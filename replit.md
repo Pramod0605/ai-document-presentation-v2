@@ -10,7 +10,7 @@ A production-grade AI pipeline that converts PDF chapters into pedagogically str
 - **Frontend**: Vanilla HTML5/JavaScript video player
 - **LLM**: OpenRouter via Replit AI Integrations
 - **Video**: Dual renderer system (Manim for math, WAN/kie.ai for science concepts)
-- **Audio**: gTTS for Indian English narration
+- **Audio**: Narakeet TTS with Indian male voice (ravi), gTTS fallback
 
 ## Pedagogical Structure
 
@@ -43,7 +43,8 @@ The system generates content in a mandatory 5-section flow:
 - `wan/wan_client.py` - kie.ai API for conceptual videos
 
 ### TTS (`tts/generate_audio.py`)
-- Indian English narration using gTTS (tld='co.in')
+- Primary: Narakeet API with Indian male voice (ravi)
+- Fallback: gTTS with Indian English (tld='co.in')
 - Generates section_[id].mp3 files
 
 ### Player (`player/`)
@@ -90,6 +91,7 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 ## Environment Variables
 
 - `OPENROUTER_API_KEY` - For LLM content generation
+- `NARAKEET_API_KEY` - For Indian male voice TTS (required for male voice)
 - `KIE_API_KEY` - For WAN video generation (optional, uses placeholder if not set)
 - `DATALAB_API_KEY` - For PDF conversion (optional, uses stub if not set)
 
@@ -102,6 +104,8 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-14: Switched TTS to Narakeet with Indian male voice (ravi)
+- 2025-12-14: Fixed Kie Runway API (duration must be 5, 8, or 10 seconds)
 - 2025-12-14: Upgraded to pedagogical structure (Intro/Summary/Content/Memory/Recap)
 - 2025-12-14: Added section_type validation and narration word count tracking
 - 2025-12-14: Player now handles all section types with appropriate layouts
