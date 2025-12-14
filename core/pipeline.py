@@ -70,7 +70,7 @@ def process_pdf_to_videos(
         job_status["completed_at"] = datetime.now().isoformat()
         job_status["presentation_path"] = str(presentation_path)
         job_status["trace_path"] = str(trace_path)
-        job_status["topics_count"] = len(presentation.get("topics", []))
+        job_status["sections_count"] = len(presentation.get("sections", []))
         
     except Exception as e:
         job_status["status"] = "failed"
@@ -136,7 +136,7 @@ def process_markdown_to_videos(
         job_status["completed_at"] = datetime.now().isoformat()
         job_status["presentation_path"] = str(presentation_path)
         job_status["trace_path"] = str(trace_path)
-        job_status["topics_count"] = len(presentation.get("topics", []))
+        job_status["sections_count"] = len(presentation.get("sections", []))
         
     except Exception as e:
         job_status["status"] = "failed"

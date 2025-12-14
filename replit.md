@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-A production-grade AI pipeline that converts PDF chapters into topic-wise explanation videos with synchronized narration. The system uses LLM as the "Director" to make all creative decisions about content presentation.
+A production-grade AI pipeline that converts PDF chapters into pedagogically structured explanation videos with synchronized narration. The system uses LLM as the "Director" to make all creative decisions about content presentation.
 
 ## Architecture
 
@@ -11,6 +11,15 @@ A production-grade AI pipeline that converts PDF chapters into topic-wise explan
 - **LLM**: OpenRouter via Replit AI Integrations
 - **Video**: Dual renderer system (Manim for math, WAN/kie.ai for science concepts)
 - **Audio**: gTTS for Indian English narration
+
+## Pedagogical Structure
+
+The system generates content in a mandatory 5-section flow:
+1. **Intro** - Warm, motivating introduction (60-100 words)
+2. **Summary** - Learning objectives and real-life connections
+3. **Content** - Multiple teaching topics (150-250+ words each, with examples)
+4. **Memory** - 3 flashcards/mnemonics for recall
+5. **Recap** - Story-based recap with 5 visual scenes
 
 ## Key Components
 
@@ -22,20 +31,57 @@ A production-grade AI pipeline that converts PDF chapters into topic-wise explan
 
 ### Core Pipeline (`core/`)
 - `llm_client.py` - OpenRouter LLM integration for content direction
+  - Validates section_type (intro, summary, content, memory, recap)
+  - Tracks narration word counts in generation_trace.json
 - `pipeline.py` - Main orchestrator for the PDF-to-video flow
 - `datalab_client.py` - PDF to Markdown conversion
 - `renderer_executor.py` - Dispatch to appropriate renderer
+- `prompts/` - System and user prompts for LLM
 
 ### Renderers (`render/`)
 - `manim/manim_runner.py` - Mathematical animations
 - `wan/wan_client.py` - kie.ai API for conceptual videos
 
 ### TTS (`tts/generate_audio.py`)
-- Indian English narration using gTTS
+- Indian English narration using gTTS (tld='co.in')
+- Generates section_[id].mp3 files
 
 ### Player (`player/`)
 - YouTube-style HTML5 video player
+- Handles section_type variations:
+  - intro: mode-center layout
+  - summary: mode-side layout
+  - content: mode-side with segments
+  - memory: mode-center with flashcards
+  - recap: mode-image with scene transitions
 - Subtitle sync, layout zones, dev mode
+- Chroma key avatar overlay
+
+## JSON Schema
+
+### Presentation (sections array)
+```json
+{
+  "chapter_title": "string",
+  "subject": "string",
+  "grade": "string",
+  "language": "en-IN",
+  "sections": [
+    {
+      "section_type": "intro|summary|content|memory|recap",
+      "id": 1,
+      "title": "Section Title",
+      "renderer": "wan_video|manim",
+      "explanation_plan": {},
+      "layout": {},
+      "narration": "...",
+      "segments": [],
+      "flashcards": [],
+      "recap_scenes": []
+    }
+  ]
+}
+```
 
 ## Running the Project
 
@@ -43,6 +89,7 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Environment Variables
 
+- `OPENROUTER_API_KEY` - For LLM content generation
 - `KIE_API_KEY` - For WAN video generation (optional, uses placeholder if not set)
 - `DATALAB_API_KEY` - For PDF conversion (optional, uses stub if not set)
 
@@ -52,3 +99,9 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 - gtts, moviepy
 - openai, tenacity, requests
 - python-dotenv
+
+## Recent Changes
+
+- 2025-12-14: Upgraded to pedagogical structure (Intro/Summary/Content/Memory/Recap)
+- 2025-12-14: Added section_type validation and narration word count tracking
+- 2025-12-14: Player now handles all section types with appropriate layouts

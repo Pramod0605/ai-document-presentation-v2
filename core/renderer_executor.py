@@ -38,7 +38,7 @@ def render_all_topics(presentation: dict, output_dir: str) -> list:
     os.makedirs(output_dir, exist_ok=True)
     
     rendered_videos = []
-    topics = presentation.get("topics", [])
+    topics = presentation.get("sections", presentation.get("topics", []))
     success_count = 0
     fail_count = 0
     

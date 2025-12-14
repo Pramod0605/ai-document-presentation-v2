@@ -2,18 +2,18 @@ import os
 from pathlib import Path
 from gtts import gTTS
 
-def generate_topic_audio(topic: dict, output_dir: str) -> str:
-    topic_id = topic.get("id", 1)
-    narration = topic.get("narration", "")
+def generate_section_audio(section: dict, output_dir: str) -> str:
+    section_id = section.get("id", 1)
+    narration = section.get("narration", "")
     
     if not narration:
-        segments = topic.get("segments", [])
+        segments = section.get("segments", [])
         narration = " ".join([seg.get("text", "") for seg in segments])
     
     if not narration:
-        narration = f"Topic {topic_id}: {topic.get('title', 'Educational content')}"
+        narration = f"Section {section_id}: {section.get('title', 'Educational content')}"
     
-    output_path = str(Path(output_dir) / f"topic_{topic_id}.mp3")
+    output_path = str(Path(output_dir) / f"section_{section_id}.mp3")
     
     tts = gTTS(
         text=narration,
@@ -30,12 +30,13 @@ def generate_all_audio(presentation: dict, output_dir: str) -> list:
     os.makedirs(output_dir, exist_ok=True)
     
     audio_files = []
-    topics = presentation.get("topics", [])
+    sections = presentation.get("sections", presentation.get("topics", []))
     
-    for topic in topics:
-        audio_path = generate_topic_audio(topic, output_dir)
+    for section in sections:
+        audio_path = generate_section_audio(section, output_dir)
         audio_files.append({
-            "topic_id": topic.get("id"),
+            "section_id": section.get("id"),
+            "section_type": section.get("section_type", "content"),
             "audio_path": audio_path
         })
     

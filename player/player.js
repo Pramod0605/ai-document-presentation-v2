@@ -74,7 +74,32 @@ function loadSlide(index) {
   const bgImg = document.getElementById('bg-image-layer');
   const sceneLabel = document.getElementById('scene-label');
 
-  if (slide.visual_content && slide.visual_content.flashcards) {
+  const sectionType = slide.section_type || slide.slide_type || 'content';
+
+  if (sectionType === 'memory' && slide.flashcards) {
+    const container = document.createElement('div');
+    container.className = 'flashcard-container';
+    slide.flashcards.forEach((fc, i) => {
+      const card = document.createElement('div');
+      card.className = 'flashcard';
+      card.id = `seg-${i}`;
+      card.innerHTML = `
+        <div class="fc-question">${fc.question}</div>
+        <div class="fc-answer">${fc.answer}</div>
+      `;
+      container.appendChild(card);
+    });
+    list.appendChild(container);
+    document.getElementById('content-box').style.width = '70%';
+
+    if (slide.audio_duration && !slide.timed_segments) {
+      const durationPerItem = slide.audio_duration / slide.flashcards.length;
+      slide.timed_segments = slide.flashcards.map((_, i) => ({
+        start_time: i * durationPerItem,
+        end_time: (i + 1) * durationPerItem
+      }));
+    }
+  } else if (slide.visual_content && slide.visual_content.flashcards) {
     const container = document.createElement('div');
     container.className = 'flashcard-container';
     slide.visual_content.flashcards.forEach((fc, i) => {
@@ -99,7 +124,7 @@ function loadSlide(index) {
 
     let items = slide.timed_segments ||
       (slide.visual_content ? slide.visual_content.bullet_points : null) ||
-      (slide.segments ? slide.segments.map(s => ({ visual: s.visual, start_time: 0, end_time: 999 })) : []);
+      (slide.segments ? slide.segments.map(s => ({ visual: s.visual || s.text, start_time: s.start || 0, end_time: (s.start || 0) + (s.duration || 5) })) : []);
 
     if (Array.isArray(items)) {
       items.forEach((item, i) => {
@@ -170,18 +195,28 @@ function loadSlide(index) {
     sceneLabel.style.opacity = 0;
   }
 
-  if (slide.slide_type === 'intro') {
+  if (sectionType === 'intro') {
     stage.className = 'mode-center';
-  } else if (slide.slide_type === 'recap') {
+    document.getElementById('content-box').style.width = '80%';
+  } else if (sectionType === 'recap') {
     stage.className = 'mode-image';
-    if (slide.storyboard_scenes && slide.storyboard_scenes.length > 0) {
-      bgImg.src = slide.storyboard_scenes[0].image_url;
-      bgImg.style.opacity = 1;
+    const scenes = slide.recap_scenes || slide.storyboard_scenes;
+    if (scenes && scenes.length > 0) {
+      if (scenes[0].image_url) {
+        bgImg.src = scenes[0].image_url;
+        bgImg.style.opacity = 1;
+      }
       if (sceneLabel) {
-        sceneLabel.innerText = slide.storyboard_scenes[0].concept_title || 'Scene';
+        sceneLabel.innerText = scenes[0].concept_title || scenes[0].description || 'Scene 1';
         sceneLabel.style.opacity = 1;
       }
     }
+  } else if (sectionType === 'summary') {
+    stage.className = 'mode-side';
+    document.getElementById('content-box').style.width = '60%';
+  } else if (sectionType === 'memory') {
+    stage.className = 'mode-center';
+    document.getElementById('content-box').style.width = '80%';
   } else {
     stage.className = 'mode-side';
     if (slide.image_id) {
@@ -260,19 +295,28 @@ function handleTimeUpdate(e) {
     });
   }
 
-  if (slide.storyboard_scenes) {
-    slide.storyboard_scenes.forEach((scene) => {
-      if (t >= scene.start_time && t < scene.end_time) {
-        const bg = document.getElementById('bg-image-layer');
-        const label = document.getElementById('scene-label');
+  const scenes = slide.recap_scenes || slide.storyboard_scenes;
+  if (scenes && slide.timed_segments) {
+    const sectionType = slide.section_type || slide.slide_type;
+    if (sectionType === 'recap') {
+      const segmentDuration = duration / scenes.length;
+      scenes.forEach((scene, i) => {
+        const sceneStart = i * segmentDuration;
+        const sceneEnd = (i + 1) * segmentDuration;
+        if (t >= sceneStart && t < sceneEnd) {
+          const bg = document.getElementById('bg-image-layer');
+          const label = document.getElementById('scene-label');
 
-        if (!bg.src.includes(scene.image_url)) {
-          bg.src = scene.image_url;
-          bg.style.opacity = 1;
-          label.innerText = scene.concept_title || 'Scene';
+          if (scene.image_url && !bg.src.includes(scene.image_url)) {
+            bg.src = scene.image_url;
+            bg.style.opacity = 1;
+          }
+          if (label) {
+            label.innerText = scene.concept_title || scene.description || `Scene ${i + 1}`;
+          }
         }
-      }
-    });
+      });
+    }
   }
 }
 
@@ -359,8 +403,9 @@ function buildSlideList() {
   
   lessonData.slides.forEach((slide, i) => {
     const div = document.createElement('div');
+    const sectionType = slide.section_type || slide.slide_type || 'content';
     div.className = 'slide-thumb' + (i === 0 ? ' active' : '');
-    div.innerHTML = `<div class="num">${i + 1}</div><div class="type">${slide.slide_type || 'content'}</div>`;
+    div.innerHTML = `<div class="num">${i + 1}</div><div class="type">${sectionType}</div>`;
     div.onclick = () => loadSlide(i);
     container.appendChild(div);
   });
@@ -372,22 +417,44 @@ async function checkExistingPresentation() {
     if (response.ok) {
       lessonData = await response.json();
       
-      if (!lessonData.slides && lessonData.topics) {
-        lessonData.slides = lessonData.topics.map(topic => ({
-          slide_number: topic.id,
-          slide_type: 'content',
-          title: topic.title,
-          segments: topic.segments,
-          timed_segments: topic.segments ? topic.segments.map(s => ({
-            visual: s.text,
-            start_time: s.start,
-            end_time: s.start + s.duration
-          })) : [],
-          audio_path: `audio/topic_${topic.id}.mp3`,
-          audio_duration: topic.duration,
-          full_narration: topic.narration,
-          visual_content: { bullet_points: topic.segments ? topic.segments.map(s => s.text) : [] }
-        }));
+      if (!lessonData.slides) {
+        if (lessonData.sections) {
+          lessonData.slides = lessonData.sections.map(section => ({
+            slide_number: section.id,
+            section_type: section.section_type || 'content',
+            slide_type: section.section_type || 'content',
+            title: section.title,
+            segments: section.segments,
+            flashcards: section.flashcards,
+            recap_scenes: section.recap_scenes,
+            timed_segments: section.segments ? section.segments.map(s => ({
+              visual: s.text,
+              start_time: s.start,
+              end_time: s.start + s.duration
+            })) : [],
+            audio_path: `audio/section_${section.id}.mp3`,
+            audio_duration: section.duration,
+            full_narration: section.narration,
+            visual_content: { bullet_points: section.segments ? section.segments.map(s => s.text) : [] }
+          }));
+        } else if (lessonData.topics) {
+          lessonData.slides = lessonData.topics.map(topic => ({
+            slide_number: topic.id,
+            slide_type: 'content',
+            section_type: 'content',
+            title: topic.title,
+            segments: topic.segments,
+            timed_segments: topic.segments ? topic.segments.map(s => ({
+              visual: s.text,
+              start_time: s.start,
+              end_time: s.start + s.duration
+            })) : [],
+            audio_path: `audio/topic_${topic.id}.mp3`,
+            audio_duration: topic.duration,
+            full_narration: topic.narration,
+            visual_content: { bullet_points: topic.segments ? topic.segments.map(s => s.text) : [] }
+          }));
+        }
       }
       
       if (lessonData.slides && lessonData.slides.length > 0) {
