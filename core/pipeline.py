@@ -52,8 +52,14 @@ def process_pdf_to_videos(
         
         job_status["steps"].append({"step": "render_videos", "status": "started"})
         rendered_videos = render_all_topics(presentation, str(videos_dir))
-        job_status["steps"][-1]["status"] = "completed"
+        
+        success_count = sum(1 for v in rendered_videos if v.get("status") == "success")
+        fail_count = len(rendered_videos) - success_count
+        
+        job_status["steps"][-1]["status"] = "completed" if fail_count == 0 else "partial"
         job_status["steps"][-1]["videos"] = rendered_videos
+        job_status["steps"][-1]["success_count"] = success_count
+        job_status["steps"][-1]["fail_count"] = fail_count
         
         job_status["steps"].append({"step": "generate_audio", "status": "started"})
         audio_files = generate_all_audio(presentation, str(audio_dir))
@@ -112,8 +118,14 @@ def process_markdown_to_videos(
         
         job_status["steps"].append({"step": "render_videos", "status": "started"})
         rendered_videos = render_all_topics(presentation, str(videos_dir))
-        job_status["steps"][-1]["status"] = "completed"
+        
+        success_count = sum(1 for v in rendered_videos if v.get("status") == "success")
+        fail_count = len(rendered_videos) - success_count
+        
+        job_status["steps"][-1]["status"] = "completed" if fail_count == 0 else "partial"
         job_status["steps"][-1]["videos"] = rendered_videos
+        job_status["steps"][-1]["success_count"] = success_count
+        job_status["steps"][-1]["fail_count"] = fail_count
         
         job_status["steps"].append({"step": "generate_audio", "status": "started"})
         audio_files = generate_all_audio(presentation, str(audio_dir))

@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 
 from core.pipeline import process_pdf_to_videos, process_markdown_to_videos
@@ -18,6 +18,10 @@ ASSETS_DIR = PLAYER_DIR / "assets"
 
 os.makedirs(ASSETS_DIR / "videos", exist_ok=True)
 os.makedirs(ASSETS_DIR / "audio", exist_ok=True)
+
+@app.route("/")
+def index():
+    return redirect("/player/")
 
 @app.route("/health", methods=["GET"])
 def health_check():

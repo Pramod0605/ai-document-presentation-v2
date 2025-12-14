@@ -23,6 +23,54 @@ def load_user_prompt() -> str:
     with open(PROMPTS_DIR / "user_prompt.txt", "r") as f:
         return f.read()
 
+def validate_and_fix_presentation(presentation: dict, subject: str, grade: str) -> dict:
+    if "chapter_title" not in presentation:
+        presentation["chapter_title"] = "Educational Content"
+    if "subject" not in presentation:
+        presentation["subject"] = subject
+    if "grade" not in presentation:
+        presentation["grade"] = grade
+    if "language" not in presentation:
+        presentation["language"] = "en-IN"
+    if "topics" not in presentation:
+        presentation["topics"] = []
+    
+    for i, topic in enumerate(presentation.get("topics", [])):
+        if "id" not in topic:
+            topic["id"] = i + 1
+        if "title" not in topic:
+            topic["title"] = f"Topic {topic['id']}"
+        if "renderer" not in topic:
+            topic["renderer"] = "wan_video"
+        if "explanation_plan" not in topic:
+            topic["explanation_plan"] = {"wan_prompt": f"Educational visualization for {topic['title']}"}
+        if "duration" not in topic:
+            topic["duration"] = 30
+        if "layout" not in topic:
+            topic["layout"] = {
+                "content_zone": {"position": "left", "width_percent": 65},
+                "avatar_zone": {"mode": "side", "position": "right", "width_percent": 35, "scale": 0.35}
+            }
+        if "narration" not in topic:
+            topic["narration"] = f"This topic covers {topic['title']}."
+        if "segments" not in topic or not topic["segments"]:
+            narration = topic.get("narration", "")
+            words = narration.split()
+            segment_size = max(10, len(words) // 3)
+            segments = []
+            start = 0.0
+            for j in range(0, len(words), segment_size):
+                segment_words = words[j:j+segment_size]
+                text = " ".join(segment_words)
+                duration = max(2.0, len(segment_words) * 0.3)
+                segments.append({"start": round(start, 1), "duration": round(duration, 1), "text": text})
+                start += duration
+            topic["segments"] = segments if segments else [{"start": 0.0, "duration": 3.0, "text": topic["narration"]}]
+        if "gesture_hints" not in topic:
+            topic["gesture_hints"] = [{"time": 1.0, "action": "explain"}]
+    
+    return presentation
+
 def is_rate_limit_error(exception: BaseException) -> bool:
     error_msg = str(exception)
     return (
@@ -71,6 +119,8 @@ def generate_presentation_plan(
         presentation_json = json.loads(json_match.group())
     else:
         raise ValueError("LLM did not return valid JSON")
+    
+    presentation_json = validate_and_fix_presentation(presentation_json, subject, grade)
     
     generation_trace = {
         "system_prompt": system_prompt,
