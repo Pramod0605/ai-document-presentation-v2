@@ -1,494 +1,586 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Animated Education - Video Player</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: #0f0f0f;
-            color: #fff;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #333;
-            margin-bottom: 20px;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ff4444;
-        }
-        
-        .dev-mode-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 26px;
-            background: #333;
-            border-radius: 13px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .toggle-switch.active {
-            background: #ff4444;
-        }
-        
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            width: 22px;
-            height: 22px;
-            background: #fff;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.3s;
-        }
-        
-        .toggle-switch.active::after {
-            transform: translateX(24px);
-        }
-        
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 20px;
-        }
-        
-        @media (max-width: 1000px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .video-section {
-            background: #181818;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        
-        .video-container {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: #000;
-        }
-        
-        .content-zone {
-            position: absolute;
-            top: 0;
-            background: #111;
-        }
-        
-        .content-zone video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        
-        .avatar-zone {
-            position: absolute;
-            background: rgba(0,0,0,0.8);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        
-        .avatar-zone video,
-        .avatar-zone img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .avatar-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            font-size: 2rem;
-        }
-        
-        .subtitles {
-            position: absolute;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-size: 1.1rem;
-            max-width: 80%;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .subtitles.visible {
-            opacity: 1;
-        }
-        
-        .controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: #202020;
-        }
-        
-        .play-btn {
-            width: 40px;
-            height: 40px;
-            background: #ff4444;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 1.2rem;
-        }
-        
-        .progress-container {
-            flex: 1;
-            height: 5px;
-            background: #444;
-            border-radius: 3px;
-            cursor: pointer;
-            position: relative;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: #ff4444;
-            border-radius: 3px;
-            width: 0%;
-            transition: width 0.1s linear;
-        }
-        
-        .time-display {
-            font-size: 0.9rem;
-            color: #aaa;
-            min-width: 100px;
-            text-align: right;
-        }
-        
-        .volume-control {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .volume-control input {
-            width: 80px;
-        }
-        
-        .topic-info {
-            padding: 20px;
-        }
-        
-        .topic-info h2 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-        }
-        
-        .topic-info .meta {
-            color: #aaa;
-            font-size: 0.9rem;
-        }
-        
-        .sidebar {
-            background: #181818;
-            border-radius: 12px;
-            padding: 15px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .sidebar h3 {
-            padding-bottom: 15px;
-            border-bottom: 1px solid #333;
-            margin-bottom: 15px;
-        }
-        
-        .topic-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .topic-item {
-            display: flex;
-            gap: 12px;
-            padding: 10px;
-            background: #252525;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .topic-item:hover,
-        .topic-item.active {
-            background: #333;
-        }
-        
-        .topic-item.active {
-            border-left: 3px solid #ff4444;
-        }
-        
-        .topic-thumb {
-            width: 120px;
-            height: 68px;
-            background: #333;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            color: #666;
-        }
-        
-        .topic-details h4 {
-            font-size: 0.95rem;
-            margin-bottom: 5px;
-        }
-        
-        .topic-details .duration {
-            font-size: 0.8rem;
-            color: #aaa;
-        }
-        
-        .dev-panel {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #252525;
-            border-radius: 12px;
-            padding: 20px;
-            width: 300px;
-            display: none;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        }
-        
-        .dev-panel.visible {
-            display: block;
-        }
-        
-        .dev-panel h4 {
-            margin-bottom: 15px;
-            color: #ff4444;
-        }
-        
-        .dev-control {
-            margin-bottom: 15px;
-        }
-        
-        .dev-control label {
-            display: block;
-            font-size: 0.85rem;
-            color: #aaa;
-            margin-bottom: 5px;
-        }
-        
-        .dev-control input[type="range"] {
-            width: 100%;
-        }
-        
-        .dev-control input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            background: #333;
-            border: 1px solid #444;
-            border-radius: 4px;
-            color: #fff;
-        }
-        
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #333;
-            border-top-color: #ff4444;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .no-content {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-        
-        .upload-section {
-            background: #181818;
-            border-radius: 12px;
-            padding: 30px;
-            text-align: center;
-            margin-bottom: 20px;
-            border: 2px dashed #333;
-        }
-        
-        .upload-section h3 {
-            margin-bottom: 15px;
-        }
-        
-        .upload-btn {
-            background: #ff4444;
-            color: #fff;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            margin: 10px;
-        }
-        
-        .upload-btn:hover {
-            background: #ff5555;
-        }
-        
-        #fileInput {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Animated Education - V4 Player</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    #stage-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #080808;
+    }
+
+    #stage {
+      width: 1280px;
+      height: 720px;
+      background: radial-gradient(circle at center, #1e3c72 0%, #2a5298 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+      perspective: 1000px;
+      border: 2px solid #333;
+    }
+
+    #bg-image-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      z-index: 0;
+    }
+
+    #scene-label {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      padding: 15px 25px;
+      border-left: 5px solid #fbbf24;
+      border-radius: 0 10px 10px 0;
+      font-size: 1.5rem;
+      color: white;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 2;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    #content-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      padding-left: 60px;
+      transition: all 0.6s ease;
+    }
+
+    #content-box {
+      width: 55%;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 40px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      transform-origin: center left;
+      transition: transform 0.2s ease-out;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #slide-image-container {
+      margin-bottom: 20px;
+      text-align: center;
+      display: none;
+    }
+
+    #slide-image-container img {
+      max-height: 250px;
+      max-width: 100%;
+      border-radius: 8px;
+      border: 2px solid rgba(251, 191, 36, 0.5);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin: 0 0 25px 0;
+      color: #fbbf24;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+      line-height: 1.1;
+    }
+
+    .segment-item {
+      font-size: 1.5rem;
+      margin-bottom: 18px;
+      padding: 12px 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      border-left: 4px solid transparent;
+      opacity: 0.4;
+      transform: translateX(-10px);
+      transition: all 0.4s ease;
+    }
+
+    .segment-item.active {
+      opacity: 1;
+      transform: translateX(0);
+      border-left-color: #fbbf24;
+      background: rgba(251, 191, 36, 0.15);
+    }
+
+    .segment-item.read {
+      opacity: 0.7;
+      transform: translateX(0);
+    }
+
+    .flashcard-container {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .flashcard {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      border-radius: 12px;
+      flex: 1;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      text-align: center;
+      opacity: 0.3;
+      transform: scale(0.95);
+      transition: all 0.5s ease;
+    }
+
+    .flashcard.active {
+      opacity: 1;
+      transform: scale(1.05);
+      background: rgba(251, 191, 36, 0.15);
+      border-color: #fbbf24;
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+
+    .flashcard.read {
+      opacity: 0.8;
+      transform: scale(1);
+    }
+
+    .fc-letter {
+      font-size: 2.5rem;
+      color: #fbbf24;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .fc-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+
+    .fc-desc {
+      font-size: 0.9rem;
+      color: #ccc;
+      line-height: 1.3;
+    }
+
+    #avatar-canvas {
+      position: absolute;
+      bottom: 0;
+      z-index: 20;
+      pointer-events: none;
+      transition: left 0.8s ease-in-out, height 0.8s ease;
+      filter: drop-shadow(-20px 5px 25px rgba(0, 0, 0, 0.6));
+      transform-origin: bottom center;
+    }
+
+    .mode-center #avatar-canvas {
+      left: 50%;
+      height: 95%;
+      transform: translateX(-50%);
+    }
+
+    .mode-center #content-wrapper {
+      opacity: 1;
+      transform: translateY(0);
+      z-index: 25;
+      display: flex;
+      justify-content: center;
+      padding-left: 0;
+      text-align: center;
+    }
+
+    .mode-center #content-box {
+      width: auto;
+      max-width: 80%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(5px);
+      align-items: center;
+    }
+
+    .mode-center #scene-label {
+      opacity: 0;
+    }
+
+    .mode-side #avatar-canvas {
+      left: auto;
+      right: 0px;
+      height: 85%;
+      transform: translateX(0);
+    }
+
+    .mode-side #content-wrapper {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mode-side #scene-label {
+      opacity: 0;
+    }
+
+    .mode-image #avatar-canvas {
+      left: auto;
+      right: 0px;
+      height: 80%;
+      transform: translateX(0);
+    }
+
+    .mode-image #content-wrapper {
+      opacity: 0;
+    }
+
+    .mode-image #bg-image-layer {
+      opacity: 1;
+    }
+
+    .mode-image #scene-label {
+      opacity: 1;
+    }
+
+    .khan-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      transition: opacity 0.5s ease;
+    }
+
+    .mode-khan #content-wrapper {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+
+    .mode-khan #scene-video {
+      opacity: 1 !important;
+    }
+
+    .mode-khan #avatar-canvas {
+      z-index: 50;
+    }
+
+    #controls-bar {
+      height: 60px;
+      background: #111;
+      border-top: 1px solid #333;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 15px;
+      z-index: 100;
+    }
+
+    button {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #555;
+    }
+
+    .progress-container {
+      flex: 1;
+      height: 6px;
+      background: #444;
+      border-radius: 3px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .progress-filled {
+      height: 100%;
+      background: #e50914;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    .slide-list-container {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      max-width: 400px;
+      scrollbar-width: thin;
+      scrollbar-color: #555 #222;
+    }
+
+    .slide-thumb {
+      min-width: 60px;
+      padding: 5px 10px;
+      background: #222;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 11px;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .slide-thumb:hover {
+      background: #333;
+    }
+
+    .slide-thumb.active {
+      border-color: #e50914;
+      background: #333;
+    }
+
+    .slide-thumb .num {
+      color: #e50914;
+      font-weight: bold;
+    }
+
+    .slide-thumb .type {
+      color: #888;
+      text-transform: uppercase;
+      font-size: 9px;
+    }
+
+    #dev-panel {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 280px;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #444;
+      font-size: 13px;
+      z-index: 2000;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #dev-panel.show {
+      display: flex;
+    }
+
+    .dev-header {
+      color: #fbbf24;
+      font-weight: bold;
+      border-bottom: 1px solid #444;
+      padding-bottom: 5px;
+    }
+
+    .slider-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    input[type=range] {
+      flex: 1;
+      margin-right: 10px;
+    }
+
+    .keyboard-hint {
+      font-size: 11px;
+      color: #666;
+      margin-left: auto;
+    }
+
+    .upload-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 5000;
+    }
+
+    .upload-overlay.hidden {
+      display: none;
+    }
+
+    .upload-box {
+      background: #1a1a1a;
+      border: 2px dashed #444;
+      border-radius: 16px;
+      padding: 60px;
+      text-align: center;
+      max-width: 500px;
+    }
+
+    .upload-box h2 {
+      margin-bottom: 20px;
+      color: #fbbf24;
+    }
+
+    .upload-box p {
+      color: #888;
+      margin-bottom: 30px;
+    }
+
+    .upload-btn {
+      background: #e50914;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 10px;
+    }
+
+    .upload-btn:hover {
+      background: #ff1a1a;
+    }
+
+    .upload-selects {
+      margin-top: 20px;
+    }
+
+    .upload-selects select {
+      padding: 10px;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      margin: 5px;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #333;
+      border-top-color: #e50914;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">AI Animated Education</div>
-            <div class="dev-mode-toggle">
-                <span>Dev Mode</span>
-                <div class="toggle-switch" id="devModeToggle"></div>
-            </div>
-        </header>
-        
-        <div class="upload-section" id="uploadSection">
-            <h3>Upload PDF or Enter Content</h3>
-            <p style="color: #aaa; margin-bottom: 15px;">Generate educational videos from your content</p>
-            <input type="file" id="fileInput" accept=".pdf">
-            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload PDF</button>
-            <button class="upload-btn" onclick="useSampleContent()">Use Sample Content</button>
-            <div style="margin-top: 15px;">
-                <select id="subjectSelect" style="padding: 10px; background: #333; color: #fff; border: none; border-radius: 4px; margin: 5px;">
-                    <option value="General Science">General Science</option>
-                    <option value="Mathematics">Mathematics</option>
-                    <option value="Physics">Physics</option>
-                    <option value="Chemistry">Chemistry</option>
-                    <option value="Biology">Biology</option>
-                </select>
-                <select id="gradeSelect" style="padding: 10px; background: #333; color: #fff; border: none; border-radius: 4px; margin: 5px;">
-                    <option value="8">Grade 8</option>
-                    <option value="9" selected>Grade 9</option>
-                    <option value="10">Grade 10</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="main-content" id="mainContent" style="display: none;">
-            <div class="video-section">
-                <div class="video-container" id="videoContainer">
-                    <div class="content-zone" id="contentZone">
-                        <video id="mainVideo" playsinline></video>
-                    </div>
-                    <div class="avatar-zone" id="avatarZone">
-                        <div class="avatar-placeholder" id="avatarPlaceholder">AI</div>
-                    </div>
-                    <div class="subtitles" id="subtitles"></div>
-                </div>
-                <div class="controls">
-                    <button class="play-btn" id="playBtn">&#9658;</button>
-                    <div class="progress-container" id="progressContainer">
-                        <div class="progress-bar" id="progressBar"></div>
-                    </div>
-                    <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
-                    <div class="volume-control">
-                        <span>&#128266;</span>
-                        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="1">
-                    </div>
-                </div>
-                <div class="topic-info">
-                    <h2 id="topicTitle">Select a topic to begin</h2>
-                    <div class="meta" id="topicMeta"></div>
-                </div>
-            </div>
-            
-            <div class="sidebar">
-                <h3>Topics</h3>
-                <div class="topic-list" id="topicList">
-                    <div class="no-content">No topics loaded</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="dev-panel" id="devPanel">
-            <h4>Developer Controls</h4>
-            <div class="dev-control">
-                <label>Content Zone Width (%)</label>
-                <input type="range" id="devContentWidth" min="30" max="100" value="65">
-            </div>
-            <div class="dev-control">
-                <label>Avatar Scale</label>
-                <input type="range" id="devAvatarScale" min="0.1" max="1" step="0.05" value="0.35">
-            </div>
-            <div class="dev-control">
-                <label>Content Position</label>
-                <select id="devContentPosition" style="width: 100%; padding: 8px; background: #333; border: 1px solid #444; color: #fff; border-radius: 4px;">
-                    <option value="left">Left</option>
-                    <option value="right">Right</option>
-                </select>
-            </div>
-            <div class="dev-control">
-                <label>Avatar Mode</label>
-                <select id="devAvatarMode" style="width: 100%; padding: 8px; background: #333; border: 1px solid #444; color: #fff; border-radius: 4px;">
-                    <option value="side">Side</option>
-                    <option value="overlay">Overlay</option>
-                </select>
-            </div>
-        </div>
+
+  <div class="upload-overlay" id="upload-overlay">
+    <div class="upload-box" id="upload-box">
+      <h2>AI Animated Education</h2>
+      <p>Upload PDF or use sample content to generate educational videos</p>
+      <input type="file" id="fileInput" accept=".pdf" style="display:none">
+      <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload PDF</button>
+      <button class="upload-btn" onclick="useSampleContent()">Use Sample Content</button>
+      <div class="upload-selects">
+        <select id="subjectSelect">
+          <option value="General Science">General Science</option>
+          <option value="Mathematics">Mathematics</option>
+          <option value="Physics">Physics</option>
+          <option value="Chemistry">Chemistry</option>
+          <option value="Biology">Biology</option>
+        </select>
+        <select id="gradeSelect">
+          <option value="8">Grade 8</option>
+          <option value="9" selected>Grade 9</option>
+          <option value="10">Grade 10</option>
+        </select>
+      </div>
     </div>
-    
-    <script src="player.js"></script>
+  </div>
+
+  <div id="stage-container">
+    <div id="stage" class="mode-side">
+      <video id="scene-video" class="khan-video" loop muted playsinline style="opacity:0"></video>
+      <img id="bg-image-layer" src="">
+
+      <div id="scene-label">Scene Title</div>
+
+      <div id="content-wrapper">
+        <div id="content-box">
+          <h1 id="slide-title">Loading...</h1>
+          <div id="slide-image-container"></div>
+          <div id="segments-list"></div>
+        </div>
+      </div>
+
+      <canvas id="avatar-canvas"></canvas>
+
+      <video id="raw-avatar-video" loop muted playsinline style="display:none"></video>
+      <audio id="main-audio"></audio>
+    </div>
+  </div>
+
+  <div id="controls-bar">
+    <button id="btn-play">Play</button>
+    <button id="btn-prev">Prev</button>
+    <button id="btn-next">Next</button>
+    <span id="time-display">0:00</span>
+    <div class="progress-container" id="progress-container">
+      <div class="progress-filled" id="timeline-fill"></div>
+    </div>
+    <div class="slide-list-container" id="slide-list"></div>
+    <button id="btn-dev" title="Toggle Dev Panel">Dev</button>
+    <span class="keyboard-hint">Space: Play | Arrows: Navigate | D: Dev Panel</span>
+    <button id="btn-fullscreen" title="Fullscreen">FS</button>
+  </div>
+
+  <div id="dev-panel">
+    <div class="dev-header">DIRECTOR CONTROLS</div>
+
+    <label>Avatar Size</label>
+    <div class="slider-row"><input type="range" id="av-scale" min="0.5" max="1.8" step="0.05" value="1.0"
+        oninput="updateVisuals()"></div>
+
+    <label>Avatar Offset (Left/Right)</label>
+    <div class="slider-row"><input type="range" id="av-x" min="-200" max="200" step="10" value="0"
+        oninput="updateVisuals()"></div>
+
+    <label>Content Size</label>
+    <div class="slider-row"><input type="range" id="con-scale" min="0.5" max="1.5" step="0.05" value="1.0"
+        oninput="updateVisuals()"></div>
+
+    <label>Green Screen Cutoff</label>
+    <div class="slider-row"><input type="range" id="av-green" min="0" max="200" step="1" value="60"></div>
+  </div>
+
+  <script src="player.js"></script>
 </body>
+
 </html>
