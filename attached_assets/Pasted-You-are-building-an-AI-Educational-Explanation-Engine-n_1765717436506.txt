@@ -1,0 +1,300 @@
+You are building an AI Educational Explanation Engine, not slides, not demos.
+
+The LLM must now do ALL of the following:
+
+Pedagogical structuring
+
+Intro → Summary → Content Topics → Memory → Recap
+
+Deep narration
+
+Each content topic must have 150–250+ words
+
+Must include:
+
+real-world examples
+
+intuitive explanation
+
+why it matters
+
+exam relevance (implicitly)
+
+Visual explanation planning
+
+Decide how the concept is best shown visually
+
+Generate WAN / Manim prompts accordingly
+
+Layout & avatar planning
+
+Content vs avatar placement
+
+Size, overlay vs side
+
+Timing & sync
+
+Subtitle segmentation
+
+Duration planning
+
+Traceability
+
+Every decision must be auditable in generation_trace.json
+
+Your supplied files (narration_intro.txt, memory_flashcards.txt, recap_storyboard.txt, narration_summary.txt) are not random extras — they are now formal section types.
+
+This is correct. We proceed.
+
+2️⃣ Implementation plan (what changes, in order)
+STEP 1 — Upgrade the prompts (MOST IMPORTANT)
+
+Prompts are the root cause of shallow narration and missing sections.
+We will rewrite both prompts, not tweak.
+
+STEP 2 — Extend the JSON schema
+
+Add:
+
+section_type
+
+long-form narration rules
+
+memory + recap blocks
+
+STEP 3 — Update generation_trace.json
+
+So you can prove:
+
+why renderer was chosen
+
+which prompt generated which video
+
+whether narration length rules were followed
+
+STEP 4 — Keep pipeline intact
+
+No breaking changes:
+
+Flask stays same
+
+WAN / Manim execution unchanged
+
+Player only branches on section_type
+
+3️⃣ DELIVERABLES (what I’m giving you now)
+✅ Deliverable 1 — FINAL system_prompt.txt (rewritten)
+You are an expert Educational Content Director and Learning Scientist.
+
+Your task is to convert textbook content into a COMPLETE
+AI-driven Teaching Experience for Indian students (Grades 8–10).
+
+You MUST think like a real teacher, not a summarizer.
+
+You are responsible for:
+- Pedagogical flow
+- Concept clarity
+- Memory retention
+- Visual explanation planning
+
+------------------------------------------------
+MANDATORY STRUCTURE (IN THIS ORDER)
+------------------------------------------------
+
+1. INTRO
+   - Warm, motivating introduction
+   - Explain what the chapter is about
+   - 60–100 words
+
+2. SUMMARY (Learning Objectives)
+   - What students will learn
+   - Why it matters
+   - How it connects to real life
+
+3. CONTENT TOPICS (Main Teaching)
+   - Break chapter into logical topics
+   - EACH topic narration must be 150–250+ words
+   - Explain step-by-step
+   - Use real-world examples
+   - Use Indian context when possible
+   - Focus on understanding, not definitions
+
+4. MEMORY SECTION
+   - Convert concepts into flashcards / mnemonics
+   - Max 3 flashcards
+   - Very short narration
+
+5. RECAP (Mental Movie)
+   - Story-based recap
+   - Use physical or cultural analogy
+   - Strong visual imagination
+   - Helps long-term memory
+
+------------------------------------------------
+VISUAL EXPLANATION RULES
+------------------------------------------------
+
+For EACH section you must decide:
+- Best renderer:
+  * "wan_video" for biology, physics, chemistry, processes
+  * "manim" for maths, graphs, formulas
+- How the concept unfolds visually over time
+
+------------------------------------------------
+LAYOUT & AVATAR RULES
+------------------------------------------------
+
+You must decide:
+- Content zone position and width
+- Avatar zone position, size, overlay vs side
+- Safe areas for subtitles
+
+------------------------------------------------
+OUTPUT RULES
+------------------------------------------------
+
+You MUST output ONLY valid JSON.
+No markdown.
+No explanations.
+No commentary.
+
+Your JSON is the single source of truth for the presentation layer.
+
+✅ Deliverable 2 — FINAL user_prompt.txt (rewritten)
+Create a complete Presentation Plan JSON for the given chapter.
+
+INPUT:
+- Subject: {subject}
+- Grade: {grade}
+- Language: English (Indian)
+- Chapter Content (Markdown):
+{markdown_content}
+
+------------------------------------------------
+REQUIREMENTS
+------------------------------------------------
+
+You MUST generate sections in this exact order:
+1. Intro
+2. Summary
+3. Content Topics (multiple)
+4. Memory
+5. Recap
+
+For EACH section include:
+- section_type: intro | summary | content | memory | recap
+- title
+- renderer decision
+- visual explanation plan
+- layout and avatar placement
+- narration text
+- subtitle segments with timing
+- gesture hints for avatar
+
+------------------------------------------------
+CONTENT SECTION RULE (CRITICAL)
+------------------------------------------------
+
+Each CONTENT section narration must be:
+- Minimum 150 words
+- Preferably 180–250 words
+- Include:
+  * real-world example
+  * intuitive explanation
+  * cause-effect reasoning
+  * why the concept is important
+
+Do NOT compress content.
+
+------------------------------------------------
+MEMORY SECTION
+------------------------------------------------
+
+- Create exactly 3 flashcards or mnemonics
+- Keep narration minimal
+- Focus on recall
+
+------------------------------------------------
+RECAP SECTION
+------------------------------------------------
+
+- Create a story-based recap
+- Use 5 visual scenes
+- Use physical or cultural analogy
+- Make it emotionally memorable
+
+------------------------------------------------
+OUTPUT
+------------------------------------------------
+
+Return ONLY valid JSON following the schema.
+Do not add explanations.
+
+✅ Deliverable 3 — Upgraded Presentation JSON schema (example)
+{
+  "section_type": "content",
+  "id": 3,
+  "title": "Binary Fission in Amoeba",
+
+  "renderer": "wan_video",
+
+  "explanation_plan": {
+    "wan_prompt": "Microscopic animation showing amoeba nucleus dividing, elongation, and cytoplasmic division..."
+  },
+
+  "layout": {
+    "content_zone": { "position": "left", "width_percent": 65 },
+    "avatar_zone": {
+      "mode": "side",
+      "position": "right",
+      "width_percent": 35
+    }
+  },
+
+  "narration": "Binary fission in Amoeba is a simple yet powerful example of asexual reproduction. Imagine a small drop of pond water where an Amoeba lives and grows... (continues 180–250 words)",
+
+  "segments": [
+    { "start": 0.0, "duration": 4.0, "text": "The nucleus duplicates first." },
+    { "start": 4.0, "duration": 5.0, "text": "The cell elongates and divides." }
+  ],
+
+  "gesture_hints": [
+    { "time": 2.0, "action": "point_left" }
+  ]
+}
+
+✅ Deliverable 4 — Upgraded generation_trace.json (example)
+{
+  "topic_id": 3,
+  "title": "Binary Fission in Amoeba",
+
+  "renderer_decision": {
+    "chosen": "wan_video",
+    "reason": "Biological process with organic motion best explained visually"
+  },
+
+  "narration_stats": {
+    "word_count": 198,
+    "meets_requirement": true
+  },
+
+  "prompts_used": {
+    "system_prompt": "...full text...",
+    "user_prompt": "...full text...",
+    "wan_prompt": "Microscopic animation showing..."
+  },
+
+  "pedagogy_notes": "Used pond-water analogy to make concept relatable."
+}
+
+✅ Final status
+
+Your existing pipeline is correct
+
+Your learning goal is correctly encoded
+
+Your missing pedagogy is now fixed at the prompt level
+
+Your intro / summary / memory / recap files are now first-class citizens
+
+Your system is now instructionally sound, not just technically impressive
