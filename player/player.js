@@ -432,7 +432,7 @@ async function checkExistingPresentation() {
               start_time: s.start,
               end_time: s.start + s.duration
             })) : [],
-            audio_path: `audio/section_${section.id}.mp3`,
+            audio_path: `assets/audio/section_${section.id}.mp3`,
             audio_duration: section.duration,
             full_narration: section.narration,
             visual_content: { bullet_points: section.segments ? section.segments.map(s => s.text) : [] }
@@ -449,7 +449,7 @@ async function checkExistingPresentation() {
               start_time: s.start,
               end_time: s.start + s.duration
             })) : [],
-            audio_path: `audio/topic_${topic.id}.mp3`,
+            audio_path: `assets/audio/topic_${topic.id}.mp3`,
             audio_duration: topic.duration,
             full_narration: topic.narration,
             visual_content: { bullet_points: topic.segments ? topic.segments.map(s => s.text) : [] }
