@@ -1,0 +1,57 @@
+Create a Presentation Plan JSON for the given chapter.
+
+Input:
+- Subject: {subject}
+- Grade: {grade}
+- Chapter Content (Markdown):
+{markdown_content}
+
+For EACH topic in the chapter:
+1. Assign a unique numeric id starting from 1
+2. Decide renderer: "manim" for math/geometry OR "wan_video" for science concepts
+3. Write renderer-specific prompt:
+   - For wan_video: write "wan_prompt" with detailed visual description
+   - For manim: write "manim_plan" with scene_type and params
+4. Define total duration (10-60 seconds per topic)
+5. Break narration into timed segments
+6. Define layout zones for content and avatar
+7. Define gesture hints for avatar
+
+OUTPUT FORMAT (strict JSON):
+{{
+  "chapter_title": "string",
+  "subject": "{subject}",
+  "grade": "{grade}",
+  "language": "en-IN",
+  "topics": [
+    {{
+      "id": 1,
+      "title": "Topic Title",
+      "renderer": "wan_video",
+      "explanation_plan": {{
+        "wan_prompt": "Detailed visual description for video generation..."
+      }},
+      "duration": 30,
+      "layout": {{
+        "content_zone": {{ "position": "left", "width_percent": 65 }},
+        "avatar_zone": {{
+          "mode": "side",
+          "position": "right",
+          "width_percent": 35,
+          "scale": 0.35
+        }}
+      }},
+      "narration": "Full narration text for this topic...",
+      "segments": [
+        {{ "start": 0.0, "duration": 3.0, "text": "First segment..." }},
+        {{ "start": 3.0, "duration": 4.0, "text": "Second segment..." }}
+      ],
+      "gesture_hints": [
+        {{ "time": 1.5, "action": "point_left" }},
+        {{ "time": 5.0, "action": "explain" }}
+      ]
+    }}
+  ]
+}}
+
+Return ONLY valid JSON. No markdown code blocks. No explanations.

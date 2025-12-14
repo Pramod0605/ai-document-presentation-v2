@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Animated Education - Video Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #0f0f0f;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff4444;
+        }
+        
+        .dev-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #333;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: #ff4444;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+        
+        @media (max-width: 1000px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .video-section {
+            background: #181818;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+        
+        .content-zone {
+            position: absolute;
+            top: 0;
+            background: #111;
+        }
+        
+        .content-zone video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .avatar-zone {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .avatar-zone video,
+        .avatar-zone img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-size: 2rem;
+        }
+        
+        .subtitles {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            max-width: 80%;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .subtitles.visible {
+            opacity: 1;
+        }
+        
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #202020;
+        }
+        
+        .play-btn {
+            width: 40px;
+            height: 40px;
+            background: #ff4444;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+        
+        .progress-container {
+            flex: 1;
+            height: 5px;
+            background: #444;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #ff4444;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        
+        .time-display {
+            font-size: 0.9rem;
+            color: #aaa;
+            min-width: 100px;
+            text-align: right;
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .volume-control input {
+            width: 80px;
+        }
+        
+        .topic-info {
+            padding: 20px;
+        }
+        
+        .topic-info h2 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        .topic-info .meta {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        .sidebar {
+            background: #181818;
+            border-radius: 12px;
+            padding: 15px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar h3 {
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 15px;
+        }
+        
+        .topic-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .topic-item {
+            display: flex;
+            gap: 12px;
+            padding: 10px;
+            background: #252525;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .topic-item:hover,
+        .topic-item.active {
+            background: #333;
+        }
+        
+        .topic-item.active {
+            border-left: 3px solid #ff4444;
+        }
+        
+        .topic-thumb {
+            width: 120px;
+            height: 68px;
+            background: #333;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .topic-details h4 {
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+        
+        .topic-details .duration {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        .dev-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #252525;
+            border-radius: 12px;
+            padding: 20px;
+            width: 300px;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        .dev-panel.visible {
+            display: block;
+        }
+        
+        .dev-panel h4 {
+            margin-bottom: 15px;
+            color: #ff4444;
+        }
+        
+        .dev-control {
+            margin-bottom: 15px;
+        }
+        
+        .dev-control label {
+            display: block;
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        
+        .dev-control input[type="range"] {
+            width: 100%;
+        }
+        
+        .dev-control input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            background: #333;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+        }
+        
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #333;
+            border-top-color: #ff4444;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .no-content {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .upload-section {
+            background: #181818;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 2px dashed #333;
+        }
+        
+        .upload-section h3 {
+            margin-bottom: 15px;
+        }
+        
+        .upload-btn {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px;
+        }
+        
+        .upload-btn:hover {
+            background: #ff5555;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">AI Animated Education</div>
+            <div class="dev-mode-toggle">
+                <span>Dev Mode</span>
+                <div class="toggle-switch" id="devModeToggle"></div>
+            </div>
+        </header>
+        
+        <div class="upload-section" id="uploadSection">
+            <h3>Upload PDF or Enter Content</h3>
+            <p style="color: #aaa; margin-bottom: 15px;">Generate educational videos from your content</p>
+            <input type="file" id="fileInput" accept=".pdf">
+            <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload PDF</button>
+            <button class="upload-btn" onclick="useSampleContent()">Use Sample Content</button>
+            <div style="margin-top: 15px;">
+                <select id="subjectSelect" style="padding: 10px; background: #333; color: #fff; border: none; border-radius: 4px; margin: 5px;">
+                    <option value="General Science">General Science</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Biology">Biology</option>
+                </select>
+                <select id="gradeSelect" style="padding: 10px; background: #333; color: #fff; border: none; border-radius: 4px; margin: 5px;">
+                    <option value="8">Grade 8</option>
+                    <option value="9" selected>Grade 9</option>
+                    <option value="10">Grade 10</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="main-content" id="mainContent" style="display: none;">
+            <div class="video-section">
+                <div class="video-container" id="videoContainer">
+                    <div class="content-zone" id="contentZone">
+                        <video id="mainVideo" playsinline></video>
+                    </div>
+                    <div class="avatar-zone" id="avatarZone">
+                        <div class="avatar-placeholder" id="avatarPlaceholder">AI</div>
+                    </div>
+                    <div class="subtitles" id="subtitles"></div>
+                </div>
+                <div class="controls">
+                    <button class="play-btn" id="playBtn">&#9658;</button>
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+                    <div class="volume-control">
+                        <span>&#128266;</span>
+                        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="1">
+                    </div>
+                </div>
+                <div class="topic-info">
+                    <h2 id="topicTitle">Select a topic to begin</h2>
+                    <div class="meta" id="topicMeta"></div>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <h3>Topics</h3>
+                <div class="topic-list" id="topicList">
+                    <div class="no-content">No topics loaded</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dev-panel" id="devPanel">
+            <h4>Developer Controls</h4>
+            <div class="dev-control">
+                <label>Content Zone Width (%)</label>
+                <input type="range" id="devContentWidth" min="30" max="100" value="65">
+            </div>
+            <div class="dev-control">
+                <label>Avatar Scale</label>
+                <input type="range" id="devAvatarScale" min="0.1" max="1" step="0.05" value="0.35">
+            </div>
+            <div class="dev-control">
+                <label>Content Position</label>
+                <select id="devContentPosition" style="width: 100%; padding: 8px; background: #333; border: 1px solid #444; color: #fff; border-radius: 4px;">
+                    <option value="left">Left</option>
+                    <option value="right">Right</option>
+                </select>
+            </div>
+            <div class="dev-control">
+                <label>Avatar Mode</label>
+                <select id="devAvatarMode" style="width: 100%; padding: 8px; background: #333; border: 1px solid #444; color: #fff; border-radius: 4px;">
+                    <option value="side">Side</option>
+                    <option value="overlay">Overlay</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <script src="player.js"></script>
+</body>
+</html>
