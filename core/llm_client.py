@@ -5,12 +5,12 @@ from pathlib import Path
 from openai import OpenAI
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception
 
-AI_INTEGRATIONS_OPENROUTER_API_KEY = os.environ.get("AI_INTEGRATIONS_OPENROUTER_API_KEY")
-AI_INTEGRATIONS_OPENROUTER_BASE_URL = os.environ.get("AI_INTEGRATIONS_OPENROUTER_BASE_URL")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 openrouter = OpenAI(
-    api_key=AI_INTEGRATIONS_OPENROUTER_API_KEY,
-    base_url=AI_INTEGRATIONS_OPENROUTER_BASE_URL
+    api_key=OPENROUTER_API_KEY,
+    base_url=OPENROUTER_BASE_URL
 )
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"
