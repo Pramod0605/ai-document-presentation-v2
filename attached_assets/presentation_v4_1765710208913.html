@@ -1,0 +1,3005 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Video Course Player - V4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Polyfill removed -->
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    /* --- CORE STYLES --- */
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    #stage-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #080808;
+    }
+
+    /* THE VIDEO STAGE */
+    #stage {
+      width: 1280px;
+      height: 720px;
+      background: radial-gradient(circle at center, #1e3c72 0%, #2a5298 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+      perspective: 1000px;
+      border: 2px solid #333;
+    }
+
+    /* --- LAYERS --- */
+
+    /* 1. Background Image (Recap/Weatherman) */
+    #bg-image-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      z-index: 0;
+    }
+
+    /* 2. Scene Label (New Feature for Recap) */
+    #scene-label {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      padding: 15px 25px;
+      border-left: 5px solid #fbbf24;
+      border-radius: 0 10px 10px 0;
+      font-size: 1.5rem;
+      color: white;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 2;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* 3. Content Wrapper (Text) */
+    #content-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      padding-left: 60px;
+      transition: all 0.6s ease;
+    }
+
+    #content-box {
+      width: 55%;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 40px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      transform-origin: center left;
+      transition: transform 0.2s ease-out;
+      max-height: 80vh;
+      /* Prevent overflow */
+      display: flex;
+      flex-direction: column;
+    }
+
+    #slide-image-container {
+      margin-bottom: 20px;
+      text-align: center;
+      display: none;
+      /* Hidden by default */
+    }
+
+    #slide-image-container img {
+      max-height: 250px;
+      max-width: 100%;
+      border-radius: 8px;
+      border: 2px solid rgba(251, 191, 36, 0.5);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin: 0 0 25px 0;
+      color: #fbbf24;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+      line-height: 1.1;
+    }
+
+    .segment-item {
+      font-size: 1.5rem;
+      margin-bottom: 18px;
+      padding: 12px 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      border-left: 4px solid transparent;
+      opacity: 0.4;
+      transform: translateX(-10px);
+      transition: all 0.4s ease;
+    }
+
+    .segment-item.active {
+      opacity: 1;
+      transform: translateX(0);
+      border-left-color: #fbbf24;
+      background: rgba(251, 191, 36, 0.15);
+    }
+
+    .segment-item.read {
+      opacity: 0.7;
+      transform: translateX(0);
+    }
+
+    /* Flashcards */
+    .flashcard-container {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .flashcard {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      border-radius: 12px;
+      flex: 1;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      text-align: center;
+      opacity: 0.3;
+      transform: scale(0.95);
+      transition: all 0.5s ease;
+    }
+
+    .flashcard.active {
+      opacity: 1;
+      transform: scale(1.05);
+      background: rgba(251, 191, 36, 0.15);
+      border-color: #fbbf24;
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+
+    .flashcard.read {
+      opacity: 0.8;
+      transform: scale(1);
+    }
+
+    .fc-letter {
+      font-size: 2.5rem;
+      color: #fbbf24;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .fc-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+
+    .fc-desc {
+      font-size: 0.9rem;
+      color: #ccc;
+      line-height: 1.3;
+    }
+
+    /* 4. Avatar Layer */
+    #avatar-canvas {
+      position: absolute;
+      bottom: 0;
+      z-index: 20;
+      pointer-events: none;
+      transition: left 0.8s ease-in-out, height 0.8s ease;
+      filter: drop-shadow(-20px 5px 25px rgba(0, 0, 0, 0.6));
+      transform-origin: bottom center;
+    }
+
+    /* --- DYNAMIC MODES --- */
+    /* Center (Intro) */
+    .mode-center #avatar-canvas {
+      left: 50%;
+      height: 95%;
+      transform: translateX(-50%);
+    }
+
+    .mode-center #content-wrapper {
+      opacity: 1;
+      /* Show content in intro */
+      transform: translateY(0);
+      z-index: 25;
+      /* Bring text above avatar for intro */
+      display: flex;
+      justify-content: center;
+      /* Center the text box */
+      padding-left: 0;
+      text-align: center;
+    }
+
+    .mode-center #content-box {
+      width: auto;
+      max-width: 80%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(5px);
+      align-items: center;
+    }
+
+    .mode-center #scene-label {
+      opacity: 0;
+    }
+
+    /* Side (Content) */
+    .mode-side #avatar-canvas {
+      left: auto;
+      right: 0px;
+      height: 85%;
+      transform: translateX(0);
+    }
+
+    .mode-side #content-wrapper {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mode-side #scene-label {
+      opacity: 0;
+    }
+
+    /* Image (Recap/Weatherman) */
+    .mode-image #avatar-canvas {
+      left: auto;
+      right: 0px;
+      height: 80%;
+      transform: translateX(0);
+    }
+
+    .mode-image #content-wrapper {
+      opacity: 0;
+    }
+
+    .mode-image #bg-image-layer {
+      opacity: 1;
+    }
+
+    .mode-image #scene-label {
+      opacity: 1;
+    }
+
+    /* --- UI CONTROLS --- */
+    #controls-bar {
+      height: 60px;
+      background: #111;
+      border-top: 1px solid #333;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 15px;
+      z-index: 100;
+    }
+
+    button {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #555;
+    }
+
+    .progress-container {
+      flex: 1;
+      height: 6px;
+      background: #444;
+      border-radius: 3px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .progress-filled {
+      height: 100%;
+      background: #e50914;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* Slide List */
+    .slide-list-container {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      max-width: 400px;
+      scrollbar-width: thin;
+      scrollbar-color: #555 #222;
+    }
+
+    .slide-thumb {
+      min-width: 60px;
+      padding: 5px 10px;
+      background: #222;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 11px;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .slide-thumb:hover {
+      background: #333;
+    }
+
+    .slide-thumb.active {
+      border-color: #e50914;
+      background: #333;
+    }
+
+    .slide-thumb .num {
+      color: #e50914;
+      font-weight: bold;
+    }
+
+    .slide-thumb .type {
+      color: #888;
+      text-transform: uppercase;
+      font-size: 9px;
+    }
+
+    /* Dev Panel (hidden by default in production) */
+    #dev-panel {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 280px;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #444;
+      font-size: 13px;
+      z-index: 2000;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #dev-panel.show {
+      display: flex;
+    }
+
+    .dev-header {
+      color: #fbbf24;
+      font-weight: bold;
+      border-bottom: 1px solid #444;
+      padding-bottom: 5px;
+    }
+
+    .slider-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    input[type=range] {
+      flex: 1;
+      margin-right: 10px;
+    }
+
+    /* Keyboard hint */
+    .keyboard-hint {
+      font-size: 11px;
+      color: #666;
+      margin-left: auto;
+    }
+
+    /* Flashcards */
+    .flashcard-container {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .flashcard {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      border-radius: 12px;
+      flex: 1;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      text-align: center;
+    }
+
+    .fc-letter {
+      font-size: 2.5rem;
+      color: #fbbf24;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .fc-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+
+    .fc-desc {
+      font-size: 0.9rem;
+      color: #ccc;
+      line-height: 1.3;
+    }
+
+    /* KHAN STYLE / WEATHERMAN MODE */
+    .khan-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      /* Below content (5) and avatar (20) */
+      transition: opacity 0.5s ease;
+    }
+
+    .mode-khan #content-wrapper {
+      opacity: 0 !important;
+      /* Hide text */
+      pointer-events: none;
+    }
+
+    .mode-khan #scene-video {
+      opacity: 1 !important;
+    }
+
+    /* Ensure Avatar is visible in Weatherman mode */
+    .mode-khan #avatar-canvas {
+      /* Position handled by JS, but ensure z-index is high */
+      z-index: 50;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="stage-container">
+    <div id="stage" class="mode-center">
+      <video id="scene-video" class="khan-video" loop muted playsinline style="opacity:0"></video>
+      <img id="bg-image-layer" src="">
+
+      <div id="scene-label">Scene Title</div>
+
+      <div id="content-wrapper">
+        <div id="content-box">
+          <h1 id="slide-title">Loading...</h1>
+          <div id="slide-image-container"></div>
+          <div id="segments-list"></div>
+        </div>
+      </div>
+
+      <canvas id="avatar-canvas"></canvas>
+
+      <video id="raw-avatar-video" loop muted playsinline style="display:none"></video>
+      <audio id="main-audio"></audio>
+    </div>
+  </div>
+
+  <div id="controls-bar">
+    <button id="btn-play">▶ Play</button>
+    <button id="btn-prev">⏮</button>
+    <button id="btn-next">⏭</button>
+    <span id="time-display">0:00</span>
+    <div class="progress-container" id="progress-container">
+      <div class="progress-filled" id="timeline-fill"></div>
+    </div>
+    <div class="slide-list-container" id="slide-list"></div>
+    <button id="btn-dev" title="Toggle Dev Panel">⚙</button>
+    <span class="keyboard-hint">Space: Play | ←→: Navigate | D: Dev Panel</span>
+    <button id="btn-fullscreen" title="Full Video Mode">⛶</button>
+  </div>
+
+  <div id="dev-panel">
+    <div class="dev-header">DIRECTOR CONTROLS</div>
+
+    <label>Avatar Size</label>
+    <div class="slider-row"><input type="range" id="av-scale" min="0.5" max="1.8" step="0.05" value="1.0"
+        oninput="updateVisuals()"></div>
+
+    <label>Avatar Offset (Left/Right)</label>
+    <div class="slider-row"><input type="range" id="av-x" min="-200" max="200" step="10" value="0"
+        oninput="updateVisuals()"></div>
+
+    <label>Content Size</label>
+    <div class="slider-row"><input type="range" id="con-scale" min="0.5" max="1.5" step="0.05" value="1.0"
+        oninput="updateVisuals()"></div>
+
+    <label>Green Screen Cutoff</label>
+    <div class="slider-row"><input type="range" id="av-green" min="0" max="200" step="1" value="60"></div>
+  </div>
+
+  <script>
+    // Lesson data injected by pipeline
+    let lessonData = null;
+    const AVATAR_URL = "assets/avatar.mp4";
+    const BASE_PATH = "";
+
+    let currentSlideIndex = 0;
+    let isPlaying = false;
+
+    const stage = document.getElementById('stage');
+    const contentBox = document.getElementById('content-box');
+    const avatarCanvas = document.getElementById('avatar-canvas');
+    const video = document.getElementById('raw-avatar-video');
+    const audio = document.getElementById('main-audio');
+    const ctx = avatarCanvas.getContext('2d', { willReadFrequently: true });
+
+    // Initialize avatar video
+    // STATE
+    // let lessonData = null; // Already defined above
+    // let AVATAR_URL = "assets/avatar.mp4"; // Already defined above
+
+    let currentMedia = audio; // Default to audio-driven
+
+    if (AVATAR_URL) {
+      video.src = AVATAR_URL;
+      video.load();
+    }
+
+    // --- 1. VISUAL UPDATE ---
+    function updateVisuals() {
+      const aScale = document.getElementById('av-scale').value;
+      const aX = document.getElementById('av-x').value;
+      const cScale = document.getElementById('con-scale').value;
+
+      avatarCanvas.style.transform = `translateX(${aX}px) scale(${aScale})`;
+      contentBox.style.transform = `scale(${cScale})`;
+    }
+
+    // --- 2. RENDER LOOP (Chroma Key) ---
+    function renderAvatar() {
+      // Draw if playing OR if we have data (for static paused state)
+      if ((!video.paused && !video.ended) || video.readyState >= 2) {
+        if (canvasSizeMismatch()) syncCanvasSize();
+
+        ctx.drawImage(video, 0, 0, avatarCanvas.width, avatarCanvas.height);
+        const frame = ctx.getImageData(0, 0, avatarCanvas.width, avatarCanvas.height);
+        const data = frame.data;
+        const thresh = parseInt(document.getElementById('av-green').value);
+
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i], g = data[i + 1], b = data[i + 2];
+          if (g > thresh && g > r * 1.3 && g > b * 1.3) data[i + 3] = 0;
+        }
+        ctx.putImageData(frame, 0, 0);
+      }
+      requestAnimationFrame(renderAvatar);
+    }
+
+    function canvasSizeMismatch() { return avatarCanvas.width !== video.videoWidth; }
+    function syncCanvasSize() { avatarCanvas.width = video.videoWidth; avatarCanvas.height = video.videoHeight; }
+    video.addEventListener('play', renderAvatar);
+    video.addEventListener('loadeddata', renderAvatar);
+
+    // --- 3. SLIDE LOADING ---
+
+    function loadSlide(index) {
+      if (!lessonData || index >= lessonData.slides.length || index < 0) return;
+
+      // Pause current media
+      video.pause();
+      audio.pause();
+
+      currentSlideIndex = index;
+      const slide = lessonData.slides[index];
+
+
+
+
+      // Update slide list active state
+      document.querySelectorAll('.slide-thumb').forEach((el, i) => {
+        el.classList.toggle('active', i === index);
+      });
+
+      // Content
+      const slideTitle = slide.title || 'Untitled';
+      if (document.getElementById('slide-title')) document.getElementById('slide-title').innerText = slideTitle;
+
+      const list = document.getElementById('segments-list');
+      list.innerHTML = '';
+
+      // Content Image
+      const imgContainer = document.getElementById('slide-image-container');
+      const bgImg = document.getElementById('bg-image-layer');
+      const sceneLabel = document.getElementById('scene-label');
+
+      // Handle Flashcards
+      if (slide.visual_content && slide.visual_content.flashcards) {
+        const container = document.createElement('div');
+        container.className = 'flashcard-container';
+        slide.visual_content.flashcards.forEach((fc, i) => {
+          const card = document.createElement('div');
+          card.className = 'flashcard';
+          card.id = `seg-${i}`;
+          card.innerHTML = `<div class="fc-letter">${fc.letter}</div><div class="fc-title">${fc.title}</div><div class="fc-desc">${fc.description}</div>`;
+          container.appendChild(card);
+        });
+        list.appendChild(container);
+        document.getElementById('content-box').style.width = '70%';
+
+        if (slide.audio_duration && !slide.timed_segments) {
+          const durationPerItem = slide.audio_duration / slide.visual_content.flashcards.length;
+          slide.timed_segments = slide.visual_content.flashcards.map((_, i) => ({
+            start_time: i * durationPerItem,
+            end_time: (i + 1) * durationPerItem
+          }));
+        }
+      } else {
+        document.getElementById('content-box').style.width = '55%';
+
+        let items = slide.timed_segments ||
+          (slide.visual_content ? slide.visual_content.bullet_points : null) ||
+          (slide.segments ? slide.segments.map(s => ({ visual: s.visual, start_time: 0, end_time: 999 })) : []);
+
+        if (Array.isArray(items)) {
+          items.forEach((item, i) => {
+            const div = document.createElement('div');
+            div.className = 'segment-item';
+            div.id = `seg-${i}`;
+            div.innerHTML = typeof item === 'string' ? item : (item.visual || item.text || '');
+            list.appendChild(div);
+          });
+
+          if (!slide.timed_segments && items.length > 0 && slide.audio_duration) {
+            const durationPerItem = slide.audio_duration / items.length;
+            slide.timed_segments = items.map((item, i) => ({
+              visual: typeof item === 'string' ? item : (item.visual || item.text || ''),
+              start_time: i * durationPerItem,
+              end_time: (i + 1) * durationPerItem
+            }));
+          }
+        }
+      }
+
+      if (window.MathJax) MathJax.typesetPromise();
+
+      // MEDIA SOURCE LOGIC (Modified for HeyGen)
+      let isHeyGen = slide.use_heygen_audio || slide.video_path;
+
+      if (isHeyGen) {
+        // MODE: HEYGEN VIDEO
+        currentMedia = video;
+        let vidSrc = slide.avatar_video_url || slide.video_path;
+
+        if (video.src.indexOf(vidSrc) === -1) {
+          video.src = vidSrc;
+        }
+        video.muted = false;
+        video.loop = false;
+        audio.src = '';
+      } else {
+        // MODE: STANDARD
+        let audSrc = slide.audio_path || '';
+        if (audSrc && !audSrc.startsWith('http') && !audSrc.startsWith('/')) {
+          audSrc = audSrc.replace(/^output\/v[34]-?[^/]*\//, '');
+        }
+
+        currentMedia = audio;
+
+        if (video.src.indexOf(AVATAR_URL) === -1) {
+          video.src = AVATAR_URL;
+        }
+        video.muted = true;
+        video.loop = true;
+
+        audio.src = audSrc;
+      }
+
+      if (currentMedia.readyState === 0) currentMedia.load();
+
+      if (currentMedia !== video) {
+        if (video.paused) video.play().catch(e => console.log("Auto-play loop failed", e));
+      }
+
+      if (isPlaying) {
+        currentMedia.play();
+        if (currentMedia === audio && video.paused) video.play();
+      }
+
+      // LAYOUT MODES
+      bgImg.src = '';
+      bgImg.style.opacity = 0;
+      if (sceneLabel) {
+        sceneLabel.innerText = '';
+        sceneLabel.style.opacity = 0;
+      }
+
+      if (slide.slide_type === 'intro') {
+        stage.className = 'mode-center';
+      } else if (slide.slide_type === 'recap') {
+        stage.className = 'mode-image';
+        if (slide.storyboard_scenes && slide.storyboard_scenes.length > 0) {
+          bgImg.src = slide.storyboard_scenes[0].image_url;
+          bgImg.style.opacity = 1;
+          if (sceneLabel) {
+            sceneLabel.innerText = slide.storyboard_scenes[0].concept_title || 'Scene';
+            sceneLabel.style.opacity = 1;
+          }
+        }
+      } else {
+        stage.className = 'mode-side';
+        if (slide.image_id) {
+          if (imgContainer) {
+            imgContainer.style.display = 'block';
+            imgContainer.innerHTML = `<img src="images/${slide.image_id}">`;
+          }
+          bgImg.src = "images/" + slide.image_id;
+          bgImg.style.opacity = 0.2;
+        } else {
+          if (imgContainer) imgContainer.style.display = 'none';
+          bgImg.src = '';
+          bgImg.style.opacity = 0;
+        }
+      }
+
+      updateVisuals();
+
+      // KHAN: Video Background Logic (Applied LAST to override layout modes)
+      const bgVideo = document.getElementById('scene-video');
+      const bgVidPath = slide.background_video;
+
+      if (bgVidPath) {
+        stage.classList.add('mode-khan');
+
+        if (bgVideo.src.indexOf(bgVidPath) === -1) {
+          bgVideo.src = bgVidPath;
+          bgVideo.load();
+        }
+        bgVideo.play().catch(e => console.log("BG Video Play Fail", e));
+      } else {
+        stage.classList.remove('mode-khan');
+        bgVideo.pause();
+        bgVideo.style.opacity = 0;
+      }
+
+      renderAvatar();
+    }
+
+
+    // --- 4. TIMING & SYNC ---
+    // --- 4. TIMING & SYNC ---
+    function handleTimeUpdate(e) {
+      // Only respond to the active driver
+      if (e.target !== currentMedia) return;
+
+      const t = currentMedia.currentTime;
+      const duration = currentMedia.duration;
+      const slide = lessonData.slides[currentSlideIndex];
+
+      // Update progress bar
+      if (duration && !isNaN(duration)) {
+        document.getElementById('timeline-fill').style.width = (t / duration * 100) + '%';
+      }
+      document.getElementById('time-display').innerText = formatTime(t);
+
+      // KHAN Sync
+      const bgVideo = document.getElementById('scene-video');
+      if (stage.classList.contains('mode-khan') && bgVideo) {
+        if (isPlaying && bgVideo.paused) bgVideo.play();
+        if (!isPlaying && !bgVideo.paused) bgVideo.pause();
+
+        // Optional: Sync time? content is usually shorter than video or different.
+        // Manim videos are usually EXACT length of audio if generated properly, but here we stitched partials.
+        // So let's try to sync time if possible, or just loop/play.
+        // User said: "display the each of the videos in background basedon the exact narration timineg"
+        // So we SHOULD sync time.
+
+        if (Math.abs(bgVideo.currentTime - t) > 0.5) {
+          bgVideo.currentTime = t;
+        }
+      }
+
+
+      // A. Sync Bullets/Segments
+      if (slide.timed_segments) {
+        slide.timed_segments.forEach((seg, i) => {
+          const el = document.getElementById(`seg-${i}`);
+          if (!el) return;
+
+          // Handle Flashcards (seg-i) vs Segments (.segment-item)
+          // If it's a flashcard (has .flashcard class)
+          const isFlashcard = el.classList.contains('flashcard');
+
+          if (t >= seg.start_time && t < seg.end_time) {
+            el.classList.add('active');
+            el.classList.remove('read');
+          } else if (t >= seg.end_time) {
+            el.classList.remove('active');
+            el.classList.add('read');
+          } else {
+            el.classList.remove('active');
+            el.classList.remove('read');
+          }
+        });
+      }
+      // B. Sync Recap Scenes
+      if (slide.storyboard_scenes) {
+        slide.storyboard_scenes.forEach((scene) => {
+          if (t >= scene.start_time && t < scene.end_time) {
+            const bg = document.getElementById('bg-image-layer');
+            const label = document.getElementById('scene-label');
+
+            if (!bg.src.includes(scene.image_url)) {
+              bg.src = scene.image_url;
+              bg.style.opacity = 1;
+              label.innerText = scene.concept_title || 'Scene';
+            }
+          }
+        });
+      }
+    }
+
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('timeupdate', handleTimeUpdate);
+
+    // Listen for 'ended' on whichever is current logic?
+    // Actually, just listen on both, but check if target is currentMedia
+    function handleEnded(e) {
+      if (e.target !== currentMedia) return;
+      if (currentSlideIndex < lessonData.slides.length - 1) {
+        setTimeout(() => loadSlide(currentSlideIndex + 1), 1000);
+      }
+    }
+    audio.addEventListener('ended', handleEnded);
+    video.addEventListener('ended', handleEnded);
+
+    // --- 5. HELPERS ---
+    function formatTime(s) {
+      return `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, '0')}`;
+    }
+
+    function togglePlay() {
+      if (currentMedia.paused) {
+        currentMedia.play();
+        // If it's AUDIO mode, we also need to play the video loop
+        if (currentMedia === audio) video.play();
+
+        isPlaying = true;
+        document.getElementById('btn-play').innerText = "⏸";
+      } else {
+        currentMedia.pause();
+        // If it's AUDIO mode, we also need to pause the video loop
+        if (currentMedia === audio) video.pause();
+
+        isPlaying = false;
+        document.getElementById('btn-play').innerText = "▶";
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlideIndex > 0) loadSlide(currentSlideIndex - 1);
+    }
+
+    function nextSlide() {
+      if (currentSlideIndex < lessonData.slides.length - 1) loadSlide(currentSlideIndex + 1);
+    }
+
+    // Event Listeners
+    document.getElementById('btn-play').onclick = togglePlay;
+    document.getElementById('btn-prev').onclick = prevSlide;
+    document.getElementById('btn-next').onclick = nextSlide;
+    document.getElementById('btn-dev').onclick = () => {
+      document.getElementById('dev-panel').classList.toggle('show');
+    };
+    document.getElementById('btn-fullscreen').onclick = toggleFullScreen;
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        stage.requestFullscreen().catch(err => {
+          alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    // Progress bar seeking
+    document.getElementById('progress-container').onclick = (e) => {
+      const rect = e.target.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      if (audio.duration && !isNaN(audio.duration)) {
+        audio.currentTime = pct * audio.duration;
+      }
+    };
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+      if (e.code === 'ArrowLeft') prevSlide();
+      if (e.code === 'ArrowRight') nextSlide();
+      if (e.code === 'KeyD') document.getElementById('dev-panel').classList.toggle('show');
+    });
+
+    // Build slide list
+    function buildSlideList() {
+      const container = document.getElementById('slide-list');
+      container.innerHTML = '';
+      lessonData.slides.forEach((slide, i) => {
+        const div = document.createElement('div');
+        div.className = 'slide-thumb' + (i === 0 ? ' active' : '');
+        div.innerHTML = `<div class="num">${i + 1}</div><div class="type">${slide.slide_type || 'content'}</div>`;
+        div.onclick = () => loadSlide(i);
+        container.appendChild(div);
+      });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      buildSlideList();
+      loadSlide(0);
+      updateVisuals();
+    });
+  </script>
+
+  <!-- LESSON DATA INJECTED HERE -->
+  <script>
+    lessonData = {
+      "topic": "REPRODUCTION IN ORGANISMS",
+      "slides": [
+        {
+          "slide_number": 1,
+          "slide_type": "intro",
+          "title": "Welcome to Reproduction in Organisms!",
+          "image_id": null,
+          "visual_content": {},
+          "full_narration": "Namaste students! Welcome to our biology class. Today, we are going to explore one of the most fundamental processes of life: Reproduction in Organisms. It's a fascinating topic that explains how life continues from one generation to the next. Please get your notebooks and pens ready to take notes. Let's begin this exciting journey together!",
+          "estimated_duration_seconds": 20,
+          "audio_path": "audio/slide_001_full.mp3",
+          "audio_duration": 26.472,
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_001_avatar.mp4",
+          "background_video": "assets/topic_01.mp4"
+        },
+        {
+          "slide_number": 2,
+          "slide_type": "summary",
+          "title": "What We Will Learn Today",
+          "image_id": null,
+          "visual_content": {
+            "bullet_points": [
+              "Understand the basics and purpose of reproduction.",
+              "Differentiate between Asexual and Sexual Reproduction.",
+              "Explore various methods of Asexual Reproduction.",
+              "Learn the key events in Sexual Reproduction.",
+              "Analyze the advantages and disadvantages of each type."
+            ]
+          },
+          "full_narration": "Namaste students! In today's lesson, our goal is to build a strong foundation on the topic of reproduction. We will start by understanding why reproduction is so important. Then, we'll dive into the two major types: asexual and sexual reproduction. We will explore the many interesting methods of asexual reproduction, like budding and fission. After that, we'll cover the detailed stages of sexual reproduction \u2013 from gamete formation to the development of a new organism. Finally, we'll weigh the pros and cons of each method. Let's get started!",
+          "estimated_duration_seconds": 45,
+          "audio_path": "audio/slide_002_full.mp3",
+          "audio_duration": 41.976,
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_002_avatar.mp4",
+          "background_video": "assets/topic_02.mp4"
+        },
+        {
+          "slide_number": 3,
+          "slide_type": "content",
+          "title": "What is Reproduction?",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "A process where living organisms create copies of themselves.",
+              "narration_fragment": "Reproduction is one of the most important biological processes. It's how every living organism, from a tiny bacterium to a giant banyan tree, makes a copy of itself.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_003_seg_0.mp3"
+            },
+            {
+              "visual": "Ensures the continuation of a species.",
+              "narration_fragment": "This process is the primary means of multiplication for any species. It's essential because older individuals eventually undergo senescence, which is aging, and die.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_003_seg_1.mp3"
+            },
+            {
+              "visual": "Basic Features: DNA Replication",
+              "narration_fragment": "At the molecular level, the most fundamental feature of all reproduction is the replication of DNA. This ensures that genetic information is passed on.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_003_seg_2.mp3"
+            },
+            {
+              "visual": "Basic Features: Cell Division (Mitotic/Meiotic)",
+              "narration_fragment": "At the cellular level, reproduction involves cell division. This can be either mitotic division, or in some cases, both mitotic and meiotic divisions.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_003_seg_3.mp3"
+            },
+            {
+              "visual": "Two Broad Categories: Asexual & Sexual Reproduction",
+              "narration_fragment": "All the diverse methods of reproduction that we see in nature can be broadly classified into two main types: Asexual Reproduction and Sexual Reproduction.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_003_seg_4.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_003_seg_0.mp3",
+            "audio/slide_003_seg_1.mp3",
+            "audio/slide_003_seg_2.mp3",
+            "audio/slide_003_seg_3.mp3",
+            "audio/slide_003_seg_4.mp3"
+          ],
+          "audio_path": "audio/slide_003_full.mp3",
+          "audio_duration": 61.056,
+          "timed_segments": [
+            {
+              "visual": "A process where living organisms create copies of themselves.",
+              "narration_fragment": "Reproduction is one of the most important biological processes. It's how every living organism, from a tiny bacterium to a giant banyan tree, makes a copy of itself.",
+              "start_time": 0,
+              "end_time": 12.99,
+              "duration": 12.99
+            },
+            {
+              "visual": "Ensures the continuation of a species.",
+              "narration_fragment": "This process is the primary means of multiplication for any species. It's essential because older individuals eventually undergo senescence, which is aging, and die.",
+              "start_time": 12.99,
+              "end_time": 25.98,
+              "duration": 12.99
+            },
+            {
+              "visual": "Basic Features: DNA Replication",
+              "narration_fragment": "At the molecular level, the most fundamental feature of all reproduction is the replication of DNA. This ensures that genetic information is passed on.",
+              "start_time": 25.98,
+              "end_time": 37.67,
+              "duration": 11.69
+            },
+            {
+              "visual": "Basic Features: Cell Division (Mitotic/Meiotic)",
+              "narration_fragment": "At the cellular level, reproduction involves cell division. This can be either mitotic division, or in some cases, both mitotic and meiotic divisions.",
+              "start_time": 37.67,
+              "end_time": 49.36,
+              "duration": 11.69
+            },
+            {
+              "visual": "Two Broad Categories: Asexual & Sexual Reproduction",
+              "narration_fragment": "All the diverse methods of reproduction that we see in nature can be broadly classified into two main types: Asexual Reproduction and Sexual Reproduction.",
+              "start_time": 49.36,
+              "end_time": 61.06,
+              "duration": 11.69
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_003_avatar.mp4",
+          "background_video": "assets/topic_03.mp4"
+        },
+        {
+          "slide_number": 4,
+          "slide_type": "content",
+          "title": "Asexual Reproduction: The Basics",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "New individuals formed without fusion of gametes.",
+              "narration_fragment": "In asexual reproduction, new individuals are produced by means other than the fusion of sex gametes. This means there is no mixing of genetic material from two parents.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_004_seg_0.mp3"
+            },
+            {
+              "visual": "Also known as Apomixis (Apo = without; mixis = mixing).",
+              "narration_fragment": "Because there is no 'mixing', asexual reproduction is also known as Apomixis. This term was first suggested by the scientist Winkler.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_004_seg_1.mp3"
+            },
+            {
+              "visual": "Offspring are genetically identical to the parent.",
+              "narration_fragment": "A key characteristic is that the offspring are genetically similar, or identical, to the single parent. This population of identical individuals is called a 'clone'.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_004_seg_2.mp3"
+            },
+            {
+              "visual": "Common in: Single-celled organisms, simple plants & animals.",
+              "narration_fragment": "You will find asexual reproduction to be very common among single-celled organisms like bacteria and Amoeba, and also in plants and animals with relatively simple body structures.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_004_seg_3.mp3"
+            },
+            {
+              "visual": "Advantageous in stable, favorable environments.",
+              "narration_fragment": "This method is most advantageous in a stable environment. Since the parent is already well-adapted, creating identical offspring ensures the continuation of that successful genetic makeup.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_004_seg_4.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_004_seg_0.mp3",
+            "audio/slide_004_seg_1.mp3",
+            "audio/slide_004_seg_2.mp3",
+            "audio/slide_004_seg_3.mp3",
+            "audio/slide_004_seg_4.mp3"
+          ],
+          "audio_path": "audio/slide_004_full.mp3",
+          "audio_duration": 63.552,
+          "timed_segments": [
+            {
+              "visual": "New individuals formed without fusion of gametes.",
+              "narration_fragment": "In asexual reproduction, new individuals are produced by means other than the fusion of sex gametes. This means there is no mixing of genetic material from two parents.",
+              "start_time": 0,
+              "end_time": 12.97,
+              "duration": 12.97
+            },
+            {
+              "visual": "Also known as Apomixis (Apo = without; mixis = mixing).",
+              "narration_fragment": "Because there is no 'mixing', asexual reproduction is also known as Apomixis. This term was first suggested by the scientist Winkler.",
+              "start_time": 12.97,
+              "end_time": 24.64,
+              "duration": 11.67
+            },
+            {
+              "visual": "Offspring are genetically identical to the parent.",
+              "narration_fragment": "A key characteristic is that the offspring are genetically similar, or identical, to the single parent. This population of identical individuals is called a 'clone'.",
+              "start_time": 24.64,
+              "end_time": 37.61,
+              "duration": 12.97
+            },
+            {
+              "visual": "Common in: Single-celled organisms, simple plants & animals.",
+              "narration_fragment": "You will find asexual reproduction to be very common among single-celled organisms like bacteria and Amoeba, and also in plants and animals with relatively simple body structures.",
+              "start_time": 37.61,
+              "end_time": 50.58,
+              "duration": 12.97
+            },
+            {
+              "visual": "Advantageous in stable, favorable environments.",
+              "narration_fragment": "This method is most advantageous in a stable environment. Since the parent is already well-adapted, creating identical offspring ensures the continuation of that successful genetic makeup.",
+              "start_time": 50.58,
+              "end_time": 63.55,
+              "duration": 12.97
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_004_avatar.mp4",
+          "background_video": "assets/topic_04.mp4"
+        },
+        {
+          "slide_number": 5,
+          "slide_type": "content",
+          "title": "Characteristics of Asexual Reproduction",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Uniparental: Involves a single parent.",
+              "narration_fragment": "First, it is uniparental, which simply means only a single parent is involved in producing the offspring. There are no male or female parents.",
+              "duration_estimate": 8,
+              "audio_file": "audio/slide_005_seg_0.mp3"
+            },
+            {
+              "visual": "No Gamete Formation: Sex cells are not produced.",
+              "narration_fragment": "Second, gametes, which are specialized sex cells like sperm and egg, are not formed in this process. Reproduction happens directly from the parent's body cells.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_005_seg_1.mp3"
+            },
+            {
+              "visual": "Mitotic Division: Cell divisions are only mitotic.",
+              "narration_fragment": "Third, the cell divisions involved are purely mitotic. This type of cell division creates daughter cells that are exact copies of the parent cell.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_005_seg_2.mp3"
+            },
+            {
+              "visual": "Genetically Identical Offspring (Clones).",
+              "narration_fragment": "As a result, the new individuals formed are usually genetically identical to the parent. Any variation that occurs is rare and is typically due to random mutations.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_005_seg_3.mp3"
+            },
+            {
+              "visual": "Rapid Multiplication: Occurs very quickly.",
+              "narration_fragment": "Finally, multiplication happens very rapidly. This allows organisms to produce a large number of offspring in a very short amount of time.",
+              "duration_estimate": 8,
+              "audio_file": "audio/slide_005_seg_4.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_005_seg_0.mp3",
+            "audio/slide_005_seg_1.mp3",
+            "audio/slide_005_seg_2.mp3",
+            "audio/slide_005_seg_3.mp3",
+            "audio/slide_005_seg_4.mp3"
+          ],
+          "audio_path": "audio/slide_005_full.mp3",
+          "audio_duration": 57.384,
+          "timed_segments": [
+            {
+              "visual": "Uniparental: Involves a single parent.",
+              "narration_fragment": "First, it is uniparental, which simply means only a single parent is involved in producing the offspring. There are no male or female parents.",
+              "start_time": 0,
+              "end_time": 10.43,
+              "duration": 10.43
+            },
+            {
+              "visual": "No Gamete Formation: Sex cells are not produced.",
+              "narration_fragment": "Second, gametes, which are specialized sex cells like sperm and egg, are not formed in this process. Reproduction happens directly from the parent's body cells.",
+              "start_time": 10.43,
+              "end_time": 22.17,
+              "duration": 11.74
+            },
+            {
+              "visual": "Mitotic Division: Cell divisions are only mitotic.",
+              "narration_fragment": "Third, the cell divisions involved are purely mitotic. This type of cell division creates daughter cells that are exact copies of the parent cell.",
+              "start_time": 22.17,
+              "end_time": 33.91,
+              "duration": 11.74
+            },
+            {
+              "visual": "Genetically Identical Offspring (Clones).",
+              "narration_fragment": "As a result, the new individuals formed are usually genetically identical to the parent. Any variation that occurs is rare and is typically due to random mutations.",
+              "start_time": 33.91,
+              "end_time": 46.95,
+              "duration": 13.04
+            },
+            {
+              "visual": "Rapid Multiplication: Occurs very quickly.",
+              "narration_fragment": "Finally, multiplication happens very rapidly. This allows organisms to produce a large number of offspring in a very short amount of time.",
+              "start_time": 46.95,
+              "end_time": 57.38,
+              "duration": 10.43
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_005_avatar.mp4",
+          "background_video": "assets/topic_05.mp4"
+        },
+        {
+          "slide_number": 6,
+          "slide_type": "content",
+          "title": "Method 1: Binary Fission",
+          "image_id": "8d0979f8938b15f6c0ab58694e4e5fac_img.jpg",
+          "segments": [
+            {
+              "visual": "Division of parent into two equal daughter individuals.",
+              "narration_fragment": "Binary fission is the simplest method, where the parent organism divides into two small, nearly equal daughter individuals. This is common in protozoans and bacteria.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_006_seg_0.mp3"
+            },
+            {
+              "visual": "Simple Fission: Division plane is in any direction. (e.g., Amoeba)",
+              "narration_fragment": "First, we have simple binary fission, seen here in Amoeba. The cell can divide along any plane or direction to form two new Amoebae.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_006_seg_1.mp3"
+            },
+            {
+              "visual": "Transverse Fission: Division along the transverse axis. (e.g., Paramecium)",
+              "narration_fragment": "Next is transverse binary fission. Here, the division plane is along the transverse, or horizontal, axis of the organism. A good example is Paramecium.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_006_seg_2.mp3"
+            },
+            {
+              "visual": "Longitudinal Fission: Division along the longitudinal axis. (e.g., Euglena)",
+              "narration_fragment": "Finally, there is longitudinal binary fission. In this case, the division happens along the longitudinal, or vertical, axis. You can see this in Euglena.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_006_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_006_seg_0.mp3",
+            "audio/slide_006_seg_1.mp3",
+            "audio/slide_006_seg_2.mp3",
+            "audio/slide_006_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_006_full.mp3",
+          "audio_duration": 49.584,
+          "timed_segments": [
+            {
+              "visual": "Division of parent into two equal daughter individuals.",
+              "narration_fragment": "Binary fission is the simplest method, where the parent organism divides into two small, nearly equal daughter individuals. This is common in protozoans and bacteria.",
+              "start_time": 0,
+              "end_time": 12.71,
+              "duration": 12.71
+            },
+            {
+              "visual": "Simple Fission: Division plane is in any direction. (e.g., Amoeba)",
+              "narration_fragment": "First, we have simple binary fission, seen here in Amoeba. The cell can divide along any plane or direction to form two new Amoebae.",
+              "start_time": 12.71,
+              "end_time": 24.16,
+              "duration": 11.44
+            },
+            {
+              "visual": "Transverse Fission: Division along the transverse axis. (e.g., Paramecium)",
+              "narration_fragment": "Next is transverse binary fission. Here, the division plane is along the transverse, or horizontal, axis of the organism. A good example is Paramecium.",
+              "start_time": 24.16,
+              "end_time": 36.87,
+              "duration": 12.71
+            },
+            {
+              "visual": "Longitudinal Fission: Division along the longitudinal axis. (e.g., Euglena)",
+              "narration_fragment": "Finally, there is longitudinal binary fission. In this case, the division happens along the longitudinal, or vertical, axis. You can see this in Euglena.",
+              "start_time": 36.87,
+              "end_time": 49.58,
+              "duration": 12.71
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_006_avatar.mp4",
+          "background_video": "assets/topic_06.mp4"
+        },
+        {
+          "slide_number": 7,
+          "slide_type": "content",
+          "title": "Methods 2 & 3: Multiple Fission & Budding",
+          "image_id": "c803f6f6e2c49429d2951832bd0f208d_img.jpg",
+          "segments": [
+            {
+              "visual": "Multiple Fission: Parent divides into MANY small daughters. (e.g., Plasmodium)",
+              "narration_fragment": "Unlike binary fission, multiple fission is the division of the parent into many small daughter individuals simultaneously. This occurs in organisms like Plasmodium, the malaria parasite.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_007_seg_0.mp3"
+            },
+            {
+              "visual": "Budding: A small projection (bud) grows on the parent body.",
+              "narration_fragment": "Budding is the formation of a daughter individual from a small projection, called a bud, which arises on the parent's body. This is common in Hydra and Yeast.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_007_seg_1.mp3"
+            },
+            {
+              "visual": "Exogenous (External) Budding: Bud forms on the outside. (e.g., Hydra)",
+              "narration_fragment": "In exogenous budding, a small outgrowth on the parent\u2019s body, as you can see in this diagram of Hydra, develops into a miniature individual and then detaches.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_007_seg_2.mp3"
+            },
+            {
+              "visual": "Endogenous (Internal) Budding: Bud forms inside, called a gemmule. (e.g., Spongilla)",
+              "narration_fragment": "In endogenous budding, a specialized mass of cells is formed inside the parent's body. This structure, called a gemmule, is released and can grow into a new organism.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_007_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_007_seg_0.mp3",
+            "audio/slide_007_seg_1.mp3",
+            "audio/slide_007_seg_2.mp3",
+            "audio/slide_007_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_007_full.mp3",
+          "audio_duration": 50.424,
+          "timed_segments": [
+            {
+              "visual": "Multiple Fission: Parent divides into MANY small daughters. (e.g., Plasmodium)",
+              "narration_fragment": "Unlike binary fission, multiple fission is the division of the parent into many small daughter individuals simultaneously. This occurs in organisms like Plasmodium, the malaria parasite.",
+              "start_time": 0,
+              "end_time": 13.21,
+              "duration": 13.21
+            },
+            {
+              "visual": "Budding: A small projection (bud) grows on the parent body.",
+              "narration_fragment": "Budding is the formation of a daughter individual from a small projection, called a bud, which arises on the parent's body. This is common in Hydra and Yeast.",
+              "start_time": 13.21,
+              "end_time": 25.21,
+              "duration": 12.01
+            },
+            {
+              "visual": "Exogenous (External) Budding: Bud forms on the outside. (e.g., Hydra)",
+              "narration_fragment": "In exogenous budding, a small outgrowth on the parent\u2019s body, as you can see in this diagram of Hydra, develops into a miniature individual and then detaches.",
+              "start_time": 25.21,
+              "end_time": 37.22,
+              "duration": 12.01
+            },
+            {
+              "visual": "Endogenous (Internal) Budding: Bud forms inside, called a gemmule. (e.g., Spongilla)",
+              "narration_fragment": "In endogenous budding, a specialized mass of cells is formed inside the parent's body. This structure, called a gemmule, is released and can grow into a new organism.",
+              "start_time": 37.22,
+              "end_time": 50.42,
+              "duration": 13.21
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_007_avatar.mp4",
+          "background_video": "assets/topic_07.mp4"
+        },
+        {
+          "slide_number": 8,
+          "slide_type": "content",
+          "title": "Methods 4 & 5: Fragmentation & Regeneration",
+          "image_id": "96fb4373e63be843d9d2dcac2260afff_img.jpg",
+          "segments": [
+            {
+              "visual": "Fragmentation: Breaking of body into pieces; each piece grows.",
+              "narration_fragment": "Fragmentation is the process of breaking up an animal's body into two or more pieces. Each of these pieces then grows into a complete new individual.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_008_seg_0.mp3"
+            },
+            {
+              "visual": "Example: Flatworms like Planaria and Microstomum.",
+              "narration_fragment": "This method is common in organisms with simple body plans, such as flatworms. As you can see in the diagram, if a Planaria is cut, each fragment can develop into a new worm.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_008_seg_1.mp3"
+            },
+            {
+              "visual": "Regeneration: Repairing or regrowing missing parts.",
+              "narration_fragment": "Regeneration is closely related. It is a mode of asexual reproduction where the missing parts of an organism are repaired or regrown by the proliferation of cells.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_008_seg_2.mp3"
+            },
+            {
+              "visual": "While all organisms can regenerate to some extent, for some it's a mode of reproduction.",
+              "narration_fragment": "For example, if a lizard loses its tail, it can regenerate it. But for organisms like Planaria, regeneration of a fragment leads to a whole new individual, making it a form of reproduction.",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_008_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_008_seg_0.mp3",
+            "audio/slide_008_seg_1.mp3",
+            "audio/slide_008_seg_2.mp3",
+            "audio/slide_008_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_008_full.mp3",
+          "audio_duration": 51.768,
+          "timed_segments": [
+            {
+              "visual": "Fragmentation: Breaking of body into pieces; each piece grows.",
+              "narration_fragment": "Fragmentation is the process of breaking up an animal's body into two or more pieces. Each of these pieces then grows into a complete new individual.",
+              "start_time": 0,
+              "end_time": 12.04,
+              "duration": 12.04
+            },
+            {
+              "visual": "Example: Flatworms like Planaria and Microstomum.",
+              "narration_fragment": "This method is common in organisms with simple body plans, such as flatworms. As you can see in the diagram, if a Planaria is cut, each fragment can develop into a new worm.",
+              "start_time": 12.04,
+              "end_time": 25.28,
+              "duration": 13.24
+            },
+            {
+              "visual": "Regeneration: Repairing or regrowing missing parts.",
+              "narration_fragment": "Regeneration is closely related. It is a mode of asexual reproduction where the missing parts of an organism are repaired or regrown by the proliferation of cells.",
+              "start_time": 25.28,
+              "end_time": 37.32,
+              "duration": 12.04
+            },
+            {
+              "visual": "While all organisms can regenerate to some extent, for some it's a mode of reproduction.",
+              "narration_fragment": "For example, if a lizard loses its tail, it can regenerate it. But for organisms like Planaria, regeneration of a fragment leads to a whole new individual, making it a form of reproduction.",
+              "start_time": 37.32,
+              "end_time": 51.77,
+              "duration": 14.45
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_008_avatar.mp4",
+          "background_video": "assets/topic_08.mp4"
+        },
+        {
+          "slide_number": 9,
+          "slide_type": "content",
+          "title": "Method 6: Spore Formation",
+          "image_id": "a4c38758d2beb7324d786510e83609ec_img.jpg",
+          "segments": [
+            {
+              "visual": "Zoospores: Motile spores with flagella. (e.g., Chlamydomonas)",
+              "narration_fragment": "Zoospores are tiny, motile spores, meaning they can move using one or two flagella. They are produced inside a sac-like structure called a zoosporangium, as seen in algae like Chlamydomonas.",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_009_seg_0.mp3"
+            },
+            {
+              "visual": "Conidia: Non-motile spores formed externally. (e.g., Penicillium)",
+              "narration_fragment": "Conidia are non-motile spores that are cut off externally, either singly or in chains, from the tip of a special stalk called a conidiophore. This is how fungi like Penicillium reproduce.",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_009_seg_1.mp3"
+            },
+            {
+              "visual": "Gemmules: Internal buds for surviving harsh conditions. (e.g., Sponges)",
+              "narration_fragment": "Gemmules are internal asexual reproductive units, essentially internal buds. Seen here in sponges, they are tough structures that help the organism survive unfavorable conditions and germinate when things get better.",
+              "duration_estimate": 13,
+              "audio_file": "audio/slide_009_seg_2.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_009_seg_0.mp3",
+            "audio/slide_009_seg_1.mp3",
+            "audio/slide_009_seg_2.mp3"
+          ],
+          "audio_path": "audio/slide_009_full.mp3",
+          "audio_duration": 45.096,
+          "timed_segments": [
+            {
+              "visual": "Zoospores: Motile spores with flagella. (e.g., Chlamydomonas)",
+              "narration_fragment": "Zoospores are tiny, motile spores, meaning they can move using one or two flagella. They are produced inside a sac-like structure called a zoosporangium, as seen in algae like Chlamydomonas.",
+              "start_time": 0,
+              "end_time": 14.63,
+              "duration": 14.63
+            },
+            {
+              "visual": "Conidia: Non-motile spores formed externally. (e.g., Penicillium)",
+              "narration_fragment": "Conidia are non-motile spores that are cut off externally, either singly or in chains, from the tip of a special stalk called a conidiophore. This is how fungi like Penicillium reproduce.",
+              "start_time": 14.63,
+              "end_time": 29.25,
+              "duration": 14.63
+            },
+            {
+              "visual": "Gemmules: Internal buds for surviving harsh conditions. (e.g., Sponges)",
+              "narration_fragment": "Gemmules are internal asexual reproductive units, essentially internal buds. Seen here in sponges, they are tough structures that help the organism survive unfavorable conditions and germinate when things get better.",
+              "start_time": 29.25,
+              "end_time": 45.1,
+              "duration": 15.84
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_009_avatar.mp4",
+          "background_video": "assets/topic_09.mp4"
+        },
+        {
+          "slide_number": 10,
+          "slide_type": "content",
+          "title": "Method 7: Vegetative Propagation in Plants",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Propagation by a part of the body other than a seed.",
+              "narration_fragment": "Vegetative propagation is a type of asexual reproduction in plants. Here, new plants are grown from a part of the parent plant, like a root, stem, or leaf, instead of a seed.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_010_seg_0.mp3"
+            },
+            {
+              "visual": "Natural Method - By Roots: Sweet potato, Dahlia, Guava.",
+              "narration_fragment": "Nature has its own ways. Some plants use their roots for propagation. For example, the tuberous roots of sweet potato and dahlia can grow into new plants when planted.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_010_seg_1.mp3"
+            },
+            {
+              "visual": "Natural Method - By Underground Stems:",
+              "narration_fragment": "Many plants use underground modified stems. These come in various forms and are packed with stored food to support new growth.",
+              "duration_estimate": 8,
+              "audio_file": "audio/slide_010_seg_2.mp3"
+            },
+            {
+              "visual": "\u2022 Rhizomes (Ginger, Turmeric) \u2022 Tubers (Potato) \u2022 Bulbs (Onion, Garlic)",
+              "narration_fragment": "Examples include rhizomes, like in ginger and turmeric; tubers, such as the common potato; and bulbs, which you can see in onions and garlic.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_010_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_010_seg_0.mp3",
+            "audio/slide_010_seg_1.mp3",
+            "audio/slide_010_seg_2.mp3",
+            "audio/slide_010_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_010_full.mp3",
+          "audio_duration": 49.464,
+          "timed_segments": [
+            {
+              "visual": "Propagation by a part of the body other than a seed.",
+              "narration_fragment": "Vegetative propagation is a type of asexual reproduction in plants. Here, new plants are grown from a part of the parent plant, like a root, stem, or leaf, instead of a seed.",
+              "start_time": 0,
+              "end_time": 13.95,
+              "duration": 13.95
+            },
+            {
+              "visual": "Natural Method - By Roots: Sweet potato, Dahlia, Guava.",
+              "narration_fragment": "Nature has its own ways. Some plants use their roots for propagation. For example, the tuberous roots of sweet potato and dahlia can grow into new plants when planted.",
+              "start_time": 13.95,
+              "end_time": 26.63,
+              "duration": 12.68
+            },
+            {
+              "visual": "Natural Method - By Underground Stems:",
+              "narration_fragment": "Many plants use underground modified stems. These come in various forms and are packed with stored food to support new growth.",
+              "start_time": 26.63,
+              "end_time": 36.78,
+              "duration": 10.15
+            },
+            {
+              "visual": "\u2022 Rhizomes (Ginger, Turmeric) \u2022 Tubers (Potato) \u2022 Bulbs (Onion, Garlic)",
+              "narration_fragment": "Examples include rhizomes, like in ginger and turmeric; tubers, such as the common potato; and bulbs, which you can see in onions and garlic.",
+              "start_time": 36.78,
+              "end_time": 49.46,
+              "duration": 12.68
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_010_avatar.mp4",
+          "background_video": "assets/topic_10.mp4"
+        },
+        {
+          "slide_number": 11,
+          "slide_type": "content",
+          "title": "Vegetative Propagation (Continued)",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Natural Method - By Creepers:",
+              "narration_fragment": "Creeping stems that grow along the ground can also give rise to new plants. They develop roots at their nodes, which then form new shoots.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_011_seg_0.mp3"
+            },
+            {
+              "visual": "\u2022 Runners (Grass) \u2022 Stolons (Strawberry) \u2022 Offsets (Water Hyacinth)",
+              "narration_fragment": "Examples include runners in lawn grass, stolons in strawberry plants, and offsets in aquatic plants like the water hyacinth, or 'Jal Kumbhi'.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_011_seg_1.mp3"
+            },
+            {
+              "visual": "Natural Method - By Leaves: e.g., Bryophyllum.",
+              "narration_fragment": "Amazingly, some plants can reproduce from their leaves! Adventitious buds develop on the leaf margins of plants like Bryophyllum. When the leaf falls on moist soil, these buds grow into new plantlets.",
+              "duration_estimate": 13,
+              "audio_file": "audio/slide_011_seg_2.mp3"
+            },
+            {
+              "visual": "Special Structures: Bulbils (Agave) & Turions (Utricularia).",
+              "narration_fragment": "Some plants form special fleshy buds called bulbils in the axil of leaves, like in Agave. Aquatic plants like Utricularia form overwintering buds called turions.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_011_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_011_seg_0.mp3",
+            "audio/slide_011_seg_1.mp3",
+            "audio/slide_011_seg_2.mp3",
+            "audio/slide_011_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_011_full.mp3",
+          "audio_duration": 50.352,
+          "timed_segments": [
+            {
+              "visual": "Natural Method - By Creepers:",
+              "narration_fragment": "Creeping stems that grow along the ground can also give rise to new plants. They develop roots at their nodes, which then form new shoots.",
+              "start_time": 0,
+              "end_time": 10.54,
+              "duration": 10.54
+            },
+            {
+              "visual": "\u2022 Runners (Grass) \u2022 Stolons (Strawberry) \u2022 Offsets (Water Hyacinth)",
+              "narration_fragment": "Examples include runners in lawn grass, stolons in strawberry plants, and offsets in aquatic plants like the water hyacinth, or 'Jal Kumbhi'.",
+              "start_time": 10.54,
+              "end_time": 22.25,
+              "duration": 11.71
+            },
+            {
+              "visual": "Natural Method - By Leaves: e.g., Bryophyllum.",
+              "narration_fragment": "Amazingly, some plants can reproduce from their leaves! Adventitious buds develop on the leaf margins of plants like Bryophyllum. When the leaf falls on moist soil, these buds grow into new plantlets.",
+              "start_time": 22.25,
+              "end_time": 37.47,
+              "duration": 15.22
+            },
+            {
+              "visual": "Special Structures: Bulbils (Agave) & Turions (Utricularia).",
+              "narration_fragment": "Some plants form special fleshy buds called bulbils in the axil of leaves, like in Agave. Aquatic plants like Utricularia form overwintering buds called turions.",
+              "start_time": 37.47,
+              "end_time": 50.35,
+              "duration": 12.88
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_011_avatar.mp4",
+          "background_video": "assets/topic_11.mp4"
+        },
+        {
+          "slide_number": 12,
+          "slide_type": "content",
+          "title": "Artificial Vegetative Propagation",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Man-made methods used by gardeners and horticulturists.",
+              "narration_fragment": "Humans have developed their own methods of vegetative propagation, mainly for agriculture and gardening. These are called artificial propagation techniques.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_012_seg_0.mp3"
+            },
+            {
+              "visual": "Cutting: A piece of root, stem, or leaf is planted. (e.g., Rose, Sugarcane)",
+              "narration_fragment": "Cutting is a very common method. A piece of the parent plant's stem or root is cut and planted in the soil, where it develops roots and grows into a new plant. This is done for roses and sugarcane.",
+              "duration_estimate": 13,
+              "audio_file": "audio/slide_012_seg_1.mp3"
+            },
+            {
+              "visual": "Grafting: Joining parts of two plants to grow as one.",
+              "narration_fragment": "Grafting is a more advanced technique. Here, parts of two different plants are joined together so that they continue their growth as a single plant.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_012_seg_2.mp3"
+            },
+            {
+              "visual": "\u2022 Stock: The rooted support plant. \u2022 Scion: The twig with desired traits.",
+              "narration_fragment": "The rooted portion is called the stock, often chosen for its hardiness. The part being attached, called the scion, is chosen for its desirable fruits or flowers, like in grafted mangoes and apples.",
+              "duration_estimate": 13,
+              "audio_file": "audio/slide_012_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_012_seg_0.mp3",
+            "audio/slide_012_seg_1.mp3",
+            "audio/slide_012_seg_2.mp3",
+            "audio/slide_012_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_012_full.mp3",
+          "audio_duration": 51.552,
+          "timed_segments": [
+            {
+              "visual": "Man-made methods used by gardeners and horticulturists.",
+              "narration_fragment": "Humans have developed their own methods of vegetative propagation, mainly for agriculture and gardening. These are called artificial propagation techniques.",
+              "start_time": 0,
+              "end_time": 11.21,
+              "duration": 11.21
+            },
+            {
+              "visual": "Cutting: A piece of root, stem, or leaf is planted. (e.g., Rose, Sugarcane)",
+              "narration_fragment": "Cutting is a very common method. A piece of the parent plant's stem or root is cut and planted in the soil, where it develops roots and grows into a new plant. This is done for roses and sugarcane.",
+              "start_time": 11.21,
+              "end_time": 25.78,
+              "duration": 14.57
+            },
+            {
+              "visual": "Grafting: Joining parts of two plants to grow as one.",
+              "narration_fragment": "Grafting is a more advanced technique. Here, parts of two different plants are joined together so that they continue their growth as a single plant.",
+              "start_time": 25.78,
+              "end_time": 36.98,
+              "duration": 11.21
+            },
+            {
+              "visual": "\u2022 Stock: The rooted support plant. \u2022 Scion: The twig with desired traits.",
+              "narration_fragment": "The rooted portion is called the stock, often chosen for its hardiness. The part being attached, called the scion, is chosen for its desirable fruits or flowers, like in grafted mangoes and apples.",
+              "start_time": 36.98,
+              "end_time": 51.55,
+              "duration": 14.57
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_012_avatar.mp4",
+          "background_video": "assets/topic_12.mp4"
+        },
+        {
+          "slide_number": 13,
+          "slide_type": "content",
+          "title": "Merits of Vegetative Propagation",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Fastest method of reproduction.",
+              "narration_fragment": "One of the biggest advantages is speed. A potato crop can be harvested in 3-4 months using tubers, while it would take over a year using seeds.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_013_seg_0.mp3"
+            },
+            {
+              "visual": "Enables propagation of seedless plants.",
+              "narration_fragment": "It's essential for multiplying seedless plants. Think about how we get more bananas, seedless oranges, or pineapples \u2013 it\u2019s all through vegetative propagation.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_013_seg_1.mp3"
+            },
+            {
+              "visual": "Preserves desirable qualities (genetic similarity).",
+              "narration_fragment": "Since the offspring is a clone, it preserves the good qualities of the parent. A sweet mango variety can be multiplied indefinitely without any change in taste using grafting.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_013_seg_2.mp3"
+            },
+            {
+              "visual": "Higher certainty of success than growing from seeds.",
+              "narration_fragment": "This method gives 100% genetic similarity to the parent. It also bypasses problems like poor seed viability or long seed dormancy, ensuring the plant grows.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_013_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_013_seg_0.mp3",
+            "audio/slide_013_seg_1.mp3",
+            "audio/slide_013_seg_2.mp3",
+            "audio/slide_013_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_013_full.mp3",
+          "audio_duration": 49.368,
+          "timed_segments": [
+            {
+              "visual": "Fastest method of reproduction.",
+              "narration_fragment": "One of the biggest advantages is speed. A potato crop can be harvested in 3-4 months using tubers, while it would take over a year using seeds.",
+              "start_time": 0,
+              "end_time": 12.04,
+              "duration": 12.04
+            },
+            {
+              "visual": "Enables propagation of seedless plants.",
+              "narration_fragment": "It's essential for multiplying seedless plants. Think about how we get more bananas, seedless oranges, or pineapples \u2013 it\u2019s all through vegetative propagation.",
+              "start_time": 12.04,
+              "end_time": 24.08,
+              "duration": 12.04
+            },
+            {
+              "visual": "Preserves desirable qualities (genetic similarity).",
+              "narration_fragment": "Since the offspring is a clone, it preserves the good qualities of the parent. A sweet mango variety can be multiplied indefinitely without any change in taste using grafting.",
+              "start_time": 24.08,
+              "end_time": 37.33,
+              "duration": 13.25
+            },
+            {
+              "visual": "Higher certainty of success than growing from seeds.",
+              "narration_fragment": "This method gives 100% genetic similarity to the parent. It also bypasses problems like poor seed viability or long seed dormancy, ensuring the plant grows.",
+              "start_time": 37.33,
+              "end_time": 49.37,
+              "duration": 12.04
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_013_avatar.mp4",
+          "background_video": "assets/topic_13.mp4"
+        },
+        {
+          "slide_number": 14,
+          "slide_type": "content",
+          "title": "Demerits of Vegetative Propagation",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "No genetic variation.",
+              "narration_fragment": "The biggest disadvantage is the lack of genetic variation. All offspring are identical, which reduces the population's ability to adapt to new diseases or changing environments.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_014_seg_0.mp3"
+            },
+            {
+              "visual": "Diseases from the parent are passed to offspring.",
+              "narration_fragment": "If the parent plant has a viral or bacterial disease, it will be transmitted to all the clones. This can wipe out an entire crop.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_014_seg_1.mp3"
+            },
+            {
+              "visual": "Overcrowding and competition.",
+              "narration_fragment": "There is no mechanism for dispersal, unlike seeds which can travel far. This leads to overcrowding around the parent plant, causing competition for sunlight, water, and nutrients.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_014_seg_2.mp3"
+            },
+            {
+              "visual": "Propagules are difficult to store.",
+              "narration_fragment": "Vegetative parts like tubers or stems cannot be stored for as long as seeds. They are bulky and can easily rot or get infected.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_014_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_014_seg_0.mp3",
+            "audio/slide_014_seg_1.mp3",
+            "audio/slide_014_seg_2.mp3",
+            "audio/slide_014_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_014_full.mp3",
+          "audio_duration": 46.656,
+          "timed_segments": [
+            {
+              "visual": "No genetic variation.",
+              "narration_fragment": "The biggest disadvantage is the lack of genetic variation. All offspring are identical, which reduces the population's ability to adapt to new diseases or changing environments.",
+              "start_time": 0,
+              "end_time": 12.83,
+              "duration": 12.83
+            },
+            {
+              "visual": "Diseases from the parent are passed to offspring.",
+              "narration_fragment": "If the parent plant has a viral or bacterial disease, it will be transmitted to all the clones. This can wipe out an entire crop.",
+              "start_time": 12.83,
+              "end_time": 23.33,
+              "duration": 10.5
+            },
+            {
+              "visual": "Overcrowding and competition.",
+              "narration_fragment": "There is no mechanism for dispersal, unlike seeds which can travel far. This leads to overcrowding around the parent plant, causing competition for sunlight, water, and nutrients.",
+              "start_time": 23.33,
+              "end_time": 36.16,
+              "duration": 12.83
+            },
+            {
+              "visual": "Propagules are difficult to store.",
+              "narration_fragment": "Vegetative parts like tubers or stems cannot be stored for as long as seeds. They are bulky and can easily rot or get infected.",
+              "start_time": 36.16,
+              "end_time": 46.66,
+              "duration": 10.5
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_014_avatar.mp4"
+        },
+        {
+          "slide_number": 15,
+          "slide_type": "content",
+          "title": "Introduction to Sexual Reproduction",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Involves formation and fusion of male & female gametes.",
+              "narration_fragment": "Sexual reproduction is a more complex process. It involves the formation of male and female gametes, which then fuse to form a zygote that develops into a new organism.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_015_seg_0.mp3"
+            },
+            {
+              "visual": "Offspring are not identical to parents (genetic variation).",
+              "narration_fragment": "Because of the fusion of gametes from two different parents, the offspring are genetically different from the parents and from each other. This is the source of variation in a population.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_015_seg_1.mp3"
+            },
+            {
+              "visual": "Juvenile Phase: Period of growth before sexual maturity.",
+              "narration_fragment": "All organisms must go through a period of growth, called the juvenile phase, before they become capable of sexual reproduction. In plants, this is called the vegetative phase.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_015_seg_2.mp3"
+            },
+            {
+              "visual": "Reproductive Cycles in Animals:",
+              "narration_fragment": "In animals, reproductive maturity is marked by cycles. Let's look at the two main types.",
+              "duration_estimate": 6,
+              "audio_file": "audio/slide_015_seg_3.mp3"
+            },
+            {
+              "visual": "\u2022 Oestrus Cycle (Cow, Dog, Tiger) \u2022 Menstrual Cycle (Monkeys, Humans)",
+              "narration_fragment": "Non-primate mammals like cows and dogs have an oestrus cycle, while primates like monkeys and humans have a menstrual cycle.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_015_seg_4.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_015_seg_0.mp3",
+            "audio/slide_015_seg_1.mp3",
+            "audio/slide_015_seg_2.mp3",
+            "audio/slide_015_seg_3.mp3",
+            "audio/slide_015_seg_4.mp3"
+          ],
+          "audio_path": "audio/slide_015_full.mp3",
+          "audio_duration": 55.152,
+          "timed_segments": [
+            {
+              "visual": "Involves formation and fusion of male & female gametes.",
+              "narration_fragment": "Sexual reproduction is a more complex process. It involves the formation of male and female gametes, which then fuse to form a zygote that develops into a new organism.",
+              "start_time": 0,
+              "end_time": 12.64,
+              "duration": 12.64
+            },
+            {
+              "visual": "Offspring are not identical to parents (genetic variation).",
+              "narration_fragment": "Because of the fusion of gametes from two different parents, the offspring are genetically different from the parents and from each other. This is the source of variation in a population.",
+              "start_time": 12.64,
+              "end_time": 25.28,
+              "duration": 12.64
+            },
+            {
+              "visual": "Juvenile Phase: Period of growth before sexual maturity.",
+              "narration_fragment": "All organisms must go through a period of growth, called the juvenile phase, before they become capable of sexual reproduction. In plants, this is called the vegetative phase.",
+              "start_time": 25.28,
+              "end_time": 37.92,
+              "duration": 12.64
+            },
+            {
+              "visual": "Reproductive Cycles in Animals:",
+              "narration_fragment": "In animals, reproductive maturity is marked by cycles. Let's look at the two main types.",
+              "start_time": 37.92,
+              "end_time": 44.81,
+              "duration": 6.89
+            },
+            {
+              "visual": "\u2022 Oestrus Cycle (Cow, Dog, Tiger) \u2022 Menstrual Cycle (Monkeys, Humans)",
+              "narration_fragment": "Non-primate mammals like cows and dogs have an oestrus cycle, while primates like monkeys and humans have a menstrual cycle.",
+              "start_time": 44.81,
+              "end_time": 55.15,
+              "duration": 10.34
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_015_avatar.mp4"
+        },
+        {
+          "slide_number": 16,
+          "slide_type": "content",
+          "title": "Pre-Fertilisation Event 1: Gametogenesis",
+          "image_id": "4b9457ad2400572dbf0c0c9f7c825643_img.jpg",
+          "segments": [
+            {
+              "visual": "Gametogenesis: The process of forming gametes (male & female).",
+              "narration_fragment": "Gametogenesis is the first major event. It refers to the process of formation of the two types of gametes \u2013 male and female. These gametes are haploid cells.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_016_seg_0.mp3"
+            },
+            {
+              "visual": "Homogametes (Isogametes): Gametes are similar in appearance.",
+              "narration_fragment": "In some organisms, like certain algae shown here, the two gametes are so similar in appearance that you cannot distinguish them as male or female. These are called homogametes or isogametes.",
+              "duration_estimate": 13,
+              "audio_file": "audio/slide_016_seg_1.mp3"
+            },
+            {
+              "visual": "Heterogametes: Gametes are morphologically distinct.",
+              "narration_fragment": "However, in the majority of sexually reproducing organisms, the gametes produced are of two distinct types. These are called heterogametes.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_016_seg_2.mp3"
+            },
+            {
+              "visual": "\u2022 Male Gamete: antherozoid or sperm. \u2022 Female Gamete: egg or ovum.",
+              "narration_fragment": "In such cases, the male gamete is typically smaller and motile, called the sperm. The female gamete is larger and non-motile, known as the egg or ovum.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_016_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_016_seg_0.mp3",
+            "audio/slide_016_seg_1.mp3",
+            "audio/slide_016_seg_2.mp3",
+            "audio/slide_016_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_016_full.mp3",
+          "audio_duration": 49.368,
+          "timed_segments": [
+            {
+              "visual": "Gametogenesis: The process of forming gametes (male & female).",
+              "narration_fragment": "Gametogenesis is the first major event. It refers to the process of formation of the two types of gametes \u2013 male and female. These gametes are haploid cells.",
+              "start_time": 0,
+              "end_time": 12.63,
+              "duration": 12.63
+            },
+            {
+              "visual": "Homogametes (Isogametes): Gametes are similar in appearance.",
+              "narration_fragment": "In some organisms, like certain algae shown here, the two gametes are so similar in appearance that you cannot distinguish them as male or female. These are called homogametes or isogametes.",
+              "start_time": 12.63,
+              "end_time": 27.55,
+              "duration": 14.93
+            },
+            {
+              "visual": "Heterogametes: Gametes are morphologically distinct.",
+              "narration_fragment": "However, in the majority of sexually reproducing organisms, the gametes produced are of two distinct types. These are called heterogametes.",
+              "start_time": 27.55,
+              "end_time": 37.89,
+              "duration": 10.33
+            },
+            {
+              "visual": "\u2022 Male Gamete: antherozoid or sperm. \u2022 Female Gamete: egg or ovum.",
+              "narration_fragment": "In such cases, the male gamete is typically smaller and motile, called the sperm. The female gamete is larger and non-motile, known as the egg or ovum.",
+              "start_time": 37.89,
+              "end_time": 49.37,
+              "duration": 11.48
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_016_avatar.mp4"
+        },
+        {
+          "slide_number": 17,
+          "slide_type": "content",
+          "title": "Sexuality in Organisms",
+          "image_id": "bb08c83fc8939517c6803d65c69dd06b_img.jpg",
+          "segments": [
+            {
+              "visual": "Bisexual / Monoecious: Both male & female parts on the same individual.",
+              "narration_fragment": "Some organisms are bisexual, meaning they have both male and female reproductive structures in the same individual. In plants, the term for this is monoecious. Examples include coconut and cucurbits.",
+              "duration_estimate": 13,
+              "audio_file": "audio/slide_017_seg_0.mp3"
+            },
+            {
+              "visual": "Unisexual / Dioecious: Male & female parts on different individuals.",
+              "narration_fragment": "Other organisms are unisexual, with male and female reproductive organs on separate individuals. In plants, like the one shown, this is called dioecious. Papaya and date palm are common examples.",
+              "duration_estimate": 13,
+              "audio_file": "audio/slide_017_seg_1.mp3"
+            },
+            {
+              "visual": "Hermaphrodites: Bisexual animals (e.g., Earthworm, Leech).",
+              "narration_fragment": "In the animal kingdom, bisexual animals like the earthworm, sponge, and leech, which possess both male and female organs, are called hermaphrodites.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_017_seg_2.mp3"
+            },
+            {
+              "visual": "Unisexual Animals: Cockroach, Humans.",
+              "narration_fragment": "Most animals we are familiar with, including insects like the cockroach and mammals like humans, are unisexual, with distinct male and female individuals.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_017_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_017_seg_0.mp3",
+            "audio/slide_017_seg_1.mp3",
+            "audio/slide_017_seg_2.mp3",
+            "audio/slide_017_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_017_full.mp3",
+          "audio_duration": 55.104,
+          "timed_segments": [
+            {
+              "visual": "Bisexual / Monoecious: Both male & female parts on the same individual.",
+              "narration_fragment": "Some organisms are bisexual, meaning they have both male and female reproductive structures in the same individual. In plants, the term for this is monoecious. Examples include coconut and cucurbits.",
+              "start_time": 0,
+              "end_time": 15.92,
+              "duration": 15.92
+            },
+            {
+              "visual": "Unisexual / Dioecious: Male & female parts on different individuals.",
+              "narration_fragment": "Other organisms are unisexual, with male and female reproductive organs on separate individuals. In plants, like the one shown, this is called dioecious. Papaya and date palm are common examples.",
+              "start_time": 15.92,
+              "end_time": 31.84,
+              "duration": 15.92
+            },
+            {
+              "visual": "Hermaphrodites: Bisexual animals (e.g., Earthworm, Leech).",
+              "narration_fragment": "In the animal kingdom, bisexual animals like the earthworm, sponge, and leech, which possess both male and female organs, are called hermaphrodites.",
+              "start_time": 31.84,
+              "end_time": 44.08,
+              "duration": 12.25
+            },
+            {
+              "visual": "Unisexual Animals: Cockroach, Humans.",
+              "narration_fragment": "Most animals we are familiar with, including insects like the cockroach and mammals like humans, are unisexual, with distinct male and female individuals.",
+              "start_time": 44.08,
+              "end_time": 55.1,
+              "duration": 11.02
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_017_avatar.mp4"
+        },
+        {
+          "slide_number": 18,
+          "slide_type": "content",
+          "title": "Cell Division in Gamete Formation",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Haploid (n) Parent \u2192 Mitosis \u2192 Haploid (n) Gametes",
+              "narration_fragment": "If the parent organism's body is haploid, with one set of chromosomes, it produces haploid gametes through mitotic division. This is seen in Monera, fungi, and bryophytes.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_018_seg_0.mp3"
+            },
+            {
+              "visual": "Diploid (2n) Parent \u2192 Meiosis \u2192 Haploid (n) Gametes",
+              "narration_fragment": "If the parent's body is diploid, with two sets of chromosomes, it must undergo meiosis, or reduction division, to produce haploid gametes. This is crucial to maintain chromosome number.",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_018_seg_1.mp3"
+            },
+            {
+              "visual": "Meiocytes: Specialised diploid cells that undergo meiosis.",
+              "narration_fragment": "In diploid organisms, there are specialized cells called meiocytes, or gamete mother cells. These are the cells that undergo meiosis to form the gametes.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_018_seg_2.mp3"
+            },
+            {
+              "visual": "Example: Humans have 46 chromosomes in meiocytes, but 23 in gametes.",
+              "narration_fragment": "For example, in human beings, our body cells are diploid with 46 chromosomes. But our gametes, sperm and egg, are haploid with only 23 chromosomes.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_018_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_018_seg_0.mp3",
+            "audio/slide_018_seg_1.mp3",
+            "audio/slide_018_seg_2.mp3",
+            "audio/slide_018_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_018_full.mp3",
+          "audio_duration": 54.744,
+          "timed_segments": [
+            {
+              "visual": "Haploid (n) Parent \u2192 Mitosis \u2192 Haploid (n) Gametes",
+              "narration_fragment": "If the parent organism's body is haploid, with one set of chromosomes, it produces haploid gametes through mitotic division. This is seen in Monera, fungi, and bryophytes.",
+              "start_time": 0,
+              "end_time": 14.0,
+              "duration": 14.0
+            },
+            {
+              "visual": "Diploid (2n) Parent \u2192 Meiosis \u2192 Haploid (n) Gametes",
+              "narration_fragment": "If the parent's body is diploid, with two sets of chromosomes, it must undergo meiosis, or reduction division, to produce haploid gametes. This is crucial to maintain chromosome number.",
+              "start_time": 14.0,
+              "end_time": 29.28,
+              "duration": 15.28
+            },
+            {
+              "visual": "Meiocytes: Specialised diploid cells that undergo meiosis.",
+              "narration_fragment": "In diploid organisms, there are specialized cells called meiocytes, or gamete mother cells. These are the cells that undergo meiosis to form the gametes.",
+              "start_time": 29.28,
+              "end_time": 42.01,
+              "duration": 12.73
+            },
+            {
+              "visual": "Example: Humans have 46 chromosomes in meiocytes, but 23 in gametes.",
+              "narration_fragment": "For example, in human beings, our body cells are diploid with 46 chromosomes. But our gametes, sperm and egg, are haploid with only 23 chromosomes.",
+              "start_time": 42.01,
+              "end_time": 54.74,
+              "duration": 12.73
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_018_avatar.mp4"
+        },
+        {
+          "slide_number": 19,
+          "slide_type": "content",
+          "title": "Pre-Fertilisation Event 2: Gamete Transfer",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Bringing male and female gametes together for fertilisation.",
+              "narration_fragment": "After gametes are formed, the next critical step is bringing them together. This process is called gamete transfer. It is a prerequisite for fusion.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_019_seg_0.mp3"
+            },
+            {
+              "visual": "In most organisms, male gamete is motile, female is stationary.",
+              "narration_fragment": "In the majority of cases, the male gamete is motile and has to travel to the stationary female gamete. This often requires a medium, like water in algae and bryophytes.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_019_seg_1.mp3"
+            },
+            {
+              "visual": "Pollination: Transfer of pollen grains (carrying male gametes) to the stigma in plants.",
+              "narration_fragment": "In seed plants, this transfer is achieved by a specialized event called pollination. Pollen grains, which carry the male gametes, are transferred from the anther to the stigma.",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_019_seg_2.mp3"
+            },
+            {
+              "visual": "Pollen tube grows to deliver male gametes to the ovule.",
+              "narration_fragment": "After landing on the stigma, the pollen grain germinates, growing a pollen tube. This tube acts as a delivery pipe, carrying the male gametes down to the ovule to reach the egg.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_019_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_019_seg_0.mp3",
+            "audio/slide_019_seg_1.mp3",
+            "audio/slide_019_seg_2.mp3",
+            "audio/slide_019_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_019_full.mp3",
+          "audio_duration": 51.168,
+          "timed_segments": [
+            {
+              "visual": "Bringing male and female gametes together for fertilisation.",
+              "narration_fragment": "After gametes are formed, the next critical step is bringing them together. This process is called gamete transfer. It is a prerequisite for fusion.",
+              "start_time": 0,
+              "end_time": 11.63,
+              "duration": 11.63
+            },
+            {
+              "visual": "In most organisms, male gamete is motile, female is stationary.",
+              "narration_fragment": "In the majority of cases, the male gamete is motile and has to travel to the stationary female gamete. This often requires a medium, like water in algae and bryophytes.",
+              "start_time": 11.63,
+              "end_time": 24.42,
+              "duration": 12.79
+            },
+            {
+              "visual": "Pollination: Transfer of pollen grains (carrying male gametes) to the stigma in plants.",
+              "narration_fragment": "In seed plants, this transfer is achieved by a specialized event called pollination. Pollen grains, which carry the male gametes, are transferred from the anther to the stigma.",
+              "start_time": 24.42,
+              "end_time": 38.38,
+              "duration": 13.95
+            },
+            {
+              "visual": "Pollen tube grows to deliver male gametes to the ovule.",
+              "narration_fragment": "After landing on the stigma, the pollen grain germinates, growing a pollen tube. This tube acts as a delivery pipe, carrying the male gametes down to the ovule to reach the egg.",
+              "start_time": 38.38,
+              "end_time": 51.17,
+              "duration": 12.79
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_019_avatar.mp4"
+        },
+        {
+          "slide_number": 20,
+          "slide_type": "content",
+          "title": "The Main Event: Fertilisation (Syngamy)",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Syngamy: The fusion of male and female gametes.",
+              "narration_fragment": "The most vital event of sexual reproduction is the fusion of gametes. This process is called syngamy, and the term fertilisation is also commonly used.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_020_seg_0.mp3"
+            },
+            {
+              "visual": "Results in the formation of a diploid (2n) Zygote.",
+              "narration_fragment": "The fusion of two haploid gametes restores the diploid condition, resulting in the formation of a single diploid cell called the zygote. This is the first cell of the new individual.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_020_seg_1.mp3"
+            },
+            {
+              "visual": "External Fertilisation: Fusion occurs outside the body (e.g., in water).",
+              "narration_fragment": "In most aquatic organisms like fish and amphibians, syngamy occurs in the external medium, usually water. This is called external fertilisation.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_020_seg_2.mp3"
+            },
+            {
+              "visual": "Internal Fertilisation: Fusion occurs inside the female body.",
+              "narration_fragment": "In most terrestrial organisms, including reptiles, birds, mammals, and higher plants, syngamy occurs inside the body of the female organism. This is called internal fertilisation.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_020_seg_3.mp3"
+            },
+            {
+              "visual": "Parthenogenesis: Development without fertilisation (e.g., Honeybees, some lizards).",
+              "narration_fragment": "Interestingly, in some organisms like honeybees and certain lizards, the female gamete can develop into a new organism without any fertilisation. This phenomenon is called parthenogenesis.",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_020_seg_4.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_020_seg_0.mp3",
+            "audio/slide_020_seg_1.mp3",
+            "audio/slide_020_seg_2.mp3",
+            "audio/slide_020_seg_3.mp3",
+            "audio/slide_020_seg_4.mp3"
+          ],
+          "audio_path": "audio/slide_020_full.mp3",
+          "audio_duration": 66.576,
+          "timed_segments": [
+            {
+              "visual": "Syngamy: The fusion of male and female gametes.",
+              "narration_fragment": "The most vital event of sexual reproduction is the fusion of gametes. This process is called syngamy, and the term fertilisation is also commonly used.",
+              "start_time": 0,
+              "end_time": 12.33,
+              "duration": 12.33
+            },
+            {
+              "visual": "Results in the formation of a diploid (2n) Zygote.",
+              "narration_fragment": "The fusion of two haploid gametes restores the diploid condition, resulting in the formation of a single diploid cell called the zygote. This is the first cell of the new individual.",
+              "start_time": 12.33,
+              "end_time": 25.89,
+              "duration": 13.56
+            },
+            {
+              "visual": "External Fertilisation: Fusion occurs outside the body (e.g., in water).",
+              "narration_fragment": "In most aquatic organisms like fish and amphibians, syngamy occurs in the external medium, usually water. This is called external fertilisation.",
+              "start_time": 25.89,
+              "end_time": 38.22,
+              "duration": 12.33
+            },
+            {
+              "visual": "Internal Fertilisation: Fusion occurs inside the female body.",
+              "narration_fragment": "In most terrestrial organisms, including reptiles, birds, mammals, and higher plants, syngamy occurs inside the body of the female organism. This is called internal fertilisation.",
+              "start_time": 38.22,
+              "end_time": 51.78,
+              "duration": 13.56
+            },
+            {
+              "visual": "Parthenogenesis: Development without fertilisation (e.g., Honeybees, some lizards).",
+              "narration_fragment": "Interestingly, in some organisms like honeybees and certain lizards, the female gamete can develop into a new organism without any fertilisation. This phenomenon is called parthenogenesis.",
+              "start_time": 51.78,
+              "end_time": 66.58,
+              "duration": 14.79
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_020_avatar.mp4"
+        },
+        {
+          "slide_number": 21,
+          "slide_type": "content",
+          "title": "Post-Fertilisation Event 1: The Zygote",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "The first cell of the new generation.",
+              "narration_fragment": "The zygote is the vital link that ensures continuity of species between organisms of one generation and the next. Every sexually reproducing organism begins its life as a single cell, the zygote.",
+              "duration_estimate": 13,
+              "audio_file": "audio/slide_021_seg_0.mp3"
+            },
+            {
+              "visual": "In fungi & algae, it develops a thick wall for protection.",
+              "narration_fragment": "In organisms like fungi and algae, the zygote often develops a thick, resistant wall. This protects it from drying out and other damage, allowing it to rest until conditions are favorable.",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_021_seg_1.mp3"
+            },
+            {
+              "visual": "Haplontic life cycle: Zygote (2n) divides by meiosis to form haploid (n) spores.",
+              "narration_fragment": "In organisms with a haplontic life cycle, the diploid zygote is the only diploid stage. It quickly undergoes meiosis to form haploid spores which grow into the main plant body.",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_021_seg_2.mp3"
+            },
+            {
+              "visual": "Diplontic life cycle: Zygote (2n) divides by mitosis to form an embryo (2n).",
+              "narration_fragment": "In organisms with a diplontic life cycle, like humans, the diploid zygote divides by mitosis. It develops into a multicellular diploid embryo.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_021_seg_3.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_021_seg_0.mp3",
+            "audio/slide_021_seg_1.mp3",
+            "audio/slide_021_seg_2.mp3",
+            "audio/slide_021_seg_3.mp3"
+          ],
+          "audio_path": "audio/slide_021_full.mp3",
+          "audio_duration": 55.464,
+          "timed_segments": [
+            {
+              "visual": "The first cell of the new generation.",
+              "narration_fragment": "The zygote is the vital link that ensures continuity of species between organisms of one generation and the next. Every sexually reproducing organism begins its life as a single cell, the zygote.",
+              "start_time": 0,
+              "end_time": 15.34,
+              "duration": 15.34
+            },
+            {
+              "visual": "In fungi & algae, it develops a thick wall for protection.",
+              "narration_fragment": "In organisms like fungi and algae, the zygote often develops a thick, resistant wall. This protects it from drying out and other damage, allowing it to rest until conditions are favorable.",
+              "start_time": 15.34,
+              "end_time": 29.5,
+              "duration": 14.16
+            },
+            {
+              "visual": "Haplontic life cycle: Zygote (2n) divides by meiosis to form haploid (n) spores.",
+              "narration_fragment": "In organisms with a haplontic life cycle, the diploid zygote is the only diploid stage. It quickly undergoes meiosis to form haploid spores which grow into the main plant body.",
+              "start_time": 29.5,
+              "end_time": 43.66,
+              "duration": 14.16
+            },
+            {
+              "visual": "Diplontic life cycle: Zygote (2n) divides by mitosis to form an embryo (2n).",
+              "narration_fragment": "In organisms with a diplontic life cycle, like humans, the diploid zygote divides by mitosis. It develops into a multicellular diploid embryo.",
+              "start_time": 43.66,
+              "end_time": 55.46,
+              "duration": 11.8
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_021_avatar.mp4"
+        },
+        {
+          "slide_number": 22,
+          "slide_type": "content",
+          "title": "Post-Fertilisation Event 2: Embryogenesis",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Embryogenesis: Development of the embryo from the zygote.",
+              "narration_fragment": "Embryogenesis is the process of development of an embryo from the zygote. It involves two key cellular processes: cell division and cell differentiation.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_022_seg_0.mp3"
+            },
+            {
+              "visual": "Cell Division (Mitosis): Increases the number of cells.",
+              "narration_fragment": "The zygote undergoes repeated mitotic divisions, increasing the number of cells in the developing embryo from one, to two, to four, and so on.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_022_seg_1.mp3"
+            },
+            {
+              "visual": "Cell Differentiation: Cells form specialized tissues and organs.",
+              "narration_fragment": "Cell differentiation is the process where groups of cells undergo modifications. They become specialized to form different tissues and organs, like muscle tissue, nerve tissue, and so on, to form a complete organism.",
+              "duration_estimate": 13,
+              "audio_file": "audio/slide_022_seg_2.mp3"
+            },
+            {
+              "visual": "Oviparous Animals: Lay eggs (e.g., Reptiles, Birds).",
+              "narration_fragment": "Based on where the embryo develops, we classify animals. Oviparous animals, like reptiles and birds, lay fertilized eggs which then hatch outside the mother's body.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_022_seg_3.mp3"
+            },
+            {
+              "visual": "Viviparous Animals: Give birth to young ones (e.g., Mammals).",
+              "narration_fragment": "Viviparous animals, which include most mammals, retain the embryo inside the female's body. The young ones are delivered after attaining a certain stage of growth, which offers better protection.",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_022_seg_4.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_022_seg_0.mp3",
+            "audio/slide_022_seg_1.mp3",
+            "audio/slide_022_seg_2.mp3",
+            "audio/slide_022_seg_3.mp3",
+            "audio/slide_022_seg_4.mp3"
+          ],
+          "audio_path": "audio/slide_022_full.mp3",
+          "audio_duration": 67.44,
+          "timed_segments": [
+            {
+              "visual": "Embryogenesis: Development of the embryo from the zygote.",
+              "narration_fragment": "Embryogenesis is the process of development of an embryo from the zygote. It involves two key cellular processes: cell division and cell differentiation.",
+              "start_time": 0,
+              "end_time": 12.26,
+              "duration": 12.26
+            },
+            {
+              "visual": "Cell Division (Mitosis): Increases the number of cells.",
+              "narration_fragment": "The zygote undergoes repeated mitotic divisions, increasing the number of cells in the developing embryo from one, to two, to four, and so on.",
+              "start_time": 12.26,
+              "end_time": 23.3,
+              "duration": 11.04
+            },
+            {
+              "visual": "Cell Differentiation: Cells form specialized tissues and organs.",
+              "narration_fragment": "Cell differentiation is the process where groups of cells undergo modifications. They become specialized to form different tissues and organs, like muscle tissue, nerve tissue, and so on, to form a complete organism.",
+              "start_time": 23.3,
+              "end_time": 39.24,
+              "duration": 15.94
+            },
+            {
+              "visual": "Oviparous Animals: Lay eggs (e.g., Reptiles, Birds).",
+              "narration_fragment": "Based on where the embryo develops, we classify animals. Oviparous animals, like reptiles and birds, lay fertilized eggs which then hatch outside the mother's body.",
+              "start_time": 39.24,
+              "end_time": 52.73,
+              "duration": 13.49
+            },
+            {
+              "visual": "Viviparous Animals: Give birth to young ones (e.g., Mammals).",
+              "narration_fragment": "Viviparous animals, which include most mammals, retain the embryo inside the female's body. The young ones are delivered after attaining a certain stage of growth, which offers better protection.",
+              "start_time": 52.73,
+              "end_time": 67.44,
+              "duration": 14.71
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_022_avatar.mp4"
+        },
+        {
+          "slide_number": 23,
+          "slide_type": "content",
+          "title": "Embryogenesis in Flowering Plants",
+          "image_id": "8e592c58b5074d79831ff650c2c636df_img.jpg",
+          "segments": [
+            {
+              "visual": "Zygote is formed inside the ovule.",
+              "narration_fragment": "In flowering plants, after fertilisation, the zygote is formed inside the ovule, which is located within the ovary of the flower.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_023_seg_0.mp3"
+            },
+            {
+              "visual": "Post-fertilisation, sepals, petals, and stamens fall off.",
+              "narration_fragment": "After fertilisation is complete, the accessory parts of the flower, such as the sepals, petals, and stamens, wither and fall off. Only the pistil remains attached.",
+              "duration_estimate": 11,
+              "audio_file": "audio/slide_023_seg_1.mp3"
+            },
+            {
+              "visual": "Zygote \u2192 Embryo",
+              "narration_fragment": "The zygote divides and develops into the embryo, which is the baby plant.",
+              "duration_estimate": 5,
+              "audio_file": "audio/slide_023_seg_2.mp3"
+            },
+            {
+              "visual": "Ovules \u2192 Seed",
+              "narration_fragment": "The ovules, which contain the embryo, mature and develop into the seed. The seed provides protection and nourishment to the embryo.",
+              "duration_estimate": 8,
+              "audio_file": "audio/slide_023_seg_3.mp3"
+            },
+            {
+              "visual": "Ovary \u2192 Fruit (Pericarp is the fruit wall).",
+              "narration_fragment": "Simultaneously, the ovary develops and ripens into the fruit. The wall of the ovary develops into the pericarp, which is the protective wall of the fruit.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_023_seg_4.mp3"
+            },
+            {
+              "visual": "Seeds germinate to produce new plants.",
+              "narration_fragment": "As you can see in the diagram, after dispersal, the seeds find a suitable place and, under favorable conditions, germinate to produce new plants, completing the life cycle.",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_023_seg_5.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_023_seg_0.mp3",
+            "audio/slide_023_seg_1.mp3",
+            "audio/slide_023_seg_2.mp3",
+            "audio/slide_023_seg_3.mp3",
+            "audio/slide_023_seg_4.mp3",
+            "audio/slide_023_seg_5.mp3"
+          ],
+          "audio_path": "audio/slide_023_full.mp3",
+          "audio_duration": 64.68,
+          "timed_segments": [
+            {
+              "visual": "Zygote is formed inside the ovule.",
+              "narration_fragment": "In flowering plants, after fertilisation, the zygote is formed inside the ovule, which is located within the ovary of the flower.",
+              "start_time": 0,
+              "end_time": 10.98,
+              "duration": 10.98
+            },
+            {
+              "visual": "Post-fertilisation, sepals, petals, and stamens fall off.",
+              "narration_fragment": "After fertilisation is complete, the accessory parts of the flower, such as the sepals, petals, and stamens, wither and fall off. Only the pistil remains attached.",
+              "start_time": 10.98,
+              "end_time": 24.41,
+              "duration": 13.42
+            },
+            {
+              "visual": "Zygote \u2192 Embryo",
+              "narration_fragment": "The zygote divides and develops into the embryo, which is the baby plant.",
+              "start_time": 24.41,
+              "end_time": 30.51,
+              "duration": 6.1
+            },
+            {
+              "visual": "Ovules \u2192 Seed",
+              "narration_fragment": "The ovules, which contain the embryo, mature and develop into the seed. The seed provides protection and nourishment to the embryo.",
+              "start_time": 30.51,
+              "end_time": 40.27,
+              "duration": 9.76
+            },
+            {
+              "visual": "Ovary \u2192 Fruit (Pericarp is the fruit wall).",
+              "narration_fragment": "Simultaneously, the ovary develops and ripens into the fruit. The wall of the ovary develops into the pericarp, which is the protective wall of the fruit.",
+              "start_time": 40.27,
+              "end_time": 52.48,
+              "duration": 12.2
+            },
+            {
+              "visual": "Seeds germinate to produce new plants.",
+              "narration_fragment": "As you can see in the diagram, after dispersal, the seeds find a suitable place and, under favorable conditions, germinate to produce new plants, completing the life cycle.",
+              "start_time": 52.48,
+              "end_time": 64.68,
+              "duration": 12.2
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_023_avatar.mp4"
+        },
+        {
+          "slide_number": 24,
+          "slide_type": "exercise",
+          "title": "Let's Practice!",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Q. Which of the following is the most significant advantage of sexual reproduction over asexual reproduction?",
+              "narration_fragment": "Alright everyone, time for a quick quiz! Here is your first question. Which of the following is the most significant advantage of sexual reproduction over asexual reproduction?",
+              "duration_estimate": 10,
+              "audio_file": "audio/slide_024_seg_0.mp3"
+            },
+            {
+              "visual": "(1) Allows the embryo to survive over winter.\n(2) Produces more offspring.\n(3) Produces offspring with more variations.\n(4) Provides more protection to the embryo.",
+              "narration_fragment": "Your options are: One, it allows the embryo to survive over winter. Two, it produces more offspring. Three, it produces offspring with more variations. Or four, it provides more protection to the embryo. Think carefully!",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_024_seg_1.mp3"
+            },
+            {
+              "visual": "Correct Answer: (3) Produces offspring with more variations.",
+              "narration_fragment": "And the correct answer is option 3! The biggest strength of sexual reproduction is the genetic recombination from two parents, which creates variation. This variation is the raw material for evolution and helps species adapt to changing environments.",
+              "duration_estimate": 13,
+              "audio_file": "audio/slide_024_seg_2.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_024_seg_0.mp3",
+            "audio/slide_024_seg_1.mp3",
+            "audio/slide_024_seg_2.mp3"
+          ],
+          "audio_path": "audio/slide_024_full.mp3",
+          "audio_duration": 51.312,
+          "timed_segments": [
+            {
+              "visual": "Q. Which of the following is the most significant advantage of sexual reproduction over asexual reproduction?",
+              "narration_fragment": "Alright everyone, time for a quick quiz! Here is your first question. Which of the following is the most significant advantage of sexual reproduction over asexual reproduction?",
+              "start_time": 0,
+              "end_time": 14.66,
+              "duration": 14.66
+            },
+            {
+              "visual": "(1) Allows the embryo to survive over winter.\n(2) Produces more offspring.\n(3) Produces offspring with more variations.\n(4) Provides more protection to the embryo.",
+              "narration_fragment": "Your options are: One, it allows the embryo to survive over winter. Two, it produces more offspring. Three, it produces offspring with more variations. Or four, it provides more protection to the embryo. Think carefully!",
+              "start_time": 14.66,
+              "end_time": 32.25,
+              "duration": 17.59
+            },
+            {
+              "visual": "Correct Answer: (3) Produces offspring with more variations.",
+              "narration_fragment": "And the correct answer is option 3! The biggest strength of sexual reproduction is the genetic recombination from two parents, which creates variation. This variation is the raw material for evolution and helps species adapt to changing environments.",
+              "start_time": 32.25,
+              "end_time": 51.31,
+              "duration": 19.06
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_024_avatar.mp4"
+        },
+        {
+          "slide_number": 25,
+          "slide_type": "exercise",
+          "title": "Let's Practice!",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Q. A sea star was cut into two pieces; each developed into a complete sea star. This is an example of:",
+              "narration_fragment": "Here's the next one. A sea star was cut into two pieces, and each piece developed into a complete sea star. What is this an example of?",
+              "duration_estimate": 8,
+              "audio_file": "audio/slide_025_seg_0.mp3"
+            },
+            {
+              "visual": "(1) external fertilization\n(2) fission\n(3) budding\n(4) fragmentation",
+              "narration_fragment": "Is it: one, external fertilization; two, fission; three, budding; or four, fragmentation? What do you think?",
+              "duration_estimate": 8,
+              "audio_file": "audio/slide_025_seg_1.mp3"
+            },
+            {
+              "visual": "Correct Answer: (4) fragmentation",
+              "narration_fragment": "The correct answer is option 4, fragmentation! This is a classic example of fragmentation, where the parent's body breaks into pieces, and each piece can regenerate into a new, complete animal. Well done if you got that right!",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_025_seg_2.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_025_seg_0.mp3",
+            "audio/slide_025_seg_1.mp3",
+            "audio/slide_025_seg_2.mp3"
+          ],
+          "audio_path": "audio/slide_025_full.mp3",
+          "audio_duration": 39.696,
+          "timed_segments": [
+            {
+              "visual": "Q. A sea star was cut into two pieces; each developed into a complete sea star. This is an example of:",
+              "narration_fragment": "Here's the next one. A sea star was cut into two pieces, and each piece developed into a complete sea star. What is this an example of?",
+              "start_time": 0,
+              "end_time": 11.34,
+              "duration": 11.34
+            },
+            {
+              "visual": "(1) external fertilization\n(2) fission\n(3) budding\n(4) fragmentation",
+              "narration_fragment": "Is it: one, external fertilization; two, fission; three, budding; or four, fragmentation? What do you think?",
+              "start_time": 11.34,
+              "end_time": 22.68,
+              "duration": 11.34
+            },
+            {
+              "visual": "Correct Answer: (4) fragmentation",
+              "narration_fragment": "The correct answer is option 4, fragmentation! This is a classic example of fragmentation, where the parent's body breaks into pieces, and each piece can regenerate into a new, complete animal. Well done if you got that right!",
+              "start_time": 22.68,
+              "end_time": 39.7,
+              "duration": 17.01
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_025_avatar.mp4"
+        },
+        {
+          "slide_number": 26,
+          "slide_type": "exercise",
+          "title": "Let's Practice!",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Q. The 'eyes' of the potato tuber are:",
+              "narration_fragment": "Let's test your knowledge of vegetative propagation. The 'eyes' of the potato tuber are...",
+              "duration_estimate": 6,
+              "audio_file": "audio/slide_026_seg_0.mp3"
+            },
+            {
+              "visual": "(1) Root buds\n(2) Flower buds\n(3) Shoot buds\n(4) Axillary buds",
+              "narration_fragment": "Are they: one, Root buds; two, Flower buds; three, Shoot buds; or four, Axillary buds? Recall what we learned about modified stems.",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_026_seg_1.mp3"
+            },
+            {
+              "visual": "Correct Answer: (4) Axillary buds",
+              "narration_fragment": "The correct answer is option 4, Axillary buds! The potato is a modified stem, and the 'eyes' are actually nodes. The buds in these nodes are axillary buds, which can sprout to form new plants.",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_026_seg_2.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_026_seg_0.mp3",
+            "audio/slide_026_seg_1.mp3",
+            "audio/slide_026_seg_2.mp3"
+          ],
+          "audio_path": "audio/slide_026_full.mp3",
+          "audio_duration": 36.504,
+          "timed_segments": [
+            {
+              "visual": "Q. The 'eyes' of the potato tuber are:",
+              "narration_fragment": "Let's test your knowledge of vegetative propagation. The 'eyes' of the potato tuber are...",
+              "start_time": 0,
+              "end_time": 8.11,
+              "duration": 8.11
+            },
+            {
+              "visual": "(1) Root buds\n(2) Flower buds\n(3) Shoot buds\n(4) Axillary buds",
+              "narration_fragment": "Are they: one, Root buds; two, Flower buds; three, Shoot buds; or four, Axillary buds? Recall what we learned about modified stems.",
+              "start_time": 8.11,
+              "end_time": 20.28,
+              "duration": 12.17
+            },
+            {
+              "visual": "Correct Answer: (4) Axillary buds",
+              "narration_fragment": "The correct answer is option 4, Axillary buds! The potato is a modified stem, and the 'eyes' are actually nodes. The buds in these nodes are axillary buds, which can sprout to form new plants.",
+              "start_time": 20.28,
+              "end_time": 36.5,
+              "duration": 16.22
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_026_avatar.mp4"
+        },
+        {
+          "slide_number": 27,
+          "slide_type": "exercise",
+          "title": "Let's Practice!",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Q. Why is a coconut plant referred to as monoecious?",
+              "narration_fragment": "Here's a question on plant sexuality. Why is a coconut plant referred to as monoecious?",
+              "duration_estimate": 6,
+              "audio_file": "audio/slide_027_seg_0.mp3"
+            },
+            {
+              "visual": "(1) It has only male flowers.\n(2) It has only female flowers.\n(3) It has separate male and female flowers on the same plant.\n(4) It has male and female parts in the same flower.",
+              "narration_fragment": "Your options are: One, it has only male flowers. Two, it has only female flowers. Three, it has separate male and female flowers on the same plant. Or four, it has male and female parts in the same flower. Think carefully about the term 'monoecious'.",
+              "duration_estimate": 15,
+              "audio_file": "audio/slide_027_seg_1.mp3"
+            },
+            {
+              "visual": "Correct Answer: (3) It has separate male and female flowers on the same plant.",
+              "narration_fragment": "And the correct answer is option 3! 'Monoecious' means 'one house'. This refers to plants where both male and female reproductive structures, in this case flowers, are present on the same single plant.",
+              "duration_estimate": 12,
+              "audio_file": "audio/slide_027_seg_2.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_027_seg_0.mp3",
+            "audio/slide_027_seg_1.mp3",
+            "audio/slide_027_seg_2.mp3"
+          ],
+          "audio_path": "audio/slide_027_full.mp3",
+          "audio_duration": 43.44,
+          "timed_segments": [
+            {
+              "visual": "Q. Why is a coconut plant referred to as monoecious?",
+              "narration_fragment": "Here's a question on plant sexuality. Why is a coconut plant referred to as monoecious?",
+              "start_time": 0,
+              "end_time": 7.9,
+              "duration": 7.9
+            },
+            {
+              "visual": "(1) It has only male flowers.\n(2) It has only female flowers.\n(3) It has separate male and female flowers on the same plant.\n(4) It has male and female parts in the same flower.",
+              "narration_fragment": "Your options are: One, it has only male flowers. Two, it has only female flowers. Three, it has separate male and female flowers on the same plant. Or four, it has male and female parts in the same flower. Think carefully about the term 'monoecious'.",
+              "start_time": 7.9,
+              "end_time": 27.64,
+              "duration": 19.75
+            },
+            {
+              "visual": "Correct Answer: (3) It has separate male and female flowers on the same plant.",
+              "narration_fragment": "And the correct answer is option 3! 'Monoecious' means 'one house'. This refers to plants where both male and female reproductive structures, in this case flowers, are present on the same single plant.",
+              "start_time": 27.64,
+              "end_time": 43.44,
+              "duration": 15.8
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_027_avatar.mp4"
+        },
+        {
+          "slide_number": 28,
+          "slide_type": "exercise",
+          "title": "Let's Practice!",
+          "image_id": null,
+          "segments": [
+            {
+              "visual": "Q. In humans and other placental mammals, fertilization normally occurs in the:",
+              "narration_fragment": "Let's move to human reproduction. In humans and other placental mammals, where does fertilization normally occur?",
+              "duration_estimate": 8,
+              "audio_file": "audio/slide_028_seg_0.mp3"
+            },
+            {
+              "visual": "(1) Ovary\n(2) Uterus\n(3) Fallopian tubes\n(4) Vagina",
+              "narration_fragment": "Your options are: one, the Ovary; two, the Uterus; three, the Fallopian tubes; or four, the Vagina. Where does the sperm meet the egg?",
+              "duration_estimate": 9,
+              "audio_file": "audio/slide_028_seg_1.mp3"
+            },
+            {
+              "visual": "Correct Answer: (3) Fallopian tubes",
+              "narration_fragment": "The correct answer is option 3, the Fallopian tubes! After ovulation, the egg travels into the fallopian tube, which is where it is typically fertilized by a sperm. The resulting zygote then travels to the uterus for implantation.",
+              "duration_estimate": 14,
+              "audio_file": "audio/slide_028_seg_2.mp3"
+            }
+          ],
+          "segment_audio_files": [
+            "audio/slide_028_seg_0.mp3",
+            "audio/slide_028_seg_1.mp3",
+            "audio/slide_028_seg_2.mp3"
+          ],
+          "audio_path": "audio/slide_028_full.mp3",
+          "audio_duration": 39.36,
+          "timed_segments": [
+            {
+              "visual": "Q. In humans and other placental mammals, fertilization normally occurs in the:",
+              "narration_fragment": "Let's move to human reproduction. In humans and other placental mammals, where does fertilization normally occur?",
+              "start_time": 0,
+              "end_time": 10.16,
+              "duration": 10.16
+            },
+            {
+              "visual": "(1) Ovary\n(2) Uterus\n(3) Fallopian tubes\n(4) Vagina",
+              "narration_fragment": "Your options are: one, the Ovary; two, the Uterus; three, the Fallopian tubes; or four, the Vagina. Where does the sperm meet the egg?",
+              "start_time": 10.16,
+              "end_time": 21.58,
+              "duration": 11.43
+            },
+            {
+              "visual": "Correct Answer: (3) Fallopian tubes",
+              "narration_fragment": "The correct answer is option 3, the Fallopian tubes! After ovulation, the egg travels into the fallopian tube, which is where it is typically fertilized by a sperm. The resulting zygote then travels to the uterus for implantation.",
+              "start_time": 21.58,
+              "end_time": 39.36,
+              "duration": 17.78
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_028_avatar.mp4"
+        },
+        {
+          "slide_number": 29,
+          "slide_type": "memory",
+          "title": "R-A-S Memory Card",
+          "image_id": null,
+          "visual_content": {
+            "flashcards": [
+              {
+                "letter": "R",
+                "title": "Reproduction",
+                "description": "The biological process of creating new individuals. Can be Asexual (one parent, clones) or Sexual (two parents, variation)."
+              },
+              {
+                "letter": "A",
+                "title": "Apomixis",
+                "description": "A synonym for asexual reproduction, especially in plants. It means 'without mixing' of gametes."
+              },
+              {
+                "letter": "S",
+                "title": "Syngamy",
+                "description": "The fusion of male and female gametes to form a diploid zygote. This is the key event in sexual reproduction."
+              }
+            ]
+          },
+          "full_narration": "Alright students, let's lock in today's key concepts with our R-A-S memory tool. First, 'R' for Reproduction. Remember, this is the fundamental process of creating new life. The two paths are Asexual, with one parent creating identical clones, and Sexual, with two parents creating unique offspring. Next, 'A' for Apomixis. This is just a fancy word for asexual reproduction, meaning 'without mixing'. It highlights the absence of gamete fusion. Finally, 'S' for Syngamy. This is the main event of sexual reproduction\u2014the moment of fusion between the male and female gametes to form the zygote. R for Reproduction, A for Apomixis, S for Syngamy. Keep these in mind!",
+          "estimated_duration_seconds": 55,
+          "audio_path": "audio/slide_029_full.mp3",
+          "audio_duration": 55.872,
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_029_avatar.mp4"
+        },
+        {
+          "slide_number": 30,
+          "slide_type": "recap",
+          "title": "A Day on Rajubhai's Farm: A Mental Movie",
+          "image_id": null,
+          "visual_content": {
+            "infographic_prompt": "Flat vector illustration of a cheerful Indian farmer, Rajubhai, in his field. On the left, he is planting potatoes with visible sprouts. In the middle, a mango tree with a clear grafting joint is shown. On the right, a cow stands protectively next to its small calf. The background shows a sunny day with a village hut. Bright, vibrant colors, simple style."
+          },
+          "full_narration": "Close your eyes and let's create a Mental Movie. Imagine a farmer, Rajubhai, walking through his farm on a sunny morning. WHOOSH! A gentle breeze blows. First, he goes to his potato patch. He takes a potato, sees the small 'eyes' on it, and plants it in the soil. DHAM! He knows in a few months, a whole new plant will grow from this one piece. This is his quick and easy method \u2013 asexual reproduction! Next, he walks to his prized mango tree. He smiles, remembering how his neighbor uncle, a wise old gardener, helped him. They took a branch from a tree with very sweet mangoes and joined it to this strong, local tree. That's grafting, a type of artificial vegetative propagation. Now, this single tree gives the juiciest mangoes in the village! Finally, he hears a soft 'Moo'. He turns to see his cow, Ganga, gently cleaning her newborn calf. The calf is a little different from Ganga, and a little different from the bull. It\u2019s a unique mix! SPLASH! The calf tries to stand and stumbles. Rajubhai smiles. This is the result of sexual reproduction, a slower process, but one that brings new life and new variations to the farm. From a simple potato to a complex calf, Rajubhai sees the magic of reproduction all around him. JHOOM! The sun shines brightly on his thriving farm.",
+          "estimated_duration_seconds": 80,
+          "audio_path": "audio/slide_030_full.mp3",
+          "audio_duration": 104.304,
+          "storyboard_scenes": [
+            {
+              "scene_number": 1,
+              "concept_title": "Part 1",
+              "image_url": "../images/recap/recap_scene_01.png",
+              "start_time": 0.0,
+              "end_time": 25.78,
+              "segment_text": "Close your eyes and let's create a Mental Movie. Imagine a farmer, Rajubhai, walking through his farm on a sunny morning. WHOOSH! A gentle breeze blows. First, he goes to his potato patch. He takes a potato, sees the small 'eyes' on it, and plants it in the soil. DHAM! He knows in a few months, a"
+            },
+            {
+              "scene_number": 2,
+              "concept_title": "Part 2",
+              "image_url": "../images/recap/recap_scene_02.png",
+              "start_time": 25.78,
+              "end_time": 51.57,
+              "segment_text": "whole new plant will grow from this one piece. This is his quick and easy method \u2013 asexual reproduction! Next, he walks to his prized mango tree. He smiles, remembering how his neighbor uncle, a wise old gardener, helped him. They took a branch from a tree with very sweet mangoes and joined it to this strong,"
+            },
+            {
+              "scene_number": 3,
+              "concept_title": "Part 3",
+              "image_url": "../images/recap/recap_scene_03.png",
+              "start_time": 51.57,
+              "end_time": 77.35,
+              "segment_text": "local tree. That's grafting, a type of artificial vegetative propagation. Now, this single tree gives the juiciest mangoes in the village! Finally, he hears a soft 'Moo'. He turns to see his cow, Ganga, gently cleaning her newborn calf. The calf is a little different from Ganga, and a little different from the bull. It\u2019s a unique"
+            },
+            {
+              "scene_number": 4,
+              "concept_title": "Part 4",
+              "image_url": "../images/recap/recap_scene_04.png",
+              "start_time": 77.35,
+              "end_time": 104.3,
+              "segment_text": "mix! SPLASH! The calf tries to stand and stumbles. Rajubhai smiles. This is the result of sexual reproduction, a slower process, but one that brings new life and new variations to the farm. From a simple potato to a complex calf, Rajubhai sees the magic of reproduction all around him. JHOOM! The sun shines brightly on his thriving farm."
+            }
+          ],
+          "use_heygen_audio": true,
+          "avatar_video_url": "assets/slide_030_avatar.mp4"
+        }
+      ]
+    };
+  </script>
+</body>
+
+</html>
