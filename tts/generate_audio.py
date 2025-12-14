@@ -1,6 +1,9 @@
 import os
+import requests
 from pathlib import Path
-from gtts import gTTS
+
+NARAKEET_API_KEY = os.environ.get("NARAKEET_API_KEY", "")
+NARAKEET_VOICE = "ravi"
 
 def generate_section_audio(section: dict, output_dir: str) -> str:
     section_id = section.get("id", 1)
@@ -15,15 +18,39 @@ def generate_section_audio(section: dict, output_dir: str) -> str:
     
     output_path = str(Path(output_dir) / f"section_{section_id}.mp3")
     
+    if NARAKEET_API_KEY:
+        try:
+            response = requests.post(
+                f"https://api.narakeet.com/text-to-speech/mp3?voice={NARAKEET_VOICE}",
+                headers={
+                    "x-api-key": NARAKEET_API_KEY,
+                    "Content-Type": "text/plain",
+                    "accept": "application/octet-stream"
+                },
+                data=narration.encode('utf-8'),
+                timeout=120
+            )
+            
+            if response.status_code == 200:
+                with open(output_path, 'wb') as f:
+                    f.write(response.content)
+                duration = response.headers.get('x-duration-seconds', 'unknown')
+                print(f"Narakeet audio generated: {output_path} ({duration}s)")
+                return output_path
+            else:
+                print(f"Narakeet API error: {response.status_code} - {response.text}")
+        except Exception as e:
+            print(f"Narakeet error: {e}")
+    
+    from gtts import gTTS
     tts = gTTS(
         text=narration,
         lang="en",
         tld="co.in",
         slow=False
     )
-    
     tts.save(output_path)
-    
+    print(f"gTTS fallback audio generated: {output_path}")
     return output_path
 
 def generate_all_audio(presentation: dict, output_dir: str) -> list:

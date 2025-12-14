@@ -2,12 +2,13 @@ import os
 import time
 import requests
 from pathlib import Path
+from typing import Optional
 
 KIE_API_KEY = os.environ.get("KIE_API_KEY", "")
 KIE_API_URL = "https://api.kie.ai/api/v1/runway"
 
 class WANClient:
-    def __init__(self, api_key: str = None):
+    def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or KIE_API_KEY
         self.base_url = KIE_API_URL
         self.headers = {
@@ -15,7 +16,7 @@ class WANClient:
             "Content-Type": "application/json"
         }
     
-    def generate_video(self, prompt: str, duration: int = 5, output_path: str = None) -> str:
+    def generate_video(self, prompt: str, duration: int = 5, output_path: Optional[str] = None) -> str:
         if not self.api_key:
             return self._generate_placeholder(prompt, duration, output_path)
         
@@ -83,7 +84,7 @@ class WANClient:
             print(f"Runway API error: {e}")
             return self._generate_placeholder(prompt, duration, output_path)
     
-    def _download_video(self, video_url: str, output_path: str) -> str:
+    def _download_video(self, video_url: str, output_path: Optional[str]) -> str:
         response = requests.get(video_url, stream=True, timeout=120)
         if response.status_code == 200:
             output_path = output_path or f"runway_video_{int(time.time())}.mp4"
@@ -93,7 +94,7 @@ class WANClient:
             return output_path
         raise Exception(f"Failed to download video: {response.status_code}")
     
-    def _generate_placeholder(self, prompt: str, duration: int, output_path: str) -> str:
+    def _generate_placeholder(self, prompt: str, duration: int, output_path: Optional[str]) -> str:
         try:
             from moviepy import ColorClip
             
@@ -116,7 +117,7 @@ class WANClient:
             print(f"Placeholder generation error: {e}")
             return self._create_ffmpeg_video(output_path, duration)
     
-    def _create_ffmpeg_video(self, output_path: str, duration: int) -> str:
+    def _create_ffmpeg_video(self, output_path: Optional[str], duration: int) -> str:
         import subprocess
         
         output_path = output_path or f"minimal_{int(time.time())}.mp4"
