@@ -30,6 +30,10 @@ function updateVisuals() {
 function renderAvatar() {
   if ((!video.paused && !video.ended) || video.readyState >= 2) {
     if (canvasSizeMismatch()) syncCanvasSize();
+    if (avatarCanvas.width === 0 || avatarCanvas.height === 0) {
+      requestAnimationFrame(renderAvatar);
+      return;
+    }
 
     ctx.drawImage(video, 0, 0, avatarCanvas.width, avatarCanvas.height);
     const frame = ctx.getImageData(0, 0, avatarCanvas.width, avatarCanvas.height);
