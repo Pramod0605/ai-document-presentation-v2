@@ -237,8 +237,22 @@ function loadSlide(index) {
 
   const bgVideo = document.getElementById('scene-video');
   const bgVidPath = slide.background_video;
+  const contentVidPath = slide.content_video_path;
 
-  if (bgVidPath) {
+  if (contentVidPath && slide.has_content_video) {
+    stage.classList.remove('mode-khan');
+    stage.classList.add('mode-content-video');
+    bgVideo.muted = true;
+    bgVideo.loop = false;
+
+    if (!bgVideo.src.includes(contentVidPath)) {
+      bgVideo.src = contentVidPath;
+      bgVideo.load();
+    }
+    bgVideo.style.opacity = 1;
+    bgVideo.play().catch(e => console.log("Content Video Play Fail", e));
+  } else if (bgVidPath) {
+    stage.classList.remove('mode-content-video');
     stage.classList.add('mode-khan');
 
     if (bgVideo.src.indexOf(bgVidPath) === -1) {
@@ -248,6 +262,7 @@ function loadSlide(index) {
     bgVideo.play().catch(e => console.log("BG Video Play Fail", e));
   } else {
     stage.classList.remove('mode-khan');
+    stage.classList.remove('mode-content-video');
     bgVideo.pause();
     bgVideo.style.opacity = 0;
   }
@@ -272,6 +287,14 @@ function handleTimeUpdate(e) {
     if (isPlaying && bgVideo.paused) bgVideo.play();
     if (!isPlaying && !bgVideo.paused) bgVideo.pause();
 
+    if (Math.abs(bgVideo.currentTime - t) > 0.5) {
+      bgVideo.currentTime = t;
+    }
+  }
+
+  if (stage.classList.contains('mode-content-video') && bgVideo) {
+    if (isPlaying && bgVideo.paused) bgVideo.play();
+    if (!isPlaying && !bgVideo.paused) bgVideo.pause();
     if (Math.abs(bgVideo.currentTime - t) > 0.5) {
       bgVideo.currentTime = t;
     }
@@ -337,15 +360,23 @@ function formatTime(s) {
 }
 
 function togglePlay() {
+  const bgVideo = document.getElementById('scene-video');
+  
   if (currentMedia.paused) {
     currentMedia.play();
     if (currentMedia === audio) video.play();
+    if (bgVideo && bgVideo.src && (stage.classList.contains('mode-khan') || stage.classList.contains('mode-content-video'))) {
+      bgVideo.play().catch(e => {});
+    }
 
     isPlaying = true;
     document.getElementById('btn-play').innerText = "Pause";
   } else {
     currentMedia.pause();
     if (currentMedia === audio) video.pause();
+    if (bgVideo && !bgVideo.paused) {
+      bgVideo.pause();
+    }
 
     isPlaying = false;
     document.getElementById('btn-play').innerText = "Play";
@@ -433,6 +464,8 @@ async function checkExistingPresentation() {
               end_time: s.start + s.duration
             })) : [],
             audio_path: `assets/audio/section_${section.id}.mp3`,
+            content_video_path: section.renderer === 'wan_video' ? `assets/videos/topic_${section.id}.mp4` : null,
+            has_content_video: section.renderer === 'wan_video',
             audio_duration: section.duration,
             full_narration: section.narration,
             visual_content: { bullet_points: section.segments ? section.segments.map(s => s.text) : [] }
