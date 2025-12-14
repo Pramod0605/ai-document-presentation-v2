@@ -84,26 +84,13 @@ class WANClient:
     
     def _generate_placeholder(self, prompt: str, duration: int, output_path: str) -> str:
         try:
-            from moviepy.editor import ColorClip, TextClip, CompositeVideoClip
+            from moviepy import ColorClip
             
             output_path = output_path or f"placeholder_{int(time.time())}.mp4"
             
             bg = ColorClip(size=(1280, 720), color=(30, 30, 60), duration=duration)
             
-            try:
-                txt = TextClip(
-                    prompt[:100] + "..." if len(prompt) > 100 else prompt,
-                    fontsize=24,
-                    color="white",
-                    size=(1200, None),
-                    method="caption"
-                )
-                txt = txt.set_position("center").set_duration(duration)
-                video = CompositeVideoClip([bg, txt])
-            except Exception:
-                video = bg
-            
-            video.write_videofile(
+            bg.write_videofile(
                 output_path,
                 fps=24,
                 codec="libx264",
@@ -112,25 +99,22 @@ class WANClient:
                 logger=None
             )
             
-            video.close()
+            bg.close()
             return output_path
             
         except Exception as e:
             print(f"Placeholder generation error: {e}")
-            return self._create_minimal_video(output_path, duration)
+            return self._create_ffmpeg_video(output_path, duration)
     
-    def _create_minimal_video(self, output_path: str, duration: int) -> str:
-        from moviepy.editor import ColorClip
+    def _create_ffmpeg_video(self, output_path: str, duration: int) -> str:
+        import subprocess
         
         output_path = output_path or f"minimal_{int(time.time())}.mp4"
-        clip = ColorClip(size=(1280, 720), color=(40, 40, 80), duration=duration)
-        clip.write_videofile(
-            output_path,
-            fps=24,
-            codec="libx264",
-            audio=False,
-            verbose=False,
-            logger=None
-        )
-        clip.close()
+        cmd = [
+            "ffmpeg", "-y", "-f", "lavfi",
+            "-i", f"color=c=0x1e3c72:s=1280x720:d={duration}",
+            "-c:v", "libx264", "-pix_fmt", "yuv420p",
+            output_path
+        ]
+        subprocess.run(cmd, capture_output=True)
         return output_path

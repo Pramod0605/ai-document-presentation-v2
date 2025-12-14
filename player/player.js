@@ -372,6 +372,24 @@ async function checkExistingPresentation() {
     if (response.ok) {
       lessonData = await response.json();
       
+      if (!lessonData.slides && lessonData.topics) {
+        lessonData.slides = lessonData.topics.map(topic => ({
+          slide_number: topic.id,
+          slide_type: 'content',
+          title: topic.title,
+          segments: topic.segments,
+          timed_segments: topic.segments ? topic.segments.map(s => ({
+            visual: s.text,
+            start_time: s.start,
+            end_time: s.start + s.duration
+          })) : [],
+          audio_path: `audio/topic_${topic.id}.mp3`,
+          audio_duration: topic.duration,
+          full_narration: topic.narration,
+          visual_content: { bullet_points: topic.segments ? topic.segments.map(s => s.text) : [] }
+        }));
+      }
+      
       if (lessonData.slides && lessonData.slides.length > 0) {
         document.getElementById('upload-overlay').classList.add('hidden');
         buildSlideList();
