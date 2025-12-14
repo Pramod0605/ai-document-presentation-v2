@@ -4,7 +4,7 @@ import requests
 from pathlib import Path
 
 KIE_API_KEY = os.environ.get("KIE_API_KEY", "")
-KIE_API_URL = "https://api.kie.ai/v1"
+KIE_API_URL = "https://api.kie.ai/api/v1/runway"
 
 class WANClient:
     def __init__(self, api_key: str = None):
@@ -21,61 +21,72 @@ class WANClient:
         
         try:
             create_response = requests.post(
-                f"{self.base_url}/generations",
+                f"{self.base_url}/generate",
                 headers=self.headers,
                 json={
-                    "model": "wan",
                     "prompt": prompt,
                     "duration": duration,
-                    "aspect_ratio": "16:9",
-                    "quality": "high"
+                    "quality": "720p",
+                    "aspectRatio": "16:9",
+                    "waterMark": ""
                 },
                 timeout=30
             )
             
             if create_response.status_code != 200:
-                print(f"WAN API creation failed: {create_response.status_code}")
+                print(f"Runway API creation failed: {create_response.status_code}")
                 return self._generate_placeholder(prompt, duration, output_path)
             
-            task_data = create_response.json()
-            task_id = task_data.get("id") or task_data.get("task_id")
+            result = create_response.json()
+            if result.get("code") != 200:
+                print(f"Runway API error: {result.get('msg', 'Unknown error')}")
+                return self._generate_placeholder(prompt, duration, output_path)
+            
+            task_id = result.get("data", {}).get("taskId")
             
             if not task_id:
+                print("No task ID returned from Runway API")
                 return self._generate_placeholder(prompt, duration, output_path)
             
             max_attempts = 60
             for attempt in range(max_attempts):
                 status_response = requests.get(
-                    f"{self.base_url}/generations/{task_id}",
+                    f"{self.base_url}/record-detail?taskId={task_id}",
                     headers=self.headers,
                     timeout=30
                 )
                 
                 if status_response.status_code == 200:
-                    status_data = status_response.json()
-                    status = status_data.get("status", "")
-                    
-                    if status == "completed":
-                        video_url = status_data.get("video_url") or status_data.get("output", {}).get("video_url")
-                        if video_url:
-                            return self._download_video(video_url, output_path)
-                    elif status == "failed":
-                        print(f"WAN generation failed: {status_data.get('error', 'Unknown error')}")
-                        return self._generate_placeholder(prompt, duration, output_path)
+                    status_result = status_response.json()
+                    if status_result.get("code") == 200:
+                        status_data = status_result.get("data", {})
+                        state = status_data.get("state", "")
+                        
+                        if state == "success":
+                            video_info = status_data.get("videoInfo", {})
+                            video_url = video_info.get("videoUrl")
+                            if video_url:
+                                return self._download_video(video_url, output_path)
+                        elif state == "fail":
+                            fail_msg = status_data.get("failMsg", "Unknown error")
+                            print(f"Runway generation failed: {fail_msg}")
+                            return self._generate_placeholder(prompt, duration, output_path)
+                        elif state in ["wait", "queueing", "generating"]:
+                            print(f"Runway status: {state}")
                 
                 time.sleep(5)
             
-            print("WAN generation timed out")
+            print("Runway generation timed out")
             return self._generate_placeholder(prompt, duration, output_path)
             
         except Exception as e:
-            print(f"WAN API error: {e}")
+            print(f"Runway API error: {e}")
             return self._generate_placeholder(prompt, duration, output_path)
     
     def _download_video(self, video_url: str, output_path: str) -> str:
         response = requests.get(video_url, stream=True, timeout=120)
         if response.status_code == 200:
-            output_path = output_path or f"wan_video_{int(time.time())}.mp4"
+            output_path = output_path or f"runway_video_{int(time.time())}.mp4"
             with open(output_path, "wb") as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
@@ -95,7 +106,6 @@ class WANClient:
                 fps=24,
                 codec="libx264",
                 audio=False,
-                verbose=False,
                 logger=None
             )
             
