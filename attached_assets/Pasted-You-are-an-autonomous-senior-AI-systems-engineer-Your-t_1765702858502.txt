@@ -1,0 +1,312 @@
+You are an autonomous senior AI systems engineer.
+
+Your task is to scaffold and implement a COMPLETE Phase-1 AI education system
+named:
+
+ai-animated-education-phase1
+
+====================================================
+CORE GOAL
+====================================================
+
+Build a production-grade AI pipeline that converts a PDF chapter into
+TOPIC-WISE EXPLANATION VIDEOS (MP4), synchronized with narration,
+and presented in a YouTube/Vimeo-style HTML player.
+
+This is NOT a slide system.
+This is a narrated visual explanation engine.
+
+The ONLY thing excluded in Phase-1 is REAL AI AVATAR VIDEO generation.
+Everything else must be REAL and EXECUTED.
+
+====================================================
+NON-NEGOTIABLE PRINCIPLES
+====================================================
+
+1. The LLM is the DIRECTOR and BRAIN.
+2. The LLM decides:
+   - topic breakdown
+   - narration
+   - subtitle timing
+   - explanation strategy
+   - renderer choice (WAN vs Manim)
+   - layout (content vs avatar zones)
+   - video role (primary explanation visual)
+3. The frontend is a DUMB EXECUTOR.
+4. One MP4 per topic (best pedagogy).
+5. All decisions must be traceable via JSON logs.
+
+====================================================
+RENDERERS (PHASE-1)
+====================================================
+
+- MANIM (local CLI, CPU):
+  Used for:
+    • Mathematics
+    • Geometry
+    • Graphs
+    • Formula derivations
+
+- WAN (via https://kie.ai API):
+  Used for:
+    • Biology processes
+    • Physics concepts
+    • Chemistry reactions
+    • Conceptual visual explanations
+
+WAN produces the PRIMARY EXPLANATION VIDEO
+(not decorative backgrounds).
+
+====================================================
+REPO STRUCTURE (MANDATORY)
+====================================================
+
+ai-animated-education-phase1/
+│
+├── api/
+│   └── app.py
+│
+├── core/
+│   ├── datalab_client.py
+│   ├── llm_client.py
+│   ├── pipeline.py
+│   ├── renderer_executor.py
+│   └── prompts/
+│       ├── system_prompt.txt
+│       └── user_prompt.txt
+│
+├── render/
+│   ├── manim/
+│   │   ├── manim_runner.py
+│   │   └── templates/
+│   └── wan/
+│       ├── wan_client.py
+│       └── wan_runner.py
+│
+├── tts/
+│   └── generate_audio.py
+│
+├── player/
+│   ├── index.html
+│   ├── player.js
+│   └── assets/
+│       ├── videos/
+│       ├── audio/
+│       ├── avatar_placeholder.mp4
+│       ├── presentation.json
+│       └── generation_trace.json
+│
+├── examples/
+│   ├── sample_markdown.md
+│   └── sample_presentation.json
+│
+├── requirements.txt
+├── README.md
+└── project.md
+
+====================================================
+FLASK API (api/app.py)
+====================================================
+
+Implement a Flask app with:
+
+POST /process_pdf
+- Accepts PDF
+- PDF → Markdown (Datalab stub)
+- Markdown → LLM (OpenRouter-ready)
+- LLM outputs:
+    • presentation.json
+    • generation_trace.json
+- Execute renderers:
+    • WAN → MP4 per topic
+    • Manim → MP4 per topic
+- Generate MP3 narration per topic
+- Save all outputs to player/assets
+- Return job status
+
+GET /health
+- Health check
+
+Serve /player as static content at /player
+
+====================================================
+LLM PROMPTS (CRITICAL)
+====================================================
+
+system_prompt.txt:
+
+"You are an expert Educational Content Director.
+You convert textbook chapters into narrated visual explanations.
+
+You must:
+- Break content into teaching topics
+- Decide how each topic should be explained visually over time
+- Choose the correct renderer (manim or wan_video)
+- Write narration for Indian students (Grade 8-10)
+- Define subtitle timing
+- Define avatar gesture hints
+- Decide layout (content vs avatar zones and sizes)
+
+You output ONLY JSON.
+No HTML. No code. No explanations."
+
+----------------------------------------------------
+
+user_prompt.txt:
+
+"Create a Presentation Plan JSON for the given chapter.
+
+Input:
+- Subject
+- Grade
+- Markdown content
+
+For EACH topic:
+- Decide renderer (manim | wan_video)
+- Write renderer-specific prompt or plan
+- Define total duration
+- Break narration into timed segments
+- Define layout zones:
+    • content position + width %
+    • avatar position + width % or overlay
+- Define gesture hints
+- Ensure explanations are visual and intuitive
+
+Return ONLY valid JSON."
+
+====================================================
+PRESENTATION JSON (AUTHORITATIVE)
+====================================================
+
+presentation.json MUST follow this pattern:
+
+{
+  "chapter_title": "",
+  "subject": "",
+  "grade": "",
+  "language": "en-IN",
+  "topics": [
+    {
+      "id": 1,
+      "title": "",
+      "renderer": "wan_video | manim",
+
+      "explanation_plan": {
+        "wan_prompt": "..." OR
+        "manim_plan": { "scene_type": "...", "params": {} }
+      },
+
+      "layout": {
+        "content_zone": { "position": "left|right", "width_percent": 60 },
+        "avatar_zone": {
+          "mode": "side|overlay",
+          "position": "right|bottom_right",
+          "width_percent": 40,
+          "scale": 0.35
+        }
+      },
+
+      "narration": "",
+      "segments": [
+        { "start": 0.0, "duration": 2.5, "text": "" }
+      ],
+
+      "gesture_hints": [
+        { "time": 1.2, "action": "point_left" }
+      ]
+    }
+  ]
+}
+
+====================================================
+GENERATION TRACE (MANDATORY)
+====================================================
+
+generation_trace.json MUST store:
+
+- full system prompt
+- full user prompt
+- model name
+- renderer decision + reason
+- exact WAN or Manim prompts used
+- timing decisions
+
+This file is REQUIRED for audit and debugging.
+
+====================================================
+TTS
+====================================================
+
+- Use gTTS
+- Indian English male approximation
+- One MP3 per topic
+- Saved to player/assets/audio/topic_{id}.mp3
+
+====================================================
+PLAYER (HTML + JS)
+====================================================
+
+index.html + player.js must:
+
+- Behave like YouTube/Vimeo
+- Play MP4 explanation videos
+- Play MP3 narration
+- Sync subtitles
+- Show avatar placeholder
+- Obey JSON layout strictly
+
+Include DEV MODE:
+- Toggle on/off
+- Drag & resize content/avatar zones
+- Temporarily override layout
+- Default mode uses LLM layout
+
+====================================================
+REQUIREMENTS.TXT
+====================================================
+
+flask
+flask-cors
+gtts
+python-dotenv
+requests
+moviepy
+
+====================================================
+README.md
+====================================================
+
+Explain:
+- How to run locally
+- How PDF → video works
+- How JSON controls everything
+- Phase-1 limitations
+- Phase-2 roadmap (avatar, gestures)
+
+====================================================
+FINAL INSTRUCTIONS
+====================================================
+
+- Scaffold ALL files
+- Implement REAL execution paths
+- Do NOT stub renderers
+- Do NOT simplify logic
+- Ensure app runs locally
+- Player must load at:
+  http://localhost:5000/player/index.html
+
+Proceed immediately.
+✅ What happens next (for you)
+Paste this into Anti-Gravity IDE or Replit AI
+
+Let it scaffold and build
+
+Plug in:
+
+OpenRouter key
+
+KIE.ai WAN key
+
+Upload a PDF
+
+Watch topic-wise explanation videos play in the browser
