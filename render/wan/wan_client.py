@@ -17,6 +17,10 @@ class WANClient:
         }
     
     def generate_video(self, prompt: str, duration: int = 5, output_path: Optional[str] = None) -> str:
+        valid_durations = [5, 8, 10]
+        if duration not in valid_durations:
+            duration = 5 if duration <= 6 else (8 if duration <= 9 else 10)
+        
         if not self.api_key:
             return self._generate_placeholder(prompt, duration, output_path)
         
