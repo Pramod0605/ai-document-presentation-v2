@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import uuid
 import threading
@@ -6,6 +7,12 @@ import tempfile
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Optional, Callable
+
+
+def log(msg: str):
+    """Print with immediate flush for real-time logging."""
+    print(msg)
+    sys.stdout.flush()
 
 class JobManager:
     def __init__(self):
@@ -97,10 +104,16 @@ def run_job_async(job_id: str, process_func: Callable, **kwargs):
         with job_manager._execution_lock:
             try:
                 job_manager._current_job_id = job_id
+                log(f"\n[JOB {job_id}] Starting job...")
                 job_manager.start_job(job_id)
                 result = process_func(job_id=job_id, **kwargs)
+                log(f"[JOB {job_id}] Job completed successfully!")
                 job_manager.complete_job(job_id, result)
             except Exception as e:
+                import traceback
+                log(f"\n[JOB {job_id}] JOB FAILED!")
+                log(f"[JOB {job_id}] Error: {str(e)}")
+                log(f"[JOB {job_id}] Traceback:\n{traceback.format_exc()}")
                 job_manager.fail_job(job_id, str(e))
             finally:
                 job_manager._current_job_id = None
