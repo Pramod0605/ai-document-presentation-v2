@@ -104,6 +104,10 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-15: Added render prompt logging to `player/assets/render_prompts.json`
+  - WAN prompts logged before video generation
+  - Manim plans and generated code logged for debugging
+  - Trace cleared at start of each job
 - 2025-12-15: V2 LLM prompts with strict visualization rules and validation
 - 2025-12-15: Added example section type with step-by-step visualization
 - 2025-12-15: Field-level validation for narration_segments and visual_beats
