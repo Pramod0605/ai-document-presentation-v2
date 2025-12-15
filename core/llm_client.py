@@ -342,7 +342,7 @@ def generate_presentation_plan(
     markdown_content: str,
     subject: str,
     grade: str,
-    model: str = "meta-llama/llama-3.3-70b-instruct"
+    model: str = "google/gemini-2.5-pro-preview-06-05"
 ) -> tuple[dict, dict]:
     print("\n" + "="*60)
     print("LLM GENERATION - START")
