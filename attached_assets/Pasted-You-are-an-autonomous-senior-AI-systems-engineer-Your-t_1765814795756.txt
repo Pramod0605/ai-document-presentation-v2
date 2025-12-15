@@ -1,0 +1,198 @@
+You are an autonomous senior AI systems engineer.
+
+Your task is to UPGRADE an existing AI education pipeline so that
+LLM-generated explanation videos are ACCURATE, LOGICAL, and
+NARRATION-SYNCHRONIZED — not vague or atmospheric.
+
+This is NOT a rewrite of the app.
+This is a GOVERNANCE + ENFORCEMENT upgrade.
+
+====================================================
+CORE GOAL
+====================================================
+
+Convert textbook Markdown into:
+- topic-wise explanation videos (MP4)
+- synced narration (MP3)
+- where EVERY narration idea is VISUALIZED
+- where worked examples are SHOWN step-by-step
+- where renderers (WAN / Manim) strictly obey LLM instructions
+
+The LLM is the DIRECTOR.
+Renderers are EXECUTORS.
+The player is a DUMB PRESENTER.
+
+====================================================
+CRITICAL PROBLEM TO FIX
+====================================================
+
+Current system generates vague videos because:
+- WAN receives generic prompts
+- Manim uses placeholder equations
+- Visual instructions are ignored
+- Examples are narrated but not visualized
+
+This must be FIXED.
+
+====================================================
+MANDATORY CHANGES (DO NOT SKIP)
+====================================================
+
+PHASE 1 — PROMPTS (REQUIRED)
+
+1. Archive existing prompts:
+   - system_prompt_v1.txt
+   - user_prompt_v1.txt
+
+2. Create new prompts:
+   - system_prompt_v2_visual_beats.txt
+   - user_prompt_v2_visual_beats.txt
+
+These prompts MUST:
+- enforce MICRO-TOPICS
+- enforce EXAMPLE sections
+- enforce VISUAL BEATS
+- forbid vague phrases like "conceptual visualization"
+- require ≥150 words narration for content sections
+- require step-by-step visualization for examples
+- follow Markdown structure strictly
+
+Use the rules already agreed in this project.
+
+----------------------------------------------------
+
+PHASE 2 — LLM CLIENT ENFORCEMENT
+
+Update core/llm_client.py to:
+
+1. Use ONLY v2 prompts
+2. Validate output STRICTLY:
+
+FAIL ENTIRE JOB if:
+- content or example narration <150 words
+- narration segment has no visual beat
+- example section has no step-by-step visuals
+- formula is mentioned but not visualized
+- visual instruction contains vague language
+
+WARN ONLY (do not fail) for:
+- intro / summary / memory / recap length issues
+
+3. Store validation results and word counts in:
+   generation_trace.json
+
+----------------------------------------------------
+
+PHASE 3 — VISUAL COMPILER (NEW MODULE)
+
+Create a new module:
+core/visual_compiler.py
+
+Responsibilities:
+- Read visual_beats[] from JSON
+- Convert EACH visual beat into:
+  - WAN prompt (for wan_video)
+  - Manim code block (for manim)
+
+Rules:
+- One narration_segment → one visual beat → one render unit
+- Reject vague visual instructions
+- DO NOT allow renderers to invent visuals
+
+----------------------------------------------------
+
+PHASE 4 — RENDERER EXECUTION (CRITICAL)
+
+Update renderer_executor.py so that:
+
+WAN:
+- Receives ONE prompt PER visual beat
+- Prompts must be concrete, ≥50 words, step-specific
+- Multiple WAN clips may be stitched in order
+
+Manim:
+- Generate SCENE-SPECIFIC code
+- NO placeholder equations
+- Physics examples must show:
+  • geometry
+  • vectors
+  • arrows
+  • intermediate steps
+
+FAIL if Manim output is identical across topics.
+
+Store ALL renderer prompts in:
+render_prompts.json
+
+----------------------------------------------------
+
+PHASE 5 — EXAMPLE SECTIONS (NON-NEGOTIABLE)
+
+Add section_type = "example"
+
+Rules:
+- Every worked example in Markdown MUST be its own section
+- Renderer = manim (unless biological)
+- Extract example steps explicitly
+- One step → one visual beat → one animation segment
+
+----------------------------------------------------
+
+PHASE 6 — PLAYER UPDATE (LIGHTWEIGHT)
+
+Update player.js to:
+- Recognize example sections
+- Apply distinct styling (badge: "Worked Example")
+- Otherwise keep logic unchanged
+
+Player must:
+- NEVER interpret visual_beats
+- ONLY play generated MP4 + MP3
+- Sync subtitles
+
+----------------------------------------------------
+
+FAIL FAST PHILOSOPHY
+
+If output is vague → FAIL.
+If example is verbal-only → FAIL.
+If renderer ignores plan → FAIL.
+
+Partial output is WORSE than no output.
+
+====================================================
+FINAL EXPECTED OUTCOME
+====================================================
+
+When run on a Physics chapter (Electrostatics):
+
+- Coulomb’s Law is broken into micro-topics
+- Forces are shown visually with arrows
+- Examples are animated step-by-step
+- WAN videos are precise, not atmospheric
+- Manim videos differ per topic
+- Narration and visuals are causally linked
+
+====================================================
+DO NOT
+====================================================
+
+- Do NOT add fallback visuals
+- Do NOT summarize content
+- Do NOT invent explanation order
+- Do NOT keep generic WAN prompts
+- Do NOT use placeholder Manim code
+
+====================================================
+PROCEED
+====================================================
+
+Implement all phases above.
+After completion, run once on the provided Physics Markdown
+and output updated:
+
+- presentation.json
+- generation_trace.json
+- render_prompts.json
+
+Proceed immediately.
