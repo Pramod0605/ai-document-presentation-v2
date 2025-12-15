@@ -104,6 +104,13 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-15: Added job dashboard at /dashboard with:
+  - File upload (PDF/Markdown)
+  - Subject/Grade inputs
+  - Options: Dry Run, Skip WAN, Skip Avatar
+  - Job status display with progress bar
+  - Play button to open completed jobs in new window
+  - Job output files stored in player/jobs/<job_id>/
 - 2025-12-15: Added render prompt logging to `player/assets/render_prompts.json`
   - WAN prompts logged before video generation
   - Manim plans and generated code logged for debugging
