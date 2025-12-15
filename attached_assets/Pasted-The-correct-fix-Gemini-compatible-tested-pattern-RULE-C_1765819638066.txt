@@ -1,0 +1,70 @@
+The correct fix (Gemini-compatible, tested pattern)
+🔑 RULE CHANGE (this is the breakthrough)
+
+Instead of:
+
+"visual_instruction": "string (≥50 words)"
+
+
+You must force multi-part decomposition.
+
+✅ Gemini-safe Visual Beat Schema (USE THIS)
+
+Change your visual beat definition to:
+
+"visual_beat": {
+  "segment_id": 1,
+
+  "scene_setup": "Describe the scene setup in 2–3 sentences.",
+  "objects_and_properties": "List and describe ALL objects with colors, sizes, positions.",
+  "motion_sequence": "Describe the animation sequence step-by-step.",
+  "labels_and_text": "List every label, text, symbol, and where it appears.",
+  "pedagogical_focus": "Explain what the student should understand from this visual."
+}
+
+Why this works with Gemini
+
+Gemini cannot collapse this into one sentence
+
+Each field forces independent generation
+
+Combined length naturally exceeds 80–120 words
+
+Validation becomes trivial (missing field = FAIL)
+
+This is structural coercion, not polite instruction.
+
+4️⃣ The corrected Gemini-2.5-Pro-compatible prompt (IMPORTANT)
+🔁 Replace ONLY this part in your user_prompt.txt
+❌ OLD (problematic with Gemini)
+
+“visual_instruction must be ≥50 words”
+
+✅ NEW (Gemini-safe)
+Each visual beat MUST be decomposed into the following FIVE REQUIRED FIELDS.
+All fields are mandatory and must be non-empty.
+
+- scene_setup: Describe the initial visual scene in detail.
+- objects_and_properties: Describe all objects, their colors, sizes, positions, and relationships.
+- motion_sequence: Describe the animation sequence step-by-step, in order.
+- labels_and_text: List all labels, symbols, text, and where they appear.
+- pedagogical_focus: Explain what the learner should understand from this visual.
+
+If any field is missing or too short, the output is INVALID.
+
+
+And remove word-count language entirely — Gemini responds better to structure than numbers.
+
+5️⃣ Validation rule update (important)
+
+Change validation from:
+
+❌ “<50 words → FAIL”
+
+To:
+
+❌ missing any required sub-field → FAIL
+
+❌ any sub-field < 1–2 sentences → FAIL
+
+This is far more reliable.
