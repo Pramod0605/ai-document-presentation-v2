@@ -104,6 +104,12 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-15: **Fixed LLM Truncation Issue (Root Cause)**:
+  - CONFIRMED: Server logs showed "[JSON FIX]: Detected truncated JSON - 163 { vs 161 }"
+  - Increased max_tokens from 16384 to 32768 (doubled output limit)
+  - Added fail-fast: raises ValidationError when truncation detected instead of silently continuing
+  - Added truncation tracking in generation_trace with details (missing braces/brackets count)
+  - Clear log message: "[TRUNCATION WARNING]: Response was TRUNCATED!"
 - 2025-12-15: **Fixed File Persistence on Validation Failure**:
   - ValidationError now carries presentation and trace data
   - pipeline.py saves presentation.json and generation_trace.json BEFORE re-raising validation errors

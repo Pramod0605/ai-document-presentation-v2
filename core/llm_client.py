@@ -13,8 +13,20 @@ def log(msg: str):
     sys.stdout.flush()
 
 
+_truncation_detected = False
+_truncation_details = None
+
+def was_truncated() -> tuple:
+    """Return truncation status and details from last JSON fix."""
+    global _truncation_detected, _truncation_details
+    return _truncation_detected, _truncation_details
+
 def fix_malformed_json(json_text: str) -> str:
     """Attempt to fix common JSON issues from LLM responses."""
+    global _truncation_detected, _truncation_details
+    _truncation_detected = False
+    _truncation_details = None
+    
     text = json_text.strip()
     
     if text.startswith("```json"):
@@ -31,6 +43,15 @@ def fix_malformed_json(json_text: str) -> str:
     close_brackets = text.count(']')
     
     if open_braces > close_braces or open_brackets > close_brackets:
+        _truncation_detected = True
+        _truncation_details = {
+            "open_braces": open_braces,
+            "close_braces": close_braces,
+            "open_brackets": open_brackets,
+            "close_brackets": close_brackets,
+            "original_length": len(json_text)
+        }
+        log(f"[TRUNCATION WARNING]: Response was TRUNCATED! Missing {open_braces - close_braces} braces and {open_brackets - close_brackets} brackets")
         log(f"[JSON FIX]: Detected truncated JSON - {open_braces} {{ vs {close_braces} }}, {open_brackets} [ vs {close_brackets} ]")
         
         search_patterns = [
@@ -525,7 +546,7 @@ def generate_presentation_plan(
     log(f"[SYSTEM PROMPT]: {len(system_prompt)} chars, first 200: {system_prompt[:200]}...")
     log(f"[USER PROMPT]: {len(user_prompt)} chars")
     log(f"[INPUT MARKDOWN]: {len(markdown_content)} chars")
-    log(f"[MAX TOKENS]: 16384")
+    log(f"[MAX TOKENS]: 32768")
     log(f"[TEMPERATURE]: 0.7")
     log("\n--- Calling OpenRouter API ---")
     
@@ -535,7 +556,7 @@ def generate_presentation_plan(
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ],
-        max_tokens=16384,
+        max_tokens=32768,
         temperature=0.7
     )
     
@@ -596,13 +617,43 @@ def generate_presentation_plan(
     log("LLM GENERATION - END")
     log("="*60 + "\n")
     
+    truncated, truncation_info = was_truncated()
+    if truncated:
+        log(f"[CRITICAL]: Response was truncated! This may cause incomplete visual beats in later sections.")
+        log(f"[TRUNCATION DETAILS]: {truncation_info}")
+        
+        truncation_trace = {
+            "prompt_version": "v2",
+            "model": model,
+            "max_tokens": 32768,
+            "raw_response_length": len(response_text),
+            "truncation": {
+                "detected": True,
+                "details": truncation_info
+            },
+            "fatal_error": "LLM response was truncated. Later sections may have incomplete content."
+        }
+        raise ValidationError(
+            f"LLM response was TRUNCATED (missing {truncation_info.get('open_braces', 0) - truncation_info.get('close_braces', 0)} braces, "
+            f"{truncation_info.get('open_brackets', 0) - truncation_info.get('close_brackets', 0)} brackets). "
+            f"Response length: {len(response_text)} chars. Consider reducing input size or increasing max_tokens.",
+            presentation_json,
+            truncation_trace
+        )
+    
     generation_trace = {
         "prompt_version": "v2",
         "system_prompt": system_prompt,
         "user_prompt": user_prompt,
         "model": model,
+        "max_tokens": 32768,
+        "raw_response_length": len(response_text),
         "raw_response": response_text,
         "sections_generated": len(presentation_json.get("sections", [])),
+        "truncation": {
+            "detected": truncated,
+            "details": truncation_info
+        },
         "validation": {
             "errors": validation_errors,
             "warnings": [{"message": w.message, "section_id": w.section_id, "section_type": w.section_type} 
