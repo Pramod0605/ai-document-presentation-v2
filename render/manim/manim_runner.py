@@ -2,7 +2,9 @@ import os
 import subprocess
 import tempfile
 import shutil
+import json
 from pathlib import Path
+from render.render_trace import log_render_prompt
 
 MANIM_TEMPLATES = {
     "equation": '''
@@ -63,6 +65,7 @@ class DerivationScene(Scene):
 
 def render_manim_video(topic: dict, output_dir: str) -> str:
     topic_id = topic.get("id", 1)
+    topic_title = topic.get("title", "Untitled")
     explanation_plan = topic.get("explanation_plan", {})
     manim_plan = explanation_plan.get("manim_plan", {})
     duration = topic.get("duration", 30)
@@ -72,14 +75,25 @@ def render_manim_video(topic: dict, output_dir: str) -> str:
     
     output_path = str(Path(output_dir) / f"topic_{topic_id}.mp4")
     
+    # Log the manim plan before rendering
+    log_render_prompt(
+        section_id=topic_id,
+        section_title=topic_title,
+        renderer="manim",
+        prompt=json.dumps(manim_plan, indent=2),
+        output_path=output_path,
+        extra_data={"scene_type": scene_type, "duration": duration}
+    )
+    
     try:
-        result = _execute_manim_render(scene_type, params, duration, output_path)
+        result = _execute_manim_render(scene_type, params, duration, output_path, topic_id, topic_title)
         return result
     except Exception as e:
         print(f"Manim render failed: {e}, using placeholder")
         return _create_placeholder(topic, output_path, duration)
 
-def _execute_manim_render(scene_type: str, params: dict, duration: int, output_path: str) -> str:
+def _execute_manim_render(scene_type: str, params: dict, duration: int, output_path: str, 
+                          topic_id: int = 0, topic_title: str = "") -> str:
     template = MANIM_TEMPLATES.get(scene_type, MANIM_TEMPLATES["equation"])
     
     default_params = {
@@ -103,6 +117,16 @@ def _execute_manim_render(scene_type: str, params: dict, duration: int, output_p
     except KeyError as e:
         print(f"Missing parameter {e}, using defaults")
         scene_code = template.format(**default_params)
+    
+    # Log the generated Manim code
+    log_render_prompt(
+        section_id=topic_id,
+        section_title=f"{topic_title} (generated code)",
+        renderer="manim_code",
+        prompt=scene_code,
+        output_path=output_path,
+        extra_data={"scene_type": scene_type}
+    )
     
     with tempfile.TemporaryDirectory() as tmpdir:
         scene_file = Path(tmpdir) / "scene.py"
