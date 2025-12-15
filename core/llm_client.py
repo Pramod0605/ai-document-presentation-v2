@@ -25,9 +25,6 @@ def fix_malformed_json(json_text: str) -> str:
         text = text[:-3]
     text = text.strip()
     
-    text = re.sub(r',\s*}', '}', text)
-    text = re.sub(r',\s*]', ']', text)
-    
     open_braces = text.count('{')
     close_braces = text.count('}')
     open_brackets = text.count('[')
@@ -36,23 +33,63 @@ def fix_malformed_json(json_text: str) -> str:
     if open_braces > close_braces or open_brackets > close_brackets:
         log(f"[JSON FIX]: Detected truncated JSON - {open_braces} {{ vs {close_braces} }}, {open_brackets} [ vs {close_brackets} ]")
         
-        last_complete = max(
-            text.rfind('},'),
-            text.rfind('}]'),
-            text.rfind('"}'),
-            text.rfind('"]')
-        )
+        search_patterns = [
+            (r'\}\s*\]', '}]'),
+            (r'\}\s*,', '},'),
+            (r'"\s*\}', '"}'),
+            (r'"\s*\]', '"]'),
+            (r'\]\s*\}', ']}'),
+            (r'\]\s*,', '],'),
+        ]
         
-        if last_complete > len(text) // 2:
-            text = text[:last_complete + 2]
-            log(f"[JSON FIX]: Truncated to last complete structure at char {last_complete}")
+        best_pos = -1
+        for pattern, _ in search_patterns:
+            matches = list(re.finditer(pattern, text))
+            if matches:
+                pos = matches[-1].end()
+                if pos > best_pos and pos > len(text) // 2:
+                    best_pos = pos
         
-        while open_brackets > close_brackets:
-            text += ']'
-            close_brackets += 1
-        while open_braces > close_braces:
-            text += '}'
-            close_braces += 1
+        if best_pos > 0:
+            text = text[:best_pos]
+            log(f"[JSON FIX]: Truncated to last complete structure at char {best_pos}")
+        else:
+            last_quote = text.rfind('"')
+            if last_quote > len(text) // 2:
+                search_back = text[:last_quote].rfind('"')
+                if search_back > 0:
+                    text = text[:last_quote + 1]
+                    log(f"[JSON FIX]: Truncated to last complete string at char {last_quote}")
+        
+        text = re.sub(r',\s*$', '', text)
+        
+        open_braces = text.count('{')
+        close_braces = text.count('}')
+        open_brackets = text.count('[')
+        close_brackets = text.count(']')
+        
+        closing_needed = []
+        stack = []
+        for char in text:
+            if char == '{':
+                stack.append('}')
+            elif char == '[':
+                stack.append(']')
+            elif char in '}]':
+                if stack and stack[-1] == char:
+                    stack.pop()
+        
+        closing_needed = list(reversed(stack))
+        
+        if closing_needed:
+            text = text.rstrip()
+            if text.endswith(','):
+                text = text[:-1]
+            text += ''.join(closing_needed)
+            log(f"[JSON FIX]: Added {len(closing_needed)} closing brackets: {''.join(closing_needed)}")
+    
+    text = re.sub(r',\s*}', '}', text)
+    text = re.sub(r',\s*]', ']', text)
     
     return text
 
@@ -365,6 +402,47 @@ def validate_and_fix_presentation(presentation: dict, subject: str, grade: str) 
         if "gesture_hints" not in section:
             section["gesture_hints"] = [{"time": 1.0, "action": "explain"}]
         
+        if section["section_type"] in ["content", "example"]:
+            narration_segments = section.get("narration_segments", [])
+            visual_beats = section.get("visual_beats", [])
+            
+            if "visual_beats" not in section:
+                section["visual_beats"] = []
+            
+            valid_beats = []
+            for beat in visual_beats:
+                is_valid = (
+                    isinstance(beat.get("segment_id"), (int, float)) and
+                    isinstance(beat.get("visual_instruction"), str) and
+                    beat.get("visual_instruction", "").strip() and
+                    isinstance(beat.get("labels"), list) and
+                    isinstance(beat.get("motion"), str)
+                )
+                if is_valid:
+                    valid_beats.append(beat)
+                else:
+                    log(f"[AUTO-REPAIR]: Removed incomplete visual_beat from section {section.get('id')}")
+            
+            section["visual_beats"] = valid_beats
+            visual_beats = valid_beats
+            
+            if narration_segments:
+                segment_ids = {s.get("id") for s in narration_segments if s.get("id") is not None}
+                beat_segment_ids = {b.get("segment_id") for b in visual_beats if b.get("segment_id") is not None}
+                missing_ids = segment_ids - beat_segment_ids
+                
+                for seg_id in sorted(missing_ids):
+                    matching_seg = next((s for s in narration_segments if s.get("id") == seg_id), None)
+                    seg_text = matching_seg.get("text", "Content explanation") if matching_seg else "Content explanation"
+                    placeholder_beat = {
+                        "segment_id": seg_id,
+                        "visual_instruction": f"Display educational content related to: {seg_text[:100]}",
+                        "labels": ["Educational content"],
+                        "motion": "Static display with text overlay"
+                    }
+                    section["visual_beats"].append(placeholder_beat)
+                    log(f"[AUTO-REPAIR]: Added placeholder visual_beat for segment {seg_id} in section {section.get('id')}")
+        
         section_errors, section_warnings = validate_section_v2(section)
         all_errors.extend(section_errors)
         all_warnings.extend(section_warnings)
@@ -412,7 +490,7 @@ def generate_presentation_plan(
     log(f"[SYSTEM PROMPT]: {len(system_prompt)} chars, first 200: {system_prompt[:200]}...")
     log(f"[USER PROMPT]: {len(user_prompt)} chars")
     log(f"[INPUT MARKDOWN]: {len(markdown_content)} chars")
-    log(f"[MAX TOKENS]: 8192")
+    log(f"[MAX TOKENS]: 16384")
     log(f"[TEMPERATURE]: 0.7")
     log("\n--- Calling OpenRouter API ---")
     
@@ -422,7 +500,7 @@ def generate_presentation_plan(
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ],
-        max_tokens=8192,
+        max_tokens=16384,
         temperature=0.7
     )
     
