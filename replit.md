@@ -104,8 +104,20 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-15: Added job-based async processing with real-time progress UI
+- 2025-12-15: UI now supports both PDF and Markdown file uploads (.pdf, .md, .markdown, .txt)
+- 2025-12-15: Added /submit_job and /job/<id>/status API endpoints
+- 2025-12-15: Fixed video playback sync issues for content videos
 - 2025-12-14: Switched TTS to Narakeet with Indian male voice (ravi)
 - 2025-12-14: Fixed Kie Runway API (duration must be 5, 8, or 10 seconds)
 - 2025-12-14: Upgraded to pedagogical structure (Intro/Summary/Content/Memory/Recap)
 - 2025-12-14: Added section_type validation and narration word count tracking
 - 2025-12-14: Player now handles all section types with appropriate layouts
+
+## Job-Based Processing
+
+The system now uses async job processing:
+- POST `/submit_job` - Submit PDF or Markdown file, returns job_id immediately
+- GET `/job/<id>/status` - Poll for progress (progress %, current step, completion)
+- Only one job runs at a time (serialized execution)
+- Progress bar shows real-time step updates in UI
