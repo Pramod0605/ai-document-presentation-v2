@@ -4,7 +4,7 @@ from pathlib import Path
 from render.wan.wan_runner import render_wan_video
 from render.manim.manim_runner import render_manim_video
 
-def execute_renderer(topic: dict, output_dir: str) -> dict:
+def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False) -> dict:
     os.makedirs(output_dir, exist_ok=True)
     
     topic_id = topic.get("id", 1)
@@ -24,14 +24,15 @@ def execute_renderer(topic: dict, output_dir: str) -> dict:
         "status": "pending",
         "video_path": None,
         "error": None,
-        "visual_beats_used": len(visual_beats) if visual_beats else 0
+        "visual_beats_used": len(visual_beats) if visual_beats else 0,
+        "dry_run": dry_run
     }
     
     try:
         if renderer == "manim":
-            video_path = render_manim_video(topic, output_dir)
+            video_path = render_manim_video(topic, output_dir, dry_run=dry_run)
         else:
-            video_path = render_wan_video(topic, output_dir)
+            video_path = render_wan_video(topic, output_dir, dry_run=dry_run)
         
         result["status"] = "success"
         result["video_path"] = video_path
@@ -43,7 +44,7 @@ def execute_renderer(topic: dict, output_dir: str) -> dict:
     
     return result
 
-def render_all_topics(presentation: dict, output_dir: str) -> list:
+def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False) -> list:
     os.makedirs(output_dir, exist_ok=True)
     
     rendered_videos = []
@@ -51,11 +52,13 @@ def render_all_topics(presentation: dict, output_dir: str) -> list:
     success_count = 0
     fail_count = 0
     
+    mode_label = "[DRY RUN] " if dry_run else ""
+    
     for topic in topics:
         topic_id = topic.get("id", 1)
-        print(f"Rendering topic {topic_id}: {topic.get('title', 'Untitled')}")
+        print(f"{mode_label}Rendering topic {topic_id}: {topic.get('title', 'Untitled')}")
         
-        result = execute_renderer(topic, output_dir)
+        result = execute_renderer(topic, output_dir, dry_run=dry_run)
         rendered_videos.append(result)
         
         if result["status"] == "success":
@@ -65,5 +68,5 @@ def render_all_topics(presentation: dict, output_dir: str) -> list:
             fail_count += 1
             print(f"  -> Failed: {result['error']}")
     
-    print(f"Rendering complete: {success_count} success, {fail_count} failed")
+    print(f"{mode_label}Rendering complete: {success_count} success, {fail_count} failed")
     return rendered_videos

@@ -18,7 +18,8 @@ def process_pdf_to_videos(
     subject: str = "General Science",
     grade: str = "9",
     output_dir: str = None,
-    job_id: str = None
+    job_id: str = None,
+    dry_run: bool = False
 ) -> dict:
     from core.job_manager import job_manager
     
@@ -71,7 +72,7 @@ def process_pdf_to_videos(
             job_manager.set_step(job_id, "Rendering videos with AI...", 2)
         
         job_status["steps"].append({"step": "render_videos", "status": "started"})
-        rendered_videos = render_all_topics(presentation, str(videos_dir))
+        rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run)
         
         success_count = sum(1 for v in rendered_videos if v.get("status") == "success")
         fail_count = len(rendered_videos) - success_count
@@ -80,24 +81,31 @@ def process_pdf_to_videos(
         job_status["steps"][-1]["videos"] = rendered_videos
         job_status["steps"][-1]["success_count"] = success_count
         job_status["steps"][-1]["fail_count"] = fail_count
+        job_status["steps"][-1]["dry_run"] = dry_run
         
         if job_id:
             job_manager.complete_step(job_id, 2)
-            job_manager.set_step(job_id, "Generating audio narration...", 3)
         
-        job_status["steps"].append({"step": "generate_audio", "status": "started"})
-        audio_files = generate_all_audio(presentation, str(audio_dir))
-        job_status["steps"][-1]["status"] = "completed"
-        job_status["steps"][-1]["audio_files"] = audio_files
-        
-        if job_id:
-            job_manager.complete_step(job_id, 3)
+        # Skip audio generation in dry_run mode
+        if dry_run:
+            job_status["steps"].append({"step": "generate_audio", "status": "skipped", "reason": "dry_run"})
+            audio_files = []
+        else:
+            if job_id:
+                job_manager.set_step(job_id, "Generating audio narration...", 3)
+            job_status["steps"].append({"step": "generate_audio", "status": "started"})
+            audio_files = generate_all_audio(presentation, str(audio_dir))
+            job_status["steps"][-1]["status"] = "completed"
+            job_status["steps"][-1]["audio_files"] = audio_files
+            if job_id:
+                job_manager.complete_step(job_id, 3)
         
         job_status["status"] = "completed"
         job_status["completed_at"] = datetime.now().isoformat()
         job_status["presentation_path"] = str(presentation_path)
         job_status["trace_path"] = str(trace_path)
         job_status["sections_count"] = len(presentation.get("sections", []))
+        job_status["dry_run"] = dry_run
         
     except Exception as e:
         job_status["status"] = "failed"
@@ -113,7 +121,8 @@ def process_markdown_to_videos(
     subject: str = "General Science",
     grade: str = "9",
     output_dir: str = None,
-    job_id: str = None
+    job_id: str = None,
+    dry_run: bool = False
 ) -> dict:
     from core.job_manager import job_manager
     
@@ -158,7 +167,7 @@ def process_markdown_to_videos(
             job_manager.set_step(job_id, "Rendering videos with AI...", 1)
         
         job_status["steps"].append({"step": "render_videos", "status": "started"})
-        rendered_videos = render_all_topics(presentation, str(videos_dir))
+        rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run)
         
         success_count = sum(1 for v in rendered_videos if v.get("status") == "success")
         fail_count = len(rendered_videos) - success_count
@@ -167,24 +176,31 @@ def process_markdown_to_videos(
         job_status["steps"][-1]["videos"] = rendered_videos
         job_status["steps"][-1]["success_count"] = success_count
         job_status["steps"][-1]["fail_count"] = fail_count
+        job_status["steps"][-1]["dry_run"] = dry_run
         
         if job_id:
             job_manager.complete_step(job_id, 1)
-            job_manager.set_step(job_id, "Generating audio narration...", 2)
         
-        job_status["steps"].append({"step": "generate_audio", "status": "started"})
-        audio_files = generate_all_audio(presentation, str(audio_dir))
-        job_status["steps"][-1]["status"] = "completed"
-        job_status["steps"][-1]["audio_files"] = audio_files
-        
-        if job_id:
-            job_manager.complete_step(job_id, 2)
+        # Skip audio generation in dry_run mode
+        if dry_run:
+            job_status["steps"].append({"step": "generate_audio", "status": "skipped", "reason": "dry_run"})
+            audio_files = []
+        else:
+            if job_id:
+                job_manager.set_step(job_id, "Generating audio narration...", 2)
+            job_status["steps"].append({"step": "generate_audio", "status": "started"})
+            audio_files = generate_all_audio(presentation, str(audio_dir))
+            job_status["steps"][-1]["status"] = "completed"
+            job_status["steps"][-1]["audio_files"] = audio_files
+            if job_id:
+                job_manager.complete_step(job_id, 2)
         
         job_status["status"] = "completed"
         job_status["completed_at"] = datetime.now().isoformat()
         job_status["presentation_path"] = str(presentation_path)
         job_status["trace_path"] = str(trace_path)
         job_status["sections_count"] = len(presentation.get("sections", []))
+        job_status["dry_run"] = dry_run
         
     except Exception as e:
         job_status["status"] = "failed"

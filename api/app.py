@@ -49,6 +49,7 @@ def submit_job():
         
         subject = request.form.get("subject", "General Science")
         grade = request.form.get("grade", "9")
+        dry_run = request.form.get("dry_run", "false").lower() == "true"
         
         if "file" in request.files:
             uploaded_file = request.files["file"]
@@ -82,7 +83,8 @@ def submit_job():
                     pdf_path=str(temp_file),
                     subject=subject,
                     grade=grade,
-                    output_dir=str(ASSETS_DIR)
+                    output_dir=str(ASSETS_DIR),
+                    dry_run=dry_run
                 )
             else:
                 with open(temp_file, "r", encoding="utf-8") as f:
@@ -95,7 +97,8 @@ def submit_job():
                     markdown_content=markdown_content,
                     subject=subject,
                     grade=grade,
-                    output_dir=str(ASSETS_DIR)
+                    output_dir=str(ASSETS_DIR),
+                    dry_run=dry_run
                 )
         
         elif request.is_json:
@@ -109,7 +112,8 @@ def submit_job():
             
             job_id = job_manager.create_job("markdown", {
                 "subject": subject,
-                "grade": grade
+                "grade": grade,
+                "dry_run": dry_run
             })
             
             run_job_async(
@@ -118,16 +122,19 @@ def submit_job():
                 markdown_content=markdown_content,
                 subject=subject,
                 grade=grade,
-                output_dir=str(ASSETS_DIR)
+                output_dir=str(ASSETS_DIR),
+                dry_run=dry_run
             )
         
         else:
             return jsonify({"error": "Please provide a file or markdown content"}), 400
         
+        mode_msg = " (DRY RUN - prompts only, no real rendering)" if dry_run else ""
         return jsonify({
             "status": "accepted",
             "job_id": job_id,
-            "message": "Job submitted successfully. Poll /job/<job_id>/status for progress."
+            "dry_run": dry_run,
+            "message": f"Job submitted successfully{mode_msg}. Poll /job/<job_id>/status for progress."
         })
     
     except Exception as e:
@@ -158,14 +165,15 @@ def get_job_status(job_id):
     })
 
 
-def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str) -> dict:
+def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False) -> dict:
     try:
         result = process_pdf_to_videos(
             pdf_path=pdf_path,
             subject=subject,
             grade=grade,
             output_dir=output_dir,
-            job_id=job_id
+            job_id=job_id,
+            dry_run=dry_run
         )
         return result
     finally:
@@ -173,13 +181,14 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
             os.unlink(pdf_path)
 
 
-def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str) -> dict:
+def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False) -> dict:
     return process_markdown_to_videos(
         markdown_content=markdown_content,
         subject=subject,
         grade=grade,
         output_dir=output_dir,
-        job_id=job_id
+        job_id=job_id,
+        dry_run=dry_run
     )
 
 
