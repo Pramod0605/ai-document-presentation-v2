@@ -104,6 +104,13 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-15: **Structural Coercion for Visual Beats (Gemini-safe)**:
+  - Replaced word-count validation with 5 mandatory sub-fields
+  - New schema: scene_setup, objects_and_properties, motion_sequence, labels_and_text, pedagogical_focus
+  - Each field must be at least 8 words (Gemini naturally produces 80-120 words total)
+  - Validation checks for missing/empty fields instead of word counts
+  - Updated prompts with good/bad examples in the new format
+  - Unit tests updated and all 6 passing
 - 2025-12-15: **Fixed LLM Truncation Issue (Root Cause)**:
   - CONFIRMED: Server logs showed "[JSON FIX]: Detected truncated JSON - 163 { vs 161 }"
   - Increased max_tokens from 16384 to 32768 (doubled output limit)

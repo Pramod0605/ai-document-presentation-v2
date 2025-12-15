@@ -1,37 +1,79 @@
 """
 Unit tests for visual_compiler strict validation.
-Tests that vague visual beats are correctly rejected.
+Tests that incomplete visual beats are correctly rejected.
+
+NEW SCHEMA: Each visual beat must have 5 required fields:
+- scene_setup
+- objects_and_properties
+- motion_sequence
+- labels_and_text
+- pedagogical_focus
 """
 
 import sys
 sys.path.insert(0, '.')
 
 from core.visual_compiler import (
-    validate_visual_beat_for_compilation,
+    validate_visual_beat_structure,
     compile_wan_prompt,
     compile_manim_plan,
     compile_section_visuals,
     VisualCompilationError,
-    VISUAL_INSTRUCTION_MIN_WORDS,
-    BANNED_VAGUE_PHRASES
+    REQUIRED_VISUAL_BEAT_FIELDS,
+    BANNED_VAGUE_PHRASES,
+    MIN_FIELD_WORDS
 )
 
 
-def test_rejects_short_instruction():
-    """Visual beat with <50 words should be rejected."""
+def make_valid_beat():
+    """Create a valid visual beat with all 5 required fields."""
+    return {
+        "segment_id": 1,
+        "scene_setup": "A white background with a 2D Cartesian coordinate system. X-axis from -5 to 5, Y-axis from -5 to 5. Grid lines visible in light gray.",
+        "objects_and_properties": "A blue circle with radius 2 units at position (0,0). A red arrow 4 units long starting at (0,0) pointing to (3,2). A green label text at position (3.5, 2.5).",
+        "motion_sequence": "First, the coordinate axes fade in. Then, the blue circle appears at origin. Next, the red arrow grows from origin to endpoint. Finally, the label fades in.",
+        "labels_and_text": "Label 'O' at origin (0,0). Label 'F=5N' above the red arrow tip at (3.2, 2.2). Label 'Force Vector' in the corner.",
+        "pedagogical_focus": "Students should understand that force is a vector with both magnitude and direction, represented by arrows in physics diagrams."
+    }
+
+
+def test_rejects_missing_fields():
+    """Visual beat missing required fields should be rejected."""
     beat = {
-        "visual_instruction": "Show a ball moving left to right with color blue.",
-        "labels": ["Ball", "Motion"],
-        "motion": "Ball moves from left to right smoothly"
+        "segment_id": 1,
+        "scene_setup": "A white background with coordinate system visible. Grid lines at every unit.",
     }
     
     try:
         compile_wan_prompt(beat, section_id=1, beat_index=0)
-        print("FAIL: Should have rejected short instruction")
+        print("FAIL: Should have rejected missing fields")
         return False
     except VisualCompilationError as e:
-        if "words" in str(e) and "minimum" in str(e):
-            print(f"PASS: Rejected short instruction - {e}")
+        if "missing required fields" in str(e).lower():
+            print(f"PASS: Rejected missing fields - {e}")
+            return True
+        print(f"FAIL: Wrong error - {e}")
+        return False
+
+
+def test_rejects_short_fields():
+    """Visual beat with too-short fields should be rejected."""
+    beat = {
+        "segment_id": 1,
+        "scene_setup": "White background only.",
+        "objects_and_properties": "A red arrow.",
+        "motion_sequence": "Arrow appears.",
+        "labels_and_text": "Label F.",
+        "pedagogical_focus": "Force concept."
+    }
+    
+    try:
+        compile_wan_prompt(beat, section_id=1, beat_index=0)
+        print("FAIL: Should have rejected short fields")
+        return False
+    except VisualCompilationError as e:
+        if "too short" in str(e).lower() or "words" in str(e).lower():
+            print(f"PASS: Rejected short fields - {e}")
             return True
         print(f"FAIL: Wrong error - {e}")
         return False
@@ -39,106 +81,28 @@ def test_rejects_short_instruction():
 
 def test_rejects_vague_phrases():
     """Visual beat with banned vague phrases should be rejected."""
-    long_instruction = (
-        "Show clearly the concept of electric field lines radiating outward from a positive charge. "
+    beat = make_valid_beat()
+    beat["objects_and_properties"] = (
+        "Show clearly the electric field lines radiating outward from the positive charge. "
         "The field lines should demonstrate effectively how the force decreases with distance. "
-        "Use blue color for the positive charge at center position. Draw arrows pointing outward "
-        "from center to edges of screen. Each arrow has decreasing size as it gets farther from center. "
-        "The arrows should be labeled with 'E' for electric field."
+        "Use appropriate colors for the visualization that illustrate the concept well."
     )
-    
-    beat = {
-        "visual_instruction": long_instruction,
-        "labels": ["E", "Electric Field"],
-        "motion": "Arrows appear one by one from center outward"
-    }
     
     try:
         compile_wan_prompt(beat, section_id=1, beat_index=0)
         print("FAIL: Should have rejected vague phrase 'show clearly'")
         return False
     except VisualCompilationError as e:
-        if "vague phrases" in str(e).lower():
+        if "vague" in str(e).lower():
             print(f"PASS: Rejected vague phrase - {e}")
             return True
         print(f"FAIL: Wrong error type - {e}")
         return False
 
 
-def test_rejects_missing_labels():
-    """Visual beat without labels should be rejected."""
-    long_instruction = (
-        "A blue circle representing a positive charge sits at the center of the screen. "
-        "Red arrows radiate outward from the center in 8 directions (up, down, left, right, diagonals). "
-        "Each arrow starts 1cm from center and extends to screen edge. Arrow thickness is 3 pixels. "
-        "The arrows animate in sequence, appearing clockwise starting from top arrow. "
-        "Background is dark gray color #333333 to provide contrast."
-    )
-    
-    beat = {
-        "visual_instruction": long_instruction,
-        "labels": [],
-        "motion": "Arrows appear one by one clockwise"
-    }
-    
-    try:
-        compile_wan_prompt(beat, section_id=1, beat_index=0)
-        print("FAIL: Should have rejected missing labels")
-        return False
-    except VisualCompilationError as e:
-        if "label" in str(e).lower():
-            print(f"PASS: Rejected missing labels - {e}")
-            return True
-        print(f"FAIL: Wrong error type - {e}")
-        return False
-
-
-def test_rejects_insufficient_motion():
-    """Visual beat with too short motion description should be rejected."""
-    long_instruction = (
-        "A blue circle representing a positive charge sits at the center of the screen. "
-        "Red arrows radiate outward from the center in 8 directions (up, down, left, right, diagonals). "
-        "Each arrow starts 1cm from center and extends to screen edge. Arrow thickness is 3 pixels. "
-        "Background is dark gray color #333333 to provide contrast with red arrows."
-    )
-    
-    beat = {
-        "visual_instruction": long_instruction,
-        "labels": ["Positive Charge", "Field Lines"],
-        "motion": "fade in"
-    }
-    
-    try:
-        compile_wan_prompt(beat, section_id=1, beat_index=0)
-        print("FAIL: Should have rejected short motion")
-        return False
-    except VisualCompilationError as e:
-        if "motion" in str(e).lower():
-            print(f"PASS: Rejected short motion - {e}")
-            return True
-        print(f"FAIL: Wrong error type - {e}")
-        return False
-
-
 def test_accepts_valid_beat():
-    """A properly detailed visual beat should be accepted."""
-    long_instruction = (
-        "A bright blue circle with radius 0.5 units sits at screen center position (0, 0). "
-        "Eight red arrow vectors radiate outward from the blue circle in 8 directions: up, down, left, right, "
-        "and four diagonals at 45-degree angles. Each arrow starts at 1 unit from center and extends to 4 units. "
-        "Arrow thickness is 3 pixels with pointed arrowheads. The arrows are labeled with 'E' near their tips. "
-        "Background is dark gray #333333 color. Arrow opacity fades from 100% at center to 60% at edges."
-    )
-    
-    beat = {
-        "visual_instruction": long_instruction,
-        "labels": ["E", "Electric Field", "+q"],
-        "motion": "Arrows appear sequentially clockwise starting from top, each taking 0.3 seconds to draw",
-        "objects": [
-            {"type": "circle", "color": "blue", "label": "+q"},
-            {"type": "arrow", "color": "red", "label": "E"}
-        ]
-    }
+    """A properly structured visual beat should be accepted."""
+    beat = make_valid_beat()
     
     try:
         prompt = compile_wan_prompt(beat, section_id=1, beat_index=0)
@@ -149,17 +113,16 @@ def test_accepts_valid_beat():
         return False
 
 
-def test_section_compilation_fails_on_vague():
-    """compile_section_visuals should return errors for vague beats."""
+def test_section_compilation_fails_on_incomplete():
+    """compile_section_visuals should return errors for incomplete beats."""
     section = {
         "id": 3,
         "section_type": "content",
         "renderer": "wan_video",
         "visual_beats": [
             {
-                "visual_instruction": "Show the concept beautifully with nice animations.",
-                "labels": [],
-                "motion": "animate"
+                "segment_id": 1,
+                "scene_setup": "Background only."
             }
         ]
     }
@@ -174,30 +137,49 @@ def test_section_compilation_fails_on_vague():
         return False
 
 
-def print_banned_phrases():
-    """Print all banned vague phrases for reference."""
+def test_manim_compilation():
+    """Test that Manim plans are compiled correctly from structured beats."""
+    beat = make_valid_beat()
+    
+    try:
+        plan = compile_manim_plan(beat, section_id=1, beat_index=0)
+        if "scene_type" in plan and "params" in plan and "structured_fields" in plan:
+            print(f"PASS: Manim plan compiled with scene_type: {plan['scene_type']}, params: {list(plan['params'].keys())}")
+            return True
+        print(f"FAIL: Manim plan missing expected fields. Got: {list(plan.keys())}")
+        return False
+    except VisualCompilationError as e:
+        print(f"FAIL: Rejected valid beat for Manim - {e}")
+        return False
+
+
+def print_schema_info():
+    """Print schema information for reference."""
+    print(f"\n=== VISUAL BEAT SCHEMA ===")
+    print(f"Required fields: {REQUIRED_VISUAL_BEAT_FIELDS}")
+    print(f"Minimum words per field: {MIN_FIELD_WORDS}")
     print(f"\n=== BANNED VAGUE PHRASES ({len(BANNED_VAGUE_PHRASES)}) ===")
-    for phrase in BANNED_VAGUE_PHRASES:
+    for phrase in BANNED_VAGUE_PHRASES[:5]:
         print(f"  - '{phrase}'")
-    print(f"\nMinimum word count for visual_instruction: {VISUAL_INSTRUCTION_MIN_WORDS}")
+    print(f"  ... and {len(BANNED_VAGUE_PHRASES) - 5} more")
 
 
 def run_all_tests():
     print("=" * 60)
-    print("VISUAL COMPILER STRICT VALIDATION TESTS")
+    print("VISUAL COMPILER STRUCTURED VALIDATION TESTS")
     print("=" * 60)
     
-    print_banned_phrases()
+    print_schema_info()
     
     print("\n--- Running Tests ---\n")
     
     tests = [
-        ("Rejects short instruction (<50 words)", test_rejects_short_instruction),
+        ("Rejects missing fields", test_rejects_missing_fields),
+        ("Rejects short fields", test_rejects_short_fields),
         ("Rejects vague phrases", test_rejects_vague_phrases),
-        ("Rejects missing labels", test_rejects_missing_labels),
-        ("Rejects insufficient motion", test_rejects_insufficient_motion),
-        ("Accepts valid detailed beat", test_accepts_valid_beat),
-        ("Section compilation fails on vague", test_section_compilation_fails_on_vague),
+        ("Accepts valid structured beat", test_accepts_valid_beat),
+        ("Section compilation fails on incomplete", test_section_compilation_fails_on_incomplete),
+        ("Manim compilation works", test_manim_compilation),
     ]
     
     passed = 0
@@ -212,6 +194,8 @@ def run_all_tests():
                 failed += 1
         except Exception as e:
             print(f"ERROR: {e}")
+            import traceback
+            traceback.print_exc()
             failed += 1
     
     print("\n" + "=" * 60)

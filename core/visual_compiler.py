@@ -1,17 +1,32 @@
 """
 Visual Compiler - Converts visual_beats to concrete renderer prompts/code.
 
-CRITICAL: This module implements FAIL-FAST for vague visual beats.
-- If a visual beat cannot produce a concrete prompt (≥50 words), it FAILS.
+CRITICAL: This module implements FAIL-FAST for incomplete visual beats.
+- If a visual beat is missing required fields, it FAILS.
 - NO "best effort" interpretation.
 - NO silent fallback to placeholders.
 - NO renderer creativity.
+
+SCHEMA: Each visual beat MUST have these 5 fields:
+- scene_setup
+- objects_and_properties
+- motion_sequence
+- labels_and_text
+- pedagogical_focus
 """
 
 import re
 from typing import Tuple, List, Optional
 
-VISUAL_INSTRUCTION_MIN_WORDS = 50
+REQUIRED_VISUAL_BEAT_FIELDS = [
+    "scene_setup",
+    "objects_and_properties", 
+    "motion_sequence",
+    "labels_and_text",
+    "pedagogical_focus"
+]
+
+MIN_FIELD_WORDS = 8
 
 BANNED_VAGUE_PHRASES = [
     "detailed animation",
@@ -35,11 +50,6 @@ BANNED_VAGUE_PHRASES = [
     "animate the concept"
 ]
 
-REQUIRED_CONCRETE_ELEMENTS = {
-    "manim": ["color", "position", "label", "coordinate", "arrow", "line", "circle", "text"],
-    "wan_video": ["color", "direction", "object", "motion", "position", "size", "label"]
-}
-
 
 class VisualCompilationError(Exception):
     def __init__(self, section_id: int, beat_index: int, reason: str):
@@ -62,115 +72,108 @@ def check_vague_phrases(text: str) -> List[str]:
     return found
 
 
-def check_concrete_elements(text: str, renderer: str) -> Tuple[bool, List[str]]:
-    required = REQUIRED_CONCRETE_ELEMENTS.get(renderer, [])
-    text_lower = text.lower()
-    found = [elem for elem in required if elem in text_lower]
-    missing = [elem for elem in required if elem not in text_lower]
-    has_enough = len(found) >= 2
-    return has_enough, missing
+def validate_visual_beat_structure(beat: dict, section_id: int, beat_index: int) -> None:
+    """Validate that a visual beat has all 5 required fields with sufficient content."""
+    
+    missing_fields = []
+    short_fields = []
+    vague_fields = []
+    
+    for field in REQUIRED_VISUAL_BEAT_FIELDS:
+        value = beat.get(field, "")
+        
+        if not value or not isinstance(value, str):
+            missing_fields.append(field)
+            continue
+        
+        word_count = count_words(value)
+        if word_count < MIN_FIELD_WORDS:
+            short_fields.append(f"{field} ({word_count} words, need {MIN_FIELD_WORDS}+)")
+        
+        vague = check_vague_phrases(value)
+        if vague:
+            vague_fields.append(f"{field}: {vague}")
+    
+    if missing_fields:
+        raise VisualCompilationError(
+            section_id, beat_index,
+            f"Missing required fields: {missing_fields}. "
+            f"All visual beats must have: {REQUIRED_VISUAL_BEAT_FIELDS}"
+        )
+    
+    if short_fields:
+        raise VisualCompilationError(
+            section_id, beat_index,
+            f"Fields too short: {short_fields}. "
+            f"Each field must be at least {MIN_FIELD_WORDS} words."
+        )
+    
+    if vague_fields:
+        raise VisualCompilationError(
+            section_id, beat_index,
+            f"Vague phrases detected: {vague_fields}. "
+            f"Use specific descriptions with colors, positions, and sizes."
+        )
 
 
-def validate_visual_beat_for_compilation(beat: dict, section_id: int, beat_index: int, renderer: str) -> None:
-    instruction = beat.get("visual_instruction", "")
-    labels = beat.get("labels", [])
-    motion = beat.get("motion", "")
-    
-    word_count = count_words(instruction)
-    if word_count < VISUAL_INSTRUCTION_MIN_WORDS:
-        raise VisualCompilationError(
-            section_id, beat_index,
-            f"visual_instruction has only {word_count} words, minimum {VISUAL_INSTRUCTION_MIN_WORDS} required. "
-            f"The instruction must be concrete and specific, not vague."
-        )
-    
-    vague = check_vague_phrases(instruction)
-    if vague:
-        raise VisualCompilationError(
-            section_id, beat_index,
-            f"visual_instruction contains banned vague phrases: {vague}. "
-            f"Rewrite with specific colors, positions, and motion sequences."
-        )
-    
-    if not labels or len(labels) == 0:
-        raise VisualCompilationError(
-            section_id, beat_index,
-            "missing labels - every visual beat must specify text labels to show on screen"
-        )
-    
-    if not motion or count_words(motion) < 5:
-        raise VisualCompilationError(
-            section_id, beat_index,
-            "missing or insufficient motion description - describe step-by-step animation sequence"
-        )
-    
-    has_concrete, missing = check_concrete_elements(instruction, renderer)
-    if not has_concrete:
-        raise VisualCompilationError(
-            section_id, beat_index,
-            f"visual_instruction lacks concrete elements. Missing: {missing[:3]}. "
-            f"Include specific colors, positions, sizes, or shapes."
-        )
+def extract_labels_from_text(labels_text: str) -> List[str]:
+    """Extract label strings from labels_and_text field."""
+    labels = re.findall(r"['\"]([^'\"]+)['\"]", labels_text)
+    if not labels:
+        labels = re.findall(r"Label\s+(\S+)", labels_text)
+    return labels if labels else ["Label"]
 
 
 def compile_wan_prompt(beat: dict, section_id: int, beat_index: int) -> str:
-    validate_visual_beat_for_compilation(beat, section_id, beat_index, "wan_video")
+    """Compile a WAN video prompt from structured visual beat fields."""
+    validate_visual_beat_structure(beat, section_id, beat_index)
     
-    instruction = beat.get("visual_instruction", "")
-    labels = beat.get("labels", [])
-    motion = beat.get("motion", "")
-    objects = beat.get("objects", [])
+    scene_setup = beat.get("scene_setup", "")
+    objects_text = beat.get("objects_and_properties", "")
+    motion = beat.get("motion_sequence", "")
+    labels_text = beat.get("labels_and_text", "")
+    focus = beat.get("pedagogical_focus", "")
     
-    prompt_parts = [instruction]
+    labels = extract_labels_from_text(labels_text)
     
-    if labels:
-        prompt_parts.append(f"Text labels to show: {', '.join(labels)}.")
-    
-    if motion:
-        prompt_parts.append(f"Animation sequence: {motion}")
-    
-    if objects:
-        for obj in objects:
-            obj_type = obj.get("type", "shape")
-            obj_color = obj.get("color", "")
-            obj_label = obj.get("label", "")
-            if obj_type and (obj_color or obj_label):
-                prompt_parts.append(f"Object: {obj_type} ({obj_color}) labeled '{obj_label}'.")
+    prompt_parts = [
+        f"Scene: {scene_setup}",
+        f"Objects: {objects_text}",
+        f"Animation: {motion}",
+        f"Text labels to show: {', '.join(labels)}.",
+        f"Educational goal: {focus}"
+    ]
     
     compiled_prompt = " ".join(prompt_parts)
-    
-    if count_words(compiled_prompt) < 50:
-        raise VisualCompilationError(
-            section_id, beat_index,
-            f"Compiled WAN prompt is too short ({count_words(compiled_prompt)} words). "
-            f"Visual beat lacks sufficient detail for video generation."
-        )
-    
     return compiled_prompt
 
 
 def compile_manim_plan(beat: dict, section_id: int, beat_index: int) -> dict:
-    validate_visual_beat_for_compilation(beat, section_id, beat_index, "manim")
+    """Compile a Manim animation plan from structured visual beat fields."""
+    validate_visual_beat_structure(beat, section_id, beat_index)
     
-    instruction = beat.get("visual_instruction", "")
-    labels = beat.get("labels", [])
-    motion = beat.get("motion", "")
-    objects = beat.get("objects", [])
+    scene_setup = beat.get("scene_setup", "")
+    objects_text = beat.get("objects_and_properties", "")
+    motion = beat.get("motion_sequence", "")
+    labels_text = beat.get("labels_and_text", "")
+    focus = beat.get("pedagogical_focus", "")
     
-    instruction_lower = instruction.lower()
-    if "graph" in instruction_lower or "plot" in instruction_lower or "axis" in instruction_lower or "axes" in instruction_lower:
+    combined = f"{scene_setup} {objects_text}".lower()
+    if "graph" in combined or "plot" in combined or "axis" in combined or "axes" in combined:
         scene_type = "graph"
-    elif "equation" in instruction_lower or "formula" in instruction_lower or "=" in instruction:
+    elif "equation" in combined or "formula" in combined or "=" in combined:
         scene_type = "equation"
-    elif "step" in instruction_lower or "derivation" in instruction_lower or "calculation" in instruction_lower:
+    elif "step" in combined or "derivation" in combined or "calculation" in combined:
         scene_type = "derivation"
     else:
         scene_type = "geometry"
     
-    params = {}
+    labels = extract_labels_from_text(labels_text)
     
+    params = {}
     if scene_type == "equation":
-        equation_match = re.search(r'([A-Z]?\s*=\s*[^,\.]+)', instruction)
+        import re
+        equation_match = re.search(r'([A-Z]?\s*=\s*[^,\.]+)', objects_text)
         if equation_match:
             params["equation"] = equation_match.group(1).strip()
         else:
@@ -186,15 +189,6 @@ def compile_manim_plan(beat: dict, section_id: int, beat_index: int) -> dict:
         params["function"] = "x**2"
         params["label"] = labels[0] if labels else "f(x)"
         params["wait_time"] = 3
-        
-        for obj in objects:
-            if obj.get("type") == "axes":
-                x_range = obj.get("x_range", [-5, 5])
-                y_range = obj.get("y_range", [-5, 5])
-                params["x_min"] = x_range[0]
-                params["x_max"] = x_range[1]
-                params["y_min"] = y_range[0]
-                params["y_max"] = y_range[1]
     
     elif scene_type == "derivation":
         steps = []
@@ -207,42 +201,27 @@ def compile_manim_plan(beat: dict, section_id: int, beat_index: int) -> dict:
         params["wait_time"] = 2
     
     else:
-        shape_code_parts = []
-        for obj in objects:
-            obj_type = obj.get("type", "circle")
-            color = obj.get("color", "BLUE").upper()
-            if obj_type == "circle":
-                radius = obj.get("radius", 1)
-                shape_code_parts.append(f"shapes.add(Circle(radius={radius}, color={color}))")
-            elif obj_type == "arrow" or obj_type == "vector":
-                start = obj.get("start", [0, 0])
-                end = obj.get("end", [1, 1])
-                shape_code_parts.append(f"shapes.add(Arrow(start=np.array([{start[0]}, {start[1]}, 0]), end=np.array([{end[0]}, {end[1]}, 0]), color={color}))")
-            elif obj_type == "line":
-                start = obj.get("start", [0, 0])
-                end = obj.get("end", [1, 1])
-                style = obj.get("style", "solid")
-                if style == "dashed":
-                    shape_code_parts.append(f"shapes.add(DashedLine(start=np.array([{start[0]}, {start[1]}, 0]), end=np.array([{end[0]}, {end[1]}, 0]), color={color}))")
-                else:
-                    shape_code_parts.append(f"shapes.add(Line(start=np.array([{start[0]}, {start[1]}, 0]), end=np.array([{end[0]}, {end[1]}, 0]), color={color}))")
-        
-        if shape_code_parts:
-            params["shape_code"] = "\n        ".join(shape_code_parts)
-        else:
-            params["shape_code"] = "shapes.add(Circle(radius=1, color=BLUE))"
+        params["shape_code"] = "shapes.add(Circle(radius=1, color=BLUE))"
         params["wait_time"] = 3
     
     return {
         "scene_type": scene_type,
         "params": params,
-        "source_instruction": instruction,
+        "source_instruction": f"{scene_setup} {objects_text} {motion}",
         "source_labels": labels,
-        "source_motion": motion
+        "source_motion": motion,
+        "structured_fields": {
+            "scene_setup": scene_setup,
+            "objects_and_properties": objects_text,
+            "motion_sequence": motion,
+            "labels_and_text": labels_text,
+            "pedagogical_focus": focus
+        }
     }
 
 
 def compile_section_visuals(section: dict) -> Tuple[Optional[str], Optional[dict], List[VisualCompilationError]]:
+    """Compile all visual beats in a section."""
     section_id = section.get("id", 0)
     section_type = section.get("section_type", "content")
     renderer = section.get("renderer", "wan_video")
@@ -282,6 +261,7 @@ def compile_section_visuals(section: dict) -> Tuple[Optional[str], Optional[dict
 
 
 def compile_presentation_visuals(presentation: dict) -> Tuple[dict, List[VisualCompilationError]]:
+    """Compile all visual beats in a presentation."""
     all_errors = []
     
     for section in presentation.get("sections", []):

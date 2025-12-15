@@ -55,27 +55,30 @@ VISUALIZATION RULES (NON-NEGOTIABLE)
    - "visualize the concept"
    - "illustrate the process"
 
-8. CONCRETE VISUAL INSTRUCTION EXAMPLES:
+8. VISUAL BEAT STRUCTURE (5 REQUIRED FIELDS):
 
-   BAD (will FAIL validation):
-   "Show force interaction clearly"
-   
-   GOOD (will PASS validation):
-   "Draw a red arrow labeled 'F1=10N' pointing right from point A. 
-    Draw a blue arrow labeled 'F2=5N' pointing left from point A.
-    Animate both arrows appearing sequentially, then show a green 
-    resultant arrow 'F_net=5N' pointing right."
+   Each visual beat MUST have these 5 fields:
+   - scene_setup: Describe background, coordinate system, initial state
+   - objects_and_properties: List ALL objects with colors, sizes, positions
+   - motion_sequence: Describe step-by-step animation order
+   - labels_and_text: List WHERE each label appears
+   - pedagogical_focus: What should the student understand?
 
-   BAD (will FAIL validation):
-   "Visualize photosynthesis process"
+   BAD (will FAIL - missing fields):
+   {{
+     "segment_id": 1,
+     "visual_instruction": "Show force interaction clearly"
+   }}
    
-   GOOD (will PASS validation):
-   "Show a plant cell cross-section with green chloroplasts.
-    Blue CO2 molecules enter through stomata on the left.
-    Yellow sunlight rays hit chloroplasts from above.
-    H2O molecules (blue spheres) rise from roots below.
-    Inside chloroplast: CO2 + H2O combine, green glucose molecule forms.
-    O2 molecules (red pairs) exit through stomata on right."
+   GOOD (will PASS - all 5 fields present):
+   {{
+     "segment_id": 1,
+     "scene_setup": "A white background with a point A at center. Cartesian grid visible.",
+     "objects_and_properties": "A red arrow 10 units long from point A pointing right. A blue arrow 5 units long from point A pointing left. A green resultant arrow 5 units long pointing right.",
+     "motion_sequence": "First, point A appears. Then, red F1 arrow grows rightward. Then, blue F2 arrow grows leftward. Finally, green resultant arrow appears.",
+     "labels_and_text": "Label 'A' at the point. Label 'F1=10N' above red arrow. Label 'F2=5N' above blue arrow. Label 'F_net=5N' above green arrow.",
+     "pedagogical_focus": "Students understand that forces are vectors that add, and the resultant shows net force direction and magnitude."
+   }}
 
 9. FORMULA VISUALIZATION RULES:
    - When narration mentions F=ma, show: "F", "=", "m", "×", "a" as separate animated symbols
@@ -111,15 +114,14 @@ RENDERER DECISION RULES
 VISUAL BEAT QUALITY CHECKLIST
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Before outputting each visual beat, verify:
-□ Can a renderer produce EXACTLY this without interpretation?
-□ Are colors specified? (red, blue, green, not "appropriate color")
-□ Are positions specified? (left, right, center, coordinates)
-□ Are sizes/magnitudes specified where relevant?
-□ Are motion directions and sequences described?
-□ Are text labels explicitly listed?
+Before outputting each visual beat, verify ALL 5 FIELDS are present:
+□ scene_setup: Does it describe background and coordinate system?
+□ objects_and_properties: Are colors, sizes, and positions listed?
+□ motion_sequence: Is animation order described step-by-step?
+□ labels_and_text: Are label positions specified?
+□ pedagogical_focus: Is the learning goal explained?
 
-If ANY answer is NO, rewrite the visual instruction to be more specific.
+If ANY field is missing or too short, add the missing content.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OUTPUT RULES

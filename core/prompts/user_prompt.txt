@@ -66,20 +66,27 @@ Examples must NEVER be explained only in words.
 VISUAL BEAT FORMAT (STRICT)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Each visual beat MUST include:
-- segment_id: integer matching narration_segments[].id
-- visual_instruction: CONCRETE description (≥50 words for content/example)
-- labels: array of EXACT text labels to show
-- motion: SPECIFIC animation description (not "animate smoothly")
-- objects: array of objects with properties (for Manim)
-- purpose: pedagogical purpose
+Each visual beat MUST be decomposed into FIVE REQUIRED FIELDS.
+ALL fields are MANDATORY and must be non-empty.
 
-VISUAL INSTRUCTION REQUIREMENTS:
-1. Must be ≥50 words for content and example sections
-2. Must specify colors (e.g., "red arrow", "blue circle")
-3. Must specify positions (e.g., "at origin", "top-left", "(3,4)")
-4. Must specify sizes where relevant (e.g., "radius 2 units")
-5. Must describe motion sequence (e.g., "first...then...finally")
+- segment_id: integer matching narration_segments[].id
+
+- scene_setup: Describe the initial visual scene in 2-3 sentences.
+  What is the background? What coordinate system? What starting state?
+
+- objects_and_properties: List ALL objects with their colors, sizes, positions.
+  Example: "A red arrow (10 units long) at origin pointing right. A blue circle (radius 2) at position (5,3)."
+
+- motion_sequence: Describe animation step-by-step, in order.
+  Example: "First, axes fade in. Then, the arrow grows from origin. Finally, the label appears."
+
+- labels_and_text: List EVERY label, symbol, text, and WHERE it appears.
+  Example: "Label 'F=10N' above the arrow. Label 'Origin' at (0,0). Axis labels 'x' and 'y'."
+
+- pedagogical_focus: Explain what the learner should understand from this visual.
+  Example: "Student should understand that force has both magnitude and direction."
+
+If ANY field is missing or too short, the output is INVALID.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CONCRETE VISUAL BEAT EXAMPLE
@@ -87,30 +94,25 @@ CONCRETE VISUAL BEAT EXAMPLE
 
 {{
   "segment_id": 1,
-  "visual_instruction": "Draw a 2D coordinate plane with x-axis from -5 to 5 and y-axis from -5 to 5. At the origin, draw a small black dot labeled 'O'. From the origin, draw a blue arrow 3 units long pointing at 30 degrees above the x-axis. Label this arrow 'v = 3 m/s'. Draw dashed lines from the arrowhead perpendicular to both axes, creating a right triangle. Label the horizontal component 'vx = 2.6 m/s' and the vertical component 'vy = 1.5 m/s'.",
-  "labels": ["O", "v = 3 m/s", "vx = 2.6 m/s", "vy = 1.5 m/s", "30°"],
-  "motion": "First draw axes fading in. Then animate the velocity vector growing from origin. Then draw dashed projection lines. Finally, show component labels appearing.",
-  "objects": [
-    {{"type": "axes", "x_range": [-5, 5], "y_range": [-5, 5]}},
-    {{"type": "vector", "start": [0, 0], "end": [2.6, 1.5], "color": "blue", "label": "v = 3 m/s"}},
-    {{"type": "line", "start": [2.6, 1.5], "end": [2.6, 0], "style": "dashed"}},
-    {{"type": "line", "start": [2.6, 1.5], "end": [0, 1.5], "style": "dashed"}}
-  ],
-  "purpose": "Show velocity vector decomposition into x and y components"
+  "scene_setup": "A 2D Cartesian coordinate plane with x-axis from -5 to 5 and y-axis from -5 to 5. Grid lines are light gray. Background is white. Origin is marked with a small black dot.",
+  "objects_and_properties": "A blue velocity vector arrow, 3 units in magnitude, starting at origin (0,0) and pointing at 30 degrees above x-axis, ending at approximately (2.6, 1.5). Two dashed gray projection lines: one vertical from (2.6, 1.5) to (2.6, 0), one horizontal from (2.6, 1.5) to (0, 1.5). A red angle arc at origin showing the 30-degree angle.",
+  "motion_sequence": "First, the coordinate axes fade in with grid. Then, the velocity vector grows from the origin outward to its full length. Next, the dashed projection lines draw themselves. Finally, all component labels appear simultaneously.",
+  "labels_and_text": "Label 'O' at the origin. Label 'v = 3 m/s' above the blue arrow tip. Label 'vx = 2.6 m/s' below the x-axis at x=1.3. Label 'vy = 1.5 m/s' to the left of the y-projection. Label '30°' inside the angle arc. Axis labels 'x' and 'y' at the ends.",
+  "pedagogical_focus": "Students should understand that any velocity vector can be decomposed into independent horizontal (x) and vertical (y) components using trigonometry. The visual shows that vx = v*cos(30°) and vy = v*sin(30°)."
 }}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-BANNED VAGUE INSTRUCTIONS
+BANNED PATTERNS (VALIDATION FAILURE)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 These will cause VALIDATION FAILURE:
-- "Show the concept visually"
-- "Animate the process"
-- "Display the formula clearly"
-- "Visualize the interaction"
-- "Demonstrate the principle"
-- "Illustrate the relationship"
-- Any instruction under 50 words for content/example
+- Missing ANY of the 5 required fields
+- Empty or single-sentence fields
+- Vague phrases like "show clearly", "animate smoothly", "visualize the concept"
+- scene_setup that doesn't describe background/coordinate system
+- objects_and_properties that doesn't list colors and positions
+- motion_sequence that doesn't describe step-by-step order
+- labels_and_text that doesn't specify WHERE labels appear
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 LAYOUT RULES
@@ -147,13 +149,11 @@ OUTPUT SCHEMA
       "visual_beats": [
         {{
           "segment_id": 1,
-          "visual_instruction": "Draw a coordinate plane with x-axis labeled from -5 to 5...",
-          "labels": ["x-axis", "y-axis", "origin"],
-          "motion": "Axes fade in from center, then labels appear left-to-right",
-          "objects": [
-            {{"type": "axes", "x_range": [-5, 5], "y_range": [-5, 5]}}
-          ],
-          "purpose": "Establish coordinate system for vector discussion"
+          "scene_setup": "A 2D coordinate plane with x-axis from -5 to 5 and y-axis from -5 to 5. White background with light gray grid lines.",
+          "objects_and_properties": "Two perpendicular black axis lines. Small black dot at origin. Tick marks every 1 unit on both axes.",
+          "motion_sequence": "First, the x-axis draws itself left to right. Then, the y-axis draws itself bottom to top. Finally, the grid and labels fade in.",
+          "labels_and_text": "Label 'x' at right end of x-axis. Label 'y' at top of y-axis. Label 'O' at origin.",
+          "pedagogical_focus": "Establish the coordinate system that will be used throughout this lesson for vector representation."
         }}
       ],
       "layout": {{
@@ -181,14 +181,14 @@ For recap sections, also include:
 QUALITY GATE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Before outputting, verify EACH visual beat:
-1. Is visual_instruction ≥50 words? (for content/example)
-2. Are specific colors mentioned?
-3. Are specific positions mentioned?
-4. Are labels explicitly listed?
-5. Is motion sequence described step-by-step?
+Before outputting, verify EACH visual beat has ALL 5 fields:
+1. scene_setup: Does it describe background and coordinate system?
+2. objects_and_properties: Does it list ALL objects with colors and positions?
+3. motion_sequence: Does it describe step-by-step animation order?
+4. labels_and_text: Does it list WHERE each label appears?
+5. pedagogical_focus: Does it explain what the student learns?
 
-If any check fails, REWRITE that visual beat.
+If ANY field is missing or too short, REWRITE that visual beat.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OUTPUT
