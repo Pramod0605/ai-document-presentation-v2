@@ -8,6 +8,7 @@ from core.datalab_client import pdf_to_markdown
 from core.llm_client import generate_presentation_plan
 from core.renderer_executor import render_all_topics
 from tts.generate_audio import generate_all_audio
+from render.render_trace import clear_render_trace
 
 PLAYER_ASSETS_DIR = Path(__file__).parent.parent / "player" / "assets"
 
@@ -27,6 +28,9 @@ def process_pdf_to_videos(
     
     os.makedirs(videos_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
+    
+    # Clear render trace for fresh logging
+    clear_render_trace()
     
     job_status = {
         "status": "processing",
@@ -119,6 +123,9 @@ def process_markdown_to_videos(
     
     os.makedirs(videos_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
+    
+    # Clear render trace for fresh logging
+    clear_render_trace()
     
     job_status = {
         "status": "processing",
