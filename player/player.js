@@ -651,6 +651,47 @@ Photosynthesis is essential for life on Earth as it produces the oxygen we breat
 
 document.getElementById('fileInput').addEventListener('change', handleFileUpload);
 
+function showNewContentOverlay() {
+  lessonData = null;
+  currentSlideIndex = 0;
+  
+  if (pollInterval) {
+    clearInterval(pollInterval);
+    pollInterval = null;
+  }
+  
+  document.getElementById('upload-box').innerHTML = `
+    <h2>AI Animated Education</h2>
+    <p>Upload PDF or Markdown file to generate educational videos</p>
+    <input type="file" id="fileInput" accept=".pdf,.md,.markdown,.txt" style="display:none">
+    <div style="margin-bottom: 15px;">
+      <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload PDF or Markdown</button>
+    </div>
+    <button class="upload-btn" style="background:#333" onclick="useSampleContent()">Try Sample Content</button>
+    <div class="upload-selects">
+      <select id="subjectSelect">
+        <option value="General Science">General Science</option>
+        <option value="Mathematics">Mathematics</option>
+        <option value="Physics">Physics</option>
+        <option value="Chemistry">Chemistry</option>
+        <option value="Biology">Biology</option>
+      </select>
+      <select id="gradeSelect">
+        <option value="8">Grade 8</option>
+        <option value="9" selected>Grade 9</option>
+        <option value="10">Grade 10</option>
+      </select>
+    </div>
+    <p style="color:#666; font-size:0.8rem; margin-top:15px;">Supports: .pdf, .md, .markdown, .txt files</p>
+  `;
+  
+  document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+  
+  document.getElementById('upload-overlay').classList.remove('hidden');
+}
+
+document.getElementById('btn-new').onclick = showNewContentOverlay;
+
 document.addEventListener('DOMContentLoaded', () => {
   checkExistingPresentation();
   updateVisuals();
