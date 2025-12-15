@@ -133,7 +133,10 @@ VISUAL_INSTRUCTION_MIN_WORDS = 50
 
 
 class ValidationError(Exception):
-    pass
+    def __init__(self, message: str, presentation=None, trace=None):
+        super().__init__(message)
+        self.presentation = presentation
+        self.trace = trace
 
 
 class ValidationWarning:
@@ -673,6 +676,7 @@ def generate_presentation_plan(
     
     if validation_errors:
         error_msg = f"Validation failed with {len(validation_errors)} critical errors:\n" + "\n".join(validation_errors)
-        raise ValidationError(error_msg)
+        generation_trace["validation"]["fatal_error"] = error_msg
+        raise ValidationError(error_msg, presentation_json, generation_trace)
     
     return presentation_json, generation_trace

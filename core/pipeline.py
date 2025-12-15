@@ -2,10 +2,10 @@ import os
 import json
 from pathlib import Path
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 
 from core.datalab_client import pdf_to_markdown
-from core.llm_client import generate_presentation_plan
+from core.llm_client import generate_presentation_plan, ValidationError
 from core.renderer_executor import render_all_topics
 from tts.generate_audio import generate_all_audio
 from render.render_trace import clear_render_trace
@@ -53,20 +53,39 @@ def process_pdf_to_videos(
             job_manager.set_step(job_id, "LLM generating presentation plan...", 1)
         
         job_status["steps"].append({"step": "generate_presentation_plan", "status": "started"})
-        presentation, generation_trace = generate_presentation_plan(
-            markdown_content=markdown_content,
-            subject=subject,
-            grade=grade
-        )
-        job_status["steps"][-1]["status"] = "completed"
+        
+        presentation = None
+        generation_trace = None
+        validation_failed = False
+        validation_error_msg = None
+        
+        try:
+            presentation, generation_trace = generate_presentation_plan(
+                markdown_content=markdown_content,
+                subject=subject,
+                grade=grade
+            )
+            job_status["steps"][-1]["status"] = "completed"
+        except ValidationError as ve:
+            validation_failed = True
+            validation_error_msg = str(ve)
+            presentation = ve.presentation
+            generation_trace = ve.trace
+            job_status["steps"][-1]["status"] = "validation_failed"
+            job_status["steps"][-1]["validation_errors"] = validation_error_msg
         
         presentation_path = Path(output_dir) / "presentation.json"
-        with open(presentation_path, "w") as f:
-            json.dump(presentation, f, indent=2)
+        if presentation:
+            with open(presentation_path, "w") as f:
+                json.dump(presentation, f, indent=2)
         
         trace_path = Path(output_dir) / "generation_trace.json"
-        with open(trace_path, "w") as f:
-            json.dump(generation_trace, f, indent=2)
+        if generation_trace:
+            with open(trace_path, "w") as f:
+                json.dump(generation_trace, f, indent=2)
+        
+        if validation_failed:
+            raise ValidationError(validation_error_msg, presentation, generation_trace)
         
         if job_id:
             job_manager.complete_step(job_id, 1)
@@ -151,20 +170,39 @@ def process_markdown_to_videos(
             job_manager.set_step(job_id, "LLM generating presentation plan...", 0)
         
         job_status["steps"].append({"step": "generate_presentation_plan", "status": "started"})
-        presentation, generation_trace = generate_presentation_plan(
-            markdown_content=markdown_content,
-            subject=subject,
-            grade=grade
-        )
-        job_status["steps"][-1]["status"] = "completed"
+        
+        presentation = None
+        generation_trace = None
+        validation_failed = False
+        validation_error_msg = None
+        
+        try:
+            presentation, generation_trace = generate_presentation_plan(
+                markdown_content=markdown_content,
+                subject=subject,
+                grade=grade
+            )
+            job_status["steps"][-1]["status"] = "completed"
+        except ValidationError as ve:
+            validation_failed = True
+            validation_error_msg = str(ve)
+            presentation = ve.presentation
+            generation_trace = ve.trace
+            job_status["steps"][-1]["status"] = "validation_failed"
+            job_status["steps"][-1]["validation_errors"] = validation_error_msg
         
         presentation_path = Path(output_dir) / "presentation.json"
-        with open(presentation_path, "w") as f:
-            json.dump(presentation, f, indent=2)
+        if presentation:
+            with open(presentation_path, "w") as f:
+                json.dump(presentation, f, indent=2)
         
         trace_path = Path(output_dir) / "generation_trace.json"
-        with open(trace_path, "w") as f:
-            json.dump(generation_trace, f, indent=2)
+        if generation_trace:
+            with open(trace_path, "w") as f:
+                json.dump(generation_trace, f, indent=2)
+        
+        if validation_failed:
+            raise ValidationError(validation_error_msg, presentation, generation_trace)
         
         if job_id:
             job_manager.complete_step(job_id, 0)
@@ -187,7 +225,6 @@ def process_markdown_to_videos(
         if job_id:
             job_manager.complete_step(job_id, 1)
         
-        # Skip audio generation in dry_run mode
         if dry_run:
             job_status["steps"].append({"step": "generate_audio", "status": "skipped", "reason": "dry_run"})
             audio_files = []

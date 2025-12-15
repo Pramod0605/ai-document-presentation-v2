@@ -104,6 +104,12 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-15: **Fixed File Persistence on Validation Failure**:
+  - ValidationError now carries presentation and trace data
+  - pipeline.py saves presentation.json and generation_trace.json BEFORE re-raising validation errors
+  - Failed jobs now have debug files available for investigation
+  - Job History section added to dashboard showing past jobs with error previews
+  - Jobs persist to jobs_index.json (survive server restarts)
 - 2025-12-15: **Governance Upgrade - Fail-Fast for Vague Visual Beats**:
   - core/visual_compiler.py - Converts visual_beats to concrete WAN/Manim prompts
   - VISUAL_INSTRUCTION_MIN_WORDS = 50 for content/example sections
