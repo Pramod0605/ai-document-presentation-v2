@@ -3,10 +3,12 @@ import sys
 import json
 import uuid
 import threading
-import tempfile
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, Optional, Callable
+from typing import Dict, Optional, Callable, List
+
+JOBS_DIR = Path("player/jobs")
+JOBS_INDEX_FILE = JOBS_DIR / "jobs_index.json"
 
 
 def log(msg: str):
@@ -14,12 +16,39 @@ def log(msg: str):
     print(msg)
     sys.stdout.flush()
 
+
+def load_jobs_index() -> Dict[str, dict]:
+    """Load jobs index from disk."""
+    if JOBS_INDEX_FILE.exists():
+        try:
+            with open(JOBS_INDEX_FILE, 'r') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, IOError):
+            return {}
+    return {}
+
+
+def save_jobs_index(jobs: Dict[str, dict]):
+    """Save jobs index to disk."""
+    JOBS_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        with open(JOBS_INDEX_FILE, 'w') as f:
+            json.dump(jobs, f, indent=2, default=str)
+    except IOError as e:
+        log(f"[WARN] Failed to save jobs index: {e}")
+
+
 class JobManager:
     def __init__(self):
-        self._jobs: Dict[str, dict] = {}
+        self._jobs: Dict[str, dict] = load_jobs_index()
         self._lock = threading.Lock()
         self._execution_lock = threading.Lock()
         self._current_job_id: Optional[str] = None
+    
+    def _persist(self):
+        """Save current jobs state to disk."""
+        with self._lock:
+            save_jobs_index(self._jobs)
     
     def create_job(self, job_type: str, params: dict) -> str:
         job_id = str(uuid.uuid4())[:8]
@@ -42,16 +71,26 @@ class JobManager:
                 "result": None
             }
         
+        self._persist()
         return job_id
     
     def get_job(self, job_id: str) -> Optional[dict]:
         with self._lock:
             return self._jobs.get(job_id, None)
     
-    def update_job(self, job_id: str, updates: dict):
+    def get_all_jobs(self) -> List[dict]:
+        """Get all jobs, sorted by created_at descending."""
+        with self._lock:
+            jobs = list(self._jobs.values())
+        jobs.sort(key=lambda j: j.get("created_at", ""), reverse=True)
+        return jobs
+    
+    def update_job(self, job_id: str, updates: dict, persist: bool = False):
         with self._lock:
             if job_id in self._jobs:
                 self._jobs[job_id].update(updates)
+        if persist:
+            self._persist()
     
     def set_step(self, job_id: str, step_name: str, step_number: int):
         job = self.get_job(job_id)
@@ -80,20 +119,20 @@ class JobManager:
             "progress": 100,
             "completed_at": datetime.now().isoformat(),
             "result": result
-        })
+        }, persist=True)
     
     def fail_job(self, job_id: str, error: str):
         self.update_job(job_id, {
             "status": "failed",
             "error": error,
             "completed_at": datetime.now().isoformat()
-        })
+        }, persist=True)
     
     def start_job(self, job_id: str):
         self.update_job(job_id, {
             "status": "processing",
             "started_at": datetime.now().isoformat()
-        })
+        }, persist=True)
 
 
 job_manager = JobManager()

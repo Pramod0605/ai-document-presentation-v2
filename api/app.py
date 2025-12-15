@@ -183,6 +183,29 @@ def get_job_status(job_id):
     })
 
 
+@app.route("/jobs", methods=["GET"])
+def list_all_jobs():
+    """List all jobs with their status (persisted across restarts)."""
+    jobs = job_manager.get_all_jobs()
+    return jsonify({
+        "jobs": [{
+            "job_id": j["id"],
+            "type": j.get("type", "unknown"),
+            "status": j["status"],
+            "progress": j["progress"],
+            "created_at": j["created_at"],
+            "completed_at": j["completed_at"],
+            "error": j.get("error"),
+            "params": {
+                "subject": j.get("params", {}).get("subject", ""),
+                "grade": j.get("params", {}).get("grade", ""),
+                "dry_run": j.get("params", {}).get("dry_run", False)
+            }
+        } for j in jobs],
+        "total": len(jobs)
+    })
+
+
 def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False) -> dict:
     try:
         result = process_pdf_to_videos(

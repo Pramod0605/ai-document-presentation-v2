@@ -321,6 +321,13 @@
                 <a class="file-link" id="promptsLink" href="#" target="_blank">render_prompts.json</a>
             </div>
         </div>
+
+        <div class="card">
+            <h2>Job History <button class="btn btn-secondary" style="float: right; padding: 6px 12px; font-size: 0.8rem;" onclick="loadJobHistory()">Refresh</button></h2>
+            <div id="jobHistoryList" style="margin-top: 15px;">
+                <div style="color: #888; text-align: center; padding: 20px;">Loading job history...</div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -475,6 +482,62 @@
                 window.open(`/player/jobs/${currentJobId}/`, '_blank');
             }
         }
+
+        async function loadJobHistory() {
+            const container = document.getElementById('jobHistoryList');
+            try {
+                const response = await fetch('/jobs');
+                const data = await response.json();
+                
+                if (!data.jobs || data.jobs.length === 0) {
+                    container.innerHTML = '<div style="color: #888; text-align: center; padding: 20px;">No jobs found</div>';
+                    return;
+                }
+                
+                container.innerHTML = data.jobs.map(job => {
+                    const statusClass = job.status === 'completed' ? 'completed' : 
+                                       job.status === 'failed' ? 'failed' : 
+                                       job.status === 'processing' ? 'processing' : 'pending';
+                    const createdDate = new Date(job.created_at).toLocaleString();
+                    const dryRunBadge = job.params?.dry_run ? '<span style="background: #ff9800; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 5px;">DRY RUN</span>' : '';
+                    
+                    let actions = '';
+                    if (job.status === 'completed') {
+                        actions = `<button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="window.open('/player/jobs/${job.job_id}/', '_blank')">Play</button>`;
+                    } else if (job.status === 'failed') {
+                        actions = `<button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="showJobError('${job.job_id}')">View Error</button>`;
+                    }
+                    
+                    const errorPreview = job.error ? `<div style="color: #ff5252; font-size: 0.8rem; margin-top: 5px; max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${job.error.substring(0, 100)}...</div>` : '';
+                    
+                    return `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); ${job.status === 'failed' ? 'background: rgba(255,82,82,0.05);' : ''}">
+                            <div>
+                                <span style="font-family: monospace; color: #00d4ff;">${job.job_id}</span>
+                                <span class="job-status ${statusClass}" style="margin-left: 10px; padding: 3px 8px; font-size: 0.75rem;">${job.status}</span>
+                                ${dryRunBadge}
+                                <div style="color: #888; font-size: 0.8rem; margin-top: 4px;">${createdDate} | ${job.params?.subject || 'N/A'} - ${job.params?.grade || 'N/A'}</div>
+                                ${errorPreview}
+                            </div>
+                            <div>${actions}</div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                container.innerHTML = `<div style="color: #ff5252; text-align: center; padding: 20px;">Error loading job history: ${err.message}</div>`;
+            }
+        }
+
+        function showJobError(jobId) {
+            fetch(`/job/${jobId}/status`)
+                .then(r => r.json())
+                .then(data => {
+                    alert(`Job ${jobId} Error:\n\n${data.error || 'Unknown error'}`);
+                })
+                .catch(err => alert('Error fetching job details: ' + err.message));
+        }
+
+        loadJobHistory();
     </script>
 </body>
 </html>
