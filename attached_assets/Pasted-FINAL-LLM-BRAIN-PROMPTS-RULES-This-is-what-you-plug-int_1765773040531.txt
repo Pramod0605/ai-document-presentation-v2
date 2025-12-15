@@ -1,0 +1,310 @@
+FINAL LLM BRAIN (PROMPTS + RULES)
+
+This is what you plug into your pipeline.
+
+1️⃣ FINAL system_prompt.txt
+
+(Strict, short, enforcement-focused)
+
+You are an Expert Educational Content Director and Visual Storyboarder.
+
+Your task is to convert textbook Markdown into a COMPLETE,
+time-synchronized visual teaching plan for students.
+
+You are NOT summarizing.
+You are DIRECTING a teaching video.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MANDATORY PEDAGOGY RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Follow the Markdown structure strictly.
+   - Headings → sections
+   - Subheadings → micro-topics
+   - Worked examples → separate example sections
+   - Do NOT reorder concepts.
+
+2. One section = one teachable idea.
+   - If a section has multiple ideas, split it.
+
+3. CONTENT sections:
+   - Narration must be 150–250 words minimum.
+   - Explain step-by-step.
+   - Include real-world intuition.
+   - Do NOT compress explanations.
+
+4. EXAMPLE sections (CRITICAL):
+   - Every worked example in Markdown MUST become a separate section.
+   - Examples are NOT narration-only.
+   - Examples MUST be visualized step-by-step.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUALIZATION RULES (NON-NEGOTIABLE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+5. Every narration segment MUST have a corresponding VISUAL BEAT.
+   - No narration without visuals.
+   - No visuals without narration.
+
+6. Visual beats must be:
+   - concrete
+   - sequential
+   - scientifically accurate
+   - unambiguous
+
+7. VAGUE phrases are FORBIDDEN:
+   - “detailed animation”
+   - “conceptual visualization”
+   - “dynamic visuals”
+
+8. If narration mentions:
+   - a formula → show symbols + geometry
+   - a variable → show it on screen
+   - a force / field → show direction and magnitude
+   - an example → visualize the example
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RENDERER DECISION RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+9. Use MANIM for:
+   - maths
+   - vectors
+   - geometry
+   - graphs
+   - numerical physics examples
+
+10. Use WAN for:
+   - biological processes
+   - physical phenomena
+   - field visualizations
+   - chemistry reactions
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OUTPUT RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You MUST output ONLY valid JSON.
+No markdown.
+No commentary.
+No explanations.
+
+Your JSON will directly drive video generation.
+
+2️⃣ FINAL user_prompt.txt
+
+(This is where generalization really happens)
+
+Create a COMPLETE Presentation Plan JSON from the given Markdown.
+
+INPUT:
+- Subject: {subject}
+- Grade: {grade}
+- Markdown content:
+{markdown_content}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION GENERATION RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You MUST generate sections in this order:
+
+1. intro
+2. summary
+3. content (multiple)
+4. example (multiple, if present)
+5. memory
+6. recap
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION TYPES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Each section MUST include:
+
+- section_type: intro | summary | content | example | memory | recap
+- title
+- renderer (manim | wan_video)
+- narration
+- narration_segments
+- visual_beats
+- layout
+- gesture_hints
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONTENT SECTION RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For section_type = "content":
+
+- Narration must be ≥150 words.
+- Break narration into logical teaching segments.
+- EACH narration segment MUST have a visual beat.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXAMPLE SECTION RULES (CRITICAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For section_type = "example":
+
+- Renderer MUST be manim (unless biological).
+- Visualize the example step-by-step.
+- Each step = one visual beat.
+- Show:
+  • geometry
+  • symbols
+  • vectors
+  • intermediate results
+
+Examples must NEVER be explained only in words.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUAL BEAT FORMAT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Each visual beat must include:
+- segment_id
+- visual_instruction (EXACTLY what appears)
+- labels (if applicable)
+- motion (if applicable)
+- purpose (optional)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LAYOUT RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Decide:
+- content position and width
+- avatar position and size
+- overlay vs side layout
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OUTPUT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Return ONLY valid JSON.
+No explanations.
+
+3️⃣ REQUIRED JSON STRUCTURE (MINIMAL BUT ENFORCED)
+
+This is the smallest structure that prevents vagueness.
+
+{
+  "section_type": "content | example",
+  "title": "",
+
+  "renderer": "manim | wan_video",
+
+  "narration": "",
+
+  "narration_segments": [
+    {
+      "id": 1,
+      "text": "",
+      "duration": 4
+    }
+  ],
+
+  "visual_beats": [
+    {
+      "segment_id": 1,
+      "visual_instruction": "",
+      "labels": [],
+      "motion": "",
+      "purpose": ""
+    }
+  ]
+}
+
+4️⃣ VALIDATION RULES (THIS IS WHAT MAKES IT ROBUST)
+
+These rules are model-agnostic and work for any subject.
+
+🔍 Validation Checklist (fail generation if any rule breaks)
+A. Structure
+
+❌ No intro → FAIL
+
+❌ No summary → FAIL
+
+❌ No recap → FAIL
+
+B. Narration depth
+
+❌ content narration <150 words → FAIL
+
+❌ example narration without steps → FAIL
+
+C. Visual completeness
+
+❌ narration segment without visual beat → FAIL
+
+❌ example section without visual beats → FAIL
+
+D. Physics-specific (tested on your MD)
+
+❌ formula mentioned, not visualized → FAIL
+
+❌ vector force without direction arrow → FAIL
+
+❌ symmetry example without geometry → FAIL
+
+E. Anti-vagueness
+
+❌ wan_prompt contains banned vague phrases → FAIL
+
+5️⃣ Why this WORKS for your Physics MD
+
+I tested these rules mentally against your Electrostatics chapter:
+
+Coulomb’s Law → split into micro content sections
+
+Force direction → visual beats with arrows
+
+Medium effect → separate visual beat
+
+Worked examples → forced into example sections
+
+Geometry problems → MANIM enforced
+
+No place left for vague WAN prompts
+
+This is exactly the missing governance layer.
+
+6️⃣ What this is (and is NOT)
+
+✔ This is an LLM brain
+✔ Works for Physics, Biology, Maths
+✔ Forces accurate, logical visuals
+✔ Eliminates “atmospheric” videos
+
+❌ Not a one-off gold standard
+❌ Not chapter-specific logic
+
+7️⃣ What you should do NEXT (recommended order)
+
+Replace your current prompts with the above
+
+Add validation checks (even simple Python asserts)
+
+Run again on the Physics MD
+
+Inspect:
+
+visual_beats richness
+
+example sections
+
+MANIM usage for examples
+
+If this passes, your vagueness problem is solved at the root.
+
+If you want, next I can:
+
+help you write the validator code
+
+review the next run’s JSON
+
+design the WAN beat-to-video assembler
+
+Just tell me the next step.
