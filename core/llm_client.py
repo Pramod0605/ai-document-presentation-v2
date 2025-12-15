@@ -12,6 +12,50 @@ def log(msg: str):
     print(msg)
     sys.stdout.flush()
 
+
+def fix_malformed_json(json_text: str) -> str:
+    """Attempt to fix common JSON issues from LLM responses."""
+    text = json_text.strip()
+    
+    if text.startswith("```json"):
+        text = text[7:]
+    if text.startswith("```"):
+        text = text[3:]
+    if text.endswith("```"):
+        text = text[:-3]
+    text = text.strip()
+    
+    text = re.sub(r',\s*}', '}', text)
+    text = re.sub(r',\s*]', ']', text)
+    
+    open_braces = text.count('{')
+    close_braces = text.count('}')
+    open_brackets = text.count('[')
+    close_brackets = text.count(']')
+    
+    if open_braces > close_braces or open_brackets > close_brackets:
+        log(f"[JSON FIX]: Detected truncated JSON - {open_braces} {{ vs {close_braces} }}, {open_brackets} [ vs {close_brackets} ]")
+        
+        last_complete = max(
+            text.rfind('},'),
+            text.rfind('}]'),
+            text.rfind('"}'),
+            text.rfind('"]')
+        )
+        
+        if last_complete > len(text) // 2:
+            text = text[:last_complete + 2]
+            log(f"[JSON FIX]: Truncated to last complete structure at char {last_complete}")
+        
+        while open_brackets > close_brackets:
+            text += ']'
+            close_brackets += 1
+        while open_braces > close_braces:
+            text += '}'
+            close_braces += 1
+    
+    return text
+
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
@@ -389,8 +433,23 @@ def generate_presentation_plan(
     
     json_match = re.search(r'\{[\s\S]*\}', response_text)
     if json_match:
-        log(f"[JSON EXTRACTION]: Found JSON block of {len(json_match.group())} chars")
-        presentation_json = json.loads(json_match.group())
+        json_text = json_match.group()
+        log(f"[JSON EXTRACTION]: Found JSON block of {len(json_text)} chars")
+        
+        try:
+            presentation_json = json.loads(json_text)
+        except json.JSONDecodeError as e:
+            log(f"[JSON ERROR]: {e}")
+            log(f"[JSON ERROR]: Attempting to fix malformed JSON...")
+            
+            json_text = fix_malformed_json(json_text)
+            try:
+                presentation_json = json.loads(json_text)
+                log(f"[JSON FIXED]: Successfully parsed after repair")
+            except json.JSONDecodeError as e2:
+                log(f"[JSON REPAIR FAILED]: {e2}")
+                log(f"[JSON TAIL 500 chars]: ...{json_text[-500:]}")
+                raise ValueError(f"LLM returned invalid JSON: {e2}")
     else:
         log("[JSON EXTRACTION]: FAILED - No JSON found!")
         raise ValueError("LLM did not return valid JSON")

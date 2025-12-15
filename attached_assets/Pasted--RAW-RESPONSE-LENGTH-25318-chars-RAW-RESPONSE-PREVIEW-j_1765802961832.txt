@@ -1,0 +1,64 @@
+[RAW RESPONSE LENGTH]: 25318 chars
+[RAW RESPONSE PREVIEW]: ```json
+{
+  "chapter_title": "ELECTROSTATICS",
+  "subject": "General Science",
+  "grade": "9",
+  "language": "en-IN",
+  "sections": [
+    {
+      "section_type": "intro",
+      "id": 1,
+      "title": "Introduction to Electrostatics",
+      "renderer": "wan_video",
+      "narration": "Welcome to the fascinating world of electrostatics! Have you ever felt a small shock when you touch a doorknob after walking on a carpet? Or seen your hair stand on end after taking off a woolen cap? These everyday...
+[JSON EXTRACTION]: Found JSON block of 24850 chars
+
+[JOB ea0df82d] JOB FAILED!
+[JOB ea0df82d] Error: Expecting ',' delimiter: line 403 column 10 (char 24850)
+[JOB ea0df82d] Traceback:
+Traceback (most recent call last):
+  File "/home/runner/workspace/core/job_manager.py", line 109, in worker
+    result = process_func(job_id=job_id, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/api/app.py", line 177, in process_markdown_job
+    return process_markdown_to_videos(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/core/pipeline.py", line 134, in process_markdown_to_videos
+    presentation, generation_trace = generate_presentation_plan(
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/tenacity/__init__.py", line 338, in wrapped_f
+    return copy(f, *args, **kw)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/tenacity/__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/tenacity/__init__.py", line 378, in iter
+    result = action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/tenacity/__init__.py", line 400, in <lambda>
+    self._add_action_func(lambda rs: rs.outcome.result())
+                                     ^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/tenacity/__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/core/llm_client.py", line 393, in generate_presentation_plan
+    presentation_json = json.loads(json_match.group())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting ',' delimiter: line 403 column 10 (char 24850)
+
+172.31.66.98 - - [15/Dec/2025 12:48:51] "GET /job/ea0df82d/status HTTP/1.1" 200 -
