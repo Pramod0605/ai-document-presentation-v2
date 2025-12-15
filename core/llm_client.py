@@ -344,6 +344,10 @@ def generate_presentation_plan(
     grade: str,
     model: str = "meta-llama/llama-3.3-70b-instruct"
 ) -> tuple[dict, dict]:
+    print("\n" + "="*60)
+    print("LLM GENERATION - START")
+    print("="*60)
+    
     system_prompt = load_system_prompt()
     user_prompt_template = load_user_prompt()
     
@@ -352,6 +356,14 @@ def generate_presentation_plan(
         grade=grade,
         markdown_content=markdown_content
     )
+    
+    print(f"\n[MODEL]: {model}")
+    print(f"[SYSTEM PROMPT]: {len(system_prompt)} chars, first 200: {system_prompt[:200]}...")
+    print(f"[USER PROMPT]: {len(user_prompt)} chars")
+    print(f"[INPUT MARKDOWN]: {len(markdown_content)} chars")
+    print(f"[MAX TOKENS]: 8192")
+    print(f"[TEMPERATURE]: 0.7")
+    print("\n--- Calling OpenRouter API ---")
     
     response = openrouter.chat.completions.create(
         model=model,
@@ -365,15 +377,45 @@ def generate_presentation_plan(
     
     response_text = response.choices[0].message.content or ""
     
+    print(f"\n[RAW RESPONSE LENGTH]: {len(response_text)} chars")
+    print(f"[RAW RESPONSE PREVIEW]: {response_text[:500]}...")
+    
     json_match = re.search(r'\{[\s\S]*\}', response_text)
     if json_match:
+        print(f"[JSON EXTRACTION]: Found JSON block of {len(json_match.group())} chars")
         presentation_json = json.loads(json_match.group())
     else:
+        print("[JSON EXTRACTION]: FAILED - No JSON found!")
         raise ValueError("LLM did not return valid JSON")
     
     presentation_json, validation_errors, validation_warnings = validate_and_fix_presentation(
         presentation_json, subject, grade
     )
+    
+    print(f"\n[SECTIONS GENERATED]: {len(presentation_json.get('sections', []))}")
+    print("\n--- Section-by-Section Analysis ---")
+    for sec in presentation_json.get("sections", []):
+        sec_id = sec.get("id", "?")
+        sec_type = sec.get("section_type", "unknown")
+        sec_title = sec.get("title", "Untitled")[:40]
+        narr = sec.get("narration", "")
+        wc = count_words(narr)
+        has_segments = "YES" if sec.get("narration_segments") else "NO"
+        has_beats = "YES" if sec.get("visual_beats") else "NO"
+        status = "OK" if (sec_type != "content" or wc >= CONTENT_MIN_WORDS) else "FAIL"
+        print(f"  [{sec_id}] {sec_type:8} | {wc:3} words | segments:{has_segments} beats:{has_beats} | {status} | {sec_title}")
+    
+    print(f"\n[VALIDATION ERRORS]: {len(validation_errors)}")
+    for err in validation_errors:
+        print(f"  ERROR: {err}")
+    print(f"[VALIDATION WARNINGS]: {len(validation_warnings)}")
+    for warn in validation_warnings:
+        if isinstance(warn, ValidationWarning):
+            print(f"  WARN: {warn.message}")
+    
+    print("\n" + "="*60)
+    print("LLM GENERATION - END")
+    print("="*60 + "\n")
     
     generation_trace = {
         "prompt_version": "v2",
