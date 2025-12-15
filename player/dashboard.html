@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Education - Job Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00d4ff;
+            font-size: 2rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .card h2 {
+            color: #00d4ff;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1rem;
+        }
+        .form-group input[type="file"] {
+            cursor: pointer;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .checkbox-item label {
+            cursor: pointer;
+            color: #ccc;
+        }
+        .checkbox-item.checked label {
+            color: #00d4ff;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #000;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #000;
+        }
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .status-area {
+            display: none;
+        }
+        .status-area.visible {
+            display: block;
+        }
+        .job-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .job-id {
+            font-family: monospace;
+            background: rgba(0, 212, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 6px;
+            color: #00d4ff;
+        }
+        .job-status {
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+        .job-status.processing {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        .job-status.completed {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+        .job-status.failed {
+            background: rgba(255, 82, 82, 0.2);
+            color: #ff5252;
+        }
+        .job-status.pending {
+            background: rgba(255, 255, 255, 0.1);
+            color: #aaa;
+        }
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .progress-bar .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .current-step {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        .step-details {
+            display: flex;
+            justify-content: space-between;
+            color: #888;
+            font-size: 0.85rem;
+        }
+        .error-message {
+            background: rgba(255, 82, 82, 0.1);
+            border: 1px solid rgba(255, 82, 82, 0.3);
+            color: #ff5252;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        .file-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #00d4ff;
+            text-decoration: none;
+            padding: 8px 0;
+            font-size: 0.9rem;
+        }
+        .file-link:hover {
+            text-decoration: underline;
+        }
+        .files-section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .files-section h3 {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .option-description {
+            font-size: 0.8rem;
+            color: #888;
+            margin-left: 26px;
+            margin-top: 2px;
+        }
+        .timestamp {
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Education Job Dashboard</h1>
+
+        <div class="card">
+            <h2>Submit New Job</h2>
+            <form id="submitForm">
+                <div class="form-group">
+                    <label for="file">Upload File (PDF or Markdown)</label>
+                    <input type="file" id="file" name="file" accept=".pdf,.md,.markdown,.txt" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" value="Physics" placeholder="e.g. Physics, Chemistry">
+                    </div>
+                    <div class="form-group">
+                        <label for="grade">Grade</label>
+                        <input type="text" id="grade" name="grade" value="12" placeholder="e.g. 9, 10, 11, 12">
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="dry_run" name="dry_run">
+                        <label for="dry_run">Dry Run</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="skip_wan" name="skip_wan">
+                        <label for="skip_wan">Skip WAN Videos</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="skip_avatar" name="skip_avatar">
+                        <label for="skip_avatar">Skip Avatar</label>
+                    </div>
+                </div>
+                <div class="option-description" id="optionDesc">
+                    Select options to customize the job processing.
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Submit Job</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card status-area" id="statusArea">
+            <h2>Job Status</h2>
+            
+            <div class="job-info">
+                <div>
+                    <span class="job-id" id="jobIdDisplay">-</span>
+                    <span class="timestamp" id="createdAt"></span>
+                </div>
+                <span class="job-status pending" id="jobStatus">Pending</span>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress" id="progressBar" style="width: 0%"></div>
+            </div>
+
+            <div class="current-step" id="currentStep">Waiting...</div>
+
+            <div class="step-details">
+                <span id="stepsCompleted">Steps: 0/0</span>
+                <span id="progressPercent">0%</span>
+            </div>
+
+            <div class="error-message" id="errorMessage" style="display: none;"></div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" id="refreshBtn" onclick="refreshStatus()">Refresh Status</button>
+                <button class="btn btn-success" id="playBtn" style="display: none;" onclick="openPlayer()">Play Video</button>
+            </div>
+
+            <div class="files-section" id="filesSection" style="display: none;">
+                <h3>Job Output Files</h3>
+                <a class="file-link" id="presentationLink" href="#" target="_blank">presentation.json</a>
+                <a class="file-link" id="traceLink" href="#" target="_blank">generation_trace.json</a>
+                <a class="file-link" id="promptsLink" href="#" target="_blank">render_prompts.json</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentJobId = null;
+        let pollInterval = null;
+
+        const optionDescriptions = {
+            none: "Select options to customize the job processing.",
+            dry_run: "Dry Run: Skip actual video/audio generation, only log prompts to render_prompts.json",
+            skip_wan: "Skip WAN: Use placeholder videos instead of kie.ai video generation",
+            skip_avatar: "Skip Avatar: Disable avatar overlay in the player"
+        };
+
+        document.querySelectorAll('.checkbox-item input').forEach(cb => {
+            cb.addEventListener('change', updateOptionDesc);
+        });
+
+        function updateOptionDesc() {
+            const checked = Array.from(document.querySelectorAll('.checkbox-item input:checked'))
+                .map(cb => cb.id);
+            
+            document.querySelectorAll('.checkbox-item').forEach(item => {
+                const input = item.querySelector('input');
+                item.classList.toggle('checked', input.checked);
+            });
+
+            if (checked.length === 0) {
+                document.getElementById('optionDesc').textContent = optionDescriptions.none;
+            } else {
+                const desc = checked.map(id => optionDescriptions[id]).filter(Boolean).join(' | ');
+                document.getElementById('optionDesc').textContent = desc;
+            }
+        }
+
+        document.getElementById('submitForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            const formData = new FormData();
+            const fileInput = document.getElementById('file');
+            formData.append('file', fileInput.files[0]);
+            formData.append('subject', document.getElementById('subject').value);
+            formData.append('grade', document.getElementById('grade').value);
+            formData.append('dry_run', document.getElementById('dry_run').checked ? 'true' : 'false');
+            formData.append('skip_wan', document.getElementById('skip_wan').checked ? 'true' : 'false');
+            formData.append('skip_avatar', document.getElementById('skip_avatar').checked ? 'true' : 'false');
+
+            try {
+                const response = await fetch('/submit_job', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.job_id) {
+                    currentJobId = data.job_id;
+                    showStatusArea();
+                    updateStatus(data);
+                    startPolling();
+                } else {
+                    alert('Error: ' + (data.error || data.message || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('Error submitting job: ' + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Job';
+            }
+        });
+
+        function showStatusArea() {
+            document.getElementById('statusArea').classList.add('visible');
+        }
+
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = setInterval(refreshStatus, 3000);
+        }
+
+        function stopPolling() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+        }
+
+        async function refreshStatus() {
+            if (!currentJobId) return;
+
+            try {
+                const response = await fetch(`/job/${currentJobId}/status`);
+                const data = await response.json();
+                updateStatus(data);
+
+                if (data.status === 'completed' || data.status === 'failed') {
+                    stopPolling();
+                }
+            } catch (err) {
+                console.error('Error refreshing status:', err);
+            }
+        }
+
+        function updateStatus(data) {
+            document.getElementById('jobIdDisplay').textContent = data.job_id || currentJobId;
+            
+            const statusEl = document.getElementById('jobStatus');
+            statusEl.textContent = data.status || 'pending';
+            statusEl.className = 'job-status ' + (data.status || 'pending');
+
+            if (data.created_at) {
+                document.getElementById('createdAt').textContent = 
+                    'Created: ' + new Date(data.created_at).toLocaleTimeString();
+            }
+
+            const progress = data.progress || 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressPercent').textContent = progress + '%';
+
+            document.getElementById('currentStep').textContent = 
+                data.current_step || 'Waiting...';
+
+            document.getElementById('stepsCompleted').textContent = 
+                `Steps: ${data.steps_completed || 0}/${data.total_steps || 0}`;
+
+            if (data.error) {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').textContent = data.error;
+            } else {
+                document.getElementById('errorMessage').style.display = 'none';
+            }
+
+            if (data.status === 'completed') {
+                document.getElementById('playBtn').style.display = 'inline-block';
+                document.getElementById('filesSection').style.display = 'block';
+                
+                const basePath = `/player/jobs/${currentJobId}`;
+                document.getElementById('presentationLink').href = `${basePath}/presentation.json`;
+                document.getElementById('traceLink').href = `${basePath}/generation_trace.json`;
+                document.getElementById('promptsLink').href = `${basePath}/render_prompts.json`;
+            } else {
+                document.getElementById('playBtn').style.display = 'none';
+                document.getElementById('filesSection').style.display = 'none';
+            }
+        }
+
+        function openPlayer() {
+            if (currentJobId) {
+                window.open(`/player/jobs/${currentJobId}/`, '_blank');
+            }
+        }
+    </script>
+</body>
+</html>

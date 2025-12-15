@@ -16,10 +16,12 @@ CORS(app)
 
 PLAYER_DIR = Path(__file__).parent.parent / "player"
 ASSETS_DIR = PLAYER_DIR / "assets"
+JOBS_DIR = PLAYER_DIR / "jobs"
 TEMP_DIR = Path(tempfile.gettempdir()) / "ai_education_jobs"
 
 os.makedirs(ASSETS_DIR / "videos", exist_ok=True)
 os.makedirs(ASSETS_DIR / "audio", exist_ok=True)
+os.makedirs(JOBS_DIR, exist_ok=True)
 os.makedirs(TEMP_DIR, exist_ok=True)
 
 @app.route("/")
@@ -50,6 +52,8 @@ def submit_job():
         subject = request.form.get("subject", "General Science")
         grade = request.form.get("grade", "9")
         dry_run = request.form.get("dry_run", "false").lower() == "true"
+        skip_wan = request.form.get("skip_wan", "false").lower() == "true"
+        skip_avatar = request.form.get("skip_avatar", "false").lower() == "true"
         
         if "file" in request.files:
             uploaded_file = request.files["file"]
@@ -76,6 +80,9 @@ def submit_job():
                 "file_path": str(temp_file)
             })
             
+            job_output_dir = JOBS_DIR / job_id
+            os.makedirs(job_output_dir, exist_ok=True)
+            
             if job_type == "pdf":
                 run_job_async(
                     job_id,
@@ -83,8 +90,10 @@ def submit_job():
                     pdf_path=str(temp_file),
                     subject=subject,
                     grade=grade,
-                    output_dir=str(ASSETS_DIR),
-                    dry_run=dry_run
+                    output_dir=str(job_output_dir),
+                    dry_run=dry_run,
+                    skip_wan=skip_wan,
+                    skip_avatar=skip_avatar
                 )
             else:
                 with open(temp_file, "r", encoding="utf-8") as f:
@@ -97,8 +106,10 @@ def submit_job():
                     markdown_content=markdown_content,
                     subject=subject,
                     grade=grade,
-                    output_dir=str(ASSETS_DIR),
-                    dry_run=dry_run
+                    output_dir=str(job_output_dir),
+                    dry_run=dry_run,
+                    skip_wan=skip_wan,
+                    skip_avatar=skip_avatar
                 )
         
         elif request.is_json:
@@ -116,14 +127,19 @@ def submit_job():
                 "dry_run": dry_run
             })
             
+            job_output_dir = JOBS_DIR / job_id
+            os.makedirs(job_output_dir, exist_ok=True)
+            
             run_job_async(
                 job_id,
                 process_markdown_job,
                 markdown_content=markdown_content,
                 subject=subject,
                 grade=grade,
-                output_dir=str(ASSETS_DIR),
-                dry_run=dry_run
+                output_dir=str(job_output_dir),
+                dry_run=dry_run,
+                skip_wan=skip_wan,
+                skip_avatar=skip_avatar
             )
         
         else:
@@ -134,6 +150,8 @@ def submit_job():
             "status": "accepted",
             "job_id": job_id,
             "dry_run": dry_run,
+            "skip_wan": skip_wan,
+            "skip_avatar": skip_avatar,
             "message": f"Job submitted successfully{mode_msg}. Poll /job/<job_id>/status for progress."
         })
     
@@ -165,7 +183,7 @@ def get_job_status(job_id):
     })
 
 
-def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False) -> dict:
+def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False) -> dict:
     try:
         result = process_pdf_to_videos(
             pdf_path=pdf_path,
@@ -173,7 +191,9 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
             grade=grade,
             output_dir=output_dir,
             job_id=job_id,
-            dry_run=dry_run
+            dry_run=dry_run,
+            skip_wan=skip_wan,
+            skip_avatar=skip_avatar
         )
         return result
     finally:
@@ -181,14 +201,16 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
             os.unlink(pdf_path)
 
 
-def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False) -> dict:
+def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False) -> dict:
     return process_markdown_to_videos(
         markdown_content=markdown_content,
         subject=subject,
         grade=grade,
         output_dir=output_dir,
         job_id=job_id,
-        dry_run=dry_run
+        dry_run=dry_run,
+        skip_wan=skip_wan,
+        skip_avatar=skip_avatar
     )
 
 
@@ -271,6 +293,11 @@ def process_markdown():
             "error": str(e)
         }), 500
 
+@app.route("/dashboard")
+@app.route("/dashboard/")
+def serve_dashboard():
+    return send_from_directory(PLAYER_DIR, "dashboard.html")
+
 @app.route("/player/")
 @app.route("/player/<path:filename>")
 def serve_player(filename="index.html"):
@@ -279,6 +306,20 @@ def serve_player(filename="index.html"):
 @app.route("/player/assets/<path:filename>")
 def serve_assets(filename):
     return send_from_directory(ASSETS_DIR, filename)
+
+@app.route("/player/jobs/<job_id>/")
+def serve_job_player(job_id):
+    job_dir = JOBS_DIR / job_id
+    if not job_dir.exists():
+        return jsonify({"error": "Job not found"}), 404
+    return send_from_directory(PLAYER_DIR, "index.html")
+
+@app.route("/player/jobs/<job_id>/<path:filename>")
+def serve_job_assets(job_id, filename):
+    job_dir = JOBS_DIR / job_id
+    if not job_dir.exists():
+        return jsonify({"error": "Job not found"}), 404
+    return send_from_directory(job_dir, filename)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

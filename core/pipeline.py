@@ -19,7 +19,9 @@ def process_pdf_to_videos(
     grade: str = "9",
     output_dir: str = None,
     job_id: str = None,
-    dry_run: bool = False
+    dry_run: bool = False,
+    skip_wan: bool = False,
+    skip_avatar: bool = False
 ) -> dict:
     from core.job_manager import job_manager
     
@@ -30,8 +32,7 @@ def process_pdf_to_videos(
     os.makedirs(videos_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
     
-    # Clear render trace for fresh logging
-    clear_render_trace()
+    clear_render_trace(output_dir)
     
     job_status = {
         "status": "processing",
@@ -71,8 +72,10 @@ def process_pdf_to_videos(
             job_manager.complete_step(job_id, 1)
             job_manager.set_step(job_id, "Rendering videos with AI...", 2)
         
+        presentation["skip_avatar"] = skip_avatar
+        
         job_status["steps"].append({"step": "render_videos", "status": "started"})
-        rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run)
+        rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run, skip_wan=skip_wan, output_dir_base=output_dir)
         
         success_count = sum(1 for v in rendered_videos if v.get("status") == "success")
         fail_count = len(rendered_videos) - success_count
@@ -122,7 +125,9 @@ def process_markdown_to_videos(
     grade: str = "9",
     output_dir: str = None,
     job_id: str = None,
-    dry_run: bool = False
+    dry_run: bool = False,
+    skip_wan: bool = False,
+    skip_avatar: bool = False
 ) -> dict:
     from core.job_manager import job_manager
     
@@ -133,8 +138,7 @@ def process_markdown_to_videos(
     os.makedirs(videos_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
     
-    # Clear render trace for fresh logging
-    clear_render_trace()
+    clear_render_trace(output_dir)
     
     job_status = {
         "status": "processing",
@@ -166,8 +170,10 @@ def process_markdown_to_videos(
             job_manager.complete_step(job_id, 0)
             job_manager.set_step(job_id, "Rendering videos with AI...", 1)
         
+        presentation["skip_avatar"] = skip_avatar
+        
         job_status["steps"].append({"step": "render_videos", "status": "started"})
-        rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run)
+        rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run, skip_wan=skip_wan, output_dir_base=output_dir)
         
         success_count = sum(1 for v in rendered_videos if v.get("status") == "success")
         fail_count = len(rendered_videos) - success_count

@@ -1,5 +1,16 @@
 let lessonData = null;
-const AVATAR_URL = "assets/avatar_placeholder.mp4";
+
+function getBasePath() {
+  const path = window.location.pathname;
+  const jobMatch = path.match(/\/player\/jobs\/([^\/]+)\//);
+  if (jobMatch) {
+    return `/player/jobs/${jobMatch[1]}/`;
+  }
+  return '/player/assets/';
+}
+
+const BASE_PATH = getBasePath();
+const AVATAR_URL = "/player/assets/avatar_placeholder.mp4";
 
 let currentSlideIndex = 0;
 let isPlaying = false;
@@ -454,7 +465,7 @@ function buildSlideList() {
 
 async function checkExistingPresentation() {
   try {
-    const response = await fetch('/player/assets/presentation.json');
+    const response = await fetch(BASE_PATH + 'presentation.json');
     if (response.ok) {
       lessonData = await response.json();
       
@@ -473,8 +484,8 @@ async function checkExistingPresentation() {
               start_time: s.start,
               end_time: s.start + s.duration
             })) : [],
-            audio_path: `assets/audio/section_${section.id}.mp3`,
-            content_video_path: section.renderer === 'wan_video' ? `assets/videos/topic_${section.id}.mp4` : null,
+            audio_path: BASE_PATH + `audio/section_${section.id}.mp3`,
+            content_video_path: section.renderer === 'wan_video' ? BASE_PATH + `videos/topic_${section.id}.mp4` : null,
             has_content_video: section.renderer === 'wan_video',
             audio_duration: section.duration,
             full_narration: section.narration,
@@ -492,7 +503,7 @@ async function checkExistingPresentation() {
               start_time: s.start,
               end_time: s.start + s.duration
             })) : [],
-            audio_path: `assets/audio/topic_${topic.id}.mp3`,
+            audio_path: BASE_PATH + `audio/topic_${topic.id}.mp3`,
             audio_duration: topic.duration,
             full_narration: topic.narration,
             visual_content: { bullet_points: topic.segments ? topic.segments.map(s => s.text) : [] }

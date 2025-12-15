@@ -63,7 +63,7 @@ class DerivationScene(Scene):
 '''
 }
 
-def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False) -> str:
+def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trace_output_dir: str = None) -> str:
     topic_id = topic.get("id", 1)
     topic_title = topic.get("title", "Untitled")
     explanation_plan = topic.get("explanation_plan", {})
@@ -75,14 +75,14 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False) -> s
     
     output_path = str(Path(output_dir) / f"topic_{topic_id}.mp4")
     
-    # Log the manim plan before rendering
     log_render_prompt(
         section_id=topic_id,
         section_title=topic_title,
         renderer="manim",
         prompt=json.dumps(manim_plan, indent=2),
         output_path=output_path,
-        extra_data={"scene_type": scene_type, "duration": duration, "dry_run": dry_run}
+        extra_data={"scene_type": scene_type, "duration": duration, "dry_run": dry_run},
+        trace_output_dir=trace_output_dir
     )
     
     # Generate the scene code (for logging purposes even in dry run)
@@ -108,14 +108,14 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False) -> s
         print(f"Missing parameter {e}, using defaults")
         scene_code = template.format(**default_params)
     
-    # Log the generated Manim code
     log_render_prompt(
         section_id=topic_id,
         section_title=f"{topic_title} (generated code)",
         renderer="manim_code",
         prompt=scene_code,
         output_path=output_path,
-        extra_data={"scene_type": scene_type, "dry_run": dry_run}
+        extra_data={"scene_type": scene_type, "dry_run": dry_run},
+        trace_output_dir=trace_output_dir
     )
     
     # In dry_run mode, create a marker file instead of running Manim
