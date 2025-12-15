@@ -105,30 +105,30 @@ def validate_section_v2(section: dict) -> tuple[list, list]:
     if section_type == "content":
         if word_count < CONTENT_MIN_WORDS:
             msg = f"Section {section_id} ({section_type}): narration has {word_count} words, minimum is {CONTENT_MIN_WORDS}"
-            warnings.append(ValidationWarning(msg, section_id, section_type))
+            errors.append(msg)
         
         if not narration_segments:
-            msg = f"Section {section_id} (content): missing narration_segments - will use auto-generated segments"
-            warnings.append(ValidationWarning(msg, section_id, section_type))
+            msg = f"Section {section_id} (content): missing narration_segments - required for V2"
+            errors.append(msg)
         
         if narration_segments and not visual_beats:
             msg = f"Section {section_id} (content): has narration_segments but no visual_beats"
-            warnings.append(ValidationWarning(msg, section_id, section_type))
+            errors.append(msg)
     
     if section_type == "example":
         if not narration_segments:
             msg = f"Section {section_id} (example): missing narration_segments for step-by-step explanation"
-            warnings.append(ValidationWarning(msg, section_id, section_type))
+            errors.append(msg)
         if not visual_beats:
-            msg = f"Section {section_id} (example): missing visual_beats - examples should be visualized"
-            warnings.append(ValidationWarning(msg, section_id, section_type))
+            msg = f"Section {section_id} (example): missing visual_beats - examples must be visualized"
+            errors.append(msg)
         
         if renderer == "wan_video":
             title_lower = section.get("title", "").lower()
             is_biological = any(term in title_lower for term in ["biology", "cell", "organism", "plant", "animal", "enzyme", "protein"])
             if not is_biological:
                 msg = f"Section {section_id} (example): renderer should be 'manim' for non-biological examples"
-                warnings.append(ValidationWarning(msg, section_id, section_type))
+                errors.append(msg)
     
     if section_type in ["content", "example"]:
         for i, seg in enumerate(narration_segments):
