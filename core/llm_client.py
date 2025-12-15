@@ -64,6 +64,30 @@ def check_vague_phrases(text: str) -> list:
     return found
 
 
+def validate_narration_segment(segment: dict, section_id: int, segment_index: int) -> list:
+    errors = []
+    if "id" not in segment or not isinstance(segment.get("id"), (int, float)):
+        errors.append(f"Section {section_id}: narration_segment[{segment_index}] missing or invalid 'id' (must be numeric)")
+    if "text" not in segment or not isinstance(segment.get("text"), str) or not segment.get("text", "").strip():
+        errors.append(f"Section {section_id}: narration_segment[{segment_index}] missing or empty 'text'")
+    if "duration" not in segment or not isinstance(segment.get("duration"), (int, float)):
+        errors.append(f"Section {section_id}: narration_segment[{segment_index}] missing or invalid 'duration' (must be numeric)")
+    return errors
+
+
+def validate_visual_beat(beat: dict, section_id: int, beat_index: int) -> list:
+    errors = []
+    if "segment_id" not in beat or not isinstance(beat.get("segment_id"), (int, float)):
+        errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing or invalid 'segment_id' (must be numeric)")
+    if "visual_instruction" not in beat or not isinstance(beat.get("visual_instruction"), str) or not beat.get("visual_instruction", "").strip():
+        errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing or empty 'visual_instruction'")
+    if "labels" not in beat or not isinstance(beat.get("labels"), list):
+        errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing 'labels' array")
+    if "motion" not in beat or not isinstance(beat.get("motion"), str):
+        errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing 'motion' description")
+    return errors
+
+
 def validate_section_v2(section: dict) -> tuple[list, list]:
     errors = []
     warnings = []
@@ -71,6 +95,7 @@ def validate_section_v2(section: dict) -> tuple[list, list]:
     section_id = section.get("id", 0)
     section_type = section.get("section_type", "unknown")
     is_critical = section_type in CRITICAL_SECTION_TYPES
+    renderer = section.get("renderer", "")
     
     narration = section.get("narration", "")
     word_count = count_words(narration)
@@ -80,10 +105,15 @@ def validate_section_v2(section: dict) -> tuple[list, list]:
     if section_type == "content":
         if word_count < CONTENT_MIN_WORDS:
             msg = f"Section {section_id} ({section_type}): narration has {word_count} words, minimum is {CONTENT_MIN_WORDS}"
-            if is_critical:
-                errors.append(msg)
-            else:
-                warnings.append(ValidationWarning(msg, section_id, section_type))
+            errors.append(msg)
+        
+        if not narration_segments:
+            msg = f"Section {section_id} (content): missing narration_segments - content sections MUST have segmented narration"
+            errors.append(msg)
+        
+        if narration_segments and not visual_beats:
+            msg = f"Section {section_id} (content): has narration_segments but no visual_beats - every segment needs a visual"
+            errors.append(msg)
     
     if section_type == "example":
         if not narration_segments:
@@ -92,22 +122,34 @@ def validate_section_v2(section: dict) -> tuple[list, list]:
         if not visual_beats:
             msg = f"Section {section_id} (example): missing visual_beats - examples MUST be visualized"
             errors.append(msg)
+        
+        if renderer == "wan_video":
+            title_lower = section.get("title", "").lower()
+            is_biological = any(term in title_lower for term in ["biology", "cell", "organism", "plant", "animal", "enzyme", "protein"])
+            if not is_biological:
+                msg = f"Section {section_id} (example): renderer must be 'manim' for non-biological examples, got 'wan_video'"
+                errors.append(msg)
     
     if section_type in ["content", "example"]:
-        if narration_segments and not visual_beats:
-            msg = f"Section {section_id} ({section_type}): has narration_segments but no visual_beats"
-            errors.append(msg)
+        for i, seg in enumerate(narration_segments):
+            seg_errors = validate_narration_segment(seg, section_id, i)
+            errors.extend(seg_errors)
+        
+        for i, beat in enumerate(visual_beats):
+            beat_errors = validate_visual_beat(beat, section_id, i)
+            errors.extend(beat_errors)
         
         if narration_segments and visual_beats:
-            segment_ids = {s.get("id") for s in narration_segments}
-            beat_segment_ids = {b.get("segment_id") for b in visual_beats}
+            segment_ids = {s.get("id") for s in narration_segments if s.get("id") is not None}
+            beat_segment_ids = {b.get("segment_id") for b in visual_beats if b.get("segment_id") is not None}
             missing_beats = segment_ids - beat_segment_ids
             if missing_beats:
                 msg = f"Section {section_id} ({section_type}): narration segments {missing_beats} missing visual beats"
-                if is_critical:
-                    errors.append(msg)
-                else:
-                    warnings.append(ValidationWarning(msg, section_id, section_type))
+                errors.append(msg)
+            
+            if len(narration_segments) != len(visual_beats):
+                msg = f"Section {section_id} ({section_type}): segment/beat count mismatch - {len(narration_segments)} segments vs {len(visual_beats)} beats"
+                errors.append(msg)
     
     for beat in visual_beats:
         instruction = beat.get("visual_instruction", "")
