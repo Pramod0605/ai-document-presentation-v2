@@ -9,13 +9,22 @@ def execute_renderer(topic: dict, output_dir: str) -> dict:
     
     topic_id = topic.get("id", 1)
     renderer = topic.get("renderer", "wan_video")
+    section_type = topic.get("section_type", "content")
+    visual_beats = topic.get("visual_beats", [])
+    
+    if visual_beats:
+        if "explanation_plan" not in topic:
+            topic["explanation_plan"] = {}
+        topic["explanation_plan"]["visual_beats"] = visual_beats
     
     result = {
         "topic_id": topic_id,
+        "section_type": section_type,
         "renderer": renderer,
         "status": "pending",
         "video_path": None,
-        "error": None
+        "error": None,
+        "visual_beats_used": len(visual_beats) if visual_beats else 0
     }
     
     try:

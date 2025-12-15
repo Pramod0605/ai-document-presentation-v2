@@ -80,6 +80,12 @@ function loadSlide(index) {
 
   const sectionType = slide.section_type || slide.slide_type || 'content';
 
+  if (sectionType === 'example') {
+    document.getElementById('content-box').classList.add('example-section');
+  } else {
+    document.getElementById('content-box').classList.remove('example-section');
+  }
+
   if (sectionType === 'memory' && slide.flashcards) {
     const container = document.createElement('div');
     container.className = 'flashcard-container';

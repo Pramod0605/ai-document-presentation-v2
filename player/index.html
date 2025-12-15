@@ -97,6 +97,30 @@
       flex-direction: column;
     }
 
+    #content-box.example-section {
+      border: 2px solid #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      position: relative;
+    }
+
+    #content-box.example-section::before {
+      content: "WORKED EXAMPLE";
+      position: absolute;
+      top: -12px;
+      left: 20px;
+      background: #10b981;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    #content-box.example-section h1 {
+      color: #10b981;
+    }
+
     #slide-image-container {
       margin-bottom: 20px;
       text-align: center;

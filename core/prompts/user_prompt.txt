@@ -1,68 +1,90 @@
-Create a complete Presentation Plan JSON for the given chapter.
+Create a COMPLETE Presentation Plan JSON from the given Markdown.
 
 INPUT:
 - Subject: {subject}
 - Grade: {grade}
-- Language: English (Indian)
-- Chapter Content (Markdown):
+- Markdown content:
 {markdown_content}
 
-------------------------------------------------
-REQUIREMENTS
-------------------------------------------------
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION GENERATION RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-You MUST generate sections in this exact order:
-1. Intro
-2. Summary
-3. Content Topics (multiple)
-4. Memory
-5. Recap
+You MUST generate sections in this order:
 
-For EACH section include:
-- section_type: intro | summary | content | memory | recap
-- title
-- renderer decision
-- visual explanation plan
-- layout and avatar placement
-- narration text
-- subtitle segments with timing
-- gesture hints for avatar
+1. intro
+2. summary
+3. content (multiple)
+4. example (multiple, if present in markdown)
+5. memory
+6. recap
 
-------------------------------------------------
-CONTENT SECTION RULE (CRITICAL)
-------------------------------------------------
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION TYPES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Each CONTENT section narration must be:
-- Minimum 150 words
-- Preferably 180–250 words
-- Include:
-  * real-world example
-  * intuitive explanation
-  * cause-effect reasoning
-  * why the concept is important
+Each section MUST include:
 
-Do NOT compress content.
+- section_type: intro | summary | content | example | memory | recap
+- id: unique integer
+- title: descriptive title
+- renderer: manim | wan_video
+- narration: full narration text
+- narration_segments: array of timed text segments
+- visual_beats: array of renderer instructions (one per segment)
+- layout: content and avatar positioning
+- gesture_hints: avatar animation cues
 
-------------------------------------------------
-MEMORY SECTION
-------------------------------------------------
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONTENT SECTION RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-- Create exactly 3 flashcards or mnemonics
-- Keep narration minimal
-- Focus on recall
+For section_type = "content":
 
-------------------------------------------------
-RECAP SECTION
-------------------------------------------------
+- Narration must be ≥150 words.
+- Break narration into logical teaching segments.
+- EACH narration segment MUST have a visual beat.
 
-- Create a story-based recap
-- Use 5 visual scenes
-- Use physical or cultural analogy
-- Make it emotionally memorable
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXAMPLE SECTION RULES (CRITICAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-------------------------------------------------
+For section_type = "example":
+
+- Renderer MUST be manim (unless biological).
+- Visualize the example step-by-step.
+- Each step = one visual beat.
+- Show:
+  • geometry
+  • symbols
+  • vectors
+  • intermediate results
+
+Examples must NEVER be explained only in words.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUAL BEAT FORMAT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Each visual beat must include:
+- segment_id: integer matching narration_segments[].id
+- visual_instruction: EXACTLY what appears on screen
+- labels: array of text labels to show
+- motion: description of animation/movement
+- purpose: optional pedagogical purpose
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LAYOUT RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Decide:
+- content position and width
+- avatar position and size
+- overlay vs side layout
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OUTPUT SCHEMA
-------------------------------------------------
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 {{
   "chapter_title": "string",
@@ -71,102 +93,52 @@ OUTPUT SCHEMA
   "language": "en-IN",
   "sections": [
     {{
-      "section_type": "intro",
+      "section_type": "content | example",
       "id": 1,
-      "title": "Welcome to Chapter Name",
-      "renderer": "wan_video",
-      "explanation_plan": {{
-        "wan_prompt": "Warm welcoming visual..."
-      }},
-      "layout": {{
-        "content_zone": {{ "position": "center", "width_percent": 100 }},
-        "avatar_zone": {{ "mode": "overlay", "position": "bottom_center", "width_percent": 30 }}
-      }},
-      "narration": "60-100 words intro...",
-      "segments": [
-        {{ "start": 0.0, "duration": 3.0, "text": "First segment..." }}
+      "title": "Section Title",
+      "renderer": "manim | wan_video",
+      "narration": "Full narration text...",
+      "narration_segments": [
+        {{
+          "id": 1,
+          "text": "First segment text...",
+          "duration": 4
+        }}
       ],
+      "visual_beats": [
+        {{
+          "segment_id": 1,
+          "visual_instruction": "Draw a coordinate plane with x and y axes labeled",
+          "labels": ["x-axis", "y-axis", "origin"],
+          "motion": "Axes fade in from center, labels appear sequentially",
+          "purpose": "Establish coordinate system for vector discussion"
+        }}
+      ],
+      "layout": {{
+        "content_zone": {{ "position": "left", "width_percent": 65 }},
+        "avatar_zone": {{ "mode": "side", "position": "right", "width_percent": 35 }}
+      }},
       "gesture_hints": [
-        {{ "time": 1.0, "action": "welcome" }}
+        {{ "time": 1.0, "action": "point_to_screen" }}
       ]
-    }},
-    {{
-      "section_type": "summary",
-      "id": 2,
-      "title": "Learning Objectives",
-      "renderer": "wan_video",
-      "explanation_plan": {{
-        "wan_prompt": "Visual overview of topics..."
-      }},
-      "layout": {{
-        "content_zone": {{ "position": "left", "width_percent": 65 }},
-        "avatar_zone": {{ "mode": "side", "position": "right", "width_percent": 35 }}
-      }},
-      "narration": "Summary of what students will learn...",
-      "segments": [...],
-      "gesture_hints": [...]
-    }},
-    {{
-      "section_type": "content",
-      "id": 3,
-      "title": "Topic Title",
-      "renderer": "wan_video",
-      "explanation_plan": {{
-        "wan_prompt": "Detailed visual description..."
-      }},
-      "layout": {{
-        "content_zone": {{ "position": "left", "width_percent": 65 }},
-        "avatar_zone": {{ "mode": "side", "position": "right", "width_percent": 35 }}
-      }},
-      "narration": "150-250 words with real-world example...",
-      "segments": [...],
-      "gesture_hints": [...]
-    }},
-    {{
-      "section_type": "memory",
-      "id": 10,
-      "title": "Quick Recall",
-      "renderer": "wan_video",
-      "explanation_plan": {{
-        "wan_prompt": "Flashcard style visuals..."
-      }},
-      "flashcards": [
-        {{ "question": "What is X?", "answer": "Y" }},
-        {{ "question": "What is A?", "answer": "B" }},
-        {{ "question": "What is C?", "answer": "D" }}
-      ],
-      "layout": {{
-        "content_zone": {{ "position": "center", "width_percent": 80 }},
-        "avatar_zone": {{ "mode": "overlay", "position": "bottom_right", "width_percent": 25 }}
-      }},
-      "narration": "Short recall narration...",
-      "segments": [...],
-      "gesture_hints": [...]
-    }},
-    {{
-      "section_type": "recap",
-      "id": 11,
-      "title": "Mental Movie",
-      "renderer": "wan_video",
-      "explanation_plan": {{
-        "wan_prompt": "Story-based visual journey..."
-      }},
-      "recap_scenes": [
-        {{ "scene": 1, "description": "Scene 1 visual..." }},
-        {{ "scene": 2, "description": "Scene 2 visual..." }},
-        {{ "scene": 3, "description": "Scene 3 visual..." }},
-        {{ "scene": 4, "description": "Scene 4 visual..." }},
-        {{ "scene": 5, "description": "Scene 5 visual..." }}
-      ],
-      "layout": {{
-        "content_zone": {{ "position": "center", "width_percent": 100 }},
-        "avatar_zone": {{ "mode": "overlay", "position": "bottom_center", "width_percent": 30 }}
-      }},
-      "narration": "Story-based recap with analogy...",
-      "segments": [...],
-      "gesture_hints": [...]
     }}
   ]
 }}
 
-Return ONLY valid JSON. No markdown code blocks. No explanations.
+For memory sections, also include:
+"flashcards": [
+  {{ "question": "What is X?", "answer": "Y" }}
+]
+
+For recap sections, also include:
+"recap_scenes": [
+  {{ "scene": 1, "description": "Scene visual...", "concept_title": "Key Concept" }}
+]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OUTPUT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Return ONLY valid JSON.
+No explanations.
+No markdown code blocks.

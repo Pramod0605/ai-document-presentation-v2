@@ -15,21 +15,144 @@ openrouter = OpenAI(
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 
-VALID_SECTION_TYPES = ["intro", "summary", "content", "memory", "recap"]
+VALID_SECTION_TYPES = ["intro", "summary", "content", "example", "memory", "recap"]
+CRITICAL_SECTION_TYPES = ["content", "example"]
 CONTENT_MIN_WORDS = 150
+
+BANNED_VAGUE_PHRASES = [
+    "detailed animation",
+    "conceptual visualization", 
+    "dynamic visuals",
+    "beautiful animation",
+    "stunning visual",
+    "amazing graphics",
+    "impressive display"
+]
+
+
+class ValidationError(Exception):
+    pass
+
+
+class ValidationWarning:
+    def __init__(self, message: str, section_id: int, section_type: str):
+        self.message = message
+        self.section_id = section_id
+        self.section_type = section_type
+
 
 def load_system_prompt() -> str:
     with open(PROMPTS_DIR / "system_prompt.txt", "r") as f:
         return f.read()
 
+
 def load_user_prompt() -> str:
     with open(PROMPTS_DIR / "user_prompt.txt", "r") as f:
         return f.read()
 
+
 def count_words(text: str) -> int:
     return len(text.split()) if text else 0
 
-def validate_and_fix_presentation(presentation: dict, subject: str, grade: str) -> dict:
+
+def check_vague_phrases(text: str) -> list:
+    found = []
+    text_lower = text.lower()
+    for phrase in BANNED_VAGUE_PHRASES:
+        if phrase in text_lower:
+            found.append(phrase)
+    return found
+
+
+def validate_section_v2(section: dict) -> tuple[list, list]:
+    errors = []
+    warnings = []
+    
+    section_id = section.get("id", 0)
+    section_type = section.get("section_type", "unknown")
+    is_critical = section_type in CRITICAL_SECTION_TYPES
+    
+    narration = section.get("narration", "")
+    word_count = count_words(narration)
+    narration_segments = section.get("narration_segments", [])
+    visual_beats = section.get("visual_beats", [])
+    
+    if section_type == "content":
+        if word_count < CONTENT_MIN_WORDS:
+            msg = f"Section {section_id} ({section_type}): narration has {word_count} words, minimum is {CONTENT_MIN_WORDS}"
+            if is_critical:
+                errors.append(msg)
+            else:
+                warnings.append(ValidationWarning(msg, section_id, section_type))
+    
+    if section_type == "example":
+        if not narration_segments:
+            msg = f"Section {section_id} (example): missing narration_segments for step-by-step explanation"
+            errors.append(msg)
+        if not visual_beats:
+            msg = f"Section {section_id} (example): missing visual_beats - examples MUST be visualized"
+            errors.append(msg)
+    
+    if section_type in ["content", "example"]:
+        if narration_segments and not visual_beats:
+            msg = f"Section {section_id} ({section_type}): has narration_segments but no visual_beats"
+            errors.append(msg)
+        
+        if narration_segments and visual_beats:
+            segment_ids = {s.get("id") for s in narration_segments}
+            beat_segment_ids = {b.get("segment_id") for b in visual_beats}
+            missing_beats = segment_ids - beat_segment_ids
+            if missing_beats:
+                msg = f"Section {section_id} ({section_type}): narration segments {missing_beats} missing visual beats"
+                if is_critical:
+                    errors.append(msg)
+                else:
+                    warnings.append(ValidationWarning(msg, section_id, section_type))
+    
+    for beat in visual_beats:
+        instruction = beat.get("visual_instruction", "")
+        vague = check_vague_phrases(instruction)
+        if vague:
+            msg = f"Section {section_id}: visual_beat contains banned vague phrases: {vague}"
+            if is_critical:
+                errors.append(msg)
+            else:
+                warnings.append(ValidationWarning(msg, section_id, section_type))
+    
+    wan_prompt = section.get("explanation_plan", {}).get("wan_prompt", "")
+    if wan_prompt:
+        vague = check_vague_phrases(wan_prompt)
+        if vague:
+            msg = f"Section {section_id}: wan_prompt contains banned vague phrases: {vague}"
+            if is_critical:
+                errors.append(msg)
+            else:
+                warnings.append(ValidationWarning(msg, section_id, section_type))
+    
+    return errors, warnings
+
+
+def validate_presentation_structure(presentation: dict) -> tuple[list, list]:
+    errors = []
+    warnings = []
+    
+    sections = presentation.get("sections", [])
+    section_types = [s.get("section_type") for s in sections]
+    
+    if "intro" not in section_types:
+        warnings.append(ValidationWarning("Missing intro section", 0, "structure"))
+    if "summary" not in section_types:
+        warnings.append(ValidationWarning("Missing summary section", 0, "structure"))
+    if "recap" not in section_types:
+        warnings.append(ValidationWarning("Missing recap section", 0, "structure"))
+    
+    return errors, warnings
+
+
+def validate_and_fix_presentation(presentation: dict, subject: str, grade: str) -> tuple[dict, list, list]:
+    all_errors = []
+    all_warnings = []
+    
     if "chapter_title" not in presentation:
         presentation["chapter_title"] = "Educational Content"
     if "subject" not in presentation:
@@ -44,6 +167,10 @@ def validate_and_fix_presentation(presentation: dict, subject: str, grade: str) 
             presentation["sections"] = presentation.pop("topics")
         else:
             presentation["sections"] = []
+    
+    struct_errors, struct_warnings = validate_presentation_structure(presentation)
+    all_errors.extend(struct_errors)
+    all_warnings.extend(struct_warnings)
     
     for i, section in enumerate(presentation.get("sections", [])):
         if "id" not in section:
@@ -67,22 +194,37 @@ def validate_and_fix_presentation(presentation: dict, subject: str, grade: str) 
             section["section_type"] = "content"
         
         if "renderer" not in section:
-            section["renderer"] = "wan_video"
+            if section["section_type"] == "example":
+                section["renderer"] = "manim"
+            else:
+                section["renderer"] = "wan_video"
+        
         if "explanation_plan" not in section:
             section["explanation_plan"] = {"wan_prompt": f"Educational visualization for {section['title']}"}
+        
+        if "visual_beats" in section and section["visual_beats"]:
+            section["explanation_plan"]["visual_beats"] = section["visual_beats"]
+        
         if "duration" not in section:
             section["duration"] = 30
+        
         if "layout" not in section:
             if section["section_type"] in ["intro", "recap"]:
                 section["layout"] = {
                     "content_zone": {"position": "center", "width_percent": 100},
                     "avatar_zone": {"mode": "overlay", "position": "bottom_center", "width_percent": 30}
                 }
+            elif section["section_type"] == "example":
+                section["layout"] = {
+                    "content_zone": {"position": "left", "width_percent": 70},
+                    "avatar_zone": {"mode": "side", "position": "right", "width_percent": 30, "scale": 0.3}
+                }
             else:
                 section["layout"] = {
                     "content_zone": {"position": "left", "width_percent": 65},
                     "avatar_zone": {"mode": "side", "position": "right", "width_percent": 35, "scale": 0.35}
                 }
+        
         if "narration" not in section:
             section["narration"] = f"This section covers {section['title']}."
         
@@ -102,7 +244,18 @@ def validate_and_fix_presentation(presentation: dict, subject: str, grade: str) 
                 {"scene": 5, "description": "Conclusion"}
             ]
         
-        if "segments" not in section or not section["segments"]:
+        if "narration_segments" in section and section["narration_segments"]:
+            section["segments"] = []
+            current_time = 0.0
+            for ns in section["narration_segments"]:
+                duration = ns.get("duration", 4)
+                section["segments"].append({
+                    "start": round(current_time, 1),
+                    "duration": round(duration, 1),
+                    "text": ns.get("text", "")
+                })
+                current_time += duration
+        elif "segments" not in section or not section["segments"]:
             narration = section.get("narration", "")
             words = narration.split()
             segment_size = max(10, len(words) // 3)
@@ -115,10 +268,16 @@ def validate_and_fix_presentation(presentation: dict, subject: str, grade: str) 
                 segments.append({"start": round(start, 1), "duration": round(duration, 1), "text": text})
                 start += duration
             section["segments"] = segments if segments else [{"start": 0.0, "duration": 3.0, "text": section["narration"]}]
+        
         if "gesture_hints" not in section:
             section["gesture_hints"] = [{"time": 1.0, "action": "explain"}]
+        
+        section_errors, section_warnings = validate_section_v2(section)
+        all_errors.extend(section_errors)
+        all_warnings.extend(section_warnings)
     
-    return presentation
+    return presentation, all_errors, all_warnings
+
 
 def is_rate_limit_error(exception: BaseException) -> bool:
     error_msg = str(exception)
@@ -129,6 +288,7 @@ def is_rate_limit_error(exception: BaseException) -> bool:
         or "rate limit" in error_msg.lower()
         or (hasattr(exception, "status_code") and getattr(exception, "status_code", None) == 429)
     )
+
 
 @retry(
     stop=stop_after_attempt(5),
@@ -169,21 +329,25 @@ def generate_presentation_plan(
     else:
         raise ValueError("LLM did not return valid JSON")
     
-    presentation_json = validate_and_fix_presentation(presentation_json, subject, grade)
+    presentation_json, validation_errors, validation_warnings = validate_and_fix_presentation(
+        presentation_json, subject, grade
+    )
     
     generation_trace = {
+        "prompt_version": "v2",
         "system_prompt": system_prompt,
         "user_prompt": user_prompt,
         "model": model,
         "raw_response": response_text,
         "sections_generated": len(presentation_json.get("sections", [])),
+        "validation": {
+            "errors": validation_errors,
+            "warnings": [{"message": w.message, "section_id": w.section_id, "section_type": w.section_type} 
+                        for w in validation_warnings if isinstance(w, ValidationWarning)],
+            "passed": len(validation_errors) == 0
+        },
         "section_decisions": [],
-        "narration_validation": {
-            "total_sections": 0,
-            "content_sections": 0,
-            "content_meeting_requirement": 0,
-            "content_below_requirement": 0
-        }
+        "visual_beats_audit": []
     }
     
     content_sections = 0
@@ -195,6 +359,7 @@ def generate_presentation_plan(
         renderer = section.get("renderer", "unknown")
         narration = section.get("narration", "")
         word_count = count_words(narration)
+        visual_beats = section.get("visual_beats", [])
         
         meets_requirement = True
         if section_type == "content":
@@ -221,18 +386,33 @@ def generate_presentation_plan(
             "narration_stats": {
                 "word_count": word_count,
                 "meets_requirement": meets_requirement,
-                "min_required": CONTENT_MIN_WORDS if section_type == "content" else 0
+                "min_required": CONTENT_MIN_WORDS if section_type in ["content", "example"] else 0
             },
+            "visual_beats_count": len(visual_beats),
             "prompts_used": {
                 "wan_prompt": wan_prompt if renderer == "wan_video" else None,
                 "manim_plan": manim_plan if renderer == "manim" else None
             },
             "pedagogy_notes": f"Section type: {section_type}"
         })
+        
+        if visual_beats:
+            generation_trace["visual_beats_audit"].append({
+                "section_id": section.get("id"),
+                "section_type": section_type,
+                "renderer": renderer,
+                "beats": visual_beats
+            })
     
-    generation_trace["narration_validation"]["total_sections"] = len(presentation_json.get("sections", []))
-    generation_trace["narration_validation"]["content_sections"] = content_sections
-    generation_trace["narration_validation"]["content_meeting_requirement"] = content_meeting_req
-    generation_trace["narration_validation"]["content_below_requirement"] = content_below_req
+    generation_trace["narration_validation"] = {
+        "total_sections": len(presentation_json.get("sections", [])),
+        "content_sections": content_sections,
+        "content_meeting_requirement": content_meeting_req,
+        "content_below_requirement": content_below_req
+    }
+    
+    if validation_errors:
+        error_msg = f"Validation failed with {len(validation_errors)} critical errors:\n" + "\n".join(validation_errors)
+        raise ValidationError(error_msg)
     
     return presentation_json, generation_trace
