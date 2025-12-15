@@ -38,39 +38,88 @@ VISUALIZATION RULES (NON-NEGOTIABLE)
    - No narration without visuals.
    - No visuals without narration.
 
-6. Visual beats must be:
-   - concrete
-   - sequential
-   - scientifically accurate
-   - unambiguous
+6. Visual beats MUST be CONCRETE and SPECIFIC:
+   - Describe EXACTLY what objects appear (shapes, colors, positions)
+   - Describe EXACTLY what motion occurs (direction, speed, sequence)
+   - Include numerical values where applicable
+   - Specify text labels and their positions
 
-7. VAGUE phrases are FORBIDDEN:
+7. BANNED VAGUE PHRASES (will cause VALIDATION FAILURE):
    - "detailed animation"
    - "conceptual visualization"
    - "dynamic visuals"
+   - "beautiful animation"
+   - "stunning visual"
+   - "show clearly"
+   - "demonstrate effectively"
+   - "visualize the concept"
+   - "illustrate the process"
 
-8. If narration mentions:
-   - a formula → show symbols + geometry
-   - a variable → show it on screen
-   - a force / field → show direction and magnitude
-   - an example → visualize the example
+8. CONCRETE VISUAL INSTRUCTION EXAMPLES:
+
+   BAD (will FAIL validation):
+   "Show force interaction clearly"
+   
+   GOOD (will PASS validation):
+   "Draw a red arrow labeled 'F1=10N' pointing right from point A. 
+    Draw a blue arrow labeled 'F2=5N' pointing left from point A.
+    Animate both arrows appearing sequentially, then show a green 
+    resultant arrow 'F_net=5N' pointing right."
+
+   BAD (will FAIL validation):
+   "Visualize photosynthesis process"
+   
+   GOOD (will PASS validation):
+   "Show a plant cell cross-section with green chloroplasts.
+    Blue CO2 molecules enter through stomata on the left.
+    Yellow sunlight rays hit chloroplasts from above.
+    H2O molecules (blue spheres) rise from roots below.
+    Inside chloroplast: CO2 + H2O combine, green glucose molecule forms.
+    O2 molecules (red pairs) exit through stomata on right."
+
+9. FORMULA VISUALIZATION RULES:
+   - When narration mentions F=ma, show: "F", "=", "m", "×", "a" as separate animated symbols
+   - Show numerical substitution: F = 5kg × 2m/s² = 10N
+   - Show geometry: vector arrows with magnitude labels
+   - Show units: always include units on numerical values
+
+10. If narration mentions:
+    - a formula → show symbols + substitution + result
+    - a variable → show it with label and value
+    - a force / field → show arrow with direction and magnitude label
+    - an example → visualize each calculation step
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 RENDERER DECISION RULES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-9. Use MANIM for:
-   - maths
-   - vectors
-   - geometry
-   - graphs
-   - numerical physics examples
+11. Use MANIM for:
+    - maths equations and formulas
+    - vectors and geometry
+    - graphs and plots
+    - numerical physics examples
+    - step-by-step calculations
+    - coordinate systems
 
-10. Use WAN for:
-   - biological processes
-   - physical phenomena
-   - field visualizations
-   - chemistry reactions
+12. Use WAN for:
+    - biological processes (cells, organisms, ecosystems)
+    - physical phenomena (waves, light, motion)
+    - field visualizations (electric, magnetic, gravitational)
+    - chemistry reactions (molecules, bonds, reactions)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUAL BEAT QUALITY CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Before outputting each visual beat, verify:
+□ Can a renderer produce EXACTLY this without interpretation?
+□ Are colors specified? (red, blue, green, not "appropriate color")
+□ Are positions specified? (left, right, center, coordinates)
+□ Are sizes/magnitudes specified where relevant?
+□ Are motion directions and sequences described?
+□ Are text labels explicitly listed?
+
+If ANY answer is NO, rewrite the visual instruction to be more specific.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OUTPUT RULES
@@ -82,3 +131,4 @@ No commentary.
 No explanations.
 
 Your JSON will directly drive video generation.
+Vague instructions will cause pipeline FAILURE.

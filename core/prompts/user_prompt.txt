@@ -55,23 +55,62 @@ For section_type = "example":
 - Visualize the example step-by-step.
 - Each step = one visual beat.
 - Show:
-  • geometry
-  • symbols
-  • vectors
-  • intermediate results
+  • geometry with coordinates
+  • symbols with values
+  • vectors with magnitudes
+  • intermediate calculation results
 
 Examples must NEVER be explained only in words.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-VISUAL BEAT FORMAT
+VISUAL BEAT FORMAT (STRICT)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Each visual beat must include:
+Each visual beat MUST include:
 - segment_id: integer matching narration_segments[].id
-- visual_instruction: EXACTLY what appears on screen
-- labels: array of text labels to show
-- motion: description of animation/movement
-- purpose: optional pedagogical purpose
+- visual_instruction: CONCRETE description (≥50 words for content/example)
+- labels: array of EXACT text labels to show
+- motion: SPECIFIC animation description (not "animate smoothly")
+- objects: array of objects with properties (for Manim)
+- purpose: pedagogical purpose
+
+VISUAL INSTRUCTION REQUIREMENTS:
+1. Must be ≥50 words for content and example sections
+2. Must specify colors (e.g., "red arrow", "blue circle")
+3. Must specify positions (e.g., "at origin", "top-left", "(3,4)")
+4. Must specify sizes where relevant (e.g., "radius 2 units")
+5. Must describe motion sequence (e.g., "first...then...finally")
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONCRETE VISUAL BEAT EXAMPLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{{
+  "segment_id": 1,
+  "visual_instruction": "Draw a 2D coordinate plane with x-axis from -5 to 5 and y-axis from -5 to 5. At the origin, draw a small black dot labeled 'O'. From the origin, draw a blue arrow 3 units long pointing at 30 degrees above the x-axis. Label this arrow 'v = 3 m/s'. Draw dashed lines from the arrowhead perpendicular to both axes, creating a right triangle. Label the horizontal component 'vx = 2.6 m/s' and the vertical component 'vy = 1.5 m/s'.",
+  "labels": ["O", "v = 3 m/s", "vx = 2.6 m/s", "vy = 1.5 m/s", "30°"],
+  "motion": "First draw axes fading in. Then animate the velocity vector growing from origin. Then draw dashed projection lines. Finally, show component labels appearing.",
+  "objects": [
+    {{"type": "axes", "x_range": [-5, 5], "y_range": [-5, 5]}},
+    {{"type": "vector", "start": [0, 0], "end": [2.6, 1.5], "color": "blue", "label": "v = 3 m/s"}},
+    {{"type": "line", "start": [2.6, 1.5], "end": [2.6, 0], "style": "dashed"}},
+    {{"type": "line", "start": [2.6, 1.5], "end": [0, 1.5], "style": "dashed"}}
+  ],
+  "purpose": "Show velocity vector decomposition into x and y components"
+}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BANNED VAGUE INSTRUCTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+These will cause VALIDATION FAILURE:
+- "Show the concept visually"
+- "Animate the process"
+- "Display the formula clearly"
+- "Visualize the interaction"
+- "Demonstrate the principle"
+- "Illustrate the relationship"
+- Any instruction under 50 words for content/example
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 LAYOUT RULES
@@ -108,9 +147,12 @@ OUTPUT SCHEMA
       "visual_beats": [
         {{
           "segment_id": 1,
-          "visual_instruction": "Draw a coordinate plane with x and y axes labeled",
+          "visual_instruction": "Draw a coordinate plane with x-axis labeled from -5 to 5...",
           "labels": ["x-axis", "y-axis", "origin"],
-          "motion": "Axes fade in from center, labels appear sequentially",
+          "motion": "Axes fade in from center, then labels appear left-to-right",
+          "objects": [
+            {{"type": "axes", "x_range": [-5, 5], "y_range": [-5, 5]}}
+          ],
           "purpose": "Establish coordinate system for vector discussion"
         }}
       ],
@@ -134,6 +176,19 @@ For recap sections, also include:
 "recap_scenes": [
   {{ "scene": 1, "description": "Scene visual...", "concept_title": "Key Concept" }}
 ]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+QUALITY GATE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Before outputting, verify EACH visual beat:
+1. Is visual_instruction ≥50 words? (for content/example)
+2. Are specific colors mentioned?
+3. Are specific positions mentioned?
+4. Are labels explicitly listed?
+5. Is motion sequence described step-by-step?
+
+If any check fails, REWRITE that visual beat.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OUTPUT

@@ -114,8 +114,22 @@ BANNED_VAGUE_PHRASES = [
     "beautiful animation",
     "stunning visual",
     "amazing graphics",
-    "impressive display"
+    "impressive display",
+    "show clearly",
+    "demonstrate effectively",
+    "visualize the concept",
+    "illustrate the process",
+    "display appropriately",
+    "animate smoothly",
+    "show the interaction",
+    "visualize the relationship",
+    "demonstrate the principle",
+    "illustrate the idea",
+    "show the process",
+    "animate the concept"
 ]
+
+VISUAL_INSTRUCTION_MIN_WORDS = 50
 
 
 class ValidationError(Exception):
@@ -163,7 +177,7 @@ def validate_narration_segment(segment: dict, section_id: int, segment_index: in
     return errors
 
 
-def validate_visual_beat(beat: dict, section_id: int, beat_index: int) -> list:
+def validate_visual_beat(beat: dict, section_id: int, beat_index: int, is_critical: bool = False) -> list:
     errors = []
     if "segment_id" not in beat or not isinstance(beat.get("segment_id"), (int, float)):
         errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing or invalid 'segment_id' (must be numeric)")
@@ -173,6 +187,26 @@ def validate_visual_beat(beat: dict, section_id: int, beat_index: int) -> list:
         errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing 'labels' array")
     if "motion" not in beat or not isinstance(beat.get("motion"), str):
         errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing 'motion' description")
+    
+    instruction = beat.get("visual_instruction", "")
+    instruction_word_count = count_words(instruction)
+    
+    if is_critical and instruction_word_count < VISUAL_INSTRUCTION_MIN_WORDS:
+        errors.append(
+            f"Section {section_id}: visual_beat[{beat_index}] has only {instruction_word_count} words, "
+            f"minimum {VISUAL_INSTRUCTION_MIN_WORDS} required for content/example sections"
+        )
+    
+    vague_phrases = check_vague_phrases(instruction)
+    if vague_phrases and is_critical:
+        errors.append(
+            f"Section {section_id}: visual_beat[{beat_index}] contains banned vague phrases: {vague_phrases}"
+        )
+    
+    if is_critical and "labels" in beat:
+        if len(beat["labels"]) == 0:
+            errors.append(f"Section {section_id}: visual_beat[{beat_index}] has empty labels array - must specify text labels")
+    
     return errors
 
 
@@ -224,7 +258,7 @@ def validate_section_v2(section: dict) -> tuple[list, list]:
             errors.extend(seg_errors)
         
         for i, beat in enumerate(visual_beats):
-            beat_errors = validate_visual_beat(beat, section_id, i)
+            beat_errors = validate_visual_beat(beat, section_id, i, is_critical=is_critical)
             errors.extend(beat_errors)
         
         if narration_segments and visual_beats:
@@ -239,14 +273,12 @@ def validate_section_v2(section: dict) -> tuple[list, list]:
                 msg = f"Section {section_id} ({section_type}): segment/beat count mismatch - {len(narration_segments)} segments vs {len(visual_beats)} beats"
                 errors.append(msg)
     
-    for beat in visual_beats:
-        instruction = beat.get("visual_instruction", "")
-        vague = check_vague_phrases(instruction)
-        if vague:
-            msg = f"Section {section_id}: visual_beat contains banned vague phrases: {vague}"
-            if is_critical:
-                errors.append(msg)
-            else:
+    if not is_critical:
+        for beat in visual_beats:
+            instruction = beat.get("visual_instruction", "")
+            vague = check_vague_phrases(instruction)
+            if vague:
+                msg = f"Section {section_id}: visual_beat contains banned vague phrases: {vague}"
                 warnings.append(ValidationWarning(msg, section_id, section_type))
     
     wan_prompt = section.get("explanation_plan", {}).get("wan_prompt", "")

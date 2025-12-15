@@ -104,6 +104,13 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-15: **Governance Upgrade - Fail-Fast for Vague Visual Beats**:
+  - core/visual_compiler.py - Converts visual_beats to concrete WAN/Manim prompts
+  - VISUAL_INSTRUCTION_MIN_WORDS = 50 for content/example sections
+  - Expanded BANNED_VAGUE_PHRASES (19 phrases including "show clearly", "animate smoothly", etc.)
+  - VisualCompilationError for vague beats - NO best-effort fallbacks
+  - renderer_executor.py integrates visual compiler with strict_mode parameter
+  - V2 prompts include concrete good/bad examples and quality gate checklist
 - 2025-12-15: Added job dashboard at /dashboard with:
   - File upload (PDF/Markdown)
   - Subject/Grade inputs
