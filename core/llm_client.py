@@ -201,35 +201,58 @@ def validate_narration_segment(segment: dict, section_id: int, segment_index: in
     return errors
 
 
+REQUIRED_VISUAL_BEAT_FIELDS = [
+    "scene_setup",
+    "objects_and_properties",
+    "motion_sequence",
+    "labels_and_text",
+    "pedagogical_focus"
+]
+
+MIN_FIELD_WORDS = 8
+
+
 def validate_visual_beat(beat: dict, section_id: int, beat_index: int, is_critical: bool = False) -> list:
+    """Validate visual beat using 5-field structure (Gemini-safe)."""
     errors = []
+    
     if "segment_id" not in beat or not isinstance(beat.get("segment_id"), (int, float)):
         errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing or invalid 'segment_id' (must be numeric)")
-    if "visual_instruction" not in beat or not isinstance(beat.get("visual_instruction"), str) or not beat.get("visual_instruction", "").strip():
-        errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing or empty 'visual_instruction'")
-    if "labels" not in beat or not isinstance(beat.get("labels"), list):
-        errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing 'labels' array")
-    if "motion" not in beat or not isinstance(beat.get("motion"), str):
-        errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing 'motion' description")
     
-    instruction = beat.get("visual_instruction", "")
-    instruction_word_count = count_words(instruction)
-    
-    if is_critical and instruction_word_count < VISUAL_INSTRUCTION_MIN_WORDS:
-        errors.append(
-            f"Section {section_id}: visual_beat[{beat_index}] has only {instruction_word_count} words, "
-            f"minimum {VISUAL_INSTRUCTION_MIN_WORDS} required for content/example sections"
-        )
-    
-    vague_phrases = check_vague_phrases(instruction)
-    if vague_phrases and is_critical:
-        errors.append(
-            f"Section {section_id}: visual_beat[{beat_index}] contains banned vague phrases: {vague_phrases}"
-        )
-    
-    if is_critical and "labels" in beat:
-        if len(beat["labels"]) == 0:
-            errors.append(f"Section {section_id}: visual_beat[{beat_index}] has empty labels array - must specify text labels")
+    if is_critical:
+        missing_fields = []
+        short_fields = []
+        vague_fields = []
+        
+        for field in REQUIRED_VISUAL_BEAT_FIELDS:
+            value = beat.get(field, "")
+            
+            if not value or not isinstance(value, str):
+                missing_fields.append(field)
+                continue
+            
+            word_count = count_words(value)
+            if word_count < MIN_FIELD_WORDS:
+                short_fields.append(f"{field}({word_count}w)")
+            
+            vague = check_vague_phrases(value)
+            if vague:
+                vague_fields.append(f"{field}")
+        
+        if missing_fields:
+            errors.append(
+                f"Section {section_id}: visual_beat[{beat_index}] missing required fields: {missing_fields}"
+            )
+        
+        if short_fields:
+            errors.append(
+                f"Section {section_id}: visual_beat[{beat_index}] fields too short (need {MIN_FIELD_WORDS}+ words): {short_fields}"
+            )
+        
+        if vague_fields:
+            errors.append(
+                f"Section {section_id}: visual_beat[{beat_index}] vague phrases in: {vague_fields}"
+            )
     
     return errors
 
