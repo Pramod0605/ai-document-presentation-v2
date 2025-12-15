@@ -150,7 +150,7 @@ def _execute_manim_render(scene_type: str, params: dict, duration: int, output_p
 
 def _create_placeholder(topic: dict, output_path: str, duration: int) -> str:
     try:
-        from moviepy.editor import ColorClip, TextClip, CompositeVideoClip
+        from moviepy import ColorClip, TextClip, CompositeVideoClip
         
         bg = ColorClip(size=(1280, 720), color=(20, 40, 80), duration=duration)
         
@@ -159,11 +159,12 @@ def _create_placeholder(topic: dict, output_path: str, duration: int) -> str:
         
         try:
             txt = TextClip(
-                text,
-                fontsize=48,
-                color="white"
+                text=text,
+                font_size=48,
+                color="white",
+                size=(1280, 720)
             )
-            txt = txt.set_position("center").set_duration(duration)
+            txt = txt.with_position("center").with_duration(duration)
             video = CompositeVideoClip([bg, txt])
         except Exception:
             video = bg
@@ -182,7 +183,7 @@ def _create_placeholder(topic: dict, output_path: str, duration: int) -> str:
         
     except Exception as e:
         print(f"Placeholder error: {e}")
-        from moviepy.editor import ColorClip
+        from moviepy import ColorClip
         clip = ColorClip(size=(1280, 720), color=(30, 50, 100), duration=duration)
         clip.write_videofile(output_path, fps=24, codec="libx264", audio=False, verbose=False, logger=None)
         clip.close()
