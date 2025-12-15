@@ -111,6 +111,7 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
   - VisualCompilationError for vague beats - NO best-effort fallbacks
   - renderer_executor.py integrates visual compiler with strict_mode parameter
   - V2 prompts include concrete good/bad examples and quality gate checklist
+  - tests/test_visual_compiler.py - Unit tests confirming strict validation works (6 tests, all passing)
 - 2025-12-15: Added job dashboard at /dashboard with:
   - File upload (PDF/Markdown)
   - Subject/Grade inputs
