@@ -516,6 +516,39 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    .progress-container {
+      width: 100%;
+      max-width: 400px;
+      margin: 20px 0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #333;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e50914, #ff6b6b);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      color: #888;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    .step-indicator {
+      color: #fbbf24;
+      font-size: 0.85rem;
+      margin-top: 5px;
+    }
   </style>
 </head>
 
@@ -524,10 +557,12 @@
   <div class="upload-overlay" id="upload-overlay">
     <div class="upload-box" id="upload-box">
       <h2>AI Animated Education</h2>
-      <p>Upload PDF or use sample content to generate educational videos</p>
-      <input type="file" id="fileInput" accept=".pdf" style="display:none">
-      <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload PDF</button>
-      <button class="upload-btn" onclick="useSampleContent()">Use Sample Content</button>
+      <p>Upload PDF or Markdown file to generate educational videos</p>
+      <input type="file" id="fileInput" accept=".pdf,.md,.markdown,.txt" style="display:none">
+      <div style="margin-bottom: 15px;">
+        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload PDF or Markdown</button>
+      </div>
+      <button class="upload-btn" style="background:#333" onclick="useSampleContent()">Try Sample Content</button>
       <div class="upload-selects">
         <select id="subjectSelect">
           <option value="General Science">General Science</option>
@@ -542,6 +577,7 @@
           <option value="10">Grade 10</option>
         </select>
       </div>
+      <p style="color:#666; font-size:0.8rem; margin-top:15px;">Supports: .pdf, .md, .markdown, .txt files</p>
     </div>
   </div>
 

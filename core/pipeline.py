@@ -2,6 +2,7 @@ import os
 import json
 from pathlib import Path
 from datetime import datetime
+from typing import Optional
 
 from core.datalab_client import pdf_to_markdown
 from core.llm_client import generate_presentation_plan
@@ -10,12 +11,16 @@ from tts.generate_audio import generate_all_audio
 
 PLAYER_ASSETS_DIR = Path(__file__).parent.parent / "player" / "assets"
 
+
 def process_pdf_to_videos(
     pdf_path: str,
     subject: str = "General Science",
     grade: str = "9",
-    output_dir: str = None
+    output_dir: str = None,
+    job_id: str = None
 ) -> dict:
+    from core.job_manager import job_manager
+    
     output_dir = output_dir or str(PLAYER_ASSETS_DIR)
     videos_dir = Path(output_dir) / "videos"
     audio_dir = Path(output_dir) / "audio"
@@ -30,9 +35,16 @@ def process_pdf_to_videos(
     }
     
     try:
+        if job_id:
+            job_manager.set_step(job_id, "Converting PDF to text...", 0)
+        
         job_status["steps"].append({"step": "pdf_to_markdown", "status": "started"})
         markdown_content = pdf_to_markdown(pdf_path)
         job_status["steps"][-1]["status"] = "completed"
+        
+        if job_id:
+            job_manager.complete_step(job_id, 0)
+            job_manager.set_step(job_id, "LLM generating presentation plan...", 1)
         
         job_status["steps"].append({"step": "generate_presentation_plan", "status": "started"})
         presentation, generation_trace = generate_presentation_plan(
@@ -50,6 +62,10 @@ def process_pdf_to_videos(
         with open(trace_path, "w") as f:
             json.dump(generation_trace, f, indent=2)
         
+        if job_id:
+            job_manager.complete_step(job_id, 1)
+            job_manager.set_step(job_id, "Rendering videos with AI...", 2)
+        
         job_status["steps"].append({"step": "render_videos", "status": "started"})
         rendered_videos = render_all_topics(presentation, str(videos_dir))
         
@@ -61,10 +77,17 @@ def process_pdf_to_videos(
         job_status["steps"][-1]["success_count"] = success_count
         job_status["steps"][-1]["fail_count"] = fail_count
         
+        if job_id:
+            job_manager.complete_step(job_id, 2)
+            job_manager.set_step(job_id, "Generating audio narration...", 3)
+        
         job_status["steps"].append({"step": "generate_audio", "status": "started"})
         audio_files = generate_all_audio(presentation, str(audio_dir))
         job_status["steps"][-1]["status"] = "completed"
         job_status["steps"][-1]["audio_files"] = audio_files
+        
+        if job_id:
+            job_manager.complete_step(job_id, 3)
         
         job_status["status"] = "completed"
         job_status["completed_at"] = datetime.now().isoformat()
@@ -80,12 +103,16 @@ def process_pdf_to_videos(
     
     return job_status
 
+
 def process_markdown_to_videos(
     markdown_content: str,
     subject: str = "General Science",
     grade: str = "9",
-    output_dir: str = None
+    output_dir: str = None,
+    job_id: str = None
 ) -> dict:
+    from core.job_manager import job_manager
+    
     output_dir = output_dir or str(PLAYER_ASSETS_DIR)
     videos_dir = Path(output_dir) / "videos"
     audio_dir = Path(output_dir) / "audio"
@@ -100,6 +127,9 @@ def process_markdown_to_videos(
     }
     
     try:
+        if job_id:
+            job_manager.set_step(job_id, "LLM generating presentation plan...", 0)
+        
         job_status["steps"].append({"step": "generate_presentation_plan", "status": "started"})
         presentation, generation_trace = generate_presentation_plan(
             markdown_content=markdown_content,
@@ -116,6 +146,10 @@ def process_markdown_to_videos(
         with open(trace_path, "w") as f:
             json.dump(generation_trace, f, indent=2)
         
+        if job_id:
+            job_manager.complete_step(job_id, 0)
+            job_manager.set_step(job_id, "Rendering videos with AI...", 1)
+        
         job_status["steps"].append({"step": "render_videos", "status": "started"})
         rendered_videos = render_all_topics(presentation, str(videos_dir))
         
@@ -127,10 +161,17 @@ def process_markdown_to_videos(
         job_status["steps"][-1]["success_count"] = success_count
         job_status["steps"][-1]["fail_count"] = fail_count
         
+        if job_id:
+            job_manager.complete_step(job_id, 1)
+            job_manager.set_step(job_id, "Generating audio narration...", 2)
+        
         job_status["steps"].append({"step": "generate_audio", "status": "started"})
         audio_files = generate_all_audio(presentation, str(audio_dir))
         job_status["steps"][-1]["status"] = "completed"
         job_status["steps"][-1]["audio_files"] = audio_files
+        
+        if job_id:
+            job_manager.complete_step(job_id, 2)
         
         job_status["status"] = "completed"
         job_status["completed_at"] = datetime.now().isoformat()

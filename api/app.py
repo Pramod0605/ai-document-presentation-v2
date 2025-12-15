@@ -9,15 +9,18 @@ from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 
 from core.pipeline import process_pdf_to_videos, process_markdown_to_videos
+from core.job_manager import job_manager, run_job_async, is_job_running, get_current_job_id
 
 app = Flask(__name__)
 CORS(app)
 
 PLAYER_DIR = Path(__file__).parent.parent / "player"
 ASSETS_DIR = PLAYER_DIR / "assets"
+TEMP_DIR = Path(tempfile.gettempdir()) / "ai_education_jobs"
 
 os.makedirs(ASSETS_DIR / "videos", exist_ok=True)
 os.makedirs(ASSETS_DIR / "audio", exist_ok=True)
+os.makedirs(TEMP_DIR, exist_ok=True)
 
 @app.route("/")
 def index():
@@ -28,8 +31,157 @@ def health_check():
     return jsonify({
         "status": "healthy",
         "service": "ai-animated-education-phase1",
-        "version": "1.0.0"
+        "version": "1.1.0",
+        "features": ["job_mode", "pdf", "markdown"]
     })
+
+
+@app.route("/submit_job", methods=["POST"])
+def submit_job():
+    try:
+        if is_job_running():
+            current_id = get_current_job_id()
+            return jsonify({
+                "status": "busy",
+                "message": "A job is already running. Please wait for it to complete.",
+                "current_job_id": current_id
+            }), 409
+        
+        subject = request.form.get("subject", "General Science")
+        grade = request.form.get("grade", "9")
+        
+        if "file" in request.files:
+            uploaded_file = request.files["file"]
+            if uploaded_file.filename == "":
+                return jsonify({"error": "No file selected"}), 400
+            
+            filename = uploaded_file.filename.lower()
+            
+            if filename.endswith(".pdf"):
+                job_type = "pdf"
+                suffix = ".pdf"
+            elif filename.endswith(".md") or filename.endswith(".markdown") or filename.endswith(".txt"):
+                job_type = "markdown_file"
+                suffix = ".md"
+            else:
+                return jsonify({"error": "Unsupported file type. Please upload PDF or Markdown (.md) file"}), 400
+            
+            temp_file = TEMP_DIR / f"{os.urandom(8).hex()}{suffix}"
+            uploaded_file.save(str(temp_file))
+            
+            job_id = job_manager.create_job(job_type, {
+                "subject": subject,
+                "grade": grade,
+                "file_path": str(temp_file)
+            })
+            
+            if job_type == "pdf":
+                run_job_async(
+                    job_id,
+                    process_pdf_job,
+                    pdf_path=str(temp_file),
+                    subject=subject,
+                    grade=grade,
+                    output_dir=str(ASSETS_DIR)
+                )
+            else:
+                with open(temp_file, "r", encoding="utf-8") as f:
+                    markdown_content = f.read()
+                os.unlink(temp_file)
+                
+                run_job_async(
+                    job_id,
+                    process_markdown_job,
+                    markdown_content=markdown_content,
+                    subject=subject,
+                    grade=grade,
+                    output_dir=str(ASSETS_DIR)
+                )
+        
+        elif request.is_json:
+            data = request.json
+            markdown_content = data.get("markdown", "")
+            subject = data.get("subject", subject)
+            grade = data.get("grade", grade)
+            
+            if not markdown_content:
+                return jsonify({"error": "Markdown content is required"}), 400
+            
+            job_id = job_manager.create_job("markdown", {
+                "subject": subject,
+                "grade": grade
+            })
+            
+            run_job_async(
+                job_id,
+                process_markdown_job,
+                markdown_content=markdown_content,
+                subject=subject,
+                grade=grade,
+                output_dir=str(ASSETS_DIR)
+            )
+        
+        else:
+            return jsonify({"error": "Please provide a file or markdown content"}), 400
+        
+        return jsonify({
+            "status": "accepted",
+            "job_id": job_id,
+            "message": "Job submitted successfully. Poll /job/<job_id>/status for progress."
+        })
+    
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "error": str(e)
+        }), 500
+
+
+@app.route("/job/<job_id>/status", methods=["GET"])
+def get_job_status(job_id):
+    job = job_manager.get_job(job_id)
+    
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    
+    return jsonify({
+        "job_id": job["id"],
+        "status": job["status"],
+        "progress": job["progress"],
+        "current_step": job["current_step_name"],
+        "steps_completed": job["steps_completed"],
+        "total_steps": job["total_steps"],
+        "created_at": job["created_at"],
+        "started_at": job["started_at"],
+        "completed_at": job["completed_at"],
+        "error": job["error"]
+    })
+
+
+def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str) -> dict:
+    try:
+        result = process_pdf_to_videos(
+            pdf_path=pdf_path,
+            subject=subject,
+            grade=grade,
+            output_dir=output_dir,
+            job_id=job_id
+        )
+        return result
+    finally:
+        if os.path.exists(pdf_path):
+            os.unlink(pdf_path)
+
+
+def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str) -> dict:
+    return process_markdown_to_videos(
+        markdown_content=markdown_content,
+        subject=subject,
+        grade=grade,
+        output_dir=output_dir,
+        job_id=job_id
+    )
+
 
 @app.route("/process_pdf", methods=["POST"])
 def process_pdf():

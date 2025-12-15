@@ -506,6 +506,9 @@ async function checkExistingPresentation() {
   }
 }
 
+let currentJobId = null;
+let pollInterval = null;
+
 async function handleFileUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -518,17 +521,21 @@ async function handleFileUpload(event) {
   showLoading();
 
   try {
-    const response = await fetch('/process_pdf', {
+    const response = await fetch('/submit_job', {
       method: 'POST',
       body: formData
     });
 
     const result = await response.json();
 
-    if (result.status === 'completed') {
-      await checkExistingPresentation();
+    if (result.status === 'accepted' && result.job_id) {
+      currentJobId = result.job_id;
+      startPolling(result.job_id);
+    } else if (result.status === 'busy') {
+      alert('Another job is already processing. Please wait and try again.');
+      location.reload();
     } else {
-      alert('Processing failed: ' + (result.error || 'Unknown error'));
+      alert('Job submission failed: ' + (result.error || 'Unknown error'));
       location.reload();
     }
   } catch (e) {
@@ -541,8 +548,50 @@ function showLoading() {
   document.getElementById('upload-box').innerHTML = `
     <div class="spinner"></div>
     <p>Processing your content...</p>
-    <p style="color: #aaa; font-size: 0.9rem;">This may take a few minutes</p>
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" id="job-progress" style="width: 0%"></div>
+      </div>
+      <div class="progress-text" id="progress-text">Initializing...</div>
+      <div class="step-indicator" id="step-indicator"></div>
+    </div>
   `;
+}
+
+function updateProgress(status) {
+  const progressBar = document.getElementById('job-progress');
+  const progressText = document.getElementById('progress-text');
+  const stepIndicator = document.getElementById('step-indicator');
+  
+  if (progressBar) progressBar.style.width = status.progress + '%';
+  if (progressText) progressText.textContent = status.current_step || 'Processing...';
+  if (stepIndicator) stepIndicator.textContent = `Step ${status.steps_completed + 1} of ${status.total_steps}`;
+}
+
+function startPolling(jobId) {
+  if (pollInterval) clearInterval(pollInterval);
+  
+  pollInterval = setInterval(async () => {
+    try {
+      const response = await fetch(`/job/${jobId}/status`);
+      const status = await response.json();
+      
+      updateProgress(status);
+      
+      if (status.status === 'completed') {
+        clearInterval(pollInterval);
+        pollInterval = null;
+        await checkExistingPresentation();
+      } else if (status.status === 'failed') {
+        clearInterval(pollInterval);
+        pollInterval = null;
+        alert('Processing failed: ' + (status.error || 'Unknown error'));
+        location.reload();
+      }
+    } catch (e) {
+      console.error('Polling error:', e);
+    }
+  }, 1500);
 }
 
 function useSampleContent() {
@@ -566,7 +615,7 @@ Photosynthesis is essential for life on Earth as it produces the oxygen we breat
 
   showLoading();
 
-  fetch('/process_markdown', {
+  fetch('/submit_job', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -577,10 +626,14 @@ Photosynthesis is essential for life on Earth as it produces the oxygen we breat
   })
     .then(response => response.json())
     .then(result => {
-      if (result.status === 'completed') {
-        checkExistingPresentation();
+      if (result.status === 'accepted' && result.job_id) {
+        currentJobId = result.job_id;
+        startPolling(result.job_id);
+      } else if (result.status === 'busy') {
+        alert('Another job is already processing. Please wait and try again.');
+        location.reload();
       } else {
-        alert('Processing failed: ' + (result.error || 'Unknown error'));
+        alert('Job submission failed: ' + (result.error || 'Unknown error'));
         location.reload();
       }
     })
