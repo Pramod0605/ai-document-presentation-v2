@@ -104,6 +104,10 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-15: V2 LLM prompts with strict visualization rules and validation
+- 2025-12-15: Added example section type with step-by-step visualization
+- 2025-12-15: Field-level validation for narration_segments and visual_beats
+- 2025-12-15: Example sections get distinct green styling in player
 - 2025-12-15: Added job-based async processing with real-time progress UI
 - 2025-12-15: UI now supports both PDF and Markdown file uploads (.pdf, .md, .markdown, .txt)
 - 2025-12-15: Added /submit_job and /job/<id>/status API endpoints
