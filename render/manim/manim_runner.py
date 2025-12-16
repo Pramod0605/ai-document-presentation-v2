@@ -89,7 +89,7 @@ BANNED_PLACEHOLDER_EQUATIONS = [
 ]
 
 
-def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trace_output_dir: str = None) -> str:
+def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trace_output_dir: str | None = None) -> str:
     """
     Render Manim video for a section with visual beats.
     
@@ -126,6 +126,50 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
     
     scene_type = manim_plan.get("scene_type", "equation")
     
+    # Handle spec_generated plans - use pre-generated Manim code
+    if scene_type == "spec_generated":
+        manim_code = manim_plan.get("manim_code", "")
+        params = manim_plan.get("params", {})
+        
+        if not manim_code:
+            raise ManimRenderError(
+                f"Section {topic_id}: spec_generated plan has no manim_code"
+            )
+        
+        print(f"[MANIM] spec_generated: {params.get('object_count', 0)} objects, "
+              f"{params.get('force_count', 0)} forces, "
+              f"{params.get('equation_count', 0)} equations")
+        
+        output_path = str(Path(output_dir) / f"topic_{topic_id}.mp4")
+        
+        log_render_prompt(
+            section_id=topic_id,
+            section_title=topic_title,
+            renderer="manim_spec",
+            prompt=manim_code,
+            output_path=output_path,
+            extra_data={
+                "section_type": section_type,
+                "scene_type": "spec_generated",
+                "duration": duration,
+                "dry_run": dry_run,
+                "spec": manim_plan.get("spec", {}),
+                "from_compiled_plan": True
+            },
+            trace_output_dir=trace_output_dir
+        )
+        
+        if dry_run:
+            print(f"[DRY RUN] Manim spec render for section {topic_id}")
+            return _create_dry_run_marker(topic_id, output_path, duration, manim_code)
+        
+        return _execute_spec_generated_render(
+            manim_code=manim_code,
+            duration=duration,
+            output_path=output_path,
+            topic_id=topic_id
+        )
+    
     # Handle multi_beat plans - extract first beat for rendering
     if scene_type == "multi_beat":
         beats = manim_plan.get("beats", [])
@@ -133,9 +177,47 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
             raise ManimRenderError(
                 f"Section {topic_id}: multi_beat plan has no beats"
             )
-        # Use first beat's scene_type and params
+        # Check if first beat is spec_generated
         first_beat = beats[0]
-        scene_type = first_beat.get("scene_type", "equation")
+        first_scene_type = first_beat.get("scene_type", "equation")
+        
+        if first_scene_type == "spec_generated":
+            manim_code = first_beat.get("manim_code", "")
+            params = first_beat.get("params", {})
+            
+            print(f"[MANIM] Multi-beat spec_generated: using first of {len(beats)} beats")
+            
+            output_path = str(Path(output_dir) / f"topic_{topic_id}.mp4")
+            
+            log_render_prompt(
+                section_id=topic_id,
+                section_title=topic_title,
+                renderer="manim_spec",
+                prompt=manim_code,
+                output_path=output_path,
+                extra_data={
+                    "section_type": section_type,
+                    "scene_type": "spec_generated",
+                    "duration": duration,
+                    "dry_run": dry_run,
+                    "beat_count": len(beats)
+                },
+                trace_output_dir=trace_output_dir
+            )
+            
+            if dry_run:
+                print(f"[DRY RUN] Manim spec render for section {topic_id}")
+                return _create_dry_run_marker(topic_id, output_path, duration, manim_code)
+            
+            return _execute_spec_generated_render(
+                manim_code=manim_code,
+                duration=duration,
+                output_path=output_path,
+                topic_id=topic_id
+            )
+        
+        # Legacy template-based beats
+        scene_type = first_scene_type
         params = first_beat.get("params", {})
         print(f"[MANIM] Multi-beat plan: using first of {len(beats)} beats (scene_type={scene_type})")
     else:
@@ -263,6 +345,69 @@ def _validate_not_placeholder(params: dict, topic_id: int, topic_title: str):
             f"Section {topic_id} '{topic_title}': Generic placeholder geometry detected. "
             f"LLM must generate specific shape code for this topic."
         )
+
+
+def _execute_spec_generated_render(
+    manim_code: str,
+    duration: int,
+    output_path: str,
+    topic_id: int
+) -> str:
+    """Execute Manim render from spec-generated code."""
+    
+    scene_wrapper = f'''
+from manim import *
+import numpy as np
+
+class SpecGeneratedScene(Scene):
+    def construct(self):
+{chr(10).join("        " + line for line in manim_code.split(chr(10)))}
+'''
+    
+    with tempfile.TemporaryDirectory() as tmpdir:
+        scene_file = Path(tmpdir) / "scene.py"
+        with open(scene_file, "w") as f:
+            f.write(scene_wrapper)
+        
+        cmd = [
+            "manim", "render",
+            "-ql",
+            "-o", "output.mp4",
+            "--media_dir", tmpdir,
+            str(scene_file),
+            "SpecGeneratedScene"
+        ]
+        
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=120,
+                cwd=tmpdir
+            )
+            
+            if result.returncode != 0:
+                raise ManimRenderError(
+                    f"Section {topic_id}: Manim spec render failed. "
+                    f"Return code: {result.returncode}. "
+                    f"Stderr: {result.stderr[:500]}"
+                )
+            
+            video_files = list(Path(tmpdir).rglob("output.mp4"))
+            if video_files:
+                import shutil
+                shutil.copy(video_files[0], output_path)
+                return output_path
+            
+            raise ManimRenderError(
+                f"Section {topic_id}: Manim spec render produced no output video"
+            )
+            
+        except subprocess.TimeoutExpired:
+            raise ManimRenderError(
+                f"Section {topic_id}: Manim spec render timed out after 120s"
+            )
 
 
 def _execute_manim_render(

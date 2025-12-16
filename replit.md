@@ -119,6 +119,14 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-16: **Structured manim_scene_spec for Manim Sections**:
+  - LLM now outputs manim_scene_spec JSON for renderer=manim (NOT prose descriptions)
+  - Schema: objects (point_charge, vector, equation), forces (electrostatic, gravitational), equations (latex, substitution), animation_sequence
+  - Semantic animations: appear, draw_force, show_equation, substitute, highlight, move, transform, wait
+  - Forces are semantic (from_object, to_object, direction: repulsive/attractive) not just arrows
+  - visual_compiler.py translates spec → Manim code (Dot, Arrow, MathTex, FadeIn, GrowArrow, Write)
+  - FAIL-FAST: Manim sections without manim_scene_spec raise VisualCompilationError
+  - manim_runner.py handles scene_type="spec_generated" with _execute_spec_generated_render
 - 2025-12-16: **Per-Beat Video Rendering (WAN/Manim)**:
   - WAN runner now generates one video per visual beat (not per section)
   - Each beat compiled via visual_compiler into structured prompt

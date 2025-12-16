@@ -148,76 +148,245 @@ def compile_wan_prompt(beat: dict, section_id: int, beat_index: int) -> str:
     return compiled_prompt
 
 
+COLOR_MAP = {
+    "blue": "BLUE",
+    "red": "RED",
+    "green": "GREEN",
+    "orange": "ORANGE",
+    "yellow": "YELLOW",
+    "purple": "PURPLE",
+    "white": "WHITE",
+    "gray": "GRAY",
+    "grey": "GRAY",
+    "pink": "PINK",
+    "cyan": "TEAL",
+}
+
+POSITION_MAP = {
+    "top_center": "UP * 3",
+    "top_left": "UP * 3 + LEFT * 4",
+    "top_right": "UP * 3 + RIGHT * 4",
+    "bottom_center": "DOWN * 3",
+    "bottom_left": "DOWN * 3 + LEFT * 4",
+    "bottom_right": "DOWN * 3 + RIGHT * 4",
+    "left": "LEFT * 5",
+    "right": "RIGHT * 5",
+    "center": "ORIGIN",
+}
+
+
+def validate_manim_scene_spec(spec: dict, section_id: int, beat_index: int) -> None:
+    """Validate manim_scene_spec has required structure."""
+    if not spec:
+        raise VisualCompilationError(
+            section_id, beat_index,
+            "Missing manim_scene_spec. Manim sections require structured scene specs, not prose descriptions."
+        )
+    
+    objects = spec.get("objects", [])
+    if not objects:
+        raise VisualCompilationError(
+            section_id, beat_index,
+            "manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation)."
+        )
+    
+    animation_sequence = spec.get("animation_sequence", [])
+    if not animation_sequence:
+        raise VisualCompilationError(
+            section_id, beat_index,
+            "manim_scene_spec.animation_sequence is empty. Must define animation actions."
+        )
+    
+    for obj in objects:
+        if not obj.get("id"):
+            raise VisualCompilationError(
+                section_id, beat_index,
+                f"Object missing 'id' field: {obj}"
+            )
+        if not obj.get("type"):
+            raise VisualCompilationError(
+                section_id, beat_index,
+                f"Object '{obj.get('id')}' missing 'type' field"
+            )
+
+
+def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -> str:
+    """Translate manim_scene_spec to executable Manim code."""
+    validate_manim_scene_spec(spec, section_id, beat_index)
+    
+    code_lines = []
+    object_vars = {}
+    
+    objects = spec.get("objects", [])
+    for obj in objects:
+        obj_id = obj["id"]
+        obj_type = obj["type"]
+        position = obj.get("position", [0, 0])
+        props = obj.get("properties", {})
+        
+        color = COLOR_MAP.get(props.get("color", "blue").lower(), "BLUE")
+        label_text = props.get("label", "")
+        radius = props.get("radius", 0.3)
+        
+        var_name = obj_id.replace("-", "_").replace(" ", "_")
+        object_vars[obj_id] = var_name
+        
+        if obj_type == "point_charge":
+            code_lines.append(f'{var_name} = Dot(point=np.array([{position[0]}, {position[1]}, 0]), color={color}, radius={radius})')
+            if label_text:
+                code_lines.append(f'{var_name}_label = Text("{label_text}", font_size=24).next_to({var_name}, UP)')
+        
+        elif obj_type == "charged_sphere":
+            code_lines.append(f'{var_name} = Circle(radius={radius}, color={color}, fill_opacity=0.5).move_to(np.array([{position[0]}, {position[1]}, 0]))')
+            if label_text:
+                code_lines.append(f'{var_name}_label = Text("{label_text}", font_size=24).next_to({var_name}, UP)')
+        
+        elif obj_type == "point":
+            code_lines.append(f'{var_name} = Dot(point=np.array([{position[0]}, {position[1]}, 0]), color={color})')
+            if label_text:
+                code_lines.append(f'{var_name}_label = Text("{label_text}", font_size=20).next_to({var_name}, DOWN)')
+        
+        elif obj_type == "vector":
+            end = props.get("end", [position[0] + 2, position[1]])
+            code_lines.append(f'{var_name} = Arrow(start=np.array([{position[0]}, {position[1]}, 0]), end=np.array([{end[0]}, {end[1]}, 0]), color={color}, buff=0)')
+            if label_text:
+                code_lines.append(f'{var_name}_label = Text("{label_text}", font_size=20).next_to({var_name}, DOWN)')
+        
+        elif obj_type == "equation":
+            latex = props.get("latex", "E = mc^2")
+            pos_name = POSITION_MAP.get(props.get("position", "center"), "ORIGIN")
+            code_lines.append(f'{var_name} = MathTex(r"{latex}").move_to({pos_name})')
+        
+        elif obj_type == "label":
+            pos_name = POSITION_MAP.get(props.get("position", "center"), "ORIGIN")
+            code_lines.append(f'{var_name} = Text("{label_text}", font_size=28).move_to({pos_name})')
+    
+    forces = spec.get("forces", [])
+    for force in forces:
+        force_id = force["id"]
+        from_obj = force.get("from_object")
+        to_obj = force.get("to_object")
+        direction = force.get("direction", "repulsive")
+        color = COLOR_MAP.get(force.get("color", "red").lower(), "RED")
+        label_text = force.get("label", "")
+        
+        var_name = force_id.replace("-", "_").replace(" ", "_")
+        object_vars[force_id] = var_name
+        
+        from_var = object_vars.get(from_obj, "ORIGIN")
+        to_var = object_vars.get(to_obj, "ORIGIN")
+        
+        if direction == "repulsive":
+            code_lines.append(f'{var_name}_start = {from_var}.get_center()')
+            code_lines.append(f'{var_name}_dir = ({from_var}.get_center() - {to_var}.get_center())')
+            code_lines.append(f'{var_name}_dir = {var_name}_dir / np.linalg.norm({var_name}_dir) * 1.5')
+            code_lines.append(f'{var_name} = Arrow(start={var_name}_start, end={var_name}_start + {var_name}_dir, color={color}, buff=0.1)')
+        elif direction == "attractive":
+            code_lines.append(f'{var_name}_start = {from_var}.get_center()')
+            code_lines.append(f'{var_name}_dir = ({to_var}.get_center() - {from_var}.get_center())')
+            code_lines.append(f'{var_name}_dir = {var_name}_dir / np.linalg.norm({var_name}_dir) * 1.5')
+            code_lines.append(f'{var_name} = Arrow(start={var_name}_start, end={var_name}_start + {var_name}_dir, color={color}, buff=0.1)')
+        else:
+            code_lines.append(f'{var_name} = Arrow(start={from_var}.get_center(), end={to_var}.get_center(), color={color}, buff=0.1)')
+        
+        if label_text:
+            code_lines.append(f'{var_name}_label = Text("{label_text}", font_size=20).next_to({var_name}, UP)')
+    
+    equations = spec.get("equations", [])
+    for eq in equations:
+        eq_id = eq["id"]
+        latex = eq.get("latex", "")
+        position = eq.get("position", "top_center")
+        
+        var_name = eq_id.replace("-", "_").replace(" ", "_")
+        object_vars[eq_id] = var_name
+        
+        pos_name = POSITION_MAP.get(position, "UP * 3")
+        code_lines.append(f'{var_name} = MathTex(r"{latex}").move_to({pos_name})')
+        
+        if eq.get("substitution"):
+            sub_latex = eq["substitution"]
+            code_lines.append(f'{var_name}_sub = MathTex(r"{sub_latex}").move_to({pos_name})')
+    
+    code_lines.append("")
+    code_lines.append("# Animation sequence")
+    
+    animation_sequence = spec.get("animation_sequence", [])
+    for anim in animation_sequence:
+        action = anim.get("action", "appear")
+        target = anim.get("target", "")
+        duration = anim.get("duration", 1.0)
+        
+        target_var = object_vars.get(target, target.replace("-", "_").replace(" ", "_"))
+        
+        if action == "appear":
+            code_lines.append(f'self.play(FadeIn({target_var}), run_time={duration})')
+            if f'{target_var}_label' in '\n'.join(code_lines):
+                code_lines.append(f'self.play(FadeIn({target_var}_label), run_time=0.3)')
+        
+        elif action == "draw_force":
+            code_lines.append(f'self.play(GrowArrow({target_var}), run_time={duration})')
+            if f'{target_var}_label' in '\n'.join(code_lines):
+                code_lines.append(f'self.play(FadeIn({target_var}_label), run_time=0.3)')
+        
+        elif action == "show_equation":
+            code_lines.append(f'self.play(Write({target_var}), run_time={duration})')
+        
+        elif action == "substitute":
+            code_lines.append(f'self.play(TransformMatchingShapes({target_var}, {target_var}_sub), run_time={duration})')
+        
+        elif action == "highlight":
+            code_lines.append(f'self.play(Indicate({target_var}), run_time={duration})')
+        
+        elif action == "move":
+            new_pos = anim.get("to", [0, 0])
+            code_lines.append(f'self.play({target_var}.animate.move_to(np.array([{new_pos[0]}, {new_pos[1]}, 0])), run_time={duration})')
+        
+        elif action == "transform":
+            to_target = anim.get("to", "")
+            to_var = object_vars.get(to_target, to_target.replace("-", "_").replace(" ", "_"))
+            code_lines.append(f'self.play(Transform({target_var}, {to_var}), run_time={duration})')
+        
+        elif action == "wait":
+            code_lines.append(f'self.wait({duration})')
+    
+    code_lines.append('self.wait(1)')
+    
+    return '\n'.join(code_lines)
+
+
 def compile_manim_plan(beat: dict, section_id: int, beat_index: int) -> dict:
-    """Compile a Manim animation plan from structured visual beat fields."""
+    """Compile a Manim animation plan from structured visual beat fields.
+    
+    REQUIRES: manim_scene_spec JSON with objects, forces, equations, animation_sequence.
+    FAIL-FAST: Raises VisualCompilationError if manim_scene_spec is missing or invalid.
+    """
     validate_visual_beat_structure(beat, section_id, beat_index)
     
-    scene_setup = beat.get("scene_setup", "")
-    objects_text = beat.get("objects_and_properties", "")
-    motion = beat.get("motion_sequence", "")
-    labels_text = beat.get("labels_and_text", "")
-    focus = beat.get("pedagogical_focus", "")
+    manim_scene_spec = beat.get("manim_scene_spec")
     
-    combined = f"{scene_setup} {objects_text}".lower()
-    if "graph" in combined or "plot" in combined or "axis" in combined or "axes" in combined:
-        scene_type = "graph"
-    elif "equation" in combined or "formula" in combined or "=" in combined:
-        scene_type = "equation"
-    elif "step" in combined or "derivation" in combined or "calculation" in combined:
-        scene_type = "derivation"
-    else:
-        scene_type = "geometry"
-    
-    labels = extract_labels_from_text(labels_text)
-    
-    params = {}
-    if scene_type == "equation":
-        import re
-        equation_match = re.search(r'([A-Z]?\s*=\s*[^,\.]+)', objects_text)
-        if equation_match:
-            params["equation"] = equation_match.group(1).strip()
-        else:
-            params["equation"] = labels[0] if labels else "E = mc^2"
-        params["scale"] = 1.5
-        params["wait_time"] = 3
-    
-    elif scene_type == "graph":
-        params["x_min"] = -5
-        params["x_max"] = 5
-        params["y_min"] = -5
-        params["y_max"] = 5
-        params["function"] = "x**2"
-        params["label"] = labels[0] if labels else "f(x)"
-        params["wait_time"] = 3
-    
-    elif scene_type == "derivation":
-        steps = []
-        for label in labels:
-            if "=" in label or any(c.isalpha() for c in label):
-                steps.append(f'r"{label}"')
-        if not steps:
-            steps = ['r"Step 1"', 'r"Step 2"', 'r"Result"']
-        params["steps"] = ", ".join(steps)
-        params["wait_time"] = 2
-    
-    else:
-        params["shape_code"] = "shapes.add(Circle(radius=1, color=BLUE))"
-        params["wait_time"] = 3
-    
-    return {
-        "scene_type": scene_type,
-        "params": params,
-        "source_instruction": f"{scene_setup} {objects_text} {motion}",
-        "source_labels": labels,
-        "source_motion": motion,
-        "structured_fields": {
-            "scene_setup": scene_setup,
-            "objects_and_properties": objects_text,
-            "motion_sequence": motion,
-            "labels_and_text": labels_text,
-            "pedagogical_focus": focus
+    if manim_scene_spec:
+        manim_code = translate_spec_to_manim_code(manim_scene_spec, section_id, beat_index)
+        
+        return {
+            "scene_type": "spec_generated",
+            "manim_code": manim_code,
+            "spec": manim_scene_spec,
+            "params": {
+                "generated_code": manim_code,
+                "object_count": len(manim_scene_spec.get("objects", [])),
+                "force_count": len(manim_scene_spec.get("forces", [])),
+                "equation_count": len(manim_scene_spec.get("equations", [])),
+                "animation_count": len(manim_scene_spec.get("animation_sequence", []))
+            }
         }
-    }
+    
+    raise VisualCompilationError(
+        section_id, beat_index,
+        "Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured "
+        "manim_scene_spec JSON with objects, forces, equations, and animation_sequence. "
+        "Prose-only descriptions are not allowed for Manim sections."
+    )
 
 
 def compile_section_visuals(section: dict) -> Tuple[Optional[str], Optional[dict], List[VisualCompilationError]]:

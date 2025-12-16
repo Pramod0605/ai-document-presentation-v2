@@ -1,0 +1,25 @@
+DRY RUN - Manim section 99
+Duration: 30s
+Output would be: player/jobs/render_test_05/videos/topic_99.mp4
+
+--- SCENE CODE ---
+q1 = Dot(point=np.array([-3, 0, 0]), color=BLUE, radius=0.3)
+q1_label = Text("q1 = +2uC", font_size=24).next_to(q1, UP)
+q2 = Dot(point=np.array([3, 0, 0]), color=RED, radius=0.3)
+q2_label = Text("q2 = +3uC", font_size=24).next_to(q2, UP)
+F12_start = q1.get_center()
+F12_dir = (q1.get_center() - q2.get_center())
+F12_dir = F12_dir / np.linalg.norm(F12_dir) * 1.5
+F12 = Arrow(start=F12_start, end=F12_start + F12_dir, color=ORANGE, buff=0.1)
+F12_label = Text("F = 5.4 N", font_size=20).next_to(F12, UP)
+coulomb = MathTex(r"F = k \frac{q_1 q_2}{r^2}").move_to(UP * 3)
+
+# Animation sequence
+self.play(FadeIn(q1), run_time=0.5)
+self.play(FadeIn(q1_label), run_time=0.3)
+self.play(FadeIn(q2), run_time=0.5)
+self.play(FadeIn(q2_label), run_time=0.3)
+self.play(GrowArrow(F12), run_time=1.0)
+self.play(FadeIn(F12_label), run_time=0.3)
+self.play(Write(coulomb), run_time=1.0)
+self.wait(1)

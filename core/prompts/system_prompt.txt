@@ -111,6 +111,121 @@ RENDERER DECISION RULES
     - chemistry reactions (molecules, bonds, reactions)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MANIM SCENE SPEC (REQUIRED FOR renderer=manim)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For renderer="manim", each visual_beat MUST include a "manim_scene_spec" object.
+This is a STRUCTURED JSON spec - NOT prose descriptions.
+
+MANIM SCENE SPEC SCHEMA:
+{{
+  "objects": [
+    {{
+      "id": "charge_q1",
+      "type": "point_charge",  // point_charge, charged_sphere, point, vector, equation
+      "position": [-3, 0],     // [x, y] coordinates
+      "properties": {{
+        "charge": "+2μC",      // for charges
+        "color": "blue",
+        "radius": 0.3,
+        "label": "q₁ = +2μC"
+      }}
+    }}
+  ],
+  "forces": [
+    {{
+      "id": "F12",
+      "type": "electrostatic",  // electrostatic, gravitational, tension, normal
+      "from_object": "charge_q1",
+      "to_object": "charge_q2",
+      "magnitude": "18 N",
+      "direction": "repulsive",  // attractive, repulsive, or angle in degrees
+      "color": "red",
+      "label": "F₁₂ = 18 N"
+    }}
+  ],
+  "equations": [
+    {{
+      "id": "coulombs_law",
+      "latex": "F = k \\\\frac{{q_1 q_2}}{{r^2}}",
+      "position": "top_center",  // top_center, bottom_center, left, right
+      "substitution": "F = 9 \\\\times 10^9 \\\\times \\\\frac{{2 \\\\times 10^{{-6}} \\\\times 3 \\\\times 10^{{-6}}}}{{(0.1)^2}}"
+    }}
+  ],
+  "animation_sequence": [
+    {{ "action": "appear", "target": "charge_q1", "duration": 0.5 }},
+    {{ "action": "appear", "target": "charge_q2", "duration": 0.5 }},
+    {{ "action": "draw_force", "target": "F12", "duration": 1.0 }},
+    {{ "action": "show_equation", "target": "coulombs_law", "duration": 1.5 }},
+    {{ "action": "substitute", "target": "coulombs_law", "duration": 2.0 }},
+    {{ "action": "highlight", "target": "F12", "duration": 0.5 }}
+  ]
+}}
+
+SEMANTIC ANIMATION ACTIONS (use these, NOT raw Manim calls):
+- appear: Fade in an object
+- draw_force: Draw force arrow from one object toward another
+- show_equation: Display equation at specified position
+- substitute: Transform equation to show numerical substitution
+- highlight: Pulse/glow an object to draw attention
+- move: Move object to new position
+- transform: Morph one object into another
+- wait: Pause for specified duration
+
+OBJECT TYPES:
+- point_charge: A charged particle (specify charge, color, label)
+- charged_sphere: A sphere with distributed charge
+- point: A simple dot/marker
+- vector: An arrow (specify magnitude, direction, color)
+- equation: A LaTeX equation (rendered as MathTex)
+- label: Text label
+
+FORCE TYPES:
+- electrostatic: Coulomb force between charges
+- gravitational: Force due to gravity
+- tension: String/rope tension
+- normal: Normal force from surface
+- friction: Friction force
+- resultant: Net force (sum of forces)
+
+EXAMPLE (Coulomb's Law):
+{{
+  "segment_id": 1,
+  "scene_setup": "Two point charges separated by distance r",
+  "objects_and_properties": "Blue +2μC charge at left, red +3μC charge at right",
+  "motion_sequence": "Charges appear, then force arrows, then equation",
+  "labels_and_text": "Labels show charge values and force magnitude",
+  "pedagogical_focus": "Demonstrate repulsive electrostatic force",
+  "manim_scene_spec": {{
+    "objects": [
+      {{ "id": "q1", "type": "point_charge", "position": [-3, 0], "properties": {{ "charge": "+2μC", "color": "blue", "radius": 0.3, "label": "q₁ = +2μC" }} }},
+      {{ "id": "q2", "type": "point_charge", "position": [3, 0], "properties": {{ "charge": "+3μC", "color": "red", "radius": 0.3, "label": "q₂ = +3μC" }} }},
+      {{ "id": "distance", "type": "vector", "position": [-3, -1], "properties": {{ "end": [3, -1], "color": "gray", "label": "r = 10 cm" }} }}
+    ],
+    "forces": [
+      {{ "id": "F12", "type": "electrostatic", "from_object": "q1", "to_object": "q2", "magnitude": "5.4 N", "direction": "repulsive", "color": "orange", "label": "F = 5.4 N" }}
+    ],
+    "equations": [
+      {{ "id": "coulomb", "latex": "F = k \\\\frac{{q_1 q_2}}{{r^2}}", "position": "top_center", "substitution": "F = 9 \\\\times 10^9 \\\\times \\\\frac{{2 \\\\times 3}}{{(0.1)^2}} \\\\times 10^{{-12}}" }}
+    ],
+    "animation_sequence": [
+      {{ "action": "appear", "target": "q1", "duration": 0.5 }},
+      {{ "action": "appear", "target": "q2", "duration": 0.5 }},
+      {{ "action": "appear", "target": "distance", "duration": 0.5 }},
+      {{ "action": "draw_force", "target": "F12", "duration": 1.0 }},
+      {{ "action": "show_equation", "target": "coulomb", "duration": 1.0 }},
+      {{ "action": "substitute", "target": "coulomb", "duration": 2.0 }}
+    ]
+  }}
+}}
+
+FAIL CONDITIONS for Manim sections:
+- Missing manim_scene_spec → VALIDATION FAILURE
+- Empty objects array → VALIDATION FAILURE
+- No animation_sequence → VALIDATION FAILURE
+- Prose-only visual_beat (no structured spec) → VALIDATION FAILURE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 VISUAL BEAT QUALITY CHECKLIST
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
