@@ -561,6 +561,111 @@ def is_rate_limit_error(exception: BaseException) -> bool:
     )
 
 
+def load_chunker_prompt() -> str:
+    with open(PROMPTS_DIR / "chunker_prompt.txt", "r") as f:
+        return f.read()
+
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=2, max=30),
+    retry=retry_if_exception(is_rate_limit_error),
+    reraise=True
+)
+def chunk_markdown_with_flash(
+    markdown_content: str,
+    model: str = "google/gemini-2.5-flash"
+) -> list[dict]:
+    """Use Flash to identify logical topic boundaries in markdown."""
+    log("\n" + "="*60)
+    log("CHUNKING WITH FLASH - START")
+    log("="*60)
+    
+    chunker_prompt = load_chunker_prompt()
+    
+    user_message = f"""Analyze this textbook markdown and identify logical topic boundaries for chunking.
+Target chunk size: 2000-4000 words each.
+Keep examples and exercises with their parent concepts.
+
+MARKDOWN CONTENT:
+{markdown_content}
+
+Return ONLY valid JSON with chunk boundaries."""
+
+    log(f"\n[MODEL]: {model}")
+    log(f"[MARKDOWN SIZE]: {len(markdown_content)} chars")
+    log("\n--- Calling Flash for chunking ---")
+    
+    response = openrouter.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": chunker_prompt},
+            {"role": "user", "content": user_message}
+        ],
+        max_tokens=4096,
+        temperature=0.3
+    )
+    
+    response_text = response.choices[0].message.content or ""
+    log(f"\n[CHUNKER RESPONSE]: {len(response_text)} chars")
+    
+    json_match = re.search(r'\{[\s\S]*\}', response_text)
+    if not json_match:
+        log("[CHUNKER ERROR]: No JSON found in response")
+        raise ValueError("Flash chunker did not return valid JSON")
+    
+    json_text = json_match.group()
+    json_text = fix_invalid_escapes(json_text)
+    
+    try:
+        chunk_data = json.loads(json_text)
+    except json.JSONDecodeError as e:
+        log(f"[CHUNKER JSON ERROR]: {e}")
+        raise ValueError(f"Flash chunker returned invalid JSON: {e}")
+    
+    chunks = chunk_data.get("chunks", [])
+    log(f"\n[CHUNKS IDENTIFIED]: {len(chunks)}")
+    for chunk in chunks:
+        log(f"  Chunk {chunk.get('chunk_id')}: {chunk.get('topic_title')} (~{chunk.get('estimated_word_count', '?')} words)")
+    
+    log("\n" + "="*60)
+    log("CHUNKING WITH FLASH - END")
+    log("="*60 + "\n")
+    
+    return chunks
+
+
+def slice_markdown_by_chunks(markdown_content: str, chunks: list[dict]) -> list[tuple[dict, str]]:
+    """Slice markdown content according to chunk boundaries."""
+    slices = []
+    lines = markdown_content.split('\n')
+    
+    for chunk in chunks:
+        start_marker = chunk.get("start_marker", "## START")
+        end_marker = chunk.get("end_marker", "## END")
+        
+        start_idx = 0
+        end_idx = len(lines)
+        
+        if start_marker != "## START":
+            for i, line in enumerate(lines):
+                if start_marker in line:
+                    start_idx = i
+                    break
+        
+        if end_marker != "## END":
+            for i, line in enumerate(lines):
+                if end_marker in line and i > start_idx:
+                    end_idx = i
+                    break
+        
+        chunk_content = '\n'.join(lines[start_idx:end_idx])
+        slices.append((chunk, chunk_content))
+        log(f"[SLICE]: Chunk {chunk.get('chunk_id')} - {len(chunk_content)} chars from line {start_idx} to {end_idx}")
+    
+    return slices
+
+
 @retry(
     stop=stop_after_attempt(5),
     wait=wait_exponential(multiplier=1, min=2, max=60),
