@@ -119,6 +119,16 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-16: **Two-LLM Chunked Pipeline (Solves Truncation)**:
+  - Flash chunker identifies logical topic boundaries (2000-4000 words each)
+  - Pro director generates presentation for each chunk with chunk-aware prompts
+  - Dynamic prompt modification: replaces SECTION GENERATION RULES per chunk type
+  - First chunk: intro + summary + content
+  - Middle chunks: content only
+  - Last chunk: content + memory + recap
+  - Post-merge validation with smart deduplication
+  - Sequential section ID renumbering across all chunks
+  - Threshold: Documents >30K chars trigger chunked pipeline
 - 2025-12-15: **Structural Coercion for Visual Beats (Gemini-safe)**:
   - Replaced word-count validation with 5 mandatory sub-fields
   - New schema: scene_setup, objects_and_properties, motion_sequence, labels_and_text, pedagogical_focus
