@@ -509,19 +509,21 @@ def validate_and_fix_presentation(presentation: dict, subject: str, grade: str) 
             if "visual_beats" not in section:
                 section["visual_beats"] = []
             
+            REQUIRED_BEAT_FIELDS = ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']
+            
             valid_beats = []
             for beat in visual_beats:
-                is_valid = (
-                    isinstance(beat.get("segment_id"), (int, float)) and
-                    isinstance(beat.get("visual_instruction"), str) and
-                    beat.get("visual_instruction", "").strip() and
-                    isinstance(beat.get("labels"), list) and
-                    isinstance(beat.get("motion"), str)
+                has_all_fields = all(
+                    isinstance(beat.get(field), str) and beat.get(field, "").strip()
+                    for field in REQUIRED_BEAT_FIELDS
                 )
-                if is_valid:
+                has_segment_id = isinstance(beat.get("segment_id"), (int, float))
+                
+                if has_all_fields and has_segment_id:
                     valid_beats.append(beat)
                 else:
-                    log(f"[AUTO-REPAIR]: Removed incomplete visual_beat from section {section.get('id')}")
+                    missing = [f for f in REQUIRED_BEAT_FIELDS if not (isinstance(beat.get(f), str) and beat.get(f, "").strip())]
+                    log(f"[AUTO-REPAIR]: Removed incomplete visual_beat from section {section.get('id')} (missing: {missing})")
             
             section["visual_beats"] = valid_beats
             visual_beats = valid_beats
@@ -536,12 +538,14 @@ def validate_and_fix_presentation(presentation: dict, subject: str, grade: str) 
                     seg_text = matching_seg.get("text", "Content explanation") if matching_seg else "Content explanation"
                     placeholder_beat = {
                         "segment_id": seg_id,
-                        "visual_instruction": f"Display educational content related to: {seg_text[:100]}",
-                        "labels": ["Educational content"],
-                        "motion": "Static display with text overlay"
+                        "scene_setup": f"Educational scene showing: {seg_text[:80]}",
+                        "objects_and_properties": "Clear diagrams, labeled components, visual aids for understanding",
+                        "motion_sequence": "Fade in elements sequentially, highlight key terms, animate transitions between concepts",
+                        "labels_and_text": "Display topic title, key terms highlighted, step-by-step annotations",
+                        "pedagogical_focus": "Build understanding progressively, connect to prior knowledge, reinforce with visual cues"
                     }
                     section["visual_beats"].append(placeholder_beat)
-                    log(f"[AUTO-REPAIR]: Added placeholder visual_beat for segment {seg_id} in section {section.get('id')}")
+                    log(f"[AUTO-REPAIR]: Added 5-field placeholder visual_beat for segment {seg_id} in section {section.get('id')}")
         
         section_errors, section_warnings = validate_section_v2(section)
         all_errors.extend(section_errors)
