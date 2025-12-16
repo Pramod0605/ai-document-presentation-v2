@@ -129,7 +129,6 @@ CRITICAL_SECTION_TYPES = ["content", "example"]
 CONTENT_MIN_WORDS = 150
 
 BANNED_VAGUE_PHRASES = [
-    "detailed animation",
     "conceptual visualization", 
     "dynamic visuals",
     "beautiful animation",
@@ -230,15 +229,29 @@ REQUIRED_VISUAL_BEAT_FIELDS = [
     "pedagogical_focus"
 ]
 
-MIN_FIELD_WORDS = 8
+MIN_FIELD_WORDS = 2  # Relaxed - combined prompts are 40-80+ words total, individual fields can be brief
 
 
-def validate_visual_beat(beat: dict, section_id: int, beat_index: int, is_critical: bool = False) -> list:
-    """Validate visual beat using 5-field structure (Gemini-safe)."""
+def validate_visual_beat(beat: dict, section_id: int, beat_index: int, is_critical: bool = False, has_manim_spec: bool = False) -> list:
+    """Validate visual beat using 5-field structure (Gemini-safe).
+    
+    Args:
+        has_manim_spec: If True, skip word-count validation since manim_scene_spec is authoritative
+    """
     errors = []
     
     if "segment_id" not in beat or not isinstance(beat.get("segment_id"), (int, float)):
         errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing or invalid 'segment_id' (must be numeric)")
+    
+    # If has manim_scene_spec, validate the spec structure instead of prose word counts
+    if has_manim_spec:
+        spec = beat.get("manim_scene_spec")
+        if spec:
+            if not spec.get("objects") and not spec.get("equations"):
+                errors.append(f"Section {section_id}: visual_beat[{beat_index}] manim_scene_spec needs objects or equations")
+            if not spec.get("animation_sequence"):
+                errors.append(f"Section {section_id}: visual_beat[{beat_index}] manim_scene_spec needs animation_sequence")
+        return errors
     
     if is_critical:
         missing_fields = []
@@ -325,8 +338,11 @@ def validate_section_v2(section: dict) -> tuple[list, list]:
             seg_errors = validate_narration_segment(seg, section_id, i)
             errors.extend(seg_errors)
         
+        # For Manim sections, check if beats have manim_scene_spec
+        is_manim = renderer == "manim"
         for i, beat in enumerate(visual_beats):
-            beat_errors = validate_visual_beat(beat, section_id, i, is_critical=is_critical)
+            has_spec = is_manim and beat.get("manim_scene_spec") is not None
+            beat_errors = validate_visual_beat(beat, section_id, i, is_critical=is_critical, has_manim_spec=has_spec)
             errors.extend(beat_errors)
         
         if narration_segments and visual_beats:
