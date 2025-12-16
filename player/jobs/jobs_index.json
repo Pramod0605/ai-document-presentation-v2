@@ -1360,5 +1360,201 @@
       "sections_count": 16,
       "dry_run": true
     }
+  },
+  "f6efe35a": {
+    "id": "f6efe35a",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Science",
+      "grade": "9",
+      "file_path": "/tmp/ai_education_jobs/eb8aa0004b53919f.md"
+    },
+    "status": "completed",
+    "current_step": 2,
+    "current_step_name": "Generating audio narration...",
+    "steps_completed": 3,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-16T15:52:16.022159",
+    "started_at": "2025-12-16T15:52:16.030505",
+    "completed_at": "2025-12-16T16:17:54.240556",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "started_at": "2025-12-16T15:52:16.040015",
+      "steps": [
+        {
+          "step": "generate_presentation_plan",
+          "status": "completed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/f6efe35a/videos/topic_1.mp4",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/f6efe35a/videos/topic_2.mp4",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/f6efe35a/videos/topic_3_beat_0.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 4,
+              "section_type": "content",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/f6efe35a/videos/topic_4_beat_0.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 5,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "[Errno 2] No such file or directory: 'manim'",
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 212, in render_manim_video\n    return _execute_spec_generated_render(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 382, in _execute_spec_generated_render\n    result = subprocess.run(\n             ^^^^^^^^^^^^^^^\n  File \"/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/subprocess.py\", line 548, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/subprocess.py\", line 1026, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n  File \"/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/subprocess.py\", line 1955, in _execute_child\n    raise child_exception_type(errno_num, err_msg, err_filename)\nFileNotFoundError: [Errno 2] No such file or directory: 'manim'\n"
+            },
+            {
+              "topic_id": 6,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "[Errno 2] No such file or directory: 'manim'",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 212, in render_manim_video\n    return _execute_spec_generated_render(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 382, in _execute_spec_generated_render\n    result = subprocess.run(\n             ^^^^^^^^^^^^^^^\n  File \"/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/subprocess.py\", line 548, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/subprocess.py\", line 1026, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n  File \"/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/subprocess.py\", line 1955, in _execute_child\n    raise child_exception_type(errno_num, err_msg, err_filename)\nFileNotFoundError: [Errno 2] No such file or directory: 'manim'\n"
+            },
+            {
+              "topic_id": 7,
+              "section_type": "content",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/f6efe35a/videos/topic_7_beat_0.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 8,
+              "section_type": "memory",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "[Errno 2] No such file or directory: 'manim'",
+              "visual_beats_used": 1,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 166, in render_manim_video\n    return _execute_spec_generated_render(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 382, in _execute_spec_generated_render\n    result = subprocess.run(\n             ^^^^^^^^^^^^^^^\n  File \"/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/subprocess.py\", line 548, in run\n    with Popen(*popenargs, **kwargs) as process:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/subprocess.py\", line 1026, in __init__\n    self._execute_child(args, executable, preexec_fn, close_fds,\n  File \"/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/subprocess.py\", line 1955, in _execute_child\n    raise child_exception_type(errno_num, err_msg, err_filename)\nFileNotFoundError: [Errno 2] No such file or directory: 'manim'\n"
+            },
+            {
+              "topic_id": 9,
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/f6efe35a/videos/topic_9.mp4",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": false,
+              "compilation_errors": []
+            }
+          ],
+          "success_count": 6,
+          "fail_count": 3,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": 1,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/f6efe35a/audio/section_1.mp3"
+            },
+            {
+              "section_id": 2,
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/f6efe35a/audio/section_2.mp3"
+            },
+            {
+              "section_id": 3,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/f6efe35a/audio/section_3.mp3"
+            },
+            {
+              "section_id": 4,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/f6efe35a/audio/section_4.mp3"
+            },
+            {
+              "section_id": 5,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/f6efe35a/audio/section_5.mp3"
+            },
+            {
+              "section_id": 6,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/f6efe35a/audio/section_6.mp3"
+            },
+            {
+              "section_id": 7,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/f6efe35a/audio/section_7.mp3"
+            },
+            {
+              "section_id": 8,
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/f6efe35a/audio/section_8.mp3"
+            },
+            {
+              "section_id": 9,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/f6efe35a/audio/section_9.mp3"
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-16T16:17:54.239965",
+      "presentation_path": "/home/runner/workspace/player/jobs/f6efe35a/presentation.json",
+      "trace_path": "/home/runner/workspace/player/jobs/f6efe35a/generation_trace.json",
+      "sections_count": 9,
+      "dry_run": false
+    }
   }
 }
