@@ -129,6 +129,8 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
   - Post-merge validation with smart deduplication
   - Sequential section ID renumbering across all chunks
   - Threshold: Documents >30K chars trigger chunked pipeline
+  - Fixed auto-repair: now validates 5-field visual beat format (scene_setup, objects_and_properties, motion_sequence, labels_and_text, pedagogical_focus)
+  - Placeholder beats use proper 5-field format for compilation compatibility
 - 2025-12-15: **Structural Coercion for Visual Beats (Gemini-safe)**:
   - Replaced word-count validation with 5 mandatory sub-fields
   - New schema: scene_setup, objects_and_properties, motion_sequence, labels_and_text, pedagogical_focus
