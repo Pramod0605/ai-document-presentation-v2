@@ -550,7 +550,7 @@ def generate_presentation_plan(
     markdown_content: str,
     subject: str,
     grade: str,
-    model: str = "google/gemini-2.5-pro-preview-06-05"
+    model: str = "google/gemini-2.5-flash"
 ) -> tuple[dict, dict]:
     log("\n" + "="*60)
     log("LLM GENERATION - START")
@@ -569,7 +569,7 @@ def generate_presentation_plan(
     log(f"[SYSTEM PROMPT]: {len(system_prompt)} chars, first 200: {system_prompt[:200]}...")
     log(f"[USER PROMPT]: {len(user_prompt)} chars")
     log(f"[INPUT MARKDOWN]: {len(markdown_content)} chars")
-    log(f"[MAX TOKENS]: 32768")
+    log(f"[MAX TOKENS]: 65536")
     log(f"[TEMPERATURE]: 0.7")
     log("\n--- Calling OpenRouter API ---")
     
@@ -579,7 +579,7 @@ def generate_presentation_plan(
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ],
-        max_tokens=32768,
+        max_tokens=65536,
         temperature=0.7
     )
     
