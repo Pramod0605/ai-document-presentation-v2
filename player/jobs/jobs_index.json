@@ -1556,5 +1556,249 @@
       "sections_count": 9,
       "dry_run": false
     }
+  },
+  "df4d1684": {
+    "id": "df4d1684",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Science",
+      "grade": "9",
+      "file_path": "/tmp/ai_education_jobs/1e418093c10248a3.md"
+    },
+    "status": "processing",
+    "current_step": null,
+    "current_step_name": "Initializing...",
+    "steps_completed": 0,
+    "total_steps": 3,
+    "progress": 0,
+    "created_at": "2025-12-16T16:23:20.371927",
+    "started_at": "2025-12-16T16:23:20.381908",
+    "completed_at": null,
+    "error": null,
+    "result": null
+  },
+  "b5ed9df4": {
+    "id": "b5ed9df4",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Science",
+      "grade": "9",
+      "file_path": "/tmp/ai_education_jobs/847526ba9d2043e3.md"
+    },
+    "status": "failed",
+    "current_step": 0,
+    "current_step_name": "LLM generating presentation plan...",
+    "steps_completed": 0,
+    "total_steps": 3,
+    "progress": 0,
+    "created_at": "2025-12-16T16:32:14.227883",
+    "started_at": "2025-12-16T16:32:14.238022",
+    "completed_at": "2025-12-16T16:35:03.992196",
+    "error": "Validation failed with 1 critical errors:\nSection 3: visual_beat[2] vague phrases in: ['pedagogical_focus']",
+    "result": null
+  },
+  "c1a6ebcd": {
+    "id": "c1a6ebcd",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Science",
+      "grade": "9",
+      "file_path": "/tmp/ai_education_jobs/09ab53687cf84cbd.md"
+    },
+    "status": "completed",
+    "current_step": 2,
+    "current_step_name": "Generating audio narration...",
+    "steps_completed": 3,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-16T16:37:16.619163",
+    "started_at": "2025-12-16T16:37:16.629280",
+    "completed_at": "2025-12-16T16:59:35.472347",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "started_at": "2025-12-16T16:37:16.643813",
+      "steps": [
+        {
+          "step": "generate_presentation_plan",
+          "status": "completed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/c1a6ebcd/videos/topic_1.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/c1a6ebcd/videos/topic_2.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/c1a6ebcd/videos/topic_3_beat_0.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 4,
+              "section_type": "content",
+              "renderer": "wan_video",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 1 errors",
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 4, Beat 2: Vague phrases detected: [\"pedagogical_focus: ['illustrate the process']\"]. Use specific descriptions with colors, positions, and sizes."
+              ]
+            },
+            {
+              "topic_id": 5,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 4 errors",
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 5, Beat 0: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 5, Beat 1: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 5, Beat 3: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 5, Beat 5: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation)."
+              ]
+            },
+            {
+              "topic_id": 6,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 2 errors",
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 6, Beat 0: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 6, Beat 5: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections."
+              ]
+            },
+            {
+              "topic_id": 7,
+              "section_type": "content",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/c1a6ebcd/videos/topic_7_beat_0.mp4",
+              "error": null,
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 8,
+              "section_type": "memory",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 8: No Manim plan available. Manim sections must have visual_beats or explicit manim_plan.",
+              "visual_beats_used": 0,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 122, in render_manim_video\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 8: No Manim plan available. Manim sections must have visual_beats or explicit manim_plan.\n"
+            },
+            {
+              "topic_id": 9,
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/c1a6ebcd/videos/topic_9.mp4",
+              "error": null,
+              "visual_beats_used": 0,
+              "dry_run": false,
+              "compilation_errors": []
+            }
+          ],
+          "success_count": 5,
+          "fail_count": 4,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": 1,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/c1a6ebcd/audio/section_1.mp3"
+            },
+            {
+              "section_id": 2,
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/c1a6ebcd/audio/section_2.mp3"
+            },
+            {
+              "section_id": 3,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/c1a6ebcd/audio/section_3.mp3"
+            },
+            {
+              "section_id": 4,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/c1a6ebcd/audio/section_4.mp3"
+            },
+            {
+              "section_id": 5,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/c1a6ebcd/audio/section_5.mp3"
+            },
+            {
+              "section_id": 6,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/c1a6ebcd/audio/section_6.mp3"
+            },
+            {
+              "section_id": 7,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/c1a6ebcd/audio/section_7.mp3"
+            },
+            {
+              "section_id": 8,
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/c1a6ebcd/audio/section_8.mp3"
+            },
+            {
+              "section_id": 9,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/c1a6ebcd/audio/section_9.mp3"
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-16T16:59:35.471993",
+      "presentation_path": "/home/runner/workspace/player/jobs/c1a6ebcd/presentation.json",
+      "trace_path": "/home/runner/workspace/player/jobs/c1a6ebcd/generation_trace.json",
+      "sections_count": 9,
+      "dry_run": false
+    }
   }
 }

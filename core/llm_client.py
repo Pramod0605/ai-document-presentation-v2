@@ -135,18 +135,7 @@ BANNED_VAGUE_PHRASES = [
     "stunning visual",
     "amazing graphics",
     "impressive display",
-    "show clearly",
-    "demonstrate effectively",
-    "visualize the concept",
-    "illustrate the process",
     "display appropriately",
-    "animate smoothly",
-    "show the interaction",
-    "visualize the relationship",
-    "demonstrate the principle",
-    "illustrate the idea",
-    "show the process",
-    "animate the concept"
 ]
 
 VISUAL_INSTRUCTION_MIN_WORDS = 50

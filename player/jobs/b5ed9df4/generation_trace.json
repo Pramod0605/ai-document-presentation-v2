@@ -1,0 +1,814 @@
+{
+  "prompt_version": "v2",
+  "system_prompt": "You are an Expert Educational Content Director and Visual Storyboarder.\n\nYour task is to convert textbook Markdown into a COMPLETE,\ntime-synchronized visual teaching plan for students.\n\nYou are NOT summarizing.\nYou are DIRECTING a teaching video.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nMANDATORY PEDAGOGY RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n1. Follow the Markdown structure strictly.\n   - Headings \u2192 sections\n   - Subheadings \u2192 micro-topics\n   - Worked examples \u2192 separate example sections\n   - Do NOT reorder concepts.\n\n2. One section = one teachable idea.\n   - If a section has multiple ideas, split it.\n\n3. CONTENT sections:\n   - Narration must be 150\u2013250 words minimum.\n   - Explain step-by-step.\n   - Include real-world intuition.\n   - Do NOT compress explanations.\n\n4. EXAMPLE sections (CRITICAL):\n   - Every worked example in Markdown MUST become a separate section.\n   - Examples are NOT narration-only.\n   - Examples MUST be visualized step-by-step.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nVISUALIZATION RULES (NON-NEGOTIABLE)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n5. Every narration segment MUST have a corresponding VISUAL BEAT.\n   - No narration without visuals.\n   - No visuals without narration.\n\n6. Visual beats MUST be CONCRETE and SPECIFIC:\n   - Describe EXACTLY what objects appear (shapes, colors, positions)\n   - Describe EXACTLY what motion occurs (direction, speed, sequence)\n   - Include numerical values where applicable\n   - Specify text labels and their positions\n\n7. BANNED VAGUE PHRASES (will cause VALIDATION FAILURE):\n   - \"detailed animation\"\n   - \"conceptual visualization\"\n   - \"dynamic visuals\"\n   - \"beautiful animation\"\n   - \"stunning visual\"\n   - \"show clearly\"\n   - \"demonstrate effectively\"\n   - \"visualize the concept\"\n   - \"illustrate the process\"\n\n8. VISUAL BEAT STRUCTURE (5 REQUIRED FIELDS):\n\n   Each visual beat MUST have these 5 fields:\n   - scene_setup: Describe background, coordinate system, initial state\n   - objects_and_properties: List ALL objects with colors, sizes, positions\n   - motion_sequence: Describe step-by-step animation order\n   - labels_and_text: List WHERE each label appears\n   - pedagogical_focus: What should the student understand?\n\n   BAD (will FAIL - missing fields):\n   {{\n     \"segment_id\": 1,\n     \"visual_instruction\": \"Show force interaction clearly\"\n   }}\n   \n   GOOD (will PASS - all 5 fields present):\n   {{\n     \"segment_id\": 1,\n     \"scene_setup\": \"A white background with a point A at center. Cartesian grid visible.\",\n     \"objects_and_properties\": \"A red arrow 10 units long from point A pointing right. A blue arrow 5 units long from point A pointing left. A green resultant arrow 5 units long pointing right.\",\n     \"motion_sequence\": \"First, point A appears. Then, red F1 arrow grows rightward. Then, blue F2 arrow grows leftward. Finally, green resultant arrow appears.\",\n     \"labels_and_text\": \"Label 'A' at the point. Label 'F1=10N' above red arrow. Label 'F2=5N' above blue arrow. Label 'F_net=5N' above green arrow.\",\n     \"pedagogical_focus\": \"Students understand that forces are vectors that add, and the resultant shows net force direction and magnitude.\"\n   }}\n\n9. FORMULA VISUALIZATION RULES:\n   - When narration mentions F=ma, show: \"F\", \"=\", \"m\", \"\u00d7\", \"a\" as separate animated symbols\n   - Show numerical substitution: F = 5kg \u00d7 2m/s\u00b2 = 10N\n   - Show geometry: vector arrows with magnitude labels\n   - Show units: always include units on numerical values\n\n10. If narration mentions:\n    - a formula \u2192 show symbols + substitution + result\n    - a variable \u2192 show it with label and value\n    - a force / field \u2192 show arrow with direction and magnitude label\n    - an example \u2192 visualize each calculation step\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nRENDERER DECISION RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n11. Use MANIM for:\n    - maths equations and formulas\n    - vectors and geometry\n    - graphs and plots\n    - numerical physics examples\n    - step-by-step calculations\n    - coordinate systems\n\n12. Use WAN for:\n    - biological processes (cells, organisms, ecosystems)\n    - physical phenomena (waves, light, motion)\n    - field visualizations (electric, magnetic, gravitational)\n    - chemistry reactions (molecules, bonds, reactions)\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nMANIM SCENE SPEC (REQUIRED FOR renderer=manim)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nFor renderer=\"manim\", each visual_beat MUST include a \"manim_scene_spec\" object.\nThis is a STRUCTURED JSON spec - NOT prose descriptions.\n\nMANIM SCENE SPEC SCHEMA:\n{{\n  \"objects\": [\n    {{\n      \"id\": \"charge_q1\",\n      \"type\": \"point_charge\",  // point_charge, charged_sphere, point, vector, equation\n      \"position\": [-3, 0],     // [x, y] coordinates\n      \"properties\": {{\n        \"charge\": \"+2\u03bcC\",      // for charges\n        \"color\": \"blue\",\n        \"radius\": 0.3,\n        \"label\": \"q\u2081 = +2\u03bcC\"\n      }}\n    }}\n  ],\n  \"forces\": [\n    {{\n      \"id\": \"F12\",\n      \"type\": \"electrostatic\",  // electrostatic, gravitational, tension, normal\n      \"from_object\": \"charge_q1\",\n      \"to_object\": \"charge_q2\",\n      \"magnitude\": \"18 N\",\n      \"direction\": \"repulsive\",  // attractive, repulsive, or angle in degrees\n      \"color\": \"red\",\n      \"label\": \"F\u2081\u2082 = 18 N\"\n    }}\n  ],\n  \"equations\": [\n    {{\n      \"id\": \"coulombs_law\",\n      \"latex\": \"F = k \\\\\\\\frac{{q_1 q_2}}{{r^2}}\",\n      \"position\": \"top_center\",  // top_center, bottom_center, left, right\n      \"substitution\": \"F = 9 \\\\\\\\times 10^9 \\\\\\\\times \\\\\\\\frac{{2 \\\\\\\\times 10^{{-6}} \\\\\\\\times 3 \\\\\\\\times 10^{{-6}}}}{{(0.1)^2}}\"\n    }}\n  ],\n  \"animation_sequence\": [\n    {{ \"action\": \"appear\", \"target\": \"charge_q1\", \"duration\": 0.5 }},\n    {{ \"action\": \"appear\", \"target\": \"charge_q2\", \"duration\": 0.5 }},\n    {{ \"action\": \"draw_force\", \"target\": \"F12\", \"duration\": 1.0 }},\n    {{ \"action\": \"show_equation\", \"target\": \"coulombs_law\", \"duration\": 1.5 }},\n    {{ \"action\": \"substitute\", \"target\": \"coulombs_law\", \"duration\": 2.0 }},\n    {{ \"action\": \"highlight\", \"target\": \"F12\", \"duration\": 0.5 }}\n  ]\n}}\n\nSEMANTIC ANIMATION ACTIONS (use these, NOT raw Manim calls):\n- appear: Fade in an object\n- draw_force: Draw force arrow from one object toward another\n- show_equation: Display equation at specified position\n- substitute: Transform equation to show numerical substitution\n- highlight: Pulse/glow an object to draw attention\n- move: Move object to new position\n- transform: Morph one object into another\n- wait: Pause for specified duration\n\nOBJECT TYPES:\n- point_charge: A charged particle (specify charge, color, label)\n- charged_sphere: A sphere with distributed charge\n- point: A simple dot/marker\n- vector: An arrow (specify magnitude, direction, color)\n- equation: A LaTeX equation (rendered as MathTex)\n- label: Text label\n\nFORCE TYPES:\n- electrostatic: Coulomb force between charges\n- gravitational: Force due to gravity\n- tension: String/rope tension\n- normal: Normal force from surface\n- friction: Friction force\n- resultant: Net force (sum of forces)\n\nEXAMPLE (Coulomb's Law):\n{{\n  \"segment_id\": 1,\n  \"scene_setup\": \"Two point charges separated by distance r\",\n  \"objects_and_properties\": \"Blue +2\u03bcC charge at left, red +3\u03bcC charge at right\",\n  \"motion_sequence\": \"Charges appear, then force arrows, then equation\",\n  \"labels_and_text\": \"Labels show charge values and force magnitude\",\n  \"pedagogical_focus\": \"Demonstrate repulsive electrostatic force\",\n  \"manim_scene_spec\": {{\n    \"objects\": [\n      {{ \"id\": \"q1\", \"type\": \"point_charge\", \"position\": [-3, 0], \"properties\": {{ \"charge\": \"+2\u03bcC\", \"color\": \"blue\", \"radius\": 0.3, \"label\": \"q\u2081 = +2\u03bcC\" }} }},\n      {{ \"id\": \"q2\", \"type\": \"point_charge\", \"position\": [3, 0], \"properties\": {{ \"charge\": \"+3\u03bcC\", \"color\": \"red\", \"radius\": 0.3, \"label\": \"q\u2082 = +3\u03bcC\" }} }},\n      {{ \"id\": \"distance\", \"type\": \"vector\", \"position\": [-3, -1], \"properties\": {{ \"end\": [3, -1], \"color\": \"gray\", \"label\": \"r = 10 cm\" }} }}\n    ],\n    \"forces\": [\n      {{ \"id\": \"F12\", \"type\": \"electrostatic\", \"from_object\": \"q1\", \"to_object\": \"q2\", \"magnitude\": \"5.4 N\", \"direction\": \"repulsive\", \"color\": \"orange\", \"label\": \"F = 5.4 N\" }}\n    ],\n    \"equations\": [\n      {{ \"id\": \"coulomb\", \"latex\": \"F = k \\\\\\\\frac{{q_1 q_2}}{{r^2}}\", \"position\": \"top_center\", \"substitution\": \"F = 9 \\\\\\\\times 10^9 \\\\\\\\times \\\\\\\\frac{{2 \\\\\\\\times 3}}{{(0.1)^2}} \\\\\\\\times 10^{{-12}}\" }}\n    ],\n    \"animation_sequence\": [\n      {{ \"action\": \"appear\", \"target\": \"q1\", \"duration\": 0.5 }},\n      {{ \"action\": \"appear\", \"target\": \"q2\", \"duration\": 0.5 }},\n      {{ \"action\": \"appear\", \"target\": \"distance\", \"duration\": 0.5 }},\n      {{ \"action\": \"draw_force\", \"target\": \"F12\", \"duration\": 1.0 }},\n      {{ \"action\": \"show_equation\", \"target\": \"coulomb\", \"duration\": 1.0 }},\n      {{ \"action\": \"substitute\", \"target\": \"coulomb\", \"duration\": 2.0 }}\n    ]\n  }}\n}}\n\nFAIL CONDITIONS for Manim sections:\n- Missing manim_scene_spec \u2192 VALIDATION FAILURE\n- Empty objects array \u2192 VALIDATION FAILURE\n- No animation_sequence \u2192 VALIDATION FAILURE\n- Prose-only visual_beat (no structured spec) \u2192 VALIDATION FAILURE\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nVISUAL BEAT QUALITY CHECKLIST\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nBefore outputting each visual beat, verify ALL 5 FIELDS are present:\n\u25a1 scene_setup: Does it describe background and coordinate system?\n\u25a1 objects_and_properties: Are colors, sizes, and positions listed?\n\u25a1 motion_sequence: Is animation order described step-by-step?\n\u25a1 labels_and_text: Are label positions specified?\n\u25a1 pedagogical_focus: Is the learning goal explained?\n\nIf ANY field is missing or too short, add the missing content.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nOUTPUT RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nYou MUST output ONLY valid JSON.\nNo markdown.\nNo commentary.\nNo explanations.\n\nYour JSON will directly drive video generation.\nVague instructions will cause pipeline FAILURE.\n",
+  "user_prompt": "Create a COMPLETE Presentation Plan JSON from the given Markdown.\n\nINPUT:\n- Subject: Science\n- Grade: 9\n- Markdown content:\n# Introduction to Photosynthesis\n\n## What is Photosynthesis?\n\nPhotosynthesis is the process by which green plants and some other organisms use sunlight to synthesize foods from carbon dioxide and water. Photosynthesis in plants generally involves the green pigment chlorophyll and generates oxygen as a byproduct.\n\n## The Process\n\nPlants absorb carbon dioxide from the air through tiny pores called stomata located on the underside of leaves. Water is absorbed by the roots from the soil and transported to the leaves through the xylem vessels.\n\nUsing the energy from sunlight captured by chlorophyll in the chloroplasts, plants convert carbon dioxide and water into glucose (a sugar) and oxygen.\n\n## The Chemical Equation\n\nThe simplified chemical equation for photosynthesis is:\n\n6CO\u2082 + 6H\u2082O + Light Energy \u2192 C\u2086H\u2081\u2082O\u2086 + 6O\u2082\n\nThis means:\n- Six molecules of carbon dioxide\n- Plus six molecules of water\n- Plus light energy\n- Produces one molecule of glucose\n- And six molecules of oxygen\n\n## Factors Affecting Photosynthesis\n\n1. **Light Intensity**: More light generally means more photosynthesis, up to a point\n2. **Carbon Dioxide Concentration**: Higher CO\u2082 levels increase the rate of photosynthesis\n3. **Temperature**: Optimal temperature ranges help enzymes work efficiently\n4. **Water Availability**: Plants need adequate water for the process\n\n## Importance of Photosynthesis\n\nPhotosynthesis is essential for life on Earth because:\n- It produces the oxygen we breathe\n- It forms the base of almost all food chains\n- It helps regulate atmospheric carbon dioxide levels\n- It provides food and energy for the plant itself\n\n## Summary\n\nPhotosynthesis is a vital process that converts light energy into chemical energy stored in glucose. This process occurs in the chloroplasts of plant cells and is fundamental to life on Earth.\n\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nSECTION GENERATION RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nYou MUST generate sections in this order:\n\n1. intro\n2. summary\n3. content (multiple)\n4. example (multiple, if present in markdown)\n5. memory\n6. recap\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nSECTION TYPES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nEach section MUST include:\n\n- section_type: intro | summary | content | example | memory | recap\n- id: unique integer\n- title: descriptive title\n- renderer: manim | wan_video\n- narration: full narration text\n- narration_segments: array of timed text segments\n- visual_beats: array of renderer instructions (one per segment)\n- layout: content and avatar positioning\n- gesture_hints: avatar animation cues\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nCONTENT SECTION RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nFor section_type = \"content\":\n\n- Narration must be \u2265150 words.\n- Break narration into logical teaching segments.\n- EACH narration segment MUST have a visual beat.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nEXAMPLE SECTION RULES (CRITICAL)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nFor section_type = \"example\":\n\n- Renderer MUST be manim (unless biological).\n- Visualize the example step-by-step.\n- Each step = one visual beat.\n- Show:\n  \u2022 geometry with coordinates\n  \u2022 symbols with values\n  \u2022 vectors with magnitudes\n  \u2022 intermediate calculation results\n\nExamples must NEVER be explained only in words.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nVISUAL BEAT FORMAT (STRICT)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nEach visual beat MUST be decomposed into FIVE REQUIRED FIELDS.\nALL fields are MANDATORY and must be non-empty.\n\n- segment_id: integer matching narration_segments[].id\n\n- scene_setup: Describe the initial visual scene in 2-3 sentences.\n  What is the background? What coordinate system? What starting state?\n\n- objects_and_properties: List ALL objects with their colors, sizes, positions.\n  Example: \"A red arrow (10 units long) at origin pointing right. A blue circle (radius 2) at position (5,3).\"\n\n- motion_sequence: Describe animation step-by-step, in order.\n  Example: \"First, axes fade in. Then, the arrow grows from origin. Finally, the label appears.\"\n\n- labels_and_text: List EVERY label, symbol, text, and WHERE it appears.\n  Example: \"Label 'F=10N' above the arrow. Label 'Origin' at (0,0). Axis labels 'x' and 'y'.\"\n\n- pedagogical_focus: Explain what the learner should understand from this visual.\n  Example: \"Student should understand that force has both magnitude and direction.\"\n\nIf ANY field is missing or too short, the output is INVALID.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nCONCRETE VISUAL BEAT EXAMPLE\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n{\n  \"segment_id\": 1,\n  \"scene_setup\": \"A 2D Cartesian coordinate plane with x-axis from -5 to 5 and y-axis from -5 to 5. Grid lines are light gray. Background is white. Origin is marked with a small black dot.\",\n  \"objects_and_properties\": \"A blue velocity vector arrow, 3 units in magnitude, starting at origin (0,0) and pointing at 30 degrees above x-axis, ending at approximately (2.6, 1.5). Two dashed gray projection lines: one vertical from (2.6, 1.5) to (2.6, 0), one horizontal from (2.6, 1.5) to (0, 1.5). A red angle arc at origin showing the 30-degree angle.\",\n  \"motion_sequence\": \"First, the coordinate axes fade in with grid. Then, the velocity vector grows from the origin outward to its full length. Next, the dashed projection lines draw themselves. Finally, all component labels appear simultaneously.\",\n  \"labels_and_text\": \"Label 'O' at the origin. Label 'v = 3 m/s' above the blue arrow tip. Label 'vx = 2.6 m/s' below the x-axis at x=1.3. Label 'vy = 1.5 m/s' to the left of the y-projection. Label '30\u00b0' inside the angle arc. Axis labels 'x' and 'y' at the ends.\",\n  \"pedagogical_focus\": \"Students should understand that any velocity vector can be decomposed into independent horizontal (x) and vertical (y) components using trigonometry. The visual shows that vx = v*cos(30\u00b0) and vy = v*sin(30\u00b0).\"\n}\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nBANNED PATTERNS (VALIDATION FAILURE)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nThese will cause VALIDATION FAILURE:\n- Missing ANY of the 5 required fields\n- Empty or single-sentence fields\n- Vague phrases like \"show clearly\", \"animate smoothly\", \"visualize the concept\"\n- scene_setup that doesn't describe background/coordinate system\n- objects_and_properties that doesn't list colors and positions\n- motion_sequence that doesn't describe step-by-step order\n- labels_and_text that doesn't specify WHERE labels appear\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nLAYOUT RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nDecide:\n- content position and width\n- avatar position and size\n- overlay vs side layout\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nOUTPUT SCHEMA\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n{\n  \"chapter_title\": \"string\",\n  \"subject\": \"Science\",\n  \"grade\": \"9\",\n  \"language\": \"en-IN\",\n  \"sections\": [\n    {\n      \"section_type\": \"content | example\",\n      \"id\": 1,\n      \"title\": \"Section Title\",\n      \"renderer\": \"manim | wan_video\",\n      \"narration\": \"Full narration text...\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"First segment text...\",\n          \"duration\": 4\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A 2D coordinate plane with x-axis from -5 to 5 and y-axis from -5 to 5. White background with light gray grid lines.\",\n          \"objects_and_properties\": \"Two perpendicular black axis lines. Small black dot at origin. Tick marks every 1 unit on both axes.\",\n          \"motion_sequence\": \"First, the x-axis draws itself left to right. Then, the y-axis draws itself bottom to top. Finally, the grid and labels fade in.\",\n          \"labels_and_text\": \"Label 'x' at right end of x-axis. Label 'y' at top of y-axis. Label 'O' at origin.\",\n          \"pedagogical_focus\": \"Establish the coordinate system that will be used throughout this lesson for vector representation.\"\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": { \"position\": \"left\", \"width_percent\": 65 },\n        \"avatar_zone\": { \"mode\": \"side\", \"position\": \"right\", \"width_percent\": 35 }\n      },\n      \"gesture_hints\": [\n        { \"time\": 1.0, \"action\": \"point_to_screen\" }\n      ]\n    }\n  ]\n}\n\nFor memory sections, also include:\n\"flashcards\": [\n  { \"question\": \"What is X?\", \"answer\": \"Y\" }\n]\n\nFor recap sections, also include:\n\"recap_scenes\": [\n  { \"scene\": 1, \"description\": \"Scene visual...\", \"concept_title\": \"Key Concept\" }\n]\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nQUALITY GATE\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nBefore outputting, verify EACH visual beat has ALL 5 fields:\n1. scene_setup: Does it describe background and coordinate system?\n2. objects_and_properties: Does it list ALL objects with colors and positions?\n3. motion_sequence: Does it describe step-by-step animation order?\n4. labels_and_text: Does it list WHERE each label appears?\n5. pedagogical_focus: Does it explain what the student learns?\n\nIf ANY field is missing or too short, REWRITE that visual beat.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nOUTPUT\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nReturn ONLY valid JSON.\nNo explanations.\nNo markdown code blocks.\n",
+  "model": "google/gemini-2.5-pro",
+  "max_tokens": 32768,
+  "raw_response_length": 69783,
+  "raw_response": "```json\n{\n  \"chapter_title\": \"Introduction to Photosynthesis\",\n  \"subject\": \"Science\",\n  \"grade\": \"9\",\n  \"language\": \"en-IN\",\n  \"sections\": [\n    {\n      \"section_type\": \"intro\",\n      \"id\": 1,\n      \"title\": \"Introduction to Photosynthesis\",\n      \"renderer\": \"wan_video\",\n      \"narration\": \"Have you ever wondered how a tiny seed grows into a giant tree? Where does it get its food? Unlike animals, plants are master chefs that cook their own meals. They perform a remarkable process called photosynthesis, turning simple ingredients like air, water, and sunlight into the energy they need to live and grow. In this lesson, we'll uncover the secrets of this amazing natural factory, exploring how plants harness the power of the sun to create food, release the oxygen we breathe, and sustain nearly all life on Earth. Let's begin our journey into the green world of photosynthesis.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"Have you ever wondered how a tiny seed grows into a giant tree? Where does it get its food? Unlike animals, plants are master chefs that cook their own meals.\",\n          \"duration\": 10\n        },\n        {\n          \"id\": 2,\n          \"text\": \"They perform a remarkable process called photosynthesis, turning simple ingredients like air, water, and sunlight into the energy they need to live and grow.\",\n          \"duration\": 10\n        },\n        {\n          \"id\": 3,\n          \"text\": \"In this lesson, we'll uncover the secrets of this amazing natural factory, exploring how plants harness the power of the sun to create food, release the oxygen we breathe, and sustain nearly all life on Earth.\",\n          \"duration\": 12\n        },\n        {\n          \"id\": 4,\n          \"text\": \"Let's begin our journey into the green world of photosynthesis.\",\n          \"duration\": 4\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A time-lapse scene with a soft, blurred garden background. The focus is on a small patch of soil in the center.\",\n          \"objects_and_properties\": \"A small, brown seed on the surface of the soil. A large, vibrant green tree. The soil is dark brown.\",\n          \"motion_sequence\": \"A small seed is shown on the soil. A time-lapse animation begins, showing a sprout emerging, growing into a seedling, and rapidly transforming into a large, leafy tree. The camera slowly zooms out as the tree grows to emphasize its size.\",\n          \"labels_and_text\": \"Text overlay: 'How do plants get their food?' appears and fades.\",\n          \"pedagogical_focus\": \"To spark curiosity about plant growth and introduce the idea that plants must have a way of feeding themselves.\"\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"A stylized animation with a bright, sunny sky and a single, healthy green plant in the center.\",\n          \"objects_and_properties\": \"A stylized sun icon (yellow, top left). Blue water drop icons. Gray 'CO\u2082' icons. A green plant. A glowing yellow arrow representing sunlight. Small sugar cube icons (white). Small 'O\u2082' bubble icons (light blue).\",\n          \"motion_sequence\": \"A yellow arrow of light travels from the sun to the plant's leaves. Simultaneously, gray CO\u2082 icons float from the air into the leaves, and blue water drop icons travel from the ground up the stem. The plant glows briefly, then white sugar cube icons appear inside the plant, and blue O\u2082 icons are released from the leaves into the air.\",\n          \"labels_and_text\": \"Label 'Sunlight' on the light arrow. Label 'Carbon Dioxide (CO\u2082)' near the gray icons. Label 'Water (H\u2082O)' near the blue icons. Label 'Energy (Sugar)' near the sugar cubes. Label 'Oxygen (O\u2082)' near the released bubbles.\",\n          \"pedagogical_focus\": \"To provide a high-level overview of the inputs (sunlight, CO\u2082, water) and outputs (sugar, oxygen) of photosynthesis.\"\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"A split-screen view. Left side shows the plant from the previous scene. Right side shows a montage of life on Earth.\",\n          \"objects_and_properties\": \"Left: The green plant releasing oxygen. Right: A sequence of short clips - a deer eating leaves, a person jogging and breathing, a fish swimming in water with bubbles.\",\n          \"motion_sequence\": \"On the left, the plant continues to release O\u2082 icons. These icons drift across the screen to the right side. As they enter the right panel, we see the person breathing in, the deer eating, and bubbles rising in the water, connecting the plant's output to other life forms.\",\n          \"labels_and_text\": \"Title text appears at the bottom: 'The Process that Powers our Planet'.\",\n          \"pedagogical_focus\": \"To establish the critical importance of photosynthesis for breathing (oxygen) and as the foundation of the food chain.\"\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The camera zooms into a single leaf on the plant, which begins to glow with a green light. The background fades to black.\",\n          \"objects_and_properties\": \"A detailed, realistic-looking green leaf, filling the screen. It emits a soft, pulsing green glow.\",\n          \"motion_sequence\": \"The camera performs a smooth, continuous zoom into one leaf until it fills the screen. The veins of the leaf become prominent. The leaf starts to glow from within, suggesting an internal process.\",\n          \"labels_and_text\": \"The chapter title 'Introduction to Photosynthesis' fades in over the glowing leaf.\",\n          \"pedagogical_focus\": \"To transition from the macroscopic view (whole plant) to the microscopic location of photosynthesis (the leaf).\"\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": {\n          \"position\": \"center\",\n          \"width_percent\": 100\n        },\n        \"avatar_zone\": {\n          \"mode\": \"off\"\n        }\n      },\n      \"gesture_hints\": []\n    },\n    {\n      \"section_type\": \"summary\",\n      \"id\": 2,\n      \"title\": \"Lesson Summary\",\n      \"renderer\": \"wan_video\",\n      \"narration\": \"Let's quickly summarize what we've learned. Photosynthesis is the vital process where green plants use light energy to convert carbon dioxide and water into glucose, which is their food, and oxygen, which is released into the atmosphere. This entire process takes place inside tiny structures called chloroplasts, powered by the green pigment chlorophyll. The rate of photosynthesis is influenced by key factors like light intensity, carbon dioxide levels, and temperature. Most importantly, photosynthesis is the foundation of life on Earth, providing the oxygen we need to breathe and forming the base of nearly every food chain. It's nature's own solar-powered factory, essential for the planet's health.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"Let's quickly summarize what we've learned. Photosynthesis is the vital process where green plants use light energy to convert carbon dioxide and water into glucose, which is their food, and oxygen, which is released into the atmosphere.\",\n          \"duration\": 12\n        },\n        {\n          \"id\": 2,\n          \"text\": \"This entire process takes place inside tiny structures called chloroplasts, powered by the green pigment chlorophyll.\",\n          \"duration\": 7\n        },\n        {\n          \"id\": 3,\n          \"text\": \"The rate of photosynthesis is influenced by key factors like light intensity, carbon dioxide levels, and temperature.\",\n          \"duration\": 7\n        },\n        {\n          \"id\": 4,\n          \"text\": \"Most importantly, photosynthesis is the foundation of life on Earth, providing the oxygen we need to breathe and forming the base of nearly every food chain. It's nature's own solar-powered factory, essential for the planet's health.\",\n          \"duration\": 12\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A clean, white background. A stylized diagram showing the inputs and outputs of photosynthesis.\",\n          \"objects_and_properties\": \"A central green leaf icon. On the left, a 'CO\u2082' icon, a 'H\u2082O' icon, and a yellow sun icon, with arrows pointing towards the leaf. On the right, a white sugar cube icon (C\u2086H\u2081\u2082O\u2086) and a light blue 'O\u2082' icon, with arrows pointing away from the leaf.\",\n          \"motion_sequence\": \"The leaf icon appears first. Then, the input icons (CO\u2082, H\u2082O, Sun) fade in on the left, and their arrows draw towards the leaf. After a brief pause, the output icons (Sugar, O\u2082) fade in on the right, and their arrows draw away from the leaf.\",\n          \"labels_and_text\": \"Labels for each icon appear next to them: 'Carbon Dioxide', 'Water', 'Light Energy', 'Glucose (Food)', 'Oxygen'.\",\n          \"pedagogical_focus\": \"To visually summarize the core chemical transformation of photosynthesis.\"\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"A zoom-in animation starting from a whole plant.\",\n          \"objects_and_properties\": \"A plant, a leaf, a plant cell, and a chloroplast. The chloroplast is green and contains small stacked discs (grana).\",\n          \"motion_sequence\": \"The view zooms from a whole plant to a single leaf, then into a cross-section of the leaf showing cells. It then zooms into one plant cell, highlighting a green chloroplast. Finally, it zooms into the chloroplast, showing a photon of light striking a chlorophyll molecule.\",\n          \"labels_and_text\": \"Labels appear at each stage of the zoom: 'Plant' -> 'Leaf' -> 'Cell' -> 'Chloroplast'. Label 'Chlorophyll' points to the green pigment.\",\n          \"pedagogical_focus\": \"To reinforce the location of photosynthesis, from the organ level down to the organelle.\"\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"A dashboard with three animated graphs on a light gray background.\",\n          \"objects_and_properties\": \"Three graphs side-by-side. Graph 1: Y-axis 'Rate', X-axis 'Light'. A curve rises and plateaus. Graph 2: Y-axis 'Rate', X-axis 'CO\u2082'. A curve rises and plateaus. Graph 3: Y-axis 'Rate', X-axis 'Temperature'. A bell-shaped curve.\",\n          \"motion_sequence\": \"The three graphs appear simultaneously. On each graph, a red dot animates along the curve, tracing its shape, to show the relationship between the factor and the rate.\",\n          \"labels_and_text\": \"Each graph is titled: 'Light Intensity', 'CO\u2082 Concentration', 'Temperature'.\",\n          \"pedagogical_focus\": \"To quickly recap the key environmental factors that affect the rate of photosynthesis.\"\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"An animation showing the Earth in space.\",\n          \"objects_and_properties\": \"A rotating model of the Earth. A green aura emanates from the continents. A simple food chain diagram (sun -> grass -> sheep).\",\n          \"motion_sequence\": \"The Earth rotates, with a green glow pulsing from the landmasses, representing plant life. A blue haze of oxygen forms around the planet. The scene then cross-fades to the food chain diagram, with an arrow of energy flowing from the sun to the grass, and then to the sheep.\",\n          \"labels_and_text\": \"Text 'Foundation of Life' appears over the Earth. Labels 'Energy' follow the arrows in the food chain.\",\n          \"pedagogical_focus\": \"To reiterate the global importance of photosynthesis for the atmosphere and as the ultimate source of energy for most ecosystems.\"\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": {\n          \"position\": \"left\",\n          \"width_percent\": 65\n        },\n        \"avatar_zone\": {\n          \"mode\": \"side\",\n          \"position\": \"right\",\n          \"width_percent\": 35\n        }\n      },\n      \"gesture_hints\": [\n        {\n          \"time\": 2.0,\n          \"action\": \"present_open_hand\"\n        },\n        {\n          \"time\": 14.0,\n          \"action\": \"point_to_screen\"\n        },\n        {\n          \"time\": 25.0,\n          \"action\": \"sweep_hand_across\"\n        }\n      ]\n    },\n    {\n      \"section_type\": \"content\",\n      \"id\": 3,\n      \"title\": \"What is Photosynthesis?\",\n      \"renderer\": \"wan_video\",\n      \"narration\": \"So, what exactly is photosynthesis? The word itself gives us a clue: 'photo' means light, and 'synthesis' means to make. So, photosynthesis is literally 'making with light.' It's the fundamental process that allows plants, algae, and some bacteria to become what we call autotrophs, or self-feeders. They don't need to hunt or forage for food like animals do. Instead, they create their own nourishment. They do this by capturing energy from sunlight and using it to convert two very simple inorganic substances\u2014carbon dioxide from the air and water from the soil\u2014into a sugar called glucose. This glucose is a molecule rich in chemical energy, which the plant can use to fuel its growth, repair, and reproduction. A crucial part of this process is the green pigment found in leaves called chlorophyll. Chlorophyll is the special molecule that is exceptionally good at absorbing light energy, particularly in the blue and red parts of the spectrum. As a wonderful bonus for us, this process also releases oxygen as a byproduct, the very gas that most living things, including humans, need to survive.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"So, what exactly is photosynthesis? The word itself gives us a clue: 'photo' means light, and 'synthesis' means to make. So, photosynthesis is literally 'making with light.'\",\n          \"duration\": 11\n        },\n        {\n          \"id\": 2,\n          \"text\": \"It's the fundamental process that allows plants, algae, and some bacteria to become what we call autotrophs, or self-feeders. They don't need to hunt or forage for food like animals do. Instead, they create their own nourishment.\",\n          \"duration\": 13\n        },\n        {\n          \"id\": 3,\n          \"text\": \"They do this by capturing energy from sunlight and using it to convert two very simple inorganic substances\u2014carbon dioxide from the air and water from the soil\u2014into a sugar called glucose.\",\n          \"duration\": 12\n        },\n        {\n          \"id\": 4,\n          \"text\": \"This glucose is a molecule rich in chemical energy, which the plant can use to fuel its growth, repair, and reproduction.\",\n          \"duration\": 9\n        },\n        {\n          \"id\": 5,\n          \"text\": \"A crucial part of this process is the green pigment found in leaves called chlorophyll. Chlorophyll is the special molecule that is exceptionally good at absorbing light energy, particularly in the blue and red parts of the spectrum.\",\n          \"duration\": 13\n        },\n        {\n          \"id\": 6,\n          \"text\": \"As a wonderful bonus for us, this process also releases oxygen as a byproduct, the very gas that most living things, including humans, need to survive.\",\n          \"duration\": 9\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A clean, white background. The word 'PHOTOSYNTHESIS' is in the center.\",\n          \"objects_and_properties\": \"The word 'PHOTOSYNTHESIS' in large, green capital letters. The prefix 'PHOTO' is a lighter green, and the suffix 'SYNTHESIS' is a darker green.\",\n          \"motion_sequence\": \"The word 'PHOTOSYNTHESIS' appears. It then splits into 'PHOTO' and 'SYNTHESIS'. An icon of a sun (yellow) appears above 'PHOTO'. An icon of a factory gear (gray) turning into a sugar cube (white) appears above 'SYNTHESIS'. The words and icons then merge back together.\",\n          \"labels_and_text\": \"Text 'PHOTO' (light green). Text 'SYNTHESIS' (dark green). An annotation 'from Greek 'phos' - light' appears under 'PHOTO'. An annotation 'from Greek 'synthesis' - putting together' appears under 'SYNTHESIS'.\",\n          \"pedagogical_focus\": \"To break down the term 'photosynthesis' into its roots to make its meaning intuitive.\"\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"A split screen. On the left, a plant. On the right, a lion.\",\n          \"objects_and_properties\": \"Left side: A vibrant green plant with a sun icon above it. Right side: A lion chasing a zebra. Both are stylized animations.\",\n          \"motion_sequence\": \"The plant on the left is shown calmly absorbing sunlight. On the right, the lion is actively hunting. A large green checkmark appears over the plant, and a red 'X' appears over the lion.\",\n          \"labels_and_text\": \"Label 'Autotroph (Self-feeder)' appears under the plant. Label 'Heterotroph (Other-feeder)' appears under the lion.\",\n          \"pedagogical_focus\": \"To contrast autotrophs and heterotrophs, clarifying the unique position of plants in energy acquisition.\"\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"An animated diagram on a light blue background, showing a simplified chemical conversion.\",\n          \"objects_and_properties\": \"On the left: Gray 'CO\u2082' molecules and blue 'H\u2082O' molecules. In the center: a yellow, glowing 'converter box' with a sun symbol on it. On the right: A white, hexagonal glucose molecule icon.\",\n          \"motion_sequence\": \"The CO\u2082 and H\u2082O molecules flow from the left into the converter box. The box glows brightly. A stream of glucose molecules flows out of the right side of the box.\",\n          \"labels_and_text\": \"Label 'INPUTS: Simple / Low Energy' on the left. Label 'PROCESS: Add Light Energy' on the center box. Label 'OUTPUT: Complex / High Energy' on the right.\",\n          \"pedagogical_focus\": \"To visualize the concept of converting low-energy inorganic molecules into a high-energy organic molecule using light.\"\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"A cutaway view of a plant showing how it uses glucose.\",\n          \"objects_and_properties\": \"A transparent plant animation. White glucose icons (hexagons) are shown inside the plant's stem and leaves. A battery icon.\",\n          \"motion_sequence\": \"Glucose icons travel from the leaves to different parts of the plant. Some go to the tip of the stem, causing it to grow taller. Some go to the roots, causing them to extend. Some are shown being stored in a fruit (like an apple), which appears and grows on a branch.\",\n          \"labels_and_text\": \"A label 'Glucose (Chemical Energy)' points to the hexagons. Text annotations appear: 'Growth', 'Repair', 'Storage (Fruit/Roots)'.\",\n          \"pedagogical_focus\": \"To explain that glucose is a versatile energy currency for the plant, used for various life functions.\"\n        },\n        {\n          \"segment_id\": 5,\n          \"scene_setup\": \"A zoom into a plant cell, focusing on a chloroplast.\",\n          \"objects_and_properties\": \"A green, oval chloroplast. Inside are stacks of discs (grana). Tiny green dots represent chlorophyll molecules. A rainbow-colored light beam.\",\n          \"motion_sequence\": \"A beam of light representing the full spectrum shines on the chloroplast. The green part of the spectrum is reflected off the surface, while the blue and red parts are absorbed into the chloroplast, making the chlorophyll dots glow.\",\n          \"labels_and_text\": \"Label 'Chloroplast'. Label 'Chlorophyll' pointing to the green dots. Label 'Reflected' on the green light ray bouncing off. Label 'Absorbed' on the red and blue rays going in.\",\n          \"pedagogical_focus\": \"To explain the role of chlorophyll and why plants appear green (they reflect green light and absorb other colors for energy).\"\n        },\n        {\n          \"segment_id\": 6,\n          \"scene_setup\": \"A wide view showing a lush green forest on one side and a city skyline with people on the other.\",\n          \"objects_and_properties\": \"A green forest. Blue 'O\u2082' bubbles. Animated people and animals.\",\n          \"motion_sequence\": \"Blue 'O\u2082' bubbles are continuously released from the forest and drift over to the city side. An animated person is shown jogging and breathing in the bubbles. An animated bird flies by, also breathing them in.\",\n          \"labels_and_text\": \"Label 'Oxygen (O\u2082)' on the bubbles. Text overlay: 'A Gift to the Atmosphere'.\",\n          \"pedagogical_focus\": \"To emphasize the critical importance of oxygen as a byproduct of photosynthesis for animal life.\"\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": {\n          \"position\": \"left\",\n          \"width_percent\": 65\n        },\n        \"avatar_zone\": {\n          \"mode\": \"side\",\n          \"position\": \"right\",\n          \"width_percent\": 35\n        }\n      },\n      \"gesture_hints\": [\n        {\n          \"time\": 3.0,\n          \"action\": \"expand_hands\"\n        },\n        {\n          \"time\": 25.0,\n          \"action\": \"point_to_screen\"\n        },\n        {\n          \"time\": 38.0,\n          \"action\": \"make_fist\"\n        },\n        {\n          \"time\": 50.0,\n          \"action\": \"present_open_hand\"\n        }\n      ]\n    },\n    {\n      \"section_type\": \"content\",\n      \"id\": 4,\n      \"title\": \"The Process\",\n      \"renderer\": \"wan_video\",\n      \"narration\": \"Let's dive deeper into the step-by-step process of photosynthesis. It\u2019s a beautifully coordinated operation that happens in two main stages. First, the plant needs to gather its raw materials. Think of it like a chef going to the pantry. For carbon dioxide, the plant 'breathes' it in from the atmosphere. On the underside of leaves, there are thousands of tiny, microscopic pores called stomata. These pores can open and close to let gases in and out. Carbon dioxide enters the leaf through these openings. At the same time, the plant needs water. This is absorbed from the soil by the plant's root system. From the roots, water is pulled up through the stem all the way to the leaves via a network of microscopic pipes called xylem vessels. This is like a plumbing system for the plant. Once the water and carbon dioxide are both present in the leaf, the second stage can begin: the conversion. This happens inside the chloroplasts. The chlorophyll molecules within the chloroplasts capture energy from incoming sunlight. This captured light energy is then used to power a series of chemical reactions that split the water molecules and combine them with the carbon dioxide molecules to create our two final products: energy-rich glucose and vital oxygen.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"Let's dive deeper into the step-by-step process of photosynthesis. It\u2019s a beautifully coordinated operation that happens in two main stages. First, the plant needs to gather its raw materials. Think of it like a chef going to the pantry.\",\n          \"duration\": 13\n        },\n        {\n          \"id\": 2,\n          \"text\": \"For carbon dioxide, the plant 'breathes' it in from the atmosphere. On the underside of leaves, there are thousands of tiny, microscopic pores called stomata. These pores can open and close to let gases in and out. Carbon dioxide enters the leaf through these openings.\",\n          \"duration\": 16\n        },\n        {\n          \"id\": 3,\n          \"text\": \"At the same time, the plant needs water. This is absorbed from the soil by the plant's root system. From the roots, water is pulled up through the stem all the way to the leaves via a network of microscopic pipes called xylem vessels. This is like a plumbing system for the plant.\",\n          \"duration\": 17\n        },\n        {\n          \"id\": 4,\n          \"text\": \"Once the water and carbon dioxide are both present in the leaf, the second stage can begin: the conversion. This happens inside the chloroplasts.\",\n          \"duration\": 9\n        },\n        {\n          \"id\": 5,\n          \"text\": \"The chlorophyll molecules within the chloroplasts capture energy from incoming sunlight. This captured light energy is then used to power a series of chemical reactions that split the water molecules and combine them with the carbon dioxide molecules to create our two final products: energy-rich glucose and vital oxygen.\",\n          \"duration\": 19\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A screen split into two vertical panels titled 'Stage 1: Gathering' and 'Stage 2: Conversion'.\",\n          \"objects_and_properties\": \"Panel 1 ('Gathering'): Icons for CO\u2082, H\u2082O, and a plant. Panel 2 ('Conversion'): An icon of a chloroplast with a sun shining on it.\",\n          \"motion_sequence\": \"The two panels appear. In Panel 1, arrows show CO\u2082 and H\u2082O moving towards the plant icon. In Panel 2, the chloroplast icon glows. An arrow connects Panel 1 to Panel 2, indicating the sequence.\",\n          \"labels_and_text\": \"Title 'Stage 1: Gathering Ingredients'. Title 'Stage 2: Making the Food'.\",\n          \"pedagogical_focus\": \"To introduce the two main stages of the process: resource collection and chemical conversion.\"\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"A magnified view of the underside of a leaf surface. The background is a green cellular texture.\",\n          \"objects_and_properties\": \"Several oval-shaped pores (stomata), each formed by two guard cells. Gray CO\u2082 molecules are floating outside the leaf.\",\n          \"motion_sequence\": \"The camera zooms in on one stoma. The two guard cells are shown pulling apart, opening the pore. Several CO\u2082 molecules then flow from the outside into the opening. The guard cells then move closer together, closing the pore.\",\n          \"labels_and_text\": \"An arrow points to the entire pore structure with the label 'Stoma (plural: Stomata)'. An arrow points to the cells on either side with the label 'Guard Cells'. A label 'CO\u2082' follows the molecules entering the leaf.\",\n          \"pedagogical_focus\": \"To show the specific structure (stomata) responsible for gas exchange in plants.\"\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"A cross-section of a whole plant, from roots in the soil to leaves in the air.\",\n          \"objects_and_properties\": \"The plant is shown with a transparent stem and roots. The soil is brown and dotted with blue water molecules. A network of thin blue tubes (xylem) runs from the root tips, up the stem, and into the leaf veins.\",\n          \"motion_sequence\": \"Blue water molecules in the soil are absorbed by the root hairs. These molecules then enter the xylem tubes and travel upwards in a continuous stream, like a drinking straw, branching out into the leaves.\",\n          \"labels_and_text\": \"Label 'Roots absorb water'. Label 'Xylem Vessels (Water Pipes)' points to the blue tubes. An upward-pointing arrow next to the stem is labeled 'Water Transport'.\",\n          \"pedagogical_focus\": \"To visualize the plant's vascular system (xylem) and how water is transported from the ground to the leaves.\"\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"An animation inside a cross-section of a leaf, showing the destination of the raw materials.\",\n          \"objects_and_properties\": \"Leaf cells are shown in layers. A xylem vessel (blue tube) is on one side, and a stoma (pore) is on the other. A green chloroplast is in a central cell.\",\n          \"motion_sequence\": \"A blue H\u2082O molecule is shown exiting the xylem vessel and moving into the cell. A gray CO\u2082 molecule is shown entering through the stoma and also moving towards the same cell. Both molecules arrive at the surface of the chloroplast.\",\n          \"labels_and_text\": \"Label 'H\u2082O from roots'. Label 'CO\u2082 from air'. Both have arrows pointing to the chloroplast.\",\n          \"pedagogical_focus\": \"To show that both raw materials, despite their different entry points, converge at the chloroplast, the site of photosynthesis.\"\n        },\n        {\n          \"segment_id\": 5,\n          \"scene_setup\": \"A detailed, dynamic animation inside a single chloroplast.\",\n          \"objects_and_properties\": \"A large, oval chloroplast. Yellow light photons rain down from above. Blue H\u2082O molecules and gray CO\u2082 molecules are inside. A complex molecular machine represents the enzymes.\",\n          \"motion_sequence\": \"A photon of light strikes a chlorophyll molecule, which glows and releases a spark of energy. This energy 'zaps' a water molecule, splitting it into oxygen (O\u2082) and hydrogen components. The energy and hydrogen components then react with a CO\u2082 molecule in the molecular machine, which churns and releases a white glucose molecule (C\u2086H\u2081\u2082O\u2086). The O\u2082 molecule drifts away and out of the chloroplast.\",\n          \"labels_and_text\": \"Label 'Light Energy IN'. Label 'H\u2082O splits'. Label 'CO\u2082 combines'. Label 'Glucose (C\u2086H\u2081\u2082O\u2086) OUT'. Label 'Oxygen (O\u2082) OUT'.\",\n          \"pedagogical_focus\": \"To provide a simplified but dynamic visual representation of the light-dependent and light-independent reactions, showing energy transfer and molecular transformation.\"\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": {\n          \"position\": \"left\",\n          \"width_percent\": 65\n        },\n        \"avatar_zone\": {\n          \"mode\": \"side\",\n          \"position\": \"right\",\n          \"width_percent\": 35\n        }\n      },\n      \"gesture_hints\": [\n        {\n          \"time\": 5.0,\n          \"action\": \"count_on_fingers\"\n        },\n        {\n          \"time\": 18.0,\n          \"action\": \"point_to_screen\"\n        },\n        {\n          \"time\": 33.0,\n          \"action\": \"hand_motion_up\"\n        },\n        {\n          \"time\": 50.0,\n          \"action\": \"bring_hands_together\"\n        }\n      ]\n    },\n    {\n      \"section_type\": \"content\",\n      \"id\": 5,\n      \"title\": \"The Chemical Equation\",\n      \"renderer\": \"manim\",\n      \"narration\": \"The entire, complex process of photosynthesis can be summarized by a simple, elegant chemical equation. This equation shows us the 'recipe' \u2013 the ingredients, or reactants, on the left side, and the final products on the right side. The equation is: 6CO\u2082 plus 6H\u2082O plus Light Energy yields C\u2086H\u2081\u2082O\u2086 plus 6O\u2082. Let's break this down. The '6CO\u2082' represents six molecules of carbon dioxide, the gas plants take from the air. The '6H\u2082O' represents six molecules of water, which are absorbed by the roots. These are our reactants. The arrow indicates the transformation, which is powered by light energy, often written above the arrow. On the product side, we have 'C\u2086H\u2081\u2082O\u2086'. This is the chemical formula for one molecule of glucose, the sugar that provides energy to the plant. Finally, '6O\u2082' represents the six molecules of oxygen that are released as a byproduct. Notice the balance: the number of carbon, hydrogen, and oxygen atoms is the same on both sides of the equation, demonstrating the law of conservation of mass. Nothing is created or destroyed, only rearranged.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"The entire, complex process of photosynthesis can be summarized by a simple, elegant chemical equation. This equation shows us the 'recipe' \u2013 the ingredients, or reactants, on the left side, and the final products on the right side.\",\n          \"duration\": 13\n        },\n        {\n          \"id\": 2,\n          \"text\": \"The equation is: 6CO\u2082 plus 6H\u2082O plus Light Energy yields C\u2086H\u2081\u2082O\u2086 plus 6O\u2082. Let's break this down.\",\n          \"duration\": 9\n        },\n        {\n          \"id\": 3,\n          \"text\": \"The '6CO\u2082' represents six molecules of carbon dioxide, the gas plants take from the air. The '6H\u2082O' represents six molecules of water, which are absorbed by the roots. These are our reactants.\",\n          \"duration\": 12\n        },\n        {\n          \"id\": 4,\n          \"text\": \"The arrow indicates the transformation, which is powered by light energy, often written above the arrow. On the product side, we have 'C\u2086H\u2081\u2082O\u2086'. This is the chemical formula for one molecule of glucose, the sugar that provides energy to the plant.\",\n          \"duration\": 14\n        },\n        {\n          \"id\": 5,\n          \"text\": \"Finally, '6O\u2082' represents the six molecules of oxygen that are released as a byproduct. Notice the balance: the number of carbon, hydrogen, and oxygen atoms is the same on both sides of the equation, demonstrating the law of conservation of mass. Nothing is created or destroyed, only rearranged.\",\n          \"duration\": 17\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A clean, dark background. A horizontal line divides the screen into a 'Reactants' area (left) and a 'Products' area (right).\",\n          \"objects_and_properties\": \"Text labels 'Reactants (Ingredients)' on the left and 'Products (Results)' on the right. A large arrow points from left to right across the line.\",\n          \"motion_sequence\": \"The 'Reactants' and 'Products' labels fade in. The dividing line draws across the screen. The large arrow then draws itself from the left side to the right side.\",\n          \"labels_and_text\": \"Label 'Reactants (Ingredients)' at top left. Label 'Products (Results)' at top right.\",\n          \"pedagogical_focus\": \"To establish the basic structure of a chemical equation, with reactants on the left and products on the right.\"\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"The same scene as before, but now the full equation appears.\",\n          \"objects_and_properties\": \"The full chemical equation `6CO\u2082 + 6H\u2082O \u2192 C\u2086H\u2081\u2082O\u2086 + 6O\u2082` rendered in MathTex. A sun symbol is positioned above the arrow.\",\n          \"motion_sequence\": \"Each component of the equation appears sequentially: `6CO\u2082`, then `+`, then `6H\u2082O`, then the `\u2192` with the sun symbol above it, then `C\u2086H\u2081\u2082O\u2086`, then `+`, then `6O\u2082`.\",\n          \"labels_and_text\": \"The chemical equation itself. A label 'Light Energy' appears next to the sun symbol.\",\n          \"pedagogical_focus\": \"To present the full, balanced chemical equation for photosynthesis in its standard format.\",\n          \"manim_scene_spec\": {\n            \"objects\": [],\n            \"forces\": [],\n            \"equations\": [\n              {\n                \"id\": \"photosynthesis_eq\",\n                \"latex\": \"6\\\\text{CO}_2 + 6\\\\text{H}_2\\\\text{O} \\\\xrightarrow{\\\\text{Light Energy}} \\\\text{C}_6\\\\text{H}_{12}\\\\text{O}_6 + 6\\\\text{O}_2\",\n                \"position\": \"center\"\n              }\n            ],\n            \"animation_sequence\": [\n              {\n                \"action\": \"show_equation\",\n                \"target\": \"photosynthesis_eq\",\n                \"duration\": 3.0\n              }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"The equation is visible. The reactant side is highlighted.\",\n          \"objects_and_properties\": \"The equation is on screen. A glowing box surrounds `6CO\u2082 + 6H\u2082O`.\",\n          \"motion_sequence\": \"The `6CO\u2082` part of the equation pulses. Six animated CO\u2082 molecules (one gray sphere, two red spheres) appear below it. Then, the `6H\u2082O` part pulses. Six animated H\u2082O molecules (one red sphere, two white spheres) appear below it.\",\n          \"labels_and_text\": \"A brace is drawn under `6CO\u2082 + 6H\u2082O` with the label 'Reactants'. A label '6 Carbon Dioxide molecules' appears under the CO\u2082 models. A label '6 Water molecules' appears under the H\u2082O models.\",\n          \"pedagogical_focus\": \"To visually connect the chemical formulas of the reactants to their molecular representations and quantities.\",\n          \"manim_scene_spec\": {\n            \"objects\": [],\n            \"forces\": [],\n            \"equations\": [\n              {\n                \"id\": \"photosynthesis_eq\",\n                \"latex\": \"6\\\\text{CO}_2 + 6\\\\text{H}_2\\\\text{O} \\\\xrightarrow{\\\\text{Light Energy}} \\\\text{C}_6\\\\text{H}_{12}\\\\text{O}_6 + 6\\\\text{O}_2\",\n                \"position\": \"center\"\n              }\n            ],\n            \"animation_sequence\": [\n              {\n                \"action\": \"highlight\",\n                \"target_latex\": \"6\\\\text{CO}_2\",\n                \"duration\": 1.0\n              },\n              {\n                \"action\": \"wait\",\n                \"duration\": 1.0\n              },\n              {\n                \"action\": \"highlight\",\n                \"target_latex\": \"6\\\\text{H}_2\\\\text{O}\",\n                \"duration\": 1.0\n              }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The equation is visible. The product side is highlighted.\",\n          \"objects_and_properties\": \"The equation is on screen. A glowing box surrounds `C\u2086H\u2081\u2082O\u2086`.\",\n          \"motion_sequence\": \"The arrow and 'Light Energy' pulse. Then, the `C\u2086H\u2081\u2082O\u2086` part of the equation pulses. A 3D model of a glucose molecule (a hexagonal ring of carbons) appears below it.\",\n          \"labels_and_text\": \"A brace is drawn under `C\u2086H\u2081\u2082O\u2086 + 6O\u2082` with the label 'Products'. A label '1 Glucose molecule' appears under the glucose model.\",\n          \"pedagogical_focus\": \"To visually connect the chemical formula for glucose to its molecular structure and identify it as a product.\",\n          \"manim_scene_spec\": {\n            \"objects\": [],\n            \"forces\": [],\n            \"equations\": [\n              {\n                \"id\": \"photosynthesis_eq\",\n                \"latex\": \"6\\\\text{CO}_2 + 6\\\\text{H}_2\\\\text{O} \\\\xrightarrow{\\\\text{Light Energy}} \\\\text{C}_6\\\\text{H}_{12}\\\\text{O}_6 + 6\\\\text{O}_2\",\n                \"position\": \"center\"\n              }\n            ],\n            \"animation_sequence\": [\n              {\n                \"action\": \"highlight\",\n                \"target_latex\": \"\\\\xrightarrow{\\\\text{Light Energy}}\",\n                \"duration\": 1.0\n              },\n              {\n                \"action\": \"highlight\",\n                \"target_latex\": \"\\\\text{C}_6\\\\text{H}_{12}\\\\text{O}_6\",\n                \"duration\": 1.0\n              }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 5,\n          \"scene_setup\": \"The full equation is on screen, with molecular models for all components visible below it.\",\n          \"objects_and_properties\": \"The equation, and models for 6 CO\u2082, 6 H\u2082O, 1 Glucose, and 6 O\u2082.\",\n          \"motion_sequence\": \"The `6O\u2082` part of the equation pulses, and six O\u2082 molecules (two blue spheres bonded together) appear below it. Then, atom counters appear. For example, a 'C: 6' counter appears on the left, and atoms from the CO\u2082 models fly to it. Then another 'C: 6' counter appears on the right, and atoms from the glucose model fly to it, showing they match. This repeats for H and O.\",\n          \"labels_and_text\": \"Label '6 Oxygen molecules' under the O\u2082 models. Atom tallies appear on both sides: 'C: 6 | C: 6', 'H: 12 | H: 12', 'O: 18 | O: 18'. A text box appears: 'Mass is conserved. Atoms are rearranged.'\",\n          \"pedagogical_focus\": \"To demonstrate the law of conservation of mass by showing that the number and type of atoms are identical on both sides of the equation.\",\n          \"manim_scene_spec\": {\n            \"objects\": [],\n            \"forces\": [],\n            \"equations\": [\n              {\n                \"id\": \"photosynthesis_eq\",\n                \"latex\": \"6\\\\text{CO}_2 + 6\\\\text{H}_2\\\\text{O} \\\\xrightarrow{\\\\text{Light Energy}} \\\\text{C}_6\\\\text{H}_{12}\\\\text{O}_6 + 6\\\\text{O}_2\",\n                \"position\": \"center\"\n              }\n            ],\n            \"animation_sequence\": [\n              {\n                \"action\": \"highlight\",\n                \"target_latex\": \"6\\\\text{O}_2\",\n                \"duration\": 1.0\n              },\n              {\n                \"action\": \"show_text\",\n                \"text\": \"Atoms In = Atoms Out\",\n                \"position\": \"bottom_center\",\n                \"duration\": 2.0\n              }\n            ]\n          }\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": {\n          \"position\": \"left\",\n          \"width_percent\": 65\n        },\n        \"avatar_zone\": {\n          \"mode\": \"side\",\n          \"position\": \"right\",\n          \"width_percent\": 35\n        }\n      },\n      \"gesture_hints\": [\n        {\n          \"time\": 5.0,\n          \"action\": \"sweep_hand_across\"\n        },\n        {\n          \"time\": 25.0,\n          \"action\": \"point_to_screen\"\n        },\n        {\n          \"time\": 40.0,\n          \"action\": \"point_to_screen\"\n        },\n        {\n          \"time\": 55.0,\n          \"action\": \"show_balanced_hands\"\n        }\n      ]\n    },\n    {\n      \"section_type\": \"content\",\n      \"id\": 6,\n      \"title\": \"Factors Affecting Photosynthesis\",\n      \"renderer\": \"manim\",\n      \"narration\": \"While plants are experts at photosynthesis, the speed, or rate, at which they can perform it is not always the same. It can be affected by several environmental factors. Think of it like baking a cake \u2013 if you don't have enough flour or the oven isn't at the right temperature, the cake won't turn out well. The first factor is light intensity. Generally, as light intensity increases, the rate of photosynthesis increases. However, this only works up to a certain point. Once the plant's chlorophyll is saturated with light, increasing the light further has no additional effect, and the rate plateaus. Next is carbon dioxide concentration. Similar to light, more CO\u2082 means a faster rate of photosynthesis, because it's a key ingredient. But again, this is only true up to a saturation point where other factors, like light or temperature, become the bottleneck. Temperature is also critical. Photosynthesis relies on enzymes, which are sensitive to temperature. There is an optimal temperature range where these enzymes work most efficiently. If it's too cold, they slow down. If it gets too hot, the enzymes can be damaged or 'denature', and the rate of photosynthesis plummets. Finally, water availability is fundamental. A shortage of water can cause the stomata to close to prevent water loss, which also stops CO\u2082 from entering the leaf, thereby halting photosynthesis.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"While plants are experts at photosynthesis, the speed, or rate, at which they can perform it is not always the same. It can be affected by several environmental factors. Think of it like baking a cake \u2013 if you don't have enough flour or the oven isn't at the right temperature, the cake won't turn out well.\",\n          \"duration\": 16\n        },\n        {\n          \"id\": 2,\n          \"text\": \"The first factor is light intensity. Generally, as light intensity increases, the rate of photosynthesis increases. However, this only works up to a certain point. Once the plant's chlorophyll is saturated with light, increasing the light further has no additional effect, and the rate plateaus.\",\n          \"duration\": 16\n        },\n        {\n          \"id\": 3,\n          \"text\": \"Next is carbon dioxide concentration. Similar to light, more CO\u2082 means a faster rate of photosynthesis, because it's a key ingredient. But again, this is only true up to a saturation point where other factors, like light or temperature, become the bottleneck.\",\n          \"duration\": 15\n        },\n        {\n          \"id\": 4,\n          \"text\": \"Temperature is also critical. Photosynthesis relies on enzymes, which are sensitive to temperature. There is an optimal temperature range where these enzymes work most efficiently. If it's too cold, they slow down. If it gets too hot, the enzymes can be damaged or 'denature', and the rate of photosynthesis plummets.\",\n          \"duration\": 18\n        },\n        {\n          \"id\": 5,\n          \"text\": \"Finally, water availability is fundamental. A shortage of water can cause the stomata to close to prevent water loss, which also stops CO\u2082 from entering the leaf, thereby halting photosynthesis.\",\n          \"duration\": 11\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A central plant icon with four empty slots around it.\",\n          \"objects_and_properties\": \"A green plant icon in the center. Four empty rectangular slots with dashed outlines are positioned at the top, bottom, left, and right of the plant. Icons for a sun, a CO\u2082 molecule, a thermometer, and a water drop are off to the side.\",\n          \"motion_sequence\": \"The four icons (sun, CO\u2082, thermometer, water) fly into the four empty slots around the plant, with arrows pointing from each icon to the plant.\",\n          \"labels_and_text\": \"A title appears: 'Limiting Factors'. Each slot gets a label as the icon arrives: 'Light Intensity', 'CO\u2082 Concentration', 'Temperature', 'Water'.\",\n          \"pedagogical_focus\": \"To introduce the four main environmental factors that can limit the rate of photosynthesis.\"\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"A 2D Cartesian coordinate plane. X-axis is 'Light Intensity', Y-axis is 'Rate of Photosynthesis'.\",\n          \"objects_and_properties\": \"A red curve that starts at the origin, rises linearly, and then flattens out into a horizontal plateau. A small sun icon is on the x-axis. A red dot is on the curve.\",\n          \"motion_sequence\": \"The graph axes and curve appear. The sun icon starts at the low end of the x-axis and moves to the right. As it moves, the red dot travels along the curve, first moving up, and then moving horizontally along the plateau. The sun icon grows brighter as it moves right.\",\n          \"labels_and_text\": \"X-axis label: 'Light Intensity'. Y-axis label: 'Rate of Photosynthesis'. A label 'Saturation Point' appears with an arrow pointing to where the curve flattens.\",\n          \"pedagogical_focus\": \"To graphically demonstrate that the rate of photosynthesis increases with light intensity only up to a saturation point.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              {\n                \"id\": \"graph_light\",\n                \"type\": \"graph\",\n                \"x_range\": [\n                  0,\n                  10\n                ],\n                \"y_range\": [\n                  0,\n                  5\n                ],\n                \"x_label\": \"Light Intensity\",\n                \"y_label\": \"Rate\",\n                \"plots\": [\n                  {\n                    \"id\": \"curve_light\",\n                    \"equation\": \"4 * (1 - exp(-x))\",\n                    \"color\": \"yellow\"\n                  }\n                ]\n              }\n            ],\n            \"animation_sequence\": [\n              {\n                \"action\": \"draw_graph\",\n                \"target\": \"graph_light\",\n                \"duration\": 2.0\n              },\n              {\n                \"action\": \"trace_curve\",\n                \"target\": \"curve_light\",\n                \"duration\": 3.0\n              }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"A 2D Cartesian coordinate plane. X-axis is 'CO\u2082 Concentration', Y-axis is 'Rate of Photosynthesis'.\",\n          \"objects_and_properties\": \"A blue curve, similar to the light curve, that rises and then plateaus. A small 'CO\u2082' icon is on the x-axis. A blue dot is on the curve.\",\n          \"motion_sequence\": \"The graph appears. The 'CO\u2082' icon moves from left to right along the x-axis. As it moves, more CO\u2082 icons appear around it to signify increasing concentration. The blue dot traces the curve, showing the rate increasing and then leveling off.\",\n          \"labels_and_text\": \"X-axis label: 'CO\u2082 Concentration'. Y-axis label: 'Rate of Photosynthesis'. A label 'Saturation Point' points to the plateau.\",\n          \"pedagogical_focus\": \"To show that CO\u2082 concentration also acts as a limiting factor with a saturation point.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              {\n                \"id\": \"graph_co2\",\n                \"type\": \"graph\",\n                \"x_range\": [\n                  0,\n                  10\n                ],\n                \"y_range\": [\n                  0,\n                  5\n                ],\n                \"x_label\": \"CO\u2082 Concentration\",\n                \"y_label\": \"Rate\",\n                \"plots\": [\n                  {\n                    \"id\": \"curve_co2\",\n                    \"equation\": \"4.5 * (x / (2 + x))\",\n                    \"color\": \"blue\"\n                  }\n                ]\n              }\n            ],\n            \"animation_sequence\": [\n              {\n                \"action\": \"draw_graph\",\n                \"target\": \"graph_co2\",\n                \"duration\": 2.0\n              },\n              {\n                \"action\": \"trace_curve\",\n                \"target\": \"curve_co2\",\n                \"duration\": 3.0\n              }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"A 2D Cartesian coordinate plane. X-axis is 'Temperature', Y-axis is 'Rate of Photosynthesis'.\",\n          \"objects_and_properties\": \"A green, bell-shaped curve that starts low, rises to a peak, and then drops off sharply. A thermometer icon is on the x-axis.\",\n          \"motion_sequence\": \"The graph appears. The thermometer icon moves along the x-axis from left to right. The mercury in the thermometer rises. A green dot traces the curve, showing the rate rising to a peak and then falling quickly. When the dot is at the peak, the thermometer glows. When it falls, an 'X' appears over a stylized enzyme icon.\",\n          \"labels_and_text\": \"X-axis label: 'Temperature'. Y-axis label: 'Rate of Photosynthesis'. Label 'Optimal Temperature' at the peak. Label 'Too Cold' on the left side. Label 'Too Hot (Enzymes Denature)' on the right side.\",\n          \"pedagogical_focus\": \"To illustrate the concept of an optimal temperature for enzymatic reactions and the negative effects of temperatures that are too low or too high.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              {\n                \"id\": \"graph_temp\",\n                \"type\": \"graph\",\n                \"x_range\": [\n                  0,\n                  50\n                ],\n                \"y_range\": [\n                  0,\n                  5\n                ],\n                \"x_label\": \"Temperature (\u00b0C)\",\n                \"y_label\": \"Rate\",\n                \"plots\": [\n                  {\n                    \"id\": \"curve_temp\",\n                    \"equation\": \"5 * exp(-((x-25)**2) / 150)\",\n                    \"color\": \"green\"\n                  }\n                ]\n              }\n            ],\n            \"animation_sequence\": [\n              {\n                \"action\": \"draw_graph\",\n                \"target\": \"graph_temp\",\n                \"duration\": 2.0\n              },\n              {\n                \"action\": \"trace_curve\",\n                \"target\": \"curve_temp\",\n                \"duration\": 3.0\n              }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 5,\n          \"scene_setup\": \"A side-by-side comparison of two plants.\",\n          \"objects_and_properties\": \"Left Plant: Healthy, turgid, green leaves. It's in moist, dark brown soil. A water drop icon above it is full. Right Plant: Wilted, drooping, yellowish leaves. It's in dry, cracked, light brown soil. A water drop icon above it is empty with a red slash through it.\",\n          \"motion_sequence\": \"On the right plant, the view zooms into a leaf to show a stoma that is tightly shut. A CO\u2082 molecule bounces off the closed stoma, unable to enter. The scene zooms back out to show the whole wilting plant.\",\n          \"labels_and_text\": \"Label 'Adequate Water' under the left plant. Label 'Water Scarcity' under the right plant. A text box appears by the right plant: 'Stomata close to save water, blocking CO\u2082 intake.'\",\n          \"pedagogical_focus\": \"To directly link water availability to the function of stomata and, consequently, the rate of photosynthesis.\"\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": {\n          \"position\": \"left\",\n          \"width_percent\": 65\n        },\n        \"avatar_zone\": {\n          \"mode\": \"side\",\n          \"position\": \"right\",\n          \"width_percent\": 35\n        }\n      },\n      \"gesture_hints\": [\n        {\n          \"time\": 8.0,\n          \"action\": \"shrug\"\n        },\n        {\n          \"time\": 20.0,\n          \"action\": \"hand_motion_up\"\n        },\n        {\n          \"time\": 35.0,\n          \"action\": \"point_to_screen\"\n        },\n        {\n          \"time\": 55.0,\n          \"action\": \"thumbs_down\"\n        }\n      ]\n    },\n    {\n      \"section_type\": \"content\",\n      \"id\": 7,\n      \"title\": \"Importance of Photosynthesis\",\n      \"renderer\": \"wan_video\",\n      \"narration\": \"The importance of photosynthesis extends far beyond the plant itself; it is, without exaggeration, the most important biological process on Earth. Its impact is global and fundamental to our existence. First and foremost, it produces the oxygen that fills our atmosphere. Virtually every breath you take contains oxygen that was released by a plant or algae somewhere in the world. Without photosynthesis, the air would be unbreathable for complex life forms like us. Second, photosynthesis forms the base of almost all food chains. The energy captured from the sun and stored in glucose by plants is the primary source of energy for the entire planet. Herbivores get this energy by eating plants, and carnivores get it by eating herbivores. Whether you're eating a salad, a piece of chicken, or a fish, the energy in that food ultimately traces back to the sun via photosynthesis. Third, it plays a critical role in regulating Earth's climate. Plants act as the planet's lungs, breathing in carbon dioxide, a major greenhouse gas. By converting CO\u2082 into biomass, photosynthesis helps to remove it from the atmosphere, mitigating the greenhouse effect and stabilizing global temperatures. Finally, of course, it provides the food and energy for the plant's own survival, allowing it to grow and reproduce, thus continuing this vital cycle.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"The importance of photosynthesis extends far beyond the plant itself; it is, without exaggeration, the most important biological process on Earth. Its impact is global and fundamental to our existence.\",\n          \"duration\": 12\n        },\n        {\n          \"id\": 2,\n          \"text\": \"First and foremost, it produces the oxygen that fills our atmosphere. Virtually every breath you take contains oxygen that was released by a plant or algae somewhere in the world. Without photosynthesis, the air would be unbreathable for complex life forms like us.\",\n          \"duration\": 15\n        },\n        {\n          \"id\": 3,\n          \"text\": \"Second, photosynthesis forms the base of almost all food chains. The energy captured from the sun and stored in glucose by plants is the primary source of energy for the entire planet. Herbivores get this energy by eating plants, and carnivores get it by eating herbivores.\",\n          \"duration\": 16\n        },\n        {\n          \"id\": 4,\n          \"text\": \"Whether you're eating a salad, a piece of chicken, or a fish, the energy in that food ultimately traces back to the sun via photosynthesis.\",\n          \"duration\": 9\n        },\n        {\n          \"id\": 5,\n          \"text\": \"Third, it plays a critical role in regulating Earth's climate. Plants act as the planet's lungs, breathing in carbon dioxide, a major greenhouse gas. By converting CO\u2082 into biomass, photosynthesis helps to remove it from the atmosphere, mitigating the greenhouse effect and stabilizing global temperatures.\",\n          \"duration\": 18\n        },\n        {\n          \"id\": 6,\n          \"text\": \"Finally, of course, it provides the food and energy for the plant's own survival, allowing it to grow and reproduce, thus continuing this vital cycle.\",\n          \"duration\": 9\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A view of the Earth from space. The planet is glowing with a vibrant green and blue light.\",\n          \"objects_and_properties\": \"The planet Earth. A golden web of light connects all the continents.\",\n          \"motion_sequence\": \"The camera slowly zooms towards the Earth. As it gets closer, a web of light emerges, connecting all life and demonstrating a global interconnected process. The title fades in.\",\n          \"labels_and_text\": \"Title: 'The Most Important Process on Earth'.\",\n          \"pedagogical_focus\": \"To set a grand scale for the importance of photosynthesis, framing it as a globally significant process.\"\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"A stylized animation of the Earth's atmosphere.\",\n          \"objects_and_properties\": \"A cross-section of the atmosphere shown as a blue layer over the Earth's surface. A pie chart shows the composition of the atmosphere.\",\n          \"motion_sequence\": \"The animation shows green continents and blue oceans releasing streams of 'O\u2082' bubbles into the atmosphere. The pie chart appears, with the 'Oxygen (21%)' slice highlighted. An animated human figure is shown breathing in the O\u2082 bubbles.\",\n          \"labels_and_text\": \"Pie chart labels: 'Nitrogen (78%)', 'Oxygen (21%)', 'Other (1%)'. A label points to the O\u2082 streams: 'Oxygen Production'.\",\n          \"pedagogical_focus\": \"To visually represent that the oxygen in our atmosphere is a direct product of photosynthesis.\"\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"A simple, animated food web diagram on a nature background.\",\n          \"objects_and_properties\": \"At the bottom, icons for grass, trees, and algae. In the middle, icons for a rabbit, a deer, and a small fish (herbivores). At the top, icons for a fox, a wolf, and a big fish (carnivores). A sun icon is at the very top.\",\n          \"motion_sequence\": \"A yellow arrow of energy flows from the sun to the plant icons at the bottom. The plants glow. Then, arrows flow from the plants to the herbivores. The herbivores glow. Finally, arrows flow from the herbivores to the carnivores, making them glow. The entire structure is built from the bottom up.\",\n          \"labels_and_text\": \"Label 'Producers' for the plants. Label 'Primary Consumers' for the herbivores. Label 'Secondary Consumers' for the carnivores. A large title 'Base of the Food Web' appears.\",\n          \"pedagogical_focus\": \"To illustrate that all energy in an ecosystem originates from producers (plants) who capture it via photosynthesis.\"\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"A dinner table with various foods.\",\n          \"objects_and_properties\": \"A plate with a green salad. A plate with a piece of grilled chicken. A plate with a piece of fish. A sun icon.\",\n          \"motion_sequence\": \"An arrow traces energy back from the salad directly to the sun icon. An arrow traces energy from the chicken, to a smaller icon of a chicken eating grain, to the grain plant, and then to the sun. An arrow traces energy from the fish, to a smaller fish, to algae, and then to the sun.\",\n          \"labels_and_text\": \"Text appears with each trace: 'Energy from the Sun'.\",\n          \"pedagogical_focus\": \"To connect the abstract concept of a food web to the everyday experience of eating, showing all food energy comes from the sun.\"\n        },\n        {\n          \"segment_id\": 5,\n          \"scene_setup\": \"An animation showing a representation of the global carbon cycle.\",\n          \"objects_and_properties\": \"A factory with smokestacks releasing gray CO\u2082 clouds. A large, green forest. The Earth with a semi-transparent atmospheric layer.\",\n          \"motion_sequence\": \"The factory releases CO\u2082 clouds, which accumulate in the atmospheric layer, causing it to turn a slightly darker shade. The forest then 'inhales' a large portion of the CO\u2082 clouds, and the atmospheric layer becomes clearer again. This cycle repeats.\",\n          \"labels_and_text\": \"Label 'CO\u2082 Source' on the factory. Label 'CO\u2082 Sink (Carbon Storage)' on the forest. Title: 'Regulating Climate'.\",\n          \"pedagogical_focus\": \"To visualize the role of forests and photosynthesis in acting as a 'carbon sink', removing greenhouse gases from the atmosphere.\"\n        },\n        {\n          \"segment_id\": 6,\n          \"scene_setup\": \"A single plant is shown, with a time-lapse of its life cycle.\",\n          \"objects_and_properties\": \"A single plant in a pot.\",\n          \"motion_sequence\": \"A time-lapse shows the plant growing from a seedling, developing leaves, growing larger, producing a flower, which then turns into a fruit containing seeds. Glucose icons are shown powering each stage of this growth.\",\n          \"labels_and_text\": \"Labels pop up at each stage: 'Growth', 'Flowering', 'Reproduction'. A central label says 'Powered by Glucose'.\",\n          \"pedagogical_focus\": \"To bring the focus back to the individual plant and show that photosynthesis is essential for its own life cycle, which allows the process to continue.\"\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": {\n          \"position\": \"left\",\n          \"width_percent\": 65\n        },\n        \"avatar_zone\": {\n          \"mode\": \"side\",\n          \"position\": \"right\",\n          \"width_percent\": 35\n        }\n      },\n      \"gesture_hints\": [\n        {\n          \"time\": 5.0,\n          \"action\": \"spread_hands_wide\"\n        },\n        {\n          \"time\": 15.0,\n          \"action\": \"deep_breath_gesture\"\n        },\n        {\n          \"time\": 30.0,\n          \"action\": \"build_up_hands\"\n        },\n        {\n          \"time\": 50.0,\n          \"action\": \"show_balanced_hands\"\n        }\n      ]\n    },\n    {\n      \"section_type\": \"memory\",\n      \"id\": 8,\n      \"title\": \"Key Concepts Check\",\n      \"renderer\": \"manim\",\n      \"narration\": \"Great job. Now, let's test your memory with a few quick questions to lock in these key concepts.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"Great job. Now, let's test your memory with a few quick questions to lock in these key concepts.\",\n          \"duration\": 6\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A dark background with a title at the top.\",\n          \"objects_and_properties\": \"A stack of four colored flashcards in the center of the screen.\",\n          \"motion_sequence\": \"The title 'Key Concepts Check' fades in. The stack of flashcards flies in and settles in the center.\",\n          \"labels_and_text\": \"Title: 'Key Concepts Check'.\",\n          \"pedagogical_focus\": \"To set up the flashcard review activity.\"\n        }\n      ],\n      \"flashcards\": [\n        {\n          \"question\": \"What are the three main INPUTS for photosynthesis?\",\n          \"answer\": \"Carbon Dioxide (CO\u2082), Water (H\u2082O), and Light Energy.\"\n        },\n        {\n          \"question\": \"What are the two main PRODUCTS of photosynthesis?\",\n          \"answer\": \"Glucose (C\u2086H\u2081\u2082O\u2086) and Oxygen (O\u2082).\"\n        },\n        {\n          \"question\": \"What is the name of the green pigment that captures sunlight?\",\n          \"answer\": \"Chlorophyll.\"\n        },\n        {\n          \"question\": \"Where in the plant cell does photosynthesis take place?\",\n          \"answer\": \"In the Chloroplasts.\"\n        },\n        {\n          \"question\": \"What is the name of the pores on leaves that let in CO\u2082?\",\n          \"answer\": \"Stomata.\"\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": {\n          \"position\": \"center\",\n          \"width_percent\": 100\n        },\n        \"avatar_zone\": {\n          \"mode\": \"off\"\n        }\n      },\n      \"gesture_hints\": []\n    },\n    {\n      \"section_type\": \"recap\",\n      \"id\": 9,\n      \"title\": \"Lesson Recap\",\n      \"renderer\": \"wan_video\",\n      \"narration\": \"We've covered a lot of ground today. We learned that photosynthesis is how plants make their own food using sunlight, water, and carbon dioxide. We explored the detailed process, from water traveling up the xylem to CO\u2082 entering through the stomata. We decoded the chemical equation that governs this transformation. We analyzed how factors like light, CO\u2082, and temperature can change the rate of photosynthesis. And finally, we understood its monumental importance, from producing the oxygen we breathe to powering nearly all food chains on Earth. Remember, this single process is the engine of life on our planet.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"We've covered a lot of ground today. We learned that photosynthesis is how plants make their own food using sunlight, water, and carbon dioxide.\",\n          \"duration\": 8\n        },\n        {\n          \"id\": 2,\n          \"text\": \"We explored the detailed process, from water traveling up the xylem to CO\u2082 entering through the stomata.\",\n          \"duration\": 6\n        },\n        {\n          \"id\": 3,\n          \"text\": \"We decoded the chemical equation that governs this transformation.\",\n          \"duration\": 4\n        },\n        {\n          \"id\": 4,\n          \"text\": \"We analyzed how factors like light, CO\u2082, and temperature can change the rate of photosynthesis.\",\n          \"duration\": 6\n        },\n        {\n          \"id\": 5,\n          \"text\": \"And finally, we understood its monumental importance, from producing the oxygen we breathe to powering nearly all food chains on Earth.\",\n          \"duration\": 8\n        },\n        {\n          \"id\": 6,\n          \"text\": \"Remember, this single process is the engine of life on our planet.\",\n          \"duration\": 4\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A dynamic montage of visuals from the lesson.\",\n          \"objects_and_properties\": \"A quick succession of key visuals: the input/output diagram of a leaf.\",\n          \"motion_sequence\": \"A short, 2-second clip showing the input/output diagram with CO\u2082, H\u2082O, and light going in, and glucose and O\u2082 coming out.\",\n          \"labels_and_text\": \"Concept Title: 'What is Photosynthesis?'\",\n          \"pedagogical_focus\": \"To quickly remind the student of the core concept.\"\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"A dynamic montage of visuals from the lesson.\",\n          \"objects_and_properties\": \"A quick succession of key visuals: the xylem and stomata animations.\",\n          \"motion_sequence\": \"A split screen shows water moving up the xylem on the left, and CO\u2082 entering a stoma on the right.\",\n          \"labels_and_text\": \"Concept Title: 'The Process'.\",\n          \"pedagogical_focus\": \"To remind the student of the physical mechanisms of resource gathering.\"\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"A dynamic montage of visuals from the lesson.\",\n          \"objects_and_properties\": \"A quick succession of key visuals: the balanced chemical equation.\",\n          \"motion_sequence\": \"The final balanced chemical equation `6CO\u2082 + 6H\u2082O \u2192 C\u2086H\u2081\u2082O\u2086 + 6O\u2082` is shown with atom counters below, demonstrating balance.\",\n          \"labels_and_text\": \"Concept Title: 'The Chemical Equation'.\",\n          \"pedagogical_focus\": \"To reinforce the chemical formula of photosynthesis.\"\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"A dynamic montage of visuals from the lesson.\",\n          \"objects_and_properties\": \"A quick succession of key visuals: the three graphs for limiting factors.\",\n          \"motion_sequence\": \"The three graphs for light, CO\u2082, and temperature are shown side-by-side, with the curves being traced quickly.\",\n          \"labels_and_text\": \"Concept Title: 'Limiting Factors'.\",\n          \"pedagogical_focus\": \"To recap the environmental influences on the process.\"\n        },\n        {\n          \"segment_id\": 5,\n          \"scene_setup\": \"A dynamic montage of visuals from the lesson.\",\n          \"objects_and_properties\": \"A quick succession of key visuals: the food web and Earth's atmosphere.\",\n          \"motion_sequence\": \"The animation of the food web building up from plants is shown, followed by the shot of the Earth releasing oxygen into the atmosphere.\",\n          \"labels_and_text\": \"Concept Title: 'Global Importance'.\",\n          \"pedagogical_focus\": \"To re-emphasize the global impact of photosynthesis.\"\n        },\n        {\n          \"segment_id\": 6,\n          \"scene_setup\": \"The final scene is a beautiful, sunlit forest.\",\n          \"objects_and_properties\": \"A hyper-realistic animation of a lush forest with sunbeams filtering through the canopy.\",\n          \"motion_sequence\": \"The camera slowly pans across the vibrant, living forest. The final title card fades in.\",\n          \"labels_and_text\": \"Final Title: 'Photosynthesis: The Engine of Life'.\",\n          \"pedagogical_focus\": \"To provide a concluding, memorable image that encapsulates the beauty and power of photosynthesis.\"\n        }\n      ],\n      \"recap_scenes\": [\n        {\n          \"scene\": 1,\n          \"description\": \"The overall process showing inputs (CO\u2082, H\u2082O, Light) and outputs (Glucose, O\u2082).\",\n          \"concept_title\": \"What is Photosynthesis?\"\n        },\n        {\n          \"scene\": 2,\n          \"description\": \"Animation of the balanced chemical equation with molecular models.\",\n          \"concept_title\": \"The Chemical Equation\"\n        },\n        {\n          \"scene\": 3,\n          \"description\": \"The three graphs showing the effects of light, CO\u2082, and temperature.\",\n          \"concept_title\": \"Factors Affecting Photosynthesis\"\n        },\n        {\n          \"scene\": 4,\n          \"description\": \"The food web diagram showing plants as the base, and the Earth releasing oxygen.\",\n          \"concept_title\": \"Importance of Photosynthesis\"\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": {\n          \"position\": \"left\",\n          \"width_percent\": 65\n        },\n        \"avatar_zone\": {\n          \"mode\": \"side\",\n          \"position\": \"right\",\n          \"width_percent\": 35\n        }\n      },\n      \"gesture_hints\": [\n        {\n          \"time\": 2.0,\n          \"action\": \"recap_gesture\"\n        },\n        {\n          \"time\": 30.0,\n          \"action\": \"thumbs_up\"\n        }\n      ]\n    }\n  ]\n}\n```",
+  "sections_generated": 9,
+  "truncation": {
+    "detected": false,
+    "details": null
+  },
+  "validation": {
+    "errors": [
+      "Section 3: visual_beat[2] vague phrases in: ['pedagogical_focus']"
+    ],
+    "warnings": [],
+    "passed": false,
+    "fatal_error": "Validation failed with 1 critical errors:\nSection 3: visual_beat[2] vague phrases in: ['pedagogical_focus']"
+  },
+  "section_decisions": [
+    {
+      "section_id": 1,
+      "title": "Introduction to Photosynthesis",
+      "section_type": "intro",
+      "renderer_decision": {
+        "chosen": "wan_video",
+        "reason": "conceptual/science content"
+      },
+      "narration_stats": {
+        "word_count": 100,
+        "meets_requirement": true,
+        "min_required": 0
+      },
+      "visual_beats_count": 4,
+      "prompts_used": {
+        "wan_prompt": "Educational visualization for Introduction to Photosynthesis",
+        "manim_plan": null
+      },
+      "pedagogy_notes": "Section type: intro"
+    },
+    {
+      "section_id": 2,
+      "title": "Lesson Summary",
+      "section_type": "summary",
+      "renderer_decision": {
+        "chosen": "wan_video",
+        "reason": "conceptual/science content"
+      },
+      "narration_stats": {
+        "word_count": 106,
+        "meets_requirement": true,
+        "min_required": 0
+      },
+      "visual_beats_count": 4,
+      "prompts_used": {
+        "wan_prompt": "Educational visualization for Lesson Summary",
+        "manim_plan": null
+      },
+      "pedagogy_notes": "Section type: summary"
+    },
+    {
+      "section_id": 3,
+      "title": "What is Photosynthesis?",
+      "section_type": "content",
+      "renderer_decision": {
+        "chosen": "wan_video",
+        "reason": "conceptual/science content"
+      },
+      "narration_stats": {
+        "word_count": 180,
+        "meets_requirement": true,
+        "min_required": 150
+      },
+      "visual_beats_count": 6,
+      "prompts_used": {
+        "wan_prompt": "Educational visualization for What is Photosynthesis?",
+        "manim_plan": null
+      },
+      "pedagogy_notes": "Section type: content"
+    },
+    {
+      "section_id": 4,
+      "title": "The Process",
+      "section_type": "content",
+      "renderer_decision": {
+        "chosen": "wan_video",
+        "reason": "conceptual/science content"
+      },
+      "narration_stats": {
+        "word_count": 210,
+        "meets_requirement": true,
+        "min_required": 150
+      },
+      "visual_beats_count": 5,
+      "prompts_used": {
+        "wan_prompt": "Educational visualization for The Process",
+        "manim_plan": null
+      },
+      "pedagogy_notes": "Section type: content"
+    },
+    {
+      "section_id": 5,
+      "title": "The Chemical Equation",
+      "section_type": "content",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 176,
+        "meets_requirement": true,
+        "min_required": 150
+      },
+      "visual_beats_count": 5,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: content"
+    },
+    {
+      "section_id": 6,
+      "title": "Factors Affecting Photosynthesis",
+      "section_type": "content",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 224,
+        "meets_requirement": true,
+        "min_required": 150
+      },
+      "visual_beats_count": 5,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: content"
+    },
+    {
+      "section_id": 7,
+      "title": "Importance of Photosynthesis",
+      "section_type": "content",
+      "renderer_decision": {
+        "chosen": "wan_video",
+        "reason": "conceptual/science content"
+      },
+      "narration_stats": {
+        "word_count": 214,
+        "meets_requirement": true,
+        "min_required": 150
+      },
+      "visual_beats_count": 6,
+      "prompts_used": {
+        "wan_prompt": "Educational visualization for Importance of Photosynthesis",
+        "manim_plan": null
+      },
+      "pedagogy_notes": "Section type: content"
+    },
+    {
+      "section_id": 8,
+      "title": "Key Concepts Check",
+      "section_type": "memory",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 18,
+        "meets_requirement": true,
+        "min_required": 0
+      },
+      "visual_beats_count": 1,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: memory"
+    },
+    {
+      "section_id": 9,
+      "title": "Lesson Recap",
+      "section_type": "recap",
+      "renderer_decision": {
+        "chosen": "wan_video",
+        "reason": "conceptual/science content"
+      },
+      "narration_stats": {
+        "word_count": 98,
+        "meets_requirement": true,
+        "min_required": 0
+      },
+      "visual_beats_count": 6,
+      "prompts_used": {
+        "wan_prompt": "Educational visualization for Lesson Recap",
+        "manim_plan": null
+      },
+      "pedagogy_notes": "Section type: recap"
+    }
+  ],
+  "visual_beats_audit": [
+    {
+      "section_id": 1,
+      "section_type": "intro",
+      "renderer": "wan_video",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A time-lapse scene with a soft, blurred garden background. The focus is on a small patch of soil in the center.",
+          "objects_and_properties": "A small, brown seed on the surface of the soil. A large, vibrant green tree. The soil is dark brown.",
+          "motion_sequence": "A small seed is shown on the soil. A time-lapse animation begins, showing a sprout emerging, growing into a seedling, and rapidly transforming into a large, leafy tree. The camera slowly zooms out as the tree grows to emphasize its size.",
+          "labels_and_text": "Text overlay: 'How do plants get their food?' appears and fades.",
+          "pedagogical_focus": "To spark curiosity about plant growth and introduce the idea that plants must have a way of feeding themselves."
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "A stylized animation with a bright, sunny sky and a single, healthy green plant in the center.",
+          "objects_and_properties": "A stylized sun icon (yellow, top left). Blue water drop icons. Gray 'CO\u2082' icons. A green plant. A glowing yellow arrow representing sunlight. Small sugar cube icons (white). Small 'O\u2082' bubble icons (light blue).",
+          "motion_sequence": "A yellow arrow of light travels from the sun to the plant's leaves. Simultaneously, gray CO\u2082 icons float from the air into the leaves, and blue water drop icons travel from the ground up the stem. The plant glows briefly, then white sugar cube icons appear inside the plant, and blue O\u2082 icons are released from the leaves into the air.",
+          "labels_and_text": "Label 'Sunlight' on the light arrow. Label 'Carbon Dioxide (CO\u2082)' near the gray icons. Label 'Water (H\u2082O)' near the blue icons. Label 'Energy (Sugar)' near the sugar cubes. Label 'Oxygen (O\u2082)' near the released bubbles.",
+          "pedagogical_focus": "To provide a high-level overview of the inputs (sunlight, CO\u2082, water) and outputs (sugar, oxygen) of photosynthesis."
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "A split-screen view. Left side shows the plant from the previous scene. Right side shows a montage of life on Earth.",
+          "objects_and_properties": "Left: The green plant releasing oxygen. Right: A sequence of short clips - a deer eating leaves, a person jogging and breathing, a fish swimming in water with bubbles.",
+          "motion_sequence": "On the left, the plant continues to release O\u2082 icons. These icons drift across the screen to the right side. As they enter the right panel, we see the person breathing in, the deer eating, and bubbles rising in the water, connecting the plant's output to other life forms.",
+          "labels_and_text": "Title text appears at the bottom: 'The Process that Powers our Planet'.",
+          "pedagogical_focus": "To establish the critical importance of photosynthesis for breathing (oxygen) and as the foundation of the food chain."
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The camera zooms into a single leaf on the plant, which begins to glow with a green light. The background fades to black.",
+          "objects_and_properties": "A detailed, realistic-looking green leaf, filling the screen. It emits a soft, pulsing green glow.",
+          "motion_sequence": "The camera performs a smooth, continuous zoom into one leaf until it fills the screen. The veins of the leaf become prominent. The leaf starts to glow from within, suggesting an internal process.",
+          "labels_and_text": "The chapter title 'Introduction to Photosynthesis' fades in over the glowing leaf.",
+          "pedagogical_focus": "To transition from the macroscopic view (whole plant) to the microscopic location of photosynthesis (the leaf)."
+        }
+      ]
+    },
+    {
+      "section_id": 2,
+      "section_type": "summary",
+      "renderer": "wan_video",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A clean, white background. A stylized diagram showing the inputs and outputs of photosynthesis.",
+          "objects_and_properties": "A central green leaf icon. On the left, a 'CO\u2082' icon, a 'H\u2082O' icon, and a yellow sun icon, with arrows pointing towards the leaf. On the right, a white sugar cube icon (C\u2086H\u2081\u2082O\u2086) and a light blue 'O\u2082' icon, with arrows pointing away from the leaf.",
+          "motion_sequence": "The leaf icon appears first. Then, the input icons (CO\u2082, H\u2082O, Sun) fade in on the left, and their arrows draw towards the leaf. After a brief pause, the output icons (Sugar, O\u2082) fade in on the right, and their arrows draw away from the leaf.",
+          "labels_and_text": "Labels for each icon appear next to them: 'Carbon Dioxide', 'Water', 'Light Energy', 'Glucose (Food)', 'Oxygen'.",
+          "pedagogical_focus": "To visually summarize the core chemical transformation of photosynthesis."
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "A zoom-in animation starting from a whole plant.",
+          "objects_and_properties": "A plant, a leaf, a plant cell, and a chloroplast. The chloroplast is green and contains small stacked discs (grana).",
+          "motion_sequence": "The view zooms from a whole plant to a single leaf, then into a cross-section of the leaf showing cells. It then zooms into one plant cell, highlighting a green chloroplast. Finally, it zooms into the chloroplast, showing a photon of light striking a chlorophyll molecule.",
+          "labels_and_text": "Labels appear at each stage of the zoom: 'Plant' -> 'Leaf' -> 'Cell' -> 'Chloroplast'. Label 'Chlorophyll' points to the green pigment.",
+          "pedagogical_focus": "To reinforce the location of photosynthesis, from the organ level down to the organelle."
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "A dashboard with three animated graphs on a light gray background.",
+          "objects_and_properties": "Three graphs side-by-side. Graph 1: Y-axis 'Rate', X-axis 'Light'. A curve rises and plateaus. Graph 2: Y-axis 'Rate', X-axis 'CO\u2082'. A curve rises and plateaus. Graph 3: Y-axis 'Rate', X-axis 'Temperature'. A bell-shaped curve.",
+          "motion_sequence": "The three graphs appear simultaneously. On each graph, a red dot animates along the curve, tracing its shape, to show the relationship between the factor and the rate.",
+          "labels_and_text": "Each graph is titled: 'Light Intensity', 'CO\u2082 Concentration', 'Temperature'.",
+          "pedagogical_focus": "To quickly recap the key environmental factors that affect the rate of photosynthesis."
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "An animation showing the Earth in space.",
+          "objects_and_properties": "A rotating model of the Earth. A green aura emanates from the continents. A simple food chain diagram (sun -> grass -> sheep).",
+          "motion_sequence": "The Earth rotates, with a green glow pulsing from the landmasses, representing plant life. A blue haze of oxygen forms around the planet. The scene then cross-fades to the food chain diagram, with an arrow of energy flowing from the sun to the grass, and then to the sheep.",
+          "labels_and_text": "Text 'Foundation of Life' appears over the Earth. Labels 'Energy' follow the arrows in the food chain.",
+          "pedagogical_focus": "To reiterate the global importance of photosynthesis for the atmosphere and as the ultimate source of energy for most ecosystems."
+        }
+      ]
+    },
+    {
+      "section_id": 3,
+      "section_type": "content",
+      "renderer": "wan_video",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A clean, white background. The word 'PHOTOSYNTHESIS' is in the center.",
+          "objects_and_properties": "The word 'PHOTOSYNTHESIS' in large, green capital letters. The prefix 'PHOTO' is a lighter green, and the suffix 'SYNTHESIS' is a darker green.",
+          "motion_sequence": "The word 'PHOTOSYNTHESIS' appears. It then splits into 'PHOTO' and 'SYNTHESIS'. An icon of a sun (yellow) appears above 'PHOTO'. An icon of a factory gear (gray) turning into a sugar cube (white) appears above 'SYNTHESIS'. The words and icons then merge back together.",
+          "labels_and_text": "Text 'PHOTO' (light green). Text 'SYNTHESIS' (dark green). An annotation 'from Greek 'phos' - light' appears under 'PHOTO'. An annotation 'from Greek 'synthesis' - putting together' appears under 'SYNTHESIS'.",
+          "pedagogical_focus": "To break down the term 'photosynthesis' into its roots to make its meaning intuitive."
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "A split screen. On the left, a plant. On the right, a lion.",
+          "objects_and_properties": "Left side: A vibrant green plant with a sun icon above it. Right side: A lion chasing a zebra. Both are stylized animations.",
+          "motion_sequence": "The plant on the left is shown calmly absorbing sunlight. On the right, the lion is actively hunting. A large green checkmark appears over the plant, and a red 'X' appears over the lion.",
+          "labels_and_text": "Label 'Autotroph (Self-feeder)' appears under the plant. Label 'Heterotroph (Other-feeder)' appears under the lion.",
+          "pedagogical_focus": "To contrast autotrophs and heterotrophs, clarifying the unique position of plants in energy acquisition."
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "An animated diagram on a light blue background, showing a simplified chemical conversion.",
+          "objects_and_properties": "On the left: Gray 'CO\u2082' molecules and blue 'H\u2082O' molecules. In the center: a yellow, glowing 'converter box' with a sun symbol on it. On the right: A white, hexagonal glucose molecule icon.",
+          "motion_sequence": "The CO\u2082 and H\u2082O molecules flow from the left into the converter box. The box glows brightly. A stream of glucose molecules flows out of the right side of the box.",
+          "labels_and_text": "Label 'INPUTS: Simple / Low Energy' on the left. Label 'PROCESS: Add Light Energy' on the center box. Label 'OUTPUT: Complex / High Energy' on the right.",
+          "pedagogical_focus": "To visualize the concept of converting low-energy inorganic molecules into a high-energy organic molecule using light."
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "A cutaway view of a plant showing how it uses glucose.",
+          "objects_and_properties": "A transparent plant animation. White glucose icons (hexagons) are shown inside the plant's stem and leaves. A battery icon.",
+          "motion_sequence": "Glucose icons travel from the leaves to different parts of the plant. Some go to the tip of the stem, causing it to grow taller. Some go to the roots, causing them to extend. Some are shown being stored in a fruit (like an apple), which appears and grows on a branch.",
+          "labels_and_text": "A label 'Glucose (Chemical Energy)' points to the hexagons. Text annotations appear: 'Growth', 'Repair', 'Storage (Fruit/Roots)'.",
+          "pedagogical_focus": "To explain that glucose is a versatile energy currency for the plant, used for various life functions."
+        },
+        {
+          "segment_id": 5,
+          "scene_setup": "A zoom into a plant cell, focusing on a chloroplast.",
+          "objects_and_properties": "A green, oval chloroplast. Inside are stacks of discs (grana). Tiny green dots represent chlorophyll molecules. A rainbow-colored light beam.",
+          "motion_sequence": "A beam of light representing the full spectrum shines on the chloroplast. The green part of the spectrum is reflected off the surface, while the blue and red parts are absorbed into the chloroplast, making the chlorophyll dots glow.",
+          "labels_and_text": "Label 'Chloroplast'. Label 'Chlorophyll' pointing to the green dots. Label 'Reflected' on the green light ray bouncing off. Label 'Absorbed' on the red and blue rays going in.",
+          "pedagogical_focus": "To explain the role of chlorophyll and why plants appear green (they reflect green light and absorb other colors for energy)."
+        },
+        {
+          "segment_id": 6,
+          "scene_setup": "A wide view showing a lush green forest on one side and a city skyline with people on the other.",
+          "objects_and_properties": "A green forest. Blue 'O\u2082' bubbles. Animated people and animals.",
+          "motion_sequence": "Blue 'O\u2082' bubbles are continuously released from the forest and drift over to the city side. An animated person is shown jogging and breathing in the bubbles. An animated bird flies by, also breathing them in.",
+          "labels_and_text": "Label 'Oxygen (O\u2082)' on the bubbles. Text overlay: 'A Gift to the Atmosphere'.",
+          "pedagogical_focus": "To emphasize the critical importance of oxygen as a byproduct of photosynthesis for animal life."
+        }
+      ]
+    },
+    {
+      "section_id": 4,
+      "section_type": "content",
+      "renderer": "wan_video",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A screen split into two vertical panels titled 'Stage 1: Gathering' and 'Stage 2: Conversion'.",
+          "objects_and_properties": "Panel 1 ('Gathering'): Icons for CO\u2082, H\u2082O, and a plant. Panel 2 ('Conversion'): An icon of a chloroplast with a sun shining on it.",
+          "motion_sequence": "The two panels appear. In Panel 1, arrows show CO\u2082 and H\u2082O moving towards the plant icon. In Panel 2, the chloroplast icon glows. An arrow connects Panel 1 to Panel 2, indicating the sequence.",
+          "labels_and_text": "Title 'Stage 1: Gathering Ingredients'. Title 'Stage 2: Making the Food'.",
+          "pedagogical_focus": "To introduce the two main stages of the process: resource collection and chemical conversion."
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "A magnified view of the underside of a leaf surface. The background is a green cellular texture.",
+          "objects_and_properties": "Several oval-shaped pores (stomata), each formed by two guard cells. Gray CO\u2082 molecules are floating outside the leaf.",
+          "motion_sequence": "The camera zooms in on one stoma. The two guard cells are shown pulling apart, opening the pore. Several CO\u2082 molecules then flow from the outside into the opening. The guard cells then move closer together, closing the pore.",
+          "labels_and_text": "An arrow points to the entire pore structure with the label 'Stoma (plural: Stomata)'. An arrow points to the cells on either side with the label 'Guard Cells'. A label 'CO\u2082' follows the molecules entering the leaf.",
+          "pedagogical_focus": "To show the specific structure (stomata) responsible for gas exchange in plants."
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "A cross-section of a whole plant, from roots in the soil to leaves in the air.",
+          "objects_and_properties": "The plant is shown with a transparent stem and roots. The soil is brown and dotted with blue water molecules. A network of thin blue tubes (xylem) runs from the root tips, up the stem, and into the leaf veins.",
+          "motion_sequence": "Blue water molecules in the soil are absorbed by the root hairs. These molecules then enter the xylem tubes and travel upwards in a continuous stream, like a drinking straw, branching out into the leaves.",
+          "labels_and_text": "Label 'Roots absorb water'. Label 'Xylem Vessels (Water Pipes)' points to the blue tubes. An upward-pointing arrow next to the stem is labeled 'Water Transport'.",
+          "pedagogical_focus": "To visualize the plant's vascular system (xylem) and how water is transported from the ground to the leaves."
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "An animation inside a cross-section of a leaf, showing the destination of the raw materials.",
+          "objects_and_properties": "Leaf cells are shown in layers. A xylem vessel (blue tube) is on one side, and a stoma (pore) is on the other. A green chloroplast is in a central cell.",
+          "motion_sequence": "A blue H\u2082O molecule is shown exiting the xylem vessel and moving into the cell. A gray CO\u2082 molecule is shown entering through the stoma and also moving towards the same cell. Both molecules arrive at the surface of the chloroplast.",
+          "labels_and_text": "Label 'H\u2082O from roots'. Label 'CO\u2082 from air'. Both have arrows pointing to the chloroplast.",
+          "pedagogical_focus": "To show that both raw materials, despite their different entry points, converge at the chloroplast, the site of photosynthesis."
+        },
+        {
+          "segment_id": 5,
+          "scene_setup": "A detailed, dynamic animation inside a single chloroplast.",
+          "objects_and_properties": "A large, oval chloroplast. Yellow light photons rain down from above. Blue H\u2082O molecules and gray CO\u2082 molecules are inside. A complex molecular machine represents the enzymes.",
+          "motion_sequence": "A photon of light strikes a chlorophyll molecule, which glows and releases a spark of energy. This energy 'zaps' a water molecule, splitting it into oxygen (O\u2082) and hydrogen components. The energy and hydrogen components then react with a CO\u2082 molecule in the molecular machine, which churns and releases a white glucose molecule (C\u2086H\u2081\u2082O\u2086). The O\u2082 molecule drifts away and out of the chloroplast.",
+          "labels_and_text": "Label 'Light Energy IN'. Label 'H\u2082O splits'. Label 'CO\u2082 combines'. Label 'Glucose (C\u2086H\u2081\u2082O\u2086) OUT'. Label 'Oxygen (O\u2082) OUT'.",
+          "pedagogical_focus": "To provide a simplified but dynamic visual representation of the light-dependent and light-independent reactions, showing energy transfer and molecular transformation."
+        }
+      ]
+    },
+    {
+      "section_id": 5,
+      "section_type": "content",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A clean, dark background. A horizontal line divides the screen into a 'Reactants' area (left) and a 'Products' area (right).",
+          "objects_and_properties": "Text labels 'Reactants (Ingredients)' on the left and 'Products (Results)' on the right. A large arrow points from left to right across the line.",
+          "motion_sequence": "The 'Reactants' and 'Products' labels fade in. The dividing line draws across the screen. The large arrow then draws itself from the left side to the right side.",
+          "labels_and_text": "Label 'Reactants (Ingredients)' at top left. Label 'Products (Results)' at top right.",
+          "pedagogical_focus": "To establish the basic structure of a chemical equation, with reactants on the left and products on the right."
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The same scene as before, but now the full equation appears.",
+          "objects_and_properties": "The full chemical equation `6CO\u2082 + 6H\u2082O \u2192 C\u2086H\u2081\u2082O\u2086 + 6O\u2082` rendered in MathTex. A sun symbol is positioned above the arrow.",
+          "motion_sequence": "Each component of the equation appears sequentially: `6CO\u2082`, then `+`, then `6H\u2082O`, then the `\u2192` with the sun symbol above it, then `C\u2086H\u2081\u2082O\u2086`, then `+`, then `6O\u2082`.",
+          "labels_and_text": "The chemical equation itself. A label 'Light Energy' appears next to the sun symbol.",
+          "pedagogical_focus": "To present the full, balanced chemical equation for photosynthesis in its standard format.",
+          "manim_scene_spec": {
+            "objects": [],
+            "forces": [],
+            "equations": [
+              {
+                "id": "photosynthesis_eq",
+                "latex": "6\\text{CO}_2 + 6\\text{H}_2\\text{O} \\xrightarrow{\\text{Light Energy}} \\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{O}_2",
+                "position": "center"
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "show_equation",
+                "target": "photosynthesis_eq",
+                "duration": 3.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The equation is visible. The reactant side is highlighted.",
+          "objects_and_properties": "The equation is on screen. A glowing box surrounds `6CO\u2082 + 6H\u2082O`.",
+          "motion_sequence": "The `6CO\u2082` part of the equation pulses. Six animated CO\u2082 molecules (one gray sphere, two red spheres) appear below it. Then, the `6H\u2082O` part pulses. Six animated H\u2082O molecules (one red sphere, two white spheres) appear below it.",
+          "labels_and_text": "A brace is drawn under `6CO\u2082 + 6H\u2082O` with the label 'Reactants'. A label '6 Carbon Dioxide molecules' appears under the CO\u2082 models. A label '6 Water molecules' appears under the H\u2082O models.",
+          "pedagogical_focus": "To visually connect the chemical formulas of the reactants to their molecular representations and quantities.",
+          "manim_scene_spec": {
+            "objects": [],
+            "forces": [],
+            "equations": [
+              {
+                "id": "photosynthesis_eq",
+                "latex": "6\\text{CO}_2 + 6\\text{H}_2\\text{O} \\xrightarrow{\\text{Light Energy}} \\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{O}_2",
+                "position": "center"
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "highlight",
+                "target_latex": "6\\text{CO}_2",
+                "duration": 1.0
+              },
+              {
+                "action": "wait",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target_latex": "6\\text{H}_2\\text{O}",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The equation is visible. The product side is highlighted.",
+          "objects_and_properties": "The equation is on screen. A glowing box surrounds `C\u2086H\u2081\u2082O\u2086`.",
+          "motion_sequence": "The arrow and 'Light Energy' pulse. Then, the `C\u2086H\u2081\u2082O\u2086` part of the equation pulses. A 3D model of a glucose molecule (a hexagonal ring of carbons) appears below it.",
+          "labels_and_text": "A brace is drawn under `C\u2086H\u2081\u2082O\u2086 + 6O\u2082` with the label 'Products'. A label '1 Glucose molecule' appears under the glucose model.",
+          "pedagogical_focus": "To visually connect the chemical formula for glucose to its molecular structure and identify it as a product.",
+          "manim_scene_spec": {
+            "objects": [],
+            "forces": [],
+            "equations": [
+              {
+                "id": "photosynthesis_eq",
+                "latex": "6\\text{CO}_2 + 6\\text{H}_2\\text{O} \\xrightarrow{\\text{Light Energy}} \\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{O}_2",
+                "position": "center"
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "highlight",
+                "target_latex": "\\xrightarrow{\\text{Light Energy}}",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target_latex": "\\text{C}_6\\text{H}_{12}\\text{O}_6",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 5,
+          "scene_setup": "The full equation is on screen, with molecular models for all components visible below it.",
+          "objects_and_properties": "The equation, and models for 6 CO\u2082, 6 H\u2082O, 1 Glucose, and 6 O\u2082.",
+          "motion_sequence": "The `6O\u2082` part of the equation pulses, and six O\u2082 molecules (two blue spheres bonded together) appear below it. Then, atom counters appear. For example, a 'C: 6' counter appears on the left, and atoms from the CO\u2082 models fly to it. Then another 'C: 6' counter appears on the right, and atoms from the glucose model fly to it, showing they match. This repeats for H and O.",
+          "labels_and_text": "Label '6 Oxygen molecules' under the O\u2082 models. Atom tallies appear on both sides: 'C: 6 | C: 6', 'H: 12 | H: 12', 'O: 18 | O: 18'. A text box appears: 'Mass is conserved. Atoms are rearranged.'",
+          "pedagogical_focus": "To demonstrate the law of conservation of mass by showing that the number and type of atoms are identical on both sides of the equation.",
+          "manim_scene_spec": {
+            "objects": [],
+            "forces": [],
+            "equations": [
+              {
+                "id": "photosynthesis_eq",
+                "latex": "6\\text{CO}_2 + 6\\text{H}_2\\text{O} \\xrightarrow{\\text{Light Energy}} \\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{O}_2",
+                "position": "center"
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "highlight",
+                "target_latex": "6\\text{O}_2",
+                "duration": 1.0
+              },
+              {
+                "action": "show_text",
+                "text": "Atoms In = Atoms Out",
+                "position": "bottom_center",
+                "duration": 2.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 6,
+      "section_type": "content",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A central plant icon with four empty slots around it.",
+          "objects_and_properties": "A green plant icon in the center. Four empty rectangular slots with dashed outlines are positioned at the top, bottom, left, and right of the plant. Icons for a sun, a CO\u2082 molecule, a thermometer, and a water drop are off to the side.",
+          "motion_sequence": "The four icons (sun, CO\u2082, thermometer, water) fly into the four empty slots around the plant, with arrows pointing from each icon to the plant.",
+          "labels_and_text": "A title appears: 'Limiting Factors'. Each slot gets a label as the icon arrives: 'Light Intensity', 'CO\u2082 Concentration', 'Temperature', 'Water'.",
+          "pedagogical_focus": "To introduce the four main environmental factors that can limit the rate of photosynthesis."
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "A 2D Cartesian coordinate plane. X-axis is 'Light Intensity', Y-axis is 'Rate of Photosynthesis'.",
+          "objects_and_properties": "A red curve that starts at the origin, rises linearly, and then flattens out into a horizontal plateau. A small sun icon is on the x-axis. A red dot is on the curve.",
+          "motion_sequence": "The graph axes and curve appear. The sun icon starts at the low end of the x-axis and moves to the right. As it moves, the red dot travels along the curve, first moving up, and then moving horizontally along the plateau. The sun icon grows brighter as it moves right.",
+          "labels_and_text": "X-axis label: 'Light Intensity'. Y-axis label: 'Rate of Photosynthesis'. A label 'Saturation Point' appears with an arrow pointing to where the curve flattens.",
+          "pedagogical_focus": "To graphically demonstrate that the rate of photosynthesis increases with light intensity only up to a saturation point.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "graph_light",
+                "type": "graph",
+                "x_range": [
+                  0,
+                  10
+                ],
+                "y_range": [
+                  0,
+                  5
+                ],
+                "x_label": "Light Intensity",
+                "y_label": "Rate",
+                "plots": [
+                  {
+                    "id": "curve_light",
+                    "equation": "4 * (1 - exp(-x))",
+                    "color": "yellow"
+                  }
+                ]
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "draw_graph",
+                "target": "graph_light",
+                "duration": 2.0
+              },
+              {
+                "action": "trace_curve",
+                "target": "curve_light",
+                "duration": 3.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "A 2D Cartesian coordinate plane. X-axis is 'CO\u2082 Concentration', Y-axis is 'Rate of Photosynthesis'.",
+          "objects_and_properties": "A blue curve, similar to the light curve, that rises and then plateaus. A small 'CO\u2082' icon is on the x-axis. A blue dot is on the curve.",
+          "motion_sequence": "The graph appears. The 'CO\u2082' icon moves from left to right along the x-axis. As it moves, more CO\u2082 icons appear around it to signify increasing concentration. The blue dot traces the curve, showing the rate increasing and then leveling off.",
+          "labels_and_text": "X-axis label: 'CO\u2082 Concentration'. Y-axis label: 'Rate of Photosynthesis'. A label 'Saturation Point' points to the plateau.",
+          "pedagogical_focus": "To show that CO\u2082 concentration also acts as a limiting factor with a saturation point.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "graph_co2",
+                "type": "graph",
+                "x_range": [
+                  0,
+                  10
+                ],
+                "y_range": [
+                  0,
+                  5
+                ],
+                "x_label": "CO\u2082 Concentration",
+                "y_label": "Rate",
+                "plots": [
+                  {
+                    "id": "curve_co2",
+                    "equation": "4.5 * (x / (2 + x))",
+                    "color": "blue"
+                  }
+                ]
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "draw_graph",
+                "target": "graph_co2",
+                "duration": 2.0
+              },
+              {
+                "action": "trace_curve",
+                "target": "curve_co2",
+                "duration": 3.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "A 2D Cartesian coordinate plane. X-axis is 'Temperature', Y-axis is 'Rate of Photosynthesis'.",
+          "objects_and_properties": "A green, bell-shaped curve that starts low, rises to a peak, and then drops off sharply. A thermometer icon is on the x-axis.",
+          "motion_sequence": "The graph appears. The thermometer icon moves along the x-axis from left to right. The mercury in the thermometer rises. A green dot traces the curve, showing the rate rising to a peak and then falling quickly. When the dot is at the peak, the thermometer glows. When it falls, an 'X' appears over a stylized enzyme icon.",
+          "labels_and_text": "X-axis label: 'Temperature'. Y-axis label: 'Rate of Photosynthesis'. Label 'Optimal Temperature' at the peak. Label 'Too Cold' on the left side. Label 'Too Hot (Enzymes Denature)' on the right side.",
+          "pedagogical_focus": "To illustrate the concept of an optimal temperature for enzymatic reactions and the negative effects of temperatures that are too low or too high.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "graph_temp",
+                "type": "graph",
+                "x_range": [
+                  0,
+                  50
+                ],
+                "y_range": [
+                  0,
+                  5
+                ],
+                "x_label": "Temperature (\u00b0C)",
+                "y_label": "Rate",
+                "plots": [
+                  {
+                    "id": "curve_temp",
+                    "equation": "5 * exp(-((x-25)**2) / 150)",
+                    "color": "green"
+                  }
+                ]
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "draw_graph",
+                "target": "graph_temp",
+                "duration": 2.0
+              },
+              {
+                "action": "trace_curve",
+                "target": "curve_temp",
+                "duration": 3.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 5,
+          "scene_setup": "A side-by-side comparison of two plants.",
+          "objects_and_properties": "Left Plant: Healthy, turgid, green leaves. It's in moist, dark brown soil. A water drop icon above it is full. Right Plant: Wilted, drooping, yellowish leaves. It's in dry, cracked, light brown soil. A water drop icon above it is empty with a red slash through it.",
+          "motion_sequence": "On the right plant, the view zooms into a leaf to show a stoma that is tightly shut. A CO\u2082 molecule bounces off the closed stoma, unable to enter. The scene zooms back out to show the whole wilting plant.",
+          "labels_and_text": "Label 'Adequate Water' under the left plant. Label 'Water Scarcity' under the right plant. A text box appears by the right plant: 'Stomata close to save water, blocking CO\u2082 intake.'",
+          "pedagogical_focus": "To directly link water availability to the function of stomata and, consequently, the rate of photosynthesis."
+        }
+      ]
+    },
+    {
+      "section_id": 7,
+      "section_type": "content",
+      "renderer": "wan_video",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A view of the Earth from space. The planet is glowing with a vibrant green and blue light.",
+          "objects_and_properties": "The planet Earth. A golden web of light connects all the continents.",
+          "motion_sequence": "The camera slowly zooms towards the Earth. As it gets closer, a web of light emerges, connecting all life and demonstrating a global interconnected process. The title fades in.",
+          "labels_and_text": "Title: 'The Most Important Process on Earth'.",
+          "pedagogical_focus": "To set a grand scale for the importance of photosynthesis, framing it as a globally significant process."
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "A stylized animation of the Earth's atmosphere.",
+          "objects_and_properties": "A cross-section of the atmosphere shown as a blue layer over the Earth's surface. A pie chart shows the composition of the atmosphere.",
+          "motion_sequence": "The animation shows green continents and blue oceans releasing streams of 'O\u2082' bubbles into the atmosphere. The pie chart appears, with the 'Oxygen (21%)' slice highlighted. An animated human figure is shown breathing in the O\u2082 bubbles.",
+          "labels_and_text": "Pie chart labels: 'Nitrogen (78%)', 'Oxygen (21%)', 'Other (1%)'. A label points to the O\u2082 streams: 'Oxygen Production'.",
+          "pedagogical_focus": "To visually represent that the oxygen in our atmosphere is a direct product of photosynthesis."
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "A simple, animated food web diagram on a nature background.",
+          "objects_and_properties": "At the bottom, icons for grass, trees, and algae. In the middle, icons for a rabbit, a deer, and a small fish (herbivores). At the top, icons for a fox, a wolf, and a big fish (carnivores). A sun icon is at the very top.",
+          "motion_sequence": "A yellow arrow of energy flows from the sun to the plant icons at the bottom. The plants glow. Then, arrows flow from the plants to the herbivores. The herbivores glow. Finally, arrows flow from the herbivores to the carnivores, making them glow. The entire structure is built from the bottom up.",
+          "labels_and_text": "Label 'Producers' for the plants. Label 'Primary Consumers' for the herbivores. Label 'Secondary Consumers' for the carnivores. A large title 'Base of the Food Web' appears.",
+          "pedagogical_focus": "To illustrate that all energy in an ecosystem originates from producers (plants) who capture it via photosynthesis."
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "A dinner table with various foods.",
+          "objects_and_properties": "A plate with a green salad. A plate with a piece of grilled chicken. A plate with a piece of fish. A sun icon.",
+          "motion_sequence": "An arrow traces energy back from the salad directly to the sun icon. An arrow traces energy from the chicken, to a smaller icon of a chicken eating grain, to the grain plant, and then to the sun. An arrow traces energy from the fish, to a smaller fish, to algae, and then to the sun.",
+          "labels_and_text": "Text appears with each trace: 'Energy from the Sun'.",
+          "pedagogical_focus": "To connect the abstract concept of a food web to the everyday experience of eating, showing all food energy comes from the sun."
+        },
+        {
+          "segment_id": 5,
+          "scene_setup": "An animation showing a representation of the global carbon cycle.",
+          "objects_and_properties": "A factory with smokestacks releasing gray CO\u2082 clouds. A large, green forest. The Earth with a semi-transparent atmospheric layer.",
+          "motion_sequence": "The factory releases CO\u2082 clouds, which accumulate in the atmospheric layer, causing it to turn a slightly darker shade. The forest then 'inhales' a large portion of the CO\u2082 clouds, and the atmospheric layer becomes clearer again. This cycle repeats.",
+          "labels_and_text": "Label 'CO\u2082 Source' on the factory. Label 'CO\u2082 Sink (Carbon Storage)' on the forest. Title: 'Regulating Climate'.",
+          "pedagogical_focus": "To visualize the role of forests and photosynthesis in acting as a 'carbon sink', removing greenhouse gases from the atmosphere."
+        },
+        {
+          "segment_id": 6,
+          "scene_setup": "A single plant is shown, with a time-lapse of its life cycle.",
+          "objects_and_properties": "A single plant in a pot.",
+          "motion_sequence": "A time-lapse shows the plant growing from a seedling, developing leaves, growing larger, producing a flower, which then turns into a fruit containing seeds. Glucose icons are shown powering each stage of this growth.",
+          "labels_and_text": "Labels pop up at each stage: 'Growth', 'Flowering', 'Reproduction'. A central label says 'Powered by Glucose'.",
+          "pedagogical_focus": "To bring the focus back to the individual plant and show that photosynthesis is essential for its own life cycle, which allows the process to continue."
+        }
+      ]
+    },
+    {
+      "section_id": 8,
+      "section_type": "memory",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A dark background with a title at the top.",
+          "objects_and_properties": "A stack of four colored flashcards in the center of the screen.",
+          "motion_sequence": "The title 'Key Concepts Check' fades in. The stack of flashcards flies in and settles in the center.",
+          "labels_and_text": "Title: 'Key Concepts Check'.",
+          "pedagogical_focus": "To set up the flashcard review activity."
+        }
+      ]
+    },
+    {
+      "section_id": 9,
+      "section_type": "recap",
+      "renderer": "wan_video",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A dynamic montage of visuals from the lesson.",
+          "objects_and_properties": "A quick succession of key visuals: the input/output diagram of a leaf.",
+          "motion_sequence": "A short, 2-second clip showing the input/output diagram with CO\u2082, H\u2082O, and light going in, and glucose and O\u2082 coming out.",
+          "labels_and_text": "Concept Title: 'What is Photosynthesis?'",
+          "pedagogical_focus": "To quickly remind the student of the core concept."
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "A dynamic montage of visuals from the lesson.",
+          "objects_and_properties": "A quick succession of key visuals: the xylem and stomata animations.",
+          "motion_sequence": "A split screen shows water moving up the xylem on the left, and CO\u2082 entering a stoma on the right.",
+          "labels_and_text": "Concept Title: 'The Process'.",
+          "pedagogical_focus": "To remind the student of the physical mechanisms of resource gathering."
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "A dynamic montage of visuals from the lesson.",
+          "objects_and_properties": "A quick succession of key visuals: the balanced chemical equation.",
+          "motion_sequence": "The final balanced chemical equation `6CO\u2082 + 6H\u2082O \u2192 C\u2086H\u2081\u2082O\u2086 + 6O\u2082` is shown with atom counters below, demonstrating balance.",
+          "labels_and_text": "Concept Title: 'The Chemical Equation'.",
+          "pedagogical_focus": "To reinforce the chemical formula of photosynthesis."
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "A dynamic montage of visuals from the lesson.",
+          "objects_and_properties": "A quick succession of key visuals: the three graphs for limiting factors.",
+          "motion_sequence": "The three graphs for light, CO\u2082, and temperature are shown side-by-side, with the curves being traced quickly.",
+          "labels_and_text": "Concept Title: 'Limiting Factors'.",
+          "pedagogical_focus": "To recap the environmental influences on the process."
+        },
+        {
+          "segment_id": 5,
+          "scene_setup": "A dynamic montage of visuals from the lesson.",
+          "objects_and_properties": "A quick succession of key visuals: the food web and Earth's atmosphere.",
+          "motion_sequence": "The animation of the food web building up from plants is shown, followed by the shot of the Earth releasing oxygen into the atmosphere.",
+          "labels_and_text": "Concept Title: 'Global Importance'.",
+          "pedagogical_focus": "To re-emphasize the global impact of photosynthesis."
+        },
+        {
+          "segment_id": 6,
+          "scene_setup": "The final scene is a beautiful, sunlit forest.",
+          "objects_and_properties": "A hyper-realistic animation of a lush forest with sunbeams filtering through the canopy.",
+          "motion_sequence": "The camera slowly pans across the vibrant, living forest. The final title card fades in.",
+          "labels_and_text": "Final Title: 'Photosynthesis: The Engine of Life'.",
+          "pedagogical_focus": "To provide a concluding, memorable image that encapsulates the beauty and power of photosynthesis."
+        }
+      ]
+    }
+  ],
+  "narration_validation": {
+    "total_sections": 9,
+    "content_sections": 5,
+    "content_meeting_requirement": 5,
+    "content_below_requirement": 0
+  }
+}

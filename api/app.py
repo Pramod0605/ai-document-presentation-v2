@@ -60,7 +60,7 @@ def submit_job():
             if uploaded_file.filename == "":
                 return jsonify({"error": "No file selected"}), 400
             
-            filename = uploaded_file.filename.lower()
+            filename = (uploaded_file.filename or "").lower()
             
             if filename.endswith(".pdf"):
                 job_type = "pdf"
