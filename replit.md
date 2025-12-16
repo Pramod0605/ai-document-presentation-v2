@@ -8,9 +8,24 @@ A production-grade AI pipeline that converts PDF chapters into pedagogically str
 
 - **Backend**: Python Flask API
 - **Frontend**: Vanilla HTML5/JavaScript video player
-- **LLM**: OpenRouter via Replit AI Integrations
+- **LLM**: Two-model pipeline via OpenRouter:
+  - **Gemini 2.5 Flash** (chunker): Fast, cheap model for intelligent topic boundary detection
+  - **Gemini 2.5 Pro** (director): Powerful model for detailed visual/narration generation
 - **Video**: Dual renderer system (Manim for math, WAN/kie.ai for science concepts)
 - **Audio**: Narakeet TTS with Indian male voice (ravi), gTTS fallback
+
+## Two-LLM Pipeline
+
+Large documents (>30K chars) are processed in chunks to avoid output truncation:
+1. **Flash Chunker** - Analyzes markdown, identifies logical topic boundaries
+2. **Pro Director** - Generates full presentation JSON for each chunk
+3. **Merger** - Combines all chunk outputs into unified presentation
+
+Files:
+- `core/prompts/chunker_prompt.txt` - Instructions for topic boundary detection
+- `core/llm_client.py:generate_chunked_presentation()` - Orchestrator function
+- `core/llm_client.py:chunk_markdown_with_flash()` - Flash chunking call
+- `core/llm_client.py:slice_markdown_by_chunks()` - Content slicing logic
 
 ## Pedagogical Structure
 

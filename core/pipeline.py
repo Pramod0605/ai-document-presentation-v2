@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Optional, Union
 
 from core.datalab_client import pdf_to_markdown
-from core.llm_client import generate_presentation_plan, ValidationError
+from core.llm_client import generate_chunked_presentation, ValidationError
 from core.renderer_executor import render_all_topics
 from tts.generate_audio import generate_all_audio
 from render.render_trace import clear_render_trace
@@ -60,7 +60,7 @@ def process_pdf_to_videos(
         validation_error_msg = None
         
         try:
-            presentation, generation_trace = generate_presentation_plan(
+            presentation, generation_trace = generate_chunked_presentation(
                 markdown_content=markdown_content,
                 subject=subject,
                 grade=grade
@@ -177,7 +177,7 @@ def process_markdown_to_videos(
         validation_error_msg = None
         
         try:
-            presentation, generation_trace = generate_presentation_plan(
+            presentation, generation_trace = generate_chunked_presentation(
                 markdown_content=markdown_content,
                 subject=subject,
                 grade=grade

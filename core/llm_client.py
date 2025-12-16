@@ -676,7 +676,8 @@ def generate_presentation_plan(
     markdown_content: str,
     subject: str,
     grade: str,
-    model: str = "google/gemini-2.5-flash"
+    model: str = "google/gemini-2.5-pro",
+    chunk_info: dict = None
 ) -> tuple[dict, dict]:
     log("\n" + "="*60)
     log("LLM GENERATION - START")
@@ -690,6 +691,78 @@ def generate_presentation_plan(
         grade=grade,
         markdown_content=markdown_content
     )
+    
+    if chunk_info:
+        chunk_id = chunk_info.get("chunk_id", 1)
+        total_chunks = chunk_info.get("total_chunks", 1)
+        topic_title = chunk_info.get("topic_title", "")
+        is_first = chunk_info.get("is_first", False)
+        is_last = chunk_info.get("is_last", False)
+        
+        old_section_rules = """━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION GENERATION RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You MUST generate sections in this order:
+
+1. intro
+2. summary
+3. content (multiple)
+4. example (multiple, if present in markdown)
+5. memory
+6. recap"""
+        
+        if is_first and is_last:
+            pass
+        elif is_first:
+            new_section_rules = f"""━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION GENERATION RULES (CHUNK {chunk_id}/{total_chunks} - FIRST)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Topic: "{topic_title}"
+
+You MUST generate sections in this order:
+
+1. intro (exactly ONE)
+2. summary (exactly ONE)
+3. content/example (as many as needed for THIS chunk's content)
+
+DO NOT generate memory or recap - those belong in the final chunk.
+Start section IDs from 1."""
+            user_prompt = user_prompt.replace(old_section_rules, new_section_rules)
+            log(f"[CHUNK MODE]: Replaced section rules for FIRST chunk {chunk_id}/{total_chunks}")
+        elif is_last:
+            new_section_rules = f"""━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION GENERATION RULES (CHUNK {chunk_id}/{total_chunks} - LAST)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Topic: "{topic_title}"
+
+You MUST generate sections in this order:
+
+1. content/example (as many as needed for THIS chunk's content)
+2. memory (exactly ONE - flashcards for the entire chapter)
+3. recap (exactly ONE - story recap for the entire chapter)
+
+DO NOT generate intro or summary - those were in the first chunk.
+Start section IDs from 1."""
+            user_prompt = user_prompt.replace(old_section_rules, new_section_rules)
+            log(f"[CHUNK MODE]: Replaced section rules for LAST chunk {chunk_id}/{total_chunks}")
+        else:
+            new_section_rules = f"""━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION GENERATION RULES (CHUNK {chunk_id}/{total_chunks} - MIDDLE)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Topic: "{topic_title}"
+
+You MUST generate ONLY:
+
+- content/example sections (as many as needed for THIS chunk's content)
+
+DO NOT generate intro, summary, memory, or recap sections.
+Start section IDs from 1."""
+            user_prompt = user_prompt.replace(old_section_rules, new_section_rules)
+            log(f"[CHUNK MODE]: Replaced section rules for MIDDLE chunk {chunk_id}/{total_chunks}")
     
     log(f"\n[MODEL]: {model}")
     log(f"[SYSTEM PROMPT]: {len(system_prompt)} chars, first 200: {system_prompt[:200]}...")
@@ -883,3 +956,216 @@ def generate_presentation_plan(
         raise ValidationError(error_msg, presentation_json, generation_trace)
     
     return presentation_json, generation_trace
+
+
+CHUNK_THRESHOLD_CHARS = 30000
+
+
+def generate_chunked_presentation(
+    markdown_content: str,
+    subject: str,
+    grade: str,
+    chunker_model: str = "google/gemini-2.5-flash",
+    director_model: str = "google/gemini-2.5-pro"
+) -> tuple[dict, dict]:
+    """
+    Two-LLM pipeline:
+    1. Flash (cheap) chunks the markdown into logical topics
+    2. Pro (powerful) generates presentation for each chunk
+    3. Results are merged into final presentation
+    """
+    log("\n" + "="*60)
+    log("TWO-LLM CHUNKED PIPELINE - START")
+    log("="*60)
+    log(f"\n[INPUT SIZE]: {len(markdown_content)} chars")
+    log(f"[CHUNK THRESHOLD]: {CHUNK_THRESHOLD_CHARS} chars")
+    
+    if len(markdown_content) < CHUNK_THRESHOLD_CHARS:
+        log("[DECISION]: Content below threshold, using single-call mode")
+        return generate_presentation_plan(markdown_content, subject, grade, model=director_model)
+    
+    log("[DECISION]: Content above threshold, using chunked mode")
+    
+    chunks = chunk_markdown_with_flash(markdown_content, model=chunker_model)
+    
+    if len(chunks) <= 1:
+        log("[CHUNKER]: Only 1 chunk identified, falling back to single-call")
+        return generate_presentation_plan(markdown_content, subject, grade, model=director_model)
+    
+    slices = slice_markdown_by_chunks(markdown_content, chunks)
+    
+    merged_presentation = {
+        "chapter_title": "",
+        "subject": subject,
+        "grade": grade,
+        "language": "en-IN",
+        "sections": []
+    }
+    
+    combined_trace = {
+        "pipeline": "chunked_two_llm",
+        "chunker_model": chunker_model,
+        "director_model": director_model,
+        "total_chunks": len(chunks),
+        "chunks_processed": [],
+        "section_count_per_chunk": [],
+        "total_sections": 0,
+        "all_errors": [],
+        "all_warnings": []
+    }
+    
+    section_id_offset = 0
+    
+    total_chunks = len(slices)
+    
+    for idx, (chunk_meta, chunk_content) in enumerate(slices):
+        chunk_id = chunk_meta.get("chunk_id", idx + 1)
+        topic_title = chunk_meta.get("topic_title", f"Chunk {chunk_id}")
+        
+        is_first = (idx == 0)
+        is_last = (idx == total_chunks - 1)
+        
+        enriched_chunk_info = {
+            **chunk_meta,
+            "total_chunks": total_chunks,
+            "is_first": is_first,
+            "is_last": is_last
+        }
+        
+        log(f"\n--- Processing Chunk {chunk_id}/{total_chunks}: {topic_title} ---")
+        log(f"[CHUNK {chunk_id}]: {len(chunk_content)} chars, first={is_first}, last={is_last}")
+        
+        try:
+            chunk_presentation, chunk_trace = generate_presentation_plan(
+                markdown_content=chunk_content,
+                subject=subject,
+                grade=grade,
+                model=director_model,
+                chunk_info=enriched_chunk_info
+            )
+            
+            if not merged_presentation["chapter_title"]:
+                merged_presentation["chapter_title"] = chunk_presentation.get("chapter_title", topic_title)
+            
+            chunk_sections = chunk_presentation.get("sections", [])
+            log(f"[CHUNK {chunk_id}]: Generated {len(chunk_sections)} sections")
+            
+            for section in chunk_sections:
+                original_id = section.get("id", 0)
+                section["id"] = section_id_offset + original_id
+                section["_chunk_id"] = chunk_id
+                section["_chunk_topic"] = topic_title
+                merged_presentation["sections"].append(section)
+            
+            section_id_offset += len(chunk_sections)
+            
+            combined_trace["chunks_processed"].append({
+                "chunk_id": chunk_id,
+                "topic": topic_title,
+                "content_chars": len(chunk_content),
+                "sections_generated": len(chunk_sections),
+                "status": "success"
+            })
+            combined_trace["section_count_per_chunk"].append(len(chunk_sections))
+            
+            if "validation" in chunk_trace:
+                combined_trace["all_errors"].extend(chunk_trace["validation"].get("errors", []))
+                combined_trace["all_warnings"].extend(chunk_trace["validation"].get("warnings", []))
+                
+        except ValidationError as ve:
+            log(f"[CHUNK {chunk_id}]: Validation failed - {ve}")
+            combined_trace["chunks_processed"].append({
+                "chunk_id": chunk_id,
+                "topic": topic_title,
+                "status": "validation_error",
+                "error": str(ve)
+            })
+            if ve.presentation:
+                chunk_sections = ve.presentation.get("sections", [])
+                for section in chunk_sections:
+                    original_id = section.get("id", 0)
+                    section["id"] = section_id_offset + original_id
+                    section["_chunk_id"] = chunk_id
+                    merged_presentation["sections"].append(section)
+                section_id_offset += len(chunk_sections)
+        except Exception as e:
+            log(f"[CHUNK {chunk_id}]: Failed - {e}")
+            combined_trace["chunks_processed"].append({
+                "chunk_id": chunk_id,
+                "topic": topic_title,
+                "status": "error",
+                "error": str(e)
+            })
+    
+    combined_trace["total_sections"] = len(merged_presentation["sections"])
+    
+    section_type_counts = {}
+    for sec in merged_presentation.get("sections", []):
+        sec_type = sec.get("section_type", "unknown")
+        section_type_counts[sec_type] = section_type_counts.get(sec_type, 0) + 1
+    
+    log("\n" + "="*60)
+    log("TWO-LLM CHUNKED PIPELINE - SUMMARY")
+    log("="*60)
+    log(f"[TOTAL CHUNKS]: {len(chunks)}")
+    log(f"[TOTAL SECTIONS]: {combined_trace['total_sections']}")
+    log(f"[SECTIONS PER CHUNK]: {combined_trace['section_count_per_chunk']}")
+    log(f"[SECTION TYPE COUNTS]: {section_type_counts}")
+    
+    for sec in merged_presentation.get("sections", []):
+        sec_id = sec.get("id", "?")
+        sec_type = sec.get("section_type", "unknown")
+        chunk_id = sec.get("_chunk_id", "?")
+        log(f"  [{sec_id}] {sec_type:8} | chunk:{chunk_id}")
+    
+    structure_errors = []
+    keep_first_types = ["intro", "summary"]
+    keep_last_types = ["memory", "recap"]
+    
+    for required_type in ["intro", "summary", "memory", "recap"]:
+        count = section_type_counts.get(required_type, 0)
+        if count == 0:
+            structure_errors.append(f"Missing required section type: {required_type}")
+        elif count > 1:
+            if required_type in keep_first_types:
+                log(f"[STRUCTURE WARNING]: Found {count} '{required_type}' sections, keeping FIRST (intro/summary from first chunk)")
+                first_found = False
+                sections_to_keep = []
+                for sec in merged_presentation["sections"]:
+                    if sec.get("section_type") == required_type:
+                        if not first_found:
+                            sections_to_keep.append(sec)
+                            first_found = True
+                    else:
+                        sections_to_keep.append(sec)
+                merged_presentation["sections"] = sections_to_keep
+            else:
+                log(f"[STRUCTURE WARNING]: Found {count} '{required_type}' sections, keeping LAST (memory/recap from final chunk)")
+                last_idx = None
+                for i, sec in enumerate(merged_presentation["sections"]):
+                    if sec.get("section_type") == required_type:
+                        last_idx = i
+                sections_to_keep = []
+                for i, sec in enumerate(merged_presentation["sections"]):
+                    if sec.get("section_type") == required_type:
+                        if i == last_idx:
+                            sections_to_keep.append(sec)
+                    else:
+                        sections_to_keep.append(sec)
+                merged_presentation["sections"] = sections_to_keep
+    
+    for i, sec in enumerate(merged_presentation["sections"]):
+        sec["id"] = i + 1
+    
+    combined_trace["structure_validation"] = {
+        "original_counts": section_type_counts,
+        "errors": structure_errors,
+        "deduplication_applied": any(section_type_counts.get(t, 0) > 1 for t in ["intro", "summary", "memory", "recap"])
+    }
+    
+    if structure_errors:
+        log(f"[STRUCTURE ERRORS]: {structure_errors}")
+    
+    log("="*60 + "\n")
+    
+    return merged_presentation, combined_trace
