@@ -26,7 +26,7 @@ REQUIRED_VISUAL_BEAT_FIELDS = [
     "pedagogical_focus"
 ]
 
-MIN_FIELD_WORDS = 8
+MIN_FIELD_WORDS = 4  # Relaxed - combined prompts are 40-80+ words
 
 BANNED_VAGUE_PHRASES = [
     "detailed animation",

@@ -119,6 +119,15 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-16: **Per-Beat Video Rendering (WAN/Manim)**:
+  - WAN runner now generates one video per visual beat (not per section)
+  - Each beat compiled via visual_compiler into structured prompt
+  - Output files: `topic_{id}_beat_{idx}.mp4` for each beat
+  - Manim runner handles multi_beat plans from visual_compiler
+  - Fail-fast: Manim rejects placeholder equations (E=mc², etc.)
+  - Fail-fast: WAN rejects sections without visual beats
+  - Logging: Each beat logged separately as `wan_beat` renderer
+  - MIN_FIELD_WORDS relaxed from 8 to 4 (combined prompts are 40-80+ words)
 - 2025-12-16: **Two-LLM Chunked Pipeline (Solves Truncation)**:
   - Flash chunker identifies logical topic boundaries (2000-4000 words each)
   - Pro director generates presentation for each chunk with chunk-aware prompts
