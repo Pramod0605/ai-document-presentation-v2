@@ -181,6 +181,27 @@ def count_words(text: str) -> int:
     return len(text.split()) if text else 0
 
 
+def fix_invalid_escapes(text: str) -> str:
+    """Fix invalid escape sequences that LLMs sometimes generate in JSON."""
+    valid_escapes = set('"\\/bfnrtu')
+    result = []
+    i = 0
+    while i < len(text):
+        if text[i] == '\\' and i + 1 < len(text):
+            next_char = text[i + 1]
+            if next_char in valid_escapes:
+                result.append(text[i:i+2])
+                i += 2
+            else:
+                result.append('\\\\')
+                result.append(next_char)
+                i += 2
+        else:
+            result.append(text[i])
+            i += 1
+    return ''.join(result)
+
+
 def check_vague_phrases(text: str) -> list:
     found = []
     text_lower = text.lower()
@@ -592,6 +613,9 @@ def generate_presentation_plan(
     if json_match:
         json_text = json_match.group()
         log(f"[JSON EXTRACTION]: Found JSON block of {len(json_text)} chars")
+        
+        json_text = fix_invalid_escapes(json_text)
+        log(f"[JSON ESCAPE FIX]: Applied escape sequence fixes")
         
         try:
             presentation_json = json.loads(json_text)
