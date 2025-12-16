@@ -14,6 +14,26 @@ const AVATAR_URL = "/player/assets/avatar_placeholder.mp4";
 
 let currentSlideIndex = 0;
 let isPlaying = false;
+let currentBeatIndex = 0;
+let beatVideoPaths = [];
+
+async function detectBeatVideos(sectionId) {
+  const beats = [];
+  for (let i = 0; i < 20; i++) {
+    const path = BASE_PATH + `videos/topic_${sectionId}_beat_${i}.mp4`;
+    try {
+      const resp = await fetch(path, { method: 'HEAD' });
+      if (resp.ok) {
+        beats.push(path);
+      } else {
+        break;
+      }
+    } catch (e) {
+      break;
+    }
+  }
+  return beats;
+}
 
 const stage = document.getElementById('stage');
 const contentBox = document.getElementById('content-box');
@@ -73,6 +93,7 @@ function loadSlide(index) {
   audio.pause();
 
   currentSlideIndex = index;
+  currentBeatIndex = 0;
   const slide = lessonData.slides[index];
 
   document.querySelectorAll('.slide-thumb').forEach((el, i) => {
@@ -316,8 +337,37 @@ function handleTimeUpdate(e) {
   if (stage.classList.contains('mode-content-video') && bgVideo) {
     if (isPlaying && bgVideo.paused) bgVideo.play();
     if (!isPlaying && !bgVideo.paused) bgVideo.pause();
-    if (Math.abs(bgVideo.currentTime - t) > 0.5) {
-      bgVideo.currentTime = t;
+    
+    if (slide.beat_videos && slide.beat_videos.length > 1) {
+      let targetBeatIndex = 0;
+      
+      if (slide.timed_segments && slide.timed_segments.length === slide.beat_videos.length) {
+        for (let i = 0; i < slide.timed_segments.length; i++) {
+          const seg = slide.timed_segments[i];
+          if (t >= seg.start_time && t < seg.end_time) {
+            targetBeatIndex = i;
+            break;
+          } else if (t >= seg.end_time) {
+            targetBeatIndex = Math.min(i + 1, slide.beat_videos.length - 1);
+          }
+        }
+      } else if (duration && !isNaN(duration)) {
+        const beatDuration = duration / slide.beat_videos.length;
+        targetBeatIndex = Math.min(Math.floor(t / beatDuration), slide.beat_videos.length - 1);
+      }
+      
+      if (targetBeatIndex !== currentBeatIndex) {
+        currentBeatIndex = targetBeatIndex;
+        const newBeatPath = slide.beat_videos[targetBeatIndex];
+        console.log(`Switching to beat ${targetBeatIndex}: ${newBeatPath}`);
+        bgVideo.src = newBeatPath;
+        bgVideo.load();
+        bgVideo.play().catch(e => console.log("Beat video play fail", e));
+      }
+    } else {
+      if (Math.abs(bgVideo.currentTime - t) > 0.5) {
+        bgVideo.currentTime = t;
+      }
     }
   }
 
@@ -487,6 +537,8 @@ async function checkExistingPresentation() {
             audio_path: BASE_PATH + `audio/section_${section.id}.mp3`,
             content_video_path: section.renderer === 'wan_video' ? BASE_PATH + `videos/topic_${section.id}.mp4` : null,
             has_content_video: section.renderer === 'wan_video',
+            section_id: section.id,
+            beat_videos: [],
             audio_duration: section.duration,
             full_narration: section.narration,
             visual_content: { bullet_points: section.segments ? section.segments.map(s => s.text) : [] }
@@ -512,6 +564,7 @@ async function checkExistingPresentation() {
       }
       
       if (lessonData.slides && lessonData.slides.length > 0) {
+        await detectAllBeatVideos();
         document.getElementById('upload-overlay').classList.add('hidden');
         buildSlideList();
         loadSlide(0);
@@ -520,6 +573,19 @@ async function checkExistingPresentation() {
     }
   } catch (e) {
     console.log('No existing presentation found');
+  }
+}
+
+async function detectAllBeatVideos() {
+  for (const slide of lessonData.slides) {
+    if (slide.has_content_video && slide.section_id) {
+      const beats = await detectBeatVideos(slide.section_id);
+      if (beats.length > 0) {
+        slide.beat_videos = beats;
+        slide.content_video_path = beats[0];
+        console.log(`Section ${slide.section_id}: Found ${beats.length} beat videos`);
+      }
+    }
   }
 }
 

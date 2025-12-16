@@ -119,6 +119,14 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-16: **Player Beat Video Support**:
+  - Player now auto-detects per-beat video files (topic_X_beat_Y.mp4)
+  - detectBeatVideos() checks for available beats via HEAD requests
+  - detectAllBeatVideos() runs on presentation load
+  - handleTimeUpdate() switches between beat videos based on audio timing
+  - Beat duration calculated as: audio_duration / num_beats
+  - Falls back to single video (topic_X.mp4) when no beats detected
+  - Browser console logs beat detection: "Section X: Found Y beat videos"
 - 2025-12-16: **Full Pipeline Test - Production Ready (Dry Run)**:
   - Successfully processed multi-topic sample markdown (Living World + Math/Science formulas)
   - Generated 16 sections: 1 intro, 1 summary, 10 content/example, 1 memory, 1 recap
