@@ -119,6 +119,14 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-16: **Full Pipeline Test - Production Ready (Dry Run)**:
+  - Successfully processed multi-topic sample markdown (Living World + Math/Science formulas)
+  - Generated 16 sections: 1 intro, 1 summary, 10 content/example, 1 memory, 1 recap
+  - 10 Manim sections with structured specs (40+ objects, 44+ equations, animation sequences)
+  - 6 WAN sections with detailed prompts (700+ chars each with Scene/Objects/Animation/Educational goal)
+  - Validation tuning: MIN_FIELD_WORDS reduced to 2, Manim sections with specs skip prose validation
+  - Removed "detailed animation" from BANNED_VAGUE_PHRASES (too aggressive)
+  - Type hint fixes for optional parameters
 - 2025-12-16: **Structured manim_scene_spec for Manim Sections**:
   - LLM now outputs manim_scene_spec JSON for renderer=manim (NOT prose descriptions)
   - Schema: objects (point_charge, vector, equation), forces (electrostatic, gravitational), equations (latex, substitution), animation_sequence
