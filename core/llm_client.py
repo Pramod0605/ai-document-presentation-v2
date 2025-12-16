@@ -697,7 +697,7 @@ def generate_presentation_plan(
     subject: str,
     grade: str,
     model: str = "google/gemini-2.5-pro",
-    chunk_info: dict = None
+    chunk_info: dict | None = None
 ) -> tuple[dict, dict]:
     log("\n" + "="*60)
     log("LLM GENERATION - START")
