@@ -1800,5 +1800,365 @@
       "sections_count": 9,
       "dry_run": false
     }
+  },
+  "44b260c3": {
+    "id": "44b260c3",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Science",
+      "grade": "Grade 9",
+      "file_path": "/tmp/ai_education_jobs/3a9aaa7c698aa279.md",
+      "source_file": "sample_markdown_1765895205802.md"
+    },
+    "status": "completed",
+    "current_step": 2,
+    "current_step_name": "Generating audio narration...",
+    "steps_completed": 3,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-17T06:21:34.425045",
+    "started_at": "2025-12-17T06:21:34.432562",
+    "completed_at": "2025-12-17T06:35:08.056732",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "started_at": "2025-12-17T06:21:34.442013",
+      "source_file": "sample_markdown_1765895205802.md",
+      "steps": [
+        {
+          "step": "generate_presentation_plan",
+          "status": "completed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/44b260c3/videos/topic_1.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 2: Visual beat compilation failed - Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 311, in _compile_beats_to_manim_plan\n    plan = compile_manim_plan(beat, topic_id, 0)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 384, in compile_manim_plan\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 2, Beat 0: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 120, in render_manim_video\n    manim_plan = _compile_beats_to_manim_plan(visual_beats, topic_id)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 314, in _compile_beats_to_manim_plan\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 2: Visual beat compilation failed - Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.\n"
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/44b260c3/videos/topic_3_beat_0.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 4,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 5 errors",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 4, Beat 0: Fields too short: ['labels_and_text (3 words, need 4+)']. Each field must be at least 4 words.",
+                "Section 4, Beat 1: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 4, Beat 2: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 4, Beat 3: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 4, Beat 4: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections."
+              ]
+            },
+            {
+              "topic_id": 5,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 7 errors",
+              "visual_beats_used": 8,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 5, Beat 1: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 5, Beat 2: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 5, Beat 3: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 5, Beat 4: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 5, Beat 5: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 5, Beat 6: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 5, Beat 7: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation)."
+              ]
+            },
+            {
+              "topic_id": 6,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 5 errors",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 6, Beat 0: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 6, Beat 1: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 6, Beat 2: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 6, Beat 3: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 6, Beat 4: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections."
+              ]
+            },
+            {
+              "topic_id": 7,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 4 errors",
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 7, Beat 1: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 7, Beat 3: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 7, Beat 4: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 7, Beat 5: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation)."
+              ]
+            },
+            {
+              "topic_id": 8,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 5 errors",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 8, Beat 0: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 8, Beat 1: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 8, Beat 2: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 8, Beat 3: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 8, Beat 4: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections."
+              ]
+            },
+            {
+              "topic_id": 9,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 6 errors",
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 9, Beat 1: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 9, Beat 2: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 9, Beat 3: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 9, Beat 4: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 9, Beat 5: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 9, Beat 6: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation)."
+              ]
+            },
+            {
+              "topic_id": 10,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 5 errors",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 10, Beat 0: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 10, Beat 1: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 10, Beat 2: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 10, Beat 3: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 10, Beat 4: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections."
+              ]
+            },
+            {
+              "topic_id": 11,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 7 errors",
+              "visual_beats_used": 8,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 11, Beat 1: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 11, Beat 2: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 11, Beat 3: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 11, Beat 4: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 11, Beat 5: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 11, Beat 6: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 11, Beat 7: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation)."
+              ]
+            },
+            {
+              "topic_id": 12,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 6 errors",
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 12, Beat 0: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 12, Beat 1: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 12, Beat 2: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 12, Beat 3: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 12, Beat 4: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 12, Beat 5: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections."
+              ]
+            },
+            {
+              "topic_id": 13,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 6 errors",
+              "visual_beats_used": 8,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 13, Beat 1: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 13, Beat 2: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 13, Beat 3: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 13, Beat 4: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 13, Beat 5: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 13, Beat 6: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation)."
+              ]
+            },
+            {
+              "topic_id": 14,
+              "section_type": "memory",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 14: Visual beat compilation failed - Fields too short: ['labels_and_text (3 words, need 4+)']. Each field must be at least 4 words.",
+              "visual_beats_used": 2,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 311, in _compile_beats_to_manim_plan\n    plan = compile_manim_plan(beat, topic_id, 0)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 364, in compile_manim_plan\n    validate_visual_beat_structure(beat, section_id, beat_index)\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 105, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 14, Beat 0: Fields too short: ['labels_and_text (3 words, need 4+)']. Each field must be at least 4 words.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 120, in render_manim_video\n    manim_plan = _compile_beats_to_manim_plan(visual_beats, topic_id)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 314, in _compile_beats_to_manim_plan\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 14: Visual beat compilation failed - Fields too short: ['labels_and_text (3 words, need 4+)']. Each field must be at least 4 words.\n"
+            },
+            {
+              "topic_id": 15,
+              "section_type": "recap",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 15: Visual beat compilation failed - Fields too short: ['labels_and_text (3 words, need 4+)']. Each field must be at least 4 words.",
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 311, in _compile_beats_to_manim_plan\n    plan = compile_manim_plan(beat, topic_id, 0)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 364, in compile_manim_plan\n    validate_visual_beat_structure(beat, section_id, beat_index)\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 105, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 15, Beat 0: Fields too short: ['labels_and_text (3 words, need 4+)']. Each field must be at least 4 words.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 120, in render_manim_video\n    manim_plan = _compile_beats_to_manim_plan(visual_beats, topic_id)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 314, in _compile_beats_to_manim_plan\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 15: Visual beat compilation failed - Fields too short: ['labels_and_text (3 words, need 4+)']. Each field must be at least 4 words.\n"
+            }
+          ],
+          "success_count": 2,
+          "fail_count": 13,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": 1,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_1.mp3"
+            },
+            {
+              "section_id": 2,
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_2.mp3"
+            },
+            {
+              "section_id": 3,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_3.mp3"
+            },
+            {
+              "section_id": 4,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_4.mp3"
+            },
+            {
+              "section_id": 5,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_5.mp3"
+            },
+            {
+              "section_id": 6,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_6.mp3"
+            },
+            {
+              "section_id": 7,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_7.mp3"
+            },
+            {
+              "section_id": 8,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_8.mp3"
+            },
+            {
+              "section_id": 9,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_9.mp3"
+            },
+            {
+              "section_id": 10,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_10.mp3"
+            },
+            {
+              "section_id": 11,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_11.mp3"
+            },
+            {
+              "section_id": 12,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_12.mp3"
+            },
+            {
+              "section_id": 13,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_13.mp3"
+            },
+            {
+              "section_id": 14,
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_14.mp3"
+            },
+            {
+              "section_id": 15,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/44b260c3/audio/section_15.mp3"
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-17T06:35:08.056336",
+      "presentation_path": "/home/runner/workspace/player/jobs/44b260c3/presentation.json",
+      "trace_path": "/home/runner/workspace/player/jobs/44b260c3/generation_trace.json",
+      "sections_count": 15,
+      "dry_run": false
+    }
   }
 }
