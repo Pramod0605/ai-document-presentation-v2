@@ -13,9 +13,14 @@ SCHEMA: Each visual beat MUST have these 5 fields:
 - motion_sequence
 - labels_and_text
 - pedagogical_focus
+
+VALIDATION: Two-layer approach
+1. Structural checks (code) - missing fields = hard error
+2. Semantic checks (Flash LLM) - vague content = error (understands context)
 """
 
 import re
+import sys
 from typing import Tuple, List, Optional
 
 REQUIRED_VISUAL_BEAT_FIELDS = [
@@ -26,29 +31,16 @@ REQUIRED_VISUAL_BEAT_FIELDS = [
     "pedagogical_focus"
 ]
 
-MIN_FIELD_WORDS = 4  # Relaxed - combined prompts are 40-80+ words
+_flash_validator_enabled = True
 
-BANNED_VAGUE_PHRASES = [
-    "detailed animation",
-    "conceptual visualization", 
-    "dynamic visuals",
-    "beautiful animation",
-    "stunning visual",
-    "amazing graphics",
-    "impressive display",
-    "show clearly",
-    "demonstrate effectively",
-    "visualize the concept",
-    "illustrate the process",
-    "display appropriately",
-    "animate smoothly",
-    "show the interaction",
-    "visualize the relationship",
-    "demonstrate the principle",
-    "illustrate the idea",
-    "show the process",
-    "animate the concept"
-]
+def set_flash_validator_enabled(enabled: bool):
+    """Enable or disable Flash LLM semantic validation."""
+    global _flash_validator_enabled
+    _flash_validator_enabled = enabled
+    
+def is_flash_validator_enabled() -> bool:
+    """Check if Flash LLM semantic validation is enabled."""
+    return _flash_validator_enabled
 
 
 class VisualCompilationError(Exception):
@@ -59,63 +51,43 @@ class VisualCompilationError(Exception):
         super().__init__(f"Section {section_id}, Beat {beat_index}: {reason}")
 
 
-def count_words(text: str) -> int:
-    return len(text.split()) if text else 0
-
-
-def check_vague_phrases(text: str) -> List[str]:
-    found = []
-    text_lower = text.lower()
-    for phrase in BANNED_VAGUE_PHRASES:
-        if phrase in text_lower:
-            found.append(phrase)
-    return found
+def log(msg: str):
+    """Print with immediate flush for real-time logging."""
+    print(msg)
+    sys.stdout.flush()
 
 
 def validate_visual_beat_structure(beat: dict, section_id: int, beat_index: int, section_type: str = "content", strict: bool = False) -> list:
     """Validate that a visual beat has all 5 required fields with sufficient content.
     
-    Returns a list of warnings instead of raising errors for non-critical issues.
-    Only raises errors for truly broken structure (missing all required fields).
+    Two-layer validation:
+    1. Structural checks (code) - missing fields = hard error for content sections
+    2. Semantic checks (Flash LLM) - vague content = error (understands context)
     
     Args:
         beat: The visual beat dict
         section_id: Section identifier
         beat_index: Beat index within section
         section_type: Type of section (intro, summary, content, example, memory, recap)
-        strict: If True, raise errors for all issues. If False, log warnings for minor issues.
+        strict: If True, raise errors for semantic issues. If False, log warnings.
     
     Returns:
         List of warning messages (empty if no warnings)
     """
     warnings = []
     missing_fields = []
-    short_fields = []
-    vague_fields = []
     
     for field in REQUIRED_VISUAL_BEAT_FIELDS:
         value = beat.get(field, "")
-        
         if not value or not isinstance(value, str):
             missing_fields.append(field)
-            continue
-        
-        word_count = count_words(value)
-        if word_count < MIN_FIELD_WORDS:
-            short_fields.append(f"{field} ({word_count} words, need {MIN_FIELD_WORDS}+)")
-        
-        vague = check_vague_phrases(value)
-        if vague:
-            vague_fields.append(f"{field}: {vague}")
     
-    # Hard failure: ALL fields missing means no content at all
     if len(missing_fields) == len(REQUIRED_VISUAL_BEAT_FIELDS):
         raise VisualCompilationError(
             section_id, beat_index,
             f"Visual beat has no content. All fields are empty or missing."
         )
     
-    # For content/example sections: missing fields are hard failures, short/vague are warnings
     if section_type in ("content", "example"):
         if missing_fields:
             raise VisualCompilationError(
@@ -123,19 +95,27 @@ def validate_visual_beat_structure(beat: dict, section_id: int, beat_index: int,
                 f"Missing required fields: {missing_fields}. "
                 f"All visual beats must have: {REQUIRED_VISUAL_BEAT_FIELDS}"
             )
-        # Short/vague fields are warnings (don't block rendering)
-        if short_fields:
-            warnings.append(f"[WARN] Section {section_id}, Beat {beat_index}: Short fields {short_fields}")
-        if vague_fields:
-            warnings.append(f"[WARN] Section {section_id}, Beat {beat_index}: Vague phrases {vague_fields}")
     else:
-        # Non-content sections (intro, summary, memory, recap): all issues are warnings
         if missing_fields:
             warnings.append(f"[WARN] Section {section_id}, Beat {beat_index}: Missing fields {missing_fields}")
-        if short_fields:
-            warnings.append(f"[WARN] Section {section_id}, Beat {beat_index}: Short fields {short_fields}")
-        if vague_fields:
-            warnings.append(f"[WARN] Section {section_id}, Beat {beat_index}: Vague phrases {vague_fields}")
+    
+    if _flash_validator_enabled and section_type in ("content", "example"):
+        try:
+            from core.flash_validator import validate_beat_with_flash
+            result = validate_beat_with_flash(beat, section_id, beat_index, section_type)
+            
+            if not result.get("valid"):
+                reason = result.get("reason", "Content too vague to render")
+                if strict:
+                    raise VisualCompilationError(section_id, beat_index, f"Flash validation failed: {reason}")
+                else:
+                    warnings.append(f"[SEMANTIC WARN] Section {section_id}, Beat {beat_index}: {reason}")
+        except ImportError:
+            log(f"[WARN] Flash validator not available, skipping semantic check")
+        except VisualCompilationError:
+            raise
+        except Exception as e:
+            log(f"[WARN] Flash validation error: {e}, continuing without semantic check")
     
     return warnings
 
