@@ -167,14 +167,88 @@ OUTPUT SCHEMA
   ]
 }}
 
-For memory sections, also include:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MEMORY SECTION RULES (CRITICAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For section_type = "memory":
+
+- MUST include EXACTLY 3 mnemonic flashcards
+- Each flashcard uses a MNEMONIC device (acronym, rhyme, visual association)
+- Format: letter + concept title + memorable explanation
+- Renderer: NONE (text-only display with animations)
+
 "flashcards": [
-  {{ "question": "What is X?", "answer": "Y" }}
+  {{
+    "letter": "A",
+    "title": "Acceleration Formula",
+    "mnemonic": "A = F/m - 'Apple Falls on Me' - Force divided by mass gives acceleration",
+    "explanation": "Remember Newton's apple! The heavier the object (more mass), the less it accelerates for the same force."
+  }},
+  {{
+    "letter": "B", 
+    "title": "Balanced Forces",
+    "mnemonic": "B for Balance = Zero motion change - 'Both sides Equal'",
+    "explanation": "When forces balance like a seesaw, objects stay still or keep moving at constant speed."
+  }},
+  {{
+    "letter": "C",
+    "title": "Contact Forces",
+    "mnemonic": "C for Contact = Touch required - 'Can't push without touching'",
+    "explanation": "Friction, tension, normal force all need physical contact between objects."
+  }}
 ]
 
-For recap sections, also include:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RECAP SECTION RULES (CRITICAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For section_type = "recap":
+
+- MUST include EXACTLY 5 recap scenes
+- Each scene summarizes a KEY CONCEPT from the chapter
+- Renderer: wan_video (generates 5 short conceptual videos)
+- Each scene will become a separate WAN video
+
 "recap_scenes": [
-  {{ "scene": 1, "description": "Scene visual...", "concept_title": "Key Concept" }}
+  {{
+    "scene": 1,
+    "concept_title": "What is Force?",
+    "description": "A push or pull that can change an object's motion. Show hands pushing a ball, making it roll.",
+    "wan_prompt": "Hands pushing a red ball on a table, the ball starts rolling. Educational animation style, clean background.",
+    "narration": "Force is simply a push or pull that changes how objects move."
+  }},
+  {{
+    "scene": 2,
+    "concept_title": "Newton's First Law",
+    "description": "Objects at rest stay at rest unless acted upon by force. Show a book on table remaining still.",
+    "wan_prompt": "A book resting on a wooden table, completely still. Then a hand comes and pushes it. Educational style.",
+    "narration": "Objects at rest stay at rest until a force acts on them - that's Newton's First Law."
+  }},
+  ... (3 more scenes)
+]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VIDEO-NARRATION TIMING SYNC
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For content and example sections with videos:
+
+- Total animation duration MUST approximately match narration segment duration
+- Each animation step should align with what's being spoken
+- Include "display_mode" to control text/video swap:
+  - "text_primary": Show text content, video plays in background
+  - "video_primary": Video takes center stage, text fades
+  - "video_only": Full-screen video, no text
+
+"visual_beats": [
+  {{
+    "segment_id": 1,
+    "display_mode": "video_primary",
+    "video_start_time": 0.0,
+    "video_duration": 12.0,
+    ...other fields...
+  }}
 ]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -167,10 +167,19 @@ function loadSlide(index) {
       const card = document.createElement('div');
       card.className = 'flashcard';
       card.id = `seg-${i}`;
-      card.innerHTML = `
-        <div class="fc-question">${fc.question}</div>
-        <div class="fc-answer">${fc.answer}</div>
-      `;
+      if (fc.letter && fc.mnemonic) {
+        card.innerHTML = `
+          <div class="fc-letter">${fc.letter}</div>
+          <div class="fc-title">${fc.title || ''}</div>
+          <div class="fc-mnemonic">${fc.mnemonic || ''}</div>
+          <div class="fc-desc">${fc.explanation || ''}</div>
+        `;
+      } else {
+        card.innerHTML = `
+          <div class="fc-question">${fc.question || fc.title || ''}</div>
+          <div class="fc-answer">${fc.answer || fc.description || ''}</div>
+        `;
+      }
       container.appendChild(card);
     });
     list.appendChild(container);
@@ -190,7 +199,16 @@ function loadSlide(index) {
       const card = document.createElement('div');
       card.className = 'flashcard';
       card.id = `seg-${i}`;
-      card.innerHTML = `<div class="fc-letter">${fc.letter}</div><div class="fc-title">${fc.title}</div><div class="fc-desc">${fc.description}</div>`;
+      if (fc.letter && fc.mnemonic) {
+        card.innerHTML = `
+          <div class="fc-letter">${fc.letter}</div>
+          <div class="fc-title">${fc.title || ''}</div>
+          <div class="fc-mnemonic">${fc.mnemonic || ''}</div>
+          <div class="fc-desc">${fc.explanation || ''}</div>
+        `;
+      } else {
+        card.innerHTML = `<div class="fc-letter">${fc.letter || ''}</div><div class="fc-title">${fc.title || ''}</div><div class="fc-desc">${fc.description || ''}</div>`;
+      }
       container.appendChild(card);
     });
     list.appendChild(container);
@@ -351,14 +369,28 @@ function loadSlide(index) {
   
   const showVideoBox = (sectionType !== 'intro' && sectionType !== 'memory' && sectionType !== 'recap');
 
-  if (showVideoBox && ((contentVidPath && slide.has_content_video) || hasBeatVideos)) {
+  const hasValidVideoAsset = contentVidPath && slide.has_content_video;
+  
+  if (showVideoBox && (hasValidVideoAsset || hasBeatVideos)) {
     stage.classList.remove('mode-khan');
     stage.classList.remove('mode-side');
     stage.classList.remove('mode-center');
     stage.classList.add('mode-content-video');
     stage.classList.remove('video-swap');
+    stage.classList.remove('video-focus');
     
-    console.log(`Loading video for section ${slide.id}: ${contentVidPath}, beat_videos: ${hasBeatVideos ? slide.beat_videos.length : 0}`);
+    const firstBeat = slide.visual_beats && slide.visual_beats[0];
+    const displayMode = firstBeat?.display_mode || 'video_primary';
+    
+    if (hasValidVideoAsset || hasBeatVideos) {
+      if (displayMode === 'video_only') {
+        stage.classList.add('video-focus');
+      } else if (displayMode === 'text_primary') {
+        stage.classList.add('video-swap');
+      }
+    }
+    
+    console.log(`Loading video for section ${slide.id}: ${contentVidPath}, display_mode: ${displayMode}`);
     
     if (inlineVideo && contentVidPath && !inlineVideo.src.includes(contentVidPath)) {
       inlineVideo.src = contentVidPath;
@@ -685,10 +717,15 @@ async function checkExistingPresentation() {
         }
         loadSlide(startSlide);
         updateVisuals();
+      } else {
+        document.getElementById('upload-overlay').classList.remove('hidden');
       }
+    } else {
+      document.getElementById('upload-overlay').classList.remove('hidden');
     }
   } catch (e) {
     console.log('No existing presentation found');
+    document.getElementById('upload-overlay').classList.remove('hidden');
   }
 }
 

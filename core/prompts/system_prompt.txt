@@ -230,6 +230,35 @@ FAIL CONDITIONS for Manim sections:
 - Prose-only visual_beat (no structured spec) → VALIDATION FAILURE
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MEMORY SECTION RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+13. MEMORY sections MUST have EXACTLY 3 mnemonic flashcards:
+    - Each uses a MNEMONIC device (acronym, rhyme, visual association)
+    - Format: letter (A, B, C) + title + mnemonic phrase + explanation
+    - Make mnemonics MEMORABLE and FUN for students
+    - No video rendering - text-only with animations
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RECAP SECTION RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+14. RECAP sections MUST have EXACTLY 5 recap scenes:
+    - Each scene summarizes ONE key concept from the chapter
+    - Renderer: wan_video (generates 5 conceptual videos)
+    - Each scene includes: concept_title, description, wan_prompt, narration
+    - wan_prompt should describe a 5-second visual animation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VIDEO-NARRATION TIMING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+15. Animation duration MUST match narration:
+    - Sum of animation_sequence durations ≈ narration segment duration
+    - Add "wait" actions if animation is shorter than narration
+    - Include display_mode: "text_primary" | "video_primary" | "video_only"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 VISUAL BEAT QUALITY CHECKLIST
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

@@ -45,12 +45,12 @@ def generate_section_audio(section: dict, output_dir: str) -> str:
     else:
         print(f"[TTS] Section {section_id}: No NARAKEET_API_KEY configured")
     
-    print(f"[TTS] Section {section_id}: Falling back to gTTS (female voice)")
+    print(f"[TTS] Section {section_id}: Falling back to gTTS (male voice - UK English)")
     from gtts import gTTS
     tts = gTTS(
         text=narration,
         lang="en",
-        tld="co.in",
+        tld="co.uk",
         slow=False
     )
     tts.save(output_path)
