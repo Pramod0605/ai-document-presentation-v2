@@ -1,0 +1,612 @@
+[
+  {
+    "timestamp": "2025-12-17T12:39:21.994445",
+    "section_id": 1,
+    "section_title": "A Multidisciplinary Scientific Journey",
+    "renderer": "manim_spec",
+    "prompt": "main_title = Text(\"\", font_size=28).move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(main_title), run_time=1.5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_1.mp4",
+    "extra": {
+      "section_type": "intro",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": false,
+      "spec": {
+        "objects": [
+          {
+            "id": "main_title",
+            "type": "label",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "text": "A Multidisciplinary Scientific Journey",
+              "font_size": 48,
+              "color": "white"
+            }
+          }
+        ],
+        "forces": [],
+        "equations": [],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "main_title",
+            "duration": 1.5
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:39:30.316053",
+    "section_id": 2,
+    "section_title": "Key Concepts at a Glance",
+    "renderer": "manim_spec",
+    "prompt": "ftc = MathTex(r\"\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)\").move_to(UP * 3 + RIGHT * 4)\n\n# Animation sequence\nself.play(FadeIn(axes), run_time=1.0)\nself.play(Write(ftc), run_time=1.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_2.mp4",
+    "extra": {
+      "section_type": "summary",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": false,
+      "spec": {
+        "objects": [
+          {
+            "id": "axes",
+            "type": "axes",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "x_range": [
+                0,
+                5
+              ],
+              "y_range": [
+                0,
+                6
+              ]
+            }
+          },
+          {
+            "id": "curve",
+            "type": "graph",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "equation": "lambda x: (x-2.5)**2 + 1",
+              "color": "blue"
+            }
+          },
+          {
+            "id": "area",
+            "type": "area_under_graph",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "graph_id": "curve",
+              "x_range": [
+                1,
+                4
+              ],
+              "color": "#87CEEB",
+              "opacity": 0.5
+            }
+          }
+        ],
+        "forces": [],
+        "equations": [
+          {
+            "id": "ftc",
+            "latex": "\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)",
+            "position": "top_right"
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "axes",
+            "duration": 1.0
+          },
+          {
+            "action": "draw",
+            "target": "curve",
+            "duration": 1.0
+          },
+          {
+            "action": "fill",
+            "target": "area",
+            "duration": 1.5
+          },
+          {
+            "action": "show_equation",
+            "target": "ftc",
+            "duration": 1.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:39:31.895324",
+    "section_id": 5,
+    "section_title": "Wave Mechanics: Period and Frequency - Beat 0",
+    "renderer": "wan_beat",
+    "prompt": "Scene: A stylized 2D animation of a water surface. A pebble drops in, creating concentric ripples that expand outwards. A glowing orb of 'energy' is shown moving with the ripple, while small floating 'matter' particles (corks) just bob up and down. Objects: Blue water surface. A gray pebble. Yellow concentric circles for ripples. A bright yellow glowing orb for energy. Small brown corks for matter. Animation: The pebble drops into the water. Ripples expand from the impact point. The energy orb travels outwards with a ripple. The corks on the surface move vertically up and down but do not travel horizontally. Text labels to show: Energy transfers, Matter does not. Educational goal: Visually demonstrate the core principle of wave motion: energy transfer without matter transfer.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_5_beat_0.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 0,
+      "beat_total": 5,
+      "duration": 6,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:40:19.040607",
+    "section_id": 5,
+    "section_title": "Wave Mechanics: Period and Frequency - Beat 1",
+    "renderer": "wan_beat",
+    "prompt": "Scene: A side-view of a clean, yellow sine wave frozen on a black background. A grid is visible for measurement. Objects: A single, perfect sine wave. Two prominent peaks are highlighted with bright dots. Animation: The wave is static. A horizontal double-arrowed line appears, stretching from the first peak to the second peak. The Greek letter lambda (\u03bb) appears above this line. Text labels to show: Peak, Trough, \u03bb (Wavelength). Educational goal: Clearly define wavelength as the spatial distance between two consecutive corresponding points of a wave.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_5_beat_1.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 1,
+      "beat_total": 5,
+      "duration": 6,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:41:05.915557",
+    "section_id": 5,
+    "section_title": "Wave Mechanics: Period and Frequency - Beat 2",
+    "renderer": "wan_beat",
+    "prompt": "Scene: The sine wave is now animated, moving from left to right across the screen. A vertical dashed line marks a fixed observation point. Objects: A yellow sine wave propagating across the screen. A static, vertical white dashed line at the center of the screen. A counter in the top corner. Animation: The wave moves steadily past the vertical line. Each time a peak crosses the line, the counter in the corner increments by one ('1', '2', '3'...). A one-second timer is shown. Text labels to show: Waves per second, Frequency (f), 3 cycles in 1 second = 3 Hz. Educational goal: Define frequency as a rate, counting the number of cycles passing a point per unit of time.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_5_beat_2.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 2,
+      "beat_total": 5,
+      "duration": 6,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:41:52.803581",
+    "section_id": 5,
+    "section_title": "Wave Mechanics: Period and Frequency - Beat 3",
+    "renderer": "wan_beat",
+    "prompt": "Scene: The moving wave animation continues. The formulas appear on screen. Objects: The propagating yellow wave. The '\u03bb' and 'f' labels are visible. Animation: The formula 'v = f \u00d7 \u03bb' materializes on screen. The 'f' value from the counter (3 Hz) and a sample '\u03bb' value (e.g., 2m) are plugged into the equation. The calculation 'v = 3 \u00d7 2 = 6 m/s' is animated. Text labels to show: v = f\u03bb, v = 3 Hz \u00d7 2 m = 6 m/s, v (Wave Speed). Educational goal: Introduce the wave speed equation and show how frequency and wavelength combine to determine speed.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_5_beat_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 3,
+      "beat_total": 5,
+      "duration": 6,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:42:39.668983",
+    "section_id": 5,
+    "section_title": "Wave Mechanics: Period and Frequency - Beat 4",
+    "renderer": "wan_beat",
+    "prompt": "Scene: The wave animation resets. A stopwatch appears on screen. Objects: The yellow sine wave moving left to right. The vertical dashed line. A large stopwatch icon. Animation: The stopwatch starts as one peak crosses the vertical line. The watch stops the instant the very next peak crosses the line. The time displayed on the stopwatch is the period. The formula T = 1/f appears and the values are substituted (e.g., T = 1/3 = 0.33s). Text labels to show: T (Period), T = 1/f, T = 1 / 3 Hz = 0.33 s, High Frequency \u2194 Short Period. Educational goal: Define the period as the time for one cycle and show its direct inverse relationship with frequency.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_5_beat_4.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 4,
+      "beat_total": 5,
+      "duration": 6,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:43:26.448469",
+    "section_id": 6,
+    "section_title": "Chemical Equilibrium: The Constant Kc - Beat 0",
+    "renderer": "wan_beat",
+    "prompt": "Scene: A split screen. On the left, a single arrow points right (\u2192), labeled 'Completion'. On the right, a double arrow (\u21cc) is shown, labeled 'Reversible'. Objects: A simple reaction 'R \u2192 P' is on the left. A reaction 'A + B \u21cc C + D' is on the right. Animation: On the left, all 'R' molecules turn into 'P'. On the right, some 'A' and 'B' molecules turn into 'C' and 'D', but then some 'C' and 'D' turn back into 'A' and 'B'. Text labels to show: Goes to Completion, Reversible Reaction. Educational goal: Distinguish between irreversible and reversible reactions, setting the stage for equilibrium.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_6_beat_0.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 0,
+      "beat_total": 6,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:44:13.267948",
+    "section_id": 6,
+    "section_title": "Chemical Equilibrium: The Constant Kc - Beat 1",
+    "renderer": "wan_beat",
+    "prompt": "Scene: A 2D animation of a glass container (a box). Inside are many small blue spheres (A) and red spheres (B) moving randomly. Objects: Blue spheres for molecule 'A'. Red spheres for molecule 'B'. Purple joined spheres for molecule 'C'. Green joined spheres for molecule 'D'. Animation: A blue sphere and a red sphere collide. They flash and transform into a purple 'C' molecule and a green 'D' molecule. This happens several times. A large arrow pointing right appears. Text labels to show: Forward Reaction: A + B \u2192 C + D. Educational goal: Visualize the forward reaction where reactants are converted into products.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_6_beat_1.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 1,
+      "beat_total": 6,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:45:00.387269",
+    "section_id": 6,
+    "section_title": "Chemical Equilibrium: The Constant Kc - Beat 2",
+    "renderer": "wan_beat",
+    "prompt": "Scene: The same container, which now contains a mix of A, B, C, and D molecules. Objects: Blue 'A', red 'B', purple 'C', and green 'D' molecules are all present and moving. Animation: A purple 'C' molecule and a green 'D' molecule collide. They flash and transform back into a blue 'A' and a red 'B'. A large arrow pointing left appears below the forward arrow. Text labels to show: \u21cc, Reverse Reaction: C + D \u2192 A + B. Educational goal: Visualize the reverse reaction where products are converted back into reactants.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_6_beat_2.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 2,
+      "beat_total": 6,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:45:47.255764",
+    "section_id": 6,
+    "section_title": "Chemical Equilibrium: The Constant Kc - Beat 3",
+    "renderer": "wan_beat",
+    "prompt": "Scene: A graph with 'Concentration' on the y-axis and 'Time' on the x-axis. Objects: Two lines on the graph: a blue line for '[Reactants]' and a red line for '[Products]'. Animation: The graph animates. The blue 'Reactants' line starts high and decreases over time. The red 'Products' line starts at zero and increases. Both lines eventually become flat and horizontal. Text labels to show: Concentration, Time, Equilibrium. Educational goal: Show how concentrations change over time and become constant at equilibrium.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_6_beat_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 3,
+      "beat_total": 6,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:46:34.265088",
+    "section_id": 6,
+    "section_title": "Chemical Equilibrium: The Constant Kc - Beat 4",
+    "renderer": "wan_beat",
+    "prompt": "Scene: Return to the container of molecules. The concentrations are now stable. Objects: A stable mix of A, B, C, and D molecules. Two arrows in the center, one pointing right ('Rate_fwd') and one pointing left ('Rate_rev'). Animation: An A and B collide to form C and D. Almost simultaneously, a C and D collide to form A and B. The arrows for forward and reverse rates are shown to be equal in length. Text labels to show: Rate (forward) = Rate (reverse), Dynamic Equilibrium: Reactions are still occurring!. Educational goal: Emphasize that equilibrium is a dynamic process where forward and reverse rates are equal, not that reactions have stopped.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_6_beat_4.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 4,
+      "beat_total": 6,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:47:21.353015",
+    "section_id": 6,
+    "section_title": "Chemical Equilibrium: The Constant Kc - Beat 5",
+    "renderer": "wan_beat",
+    "prompt": "Scene: A clean black background with the general chemical equation. Objects: The equation 'aA + bB \u21cc cC + dD' is at the top. Animation: The Kc expression is built step-by-step. First, 'Kc = ' appears. Then a fraction line. The product term '[C]^c [D]^d' is placed in the numerator. The reactant term '[A]^a [B]^b' is placed in the denominator. Each part glows as it appears. Text labels to show: aA + bB \u21cc cC + dD, Kc = [C]^c[D]^d / [A]^a[B]^b, [ ] = concentration, a, b, c, d = stoichiometric coefficients. Educational goal: Formally define the equilibrium constant, Kc, and break down how to construct the expression from a balanced chemical equation.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_6_beat_5.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 5,
+      "beat_total": 6,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:48:08.105705",
+    "section_id": 7,
+    "section_title": "Biology: The Endosymbiotic Theory - Beat 0",
+    "renderer": "wan_beat",
+    "prompt": "Scene: An animation showing a transition from a modern city skyline, zooming out to the Earth from space, then rewinding time. The continents shift, and the planet's surface changes until it's a primordial world with volcanoes and vast oceans. Objects: Stylized Earth, animated timeline UI that spins backwards rapidly from 'Present Day' to '-1.5 Billion Years'. Animation: The camera zooms out from a modern setting, the timeline rewinds dramatically, and the scene settles on an ancient Earth. Text labels to show: The Endosymbiotic Theory. Educational goal: Set the scene by transporting the viewer back to the primordial Earth where these events took place.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_7_beat_0.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 0,
+      "beat_total": 7,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:48:54.975576",
+    "section_id": 7,
+    "section_title": "Biology: The Endosymbiotic Theory - Beat 1",
+    "renderer": "wan_beat",
+    "prompt": "Scene: Underwater scene in a primordial ocean. Simple, blob-like prokaryotic cells are floating around. Objects: A large, simple, grey host cell with a nucleus-like region (nucleoid). A smaller, bean-shaped, red bacterium is nearby. Animation: The large host cell moves towards the smaller red bacterium. The host cell's membrane begins to fold inwards, preparing to engulf the bacterium. Text labels to show: Ancestral Host Cell (Prokaryote), Aerobic Bacterium. Educational goal: Introduce the key players: the host cell and the bacterium that will become the mitochondrion.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_7_beat_1.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 1,
+      "beat_total": 7,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:49:41.842186",
+    "section_id": 7,
+    "section_title": "Biology: The Endosymbiotic Theory - Beat 2",
+    "renderer": "wan_beat",
+    "prompt": "Scene: A close-up of the engulfing process. Objects: The host cell's membrane, the red bacterium. Animation: The host cell's membrane fully wraps around the red bacterium, pulling it inside in a vesicle. A 'digestion' animation with digestive enzymes (scary pac-man shapes) approaches the vesicle but then bounces off harmlessly. Text labels to show: X, Engulfed, not digested. Educational goal: Show the crucial step where the engulfed bacterium avoids destruction and remains intact within the host.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_7_beat_2.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 2,
+      "beat_total": 7,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:50:29.149916",
+    "section_id": 7,
+    "section_title": "Biology: The Endosymbiotic Theory - Beat 3",
+    "renderer": "wan_beat",
+    "prompt": "Scene: The scene is inside the large host cell. The red bacterium is shown functioning. Objects: The red bacterium (now an endosymbiont). Small glowing yellow orbs representing ATP. Animation: The red bacterium takes in small molecules (resources) from the host's cytoplasm and releases many glowing ATP orbs, which spread throughout the host cell, making it glow with energy. Arrows show the exchange: resources in, ATP out. Text labels to show: Energy (ATP), Symbiotic Relationship. Educational goal: Visualize the mutual benefit: the host provides protection, and the endosymbiont provides energy.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_7_beat_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 3,
+      "beat_total": 7,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:51:15.968242",
+    "section_id": 7,
+    "section_title": "Biology: The Endosymbiotic Theory - Beat 4",
+    "renderer": "wan_beat",
+    "prompt": "Scene: A time-lapse animation of the host cell and its internal bacterium. Objects: The cell is shown dividing multiple times. The red bacterium also divides within the cell, ensuring daughter cells receive it. Animation: The animation speeds up, showing generations of cell division. The red bacterium slowly transforms, becoming more complex and integrated, with folded inner membranes. It morphs into the classic shape of a mitochondrion. Text labels to show: Bacterium, Mitochondrion, Millions of years of evolution. Educational goal: Illustrate the long-term evolutionary process that transformed the bacterium into a permanent organelle.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_7_beat_4.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 4,
+      "beat_total": 7,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:52:02.995587",
+    "section_id": 7,
+    "section_title": "Biology: The Endosymbiotic Theory - Beat 5",
+    "renderer": "wan_beat",
+    "prompt": "Scene: The process repeats with a new player. The host cell, which now contains mitochondria, is shown. Objects: The eukaryotic host cell. A new, green, spiral-shaped bacterium (cyanobacterium) is nearby. Animation: The host cell engulfs the green cyanobacterium. The same symbiosis process occurs: the cyanobacterium is protected and produces food (small sugar molecules/hexagons) for the host using light. Text labels to show: Photosynthetic Bacterium, Food (Glucose), s label changes to . Educational goal: Explain the origin of chloroplasts through a second, similar endosymbiotic event.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_7_beat_5.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 5,
+      "beat_total": 7,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:52:49.864679",
+    "section_id": 7,
+    "section_title": "Biology: The Endosymbiotic Theory - Beat 6",
+    "renderer": "wan_beat",
+    "prompt": "Scene: A final diagram comparing a bacterium, a mitochondrion, and a chloroplast. Objects: Side-by-side images of the three structures. A small, circular chromosome is shown inside all three. Animation: The circular DNA inside the bacterium is highlighted. Then, the camera zooms into the mitochondrion and chloroplast, revealing their own, similar circular DNA and small ribosomes. These features are highlighted and linked back to the bacterium. Text labels to show: Circular DNA, Bacterial Ribosomes, Evidence. Educational goal: Present the key pieces of evidence (circular DNA, ribosomes) that support the Endosymbiotic Theory.",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_7_beat_6.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 6,
+      "beat_total": 7,
+      "duration": 5,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "segment_id",
+        "scene_setup",
+        "objects_and_properties",
+        "motion_sequence",
+        "labels_and_text",
+        "pedagogical_focus"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-17T12:53:36.708670",
+    "section_id": 9,
+    "section_title": "Lesson Recap",
+    "renderer": "manim_spec",
+    "prompt": "\n# Animation sequence\nself.play(FadeIn(panel1), run_time=1.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/066aa3ad/videos/topic_9.mp4",
+    "extra": {
+      "section_type": "recap",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": false,
+      "spec": {
+        "objects": [
+          {
+            "id": "panel1",
+            "type": "recap_panel",
+            "position": [
+              -5,
+              0
+            ],
+            "properties": {
+              "title": "Calculus",
+              "visual": "area_under_curve",
+              "formula": "F(b) - F(a)"
+            }
+          }
+        ],
+        "forces": [],
+        "equations": [],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "panel1",
+            "duration": 1.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  }
+]

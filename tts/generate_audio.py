@@ -19,6 +19,7 @@ def generate_section_audio(section: dict, output_dir: str) -> str:
     output_path = str(Path(output_dir) / f"section_{section_id}.mp3")
     
     if NARAKEET_API_KEY:
+        print(f"[TTS] Section {section_id}: Attempting Narakeet API (voice={NARAKEET_VOICE}, text_len={len(narration)})")
         try:
             response = requests.post(
                 f"https://api.narakeet.com/text-to-speech/mp3?voice={NARAKEET_VOICE}",
@@ -35,13 +36,16 @@ def generate_section_audio(section: dict, output_dir: str) -> str:
                 with open(output_path, 'wb') as f:
                     f.write(response.content)
                 duration = response.headers.get('x-duration-seconds', 'unknown')
-                print(f"Narakeet audio generated: {output_path} ({duration}s)")
+                print(f"[TTS] Section {section_id}: Narakeet SUCCESS - {output_path} ({duration}s)")
                 return output_path
             else:
-                print(f"Narakeet API error: {response.status_code} - {response.text}")
+                print(f"[TTS] Section {section_id}: Narakeet FAILED - Status {response.status_code}: {response.text[:200]}")
         except Exception as e:
-            print(f"Narakeet error: {e}")
+            print(f"[TTS] Section {section_id}: Narakeet EXCEPTION - {type(e).__name__}: {e}")
+    else:
+        print(f"[TTS] Section {section_id}: No NARAKEET_API_KEY configured")
     
+    print(f"[TTS] Section {section_id}: Falling back to gTTS (female voice)")
     from gtts import gTTS
     tts = gTTS(
         text=narration,
@@ -50,7 +54,7 @@ def generate_section_audio(section: dict, output_dir: str) -> str:
         slow=False
     )
     tts.save(output_path)
-    print(f"gTTS fallback audio generated: {output_path}")
+    print(f"[TTS] Section {section_id}: gTTS generated - {output_path}")
     return output_path
 
 def generate_all_audio(presentation: dict, output_dir: str) -> list:

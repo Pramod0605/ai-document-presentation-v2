@@ -258,8 +258,64 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
             code_lines.append(f'{var_name} = MathTex(r"{latex}").move_to({pos_name})')
         
         elif obj_type == "label":
-            pos_name = POSITION_MAP.get(props.get("position", "center"), "ORIGIN")
-            code_lines.append(f'{var_name} = Text("{label_text}", font_size=28).move_to({pos_name})')
+            text = props.get("text", label_text or obj_id)
+            font_size = props.get("font_size", 28)
+            if isinstance(position, list):
+                code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to(np.array([{position[0]}, {position[1]}, 0]))')
+            else:
+                pos_name = POSITION_MAP.get(position, "ORIGIN")
+                code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to({pos_name})')
+        
+        elif obj_type == "axes":
+            x_range = props.get("x_range", [-3, 3, 1])
+            y_range = props.get("y_range", [-3, 3, 1])
+            if len(x_range) == 2:
+                x_range = [x_range[0], x_range[1], 1]
+            if len(y_range) == 2:
+                y_range = [y_range[0], y_range[1], 1]
+            code_lines.append(f'{var_name} = Axes(x_range=[{x_range[0]}, {x_range[1]}, {x_range[2]}], y_range=[{y_range[0]}, {y_range[1]}, {y_range[2]}], x_length=8, y_length=6, axis_config={{"include_tip": True}})')
+        
+        elif obj_type == "graph":
+            equation = props.get("equation", "lambda x: x**2")
+            graph_color = COLOR_MAP.get(props.get("color", "blue").lower(), "BLUE")
+            axes_var = props.get("axes", "axes")
+            code_lines.append(f'{var_name} = {axes_var}.plot({equation}, color={graph_color})')
+        
+        elif obj_type == "area_under_graph":
+            graph_id = props.get("graph_id", "graph")
+            graph_var = object_vars.get(graph_id, graph_id)
+            x_range = props.get("x_range", [0, 2])
+            axes_var = props.get("axes", "axes")
+            fill_color = props.get("color", "#87CEEB")
+            opacity = props.get("opacity", 0.5)
+            code_lines.append(f'{var_name} = {axes_var}.get_area({graph_var}, x_range=[{x_range[0]}, {x_range[1]}], color="{fill_color}", opacity={opacity})')
+        
+        elif obj_type == "recap_panel" or obj_type == "panel":
+            title = props.get("title", "")
+            visual = props.get("visual", "")
+            formula = props.get("formula", "")
+            if isinstance(position, list):
+                pos_str = f"np.array([{position[0]}, {position[1]}, 0])"
+            else:
+                pos_str = POSITION_MAP.get(position, "ORIGIN")
+            content = f"{title}\\n{visual}\\n{formula}" if visual else title
+            code_lines.append(f'{var_name} = VGroup(Rectangle(width=4, height=3, color=BLUE), Text("{content[:50]}", font_size=20)).move_to({pos_str})')
+        
+        elif obj_type == "text":
+            text = props.get("text", label_text or obj_id)
+            font_size = props.get("font_size", 24)
+            if isinstance(position, list):
+                code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to(np.array([{position[0]}, {position[1]}, 0]))')
+            else:
+                pos_name = POSITION_MAP.get(position, "ORIGIN")
+                code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to({pos_name})')
+        
+        else:
+            if isinstance(position, list):
+                code_lines.append(f'{var_name} = Dot(point=np.array([{position[0]}, {position[1]}, 0]), color={color})')
+            else:
+                pos_name = POSITION_MAP.get(position, "ORIGIN")
+                code_lines.append(f'{var_name} = Dot(point={pos_name}, color={color})')
     
     forces = spec.get("forces", [])
     for force in forces:
@@ -352,6 +408,24 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
         
         elif action == "wait":
             code_lines.append(f'self.wait({duration})')
+        
+        elif action == "draw":
+            code_lines.append(f'self.play(Create({target_var}), run_time={duration})')
+        
+        elif action == "fill":
+            code_lines.append(f'self.play(FadeIn({target_var}), run_time={duration})')
+        
+        elif action == "write":
+            code_lines.append(f'self.play(Write({target_var}), run_time={duration})')
+        
+        elif action == "grow":
+            code_lines.append(f'self.play(GrowFromCenter({target_var}), run_time={duration})')
+        
+        elif action == "fade_out":
+            code_lines.append(f'self.play(FadeOut({target_var}), run_time={duration})')
+        
+        else:
+            code_lines.append(f'self.play(FadeIn({target_var}), run_time={duration})')
     
     code_lines.append('self.wait(1)')
     
