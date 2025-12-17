@@ -37,6 +37,15 @@ def fix_malformed_json(json_text: str) -> str:
         text = text[:-3]
     text = text.strip()
     
+    text = re.sub(r',\s*}', '}', text)
+    text = re.sub(r',\s*]', ']', text)
+    text = re.sub(r',\s*,', ',', text)
+    text = re.sub(r':\s*,', ': null,', text)
+    text = re.sub(r':\s*}', ': null}', text)
+    text = re.sub(r':\s*]', ': null]', text)
+    text = re.sub(r'\[\s*,', '[', text)
+    text = re.sub(r'{\s*,', '{', text)
+    
     open_braces = text.count('{')
     close_braces = text.count('}')
     open_brackets = text.count('[')
