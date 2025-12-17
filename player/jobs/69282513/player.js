@@ -422,6 +422,16 @@ function handleTimeUpdate(e) {
     if (inlineVideo) {
       if (isPlaying && inlineVideo.paused) inlineVideo.play().catch(e => {});
       if (!isPlaying && !inlineVideo.paused) inlineVideo.pause();
+      
+      // Toggle text visibility based on video playback
+      // For single video: hide text while video plays, show on pause
+      if (!slide.beat_videos || slide.beat_videos.length <= 1) {
+        if (isPlaying && !inlineVideo.paused) {
+          stage.classList.add('video-focus');
+        } else {
+          stage.classList.remove('video-focus');
+        }
+      }
     }
     
     if (slide.beat_videos && slide.beat_videos.length > 1) {
