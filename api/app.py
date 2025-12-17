@@ -2,6 +2,7 @@ import os
 import sys
 import tempfile
 from pathlib import Path
+from typing import Optional
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -210,7 +211,7 @@ def list_all_jobs():
     })
 
 
-def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: str = None) -> dict:
+def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None) -> dict:
     try:
         result = process_pdf_to_videos(
             pdf_path=pdf_path,
@@ -229,7 +230,7 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
             os.unlink(pdf_path)
 
 
-def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: str = None) -> dict:
+def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None) -> dict:
     return process_markdown_to_videos(
         markdown_content=markdown_content,
         subject=subject,

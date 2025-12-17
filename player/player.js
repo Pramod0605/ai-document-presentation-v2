@@ -10,6 +10,7 @@ function getBasePath() {
 }
 
 const BASE_PATH = getBasePath();
+console.log(`Player BASE_PATH: ${BASE_PATH}`);
 const AVATAR_URL = "/player/assets/avatar_placeholder.mp4";
 
 let currentSlideIndex = 0;
@@ -758,7 +759,8 @@ function startPolling(jobId) {
       if (status.status === 'completed') {
         clearInterval(pollInterval);
         pollInterval = null;
-        await checkExistingPresentation();
+        // Redirect to job-specific player URL so assets load from job folder
+        window.location.href = `/player/jobs/${jobId}/`;
       } else if (status.status === 'failed') {
         clearInterval(pollInterval);
         pollInterval = null;
