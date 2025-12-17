@@ -1,0 +1,17 @@
+DRY RUN - Manim section 5
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/b7930b64/videos/topic_5.mp4
+
+--- SCENE CODE ---
+problem_eq = MathTex(r"2x^2 - 7x + 3 = 0").move_to(ORIGIN)
+a_val = Text("", font_size=28).move_to(ORIGIN)
+b_val = Text("", font_size=28).move_to(ORIGIN)
+c_val = Text("", font_size=28).move_to(ORIGIN)
+
+# Animation sequence
+self.play(FadeIn(problem_eq), run_time=1.0)
+self.play(Indicate(problem_eq), run_time=1.0)
+self.play(FadeIn(a_val), run_time=1.0)
+self.play(FadeIn(b_val), run_time=1.0)
+self.play(FadeIn(c_val), run_time=1.0)
+self.wait(1)

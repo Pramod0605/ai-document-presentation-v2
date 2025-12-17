@@ -1,0 +1,2282 @@
+{
+  "prompt_version": "v2",
+  "system_prompt": "You are an Expert Educational Content Director and Visual Storyboarder.\n\nYour task is to convert textbook Markdown into a COMPLETE,\ntime-synchronized visual teaching plan for students.\n\nYou are NOT summarizing.\nYou are DIRECTING a teaching video.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nMANDATORY PEDAGOGY RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n1. Follow the Markdown structure strictly.\n   - Headings \u2192 sections\n   - Subheadings \u2192 micro-topics\n   - Worked examples \u2192 separate example sections\n   - Do NOT reorder concepts.\n\n2. One section = one teachable idea.\n   - If a section has multiple ideas, split it.\n\n3. CONTENT sections:\n   - Narration must be 150\u2013250 words minimum.\n   - Explain step-by-step.\n   - Include real-world intuition.\n   - Do NOT compress explanations.\n\n4. EXAMPLE sections (CRITICAL):\n   - Every worked example in Markdown MUST become a separate section.\n   - Examples are NOT narration-only.\n   - Examples MUST be visualized step-by-step.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nVISUALIZATION RULES (NON-NEGOTIABLE)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n5. Every narration segment MUST have a corresponding VISUAL BEAT.\n   - No narration without visuals.\n   - No visuals without narration.\n\n6. Visual beats MUST be CONCRETE and SPECIFIC:\n   - Describe EXACTLY what objects appear (shapes, colors, positions)\n   - Describe EXACTLY what motion occurs (direction, speed, sequence)\n   - Include numerical values where applicable\n   - Specify text labels and their positions\n\n7. BANNED VAGUE PHRASES (will cause VALIDATION FAILURE):\n   - \"detailed animation\"\n   - \"conceptual visualization\"\n   - \"dynamic visuals\"\n   - \"beautiful animation\"\n   - \"stunning visual\"\n   - \"show clearly\"\n   - \"demonstrate effectively\"\n   - \"visualize the concept\"\n   - \"illustrate the process\"\n\n8. VISUAL BEAT STRUCTURE (5 REQUIRED FIELDS):\n\n   Each visual beat MUST have these 5 fields:\n   - scene_setup: Describe background, coordinate system, initial state\n   - objects_and_properties: List ALL objects with colors, sizes, positions\n   - motion_sequence: Describe step-by-step animation order\n   - labels_and_text: List WHERE each label appears\n   - pedagogical_focus: What should the student understand?\n\n   BAD (will FAIL - missing fields):\n   {{\n     \"segment_id\": 1,\n     \"visual_instruction\": \"Show force interaction clearly\"\n   }}\n   \n   GOOD (will PASS - all 5 fields present):\n   {{\n     \"segment_id\": 1,\n     \"scene_setup\": \"A white background with a point A at center. Cartesian grid visible.\",\n     \"objects_and_properties\": \"A red arrow 10 units long from point A pointing right. A blue arrow 5 units long from point A pointing left. A green resultant arrow 5 units long pointing right.\",\n     \"motion_sequence\": \"First, point A appears. Then, red F1 arrow grows rightward. Then, blue F2 arrow grows leftward. Finally, green resultant arrow appears.\",\n     \"labels_and_text\": \"Label 'A' at the point. Label 'F1=10N' above red arrow. Label 'F2=5N' above blue arrow. Label 'F_net=5N' above green arrow.\",\n     \"pedagogical_focus\": \"Students understand that forces are vectors that add, and the resultant shows net force direction and magnitude.\"\n   }}\n\n9. FORMULA VISUALIZATION RULES:\n   - When narration mentions F=ma, show: \"F\", \"=\", \"m\", \"\u00d7\", \"a\" as separate animated symbols\n   - Show numerical substitution: F = 5kg \u00d7 2m/s\u00b2 = 10N\n   - Show geometry: vector arrows with magnitude labels\n   - Show units: always include units on numerical values\n\n10. If narration mentions:\n    - a formula \u2192 show symbols + substitution + result\n    - a variable \u2192 show it with label and value\n    - a force / field \u2192 show arrow with direction and magnitude label\n    - an example \u2192 visualize each calculation step\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nRENDERER DECISION RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n11. Use MANIM for:\n    - maths equations and formulas\n    - vectors and geometry\n    - graphs and plots\n    - numerical physics examples\n    - step-by-step calculations\n    - coordinate systems\n\n12. Use WAN for:\n    - biological processes (cells, organisms, ecosystems)\n    - physical phenomena (waves, light, motion)\n    - field visualizations (electric, magnetic, gravitational)\n    - chemistry reactions (molecules, bonds, reactions)\n\n\u26a0\ufe0f CRITICAL: When renderer=\"manim\", EVERY visual_beat MUST include manim_scene_spec.\nThis applies to ALL section types: content, example, summary, intro, recap.\nThere are NO exceptions. Prose-only beats for Manim sections will FAIL.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nMANIM SCENE SPEC (REQUIRED FOR renderer=manim)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nFor renderer=\"manim\", each visual_beat MUST include a \"manim_scene_spec\" object.\nThis is a STRUCTURED JSON spec - NOT prose descriptions.\n\nMANIM SCENE SPEC SCHEMA:\n{{\n  \"objects\": [\n    {{\n      \"id\": \"charge_q1\",\n      \"type\": \"point_charge\",  // point_charge, charged_sphere, point, vector, equation\n      \"position\": [-3, 0],     // [x, y] coordinates\n      \"properties\": {{\n        \"charge\": \"+2\u03bcC\",      // for charges\n        \"color\": \"blue\",\n        \"radius\": 0.3,\n        \"label\": \"q\u2081 = +2\u03bcC\"\n      }}\n    }}\n  ],\n  \"forces\": [\n    {{\n      \"id\": \"F12\",\n      \"type\": \"electrostatic\",  // electrostatic, gravitational, tension, normal\n      \"from_object\": \"charge_q1\",\n      \"to_object\": \"charge_q2\",\n      \"magnitude\": \"18 N\",\n      \"direction\": \"repulsive\",  // attractive, repulsive, or angle in degrees\n      \"color\": \"red\",\n      \"label\": \"F\u2081\u2082 = 18 N\"\n    }}\n  ],\n  \"equations\": [\n    {{\n      \"id\": \"coulombs_law\",\n      \"latex\": \"F = k \\\\\\\\frac{{q_1 q_2}}{{r^2}}\",\n      \"position\": \"top_center\",  // top_center, bottom_center, left, right\n      \"substitution\": \"F = 9 \\\\\\\\times 10^9 \\\\\\\\times \\\\\\\\frac{{2 \\\\\\\\times 10^{{-6}} \\\\\\\\times 3 \\\\\\\\times 10^{{-6}}}}{{(0.1)^2}}\"\n    }}\n  ],\n  \"animation_sequence\": [\n    {{ \"action\": \"appear\", \"target\": \"charge_q1\", \"duration\": 0.5 }},\n    {{ \"action\": \"appear\", \"target\": \"charge_q2\", \"duration\": 0.5 }},\n    {{ \"action\": \"draw_force\", \"target\": \"F12\", \"duration\": 1.0 }},\n    {{ \"action\": \"show_equation\", \"target\": \"coulombs_law\", \"duration\": 1.5 }},\n    {{ \"action\": \"substitute\", \"target\": \"coulombs_law\", \"duration\": 2.0 }},\n    {{ \"action\": \"highlight\", \"target\": \"F12\", \"duration\": 0.5 }}\n  ]\n}}\n\nSEMANTIC ANIMATION ACTIONS (use these, NOT raw Manim calls):\n- appear: Fade in an object\n- draw_force: Draw force arrow from one object toward another\n- show_equation: Display equation at specified position\n- substitute: Transform equation to show numerical substitution\n- highlight: Pulse/glow an object to draw attention\n- move: Move object to new position\n- transform: Morph one object into another\n- wait: Pause for specified duration\n\nOBJECT TYPES:\n- point_charge: A charged particle (specify charge, color, label)\n- charged_sphere: A sphere with distributed charge\n- point: A simple dot/marker\n- vector: An arrow (specify magnitude, direction, color)\n- equation: A LaTeX equation (rendered as MathTex)\n- label: Text label\n\nFORCE TYPES:\n- electrostatic: Coulomb force between charges\n- gravitational: Force due to gravity\n- tension: String/rope tension\n- normal: Normal force from surface\n- friction: Friction force\n- resultant: Net force (sum of forces)\n\nEXAMPLE (Coulomb's Law):\n{{\n  \"segment_id\": 1,\n  \"scene_setup\": \"Two point charges separated by distance r\",\n  \"objects_and_properties\": \"Blue +2\u03bcC charge at left, red +3\u03bcC charge at right\",\n  \"motion_sequence\": \"Charges appear, then force arrows, then equation\",\n  \"labels_and_text\": \"Labels show charge values and force magnitude\",\n  \"pedagogical_focus\": \"Demonstrate repulsive electrostatic force\",\n  \"manim_scene_spec\": {{\n    \"objects\": [\n      {{ \"id\": \"q1\", \"type\": \"point_charge\", \"position\": [-3, 0], \"properties\": {{ \"charge\": \"+2\u03bcC\", \"color\": \"blue\", \"radius\": 0.3, \"label\": \"q\u2081 = +2\u03bcC\" }} }},\n      {{ \"id\": \"q2\", \"type\": \"point_charge\", \"position\": [3, 0], \"properties\": {{ \"charge\": \"+3\u03bcC\", \"color\": \"red\", \"radius\": 0.3, \"label\": \"q\u2082 = +3\u03bcC\" }} }},\n      {{ \"id\": \"distance\", \"type\": \"vector\", \"position\": [-3, -1], \"properties\": {{ \"end\": [3, -1], \"color\": \"gray\", \"label\": \"r = 10 cm\" }} }}\n    ],\n    \"forces\": [\n      {{ \"id\": \"F12\", \"type\": \"electrostatic\", \"from_object\": \"q1\", \"to_object\": \"q2\", \"magnitude\": \"5.4 N\", \"direction\": \"repulsive\", \"color\": \"orange\", \"label\": \"F = 5.4 N\" }}\n    ],\n    \"equations\": [\n      {{ \"id\": \"coulomb\", \"latex\": \"F = k \\\\\\\\frac{{q_1 q_2}}{{r^2}}\", \"position\": \"top_center\", \"substitution\": \"F = 9 \\\\\\\\times 10^9 \\\\\\\\times \\\\\\\\frac{{2 \\\\\\\\times 3}}{{(0.1)^2}} \\\\\\\\times 10^{{-12}}\" }}\n    ],\n    \"animation_sequence\": [\n      {{ \"action\": \"appear\", \"target\": \"q1\", \"duration\": 0.5 }},\n      {{ \"action\": \"appear\", \"target\": \"q2\", \"duration\": 0.5 }},\n      {{ \"action\": \"appear\", \"target\": \"distance\", \"duration\": 0.5 }},\n      {{ \"action\": \"draw_force\", \"target\": \"F12\", \"duration\": 1.0 }},\n      {{ \"action\": \"show_equation\", \"target\": \"coulomb\", \"duration\": 1.0 }},\n      {{ \"action\": \"substitute\", \"target\": \"coulomb\", \"duration\": 2.0 }}\n    ]\n  }}\n}}\n\nFAIL CONDITIONS for Manim sections:\n- Missing manim_scene_spec \u2192 VALIDATION FAILURE\n- Empty objects array \u2192 VALIDATION FAILURE\n- No animation_sequence \u2192 VALIDATION FAILURE\n- Prose-only visual_beat (no structured spec) \u2192 VALIDATION FAILURE\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nVISUAL BEAT QUALITY CHECKLIST\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nBefore outputting each visual beat, verify ALL 5 FIELDS are present:\n\u25a1 scene_setup: Does it describe background and coordinate system?\n\u25a1 objects_and_properties: Are colors, sizes, and positions listed?\n\u25a1 motion_sequence: Is animation order described step-by-step?\n\u25a1 labels_and_text: Are label positions specified?\n\u25a1 pedagogical_focus: Is the learning goal explained?\n\nIf ANY field is missing or too short, add the missing content.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nOUTPUT RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nYou MUST output ONLY valid JSON.\nNo markdown.\nNo commentary.\nNo explanations.\n\nYour JSON will directly drive video generation.\nVague instructions will cause pipeline FAILURE.\n",
+  "user_prompt": "Create a COMPLETE Presentation Plan JSON from the given Markdown.\n\nINPUT:\n- Subject: Mathematics\n- Grade: 10\n- Markdown content:\n# Quadratic Equations\n\n## Introduction to Quadratics\nA quadratic equation is a polynomial equation of degree 2. The general form is ax\u00b2 + bx + c = 0 where a, b, and c are constants and a \u2260 0.\n\n## The Quadratic Formula\nThe solutions to any quadratic equation can be found using the quadratic formula:\n$$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$\n\nThe term under the square root, b\u00b2 - 4ac, is called the discriminant.\n\n## Example Problem\nSolve: 2x\u00b2 - 7x + 3 = 0\n\nUsing the quadratic formula with a=2, b=-7, c=3:\n$$x = \\frac{7 \\pm \\sqrt{49 - 24}}{4} = \\frac{7 \\pm 5}{4}$$\n\nSo x = 3 or x = 0.5\n\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nSECTION GENERATION RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nYou MUST generate sections in this order:\n\n1. intro\n2. summary\n3. content (multiple)\n4. example (multiple, if present in markdown)\n5. memory\n6. recap\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nSECTION TYPES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nEach section MUST include:\n\n- section_type: intro | summary | content | example | memory | recap\n- id: unique integer\n- title: descriptive title\n- renderer: manim | wan_video\n- narration: full narration text\n- narration_segments: array of timed text segments\n- visual_beats: array of renderer instructions (one per segment)\n- layout: content and avatar positioning\n- gesture_hints: avatar animation cues\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nCONTENT SECTION RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nFor section_type = \"content\":\n\n- Narration must be \u2265150 words.\n- Break narration into logical teaching segments.\n- EACH narration segment MUST have a visual beat.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nEXAMPLE SECTION RULES (CRITICAL)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nFor section_type = \"example\":\n\n- Renderer MUST be manim (unless biological).\n- Visualize the example step-by-step.\n- Each step = one visual beat.\n- Show:\n  \u2022 geometry with coordinates\n  \u2022 symbols with values\n  \u2022 vectors with magnitudes\n  \u2022 intermediate calculation results\n\nExamples must NEVER be explained only in words.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nVISUAL BEAT FORMAT (STRICT)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nEach visual beat MUST be decomposed into FIVE REQUIRED FIELDS.\nALL fields are MANDATORY and must be non-empty.\n\n- segment_id: integer matching narration_segments[].id\n\n- scene_setup: Describe the initial visual scene in 2-3 sentences.\n  What is the background? What coordinate system? What starting state?\n\n- objects_and_properties: List ALL objects with their colors, sizes, positions.\n  Example: \"A red arrow (10 units long) at origin pointing right. A blue circle (radius 2) at position (5,3).\"\n\n- motion_sequence: Describe animation step-by-step, in order.\n  Example: \"First, axes fade in. Then, the arrow grows from origin. Finally, the label appears.\"\n\n- labels_and_text: List EVERY label, symbol, text, and WHERE it appears.\n  Example: \"Label 'F=10N' above the arrow. Label 'Origin' at (0,0). Axis labels 'x' and 'y'.\"\n\n- pedagogical_focus: Explain what the learner should understand from this visual.\n  Example: \"Student should understand that force has both magnitude and direction.\"\n\nIf ANY field is missing or too short, the output is INVALID.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nCONCRETE VISUAL BEAT EXAMPLE\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n{\n  \"segment_id\": 1,\n  \"scene_setup\": \"A 2D Cartesian coordinate plane with x-axis from -5 to 5 and y-axis from -5 to 5. Grid lines are light gray. Background is white. Origin is marked with a small black dot.\",\n  \"objects_and_properties\": \"A blue velocity vector arrow, 3 units in magnitude, starting at origin (0,0) and pointing at 30 degrees above x-axis, ending at approximately (2.6, 1.5). Two dashed gray projection lines: one vertical from (2.6, 1.5) to (2.6, 0), one horizontal from (2.6, 1.5) to (0, 1.5). A red angle arc at origin showing the 30-degree angle.\",\n  \"motion_sequence\": \"First, the coordinate axes fade in with grid. Then, the velocity vector grows from the origin outward to its full length. Next, the dashed projection lines draw themselves. Finally, all component labels appear simultaneously.\",\n  \"labels_and_text\": \"Label 'O' at the origin. Label 'v = 3 m/s' above the blue arrow tip. Label 'vx = 2.6 m/s' below the x-axis at x=1.3. Label 'vy = 1.5 m/s' to the left of the y-projection. Label '30\u00b0' inside the angle arc. Axis labels 'x' and 'y' at the ends.\",\n  \"pedagogical_focus\": \"Students should understand that any velocity vector can be decomposed into independent horizontal (x) and vertical (y) components using trigonometry. The visual shows that vx = v*cos(30\u00b0) and vy = v*sin(30\u00b0).\"\n}\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nBANNED PATTERNS (VALIDATION FAILURE)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nThese will cause VALIDATION FAILURE:\n- Missing ANY of the 5 required fields\n- Empty or single-sentence fields\n- Vague phrases like \"show clearly\", \"animate smoothly\", \"visualize the concept\"\n- scene_setup that doesn't describe background/coordinate system\n- objects_and_properties that doesn't list colors and positions\n- motion_sequence that doesn't describe step-by-step order\n- labels_and_text that doesn't specify WHERE labels appear\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nLAYOUT RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nDecide:\n- content position and width\n- avatar position and size\n- overlay vs side layout\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nOUTPUT SCHEMA\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n{\n  \"chapter_title\": \"string\",\n  \"subject\": \"Mathematics\",\n  \"grade\": \"10\",\n  \"language\": \"en-IN\",\n  \"sections\": [\n    {\n      \"section_type\": \"content | example\",\n      \"id\": 1,\n      \"title\": \"Section Title\",\n      \"renderer\": \"manim | wan_video\",\n      \"narration\": \"Full narration text...\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"First segment text...\",\n          \"duration\": 4\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A 2D coordinate plane with x-axis from -5 to 5 and y-axis from -5 to 5. White background with light gray grid lines.\",\n          \"objects_and_properties\": \"Two perpendicular black axis lines. Small black dot at origin. Tick marks every 1 unit on both axes.\",\n          \"motion_sequence\": \"First, the x-axis draws itself left to right. Then, the y-axis draws itself bottom to top. Finally, the grid and labels fade in.\",\n          \"labels_and_text\": \"Label 'x' at right end of x-axis. Label 'y' at top of y-axis. Label 'O' at origin.\",\n          \"pedagogical_focus\": \"Establish the coordinate system that will be used throughout this lesson for vector representation.\"\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": { \"position\": \"left\", \"width_percent\": 65 },\n        \"avatar_zone\": { \"mode\": \"side\", \"position\": \"right\", \"width_percent\": 35 }\n      },\n      \"gesture_hints\": [\n        { \"time\": 1.0, \"action\": \"point_to_screen\" }\n      ]\n    }\n  ]\n}\n\nFor memory sections, also include:\n\"flashcards\": [\n  { \"question\": \"What is X?\", \"answer\": \"Y\" }\n]\n\nFor recap sections, also include:\n\"recap_scenes\": [\n  { \"scene\": 1, \"description\": \"Scene visual...\", \"concept_title\": \"Key Concept\" }\n]\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nQUALITY GATE\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nBefore outputting, verify EACH visual beat has ALL 5 fields:\n1. scene_setup: Does it describe background and coordinate system?\n2. objects_and_properties: Does it list ALL objects with colors and positions?\n3. motion_sequence: Does it describe step-by-step animation order?\n4. labels_and_text: Does it list WHERE each label appears?\n5. pedagogical_focus: Does it explain what the student learns?\n\nIf ANY field is missing or too short, REWRITE that visual beat.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nOUTPUT\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nReturn ONLY valid JSON.\nNo explanations.\nNo markdown code blocks.\n",
+  "model": "google/gemini-2.5-pro",
+  "max_tokens": 32768,
+  "raw_response_length": 62923,
+  "raw_response": "```json\n{\n  \"chapter_title\": \"Quadratic Equations\",\n  \"subject\": \"Mathematics\",\n  \"grade\": \"10\",\n  \"language\": \"en-IN\",\n  \"sections\": [\n    {\n      \"section_type\": \"intro\",\n      \"id\": 1,\n      \"title\": \"Introduction to Quadratic Equations\",\n      \"renderer\": \"manim\",\n      \"narration\": \"Hello students! Welcome to our lesson on a fascinating and powerful part of algebra: Quadratic Equations. Have you ever wondered how we can mathematically describe the beautiful arc of a basketball shot, the path of a water fountain, or even the shape of a satellite dish? The answer lies in quadratic equations. These are not just abstract math problems; they are the language we use to model the world around us. In this lesson, we're going to unlock the secrets of these equations. We'll start with the very basics, understanding what makes an equation 'quadratic'. Then, we'll introduce the master key to solving them: the famous quadratic formula. By the end of our session, you'll be able to take a complex-looking quadratic equation and confidently find its solutions. Let's begin this exciting journey into the world of parabolas and polynomials!\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"Hello students! Welcome to our lesson on a fascinating and powerful part of algebra: Quadratic Equations.\",\n          \"duration\": 6\n        },\n        {\n          \"id\": 2,\n          \"text\": \"Have you ever wondered how we can mathematically describe the beautiful arc of a basketball shot, the path of a water fountain, or even the shape of a satellite dish? The answer lies in quadratic equations.\",\n          \"duration\": 9\n        },\n        {\n          \"id\": 3,\n          \"text\": \"In this lesson, we're going to unlock the secrets of these equations. We'll start with the very basics, understanding what makes an equation 'quadratic'.\",\n          \"duration\": 7\n        },\n        {\n          \"id\": 4,\n          \"text\": \"Then, we'll introduce the master key to solving them: the famous quadratic formula. By the end of our session, you'll be able to take a complex-looking quadratic equation and confidently find its solutions. Let's begin!\",\n          \"duration\": 10\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A clean, dark blue background. The title of the chapter will appear in the center.\",\n          \"objects_and_properties\": \"Large white text for the main title, smaller yellow text for the subtitle.\",\n          \"motion_sequence\": \"The main title 'Quadratic Equations' fades in, followed by the subtitle 'The Ultimate Guide' appearing below it with a gentle zoom.\",\n          \"labels_and_text\": \"Text 'Quadratic Equations' at the center. Text 'The Ultimate Guide' directly below the main title.\",\n          \"pedagogical_focus\": \"To introduce the topic in a clear and engaging manner, setting the stage for the lesson.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              {\n                \"id\": \"main_title\",\n                \"type\": \"label\",\n                \"position\": [0, 0.5],\n                \"properties\": {\n                  \"text\": \"Quadratic Equations\",\n                  \"font_size\": 96,\n                  \"color\": \"white\"\n                }\n              },\n              {\n                \"id\": \"subtitle\",\n                \"type\": \"label\",\n                \"position\": [0, -0.5],\n                \"properties\": {\n                  \"text\": \"The Ultimate Guide\",\n                  \"font_size\": 48,\n                  \"color\": \"yellow\"\n                }\n              }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"main_title\", \"duration\": 1.5 },\n              { \"action\": \"appear\", \"target\": \"subtitle\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"A split screen. Left side shows a simple animation of a basketball being thrown towards a hoop. Right side shows a 2D Cartesian plane.\",\n          \"objects_and_properties\": \"On the left: an orange basketball, a white backboard with a red hoop. On the right: A light gray grid with black x and y axes. A red dashed curve representing a parabola.\",\n          \"motion_sequence\": \"The basketball is thrown and follows a parabolic path into the hoop. As it travels, the red dashed parabola is drawn simultaneously on the graph on the right, mirroring the ball's trajectory.\",\n          \"labels_and_text\": \"Label 'Real World' above the basketball scene. Label 'Mathematical Model' above the graph. Axes labels 'x' and 'y' on the graph.\",\n          \"pedagogical_focus\": \"To connect the abstract mathematical concept of a parabola to a tangible, real-world example.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"graph\", \"type\": \"axes\", \"position\": [3, 0], \"properties\": { \"x_range\": [0, 10], \"y_range\": [0, 6] } },\n              { \"id\": \"parabola\", \"type\": \"graph_function\", \"position\": [3, 0], \"properties\": { \"function\": \"4*x - 0.4*x**2\", \"color\": \"red\", \"x_range\": [0, 10] } },\n              { \"id\": \"ball_animation\", \"type\": \"placeholder\", \"position\": [-3, 0], \"properties\": { \"description\": \"Animation of a basketball following a parabolic arc.\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"graph\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"ball_animation\", \"duration\": 1.0 },\n              { \"action\": \"draw_path\", \"target\": \"parabola\", \"duration\": 3.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"A clean canvas with the general form of the quadratic equation at the center.\",\n          \"objects_and_properties\": \"The equation `ax\u00b2 + bx + c = 0` is displayed in large, clear font. Each component `ax\u00b2`, `bx`, `c` is a different color (e.g., `ax\u00b2` in yellow, `bx` in cyan, `c` in green).\",\n          \"motion_sequence\": \"The equation appears piece by piece. First `ax\u00b2`, then `+ bx` slides in from the right, then `+ c` slides in, and finally `= 0` appears.\",\n          \"labels_and_text\": \"The equation `ax\u00b2 + bx + c = 0` is the main text. A heading 'The General Form' appears above it.\",\n          \"pedagogical_focus\": \"To introduce the student to the standard form of a quadratic equation, which is the foundation for the rest of the lesson.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"equation_ax2\", \"type\": \"equation\", \"position\": [-3, 0], \"properties\": { \"latex\": \"ax^2\", \"color\": \"yellow\" } },\n              { \"id\": \"equation_bx\", \"type\": \"equation\", \"position\": [-0.5, 0], \"properties\": { \"latex\": \"+ bx\", \"color\": \"cyan\" } },\n              { \"id\": \"equation_c\", \"type\": \"equation\", \"position\": [1.5, 0], \"properties\": { \"latex\": \"+ c\", \"color\": \"green\" } },\n              { \"id\": \"equation_zero\", \"type\": \"equation\", \"position\": [3, 0], \"properties\": { \"latex\": \"= 0\", \"color\": \"white\" } },\n              { \"id\": \"heading\", \"type\": \"label\", \"position\": [0, 2], \"properties\": { \"text\": \"The General Form\", \"font_size\": 48 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"heading\", \"duration\": 0.5 },\n              { \"action\": \"appear\", \"target\": \"equation_ax2\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"equation_bx\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"equation_c\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"equation_zero\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The scene displays a stylized 'master key' and a locked box.\",\n          \"objects_and_properties\": \"A golden, ornate key. A wooden box with a prominent keyhole, labeled 'Solutions'. The quadratic formula is etched onto the key.\",\n          \"motion_sequence\": \"The locked box appears first. Then the key flies in from the side, glowing, and points towards the keyhole. The formula on the key, `x = ...`, pulses with light.\",\n          \"labels_and_text\": \"Label 'Solutions' on the box. The quadratic formula `x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}` is visible on the key.\",\n          \"pedagogical_focus\": \"To create a memorable metaphor for the quadratic formula as the 'key' to solving these equations, making it seem less intimidating and more like a useful tool.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"box\", \"type\": \"placeholder\", \"position\": [2, 0], \"properties\": { \"description\": \"A treasure chest with a keyhole, labeled 'Solutions'.\" } },\n              { \"id\": \"key\", \"type\": \"placeholder\", \"position\": [-2, 0], \"properties\": { \"description\": \"An ornate golden key.\" } },\n              { \"id\": \"formula_on_key\", \"type\": \"equation\", \"position\": [-2, 0], \"properties\": { \"latex\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}\", \"font_size\": 24, \"color\": \"black\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"box\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"key\", \"duration\": 1.5 },\n              { \"action\": \"highlight\", \"target\": \"formula_on_key\", \"duration\": 2.0 }\n            ]\n          }\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": { \"position\": \"left\", \"width_percent\": 65 },\n        \"avatar_zone\": { \"mode\": \"side\", \"position\": \"right\", \"width_percent\": 35 }\n      },\n      \"gesture_hints\": [\n        { \"time\": 1.0, \"action\": \"wave\" },\n        { \"time\": 8.0, \"action\": \"point_to_screen\" },\n        { \"time\": 16.0, \"action\": \"thinking_pose\" },\n        { \"time\": 24.0, \"action\": \"excited\" }\n      ]\n    },\n    {\n      \"section_type\": \"summary\",\n      \"id\": 2,\n      \"title\": \"What We Will Learn\",\n      \"renderer\": \"manim\",\n      \"narration\": \"In this lesson, we will cover three core topics. First, we'll dive deeper into the definition of a quadratic equation, looking at its components and what they represent. Second, we will thoroughly examine the quadratic formula, the powerful tool used to find the solutions. Finally, we'll put our knowledge into practice by walking through a step-by-step example, solving a quadratic equation from start to finish.\",\n      \"narration_segments\": [\n        { \"id\": 1, \"text\": \"In this lesson, we will cover three core topics.\", \"duration\": 3 },\n        { \"id\": 2, \"text\": \"First, we'll dive deeper into the definition of a quadratic equation, looking at its components and what they represent.\", \"duration\": 6 },\n        { \"id\": 3, \"text\": \"Second, we will thoroughly examine the quadratic formula, the powerful tool used to find the solutions.\", \"duration\": 5 },\n        { \"id\": 4, \"text\": \"Finally, we'll put our knowledge into practice by walking through a step-by-step example, solving a quadratic equation from start to finish.\", \"duration\": 6 }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A clean background with a main title 'Lesson Outline'.\",\n          \"objects_and_properties\": \"White text for the title.\",\n          \"motion_sequence\": \"The title 'Lesson Outline' fades in at the top of the screen.\",\n          \"labels_and_text\": \"Text: 'Lesson Outline'.\",\n          \"pedagogical_focus\": \"To set an agenda for the viewer.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"outline_title\", \"type\": \"label\", \"position\": \"top_center\", \"properties\": { \"text\": \"Lesson Outline\", \"font_size\": 72 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"outline_title\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"The 'Lesson Outline' title is at the top. A numbered list appears below it.\",\n          \"objects_and_properties\": \"A text item '1. Defining Quadratics' in white. The equation `ax\u00b2 + bx + c = 0` in a smaller font next to it.\",\n          \"motion_sequence\": \"The first list item, '1. Defining Quadratics', fades in, and the general form equation appears next to it.\",\n          \"labels_and_text\": \"Text: '1. Defining Quadratics'. Equation: `ax\u00b2 + bx + c = 0`.\",\n          \"pedagogical_focus\": \"To outline the first major topic of the lesson.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"outline_title\", \"type\": \"label\", \"position\": \"top_center\", \"properties\": { \"text\": \"Lesson Outline\", \"font_size\": 72 } },\n              { \"id\": \"item1_text\", \"type\": \"label\", \"position\": [-3, 1], \"properties\": { \"text\": \"1. Defining Quadratics\", \"font_size\": 48 } },\n              { \"id\": \"item1_eq\", \"type\": \"equation\", \"position\": [2, 1], \"properties\": { \"latex\": \"ax^2+bx+c=0\", \"font_size\": 36 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"item1_text\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"item1_eq\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"The screen contains the first outline point. The second point will now appear.\",\n          \"objects_and_properties\": \"A text item '2. The Quadratic Formula' in white. The quadratic formula itself appears next to it.\",\n          \"motion_sequence\": \"The second list item, '2. The Quadratic Formula', fades in below the first, and the formula appears beside it.\",\n          \"labels_and_text\": \"Text: '2. The Quadratic Formula'. Equation: `x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}`.\",\n          \"pedagogical_focus\": \"To outline the second major topic of the lesson.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"outline_title\", \"type\": \"label\", \"position\": \"top_center\", \"properties\": { \"text\": \"Lesson Outline\", \"font_size\": 72 } },\n              { \"id\": \"item1_text\", \"type\": \"label\", \"position\": [-3, 1], \"properties\": { \"text\": \"1. Defining Quadratics\", \"font_size\": 48 } },\n              { \"id\": \"item2_text\", \"type\": \"label\", \"position\": [-3, -0.5], \"properties\": { \"text\": \"2. The Quadratic Formula\", \"font_size\": 48 } },\n              { \"id\": \"item2_eq\", \"type\": \"equation\", \"position\": [3, -0.5], \"properties\": { \"latex\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}\", \"font_size\": 36 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"item2_text\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"item2_eq\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The screen contains the first two outline points. The third point will now appear.\",\n          \"objects_and_properties\": \"A text item '3. Solving an Example' in white. A sample equation `2x\u00b2 - 7x + 3 = 0` appears next to it.\",\n          \"motion_sequence\": \"The third list item, '3. Solving an Example', fades in below the second, and the sample equation appears beside it.\",\n          \"labels_and_text\": \"Text: '3. Solving an Example'. Equation: `2x\u00b2 - 7x + 3 = 0`.\",\n          \"pedagogical_focus\": \"To outline the final, practical application part of the lesson.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"outline_title\", \"type\": \"label\", \"position\": \"top_center\", \"properties\": { \"text\": \"Lesson Outline\", \"font_size\": 72 } },\n              { \"id\": \"item1_text\", \"type\": \"label\", \"position\": [-3, 1], \"properties\": { \"text\": \"1. Defining Quadratics\", \"font_size\": 48 } },\n              { \"id\": \"item2_text\", \"type\": \"label\", \"position\": [-3, -0.5], \"properties\": { \"text\": \"2. The Quadratic Formula\", \"font_size\": 48 } },\n              { \"id\": \"item3_text\", \"type\": \"label\", \"position\": [-3, -2], \"properties\": { \"text\": \"3. Solving an Example\", \"font_size\": 48 } },\n              { \"id\": \"item3_eq\", \"type\": \"equation\", \"position\": [2, -2], \"properties\": { \"latex\": \"2x^2 - 7x + 3 = 0\", \"font_size\": 36 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"item3_text\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"item3_eq\", \"duration\": 1.0 }\n            ]\n          }\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": { \"position\": \"left\", \"width_percent\": 70 },\n        \"avatar_zone\": { \"mode\": \"side\", \"position\": \"right\", \"width_percent\": 30 }\n      },\n      \"gesture_hints\": [\n        { \"time\": 4.0, \"action\": \"point_to_screen_1\" },\n        { \"time\": 10.0, \"action\": \"point_to_screen_2\" },\n        { \"time\": 15.0, \"action\": \"point_to_screen_3\" }\n      ]\n    },\n    {\n      \"section_type\": \"content\",\n      \"id\": 3,\n      \"title\": \"Introduction to Quadratics\",\n      \"renderer\": \"manim\",\n      \"narration\": \"So, what exactly is a quadratic equation? The formal definition says it's a 'polynomial equation of degree 2'. Let's break that down. A 'polynomial' is just an expression with variables and coefficients, like 5x or 2x\u00b2 - 1. The 'degree' is the highest power of the variable. For example, in the equation y = 3x + 2, the highest power of x is 1, so it's a first-degree equation, which gives us a straight line. But in a quadratic equation, the highest power is 2. This 'x-squared' term is the superstar of the show; it's what makes the equation quadratic and gives its graph that distinct U-shape, the parabola. The general form, as we've seen, is ax\u00b2 + bx + c = 0. Here, 'a', 'b', and 'c' are constants, which means they are fixed numbers for any given equation. For example, we could have 2x\u00b2 + 5x - 3 = 0. In this case, a=2, b=5, and c=-3. There's one very important rule: 'a' cannot be zero. Why? If 'a' were 0, the ax\u00b2 term would become 0 times x\u00b2, which is just 0. The term would vanish, and we'd be left with bx + c = 0, which is a linear equation, not a quadratic one. So, that 'a' value, the coefficient of x\u00b2, is essential.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"So, what exactly is a quadratic equation? The formal definition says it's a 'polynomial equation of degree 2'. Let's break that down.\",\n          \"duration\": 7\n        },\n        {\n          \"id\": 2,\n          \"text\": \"A 'polynomial' is just an expression with variables and coefficients. The 'degree' is the highest power of the variable. For a quadratic, the degree is 2.\",\n          \"duration\": 9\n        },\n        {\n          \"id\": 3,\n          \"text\": \"This 'x-squared' term is the superstar; it's what makes the equation quadratic and gives its graph that distinct U-shape, the parabola.\",\n          \"duration\": 8\n        },\n        {\n          \"id\": 4,\n          \"text\": \"The general form is ax\u00b2 + bx + c = 0. Here, 'a', 'b', and 'c' are constants, which means they are fixed numbers for any given equation, like 2x\u00b2 + 5x - 3 = 0.\",\n          \"duration\": 11\n        },\n        {\n          \"id\": 5,\n          \"text\": \"There's one very important rule: 'a' cannot be zero. Why? If 'a' were 0, the ax\u00b2 term would vanish, and we'd be left with a linear equation, not a quadratic one.\",\n          \"duration\": 11\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A blank screen with a title at the top.\",\n          \"objects_and_properties\": \"Title text 'What is a Quadratic Equation?' at the top. The definition 'Polynomial equation of degree 2' appears below.\",\n          \"motion_sequence\": \"The title fades in. Then the definition text appears below it. The words 'degree 2' are then highlighted in yellow.\",\n          \"labels_and_text\": \"Title: 'What is a Quadratic Equation?'. Text: 'Polynomial equation of degree 2'.\",\n          \"pedagogical_focus\": \"To state the formal definition clearly before breaking it down.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"title\", \"type\": \"label\", \"position\": \"top_center\", \"properties\": { \"text\": \"What is a Quadratic Equation?\", \"font_size\": 60 } },\n              { \"id\": \"definition\", \"type\": \"equation\", \"position\": [0,0], \"properties\": { \"latex\": \"\\\\text{Polynomial equation of } \\\\underbrace{\\\\text{degree 2}}_{\\\\text{Highest power is 2}}\", \"font_size\": 48 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"title\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"definition\", \"duration\": 1.5 },\n              { \"action\": \"highlight\", \"target\": \"definition\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"A comparison of two equations on screen.\",\n          \"objects_and_properties\": \"On the left, the equation `3x + 2` in blue. On the right, the equation `5x\u00b2 - 4x + 1` in yellow. The exponents '1' (implied) and '2' are prominent.\",\n          \"motion_sequence\": \"The linear equation `3x\u00b9 + 2` appears. The exponent '1' is highlighted and labeled 'Degree 1'. Then, the quadratic equation `5x\u00b2 - 4x + 1` appears. The exponent '2' is highlighted and labeled 'Degree 2'.\",\n          \"labels_and_text\": \"Left side: `3x+2`, label 'Degree 1'. Right side: `5x\u00b2 - 4x + 1`, label 'Degree 2'.\",\n          \"pedagogical_focus\": \"To visually contrast a linear (degree 1) and a quadratic (degree 2) expression to solidify the concept of 'degree'.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"linear_eq\", \"type\": \"equation\", \"position\": [-3, 0], \"properties\": { \"latex\": \"3x^1 + 2\", \"color\": \"cyan\" } },\n              { \"id\": \"linear_label\", \"type\": \"label\", \"position\": [-3, -1], \"properties\": { \"text\": \"Degree 1 (Linear)\", \"color\": \"cyan\" } },\n              { \"id\": \"quad_eq\", \"type\": \"equation\", \"position\": [3, 0], \"properties\": { \"latex\": \"5x^2 - 4x + 1\", \"color\": \"yellow\" } },\n              { \"id\": \"quad_label\", \"type\": \"label\", \"position\": [3, -1], \"properties\": { \"text\": \"Degree 2 (Quadratic)\", \"color\": \"yellow\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"linear_eq\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"linear_label\", \"duration\": 1.0 },\n              { \"action\": \"wait\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"quad_eq\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"quad_label\", \"duration\": 1.0 },\n              { \"action\": \"highlight\", \"target\": \"quad_eq\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"A 2D Cartesian coordinate system.\",\n          \"objects_and_properties\": \"A light gray grid with black axes. The term `ax\u00b2` is shown at the top. A blue parabola `y = x\u00b2` is drawn on the graph.\",\n          \"motion_sequence\": \"The `ax\u00b2` term appears and pulses. Then, the graph axes draw themselves. Finally, the blue parabola `y = x\u00b2` is drawn, starting from the vertex and extending upwards.\",\n          \"labels_and_text\": \"Term `ax\u00b2` at the top. Label 'Parabola' next to the curve. Axes labels 'x' and 'y'.\",\n          \"pedagogical_focus\": \"To connect the `x\u00b2` term directly to the parabolic shape of the graph.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"term_ax2\", \"type\": \"equation\", \"position\": \"top_center\", \"properties\": { \"latex\": \"ax^2\", \"color\": \"yellow\", \"font_size\": 72 } },\n              { \"id\": \"axes\", \"type\": \"axes\", \"position\": [0, -1], \"properties\": { \"x_range\": [-3, 3], \"y_range\": [0, 9] } },\n              { \"id\": \"parabola_graph\", \"type\": \"graph_function\", \"position\": [0, -1], \"properties\": { \"function\": \"x**2\", \"color\": \"blue\", \"x_range\": [-3, 3] } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"term_ax2\", \"duration\": 1.0 },\n              { \"action\": \"highlight\", \"target\": \"term_ax2\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"axes\", \"duration\": 1.0 },\n              { \"action\": \"draw_path\", \"target\": \"parabola_graph\", \"duration\": 2.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The general form is shown at the top, and an example equation is below it.\",\n          \"objects_and_properties\": \"Top: `ax\u00b2 + bx + c = 0`. Bottom: `2x\u00b2 + 5x - 3 = 0`. The coefficients 'a', 'b', 'c' and '2', '5', '-3' are color-coded to match.\",\n          \"motion_sequence\": \"The example equation appears. Then, arrows animate from 'a' to '2', 'b' to '5', and 'c' to '-3'. The labels 'a=2', 'b=5', 'c=-3' appear next to the arrows.\",\n          \"labels_and_text\": \"Equations as described. Labels 'a=2', 'b=5', 'c=-3'.\",\n          \"pedagogical_focus\": \"To show students how to identify the coefficients a, b, and c from a specific equation by mapping them to the general form.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"general_form\", \"type\": \"equation\", \"position\": [0, 2], \"properties\": { \"latex\": \"{\\\\color{red}a}x^2 + {\\\\color{green}b}x + {\\\\color{blue}c} = 0\", \"font_size\": 60 } },\n              { \"id\": \"example_eq\", \"type\": \"equation\", \"position\": [0, 0], \"properties\": { \"latex\": \"{\\\\color{red}2}x^2 + {\\\\color{green}5}x {\\\\color{blue}- 3} = 0\", \"font_size\": 60 } },\n              { \"id\": \"label_a\", \"type\": \"label\", \"position\": [-3, -2], \"properties\": { \"text\": \"a = 2\", \"color\": \"red\" } },\n              { \"id\": \"label_b\", \"type\": \"label\", \"position\": [0, -2], \"properties\": { \"text\": \"b = 5\", \"color\": \"green\" } },\n              { \"id\": \"label_c\", \"type\": \"label\", \"position\": [3, -2], \"properties\": { \"text\": \"c = -3\", \"color\": \"blue\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"general_form\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"example_eq\", \"duration\": 1.0 },\n              { \"action\": \"wait\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"label_a\", \"duration\": 0.5 },\n              { \"action\": \"appear\", \"target\": \"label_b\", \"duration\": 0.5 },\n              { \"action\": \"appear\", \"target\": \"label_c\", \"duration\": 0.5 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 5,\n          \"scene_setup\": \"The general form `ax\u00b2 + bx + c = 0` is on screen.\",\n          \"objects_and_properties\": \"The equation `ax\u00b2 + bx + c = 0` with 'a' highlighted in red.\",\n          \"motion_sequence\": \"The label 'a \u2260 0' appears with a red cross over the equals sign. Then, the value of 'a' in the equation animates to 0. The `0x\u00b2` term then fades out, leaving only `bx + c = 0`. A label 'Linear Equation!' appears.\",\n          \"labels_and_text\": \"Initial equation, label 'a \u2260 0'. The transformed equation `bx + c = 0` and the label 'Linear Equation!'.\",\n          \"pedagogical_focus\": \"To visually demonstrate why the condition 'a \u2260 0' is crucial for an equation to be classified as quadratic.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"full_eq\", \"type\": \"equation\", \"position\": [0, 1], \"properties\": { \"latex\": \"ax^2 + bx + c = 0\", \"font_size\": 60 } },\n              { \"id\": \"rule\", \"type\": \"label\", \"position\": [0, 2.5], \"properties\": { \"text\": \"Crucial Rule: a \u2260 0\", \"color\": \"yellow\" } },\n              { \"id\": \"transformed_eq\", \"type\": \"equation\", \"position\": [0, -1], \"properties\": { \"latex\": \"bx + c = 0\", \"font_size\": 60 } },\n              { \"id\": \"result_label\", \"type\": \"label\", \"position\": [0, -2], \"properties\": { \"text\": \"This is a Linear Equation!\", \"color\": \"cyan\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"full_eq\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"rule\", \"duration\": 1.0 },\n              { \"action\": \"transform\", \"target\": \"full_eq\", \"new_latex\": \"0x^2 + bx + c = 0\", \"duration\": 2.0 },\n              { \"action\": \"fade_out\", \"target\": \"full_eq\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"transformed_eq\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"result_label\", \"duration\": 1.0 }\n            ]\n          }\n        }\n      ]\n    },\n    {\n      \"section_type\": \"content\",\n      \"id\": 4,\n      \"title\": \"The Quadratic Formula\",\n      \"renderer\": \"manim\",\n      \"narration\": \"Now for the most powerful tool in our quadratic toolkit: the quadratic formula. For any quadratic equation in the standard form ax\u00b2 + bx + c = 0, this formula gives us the solutions, or 'roots', for 'x'. The formula is: x equals negative b, plus or minus the square root of b squared minus 4ac, all divided by 2a. It might look intimidating, but let's see it as a recipe. You just plug in your values for a, b, and c, and it gives you the answer. The 'plus or minus' symbol, \u00b1, is very important. It tells us that there are usually two solutions. One solution is found by using the plus sign, and the other is found by using the minus sign. This makes sense when you think about the parabola graph, which can cross the x-axis at two different points. The part inside the square root, b\u00b2 - 4ac, has a special name: the discriminant. This small piece of the formula is incredibly powerful on its own. It can tell us how many real solutions the equation has even before we do the full calculation. If the discriminant is positive, we get two real solutions. If it's zero, we get one real solution. And if it's negative, we get no real solutions, because you can't take the square root of a negative number in the real number system. We'll explore that more later, but for now, just remember its name and location.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"Now for the most powerful tool in our quadratic toolkit: the quadratic formula. For any quadratic equation in the standard form ax\u00b2 + bx + c = 0, this formula gives us the solutions.\",\n          \"duration\": 10\n        },\n        {\n          \"id\": 2,\n          \"text\": \"The formula is: x equals negative b, plus or minus the square root of b squared minus 4ac, all divided by 2a. It's a recipe: you just plug in your values for a, b, and c.\",\n          \"duration\": 12\n        },\n        {\n          \"id\": 3,\n          \"text\": \"The 'plus or minus' symbol, \u00b1, is very important. It tells us that there are usually two solutions, which makes sense because a parabola can cross the x-axis twice.\",\n          \"duration\": 10\n        },\n        {\n          \"id\": 4,\n          \"text\": \"The part inside the square root, b\u00b2 - 4ac, has a special name: the discriminant. It tells us how many real solutions the equation has before we even do the full calculation.\",\n          \"duration\": 12\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A blank screen with the general form of a quadratic equation at the top.\",\n          \"objects_and_properties\": \"The equation `ax\u00b2 + bx + c = 0` is at the top. An arrow points from it down to a box labeled 'Solutions?'\",\n          \"motion_sequence\": \"The equation appears. An arrow draws downwards from the equation to a question mark, which then transforms into a box labeled 'Solutions?'.\",\n          \"labels_and_text\": \"Equation: `ax\u00b2 + bx + c = 0`. Label: 'Solutions?'.\",\n          \"pedagogical_focus\": \"To pose the question that the quadratic formula is about to answer: how do we find the solutions?\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"equation\", \"type\": \"equation\", \"position\": \"top_center\", \"properties\": { \"latex\": \"ax^2 + bx + c = 0\", \"font_size\": 48 } },\n              { \"id\": \"q_box\", \"type\": \"placeholder\", \"position\": [0, -1], \"properties\": { \"description\": \"Box labeled 'Solutions?'\" } },\n              { \"id\": \"arrow\", \"type\": \"vector\", \"position\": [0, 1.5], \"properties\": { \"end\": [0, -0.5], \"color\": \"white\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"equation\", \"duration\": 1.0 },\n              { \"action\": \"draw_force\", \"target\": \"arrow\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"q_box\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"A clean canvas where the quadratic formula will be constructed.\",\n          \"objects_and_properties\": \"The formula `x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}` built from colored components. Numerator `-b` in green, `\u00b1` in yellow, `sqrt(...)` in blue, denominator `2a` in purple.\",\n          \"motion_sequence\": \"The formula is built step-by-step. First `x=` appears. Then the fraction line. Then `-b` appears on top. Then `\u00b1` next to it. Then the `sqrt(b\u00b2-4ac)` part draws itself. Finally, `2a` appears on the bottom.\",\n          \"labels_and_text\": \"The full quadratic formula, constructed piece by piece.\",\n          \"pedagogical_focus\": \"To deconstruct the formula and show it piece by piece, making it less intimidating to memorize and understand.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"formula\", \"type\": \"equation\", \"position\": [0, 0], \"properties\": { \"latex\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}\", \"font_size\": 72 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"show_equation\", \"target\": \"formula\", \"duration\": 4.0, \"by_parts\": true }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"The quadratic formula is centered. A parabola is graphed below it.\",\n          \"objects_and_properties\": \"The formula with the `\u00b1` symbol highlighted in yellow. Below, a 2D graph with a parabola that intersects the x-axis at two points, `x\u2081` and `x\u2082`.\",\n          \"motion_sequence\": \"The `\u00b1` symbol in the formula pulses. Then, the formula splits into two separate equations: one with `+` and one with `-`. Arrows point from these two formulas down to the two intersection points (`x\u2081` and `x\u2082`) on the graph.\",\n          \"labels_and_text\": \"Labels `x\u2081` and `x\u2082` on the x-axis. The two split formulas are shown clearly.\",\n          \"pedagogical_focus\": \"To visually explain the meaning of the `\u00b1` symbol by linking it to the two distinct roots (x-intercepts) of a parabola.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"formula\", \"type\": \"equation\", \"position\": [0, 2.5], \"properties\": { \"latex\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}\", \"font_size\": 48 } },\n              { \"id\": \"formula_plus\", \"type\": \"equation\", \"position\": [-3, 1], \"properties\": { \"latex\": \"x_1 = \\\\frac{-b + \\\\sqrt{...}}{2a}\", \"font_size\": 36 } },\n              { \"id\": \"formula_minus\", \"type\": \"equation\", \"position\": [3, 1], \"properties\": { \"latex\": \"x_2 = \\\\frac{-b - \\\\sqrt{...}}{2a}\", \"font_size\": 36 } },\n              { \"id\": \"axes\", \"type\": \"axes\", \"position\": [0, -1.5], \"properties\": { \"x_range\": [-5, 5], \"y_range\": [-2, 8] } },\n              { \"id\": \"parabola\", \"type\": \"graph_function\", \"position\": [0, -1.5], \"properties\": { \"function\": \"0.5*(x-3)*(x+2)\", \"color\": \"blue\", \"x_range\": [-4, 5] } },\n              { \"id\": \"root1\", \"type\": \"point\", \"position\": [-2, -1.5], \"properties\": { \"color\": \"red\", \"label\": \"x\u2081\" } },\n              { \"id\": \"root2\", \"type\": \"point\", \"position\": [3, -1.5], \"properties\": { \"color\": \"red\", \"label\": \"x\u2082\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"highlight\", \"target\": \"formula\", \"duration\": 1.0 },\n              { \"action\": \"transform\", \"target\": \"formula\", \"new_target_ids\": [\"formula_plus\", \"formula_minus\"], \"duration\": 2.0 },\n              { \"action\": \"appear\", \"target\": \"axes\", \"duration\": 1.0 },\n              { \"action\": \"draw_path\", \"target\": \"parabola\", \"duration\": 1.5 },\n              { \"action\": \"appear\", \"target\": \"root1\", \"duration\": 0.5 },\n              { \"action\": \"appear\", \"target\": \"root2\", \"duration\": 0.5 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The quadratic formula is on screen.\",\n          \"objects_and_properties\": \"The formula `x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}`.\",\n          \"motion_sequence\": \"A colored box (e.g., orange) animates, enclosing the `b\u00b2 - 4ac` part of the formula. The text 'Discriminant' appears next to the box.\",\n          \"labels_and_text\": \"The quadratic formula. A box around `b\u00b2 - 4ac`. The label 'Discriminant'.\",\n          \"pedagogical_focus\": \"To introduce and isolate the discriminant, highlighting its location within the larger formula and giving it a name.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"formula\", \"type\": \"equation\", \"position\": [0, 0], \"properties\": { \"latex\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}\", \"font_size\": 72 } },\n              { \"id\": \"discriminant_box\", \"type\": \"highlight_box\", \"target_latex\": \"b^2 - 4ac\", \"properties\": { \"color\": \"orange\" } },\n              { \"id\": \"discriminant_label\", \"type\": \"label\", \"position\": [0, -2], \"properties\": { \"text\": \"The Discriminant\", \"color\": \"orange\", \"font_size\": 48 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"show_equation\", \"target\": \"formula\", \"duration\": 1.0 },\n              { \"action\": \"highlight\", \"target\": \"discriminant_box\", \"duration\": 2.0 },\n              { \"action\": \"appear\", \"target\": \"discriminant_label\", \"duration\": 1.0 }\n            ]\n          }\n        }\n      ]\n    },\n    {\n      \"section_type\": \"example\",\n      \"id\": 5,\n      \"title\": \"Example: Solving 2x\u00b2 - 7x + 3 = 0\",\n      \"renderer\": \"manim\",\n      \"narration\": \"Let's put this into practice. We will solve the equation 2x\u00b2 - 7x + 3 = 0. The first step is always to identify our coefficients. Comparing this to ax\u00b2 + bx + c = 0, we can see that a is 2, b is -7, and c is 3. Now, we take these values and substitute them into the quadratic formula. The formula is x = [-b \u00b1 sqrt(b\u00b2 - 4ac)] / 2a. So we get x = [-(-7) \u00b1 sqrt((-7)\u00b2 - 4*2*3)] / (2*2). Let's simplify this. Negative -7 becomes positive 7. Inside the square root, -7 squared is 49, and 4 times 2 times 3 is 24. The denominator, 2 times 2, is 4. So now we have x = [7 \u00b1 sqrt(49 - 24)] / 4. The expression under the root, our discriminant, simplifies to 25. The square root of 25 is 5. This brings us to x = (7 \u00b1 5) / 4. Now we handle the plus-minus. We split this into two separate calculations. For the 'plus' case, we have x = (7 + 5) / 4, which is 12 / 4, giving us a solution of x = 3. For the 'minus' case, we have x = (7 - 5) / 4, which is 2 / 4, simplifying to x = 0.5. And there we have it! The two solutions to the equation 2x\u00b2 - 7x + 3 = 0 are x = 3 and x = 0.5.\",\n      \"narration_segments\": [\n        { \"id\": 1, \"text\": \"Let's solve the equation 2x\u00b2 - 7x + 3 = 0. First, we identify a, b, and c.\", \"duration\": 6 },\n        { \"id\": 2, \"text\": \"Now, we substitute these values into the quadratic formula.\", \"duration\": 4 },\n        { \"id\": 3, \"text\": \"Let's simplify the expression under the square root. -7 squared is 49, and 4 times 2 times 3 is 24.\", \"duration\": 8 },\n        { \"id\": 4, \"text\": \"So the discriminant, 49 minus 24, is 25. The square root of 25 is 5.\", \"duration\": 6 },\n        { \"id\": 5, \"text\": \"This brings us to the much simpler expression: x equals 7 plus or minus 5, all over 4.\", \"duration\": 5 },\n        { \"id\": 6, \"text\": \"Now we split this into two solutions. First, the 'plus' case: (7 + 5) / 4 equals 12 / 4, which is 3.\", \"duration\": 8 },\n        { \"id\": 7, \"text\": \"Second, the 'minus' case: (7 - 5) / 4 equals 2 / 4, which is 0.5.\", \"duration\": 7 },\n        { \"id\": 8, \"text\": \"So, the two solutions for our equation are x = 3 and x = 0.5.\", \"duration\": 5 }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A clean canvas with the problem statement at the top.\",\n          \"objects_and_properties\": \"The equation `2x\u00b2 - 7x + 3 = 0` is shown. Below it, text placeholders for `a`, `b`, and `c`.\",\n          \"motion_sequence\": \"The equation appears. Then, text 'a = ?', 'b = ?', 'c = ?' appears below. The numbers 2, -7, and 3 from the equation glow, and then their values fly down to fill in the question marks, resulting in 'a = 2', 'b = -7', 'c = 3'.\",\n          \"labels_and_text\": \"Equation: `2x\u00b2 - 7x + 3 = 0`. Final labels: `a = 2`, `b = -7`, `c = 3`.\",\n          \"pedagogical_focus\": \"To demonstrate the first crucial step of any problem: correctly identifying the coefficients a, b, and c.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"problem_eq\", \"type\": \"equation\", \"position\": [0, 2], \"properties\": { \"latex\": \"2x^2 - 7x + 3 = 0\", \"font_size\": 60 } },\n              { \"id\": \"a_val\", \"type\": \"label\", \"position\": [-3, 0], \"properties\": { \"text\": \"a = 2\", \"font_size\": 48, \"color\": \"red\" } },\n              { \"id\": \"b_val\", \"type\": \"label\", \"position\": [0, 0], \"properties\": { \"text\": \"b = -7\", \"font_size\": 48, \"color\": \"green\" } },\n              { \"id\": \"c_val\", \"type\": \"label\", \"position\": [3, 0], \"properties\": { \"text\": \"c = 3\", \"font_size\": 48, \"color\": \"blue\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"problem_eq\", \"duration\": 1.0 },\n              { \"action\": \"highlight\", \"target\": \"problem_eq\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"a_val\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"b_val\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"c_val\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"The identified coefficients `a=2, b=-7, c=3` are on the left. The quadratic formula template is on the right.\",\n          \"objects_and_properties\": \"Left: `a=2`, `b=-7`, `c=3`. Right: `x = \\\\frac{-() \\\\pm \\\\sqrt{()^2 - 4()()}}{2()}`.\",\n          \"motion_sequence\": \"The values 2, -7, and 3 fly from the left into the corresponding empty parentheses on the right. The formula fills up with the numbers.\",\n          \"labels_and_text\": \"Final formula shown: `x = \\\\frac{-(-7) \\\\pm \\\\sqrt{(-7)^2 - 4(2)(3)}}{2(2)}`.\",\n          \"pedagogical_focus\": \"To visually demonstrate the process of substituting the identified coefficients into the formula.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"coeffs\", \"type\": \"label\", \"position\": \"left\", \"properties\": { \"text\": \"a=2, b=-7, c=3\" } },\n              { \"id\": \"formula_template\", \"type\": \"equation\", \"position\": \"center\", \"properties\": { \"latex\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}\", \"font_size\": 48 } },\n              { \"id\": \"substituted_formula\", \"type\": \"equation\", \"position\": \"center\", \"properties\": { \"latex\": \"x = \\\\frac{-(-7) \\\\pm \\\\sqrt{(-7)^2 - 4(2)(3)}}{2(2)}\", \"font_size\": 48 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"show_equation\", \"target\": \"formula_template\", \"duration\": 1.0 },\n              { \"action\": \"substitute\", \"target\": \"formula_template\", \"new_target_id\": \"substituted_formula\", \"duration\": 2.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"The substituted formula is on screen. The focus is on the discriminant part.\",\n          \"objects_and_properties\": \"The expression `(-7)\u00b2 - 4(2)(3)` is highlighted.\",\n          \"motion_sequence\": \"`(-7)\u00b2` transforms into `49`. `4(2)(3)` transforms into `24`. The expression becomes `49 - 24`.\",\n          \"labels_and_text\": \"The intermediate steps of the calculation are shown clearly.\",\n          \"pedagogical_focus\": \"To break down the calculation of the discriminant into manageable parts, reducing cognitive load.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"full_formula\", \"type\": \"equation\", \"position\": \"top_center\", \"properties\": { \"latex\": \"x = \\\\frac{-(-7) \\\\pm \\\\sqrt{(-7)^2 - 4(2)(3)}}{2(2)}\", \"font_size\": 48 } },\n              { \"id\": \"simplified_formula\", \"type\": \"equation\", \"position\": \"top_center\", \"properties\": { \"latex\": \"x = \\\\frac{7 \\\\pm \\\\sqrt{49 - 24}}{4}\", \"font_size\": 48 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"highlight\", \"target\": \"full_formula\", \"target_latex\": \"(-7)^2 - 4(2)(3)\", \"duration\": 2.0 },\n              { \"action\": \"transform\", \"target\": \"full_formula\", \"new_target_id\": \"simplified_formula\", \"duration\": 3.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The formula `x = \\\\frac{7 \\\\pm \\\\sqrt{49 - 24}}{4}` is on screen.\",\n          \"objects_and_properties\": \"The expression `49 - 24` is highlighted.\",\n          \"motion_sequence\": \"`49 - 24` transforms into `25`. Then, the `sqrt(25)` term glows and transforms into `5`.\",\n          \"labels_and_text\": \"The formula updates to `x = \\\\frac{7 \\\\pm \\\\sqrt{25}}{4}` and then to `x = \\\\frac{7 \\\\pm 5}{4}`.\",\n          \"pedagogical_focus\": \"To show the final steps of simplifying the radical part of the formula.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"formula_v1\", \"type\": \"equation\", \"position\": \"center\", \"properties\": { \"latex\": \"x = \\\\frac{7 \\\\pm \\\\sqrt{49 - 24}}{4}\", \"font_size\": 60 } },\n              { \"id\": \"formula_v2\", \"type\": \"equation\", \"position\": \"center\", \"properties\": { \"latex\": \"x = \\\\frac{7 \\\\pm \\\\sqrt{25}}{4}\", \"font_size\": 60 } },\n              { \"id\": \"formula_v3\", \"type\": \"equation\", \"position\": \"center\", \"properties\": { \"latex\": \"x = \\\\frac{7 \\\\pm 5}{4}\", \"font_size\": 60 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"transform\", \"target\": \"formula_v1\", \"new_target_id\": \"formula_v2\", \"duration\": 2.0 },\n              { \"action\": \"wait\", \"duration\": 1.0 },\n              { \"action\": \"transform\", \"target\": \"formula_v2\", \"new_target_id\": \"formula_v3\", \"duration\": 2.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 5,\n          \"scene_setup\": \"The simplified formula `x = \\\\frac{7 \\\\pm 5}{4}` is in the center.\",\n          \"objects_and_properties\": \"The main formula is present.\",\n          \"motion_sequence\": \"The formula splits into two paths, creating two new equations on screen: one for the plus case and one for the minus case.\",\n          \"labels_and_text\": \"Top path: `x\u2081 = \\\\frac{7 + 5}{4}`. Bottom path: `x\u2082 = \\\\frac{7 - 5}{4}`.\",\n          \"pedagogical_focus\": \"To visually represent the branching of the `\u00b1` symbol into two distinct solution paths.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"main_formula\", \"type\": \"equation\", \"position\": [0, 0], \"properties\": { \"latex\": \"x = \\\\frac{7 \\\\pm 5}{4}\", \"font_size\": 60 } },\n              { \"id\": \"plus_formula\", \"type\": \"equation\", \"position\": [0, 2], \"properties\": { \"latex\": \"x_1 = \\\\frac{7 + 5}{4}\", \"font_size\": 48 } },\n              { \"id\": \"minus_formula\", \"type\": \"equation\", \"position\": [0, -2], \"properties\": { \"latex\": \"x_2 = \\\\frac{7 - 5}{4}\", \"font_size\": 48 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"transform\", \"target\": \"main_formula\", \"new_target_ids\": [\"plus_formula\", \"minus_formula\"], \"duration\": 2.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 6,\n          \"scene_setup\": \"The two branched equations are on screen. The top one is highlighted.\",\n          \"objects_and_properties\": \"The equation `x\u2081 = \\\\frac{7 + 5}{4}` is highlighted.\",\n          \"motion_sequence\": \"The numerator `7 + 5` transforms into `12`. The equation becomes `x\u2081 = \\\\frac{12}{4}`. Then, the whole fraction transforms into the final answer, `x\u2081 = 3`.\",\n          \"labels_and_text\": \"Steps shown: `x\u2081 = \\\\frac{7 + 5}{4}` \u2192 `x\u2081 = \\\\frac{12}{4}` \u2192 `x\u2081 = 3`.\",\n          \"pedagogical_focus\": \"To clearly and methodically calculate the first root.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"plus_formula\", \"type\": \"equation\", \"position\": [0, 2], \"properties\": { \"latex\": \"x_1 = \\\\frac{7 + 5}{4}\", \"font_size\": 48 } },\n              { \"id\": \"plus_simplified\", \"type\": \"equation\", \"position\": [0, 2], \"properties\": { \"latex\": \"x_1 = \\\\frac{12}{4}\", \"font_size\": 48 } },\n              { \"id\": \"plus_final\", \"type\": \"equation\", \"position\": [0, 2], \"properties\": { \"latex\": \"x_1 = 3\", \"font_size\": 48, \"color\": \"yellow\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"highlight\", \"target\": \"plus_formula\", \"duration\": 1.0 },\n              { \"action\": \"transform\", \"target\": \"plus_formula\", \"new_target_id\": \"plus_simplified\", \"duration\": 2.0 },\n              { \"action\": \"transform\", \"target\": \"plus_simplified\", \"new_target_id\": \"plus_final\", \"duration\": 2.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 7,\n          \"scene_setup\": \"The two branched equations are on screen. The bottom one is highlighted.\",\n          \"objects_and_properties\": \"The equation `x\u2082 = \\\\frac{7 - 5}{4}` is highlighted.\",\n          \"motion_sequence\": \"The numerator `7 - 5` transforms into `2`. The equation becomes `x\u2082 = \\\\frac{2}{4}`. Then, the whole fraction transforms into the final answer, `x\u2082 = 0.5`.\",\n          \"labels_and_text\": \"Steps shown: `x\u2082 = \\\\frac{7 - 5}{4}` \u2192 `x\u2082 = \\\\frac{2}{4}` \u2192 `x\u2082 = 0.5`.\",\n          \"pedagogical_focus\": \"To clearly and methodically calculate the second root.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"minus_formula\", \"type\": \"equation\", \"position\": [0, -2], \"properties\": { \"latex\": \"x_2 = \\\\frac{7 - 5}{4}\", \"font_size\": 48 } },\n              { \"id\": \"minus_simplified\", \"type\": \"equation\", \"position\": [0, -2], \"properties\": { \"latex\": \"x_2 = \\\\frac{2}{4}\", \"font_size\": 48 } },\n              { \"id\": \"minus_final\", \"type\": \"equation\", \"position\": [0, -2], \"properties\": { \"latex\": \"x_2 = 0.5\", \"font_size\": 48, \"color\": \"yellow\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"highlight\", \"target\": \"minus_formula\", \"duration\": 1.0 },\n              { \"action\": \"transform\", \"target\": \"minus_formula\", \"new_target_id\": \"minus_simplified\", \"duration\": 2.0 },\n              { \"action\": \"transform\", \"target\": \"minus_simplified\", \"new_target_id\": \"minus_final\", \"duration\": 2.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 8,\n          \"scene_setup\": \"A clean screen showing the original problem and the final solutions.\",\n          \"objects_and_properties\": \"The original equation `2x\u00b2 - 7x + 3 = 0` is at the top. The two solutions `x = 3` and `x = 0.5` are shown below, each inside a colored box.\",\n          \"motion_sequence\": \"The original equation appears. Then, two boxes animate onto the screen below, and the final answers `x = 3` and `x = 0.5` appear inside them.\",\n          \"labels_and_text\": \"Top: `2x\u00b2 - 7x + 3 = 0`. Bottom: `x = 3` and `x = 0.5`.\",\n          \"pedagogical_focus\": \"To provide a clear and conclusive summary of the problem and its solutions.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"problem_eq\", \"type\": \"equation\", \"position\": [0, 2], \"properties\": { \"latex\": \"2x^2 - 7x + 3 = 0\", \"font_size\": 48 } },\n              { \"id\": \"solution1_box\", \"type\": \"highlight_box\", \"position\": [-2, 0], \"properties\": { \"color\": \"green\" } },\n              { \"id\": \"solution1_text\", \"type\": \"equation\", \"position\": [-2, 0], \"properties\": { \"latex\": \"x = 3\", \"font_size\": 48 } },\n              { \"id\": \"solution2_box\", \"type\": \"highlight_box\", \"position\": [2, 0], \"properties\": { \"color\": \"green\" } },\n              { \"id\": \"solution2_text\", \"type\": \"equation\", \"position\": [2, 0], \"properties\": { \"latex\": \"x = 0.5\", \"font_size\": 48 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"problem_eq\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"solution1_box\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"solution1_text\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"solution2_box\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"solution2_text\", \"duration\": 1.0 }\n            ]\n          }\n        }\n      ]\n    },\n    {\n      \"section_type\": \"memory\",\n      \"id\": 6,\n      \"title\": \"Key Formulas\",\n      \"renderer\": \"manim\",\n      \"narration\": \"Let's test our memory. What is the general form of a quadratic equation? It's ax\u00b2 + bx + c = 0, where a is not zero. Next, what is the quadratic formula? It's x equals negative b, plus or minus the square root of b squared minus 4ac, all divided by 2a. Finally, what is the special name for the term b\u00b2 - 4ac? That's the discriminant.\",\n      \"narration_segments\": [\n        { \"id\": 1, \"text\": \"What is the general form of a quadratic equation?\", \"duration\": 3 },\n        { \"id\": 2, \"text\": \"It's ax\u00b2 + bx + c = 0, where a is not zero.\", \"duration\": 4 },\n        { \"id\": 3, \"text\": \"Next, what is the quadratic formula?\", \"duration\": 2 },\n        { \"id\": 4, \"text\": \"It's x equals negative b, plus or minus the square root of b squared minus 4ac, all divided by 2a.\", \"duration\": 7 },\n        { \"id\": 5, \"text\": \"Finally, what is the special name for the term b\u00b2 - 4ac?\", \"duration\": 4 },\n        { \"id\": 6, \"text\": \"That's the discriminant.\", \"duration\": 2 }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A flashcard appears on screen with a question.\",\n          \"objects_and_properties\": \"A blue card with white text for the question.\",\n          \"motion_sequence\": \"The card flies in and centers itself.\",\n          \"labels_and_text\": \"Question: 'What is the general form of a quadratic equation?'\",\n          \"pedagogical_focus\": \"To prompt the student to recall a key definition.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"card_q1\", \"type\": \"placeholder\", \"position\": [0,0], \"properties\": { \"description\": \"A flashcard showing the question.\" } }\n            ], \"animation_sequence\": [{ \"action\": \"appear\", \"target\": \"card_q1\", \"duration\": 1.0 }]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"The flashcard is on screen.\",\n          \"objects_and_properties\": \"The blue card with the question.\",\n          \"motion_sequence\": \"The card flips over to reveal a green back with the answer written on it.\",\n          \"labels_and_text\": \"Answer: 'ax\u00b2 + bx + c = 0, where a \u2260 0'\",\n          \"pedagogical_focus\": \"To provide the correct answer for reinforcement.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"card_a1\", \"type\": \"placeholder\", \"position\": [0,0], \"properties\": { \"description\": \"The flashcard flips to show the answer.\" } }\n            ], \"animation_sequence\": [{ \"action\": \"transform\", \"target\": \"card_q1\", \"new_target_id\": \"card_a1\", \"duration\": 1.0 }]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"A new flashcard appears on screen.\",\n          \"objects_and_properties\": \"A blue card with white text for the question.\",\n          \"motion_sequence\": \"The previous card flies off and the new one flies in.\",\n          \"labels_and_text\": \"Question: 'What is the quadratic formula?'\",\n          \"pedagogical_focus\": \"To prompt the student to recall the main formula.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"card_q2\", \"type\": \"placeholder\", \"position\": [0,0], \"properties\": { \"description\": \"A flashcard showing the question.\" } }\n            ], \"animation_sequence\": [{ \"action\": \"appear\", \"target\": \"card_q2\", \"duration\": 1.0 }]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The flashcard is on screen.\",\n          \"objects_and_properties\": \"The blue card with the question.\",\n          \"motion_sequence\": \"The card flips over to reveal a green back with the answer written on it.\",\n          \"labels_and_text\": \"Answer: 'x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}'\",\n          \"pedagogical_focus\": \"To provide the correct answer for reinforcement.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"card_a2\", \"type\": \"placeholder\", \"position\": [0,0], \"properties\": { \"description\": \"The flashcard flips to show the answer.\" } }\n            ], \"animation_sequence\": [{ \"action\": \"transform\", \"target\": \"card_q2\", \"new_target_id\": \"card_a2\", \"duration\": 1.0 }]\n          }\n        },\n        {\n          \"segment_id\": 5,\n          \"scene_setup\": \"A new flashcard appears on screen.\",\n          \"objects_and_properties\": \"A blue card with white text for the question.\",\n          \"motion_sequence\": \"The previous card flies off and the new one flies in.\",\n          \"labels_and_text\": \"Question: 'What is the special name for the term b\u00b2 - 4ac?'\",\n          \"pedagogical_focus\": \"To prompt the student to recall a key piece of terminology.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"card_q3\", \"type\": \"placeholder\", \"position\": [0,0], \"properties\": { \"description\": \"A flashcard showing the question.\" } }\n            ], \"animation_sequence\": [{ \"action\": \"appear\", \"target\": \"card_q3\", \"duration\": 1.0 }]\n          }\n        },\n        {\n          \"segment_id\": 6,\n          \"scene_setup\": \"The flashcard is on screen.\",\n          \"objects_and_properties\": \"The blue card with the question.\",\n          \"motion_sequence\": \"The card flips over to reveal a green back with the answer written on it.\",\n          \"labels_and_text\": \"Answer: 'The Discriminant'\",\n          \"pedagogical_focus\": \"To provide the correct answer for reinforcement.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"card_a3\", \"type\": \"placeholder\", \"position\": [0,0], \"properties\": { \"description\": \"The flashcard flips to show the answer.\" } }\n            ], \"animation_sequence\": [{ \"action\": \"transform\", \"target\": \"card_q3\", \"new_target_id\": \"card_a3\", \"duration\": 1.0 }]\n          }\n        }\n      ],\n      \"flashcards\": [\n        { \"question\": \"What is the general form of a quadratic equation?\", \"answer\": \"ax\u00b2 + bx + c = 0, where a \u2260 0\" },\n        { \"question\": \"What is the quadratic formula?\", \"answer\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}\" },\n        { \"question\": \"What is the name for the term b\u00b2 - 4ac?\", \"answer\": \"The discriminant\" }\n      ]\n    },\n    {\n      \"section_type\": \"recap\",\n      \"id\": 7,\n      \"title\": \"Lesson Recap\",\n      \"renderer\": \"manim\",\n      \"narration\": \"Great work today! Let's quickly recap what we've learned. We started by defining a quadratic equation as a polynomial of degree 2, with the general form ax\u00b2 + bx + c = 0. Then, we introduced the all-powerful quadratic formula, our key for finding the solutions to any quadratic equation. Finally, we applied this knowledge by working through a complete example, from identifying the coefficients to calculating the two final solutions. You now have the fundamental tools to tackle quadratic equations!\",\n      \"narration_segments\": [\n        { \"id\": 1, \"text\": \"We started by defining a quadratic equation as a polynomial of degree 2, with the general form ax\u00b2 + bx + c = 0.\", \"duration\": 7 },\n        { \"id\": 2, \"text\": \"Then, we introduced the all-powerful quadratic formula, our key for finding the solutions.\", \"duration\": 5 },\n        { \"id\": 3, \"text\": \"Finally, we applied this knowledge by working through a complete example, from identifying coefficients to calculating the two final solutions.\", \"duration\": 8 }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A quick visual summary of the first concept.\",\n          \"objects_and_properties\": \"The equation `ax\u00b2 + bx + c = 0` is on screen, with the `x\u00b2` term highlighted.\",\n          \"motion_sequence\": \"The equation appears, and a box highlights the `x\u00b2` term, with a label 'Degree 2' popping up.\",\n          \"labels_and_text\": \"Equation `ax\u00b2 + bx + c = 0`. Label 'Degree 2'.\",\n          \"pedagogical_focus\": \"To quickly remind students of the core definition of a quadratic equation.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"recap_eq1\", \"type\": \"equation\", \"position\": [0,0], \"properties\": { \"latex\": \"ax^2+bx+c=0\", \"font_size\": 60 } },\n              { \"id\": \"recap_highlight1\", \"type\": \"highlight_box\", \"target_latex\": \"x^2\", \"properties\": { \"color\": \"yellow\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"recap_eq1\", \"duration\": 1.0 },\n              { \"action\": \"highlight\", \"target\": \"recap_highlight1\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"A quick visual summary of the second concept.\",\n          \"objects_and_properties\": \"The quadratic formula `x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}` is shown.\",\n          \"motion_sequence\": \"The formula appears on screen with a glowing effect.\",\n          \"labels_and_text\": \"The quadratic formula.\",\n          \"pedagogical_focus\": \"To remind students of the key tool from the lesson.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"recap_eq2\", \"type\": \"equation\", \"position\": [0,0], \"properties\": { \"latex\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}\", \"font_size\": 60 } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"recap_eq2\", \"duration\": 1.0 },\n              { \"action\": \"highlight\", \"target\": \"recap_eq2\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"A fast-motion replay of the example problem.\",\n          \"objects_and_properties\": \"The example `2x\u00b2 - 7x + 3 = 0` and its solution steps.\",\n          \"motion_sequence\": \"A sped-up animation shows the substitution, simplification, and branching into the two solutions, `x = 3` and `x = 0.5`.\",\n          \"labels_and_text\": \"Key steps of the example are flashed on screen.\",\n          \"pedagogical_focus\": \"To reinforce the problem-solving process shown in the example.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"recap_example\", \"type\": \"placeholder\", \"position\": [0,0], \"properties\": { \"description\": \"Fast-motion animation of the example problem being solved.\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"recap_example\", \"duration\": 3.0 }\n            ]\n          }\n        }\n      ],\n      \"recap_scenes\": [\n        { \"scene\": 1, \"description\": \"The general form ax\u00b2 + bx + c = 0 with the x\u00b2 term highlighted.\", \"concept_title\": \"Defining Quadratics\" },\n        { \"scene\": 2, \"description\": \"The quadratic formula shown in full.\", \"concept_title\": \"The Quadratic Formula\" },\n        { \"scene\": 3, \"description\": \"A quick animation of the example 2x\u00b2 - 7x + 3 = 0 being solved.\", \"concept_title\": \"Solving an Example\" }\n      ]\n    }\n  ]\n}\n```",
+  "sections_generated": 7,
+  "truncation": {
+    "detected": false,
+    "details": null
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "passed": true
+  },
+  "section_decisions": [
+    {
+      "section_id": 1,
+      "title": "Introduction to Quadratic Equations",
+      "section_type": "intro",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 140,
+        "meets_requirement": true,
+        "min_required": 0
+      },
+      "visual_beats_count": 4,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: intro"
+    },
+    {
+      "section_id": 2,
+      "title": "What We Will Learn",
+      "section_type": "summary",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 65,
+        "meets_requirement": true,
+        "min_required": 0
+      },
+      "visual_beats_count": 4,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: summary"
+    },
+    {
+      "section_id": 3,
+      "title": "Introduction to Quadratics",
+      "section_type": "content",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 218,
+        "meets_requirement": true,
+        "min_required": 150
+      },
+      "visual_beats_count": 5,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: content"
+    },
+    {
+      "section_id": 4,
+      "title": "The Quadratic Formula",
+      "section_type": "content",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 246,
+        "meets_requirement": true,
+        "min_required": 150
+      },
+      "visual_beats_count": 4,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: content"
+    },
+    {
+      "section_id": 5,
+      "title": "Example: Solving 2x\u00b2 - 7x + 3 = 0",
+      "section_type": "example",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 245,
+        "meets_requirement": true,
+        "min_required": 150
+      },
+      "visual_beats_count": 8,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: example"
+    },
+    {
+      "section_id": 6,
+      "title": "Key Formulas",
+      "section_type": "memory",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 67,
+        "meets_requirement": true,
+        "min_required": 0
+      },
+      "visual_beats_count": 6,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: memory"
+    },
+    {
+      "section_id": 7,
+      "title": "Lesson Recap",
+      "section_type": "recap",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 81,
+        "meets_requirement": true,
+        "min_required": 0
+      },
+      "visual_beats_count": 3,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: recap"
+    }
+  ],
+  "visual_beats_audit": [
+    {
+      "section_id": 1,
+      "section_type": "intro",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A clean, dark blue background. The title of the chapter will appear in the center.",
+          "objects_and_properties": "Large white text for the main title, smaller yellow text for the subtitle.",
+          "motion_sequence": "The main title 'Quadratic Equations' fades in, followed by the subtitle 'The Ultimate Guide' appearing below it with a gentle zoom.",
+          "labels_and_text": "Text 'Quadratic Equations' at the center. Text 'The Ultimate Guide' directly below the main title.",
+          "pedagogical_focus": "To introduce the topic in a clear and engaging manner, setting the stage for the lesson.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "main_title",
+                "type": "label",
+                "position": [
+                  0,
+                  0.5
+                ],
+                "properties": {
+                  "text": "Quadratic Equations",
+                  "font_size": 96,
+                  "color": "white"
+                }
+              },
+              {
+                "id": "subtitle",
+                "type": "label",
+                "position": [
+                  0,
+                  -0.5
+                ],
+                "properties": {
+                  "text": "The Ultimate Guide",
+                  "font_size": 48,
+                  "color": "yellow"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "main_title",
+                "duration": 1.5
+              },
+              {
+                "action": "appear",
+                "target": "subtitle",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "A split screen. Left side shows a simple animation of a basketball being thrown towards a hoop. Right side shows a 2D Cartesian plane.",
+          "objects_and_properties": "On the left: an orange basketball, a white backboard with a red hoop. On the right: A light gray grid with black x and y axes. A red dashed curve representing a parabola.",
+          "motion_sequence": "The basketball is thrown and follows a parabolic path into the hoop. As it travels, the red dashed parabola is drawn simultaneously on the graph on the right, mirroring the ball's trajectory.",
+          "labels_and_text": "Label 'Real World' above the basketball scene. Label 'Mathematical Model' above the graph. Axes labels 'x' and 'y' on the graph.",
+          "pedagogical_focus": "To connect the abstract mathematical concept of a parabola to a tangible, real-world example.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "graph",
+                "type": "axes",
+                "position": [
+                  3,
+                  0
+                ],
+                "properties": {
+                  "x_range": [
+                    0,
+                    10
+                  ],
+                  "y_range": [
+                    0,
+                    6
+                  ]
+                }
+              },
+              {
+                "id": "parabola",
+                "type": "graph_function",
+                "position": [
+                  3,
+                  0
+                ],
+                "properties": {
+                  "function": "4*x - 0.4*x**2",
+                  "color": "red",
+                  "x_range": [
+                    0,
+                    10
+                  ]
+                }
+              },
+              {
+                "id": "ball_animation",
+                "type": "placeholder",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {
+                  "description": "Animation of a basketball following a parabolic arc."
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "graph",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "ball_animation",
+                "duration": 1.0
+              },
+              {
+                "action": "draw_path",
+                "target": "parabola",
+                "duration": 3.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "A clean canvas with the general form of the quadratic equation at the center.",
+          "objects_and_properties": "The equation `ax\u00b2 + bx + c = 0` is displayed in large, clear font. Each component `ax\u00b2`, `bx`, `c` is a different color (e.g., `ax\u00b2` in yellow, `bx` in cyan, `c` in green).",
+          "motion_sequence": "The equation appears piece by piece. First `ax\u00b2`, then `+ bx` slides in from the right, then `+ c` slides in, and finally `= 0` appears.",
+          "labels_and_text": "The equation `ax\u00b2 + bx + c = 0` is the main text. A heading 'The General Form' appears above it.",
+          "pedagogical_focus": "To introduce the student to the standard form of a quadratic equation, which is the foundation for the rest of the lesson.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "equation_ax2",
+                "type": "equation",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {
+                  "latex": "ax^2",
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "equation_bx",
+                "type": "equation",
+                "position": [
+                  -0.5,
+                  0
+                ],
+                "properties": {
+                  "latex": "+ bx",
+                  "color": "cyan"
+                }
+              },
+              {
+                "id": "equation_c",
+                "type": "equation",
+                "position": [
+                  1.5,
+                  0
+                ],
+                "properties": {
+                  "latex": "+ c",
+                  "color": "green"
+                }
+              },
+              {
+                "id": "equation_zero",
+                "type": "equation",
+                "position": [
+                  3,
+                  0
+                ],
+                "properties": {
+                  "latex": "= 0",
+                  "color": "white"
+                }
+              },
+              {
+                "id": "heading",
+                "type": "label",
+                "position": [
+                  0,
+                  2
+                ],
+                "properties": {
+                  "text": "The General Form",
+                  "font_size": 48
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "heading",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "equation_ax2",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "equation_bx",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "equation_c",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "equation_zero",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The scene displays a stylized 'master key' and a locked box.",
+          "objects_and_properties": "A golden, ornate key. A wooden box with a prominent keyhole, labeled 'Solutions'. The quadratic formula is etched onto the key.",
+          "motion_sequence": "The locked box appears first. Then the key flies in from the side, glowing, and points towards the keyhole. The formula on the key, `x = ...`, pulses with light.",
+          "labels_and_text": "Label 'Solutions' on the box. The quadratic formula `x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}` is visible on the key.",
+          "pedagogical_focus": "To create a memorable metaphor for the quadratic formula as the 'key' to solving these equations, making it seem less intimidating and more like a useful tool.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "box",
+                "type": "placeholder",
+                "position": [
+                  2,
+                  0
+                ],
+                "properties": {
+                  "description": "A treasure chest with a keyhole, labeled 'Solutions'."
+                }
+              },
+              {
+                "id": "key",
+                "type": "placeholder",
+                "position": [
+                  -2,
+                  0
+                ],
+                "properties": {
+                  "description": "An ornate golden key."
+                }
+              },
+              {
+                "id": "formula_on_key",
+                "type": "equation",
+                "position": [
+                  -2,
+                  0
+                ],
+                "properties": {
+                  "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
+                  "font_size": 24,
+                  "color": "black"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "box",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "key",
+                "duration": 1.5
+              },
+              {
+                "action": "highlight",
+                "target": "formula_on_key",
+                "duration": 2.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 2,
+      "section_type": "summary",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A clean background with a main title 'Lesson Outline'.",
+          "objects_and_properties": "White text for the title.",
+          "motion_sequence": "The title 'Lesson Outline' fades in at the top of the screen.",
+          "labels_and_text": "Text: 'Lesson Outline'.",
+          "pedagogical_focus": "To set an agenda for the viewer.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "outline_title",
+                "type": "label",
+                "position": "top_center",
+                "properties": {
+                  "text": "Lesson Outline",
+                  "font_size": 72
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "outline_title",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The 'Lesson Outline' title is at the top. A numbered list appears below it.",
+          "objects_and_properties": "A text item '1. Defining Quadratics' in white. The equation `ax\u00b2 + bx + c = 0` in a smaller font next to it.",
+          "motion_sequence": "The first list item, '1. Defining Quadratics', fades in, and the general form equation appears next to it.",
+          "labels_and_text": "Text: '1. Defining Quadratics'. Equation: `ax\u00b2 + bx + c = 0`.",
+          "pedagogical_focus": "To outline the first major topic of the lesson.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "outline_title",
+                "type": "label",
+                "position": "top_center",
+                "properties": {
+                  "text": "Lesson Outline",
+                  "font_size": 72
+                }
+              },
+              {
+                "id": "item1_text",
+                "type": "label",
+                "position": [
+                  -3,
+                  1
+                ],
+                "properties": {
+                  "text": "1. Defining Quadratics",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "item1_eq",
+                "type": "equation",
+                "position": [
+                  2,
+                  1
+                ],
+                "properties": {
+                  "latex": "ax^2+bx+c=0",
+                  "font_size": 36
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "item1_text",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "item1_eq",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The screen contains the first outline point. The second point will now appear.",
+          "objects_and_properties": "A text item '2. The Quadratic Formula' in white. The quadratic formula itself appears next to it.",
+          "motion_sequence": "The second list item, '2. The Quadratic Formula', fades in below the first, and the formula appears beside it.",
+          "labels_and_text": "Text: '2. The Quadratic Formula'. Equation: `x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}`.",
+          "pedagogical_focus": "To outline the second major topic of the lesson.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "outline_title",
+                "type": "label",
+                "position": "top_center",
+                "properties": {
+                  "text": "Lesson Outline",
+                  "font_size": 72
+                }
+              },
+              {
+                "id": "item1_text",
+                "type": "label",
+                "position": [
+                  -3,
+                  1
+                ],
+                "properties": {
+                  "text": "1. Defining Quadratics",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "item2_text",
+                "type": "label",
+                "position": [
+                  -3,
+                  -0.5
+                ],
+                "properties": {
+                  "text": "2. The Quadratic Formula",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "item2_eq",
+                "type": "equation",
+                "position": [
+                  3,
+                  -0.5
+                ],
+                "properties": {
+                  "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
+                  "font_size": 36
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "item2_text",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "item2_eq",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The screen contains the first two outline points. The third point will now appear.",
+          "objects_and_properties": "A text item '3. Solving an Example' in white. A sample equation `2x\u00b2 - 7x + 3 = 0` appears next to it.",
+          "motion_sequence": "The third list item, '3. Solving an Example', fades in below the second, and the sample equation appears beside it.",
+          "labels_and_text": "Text: '3. Solving an Example'. Equation: `2x\u00b2 - 7x + 3 = 0`.",
+          "pedagogical_focus": "To outline the final, practical application part of the lesson.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "outline_title",
+                "type": "label",
+                "position": "top_center",
+                "properties": {
+                  "text": "Lesson Outline",
+                  "font_size": 72
+                }
+              },
+              {
+                "id": "item1_text",
+                "type": "label",
+                "position": [
+                  -3,
+                  1
+                ],
+                "properties": {
+                  "text": "1. Defining Quadratics",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "item2_text",
+                "type": "label",
+                "position": [
+                  -3,
+                  -0.5
+                ],
+                "properties": {
+                  "text": "2. The Quadratic Formula",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "item3_text",
+                "type": "label",
+                "position": [
+                  -3,
+                  -2
+                ],
+                "properties": {
+                  "text": "3. Solving an Example",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "item3_eq",
+                "type": "equation",
+                "position": [
+                  2,
+                  -2
+                ],
+                "properties": {
+                  "latex": "2x^2 - 7x + 3 = 0",
+                  "font_size": 36
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "item3_text",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "item3_eq",
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 3,
+      "section_type": "content",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A blank screen with a title at the top.",
+          "objects_and_properties": "Title text 'What is a Quadratic Equation?' at the top. The definition 'Polynomial equation of degree 2' appears below.",
+          "motion_sequence": "The title fades in. Then the definition text appears below it. The words 'degree 2' are then highlighted in yellow.",
+          "labels_and_text": "Title: 'What is a Quadratic Equation?'. Text: 'Polynomial equation of degree 2'.",
+          "pedagogical_focus": "To state the formal definition clearly before breaking it down.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title",
+                "type": "label",
+                "position": "top_center",
+                "properties": {
+                  "text": "What is a Quadratic Equation?",
+                  "font_size": 60
+                }
+              },
+              {
+                "id": "definition",
+                "type": "equation",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "latex": "\\text{Polynomial equation of } \\underbrace{\\text{degree 2}}_{\\text{Highest power is 2}}",
+                  "font_size": 48
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "title",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "definition",
+                "duration": 1.5
+              },
+              {
+                "action": "highlight",
+                "target": "definition",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "A comparison of two equations on screen.",
+          "objects_and_properties": "On the left, the equation `3x + 2` in blue. On the right, the equation `5x\u00b2 - 4x + 1` in yellow. The exponents '1' (implied) and '2' are prominent.",
+          "motion_sequence": "The linear equation `3x\u00b9 + 2` appears. The exponent '1' is highlighted and labeled 'Degree 1'. Then, the quadratic equation `5x\u00b2 - 4x + 1` appears. The exponent '2' is highlighted and labeled 'Degree 2'.",
+          "labels_and_text": "Left side: `3x+2`, label 'Degree 1'. Right side: `5x\u00b2 - 4x + 1`, label 'Degree 2'.",
+          "pedagogical_focus": "To visually contrast a linear (degree 1) and a quadratic (degree 2) expression to solidify the concept of 'degree'.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "linear_eq",
+                "type": "equation",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {
+                  "latex": "3x^1 + 2",
+                  "color": "cyan"
+                }
+              },
+              {
+                "id": "linear_label",
+                "type": "label",
+                "position": [
+                  -3,
+                  -1
+                ],
+                "properties": {
+                  "text": "Degree 1 (Linear)",
+                  "color": "cyan"
+                }
+              },
+              {
+                "id": "quad_eq",
+                "type": "equation",
+                "position": [
+                  3,
+                  0
+                ],
+                "properties": {
+                  "latex": "5x^2 - 4x + 1",
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "quad_label",
+                "type": "label",
+                "position": [
+                  3,
+                  -1
+                ],
+                "properties": {
+                  "text": "Degree 2 (Quadratic)",
+                  "color": "yellow"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "linear_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "linear_label",
+                "duration": 1.0
+              },
+              {
+                "action": "wait",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "quad_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "quad_label",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target": "quad_eq",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "A 2D Cartesian coordinate system.",
+          "objects_and_properties": "A light gray grid with black axes. The term `ax\u00b2` is shown at the top. A blue parabola `y = x\u00b2` is drawn on the graph.",
+          "motion_sequence": "The `ax\u00b2` term appears and pulses. Then, the graph axes draw themselves. Finally, the blue parabola `y = x\u00b2` is drawn, starting from the vertex and extending upwards.",
+          "labels_and_text": "Term `ax\u00b2` at the top. Label 'Parabola' next to the curve. Axes labels 'x' and 'y'.",
+          "pedagogical_focus": "To connect the `x\u00b2` term directly to the parabolic shape of the graph.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "term_ax2",
+                "type": "equation",
+                "position": "top_center",
+                "properties": {
+                  "latex": "ax^2",
+                  "color": "yellow",
+                  "font_size": 72
+                }
+              },
+              {
+                "id": "axes",
+                "type": "axes",
+                "position": [
+                  0,
+                  -1
+                ],
+                "properties": {
+                  "x_range": [
+                    -3,
+                    3
+                  ],
+                  "y_range": [
+                    0,
+                    9
+                  ]
+                }
+              },
+              {
+                "id": "parabola_graph",
+                "type": "graph_function",
+                "position": [
+                  0,
+                  -1
+                ],
+                "properties": {
+                  "function": "x**2",
+                  "color": "blue",
+                  "x_range": [
+                    -3,
+                    3
+                  ]
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "term_ax2",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target": "term_ax2",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "axes",
+                "duration": 1.0
+              },
+              {
+                "action": "draw_path",
+                "target": "parabola_graph",
+                "duration": 2.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The general form is shown at the top, and an example equation is below it.",
+          "objects_and_properties": "Top: `ax\u00b2 + bx + c = 0`. Bottom: `2x\u00b2 + 5x - 3 = 0`. The coefficients 'a', 'b', 'c' and '2', '5', '-3' are color-coded to match.",
+          "motion_sequence": "The example equation appears. Then, arrows animate from 'a' to '2', 'b' to '5', and 'c' to '-3'. The labels 'a=2', 'b=5', 'c=-3' appear next to the arrows.",
+          "labels_and_text": "Equations as described. Labels 'a=2', 'b=5', 'c=-3'.",
+          "pedagogical_focus": "To show students how to identify the coefficients a, b, and c from a specific equation by mapping them to the general form.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "general_form",
+                "type": "equation",
+                "position": [
+                  0,
+                  2
+                ],
+                "properties": {
+                  "latex": "{\\color{red}a}x^2 + {\\color{green}b}x + {\\color{blue}c} = 0",
+                  "font_size": 60
+                }
+              },
+              {
+                "id": "example_eq",
+                "type": "equation",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "latex": "{\\color{red}2}x^2 + {\\color{green}5}x {\\color{blue}- 3} = 0",
+                  "font_size": 60
+                }
+              },
+              {
+                "id": "label_a",
+                "type": "label",
+                "position": [
+                  -3,
+                  -2
+                ],
+                "properties": {
+                  "text": "a = 2",
+                  "color": "red"
+                }
+              },
+              {
+                "id": "label_b",
+                "type": "label",
+                "position": [
+                  0,
+                  -2
+                ],
+                "properties": {
+                  "text": "b = 5",
+                  "color": "green"
+                }
+              },
+              {
+                "id": "label_c",
+                "type": "label",
+                "position": [
+                  3,
+                  -2
+                ],
+                "properties": {
+                  "text": "c = -3",
+                  "color": "blue"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "general_form",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "example_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "wait",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "label_a",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "label_b",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "label_c",
+                "duration": 0.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 5,
+          "scene_setup": "The general form `ax\u00b2 + bx + c = 0` is on screen.",
+          "objects_and_properties": "The equation `ax\u00b2 + bx + c = 0` with 'a' highlighted in red.",
+          "motion_sequence": "The label 'a \u2260 0' appears with a red cross over the equals sign. Then, the value of 'a' in the equation animates to 0. The `0x\u00b2` term then fades out, leaving only `bx + c = 0`. A label 'Linear Equation!' appears.",
+          "labels_and_text": "Initial equation, label 'a \u2260 0'. The transformed equation `bx + c = 0` and the label 'Linear Equation!'.",
+          "pedagogical_focus": "To visually demonstrate why the condition 'a \u2260 0' is crucial for an equation to be classified as quadratic.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "full_eq",
+                "type": "equation",
+                "position": [
+                  0,
+                  1
+                ],
+                "properties": {
+                  "latex": "ax^2 + bx + c = 0",
+                  "font_size": 60
+                }
+              },
+              {
+                "id": "rule",
+                "type": "label",
+                "position": [
+                  0,
+                  2.5
+                ],
+                "properties": {
+                  "text": "Crucial Rule: a \u2260 0",
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "transformed_eq",
+                "type": "equation",
+                "position": [
+                  0,
+                  -1
+                ],
+                "properties": {
+                  "latex": "bx + c = 0",
+                  "font_size": 60
+                }
+              },
+              {
+                "id": "result_label",
+                "type": "label",
+                "position": [
+                  0,
+                  -2
+                ],
+                "properties": {
+                  "text": "This is a Linear Equation!",
+                  "color": "cyan"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "full_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "rule",
+                "duration": 1.0
+              },
+              {
+                "action": "transform",
+                "target": "full_eq",
+                "new_latex": "0x^2 + bx + c = 0",
+                "duration": 2.0
+              },
+              {
+                "action": "fade_out",
+                "target": "full_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "transformed_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "result_label",
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 4,
+      "section_type": "content",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A blank screen with the general form of a quadratic equation at the top.",
+          "objects_and_properties": "The equation `ax\u00b2 + bx + c = 0` is at the top. An arrow points from it down to a box labeled 'Solutions?'",
+          "motion_sequence": "The equation appears. An arrow draws downwards from the equation to a question mark, which then transforms into a box labeled 'Solutions?'.",
+          "labels_and_text": "Equation: `ax\u00b2 + bx + c = 0`. Label: 'Solutions?'.",
+          "pedagogical_focus": "To pose the question that the quadratic formula is about to answer: how do we find the solutions?",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "equation",
+                "type": "equation",
+                "position": "top_center",
+                "properties": {
+                  "latex": "ax^2 + bx + c = 0",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "q_box",
+                "type": "placeholder",
+                "position": [
+                  0,
+                  -1
+                ],
+                "properties": {
+                  "description": "Box labeled 'Solutions?'"
+                }
+              },
+              {
+                "id": "arrow",
+                "type": "vector",
+                "position": [
+                  0,
+                  1.5
+                ],
+                "properties": {
+                  "end": [
+                    0,
+                    -0.5
+                  ],
+                  "color": "white"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "equation",
+                "duration": 1.0
+              },
+              {
+                "action": "draw_force",
+                "target": "arrow",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "q_box",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "A clean canvas where the quadratic formula will be constructed.",
+          "objects_and_properties": "The formula `x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}` built from colored components. Numerator `-b` in green, `\u00b1` in yellow, `sqrt(...)` in blue, denominator `2a` in purple.",
+          "motion_sequence": "The formula is built step-by-step. First `x=` appears. Then the fraction line. Then `-b` appears on top. Then `\u00b1` next to it. Then the `sqrt(b\u00b2-4ac)` part draws itself. Finally, `2a` appears on the bottom.",
+          "labels_and_text": "The full quadratic formula, constructed piece by piece.",
+          "pedagogical_focus": "To deconstruct the formula and show it piece by piece, making it less intimidating to memorize and understand.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "formula",
+                "type": "equation",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
+                  "font_size": 72
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "show_equation",
+                "target": "formula",
+                "duration": 4.0,
+                "by_parts": true
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The quadratic formula is centered. A parabola is graphed below it.",
+          "objects_and_properties": "The formula with the `\u00b1` symbol highlighted in yellow. Below, a 2D graph with a parabola that intersects the x-axis at two points, `x\u2081` and `x\u2082`.",
+          "motion_sequence": "The `\u00b1` symbol in the formula pulses. Then, the formula splits into two separate equations: one with `+` and one with `-`. Arrows point from these two formulas down to the two intersection points (`x\u2081` and `x\u2082`) on the graph.",
+          "labels_and_text": "Labels `x\u2081` and `x\u2082` on the x-axis. The two split formulas are shown clearly.",
+          "pedagogical_focus": "To visually explain the meaning of the `\u00b1` symbol by linking it to the two distinct roots (x-intercepts) of a parabola.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "formula",
+                "type": "equation",
+                "position": [
+                  0,
+                  2.5
+                ],
+                "properties": {
+                  "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "formula_plus",
+                "type": "equation",
+                "position": [
+                  -3,
+                  1
+                ],
+                "properties": {
+                  "latex": "x_1 = \\frac{-b + \\sqrt{...}}{2a}",
+                  "font_size": 36
+                }
+              },
+              {
+                "id": "formula_minus",
+                "type": "equation",
+                "position": [
+                  3,
+                  1
+                ],
+                "properties": {
+                  "latex": "x_2 = \\frac{-b - \\sqrt{...}}{2a}",
+                  "font_size": 36
+                }
+              },
+              {
+                "id": "axes",
+                "type": "axes",
+                "position": [
+                  0,
+                  -1.5
+                ],
+                "properties": {
+                  "x_range": [
+                    -5,
+                    5
+                  ],
+                  "y_range": [
+                    -2,
+                    8
+                  ]
+                }
+              },
+              {
+                "id": "parabola",
+                "type": "graph_function",
+                "position": [
+                  0,
+                  -1.5
+                ],
+                "properties": {
+                  "function": "0.5*(x-3)*(x+2)",
+                  "color": "blue",
+                  "x_range": [
+                    -4,
+                    5
+                  ]
+                }
+              },
+              {
+                "id": "root1",
+                "type": "point",
+                "position": [
+                  -2,
+                  -1.5
+                ],
+                "properties": {
+                  "color": "red",
+                  "label": "x\u2081"
+                }
+              },
+              {
+                "id": "root2",
+                "type": "point",
+                "position": [
+                  3,
+                  -1.5
+                ],
+                "properties": {
+                  "color": "red",
+                  "label": "x\u2082"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "highlight",
+                "target": "formula",
+                "duration": 1.0
+              },
+              {
+                "action": "transform",
+                "target": "formula",
+                "new_target_ids": [
+                  "formula_plus",
+                  "formula_minus"
+                ],
+                "duration": 2.0
+              },
+              {
+                "action": "appear",
+                "target": "axes",
+                "duration": 1.0
+              },
+              {
+                "action": "draw_path",
+                "target": "parabola",
+                "duration": 1.5
+              },
+              {
+                "action": "appear",
+                "target": "root1",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "root2",
+                "duration": 0.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The quadratic formula is on screen.",
+          "objects_and_properties": "The formula `x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}`.",
+          "motion_sequence": "A colored box (e.g., orange) animates, enclosing the `b\u00b2 - 4ac` part of the formula. The text 'Discriminant' appears next to the box.",
+          "labels_and_text": "The quadratic formula. A box around `b\u00b2 - 4ac`. The label 'Discriminant'.",
+          "pedagogical_focus": "To introduce and isolate the discriminant, highlighting its location within the larger formula and giving it a name.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "formula",
+                "type": "equation",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
+                  "font_size": 72
+                }
+              },
+              {
+                "id": "discriminant_box",
+                "type": "highlight_box",
+                "target_latex": "b^2 - 4ac",
+                "properties": {
+                  "color": "orange"
+                }
+              },
+              {
+                "id": "discriminant_label",
+                "type": "label",
+                "position": [
+                  0,
+                  -2
+                ],
+                "properties": {
+                  "text": "The Discriminant",
+                  "color": "orange",
+                  "font_size": 48
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "show_equation",
+                "target": "formula",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target": "discriminant_box",
+                "duration": 2.0
+              },
+              {
+                "action": "appear",
+                "target": "discriminant_label",
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 5,
+      "section_type": "example",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A clean canvas with the problem statement at the top.",
+          "objects_and_properties": "The equation `2x\u00b2 - 7x + 3 = 0` is shown. Below it, text placeholders for `a`, `b`, and `c`.",
+          "motion_sequence": "The equation appears. Then, text 'a = ?', 'b = ?', 'c = ?' appears below. The numbers 2, -7, and 3 from the equation glow, and then their values fly down to fill in the question marks, resulting in 'a = 2', 'b = -7', 'c = 3'.",
+          "labels_and_text": "Equation: `2x\u00b2 - 7x + 3 = 0`. Final labels: `a = 2`, `b = -7`, `c = 3`.",
+          "pedagogical_focus": "To demonstrate the first crucial step of any problem: correctly identifying the coefficients a, b, and c.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "problem_eq",
+                "type": "equation",
+                "position": [
+                  0,
+                  2
+                ],
+                "properties": {
+                  "latex": "2x^2 - 7x + 3 = 0",
+                  "font_size": 60
+                }
+              },
+              {
+                "id": "a_val",
+                "type": "label",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {
+                  "text": "a = 2",
+                  "font_size": 48,
+                  "color": "red"
+                }
+              },
+              {
+                "id": "b_val",
+                "type": "label",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "text": "b = -7",
+                  "font_size": 48,
+                  "color": "green"
+                }
+              },
+              {
+                "id": "c_val",
+                "type": "label",
+                "position": [
+                  3,
+                  0
+                ],
+                "properties": {
+                  "text": "c = 3",
+                  "font_size": 48,
+                  "color": "blue"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "problem_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target": "problem_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "a_val",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "b_val",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "c_val",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The identified coefficients `a=2, b=-7, c=3` are on the left. The quadratic formula template is on the right.",
+          "objects_and_properties": "Left: `a=2`, `b=-7`, `c=3`. Right: `x = \\frac{-() \\pm \\sqrt{()^2 - 4()()}}{2()}`.",
+          "motion_sequence": "The values 2, -7, and 3 fly from the left into the corresponding empty parentheses on the right. The formula fills up with the numbers.",
+          "labels_and_text": "Final formula shown: `x = \\frac{-(-7) \\pm \\sqrt{(-7)^2 - 4(2)(3)}}{2(2)}`.",
+          "pedagogical_focus": "To visually demonstrate the process of substituting the identified coefficients into the formula.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "coeffs",
+                "type": "label",
+                "position": "left",
+                "properties": {
+                  "text": "a=2, b=-7, c=3"
+                }
+              },
+              {
+                "id": "formula_template",
+                "type": "equation",
+                "position": "center",
+                "properties": {
+                  "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "substituted_formula",
+                "type": "equation",
+                "position": "center",
+                "properties": {
+                  "latex": "x = \\frac{-(-7) \\pm \\sqrt{(-7)^2 - 4(2)(3)}}{2(2)}",
+                  "font_size": 48
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "show_equation",
+                "target": "formula_template",
+                "duration": 1.0
+              },
+              {
+                "action": "substitute",
+                "target": "formula_template",
+                "new_target_id": "substituted_formula",
+                "duration": 2.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The substituted formula is on screen. The focus is on the discriminant part.",
+          "objects_and_properties": "The expression `(-7)\u00b2 - 4(2)(3)` is highlighted.",
+          "motion_sequence": "`(-7)\u00b2` transforms into `49`. `4(2)(3)` transforms into `24`. The expression becomes `49 - 24`.",
+          "labels_and_text": "The intermediate steps of the calculation are shown clearly.",
+          "pedagogical_focus": "To break down the calculation of the discriminant into manageable parts, reducing cognitive load.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "full_formula",
+                "type": "equation",
+                "position": "top_center",
+                "properties": {
+                  "latex": "x = \\frac{-(-7) \\pm \\sqrt{(-7)^2 - 4(2)(3)}}{2(2)}",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "simplified_formula",
+                "type": "equation",
+                "position": "top_center",
+                "properties": {
+                  "latex": "x = \\frac{7 \\pm \\sqrt{49 - 24}}{4}",
+                  "font_size": 48
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "highlight",
+                "target": "full_formula",
+                "target_latex": "(-7)^2 - 4(2)(3)",
+                "duration": 2.0
+              },
+              {
+                "action": "transform",
+                "target": "full_formula",
+                "new_target_id": "simplified_formula",
+                "duration": 3.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The formula `x = \\frac{7 \\pm \\sqrt{49 - 24}}{4}` is on screen.",
+          "objects_and_properties": "The expression `49 - 24` is highlighted.",
+          "motion_sequence": "`49 - 24` transforms into `25`. Then, the `sqrt(25)` term glows and transforms into `5`.",
+          "labels_and_text": "The formula updates to `x = \\frac{7 \\pm \\sqrt{25}}{4}` and then to `x = \\frac{7 \\pm 5}{4}`.",
+          "pedagogical_focus": "To show the final steps of simplifying the radical part of the formula.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "formula_v1",
+                "type": "equation",
+                "position": "center",
+                "properties": {
+                  "latex": "x = \\frac{7 \\pm \\sqrt{49 - 24}}{4}",
+                  "font_size": 60
+                }
+              },
+              {
+                "id": "formula_v2",
+                "type": "equation",
+                "position": "center",
+                "properties": {
+                  "latex": "x = \\frac{7 \\pm \\sqrt{25}}{4}",
+                  "font_size": 60
+                }
+              },
+              {
+                "id": "formula_v3",
+                "type": "equation",
+                "position": "center",
+                "properties": {
+                  "latex": "x = \\frac{7 \\pm 5}{4}",
+                  "font_size": 60
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "transform",
+                "target": "formula_v1",
+                "new_target_id": "formula_v2",
+                "duration": 2.0
+              },
+              {
+                "action": "wait",
+                "duration": 1.0
+              },
+              {
+                "action": "transform",
+                "target": "formula_v2",
+                "new_target_id": "formula_v3",
+                "duration": 2.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 5,
+          "scene_setup": "The simplified formula `x = \\frac{7 \\pm 5}{4}` is in the center.",
+          "objects_and_properties": "The main formula is present.",
+          "motion_sequence": "The formula splits into two paths, creating two new equations on screen: one for the plus case and one for the minus case.",
+          "labels_and_text": "Top path: `x\u2081 = \\frac{7 + 5}{4}`. Bottom path: `x\u2082 = \\frac{7 - 5}{4}`.",
+          "pedagogical_focus": "To visually represent the branching of the `\u00b1` symbol into two distinct solution paths.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "main_formula",
+                "type": "equation",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "latex": "x = \\frac{7 \\pm 5}{4}",
+                  "font_size": 60
+                }
+              },
+              {
+                "id": "plus_formula",
+                "type": "equation",
+                "position": [
+                  0,
+                  2
+                ],
+                "properties": {
+                  "latex": "x_1 = \\frac{7 + 5}{4}",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "minus_formula",
+                "type": "equation",
+                "position": [
+                  0,
+                  -2
+                ],
+                "properties": {
+                  "latex": "x_2 = \\frac{7 - 5}{4}",
+                  "font_size": 48
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "transform",
+                "target": "main_formula",
+                "new_target_ids": [
+                  "plus_formula",
+                  "minus_formula"
+                ],
+                "duration": 2.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 6,
+          "scene_setup": "The two branched equations are on screen. The top one is highlighted.",
+          "objects_and_properties": "The equation `x\u2081 = \\frac{7 + 5}{4}` is highlighted.",
+          "motion_sequence": "The numerator `7 + 5` transforms into `12`. The equation becomes `x\u2081 = \\frac{12}{4}`. Then, the whole fraction transforms into the final answer, `x\u2081 = 3`.",
+          "labels_and_text": "Steps shown: `x\u2081 = \\frac{7 + 5}{4}` \u2192 `x\u2081 = \\frac{12}{4}` \u2192 `x\u2081 = 3`.",
+          "pedagogical_focus": "To clearly and methodically calculate the first root.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "plus_formula",
+                "type": "equation",
+                "position": [
+                  0,
+                  2
+                ],
+                "properties": {
+                  "latex": "x_1 = \\frac{7 + 5}{4}",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "plus_simplified",
+                "type": "equation",
+                "position": [
+                  0,
+                  2
+                ],
+                "properties": {
+                  "latex": "x_1 = \\frac{12}{4}",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "plus_final",
+                "type": "equation",
+                "position": [
+                  0,
+                  2
+                ],
+                "properties": {
+                  "latex": "x_1 = 3",
+                  "font_size": 48,
+                  "color": "yellow"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "highlight",
+                "target": "plus_formula",
+                "duration": 1.0
+              },
+              {
+                "action": "transform",
+                "target": "plus_formula",
+                "new_target_id": "plus_simplified",
+                "duration": 2.0
+              },
+              {
+                "action": "transform",
+                "target": "plus_simplified",
+                "new_target_id": "plus_final",
+                "duration": 2.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 7,
+          "scene_setup": "The two branched equations are on screen. The bottom one is highlighted.",
+          "objects_and_properties": "The equation `x\u2082 = \\frac{7 - 5}{4}` is highlighted.",
+          "motion_sequence": "The numerator `7 - 5` transforms into `2`. The equation becomes `x\u2082 = \\frac{2}{4}`. Then, the whole fraction transforms into the final answer, `x\u2082 = 0.5`.",
+          "labels_and_text": "Steps shown: `x\u2082 = \\frac{7 - 5}{4}` \u2192 `x\u2082 = \\frac{2}{4}` \u2192 `x\u2082 = 0.5`.",
+          "pedagogical_focus": "To clearly and methodically calculate the second root.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "minus_formula",
+                "type": "equation",
+                "position": [
+                  0,
+                  -2
+                ],
+                "properties": {
+                  "latex": "x_2 = \\frac{7 - 5}{4}",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "minus_simplified",
+                "type": "equation",
+                "position": [
+                  0,
+                  -2
+                ],
+                "properties": {
+                  "latex": "x_2 = \\frac{2}{4}",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "minus_final",
+                "type": "equation",
+                "position": [
+                  0,
+                  -2
+                ],
+                "properties": {
+                  "latex": "x_2 = 0.5",
+                  "font_size": 48,
+                  "color": "yellow"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "highlight",
+                "target": "minus_formula",
+                "duration": 1.0
+              },
+              {
+                "action": "transform",
+                "target": "minus_formula",
+                "new_target_id": "minus_simplified",
+                "duration": 2.0
+              },
+              {
+                "action": "transform",
+                "target": "minus_simplified",
+                "new_target_id": "minus_final",
+                "duration": 2.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 8,
+          "scene_setup": "A clean screen showing the original problem and the final solutions.",
+          "objects_and_properties": "The original equation `2x\u00b2 - 7x + 3 = 0` is at the top. The two solutions `x = 3` and `x = 0.5` are shown below, each inside a colored box.",
+          "motion_sequence": "The original equation appears. Then, two boxes animate onto the screen below, and the final answers `x = 3` and `x = 0.5` appear inside them.",
+          "labels_and_text": "Top: `2x\u00b2 - 7x + 3 = 0`. Bottom: `x = 3` and `x = 0.5`.",
+          "pedagogical_focus": "To provide a clear and conclusive summary of the problem and its solutions.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "problem_eq",
+                "type": "equation",
+                "position": [
+                  0,
+                  2
+                ],
+                "properties": {
+                  "latex": "2x^2 - 7x + 3 = 0",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "solution1_box",
+                "type": "highlight_box",
+                "position": [
+                  -2,
+                  0
+                ],
+                "properties": {
+                  "color": "green"
+                }
+              },
+              {
+                "id": "solution1_text",
+                "type": "equation",
+                "position": [
+                  -2,
+                  0
+                ],
+                "properties": {
+                  "latex": "x = 3",
+                  "font_size": 48
+                }
+              },
+              {
+                "id": "solution2_box",
+                "type": "highlight_box",
+                "position": [
+                  2,
+                  0
+                ],
+                "properties": {
+                  "color": "green"
+                }
+              },
+              {
+                "id": "solution2_text",
+                "type": "equation",
+                "position": [
+                  2,
+                  0
+                ],
+                "properties": {
+                  "latex": "x = 0.5",
+                  "font_size": 48
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "problem_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "solution1_box",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "solution1_text",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "solution2_box",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "solution2_text",
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 6,
+      "section_type": "memory",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A flashcard appears on screen with a question.",
+          "objects_and_properties": "A blue card with white text for the question.",
+          "motion_sequence": "The card flies in and centers itself.",
+          "labels_and_text": "Question: 'What is the general form of a quadratic equation?'",
+          "pedagogical_focus": "To prompt the student to recall a key definition.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "card_q1",
+                "type": "placeholder",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "description": "A flashcard showing the question."
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "card_q1",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The flashcard is on screen.",
+          "objects_and_properties": "The blue card with the question.",
+          "motion_sequence": "The card flips over to reveal a green back with the answer written on it.",
+          "labels_and_text": "Answer: 'ax\u00b2 + bx + c = 0, where a \u2260 0'",
+          "pedagogical_focus": "To provide the correct answer for reinforcement.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "card_a1",
+                "type": "placeholder",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "description": "The flashcard flips to show the answer."
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "transform",
+                "target": "card_q1",
+                "new_target_id": "card_a1",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "A new flashcard appears on screen.",
+          "objects_and_properties": "A blue card with white text for the question.",
+          "motion_sequence": "The previous card flies off and the new one flies in.",
+          "labels_and_text": "Question: 'What is the quadratic formula?'",
+          "pedagogical_focus": "To prompt the student to recall the main formula.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "card_q2",
+                "type": "placeholder",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "description": "A flashcard showing the question."
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "card_q2",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The flashcard is on screen.",
+          "objects_and_properties": "The blue card with the question.",
+          "motion_sequence": "The card flips over to reveal a green back with the answer written on it.",
+          "labels_and_text": "Answer: 'x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}'",
+          "pedagogical_focus": "To provide the correct answer for reinforcement.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "card_a2",
+                "type": "placeholder",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "description": "The flashcard flips to show the answer."
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "transform",
+                "target": "card_q2",
+                "new_target_id": "card_a2",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 5,
+          "scene_setup": "A new flashcard appears on screen.",
+          "objects_and_properties": "A blue card with white text for the question.",
+          "motion_sequence": "The previous card flies off and the new one flies in.",
+          "labels_and_text": "Question: 'What is the special name for the term b\u00b2 - 4ac?'",
+          "pedagogical_focus": "To prompt the student to recall a key piece of terminology.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "card_q3",
+                "type": "placeholder",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "description": "A flashcard showing the question."
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "card_q3",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 6,
+          "scene_setup": "The flashcard is on screen.",
+          "objects_and_properties": "The blue card with the question.",
+          "motion_sequence": "The card flips over to reveal a green back with the answer written on it.",
+          "labels_and_text": "Answer: 'The Discriminant'",
+          "pedagogical_focus": "To provide the correct answer for reinforcement.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "card_a3",
+                "type": "placeholder",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "description": "The flashcard flips to show the answer."
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "transform",
+                "target": "card_q3",
+                "new_target_id": "card_a3",
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 7,
+      "section_type": "recap",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A quick visual summary of the first concept.",
+          "objects_and_properties": "The equation `ax\u00b2 + bx + c = 0` is on screen, with the `x\u00b2` term highlighted.",
+          "motion_sequence": "The equation appears, and a box highlights the `x\u00b2` term, with a label 'Degree 2' popping up.",
+          "labels_and_text": "Equation `ax\u00b2 + bx + c = 0`. Label 'Degree 2'.",
+          "pedagogical_focus": "To quickly remind students of the core definition of a quadratic equation.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "recap_eq1",
+                "type": "equation",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "latex": "ax^2+bx+c=0",
+                  "font_size": 60
+                }
+              },
+              {
+                "id": "recap_highlight1",
+                "type": "highlight_box",
+                "target_latex": "x^2",
+                "properties": {
+                  "color": "yellow"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "recap_eq1",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target": "recap_highlight1",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "A quick visual summary of the second concept.",
+          "objects_and_properties": "The quadratic formula `x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}` is shown.",
+          "motion_sequence": "The formula appears on screen with a glowing effect.",
+          "labels_and_text": "The quadratic formula.",
+          "pedagogical_focus": "To remind students of the key tool from the lesson.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "recap_eq2",
+                "type": "equation",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
+                  "font_size": 60
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "recap_eq2",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target": "recap_eq2",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "A fast-motion replay of the example problem.",
+          "objects_and_properties": "The example `2x\u00b2 - 7x + 3 = 0` and its solution steps.",
+          "motion_sequence": "A sped-up animation shows the substitution, simplification, and branching into the two solutions, `x = 3` and `x = 0.5`.",
+          "labels_and_text": "Key steps of the example are flashed on screen.",
+          "pedagogical_focus": "To reinforce the problem-solving process shown in the example.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "recap_example",
+                "type": "placeholder",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "description": "Fast-motion animation of the example problem being solved."
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "recap_example",
+                "duration": 3.0
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "narration_validation": {
+    "total_sections": 7,
+    "content_sections": 2,
+    "content_meeting_requirement": 2,
+    "content_below_requirement": 0
+  }
+}

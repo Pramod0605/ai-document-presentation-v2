@@ -2160,5 +2160,133 @@
       "sections_count": 15,
       "dry_run": false
     }
+  },
+  "b7930b64": {
+    "id": "b7930b64",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Mathematics",
+      "grade": "10",
+      "file_path": "/tmp/ai_education_jobs/a7310cc5ccf8090a.md",
+      "source_file": "math_test.md"
+    },
+    "status": "completed",
+    "current_step": 1,
+    "current_step_name": "Rendering videos with AI...",
+    "steps_completed": 2,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-17T10:08:38.715184",
+    "started_at": "2025-12-17T10:08:38.725198",
+    "completed_at": "2025-12-17T10:11:22.882588",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "started_at": "2025-12-17T10:08:38.753065",
+      "source_file": "math_test.md",
+      "steps": [
+        {
+          "step": "generate_presentation_plan",
+          "status": "completed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b7930b64/videos/topic_1.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": true,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 2: Visual beat compilation failed - Fields too short: ['labels_and_text (3 words, need 4+)']. Each field must be at least 4 words.",
+              "visual_beats_used": 4,
+              "dry_run": true,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 311, in _compile_beats_to_manim_plan\n    plan = compile_manim_plan(beat, topic_id, 0)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 364, in compile_manim_plan\n    validate_visual_beat_structure(beat, section_id, beat_index)\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 105, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 2, Beat 0: Fields too short: ['labels_and_text (3 words, need 4+)']. Each field must be at least 4 words.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 120, in render_manim_video\n    manim_plan = _compile_beats_to_manim_plan(visual_beats, topic_id)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 314, in _compile_beats_to_manim_plan\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 2: Visual beat compilation failed - Fields too short: ['labels_and_text (3 words, need 4+)']. Each field must be at least 4 words.\n"
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b7930b64/videos/topic_3.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": true,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 4,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b7930b64/videos/topic_4.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": true,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 5,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b7930b64/videos/topic_5.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 8,
+              "dry_run": true,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 6,
+              "section_type": "memory",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b7930b64/videos/topic_6.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 6,
+              "dry_run": true,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 7,
+              "section_type": "recap",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b7930b64/videos/topic_7.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 3,
+              "dry_run": true,
+              "compilation_errors": []
+            }
+          ],
+          "success_count": 6,
+          "fail_count": 1,
+          "dry_run": true
+        },
+        {
+          "step": "generate_audio",
+          "status": "skipped",
+          "reason": "dry_run"
+        }
+      ],
+      "completed_at": "2025-12-17T10:11:22.882149",
+      "presentation_path": "/home/runner/workspace/player/jobs/b7930b64/presentation.json",
+      "trace_path": "/home/runner/workspace/player/jobs/b7930b64/generation_trace.json",
+      "sections_count": 7,
+      "dry_run": true
+    }
   }
 }

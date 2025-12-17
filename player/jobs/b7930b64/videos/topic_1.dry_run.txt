@@ -1,0 +1,12 @@
+DRY RUN - Manim section 1
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/b7930b64/videos/topic_1.mp4
+
+--- SCENE CODE ---
+main_title = Text("", font_size=28).move_to(ORIGIN)
+subtitle = Text("", font_size=28).move_to(ORIGIN)
+
+# Animation sequence
+self.play(FadeIn(main_title), run_time=1.5)
+self.play(FadeIn(subtitle), run_time=1.0)
+self.wait(1)
