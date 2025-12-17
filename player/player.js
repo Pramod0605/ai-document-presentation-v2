@@ -199,12 +199,27 @@ function loadSlide(index) {
   } else {
     document.getElementById('content-box').style.width = '55%';
 
-    let items = slide.timed_segments ||
-      (slide.visual_content ? slide.visual_content.bullet_points : null) ||
-      (slide.segments ? slide.segments.map(s => ({ visual: s.visual || s.text, start_time: s.start || 0, end_time: (s.start || 0) + (s.duration || 5) })) : []);
+    let displayItems = [];
+    
+    if (slide.visual_content && slide.visual_content.bullet_points && slide.visual_content.bullet_points.length > 0) {
+      displayItems = slide.visual_content.bullet_points;
+    } else if (slide.visual_beats && slide.visual_beats.length > 0) {
+      displayItems = slide.visual_beats.map(vb => {
+        const lt = vb.labels_and_text || '';
+        const quoted = lt.match(/'([^']+)'/g);
+        if (quoted && quoted.length > 0) {
+          return quoted.map(q => q.replace(/'/g, '')).join(' | ');
+        }
+        return vb.pedagogical_focus || lt || '';
+      });
+    } else if (slide.narration_segments && slide.narration_segments.length > 0) {
+      displayItems = slide.narration_segments.map(ns => ns.text || '');
+    } else if (slide.segments && slide.segments.length > 0) {
+      displayItems = slide.segments.map(s => s.visual || s.text || '');
+    }
 
-    if (Array.isArray(items)) {
-      items.forEach((item, i) => {
+    if (Array.isArray(displayItems) && displayItems.length > 0) {
+      displayItems.forEach((item, i) => {
         const div = document.createElement('div');
         div.className = 'segment-item';
         div.id = `seg-${i}`;
@@ -212,13 +227,19 @@ function loadSlide(index) {
         list.appendChild(div);
       });
 
-      if (!slide.timed_segments && items.length > 0 && slide.audio_duration) {
-        const durationPerItem = slide.audio_duration / items.length;
-        slide.timed_segments = items.map((item, i) => ({
-          visual: typeof item === 'string' ? item : (item.visual || item.text || ''),
-          start_time: i * durationPerItem,
-          end_time: (i + 1) * durationPerItem
-        }));
+      if (slide.audio_duration) {
+        const timingSource = slide.narration_segments || displayItems;
+        let cumulativeTime = 0;
+        slide.timed_segments = timingSource.map((item, i) => {
+          const duration = item.duration || (slide.audio_duration / timingSource.length);
+          const start = cumulativeTime;
+          cumulativeTime += duration;
+          return {
+            visual: displayItems[i] || '',
+            start_time: start,
+            end_time: cumulativeTime
+          };
+        });
       }
     }
   }
@@ -580,19 +601,17 @@ async function checkExistingPresentation() {
             segments: section.segments,
             flashcards: section.flashcards,
             recap_scenes: section.recap_scenes,
-            timed_segments: section.segments ? section.segments.map(s => ({
-              visual: s.text,
-              start_time: s.start,
-              end_time: s.start + s.duration
-            })) : [],
+            visual_beats: section.visual_beats || [],
+            narration_segments: section.narration_segments || [],
             audio_path: BASE_PATH + `audio/section_${section.id}.mp3`,
             content_video_path: section.renderer === 'wan_video' ? BASE_PATH + `videos/topic_${section.id}.mp4` : null,
             has_content_video: section.renderer === 'wan_video',
             section_id: section.id,
+            id: section.id,
             beat_videos: [],
             audio_duration: section.duration,
             full_narration: section.narration,
-            visual_content: { bullet_points: section.segments ? section.segments.map(s => s.text) : [] }
+            visual_content: section.visual_content || {}
           }));
         } else if (lessonData.topics) {
           lessonData.slides = lessonData.topics.map(topic => ({
@@ -629,12 +648,24 @@ async function checkExistingPresentation() {
 
 async function detectAllBeatVideos() {
   for (const slide of lessonData.slides) {
-    if (slide.has_content_video && slide.section_id) {
-      const beats = await detectBeatVideos(slide.section_id);
+    const sectionId = slide.section_id || slide.id;
+    if (sectionId) {
+      const beats = await detectBeatVideos(sectionId);
       if (beats.length > 0) {
         slide.beat_videos = beats;
         slide.content_video_path = beats[0];
-        console.log(`Section ${slide.section_id}: Found ${beats.length} beat videos`);
+        slide.has_content_video = true;
+        console.log(`Section ${sectionId}: Found ${beats.length} beat videos`);
+      } else {
+        const singleVideoPath = `${BASE_PATH}videos/topic_${sectionId}.mp4`;
+        try {
+          const resp = await fetch(singleVideoPath, { method: 'HEAD' });
+          if (resp.ok) {
+            slide.content_video_path = singleVideoPath;
+            slide.has_content_video = true;
+            console.log(`Section ${sectionId}: Found single video`);
+          }
+        } catch (e) {}
       }
     }
   }
