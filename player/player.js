@@ -353,6 +353,8 @@ function loadSlide(index) {
 
   if (showVideoBox && ((contentVidPath && slide.has_content_video) || hasBeatVideos)) {
     stage.classList.remove('mode-khan');
+    stage.classList.remove('mode-side');
+    stage.classList.remove('mode-center');
     stage.classList.add('mode-content-video');
     stage.classList.remove('video-swap');
     
