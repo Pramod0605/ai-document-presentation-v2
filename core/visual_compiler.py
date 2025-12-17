@@ -267,17 +267,25 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
                 code_lines.append(f'{var_name}_label = Text("{label_text}", font_size=20).next_to({var_name}, DOWN)')
         
         elif obj_type == "equation":
-            latex = props.get("latex", "E = mc^2")
-            pos_name = POSITION_MAP.get(props.get("position", "center"), "ORIGIN")
+            latex = obj.get("latex") or props.get("latex", "")
+            if not latex:
+                log(f"[WARN] Equation object {obj_id} missing latex field")
+                latex = "?"
+            obj_position = obj.get("position") or props.get("position", "center")
+            if isinstance(obj_position, list):
+                pos_name = f"np.array([{obj_position[0]}, {obj_position[1]}, 0])"
+            else:
+                pos_name = POSITION_MAP.get(obj_position, "ORIGIN")
             code_lines.append(f'{var_name} = MathTex(r"{latex}").move_to({pos_name})')
         
         elif obj_type == "label":
-            text = props.get("text", label_text or obj_id)
+            text = obj.get("text") or props.get("text", label_text or obj_id)
             font_size = props.get("font_size", 28)
-            if isinstance(position, list):
-                code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to(np.array([{position[0]}, {position[1]}, 0]))')
+            obj_position = obj.get("position") or position
+            if isinstance(obj_position, list):
+                code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to(np.array([{obj_position[0]}, {obj_position[1]}, 0]))')
             else:
-                pos_name = POSITION_MAP.get(position, "ORIGIN")
+                pos_name = POSITION_MAP.get(obj_position, "ORIGIN")
                 code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to({pos_name})')
         
         elif obj_type == "axes":
@@ -290,8 +298,12 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
             code_lines.append(f'{var_name} = Axes(x_range=[{x_range[0]}, {x_range[1]}, {x_range[2]}], y_range=[{y_range[0]}, {y_range[1]}, {y_range[2]}], x_length=8, y_length=6, axis_config={{"include_tip": True}})')
         
         elif obj_type == "graph":
-            equation = props.get("equation", "lambda x: x**2")
-            graph_color = COLOR_MAP.get(props.get("color", "blue").lower(), "BLUE")
+            equation = obj.get("equation") or props.get("equation", "x**2")
+            if not equation.startswith("lambda"):
+                equation = f"lambda x: {equation}"
+            graph_color = COLOR_MAP.get(props.get("color", "blue").lower().replace("#", ""), "BLUE")
+            if props.get("color", "").startswith("#"):
+                graph_color = f'"{props.get("color")}"'
             axes_var = props.get("axes", "axes")
             code_lines.append(f'{var_name} = {axes_var}.plot({equation}, color={graph_color})')
         
@@ -316,12 +328,13 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
             code_lines.append(f'{var_name} = VGroup(Rectangle(width=4, height=3, color=BLUE), Text("{content[:50]}", font_size=20)).move_to({pos_str})')
         
         elif obj_type == "text":
-            text = props.get("text", label_text or obj_id)
+            text = obj.get("text") or props.get("text", label_text or obj_id)
             font_size = props.get("font_size", 24)
-            if isinstance(position, list):
-                code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to(np.array([{position[0]}, {position[1]}, 0]))')
+            obj_position = obj.get("position") or position
+            if isinstance(obj_position, list):
+                code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to(np.array([{obj_position[0]}, {obj_position[1]}, 0]))')
             else:
-                pos_name = POSITION_MAP.get(position, "ORIGIN")
+                pos_name = POSITION_MAP.get(obj_position, "ORIGIN")
                 code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to({pos_name})')
         
         else:
