@@ -1,0 +1,258 @@
+[
+  {
+    "timestamp": "2025-12-17T15:33:32.763272",
+    "section_id": 1,
+    "section_title": "Introduction to Quadratic Equations",
+    "renderer": "manim_spec",
+    "prompt": "title_text = Text(\"Quadratic Equations\", font_size=96).move_to(np.array([0, 0, 0]))\n\n# Animation sequence\nself.play(FadeIn(title_text), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/90c5ea89/videos/topic_1.mp4",
+    "extra": {
+      "section_type": "intro",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "title_text",
+            "type": "label",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "text": "Quadratic Equations",
+              "font_size": 96,
+              "color": "white"
+            }
+          }
+        ],
+        "forces": [],
+        "equations": [],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title_text",
+            "duration": 2.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:33:32.763970",
+    "section_id": 2,
+    "section_title": "Lesson Summary",
+    "renderer": "manim_spec",
+    "prompt": "summary_title = MathTex(r\"\\text{Summary}\").move_to(UP * 3)\nstandard_form = MathTex(r\"ax^2 + bx + c = 0\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(summary_title), run_time=1.0)\nself.play(Write(standard_form), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/90c5ea89/videos/topic_2.mp4",
+    "extra": {
+      "section_type": "summary",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [],
+        "forces": [],
+        "equations": [
+          {
+            "id": "summary_title",
+            "latex": "\\text{Summary}",
+            "position": "top_center"
+          },
+          {
+            "id": "standard_form",
+            "latex": "ax^2 + bx + c = 0",
+            "position": "center"
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "summary_title",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "standard_form",
+            "duration": 2.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:33:32.765336",
+    "section_id": 3,
+    "section_title": "What is a Quadratic Equation?",
+    "renderer": "manim_spec",
+    "prompt": "x_squared = MathTex(r\"x^2\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(x_squared), run_time=1.0)\nself.play(Indicate(x_squared), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/90c5ea89/videos/topic_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 7
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:33:32.770290",
+    "section_id": 4,
+    "section_title": "Solving by Factoring",
+    "renderer": "manim_spec",
+    "prompt": "puzzle_piece = Text(\"ax\u00b2+bx+c\", font_size=64).move_to(np.array([0, 0, 0]))\ntitle = MathTex(r\"\\text{Solving by Factoring}\").move_to(UP * 3)\n\n# Animation sequence\nself.play(FadeIn(title), run_time=1.0)\nself.play(FadeIn(puzzle_piece), run_time=1.5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/90c5ea89/videos/topic_4.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 7
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:33:32.771359",
+    "section_id": 5,
+    "section_title": "Example: Solving x\u00b2 + 5x + 6 = 0",
+    "renderer": "manim_spec",
+    "prompt": "title = MathTex(r\"\\text{Example: Solving by Factoring}\").move_to(UP * 3)\nproblem_eq = MathTex(r\"x^2 + 5x + 6 = 0\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(title), run_time=1.0)\nself.play(Write(problem_eq), run_time=1.5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/90c5ea89/videos/topic_5.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 7
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:33:32.773264",
+    "section_id": 6,
+    "section_title": "The Quadratic Formula",
+    "renderer": "manim_spec",
+    "prompt": "knife_icon = Text(\"\ud83e\uddf0\", font_size=96).move_to(np.array([-3, 0, 0]))\ntitle = MathTex(r\"\\text{The Quadratic Formula}\").move_to(np.array([2, 0, 0]))\n\n# Animation sequence\nself.play(FadeIn(knife_icon), run_time=1.0)\nself.play(FadeIn(title), run_time=1.5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/90c5ea89/videos/topic_6.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 7
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:33:32.774276",
+    "section_id": 7,
+    "section_title": "Memory Flashcards",
+    "renderer": "manim_spec",
+    "prompt": "card = Dot(point=np.array([0, 0, 0]), color=WHITE)\nquestion = MathTex(r\"\\text{What is the standard form of a}\\\\\\text{quadratic equation?}\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(card), run_time=0.5)\nself.play(FadeIn(question), run_time=1.5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/90c5ea89/videos/topic_7.mp4",
+    "extra": {
+      "section_type": "memory",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "card",
+            "type": "rectangle",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "width": 10,
+              "height": 6,
+              "color": "white",
+              "fill_opacity": 1
+            }
+          }
+        ],
+        "forces": [],
+        "equations": [
+          {
+            "id": "question",
+            "latex": "\\text{What is the standard form of a}\\\\\\text{quadratic equation?}",
+            "position": "center",
+            "color": "black"
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "card",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "question",
+            "duration": 1.5
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:33:32.775315",
+    "section_id": 8,
+    "section_title": "Lesson Recap",
+    "renderer": "manim_spec",
+    "prompt": "recap_title = MathTex(r\"\\text{Recap}\").move_to(UP * 3)\nstandard_form = MathTex(r\"ax^2 + bx + c = 0\").move_to(ORIGIN)\ncondition = MathTex(r\"a \\neq 0\").move_to(np.array([3, 0, 0]))\n\n# Animation sequence\nself.play(FadeIn(recap_title), run_time=1.0)\nself.play(Write(standard_form), run_time=1.5)\nself.play(Indicate(condition), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/90c5ea89/videos/topic_8.mp4",
+    "extra": {
+      "section_type": "recap",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [],
+        "forces": [],
+        "equations": [
+          {
+            "id": "recap_title",
+            "latex": "\\text{Recap}",
+            "position": "top_center"
+          },
+          {
+            "id": "standard_form",
+            "latex": "ax^2 + bx + c = 0",
+            "position": "center"
+          },
+          {
+            "id": "condition",
+            "latex": "a \\neq 0",
+            "position": [
+              3,
+              0,
+              0
+            ],
+            "color": "red"
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "recap_title",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "standard_form",
+            "duration": 1.5
+          },
+          {
+            "action": "highlight",
+            "target": "condition",
+            "duration": 2.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  }
+]

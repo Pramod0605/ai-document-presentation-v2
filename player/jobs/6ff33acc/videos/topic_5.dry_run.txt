@@ -1,0 +1,11 @@
+DRY RUN - Manim section 5
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/6ff33acc/videos/topic_5.mp4
+
+--- SCENE CODE ---
+problem_eq = MathTex(r"x^2 + 5x + 6 = 0").move_to(ORIGIN)
+
+# Animation sequence
+self.play(Write(problem_eq), run_time=2.0)
+self.wait(4.0)
+self.wait(1)

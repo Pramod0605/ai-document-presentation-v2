@@ -72,9 +72,23 @@ def check_vague_phrases(text: str) -> List[str]:
     return found
 
 
-def validate_visual_beat_structure(beat: dict, section_id: int, beat_index: int) -> None:
-    """Validate that a visual beat has all 5 required fields with sufficient content."""
+def validate_visual_beat_structure(beat: dict, section_id: int, beat_index: int, section_type: str = "content", strict: bool = False) -> list:
+    """Validate that a visual beat has all 5 required fields with sufficient content.
     
+    Returns a list of warnings instead of raising errors for non-critical issues.
+    Only raises errors for truly broken structure (missing all required fields).
+    
+    Args:
+        beat: The visual beat dict
+        section_id: Section identifier
+        beat_index: Beat index within section
+        section_type: Type of section (intro, summary, content, example, memory, recap)
+        strict: If True, raise errors for all issues. If False, log warnings for minor issues.
+    
+    Returns:
+        List of warning messages (empty if no warnings)
+    """
+    warnings = []
     missing_fields = []
     short_fields = []
     vague_fields = []
@@ -94,26 +108,36 @@ def validate_visual_beat_structure(beat: dict, section_id: int, beat_index: int)
         if vague:
             vague_fields.append(f"{field}: {vague}")
     
-    if missing_fields:
+    # Hard failure: ALL fields missing means no content at all
+    if len(missing_fields) == len(REQUIRED_VISUAL_BEAT_FIELDS):
         raise VisualCompilationError(
             section_id, beat_index,
-            f"Missing required fields: {missing_fields}. "
-            f"All visual beats must have: {REQUIRED_VISUAL_BEAT_FIELDS}"
+            f"Visual beat has no content. All fields are empty or missing."
         )
     
-    if short_fields:
-        raise VisualCompilationError(
-            section_id, beat_index,
-            f"Fields too short: {short_fields}. "
-            f"Each field must be at least {MIN_FIELD_WORDS} words."
-        )
+    # For content/example sections: missing fields are hard failures, short/vague are warnings
+    if section_type in ("content", "example"):
+        if missing_fields:
+            raise VisualCompilationError(
+                section_id, beat_index,
+                f"Missing required fields: {missing_fields}. "
+                f"All visual beats must have: {REQUIRED_VISUAL_BEAT_FIELDS}"
+            )
+        # Short/vague fields are warnings (don't block rendering)
+        if short_fields:
+            warnings.append(f"[WARN] Section {section_id}, Beat {beat_index}: Short fields {short_fields}")
+        if vague_fields:
+            warnings.append(f"[WARN] Section {section_id}, Beat {beat_index}: Vague phrases {vague_fields}")
+    else:
+        # Non-content sections (intro, summary, memory, recap): all issues are warnings
+        if missing_fields:
+            warnings.append(f"[WARN] Section {section_id}, Beat {beat_index}: Missing fields {missing_fields}")
+        if short_fields:
+            warnings.append(f"[WARN] Section {section_id}, Beat {beat_index}: Short fields {short_fields}")
+        if vague_fields:
+            warnings.append(f"[WARN] Section {section_id}, Beat {beat_index}: Vague phrases {vague_fields}")
     
-    if vague_fields:
-        raise VisualCompilationError(
-            section_id, beat_index,
-            f"Vague phrases detected: {vague_fields}. "
-            f"Use specific descriptions with colors, positions, and sizes."
-        )
+    return warnings
 
 
 def extract_labels_from_text(labels_text: str) -> List[str]:
@@ -124,15 +148,17 @@ def extract_labels_from_text(labels_text: str) -> List[str]:
     return labels if labels else ["Label"]
 
 
-def compile_wan_prompt(beat: dict, section_id: int, beat_index: int) -> str:
+def compile_wan_prompt(beat: dict, section_id: int, beat_index: int, section_type: str = "content") -> str:
     """Compile a WAN video prompt from structured visual beat fields."""
-    validate_visual_beat_structure(beat, section_id, beat_index)
+    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=False)
+    for w in warnings:
+        print(w)
     
-    scene_setup = beat.get("scene_setup", "")
-    objects_text = beat.get("objects_and_properties", "")
-    motion = beat.get("motion_sequence", "")
-    labels_text = beat.get("labels_and_text", "")
-    focus = beat.get("pedagogical_focus", "")
+    scene_setup = beat.get("scene_setup", "") or "Educational scene"
+    objects_text = beat.get("objects_and_properties", "") or "Visual elements"
+    motion = beat.get("motion_sequence", "") or "Smooth transitions"
+    labels_text = beat.get("labels_and_text", "") or "Text labels"
+    focus = beat.get("pedagogical_focus", "") or "Educational content"
     
     labels = extract_labels_from_text(labels_text)
     
@@ -443,13 +469,15 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
     return '\n'.join(code_lines)
 
 
-def compile_manim_plan(beat: dict, section_id: int, beat_index: int) -> dict:
+def compile_manim_plan(beat: dict, section_id: int, beat_index: int, section_type: str = "content") -> dict:
     """Compile a Manim animation plan from structured visual beat fields.
     
     REQUIRES: manim_scene_spec JSON with objects, forces, equations, animation_sequence.
     FAIL-FAST: Raises VisualCompilationError if manim_scene_spec is missing or invalid.
     """
-    validate_visual_beat_structure(beat, section_id, beat_index)
+    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=False)
+    for w in warnings:
+        print(w)
     
     manim_scene_spec = beat.get("manim_scene_spec")
     
@@ -494,10 +522,10 @@ def compile_section_visuals(section: dict) -> Tuple[Optional[str], Optional[dict
     for i, beat in enumerate(visual_beats):
         try:
             if renderer == "manim":
-                plan = compile_manim_plan(beat, section_id, i)
+                plan = compile_manim_plan(beat, section_id, i, section_type=section_type)
                 compiled_manim_plans.append(plan)
             else:
-                prompt = compile_wan_prompt(beat, section_id, i)
+                prompt = compile_wan_prompt(beat, section_id, i, section_type=section_type)
                 compiled_wan_prompts.append(prompt)
         except VisualCompilationError as e:
             errors.append(e)

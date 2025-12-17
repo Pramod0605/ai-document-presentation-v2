@@ -1,0 +1,11 @@
+DRY RUN - Manim section 3
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/90c5ea89/videos/topic_3.mp4
+
+--- SCENE CODE ---
+x_squared = MathTex(r"x^2").move_to(ORIGIN)
+
+# Animation sequence
+self.play(FadeIn(x_squared), run_time=1.0)
+self.play(Indicate(x_squared), run_time=2.0)
+self.wait(1)

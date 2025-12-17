@@ -1,0 +1,264 @@
+[
+  {
+    "timestamp": "2025-12-17T15:39:34.721358",
+    "section_id": 1,
+    "section_title": "Introduction to Quadratic Equations",
+    "renderer": "manim_spec",
+    "prompt": "title_text = Text(\"Quadratic Equations\", font_size=96).move_to(np.array([0, 0, 0]))\n\n# Animation sequence\nself.play(Write(title_text), run_time=2.0)\nself.wait(3.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6ff33acc/videos/topic_1.mp4",
+    "extra": {
+      "section_type": "intro",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "title_text",
+            "type": "label",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "text": "Quadratic Equations",
+              "font_size": 96,
+              "color": "white"
+            }
+          }
+        ],
+        "forces": [],
+        "equations": [],
+        "animation_sequence": [
+          {
+            "action": "write",
+            "target": "title_text",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "title_text",
+            "duration": 3.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:39:34.723260",
+    "section_id": 2,
+    "section_title": "Lesson Summary",
+    "renderer": "manim_spec",
+    "prompt": "standard_form = MathTex(r\"ax^2 + bx + c = 0\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(Write(standard_form), run_time=3.0)\nself.wait(6.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6ff33acc/videos/topic_2.mp4",
+    "extra": {
+      "section_type": "summary",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [],
+        "forces": [],
+        "equations": [
+          {
+            "id": "standard_form",
+            "latex": "ax^2 + bx + c = 0",
+            "position": "center"
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "write",
+            "target": "standard_form",
+            "duration": 3.0
+          },
+          {
+            "action": "wait",
+            "duration": 6.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:39:34.726920",
+    "section_id": 3,
+    "section_title": "What is a Quadratic Equation?",
+    "renderer": "manim_spec",
+    "prompt": "header = Text(\"Standard Form\", font_size=60).move_to(np.array([0, 2, 0]))\nstandard_form = MathTex(r\"ax^2 + bx + c = 0\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(header), run_time=1.0)\nself.play(Write(standard_form), run_time=3.0)\nself.wait(4.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6ff33acc/videos/topic_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 7
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:39:34.733194",
+    "section_id": 4,
+    "section_title": "Solving by Factoring: The Zero Product Property",
+    "renderer": "manim_spec",
+    "prompt": "zpp_title = Text(\"The Zero Product Property\", font_size=72).move_to(np.array([0, 0, 0]))\n\n# Animation sequence\nself.play(Write(zpp_title), run_time=2.0)\nself.play(Indicate(zpp_title), run_time=2.0)\nself.wait(7.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6ff33acc/videos/topic_4.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 6
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:39:34.739049",
+    "section_id": 5,
+    "section_title": "Example: Solving x\u00b2 + 5x + 6 = 0",
+    "renderer": "manim_spec",
+    "prompt": "problem_eq = MathTex(r\"x^2 + 5x + 6 = 0\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(Write(problem_eq), run_time=2.0)\nself.wait(4.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6ff33acc/videos/topic_5.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 9
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:39:34.743267",
+    "section_id": 6,
+    "section_title": "Key Concepts to Remember",
+    "renderer": "manim_spec",
+    "prompt": "card_q1 = Dot(point=ORIGIN, color=BLUE)\n\n# Animation sequence\nself.play(FadeIn(card_q1), run_time=1.0)\nself.wait(4.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6ff33acc/videos/topic_6.mp4",
+    "extra": {
+      "section_type": "memory",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "card_q1",
+            "type": "flashcard",
+            "position": "center",
+            "properties": {
+              "question": "What is the standard form of a quadratic equation?",
+              "answer": ""
+            }
+          }
+        ],
+        "forces": [],
+        "equations": [],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "card_q1",
+            "duration": 1.0
+          },
+          {
+            "action": "wait",
+            "duration": 4.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:39:34.748504",
+    "section_id": 7,
+    "section_title": "Lesson Recap",
+    "renderer": "manim_spec",
+    "prompt": "a_label = Text(\"Coefficient\", font_size=28).move_to(np.array([-3.5, 2, 0]))\nc_label = Text(\"Constant\", font_size=28).move_to(np.array([1.5, 2, 0]))\nhighlight_box = Dot(point=np.array([-3.5, 0, 0]), color=YELLOW)\nstandard_form = MathTex(r\"ax^2 + bx + c = 0\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(Write(standard_form), run_time=1.0)\nself.play(FadeIn(a_label), run_time=0.5)\nself.play(FadeIn(c_label), run_time=0.5)\nself.play(Create(highlight_box), run_time=0.5)\nself.wait(10.5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6ff33acc/videos/topic_7.mp4",
+    "extra": {
+      "section_type": "recap",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "a_label",
+            "type": "label",
+            "position": [
+              -3.5,
+              2
+            ],
+            "properties": {
+              "text": "Coefficient",
+              "color": "cyan"
+            }
+          },
+          {
+            "id": "c_label",
+            "type": "label",
+            "position": [
+              1.5,
+              2
+            ],
+            "properties": {
+              "text": "Constant",
+              "color": "lime"
+            }
+          },
+          {
+            "id": "highlight_box",
+            "type": "rectangle",
+            "position": [
+              -3.5,
+              0
+            ],
+            "properties": {
+              "width": 2,
+              "height": 1.5,
+              "color": "yellow"
+            }
+          }
+        ],
+        "forces": [],
+        "equations": [
+          {
+            "id": "standard_form",
+            "latex": "ax^2 + bx + c = 0",
+            "position": "center",
+            "properties": {
+              "font_size": 72
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "write",
+            "target": "standard_form",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "a_label",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "c_label",
+            "duration": 0.5
+          },
+          {
+            "action": "draw",
+            "target": "highlight_box",
+            "duration": 0.5
+          },
+          {
+            "action": "wait",
+            "duration": 10.5
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  }
+]
