@@ -335,17 +335,23 @@ function loadSlide(index) {
 
   const bgVideo = document.getElementById('scene-video');
   const bgVidPath = slide.background_video;
-  const contentVidPath = slide.content_video_path;
+  
+  const hasBeatVideos = slide.beat_videos && slide.beat_videos.length > 0;
+  const contentVidPath = hasBeatVideos ? slide.beat_videos[0] : slide.content_video_path;
 
   const inlineVideo = document.getElementById('inline-video');
   const videoBox = document.getElementById('video-box');
+  
+  const showVideoBox = (sectionType !== 'intro' && sectionType !== 'memory' && sectionType !== 'recap');
 
-  if (contentVidPath && slide.has_content_video) {
+  if (showVideoBox && ((contentVidPath && slide.has_content_video) || hasBeatVideos)) {
     stage.classList.remove('mode-khan');
     stage.classList.add('mode-content-video');
     stage.classList.remove('video-swap');
     
-    if (inlineVideo && !inlineVideo.src.includes(contentVidPath)) {
+    console.log(`Loading video for section ${slide.id}: ${contentVidPath}, beat_videos: ${hasBeatVideos ? slide.beat_videos.length : 0}`);
+    
+    if (inlineVideo && contentVidPath && !inlineVideo.src.includes(contentVidPath)) {
       inlineVideo.src = contentVidPath;
       inlineVideo.load();
     }
@@ -637,7 +643,13 @@ async function checkExistingPresentation() {
         await detectAllBeatVideos();
         document.getElementById('upload-overlay').classList.add('hidden');
         buildSlideList();
-        loadSlide(0);
+        
+        let startSlide = 0;
+        const hashMatch = window.location.hash.match(/#slide(\d+)/);
+        if (hashMatch) {
+          startSlide = Math.max(0, Math.min(parseInt(hashMatch[1]) - 1, lessonData.slides.length - 1));
+        }
+        loadSlide(startSlide);
         updateVisuals();
       }
     }

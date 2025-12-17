@@ -110,6 +110,10 @@ RENDERER DECISION RULES
     - field visualizations (electric, magnetic, gravitational)
     - chemistry reactions (molecules, bonds, reactions)
 
+⚠️ CRITICAL: When renderer="manim", EVERY visual_beat MUST include manim_scene_spec.
+This applies to ALL section types: content, example, summary, intro, recap.
+There are NO exceptions. Prose-only beats for Manim sections will FAIL.
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 MANIM SCENE SPEC (REQUIRED FOR renderer=manim)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
