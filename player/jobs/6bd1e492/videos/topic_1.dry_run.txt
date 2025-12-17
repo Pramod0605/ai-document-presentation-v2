@@ -1,0 +1,12 @@
+DRY RUN - Manim section 1
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/6bd1e492/videos/topic_1.mp4
+
+--- SCENE CODE ---
+ball = Dot(point=np.array([-5, -3, 0]), color=ORANGE)
+
+# Animation sequence
+self.play(FadeIn(hoop), run_time=0.5)
+self.play(FadeIn(ball), run_time=0.5)
+self.play(FadeIn(grid), run_time=1.0)
+self.wait(1)

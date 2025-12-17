@@ -1,0 +1,14 @@
+DRY RUN - Manim section 2
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/6bd1e492/videos/topic_2.mp4
+
+--- SCENE CODE ---
+title = Text("", font_size=28).move_to(ORIGIN)
+item1_text = Text("", font_size=28).move_to(ORIGIN)
+item1_eq = MathTex(r"E = mc^2").move_to(ORIGIN)
+
+# Animation sequence
+self.play(FadeIn(title), run_time=0.5)
+self.play(FadeIn(item1_text), run_time=0.5)
+self.play(Write(item1_eq), run_time=1.5)
+self.wait(1)

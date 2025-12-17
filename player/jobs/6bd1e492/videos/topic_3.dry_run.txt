@@ -1,0 +1,16 @@
+DRY RUN - Manim section 3
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/6bd1e492/videos/topic_3.mp4
+
+--- SCENE CODE ---
+title = Text("", font_size=28).move_to(ORIGIN)
+linear = MathTex(r"E = mc^2").move_to(ORIGIN)
+cubic = MathTex(r"E = mc^2").move_to(ORIGIN)
+quadratic = MathTex(r"E = mc^2").move_to(ORIGIN)
+
+# Animation sequence
+self.play(FadeIn(title), run_time=1.0)
+self.play(Write(linear), run_time=1.0)
+self.play(Write(cubic), run_time=1.0)
+self.play(Write(quadratic), run_time=1.0)
+self.wait(1)

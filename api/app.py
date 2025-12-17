@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 import tempfile
 from pathlib import Path
 from typing import Optional
@@ -24,6 +25,17 @@ os.makedirs(ASSETS_DIR / "videos", exist_ok=True)
 os.makedirs(ASSETS_DIR / "audio", exist_ok=True)
 os.makedirs(JOBS_DIR, exist_ok=True)
 os.makedirs(TEMP_DIR, exist_ok=True)
+
+def setup_job_folder(job_output_dir: Path):
+    """Copy player files to job folder for self-contained playback"""
+    os.makedirs(job_output_dir / "videos", exist_ok=True)
+    os.makedirs(job_output_dir / "audio", exist_ok=True)
+    # Copy player files for self-contained job
+    for filename in ["index.html", "player.js"]:
+        src = PLAYER_DIR / filename
+        dst = job_output_dir / filename
+        if src.exists() and not dst.exists():
+            shutil.copy(str(src), str(dst))
 
 @app.route("/")
 def index():
@@ -84,7 +96,7 @@ def submit_job():
             })
             
             job_output_dir = JOBS_DIR / job_id
-            os.makedirs(job_output_dir, exist_ok=True)
+            setup_job_folder(job_output_dir)
             
             if job_type == "pdf":
                 run_job_async(
@@ -133,7 +145,7 @@ def submit_job():
             })
             
             job_output_dir = JOBS_DIR / job_id
-            os.makedirs(job_output_dir, exist_ok=True)
+            setup_job_folder(job_output_dir)
             
             run_job_async(
                 job_id,
@@ -338,18 +350,35 @@ def serve_assets(filename):
     return send_from_directory(ASSETS_DIR, filename)
 
 @app.route("/player/jobs/<job_id>/")
+def serve_job_player_old(job_id):
+    """Legacy route - redirect to new structure"""
+    return redirect(f"/jobs/{job_id}/")
+
+@app.route("/jobs/<job_id>/")
 def serve_job_player(job_id):
+    """Serve job-specific player with all assets in one folder"""
     job_dir = JOBS_DIR / job_id
     if not job_dir.exists():
         return jsonify({"error": "Job not found"}), 404
+    # Serve index.html from job folder (copied during job creation)
+    if (job_dir / "index.html").exists():
+        return send_from_directory(job_dir, "index.html")
+    # Fallback to main player if not copied yet
     return send_from_directory(PLAYER_DIR, "index.html")
 
-@app.route("/player/jobs/<job_id>/<path:filename>")
+@app.route("/jobs/<job_id>/<path:filename>")
 def serve_job_assets(job_id, filename):
+    """Serve all job assets from job folder"""
     job_dir = JOBS_DIR / job_id
     if not job_dir.exists():
         return jsonify({"error": "Job not found"}), 404
-    return send_from_directory(job_dir, filename)
+    # Check if file exists in job folder
+    if (job_dir / filename).exists():
+        return send_from_directory(job_dir, filename)
+    # Fallback to main player folder for shared assets
+    if (PLAYER_DIR / filename).exists():
+        return send_from_directory(PLAYER_DIR, filename)
+    return jsonify({"error": "File not found"}), 404
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
