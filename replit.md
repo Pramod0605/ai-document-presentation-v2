@@ -119,6 +119,13 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-17: **Beat Video Path Fix and Manim Spec Per-Beat**:
+  - Player now prioritizes beat_videos[0] over content_video_path when beat sequences exist
+  - Section type gating: intro/memory/recap use mode-center layout without video-box
+  - URL hash navigation support: #slide3 jumps directly to specified slide
+  - Director prompt now mandates manim_scene_spec inside each visual_beat for renderer=manim
+  - Per-beat Manim specs include objects array (equation, label, graph) and animation_sequence
+  - Verified with math test: all 7 sections generated proper manim_scene_spec in visual beats
 - 2025-12-17: **Player Two-Pane Layout with Video/Content Swap**:
   - Content and video now display in two resizable panes (mode-content-video)
   - Video box (video-box element) displays inline video with slow motion (0.7x)
