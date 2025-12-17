@@ -73,11 +73,13 @@ def submit_job():
             
             temp_file = TEMP_DIR / f"{os.urandom(8).hex()}{suffix}"
             uploaded_file.save(str(temp_file))
+            original_filename = uploaded_file.filename
             
             job_id = job_manager.create_job(job_type, {
                 "subject": subject,
                 "grade": grade,
-                "file_path": str(temp_file)
+                "file_path": str(temp_file),
+                "source_file": original_filename
             })
             
             job_output_dir = JOBS_DIR / job_id
@@ -93,7 +95,8 @@ def submit_job():
                     output_dir=str(job_output_dir),
                     dry_run=dry_run,
                     skip_wan=skip_wan,
-                    skip_avatar=skip_avatar
+                    skip_avatar=skip_avatar,
+                    source_file=original_filename
                 )
             else:
                 with open(temp_file, "r", encoding="utf-8") as f:
@@ -109,7 +112,8 @@ def submit_job():
                     output_dir=str(job_output_dir),
                     dry_run=dry_run,
                     skip_wan=skip_wan,
-                    skip_avatar=skip_avatar
+                    skip_avatar=skip_avatar,
+                    source_file=original_filename
                 )
         
         elif request.is_json:
@@ -206,7 +210,7 @@ def list_all_jobs():
     })
 
 
-def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False) -> dict:
+def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: str = None) -> dict:
     try:
         result = process_pdf_to_videos(
             pdf_path=pdf_path,
@@ -216,7 +220,8 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
             job_id=job_id,
             dry_run=dry_run,
             skip_wan=skip_wan,
-            skip_avatar=skip_avatar
+            skip_avatar=skip_avatar,
+            source_file=source_file
         )
         return result
     finally:
@@ -224,7 +229,7 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
             os.unlink(pdf_path)
 
 
-def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False) -> dict:
+def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: str = None) -> dict:
     return process_markdown_to_videos(
         markdown_content=markdown_content,
         subject=subject,
@@ -233,7 +238,8 @@ def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade
         job_id=job_id,
         dry_run=dry_run,
         skip_wan=skip_wan,
-        skip_avatar=skip_avatar
+        skip_avatar=skip_avatar,
+        source_file=source_file
     )
 
 

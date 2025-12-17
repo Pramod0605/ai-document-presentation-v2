@@ -318,21 +318,77 @@
     .mode-content-video #content-wrapper {
       opacity: 1;
       z-index: 25;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 20px 40px;
+      gap: 20px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .mode-content-video #content-box {
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(8px);
+      flex: 1;
+      min-width: 40%;
+      max-width: 55%;
+      transition: all 0.5s ease;
+    }
+
+    .mode-content-video #video-box {
+      display: block;
+      flex: 1;
+      min-width: 35%;
+      max-width: 50%;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid rgba(251, 191, 36, 0.3);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      transition: all 0.5s ease;
+    }
+
+    .mode-content-video #video-box video {
+      width: 100%;
+      height: auto;
+      display: block;
     }
 
     .mode-content-video #scene-video {
-      opacity: 1 !important;
+      opacity: 0 !important;
+    }
+
+    .mode-content-video.video-swap #content-wrapper {
+      flex-direction: row-reverse;
+    }
+
+    .mode-content-video.video-swap #content-box {
+      max-width: 40%;
+    }
+
+    .mode-content-video.video-swap #video-box {
+      max-width: 55%;
     }
 
     .mode-content-video #avatar-canvas {
       z-index: 50;
       right: 0;
       height: 70%;
+    }
+
+    #video-box {
+      display: none;
+      height: fit-content;
+      max-height: 60vh;
+    }
+    
+    .mode-side #video-box {
+      display: none;
+    }
+    
+    .mode-center #video-box {
+      display: none;
     }
 
     #controls-bar {
@@ -617,6 +673,9 @@
           <h1 id="slide-title">Loading...</h1>
           <div id="slide-image-container"></div>
           <div id="segments-list"></div>
+        </div>
+        <div id="video-box">
+          <video id="inline-video" muted playsinline></video>
         </div>
       </div>
 

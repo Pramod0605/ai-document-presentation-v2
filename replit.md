@@ -119,12 +119,19 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-17: **Player Two-Pane Layout with Video/Content Swap**:
+  - Content and video now display in two resizable panes (mode-content-video)
+  - Video box (video-box element) displays inline video with slow motion (0.7x)
+  - Video/content swap on alternate beats via CSS class toggle (video-swap)
+  - ResizeObserver handles content overflow by scaling segments-list
+  - Source file tracking: presentation.json now includes source_file field
+  - Pipeline tracks source file for both PDF and Markdown uploads
 - 2025-12-16: **Player Beat Video Support**:
   - Player now auto-detects per-beat video files (topic_X_beat_Y.mp4)
   - detectBeatVideos() checks for available beats via HEAD requests
   - detectAllBeatVideos() runs on presentation load
   - handleTimeUpdate() switches between beat videos based on audio timing
-  - Beat duration calculated as: audio_duration / num_beats
+  - Beat duration calculated as: audio_duration / num_beats (or timed_segments when available)
   - Falls back to single video (topic_X.mp4) when no beats detected
   - Browser console logs beat detection: "Section X: Found Y beat videos"
 - 2025-12-16: **Full Pipeline Test - Production Ready (Dry Run)**:

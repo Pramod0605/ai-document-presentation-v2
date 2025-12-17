@@ -21,7 +21,8 @@ def process_pdf_to_videos(
     job_id: str = None,
     dry_run: bool = False,
     skip_wan: bool = False,
-    skip_avatar: bool = False
+    skip_avatar: bool = False,
+    source_file: str = None
 ) -> dict:
     from core.job_manager import job_manager
     
@@ -37,6 +38,7 @@ def process_pdf_to_videos(
     job_status = {
         "status": "processing",
         "started_at": datetime.now().isoformat(),
+        "source_file": source_file,
         "steps": []
     }
     
@@ -76,6 +78,7 @@ def process_pdf_to_videos(
         
         presentation_path = Path(output_dir) / "presentation.json"
         if presentation:
+            presentation["source_file"] = source_file
             with open(presentation_path, "w") as f:
                 json.dump(presentation, f, indent=2)
         
@@ -146,7 +149,8 @@ def process_markdown_to_videos(
     job_id: str = None,
     dry_run: bool = False,
     skip_wan: bool = False,
-    skip_avatar: bool = False
+    skip_avatar: bool = False,
+    source_file: str = None
 ) -> dict:
     from core.job_manager import job_manager
     
@@ -162,6 +166,7 @@ def process_markdown_to_videos(
     job_status = {
         "status": "processing",
         "started_at": datetime.now().isoformat(),
+        "source_file": source_file,
         "steps": []
     }
     
@@ -193,6 +198,7 @@ def process_markdown_to_videos(
         
         presentation_path = Path(output_dir) / "presentation.json"
         if presentation:
+            presentation["source_file"] = source_file
             with open(presentation_path, "w") as f:
                 json.dump(presentation, f, indent=2)
         

@@ -44,6 +44,41 @@ const ctx = avatarCanvas.getContext('2d', { willReadFrequently: true });
 
 let currentMedia = audio;
 
+function setupContentOverflowHandler() {
+  const contentWrapper = document.getElementById('content-wrapper');
+  if (!contentBox || !contentWrapper) return;
+  
+  const resizeObserver = new ResizeObserver(() => {
+    adjustContentScale();
+  });
+  
+  resizeObserver.observe(contentBox);
+  
+  const mutationObserver = new MutationObserver(() => {
+    setTimeout(adjustContentScale, 100);
+  });
+  mutationObserver.observe(contentBox, { childList: true, subtree: true });
+}
+
+function adjustContentScale() {
+  const contentWrapper = document.getElementById('content-wrapper');
+  const segmentsList = document.getElementById('segments-list');
+  if (!contentBox || !contentWrapper || !segmentsList) return;
+  
+  const maxHeight = contentBox.clientHeight - 80;
+  const currentHeight = segmentsList.scrollHeight;
+  
+  if (currentHeight > maxHeight && maxHeight > 0) {
+    const scale = Math.max(0.65, maxHeight / currentHeight);
+    segmentsList.style.transform = `scale(${scale})`;
+    segmentsList.style.transformOrigin = 'top left';
+    segmentsList.style.width = `${100 / scale}%`;
+  } else {
+    segmentsList.style.transform = '';
+    segmentsList.style.width = '';
+  }
+}
+
 if (AVATAR_URL) {
   video.src = AVATAR_URL;
   video.load();
@@ -281,21 +316,31 @@ function loadSlide(index) {
   const bgVidPath = slide.background_video;
   const contentVidPath = slide.content_video_path;
 
+  const inlineVideo = document.getElementById('inline-video');
+  const videoBox = document.getElementById('video-box');
+
   if (contentVidPath && slide.has_content_video) {
     stage.classList.remove('mode-khan');
     stage.classList.add('mode-content-video');
-    bgVideo.muted = true;
-    bgVideo.loop = false;
-
-    if (!bgVideo.src.includes(contentVidPath)) {
-      bgVideo.src = contentVidPath;
-      bgVideo.load();
+    stage.classList.remove('video-swap');
+    
+    if (inlineVideo && !inlineVideo.src.includes(contentVidPath)) {
+      inlineVideo.src = contentVidPath;
+      inlineVideo.load();
     }
-    bgVideo.style.opacity = 1;
-    bgVideo.play().catch(e => console.log("Content Video Play Fail", e));
+    if (inlineVideo) {
+      inlineVideo.muted = true;
+      inlineVideo.playbackRate = 0.7;
+      inlineVideo.play().catch(e => console.log("Inline Video Play Fail", e));
+    }
+    
+    bgVideo.pause();
+    bgVideo.style.opacity = 0;
   } else if (bgVidPath) {
     stage.classList.remove('mode-content-video');
+    stage.classList.remove('video-swap');
     stage.classList.add('mode-khan');
+    if (inlineVideo) inlineVideo.pause();
 
     if (bgVideo.src.indexOf(bgVidPath) === -1) {
       bgVideo.src = bgVidPath;
@@ -305,10 +350,13 @@ function loadSlide(index) {
   } else {
     stage.classList.remove('mode-khan');
     stage.classList.remove('mode-content-video');
+    stage.classList.remove('video-swap');
     bgVideo.pause();
     bgVideo.style.opacity = 0;
+    if (inlineVideo) inlineVideo.pause();
   }
 
+  adjustContentScale();
   renderAvatar();
 }
 
@@ -334,9 +382,13 @@ function handleTimeUpdate(e) {
     }
   }
 
-  if (stage.classList.contains('mode-content-video') && bgVideo) {
-    if (isPlaying && bgVideo.paused) bgVideo.play();
-    if (!isPlaying && !bgVideo.paused) bgVideo.pause();
+  const inlineVideo = document.getElementById('inline-video');
+  
+  if (stage.classList.contains('mode-content-video')) {
+    if (inlineVideo) {
+      if (isPlaying && inlineVideo.paused) inlineVideo.play().catch(e => {});
+      if (!isPlaying && !inlineVideo.paused) inlineVideo.pause();
+    }
     
     if (slide.beat_videos && slide.beat_videos.length > 1) {
       let targetBeatIndex = 0;
@@ -356,17 +408,16 @@ function handleTimeUpdate(e) {
         targetBeatIndex = Math.min(Math.floor(t / beatDuration), slide.beat_videos.length - 1);
       }
       
-      if (targetBeatIndex !== currentBeatIndex) {
+      if (targetBeatIndex !== currentBeatIndex && inlineVideo) {
         currentBeatIndex = targetBeatIndex;
         const newBeatPath = slide.beat_videos[targetBeatIndex];
         console.log(`Switching to beat ${targetBeatIndex}: ${newBeatPath}`);
-        bgVideo.src = newBeatPath;
-        bgVideo.load();
-        bgVideo.play().catch(e => console.log("Beat video play fail", e));
-      }
-    } else {
-      if (Math.abs(bgVideo.currentTime - t) > 0.5) {
-        bgVideo.currentTime = t;
+        inlineVideo.src = newBeatPath;
+        inlineVideo.load();
+        inlineVideo.playbackRate = 0.7;
+        inlineVideo.play().catch(e => console.log("Beat video play fail", e));
+        
+        stage.classList.toggle('video-swap', targetBeatIndex % 2 === 1);
       }
     }
   }
@@ -772,4 +823,5 @@ document.getElementById('btn-new').onclick = showNewContentOverlay;
 document.addEventListener('DOMContentLoaded', () => {
   checkExistingPresentation();
   updateVisuals();
+  setupContentOverflowHandler();
 });
