@@ -119,12 +119,13 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
-- 2025-12-17: **Job-Based Asset Loading Fix**:
-  - Fixed player to load assets from job-specific folders (`/player/jobs/<job_id>/`)
-  - Job completion now redirects to job-specific player URL for correct BASE_PATH
-  - Fixed player.js script path to use absolute URL (`/player/player.js`)
-  - Each job has isolated videos, audio, and presentation.json
-  - Console now logs BASE_PATH for debugging: "Player BASE_PATH: /player/jobs/..."
+- 2025-12-17: **Self-Contained Job Folders**:
+  - Job URL changed from `/player/jobs/<job_id>/` to `/jobs/<job_id>/` for cleaner structure
+  - Each job folder now contains: index.html, player.js, presentation.json, videos/, audio/
+  - `setup_job_folder()` function copies player files on job creation
+  - Player detects BASE_PATH via regex `/\/jobs\/([^\/]+)\//` from URL
+  - Console logs "Player BASE_PATH: /jobs/..." for debugging
+  - Legacy URLs still supported via redirect
 - 2025-12-17: **Beat Video Path Fix and Manim Spec Per-Beat**:
   - Player now prioritizes beat_videos[0] over content_video_path when beat sequences exist
   - Section type gating: intro/memory/recap use mode-center layout without video-box
