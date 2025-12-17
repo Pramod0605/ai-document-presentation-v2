@@ -365,7 +365,12 @@ function loadSlide(index) {
     if (inlineVideo) {
       inlineVideo.muted = true;
       inlineVideo.playbackRate = 0.7;
-      inlineVideo.play().catch(e => console.log("Inline Video Play Fail", e));
+      // Delay play to avoid AbortError race condition
+      setTimeout(() => {
+        if (inlineVideo.paused) {
+          inlineVideo.play().catch(e => {});
+        }
+      }, 100);
     }
     
     bgVideo.pause();
@@ -520,6 +525,16 @@ function handleEnded(e) {
 }
 audio.addEventListener('ended', handleEnded);
 video.addEventListener('ended', handleEnded);
+
+// Handle inline video ended - show text content again
+const inlineVideoEl = document.getElementById('inline-video');
+if (inlineVideoEl) {
+  inlineVideoEl.addEventListener('ended', () => {
+    stage.classList.remove('video-focus');
+    stage.classList.remove('video-swap');
+    console.log('Inline video ended - showing content');
+  });
+}
 
 function formatTime(s) {
   return `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, '0')}`;
