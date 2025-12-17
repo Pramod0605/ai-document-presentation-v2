@@ -119,6 +119,14 @@ The Flask server runs on port 5000. Access the player at `/player/index.html`.
 
 ## Recent Changes
 
+- 2025-12-17: **Flash LLM Validator for Semantic Quality Checking**:
+  - New `core/flash_validator.py` module uses Gemini Flash to validate visual beat content
+  - Two-layer validation: structural checks (code) + semantic checks (LLM)
+  - Replaces rigid word-count rules with intelligent context understanding
+  - Flash understands "x² + 5x + 6 = 0" is specific (PASS) vs "animate smoothly" is vague (FAIL)
+  - Content/example sections use strict mode (Flash FAIL = job fails)
+  - Non-content sections (intro, summary, memory, recap) use warning mode
+  - Logs PASS/FAIL reasoning: "Contains specific mathematical equations, describes specific motions"
 - 2025-12-17: **Self-Contained Job Folders**:
   - Job URL changed from `/player/jobs/<job_id>/` to `/jobs/<job_id>/` for cleaner structure
   - Each job folder now contains: index.html, player.js, presentation.json, videos/, audio/
