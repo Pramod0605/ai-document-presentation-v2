@@ -67,6 +67,7 @@ def validate_beat_with_flash(beat: dict, section_id: int, beat_index: int, secti
 - labels_and_text: {beat.get('labels_and_text', '(empty)')}
 - pedagogical_focus: {beat.get('pedagogical_focus', '(empty)')}"""
 
+    result_text = ""
     try:
         client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
@@ -83,7 +84,8 @@ def validate_beat_with_flash(beat: dict, section_id: int, beat_index: int, secti
             temperature=0.1
         )
         
-        result_text = response.choices[0].message.content.strip()
+        content = response.choices[0].message.content
+        result_text = content.strip() if content else ""
         
         if result_text.startswith("```"):
             result_text = result_text.split("```")[1]
@@ -101,7 +103,8 @@ def validate_beat_with_flash(beat: dict, section_id: int, beat_index: int, secti
         return result
         
     except json.JSONDecodeError as e:
-        log(f"[FLASH VALIDATOR] JSON parse error: {e}, raw: {result_text[:200]}")
+        raw_preview = result_text[:200] if result_text else "(empty)"
+        log(f"[FLASH VALIDATOR] JSON parse error: {e}, raw: {raw_preview}")
         return {"valid": True, "reason": f"Validation response parse error, allowing: {str(e)[:50]}"}
     except Exception as e:
         log(f"[FLASH VALIDATOR] Error: {e}")
