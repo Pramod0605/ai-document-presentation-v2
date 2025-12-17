@@ -301,7 +301,10 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
         var_name = eq_id.replace("-", "_").replace(" ", "_")
         object_vars[eq_id] = var_name
         
-        pos_name = POSITION_MAP.get(position, "UP * 3")
+        if isinstance(position, list):
+            pos_name = f"np.array([{position[0] if len(position) > 0 else 0}, {position[1] if len(position) > 1 else 0}, 0])"
+        else:
+            pos_name = POSITION_MAP.get(position, "UP * 3")
         code_lines.append(f'{var_name} = MathTex(r"{latex}").move_to({pos_name})')
         
         if eq.get("substitution"):
