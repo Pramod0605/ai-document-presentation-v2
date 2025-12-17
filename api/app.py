@@ -39,7 +39,7 @@ def setup_job_folder(job_output_dir: Path):
 
 @app.route("/")
 def index():
-    return redirect("/player/")
+    return redirect("/dashboard")
 
 @app.route("/health", methods=["GET"])
 def health_check():
