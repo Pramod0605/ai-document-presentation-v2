@@ -1,0 +1,215 @@
+[
+  {
+    "timestamp": "2025-12-17T15:24:56.178105",
+    "section_id": 1,
+    "section_title": "Introduction to Quadratic Equations",
+    "renderer": "manim_spec",
+    "prompt": "title_text = Text(\"Quadratic Equations\", font_size=96).move_to(np.array([0, 0, 0]))\n\n# Animation sequence\nself.play(FadeIn(title_text), run_time=1.5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/dd77e41e/videos/topic_1.mp4",
+    "extra": {
+      "section_type": "intro",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "title_text",
+            "type": "label",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "text": "Quadratic Equations",
+              "font_size": 96,
+              "color": "white"
+            }
+          }
+        ],
+        "forces": [],
+        "equations": [],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title_text",
+            "duration": 1.5
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:24:56.178814",
+    "section_id": 2,
+    "section_title": "Summary of Key Concepts",
+    "renderer": "manim_spec",
+    "prompt": "gen_form = MathTex(r\"ax^2 + bx + c = 0\").move_to(ORIGIN)\narrow_left = Arrow(start=np.array([0, 2, 0]), end=np.array([-3, 0, 0]), color=GRAY, buff=0)\narrow_right = Arrow(start=np.array([0, 2, 0]), end=np.array([3, 0, 0]), color=GRAY, buff=0)\n\n# Animation sequence\nself.play(FadeIn(gen_form), run_time=1.0)\nself.play(FadeIn(arrow_left), run_time=1.0)\nself.play(FadeIn(arrow_right), run_time=1.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/dd77e41e/videos/topic_2.mp4",
+    "extra": {
+      "section_type": "summary",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "gen_form",
+            "type": "equation",
+            "position": "top_center",
+            "properties": {
+              "latex": "ax^2 + bx + c = 0",
+              "color": "white"
+            }
+          },
+          {
+            "id": "arrow_left",
+            "type": "vector",
+            "position": [
+              0,
+              2
+            ],
+            "properties": {
+              "end": [
+                -3,
+                0
+              ],
+              "color": "gray"
+            }
+          },
+          {
+            "id": "arrow_right",
+            "type": "vector",
+            "position": [
+              0,
+              2
+            ],
+            "properties": {
+              "end": [
+                3,
+                0
+              ],
+              "color": "gray"
+            }
+          }
+        ],
+        "forces": [],
+        "equations": [],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "gen_form",
+            "duration": 1.0
+          },
+          {
+            "action": "draw_arrow",
+            "target": "arrow_left",
+            "duration": 1.0
+          },
+          {
+            "action": "draw_arrow",
+            "target": "arrow_right",
+            "duration": 1.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:24:56.179959",
+    "section_id": 3,
+    "section_title": "Defining a Quadratic Equation",
+    "renderer": "manim_spec",
+    "prompt": "gen_form = MathTex(r\"ax^2 + bx + c = 0\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(gen_form), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/dd77e41e/videos/topic_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 6
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:24:56.185203",
+    "section_id": 4,
+    "section_title": "Example: Solving by Factoring",
+    "renderer": "manim_spec",
+    "prompt": "title = Text(\"Example: Solving by Factoring\", font_size=28).move_to(UP * 3 + LEFT * 4)\nproblem_eq = MathTex(r\"x^2 + 5x + 6 = 0\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(title), run_time=1.0)\nself.play(FadeIn(problem_eq), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/dd77e41e/videos/topic_4.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 6
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:24:56.187150",
+    "section_id": 5,
+    "section_title": "The Quadratic Formula",
+    "renderer": "manim_spec",
+    "prompt": "easy_eq = MathTex(r\"x^2 + 5x + 6 = 0\").move_to(ORIGIN)\nhard_eq = MathTex(r\"3x^2 - 7x + 1 = 0\").move_to(ORIGIN)\nq_mark = Text(\"?\", font_size=72).move_to(np.array([3, 0, 0]))\n\n# Animation sequence\nself.play(FadeIn(easy_eq), run_time=1.0)\nself.wait(1.0)\nself.play(FadeOut(easy_eq), run_time=1.0)\nself.play(FadeIn(hard_eq), run_time=1.0)\nself.play(FadeIn(q_mark), run_time=0.5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/dd77e41e/videos/topic_5.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 6
+    }
+  },
+  {
+    "timestamp": "2025-12-17T15:24:56.188229",
+    "section_id": 6,
+    "section_title": "Key Formulas to Remember",
+    "renderer": "manim_spec",
+    "prompt": "card1_q = Dot(point=np.array([0, 0, 0]), color=WHITE)\n\n# Animation sequence\nself.play(FadeIn(card1_q), run_time=2.0)\nself.wait(2.0)\nself.play(FadeIn(card1_q), run_time=1.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/dd77e41e/videos/topic_6.mp4",
+    "extra": {
+      "section_type": "memory",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "card1_q",
+            "type": "flashcard",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "question": "What is the general form of a quadratic equation?",
+              "answer": "ax^2 + bx + c = 0, \\text{where } a \\neq 0",
+              "color": "white"
+            }
+          }
+        ],
+        "forces": [],
+        "equations": [],
+        "animation_sequence": [
+          {
+            "action": "show_flashcard_question",
+            "target": "card1_q",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "duration": 2.0
+          },
+          {
+            "action": "flip_flashcard_to_answer",
+            "target": "card1_q",
+            "duration": 1.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  }
+]

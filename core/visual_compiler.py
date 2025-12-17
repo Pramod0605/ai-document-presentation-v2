@@ -176,7 +176,11 @@ POSITION_MAP = {
 
 
 def validate_manim_scene_spec(spec: dict, section_id: int, beat_index: int) -> None:
-    """Validate manim_scene_spec has required structure."""
+    """Validate manim_scene_spec has required structure.
+    
+    Accepts specs with at least ONE of: objects, equations, or forces.
+    This allows equation-only specs for math-heavy content sections.
+    """
     if not spec:
         raise VisualCompilationError(
             section_id, beat_index,
@@ -184,10 +188,13 @@ def validate_manim_scene_spec(spec: dict, section_id: int, beat_index: int) -> N
         )
     
     objects = spec.get("objects", [])
-    if not objects:
+    equations = spec.get("equations", [])
+    forces = spec.get("forces", [])
+    
+    if not objects and not equations and not forces:
         raise VisualCompilationError(
             section_id, beat_index,
-            "manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation)."
+            "manim_scene_spec has no renderable content. Must define at least one of: objects, equations, or forces."
         )
     
     animation_sequence = spec.get("animation_sequence", [])

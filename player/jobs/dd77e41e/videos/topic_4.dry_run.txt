@@ -1,0 +1,12 @@
+DRY RUN - Manim section 4
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/dd77e41e/videos/topic_4.mp4
+
+--- SCENE CODE ---
+title = Text("Example: Solving by Factoring", font_size=28).move_to(UP * 3 + LEFT * 4)
+problem_eq = MathTex(r"x^2 + 5x + 6 = 0").move_to(ORIGIN)
+
+# Animation sequence
+self.play(FadeIn(title), run_time=1.0)
+self.play(FadeIn(problem_eq), run_time=2.0)
+self.wait(1)
