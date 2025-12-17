@@ -365,10 +365,27 @@
 
     .mode-content-video.video-swap #content-box {
       max-width: 40%;
+      opacity: 0.15;
+      transform: scale(0.85);
+      pointer-events: none;
     }
 
     .mode-content-video.video-swap #video-box {
-      max-width: 55%;
+      max-width: 70%;
+      min-width: 65%;
+    }
+    
+    .mode-content-video.video-focus #content-box {
+      opacity: 0;
+      max-width: 0;
+      min-width: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    
+    .mode-content-video.video-focus #video-box {
+      max-width: 85%;
+      min-width: 80%;
     }
 
     .mode-content-video #avatar-canvas {

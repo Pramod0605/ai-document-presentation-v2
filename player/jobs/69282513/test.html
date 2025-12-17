@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><title>Video Test</title></head>
+<body>
+<h1>Testing Manim Video</h1>
+<video id="test" controls width="640">
+  <source src="/jobs/69282513/videos/topic_3.mp4" type="video/mp4">
+</video>
+<script>
+document.getElementById('test').addEventListener('loadeddata', function() {
+  console.log('Video loaded successfully!');
+});
+document.getElementById('test').addEventListener('error', function(e) {
+  console.error('Video error:', e);
+});
+</script>
+</body>
+</html>
