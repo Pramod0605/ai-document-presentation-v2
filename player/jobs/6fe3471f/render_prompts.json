@@ -1,0 +1,315 @@
+[
+  {
+    "timestamp": "2025-12-17T16:21:07.419995",
+    "section_id": 1,
+    "section_title": "Introduction to Quadratic Equations",
+    "renderer": "manim_spec",
+    "prompt": "axes = Axes(x_range=[-5, 5, 1], y_range=[-5, 5, 1], x_length=8, y_length=6, axis_config={\"include_tip\": True})\nlinear_eq_label = MathTex(r\"E = mc^2\").move_to(ORIGIN)\nlinear_graph = axes.plot(2*x - 1, color=BLUE)\n\n# Animation sequence\nself.play(FadeIn(axes), run_time=1.0)\nself.play(Write(linear_eq_label), run_time=1.0)\nself.play(FadeIn(linear_graph), run_time=2.0)\nself.wait(2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6fe3471f/videos/topic_1.mp4",
+    "extra": {
+      "section_type": "intro",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "axes",
+            "type": "axes",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "x_range": [
+                -5,
+                5
+              ],
+              "y_range": [
+                -5,
+                5
+              ]
+            }
+          },
+          {
+            "id": "linear_eq_label",
+            "type": "equation",
+            "latex": "y = 2x - 1",
+            "position": "top_left",
+            "properties": {
+              "color": "white"
+            }
+          },
+          {
+            "id": "linear_graph",
+            "type": "graph",
+            "properties": {
+              "equation": "2*x - 1",
+              "color": "#33FF57"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "axes",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "linear_eq_label",
+            "duration": 1.0
+          },
+          {
+            "action": "draw_graph",
+            "target": "linear_graph",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": null,
+            "duration": 2.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T16:21:08.443691",
+    "section_id": 2,
+    "section_title": "What We Will Learn",
+    "renderer": "manim_spec",
+    "prompt": "title = Text(\"title\", font_size=48).move_to(UP * 3)\npoint1 = MathTex(r\"E = mc^2\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(title), run_time=1.0)\nself.play(FadeIn(point1), run_time=1.5)\nself.wait(5.5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6fe3471f/videos/topic_2.mp4",
+    "extra": {
+      "section_type": "summary",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "label",
+            "text": "Lesson Plan",
+            "position": "top_center",
+            "properties": {
+              "font_size": 48
+            }
+          },
+          {
+            "id": "point1",
+            "type": "equation",
+            "latex": "\\text{1. Understand the General Form: } ax^2 + bx + c = 0",
+            "position": [
+              -3,
+              1,
+              0
+            ],
+            "properties": {
+              "color": "white"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "point1",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "target": null,
+            "duration": 5.5
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T16:21:13.211070",
+    "section_id": 3,
+    "section_title": "What is a Quadratic Equation?",
+    "renderer": "manim_spec",
+    "prompt": "general_form = MathTex(r\"E = mc^2\").move_to(ORIGIN)\nform_box = Dot(point=np.array([0, 0, 0]), color=BLUE)\n\n# Animation sequence\nself.play(FadeIn(general_form), run_time=1.5)\nself.play(FadeIn(form_box), run_time=1.5)\nself.play(FadeIn(form_box), run_time=1.0)\nself.wait(5.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6fe3471f/videos/topic_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 4
+    }
+  },
+  {
+    "timestamp": "2025-12-17T16:21:17.360483",
+    "section_id": 4,
+    "section_title": "The Concept of Solving by Factoring",
+    "renderer": "manim_spec",
+    "prompt": "title = Text(\"title\", font_size=60).move_to(UP * 3)\nsubtitle = Text(\"subtitle\", font_size=48).move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(title), run_time=1.5)\nself.play(FadeIn(subtitle), run_time=1.5)\nself.play(Indicate(subtitle), run_time=2.0)\nself.wait(4.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6fe3471f/videos/topic_4.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 4
+    }
+  },
+  {
+    "timestamp": "2025-12-17T16:21:23.795987",
+    "section_id": 5,
+    "section_title": "Example: Solving x\u00b2 + 5x + 6 = 0",
+    "renderer": "manim_spec",
+    "prompt": "main_eq = MathTex(r\"E = mc^2\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(main_eq), run_time=1.0)\nself.play(FadeIn(main_eq), run_time=4.0)\nself.wait(5.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6fe3471f/videos/topic_5.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 7
+    }
+  },
+  {
+    "timestamp": "2025-12-17T16:21:24.732329",
+    "section_id": 6,
+    "section_title": "Key Concepts to Remember",
+    "renderer": "manim_spec",
+    "prompt": "card1 = Dot(point=ORIGIN, color=BLUE)\ncard2 = Dot(point=ORIGIN, color=BLUE)\ncard3 = Dot(point=ORIGIN, color=BLUE)\n\n# Animation sequence\nself.play(FadeIn(card1), run_time=2.5)\nself.play(FadeIn(card2), run_time=2.5)\nself.play(FadeIn(card3), run_time=3.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6fe3471f/videos/topic_6.mp4",
+    "extra": {
+      "section_type": "memory",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "card1",
+            "type": "flashcard",
+            "position": "center",
+            "properties": {
+              "question": "What is the general form of a quadratic equation?",
+              "answer": "$ax^2 + bx + c = 0$, where $a \\neq 0$"
+            }
+          },
+          {
+            "id": "card2",
+            "type": "flashcard",
+            "position": "center",
+            "properties": {
+              "question": "What is the Zero Product Property?",
+              "answer": "If $A \\times B = 0$, then $A=0$ or $B=0$"
+            }
+          },
+          {
+            "id": "card3",
+            "type": "flashcard",
+            "position": "center",
+            "properties": {
+              "question": "What are the two main steps to solve by factoring?",
+              "answer": "1. Factor the expression.\\n2. Set each factor to zero and solve."
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_flashcard",
+            "target": "card1",
+            "duration": 2.5
+          },
+          {
+            "action": "show_flashcard",
+            "target": "card2",
+            "duration": 2.5
+          },
+          {
+            "action": "show_flashcard",
+            "target": "card3",
+            "duration": 3.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T16:21:25.888390",
+    "section_id": 7,
+    "section_title": "Lesson Recap",
+    "renderer": "manim_spec",
+    "prompt": "recap_title = Text(\"recap_title\", font_size=28).move_to(UP * 3)\ngeneral_form = MathTex(r\"E = mc^2\").move_to(ORIGIN)\nrule_label = Text(\"rule_label\", font_size=28).move_to(np.array([4, 0, 0]))\n\n# Animation sequence\nself.play(FadeIn(recap_title), run_time=0.5)\nself.play(FadeIn(general_form), run_time=1.0)\nself.play(FadeIn(rule_label), run_time=1.0)\nself.play(Indicate(rule_label), run_time=1.5)\nself.wait(5.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/6fe3471f/videos/topic_7.mp4",
+    "extra": {
+      "section_type": "recap",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "recap_title",
+            "type": "label",
+            "text": "Recap: The Definition",
+            "position": "top_center"
+          },
+          {
+            "id": "general_form",
+            "type": "equation",
+            "latex": "ax^2 + bx + c = 0",
+            "position": "center"
+          },
+          {
+            "id": "rule_label",
+            "type": "label",
+            "text": "a \u2260 0",
+            "position": [
+              4,
+              0,
+              0
+            ],
+            "properties": {
+              "color": "red"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "recap_title",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "general_form",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "rule_label",
+            "duration": 1.0
+          },
+          {
+            "action": "highlight",
+            "target": "rule_label",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "target": null,
+            "duration": 5.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  }
+]

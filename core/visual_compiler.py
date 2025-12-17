@@ -130,7 +130,8 @@ def extract_labels_from_text(labels_text: str) -> List[str]:
 
 def compile_wan_prompt(beat: dict, section_id: int, beat_index: int, section_type: str = "content") -> str:
     """Compile a WAN video prompt from structured visual beat fields."""
-    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=False)
+    use_strict = section_type in ("content", "example")
+    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)
     for w in warnings:
         print(w)
     
@@ -389,10 +390,14 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
         target = anim.get("target") or ""
         duration = anim.get("duration", 1.0)
         
+        if isinstance(target, list):
+            target = target[0] if target else ""
+        
         if not target and action != "wait":
             continue
         
-        target_var = object_vars.get(target, target.replace("-", "_").replace(" ", "_")) if target else "placeholder"
+        target_str = str(target) if target else ""
+        target_var = object_vars.get(target_str, target_str.replace("-", "_").replace(" ", "_")) if target_str else "placeholder"
         
         if action == "appear":
             code_lines.append(f'self.play(FadeIn({target_var}), run_time={duration})')
@@ -419,8 +424,11 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
         
         elif action == "transform":
             to_target = anim.get("to") or ""
+            if isinstance(to_target, list):
+                to_target = to_target[0] if to_target else ""
             if to_target:
-                to_var = object_vars.get(to_target, to_target.replace("-", "_").replace(" ", "_"))
+                to_target_str = str(to_target)
+                to_var = object_vars.get(to_target_str, to_target_str.replace("-", "_").replace(" ", "_"))
                 code_lines.append(f'self.play(Transform({target_var}, {to_var}), run_time={duration})')
         
         elif action == "wait":
@@ -455,7 +463,8 @@ def compile_manim_plan(beat: dict, section_id: int, beat_index: int, section_typ
     REQUIRES: manim_scene_spec JSON with objects, forces, equations, animation_sequence.
     FAIL-FAST: Raises VisualCompilationError if manim_scene_spec is missing or invalid.
     """
-    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=False)
+    use_strict = section_type in ("content", "example")
+    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)
     for w in warnings:
         print(w)
     

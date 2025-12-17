@@ -1,0 +1,14 @@
+DRY RUN - Manim section 3
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/6fe3471f/videos/topic_3.mp4
+
+--- SCENE CODE ---
+general_form = MathTex(r"E = mc^2").move_to(ORIGIN)
+form_box = Dot(point=np.array([0, 0, 0]), color=BLUE)
+
+# Animation sequence
+self.play(FadeIn(general_form), run_time=1.5)
+self.play(FadeIn(form_box), run_time=1.5)
+self.play(FadeIn(form_box), run_time=1.0)
+self.wait(5.0)
+self.wait(1)

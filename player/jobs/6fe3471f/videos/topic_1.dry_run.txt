@@ -1,0 +1,15 @@
+DRY RUN - Manim section 1
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/6fe3471f/videos/topic_1.mp4
+
+--- SCENE CODE ---
+axes = Axes(x_range=[-5, 5, 1], y_range=[-5, 5, 1], x_length=8, y_length=6, axis_config={"include_tip": True})
+linear_eq_label = MathTex(r"E = mc^2").move_to(ORIGIN)
+linear_graph = axes.plot(2*x - 1, color=BLUE)
+
+# Animation sequence
+self.play(FadeIn(axes), run_time=1.0)
+self.play(Write(linear_eq_label), run_time=1.0)
+self.play(FadeIn(linear_graph), run_time=2.0)
+self.wait(2.0)
+self.wait(1)

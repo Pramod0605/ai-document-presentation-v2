@@ -1,0 +1,3901 @@
+{
+  "chapter_title": "Simple Math",
+  "subject": "Math",
+  "grade": "8",
+  "language": "en-IN",
+  "sections": [
+    {
+      "section_type": "intro",
+      "id": 1,
+      "title": "Introduction to Basic Arithmetic",
+      "renderer": "manim",
+      "narration": "Welcome! In this lesson, we're going back to the very basics to build a rock-solid foundation in mathematics. We'll be exploring one of the most fundamental operations: addition. You might think you know all about it, but understanding it deeply is the key to unlocking more complex topics later on. Addition is everywhere in our daily lives, from counting money to figuring out how many friends are coming to a party. It's the first step in the amazing world of numbers, and by the end of this session, you'll see it not just as a rule, but as a powerful idea of combining things together. Let's begin our journey into the simple, yet powerful, world of addition.",
+      "narration_segments": [
+        {
+          "id": 1,
+          "text": "Welcome! In this lesson, we're going back to the very basics to build a rock-solid foundation in mathematics. We'll be exploring one of the most fundamental operations: addition.",
+          "duration": 9
+        },
+        {
+          "id": 2,
+          "text": "You might think you know all about it, but understanding it deeply is the key to unlocking more complex topics later on. Addition is everywhere in our daily lives, from counting money to figuring out how many friends are coming to a party.",
+          "duration": 10
+        },
+        {
+          "id": 3,
+          "text": "It's the first step in the amazing world of numbers, and by the end of this session, you'll see it not just as a rule, but as a powerful idea of combining things together. Let's begin our journey into the simple, yet powerful, world of addition.",
+          "duration": 11
+        }
+      ],
+      "visual_beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A clean, dark gray background. The center of the screen is empty, ready for elements to appear.",
+          "objects_and_properties": "The text 'Addition' rendered in a clean, white, sans-serif font.",
+          "motion_sequence": "The word 'Addition' fades into the center of the screen and gently scales up slightly over 2 seconds, then holds.",
+          "labels_and_text": "Text: 'Addition' at the screen's center.",
+          "pedagogical_focus": "To introduce the topic of the lesson in a clear and focused manner.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title_text",
+                "type": "label",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "text": "Addition",
+                  "font_size": 96,
+                  "color": "white"
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "title_text",
+                "duration": 2.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The 'Addition' text remains at the center. The background is still dark gray.",
+          "objects_and_properties": "Small, colorful icons representing daily life: a shopping cart, a birthday cake, a stack of coins. These icons are semi-transparent and positioned around the central text.",
+          "motion_sequence": "The icons fade in one by one around the 'Addition' text. The shopping cart appears top-left, the coins bottom-left, and the cake top-right.",
+          "labels_and_text": "No new labels, the icons are purely visual.",
+          "pedagogical_focus": "To connect the abstract concept of addition to relatable, real-world scenarios.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title_text",
+                "type": "label",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "text": "Addition",
+                  "font_size": 96,
+                  "color": "white"
+                }
+              },
+              {
+                "id": "cart_icon",
+                "type": "icon",
+                "position": [
+                  -4,
+                  2
+                ],
+                "properties": {
+                  "name": "shopping_cart",
+                  "color": "yellow",
+                  "scale": 0.5
+                }
+              },
+              {
+                "id": "coins_icon",
+                "type": "icon",
+                "position": [
+                  -4,
+                  -2
+                ],
+                "properties": {
+                  "name": "coins",
+                  "color": "gold",
+                  "scale": 0.5
+                }
+              },
+              {
+                "id": "cake_icon",
+                "type": "icon",
+                "position": [
+                  4,
+                  2
+                ],
+                "properties": {
+                  "name": "birthday_cake",
+                  "color": "pink",
+                  "scale": 0.5
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "cart_icon",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "coins_icon",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "cake_icon",
+                "duration": 0.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The previous elements (text and icons) are on screen.",
+          "objects_and_properties": "A set of simple building blocks (squares) of different colors (red, blue, green).",
+          "motion_sequence": "The icons and 'Addition' text fade out. Then, a blue square and a red square slide in from the left and right, respectively. A plus sign appears between them, and they combine into a small stack, visually representing 'combining things'.",
+          "labels_and_text": "A '+' symbol appears between the blocks.",
+          "pedagogical_focus": "To visually define addition as the act of 'combining' and set the stage for the core concept.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "block1",
+                "type": "square",
+                "position": [
+                  -2,
+                  0
+                ],
+                "properties": {
+                  "color": "blue",
+                  "side_length": 1
+                }
+              },
+              {
+                "id": "block2",
+                "type": "square",
+                "position": [
+                  2,
+                  0
+                ],
+                "properties": {
+                  "color": "red",
+                  "side_length": 1
+                }
+              },
+              {
+                "id": "plus_sign",
+                "type": "label",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "text": "+",
+                  "font_size": 96,
+                  "color": "white"
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "fade_out",
+                "target": "all_previous",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "block1",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "block2",
+                "duration": 0.5
+              },
+              {
+                "action": "wait",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "plus_sign",
+                "duration": 0.5
+              },
+              {
+                "action": "move",
+                "target": "block1",
+                "new_position": [
+                  0,
+                  -0.5
+                ],
+                "duration": 1.0
+              },
+              {
+                "action": "move",
+                "target": "block2",
+                "new_position": [
+                  0,
+                  0.5
+                ],
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ],
+      "layout": {
+        "content_zone": {
+          "position": "left",
+          "width_percent": 65
+        },
+        "avatar_zone": {
+          "mode": "side",
+          "position": "right",
+          "width_percent": 35
+        }
+      },
+      "gesture_hints": [
+        {
+          "time": 2.0,
+          "action": "welcome_gesture"
+        },
+        {
+          "time": 12.0,
+          "action": "point_to_screen"
+        },
+        {
+          "time": 22.0,
+          "action": "open_hands_gesture"
+        }
+      ],
+      "explanation_plan": {
+        "wan_prompt": "Educational visualization for Introduction to Basic Arithmetic",
+        "visual_beats": [
+          {
+            "segment_id": 1,
+            "scene_setup": "A clean, dark gray background. The center of the screen is empty, ready for elements to appear.",
+            "objects_and_properties": "The text 'Addition' rendered in a clean, white, sans-serif font.",
+            "motion_sequence": "The word 'Addition' fades into the center of the screen and gently scales up slightly over 2 seconds, then holds.",
+            "labels_and_text": "Text: 'Addition' at the screen's center.",
+            "pedagogical_focus": "To introduce the topic of the lesson in a clear and focused manner.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "title_text",
+                  "type": "label",
+                  "position": [
+                    0,
+                    0
+                  ],
+                  "properties": {
+                    "text": "Addition",
+                    "font_size": 96,
+                    "color": "white"
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "appear",
+                  "target": "title_text",
+                  "duration": 2.0
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 2,
+            "scene_setup": "The 'Addition' text remains at the center. The background is still dark gray.",
+            "objects_and_properties": "Small, colorful icons representing daily life: a shopping cart, a birthday cake, a stack of coins. These icons are semi-transparent and positioned around the central text.",
+            "motion_sequence": "The icons fade in one by one around the 'Addition' text. The shopping cart appears top-left, the coins bottom-left, and the cake top-right.",
+            "labels_and_text": "No new labels, the icons are purely visual.",
+            "pedagogical_focus": "To connect the abstract concept of addition to relatable, real-world scenarios.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "title_text",
+                  "type": "label",
+                  "position": [
+                    0,
+                    0
+                  ],
+                  "properties": {
+                    "text": "Addition",
+                    "font_size": 96,
+                    "color": "white"
+                  }
+                },
+                {
+                  "id": "cart_icon",
+                  "type": "icon",
+                  "position": [
+                    -4,
+                    2
+                  ],
+                  "properties": {
+                    "name": "shopping_cart",
+                    "color": "yellow",
+                    "scale": 0.5
+                  }
+                },
+                {
+                  "id": "coins_icon",
+                  "type": "icon",
+                  "position": [
+                    -4,
+                    -2
+                  ],
+                  "properties": {
+                    "name": "coins",
+                    "color": "gold",
+                    "scale": 0.5
+                  }
+                },
+                {
+                  "id": "cake_icon",
+                  "type": "icon",
+                  "position": [
+                    4,
+                    2
+                  ],
+                  "properties": {
+                    "name": "birthday_cake",
+                    "color": "pink",
+                    "scale": 0.5
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "appear",
+                  "target": "cart_icon",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "coins_icon",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "cake_icon",
+                  "duration": 0.5
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 3,
+            "scene_setup": "The previous elements (text and icons) are on screen.",
+            "objects_and_properties": "A set of simple building blocks (squares) of different colors (red, blue, green).",
+            "motion_sequence": "The icons and 'Addition' text fade out. Then, a blue square and a red square slide in from the left and right, respectively. A plus sign appears between them, and they combine into a small stack, visually representing 'combining things'.",
+            "labels_and_text": "A '+' symbol appears between the blocks.",
+            "pedagogical_focus": "To visually define addition as the act of 'combining' and set the stage for the core concept.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "block1",
+                  "type": "square",
+                  "position": [
+                    -2,
+                    0
+                  ],
+                  "properties": {
+                    "color": "blue",
+                    "side_length": 1
+                  }
+                },
+                {
+                  "id": "block2",
+                  "type": "square",
+                  "position": [
+                    2,
+                    0
+                  ],
+                  "properties": {
+                    "color": "red",
+                    "side_length": 1
+                  }
+                },
+                {
+                  "id": "plus_sign",
+                  "type": "label",
+                  "position": [
+                    0,
+                    0
+                  ],
+                  "properties": {
+                    "text": "+",
+                    "font_size": 96,
+                    "color": "white"
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "fade_out",
+                  "target": "all_previous",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "block1",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "block2",
+                  "duration": 0.5
+                },
+                {
+                  "action": "wait",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "plus_sign",
+                  "duration": 0.5
+                },
+                {
+                  "action": "move",
+                  "target": "block1",
+                  "new_position": [
+                    0,
+                    -0.5
+                  ],
+                  "duration": 1.0
+                },
+                {
+                  "action": "move",
+                  "target": "block2",
+                  "new_position": [
+                    0,
+                    0.5
+                  ],
+                  "duration": 1.0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "duration": 30,
+      "segments": [
+        {
+          "start": 0.0,
+          "duration": 9,
+          "text": "Welcome! In this lesson, we're going back to the very basics to build a rock-solid foundation in mathematics. We'll be exploring one of the most fundamental operations: addition."
+        },
+        {
+          "start": 9.0,
+          "duration": 10,
+          "text": "You might think you know all about it, but understanding it deeply is the key to unlocking more complex topics later on. Addition is everywhere in our daily lives, from counting money to figuring out how many friends are coming to a party."
+        },
+        {
+          "start": 19.0,
+          "duration": 11,
+          "text": "It's the first step in the amazing world of numbers, and by the end of this session, you'll see it not just as a rule, but as a powerful idea of combining things together. Let's begin our journey into the simple, yet powerful, world of addition."
+        }
+      ]
+    },
+    {
+      "section_type": "summary",
+      "id": 2,
+      "title": "Lesson Summary",
+      "renderer": "manim",
+      "narration": "In this lesson, we will focus on the core concept of addition. We'll define what it means to add numbers together, exploring it as a process of combining sets of items. We will visualize this process to build a strong intuition. Finally, we will work through a clear, simple example, 2 + 2 = 4, to solidify our understanding of how the operation works and how it is written mathematically. By the end, you will have a clear grasp of addition as a fundamental pillar of mathematics.",
+      "narration_segments": [
+        {
+          "id": 1,
+          "text": "In this lesson, we will focus on the core concept of addition. We'll define what it means to add numbers together, exploring it as a process of combining sets of items.",
+          "duration": 8
+        },
+        {
+          "id": 2,
+          "text": "We will visualize this process to build a strong intuition. Finally, we will work through a clear, simple example, 2 + 2 = 4, to solidify our understanding.",
+          "duration": 8
+        },
+        {
+          "id": 3,
+          "text": "By the end, you will have a clear grasp of addition as a fundamental pillar of mathematics.",
+          "duration": 5
+        }
+      ],
+      "visual_beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A dark gray background with a central dividing line.",
+          "objects_and_properties": "On the left side, two separate groups of circles: a group of 2 blue circles and a group of 3 red circles. On the right side, an empty space.",
+          "motion_sequence": "The two groups of circles on the left fade in. The blue group is at the top-left, the red group at the bottom-left.",
+          "labels_and_text": "A label 'Combine' appears above the central line with an arrow pointing from left to right.",
+          "pedagogical_focus": "To introduce the summary by showing addition as combining distinct groups.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "group1",
+                "type": "group",
+                "position": [
+                  -4,
+                  1.5
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.3
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "group2",
+                "type": "group",
+                "position": [
+                  -4,
+                  -1.5
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.3
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "arrow",
+                "type": "vector",
+                "position": [
+                  -1,
+                  0
+                ],
+                "properties": {
+                  "end": [
+                    1,
+                    0
+                  ],
+                  "color": "white",
+                  "label": "Combine"
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "group1",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "group2",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "arrow",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The two groups of circles and the 'Combine' arrow are still on screen.",
+          "objects_and_properties": "A combined group of 5 circles (2 blue, 3 red) on the right side. The equation '2 + 2 = 4' in white text appears below everything.",
+          "motion_sequence": "The two groups from the left animate, moving to the right side and merging into a single, larger group. As they merge, the text '2 + 2 = 4' fades in at the bottom of the screen.",
+          "labels_and_text": "The equation '2 + 2 = 4' appears at the bottom center.",
+          "pedagogical_focus": "To visually summarize the process and outcome of addition with a concrete example.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "group1",
+                "type": "group",
+                "position": [
+                  -4,
+                  1.5
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.3
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "group2",
+                "type": "group",
+                "position": [
+                  -4,
+                  -1.5
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.3
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "combined_group",
+                "type": "group",
+                "position": [
+                  4,
+                  0
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.3
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "example_eq",
+                "type": "equation",
+                "latex": "2 + 2 = 4",
+                "position": "bottom_center"
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "transform",
+                "target": "group1",
+                "final_target": "combined_group_part1",
+                "duration": 1.5
+              },
+              {
+                "action": "transform",
+                "target": "group2",
+                "final_target": "combined_group_part2",
+                "duration": 1.5
+              },
+              {
+                "action": "appear",
+                "target": "example_eq",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The final state from the previous beat is held: the combined group of 5 circles on the right and the equation '2 + 2 = 4' at the bottom.",
+          "objects_and_properties": "A large, stylized pillar or column shape, colored in a stone texture, appears in the background, behind the other elements.",
+          "motion_sequence": "The pillar fades in slowly behind the equation and the circles, symbolizing a 'fundamental pillar'. The other elements remain static.",
+          "labels_and_text": "No new text.",
+          "pedagogical_focus": "To reinforce the idea that addition is a foundational 'pillar' of mathematics.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "combined_group",
+                "type": "group",
+                "position": [
+                  4,
+                  0
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.3
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.3
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "example_eq",
+                "type": "equation",
+                "latex": "2 + 2 = 4",
+                "position": "bottom_center"
+              },
+              {
+                "id": "pillar",
+                "type": "icon",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "name": "column",
+                  "color": "gray",
+                  "scale": 4,
+                  "opacity": 0.3
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "pillar",
+                "duration": 2.0
+              }
+            ]
+          }
+        }
+      ],
+      "layout": {
+        "content_zone": {
+          "position": "left",
+          "width_percent": 65
+        },
+        "avatar_zone": {
+          "mode": "side",
+          "position": "right",
+          "width_percent": 35
+        }
+      },
+      "gesture_hints": [
+        {
+          "time": 1.0,
+          "action": "point_to_screen"
+        },
+        {
+          "time": 9.0,
+          "action": "sweep_hand_across_screen"
+        },
+        {
+          "time": 17.0,
+          "action": "confident_nod"
+        }
+      ],
+      "explanation_plan": {
+        "wan_prompt": "Educational visualization for Lesson Summary",
+        "visual_beats": [
+          {
+            "segment_id": 1,
+            "scene_setup": "A dark gray background with a central dividing line.",
+            "objects_and_properties": "On the left side, two separate groups of circles: a group of 2 blue circles and a group of 3 red circles. On the right side, an empty space.",
+            "motion_sequence": "The two groups of circles on the left fade in. The blue group is at the top-left, the red group at the bottom-left.",
+            "labels_and_text": "A label 'Combine' appears above the central line with an arrow pointing from left to right.",
+            "pedagogical_focus": "To introduce the summary by showing addition as combining distinct groups.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "group1",
+                  "type": "group",
+                  "position": [
+                    -4,
+                    1.5
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.3
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "group2",
+                  "type": "group",
+                  "position": [
+                    -4,
+                    -1.5
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.3
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "arrow",
+                  "type": "vector",
+                  "position": [
+                    -1,
+                    0
+                  ],
+                  "properties": {
+                    "end": [
+                      1,
+                      0
+                    ],
+                    "color": "white",
+                    "label": "Combine"
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "appear",
+                  "target": "group1",
+                  "duration": 1.0
+                },
+                {
+                  "action": "appear",
+                  "target": "group2",
+                  "duration": 1.0
+                },
+                {
+                  "action": "appear",
+                  "target": "arrow",
+                  "duration": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 2,
+            "scene_setup": "The two groups of circles and the 'Combine' arrow are still on screen.",
+            "objects_and_properties": "A combined group of 5 circles (2 blue, 3 red) on the right side. The equation '2 + 2 = 4' in white text appears below everything.",
+            "motion_sequence": "The two groups from the left animate, moving to the right side and merging into a single, larger group. As they merge, the text '2 + 2 = 4' fades in at the bottom of the screen.",
+            "labels_and_text": "The equation '2 + 2 = 4' appears at the bottom center.",
+            "pedagogical_focus": "To visually summarize the process and outcome of addition with a concrete example.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "group1",
+                  "type": "group",
+                  "position": [
+                    -4,
+                    1.5
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.3
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "group2",
+                  "type": "group",
+                  "position": [
+                    -4,
+                    -1.5
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.3
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "combined_group",
+                  "type": "group",
+                  "position": [
+                    4,
+                    0
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.3
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "example_eq",
+                  "type": "equation",
+                  "latex": "2 + 2 = 4",
+                  "position": "bottom_center"
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "transform",
+                  "target": "group1",
+                  "final_target": "combined_group_part1",
+                  "duration": 1.5
+                },
+                {
+                  "action": "transform",
+                  "target": "group2",
+                  "final_target": "combined_group_part2",
+                  "duration": 1.5
+                },
+                {
+                  "action": "appear",
+                  "target": "example_eq",
+                  "duration": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 3,
+            "scene_setup": "The final state from the previous beat is held: the combined group of 5 circles on the right and the equation '2 + 2 = 4' at the bottom.",
+            "objects_and_properties": "A large, stylized pillar or column shape, colored in a stone texture, appears in the background, behind the other elements.",
+            "motion_sequence": "The pillar fades in slowly behind the equation and the circles, symbolizing a 'fundamental pillar'. The other elements remain static.",
+            "labels_and_text": "No new text.",
+            "pedagogical_focus": "To reinforce the idea that addition is a foundational 'pillar' of mathematics.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "combined_group",
+                  "type": "group",
+                  "position": [
+                    4,
+                    0
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.3
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.3
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "example_eq",
+                  "type": "equation",
+                  "latex": "2 + 2 = 4",
+                  "position": "bottom_center"
+                },
+                {
+                  "id": "pillar",
+                  "type": "icon",
+                  "position": [
+                    0,
+                    0
+                  ],
+                  "properties": {
+                    "name": "column",
+                    "color": "gray",
+                    "scale": 4,
+                    "opacity": 0.3
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "appear",
+                  "target": "pillar",
+                  "duration": 2.0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "duration": 30,
+      "segments": [
+        {
+          "start": 0.0,
+          "duration": 8,
+          "text": "In this lesson, we will focus on the core concept of addition. We'll define what it means to add numbers together, exploring it as a process of combining sets of items."
+        },
+        {
+          "start": 8.0,
+          "duration": 8,
+          "text": "We will visualize this process to build a strong intuition. Finally, we will work through a clear, simple example, 2 + 2 = 4, to solidify our understanding."
+        },
+        {
+          "start": 16.0,
+          "duration": 5,
+          "text": "By the end, you will have a clear grasp of addition as a fundamental pillar of mathematics."
+        }
+      ]
+    },
+    {
+      "section_type": "content",
+      "id": 3,
+      "title": "Understanding Addition",
+      "renderer": "manim",
+      "narration": "So, what exactly is addition? At its heart, addition is simply the process of combining collections of items into one larger collection. Imagine you have a few objects, and your friend gives you a few more. Addition is the mathematical tool we use to figure out the total number of objects you have now. This total amount is called the 'sum'. The numbers that you are adding together are called 'addends'. To tell us we need to add, we use a special symbol: the plus sign, which looks like a small cross. It acts as an instruction, saying 'combine these quantities'. After we've done the combining, we use another symbol, the equals sign, which is two short horizontal lines. The equals sign tells us that what's on the left side has the exact same value as what's on the right side. So, when we write an equation like 'addend plus addend equals sum', we are telling a complete story: we started with some parts, we combined them, and now we have a new total.",
+      "narration_segments": [
+        {
+          "id": 1,
+          "text": "So, what exactly is addition? At its heart, addition is simply the process of combining collections of items into one larger collection. Imagine you have a few objects, and your friend gives you a few more.",
+          "duration": 11
+        },
+        {
+          "id": 2,
+          "text": "Addition is the mathematical tool we use to figure out the total number of objects you have now. This total amount is called the 'sum'. The numbers that you are adding together are called 'addends'.",
+          "duration": 11
+        },
+        {
+          "id": 3,
+          "text": "To tell us we need to add, we use a special symbol: the plus sign, which looks like a small cross. It acts as an instruction, saying 'combine these quantities'.",
+          "duration": 9
+        },
+        {
+          "id": 4,
+          "text": "After we've done the combining, we use another symbol, the equals sign, which is two short horizontal lines. The equals sign tells us that what's on the left side has the exact same value as what's on the right side.",
+          "duration": 11
+        },
+        {
+          "id": 5,
+          "text": "So, when we write an equation like 'addend plus addend equals sum', we are telling a complete story: we started with some parts, we combined them, and now we have a new total.",
+          "duration": 10
+        }
+      ],
+      "visual_beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A dark gray background, split visually into two halves with a faint vertical line.",
+          "objects_and_properties": "On the left half, a group of 3 blue squares arranged neatly. On the right half, a group of 2 red squares arranged neatly.",
+          "motion_sequence": "First, the 3 blue squares appear on the left. Then, the 2 red squares appear on the right. An arrow animates from the right group towards the left group, indicating a combination.",
+          "labels_and_text": "No text labels initially.",
+          "pedagogical_focus": "To visually represent the core idea of addition as starting with separate collections of items.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "group_A",
+                "type": "group",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "square",
+                      "color": "blue"
+                    },
+                    {
+                      "type": "square",
+                      "color": "blue"
+                    },
+                    {
+                      "type": "square",
+                      "color": "blue"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "group_B",
+                "type": "group",
+                "position": [
+                  3,
+                  0
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "square",
+                      "color": "red"
+                    },
+                    {
+                      "type": "square",
+                      "color": "red"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "arrow_combine",
+                "type": "vector",
+                "position": [
+                  2,
+                  0
+                ],
+                "properties": {
+                  "end": [
+                    -1,
+                    0
+                  ],
+                  "color": "yellow"
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "group_A",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "group_B",
+                "duration": 1.0
+              },
+              {
+                "action": "draw_vector",
+                "target": "arrow_combine",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The two groups of squares are on screen. The combining arrow fades out.",
+          "objects_and_properties": "The 3 blue squares and 2 red squares. Text labels 'Addend', 'Addend', and 'Sum'.",
+          "motion_sequence": "The two groups of squares move towards the center and merge into a single stack of 5 squares. As they merge, the label 'Sum' appears above the new stack. The labels 'Addend' then appear above the original positions of the two groups.",
+          "labels_and_text": "Label 'Addend' appears at [-3, 2]. Another 'Addend' label appears at [3, 2]. Label 'Sum' appears at [0, 3].",
+          "pedagogical_focus": "To introduce and define the key terms 'addend' and 'sum' in the context of the visual combination.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "group_A",
+                "type": "group",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "square",
+                      "color": "blue"
+                    },
+                    {
+                      "type": "square",
+                      "color": "blue"
+                    },
+                    {
+                      "type": "square",
+                      "color": "blue"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "group_B",
+                "type": "group",
+                "position": [
+                  3,
+                  0
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "square",
+                      "color": "red"
+                    },
+                    {
+                      "type": "square",
+                      "color": "red"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "label_addend1",
+                "type": "label",
+                "position": [
+                  -3,
+                  2
+                ],
+                "properties": {
+                  "text": "Addend",
+                  "color": "white"
+                }
+              },
+              {
+                "id": "label_addend2",
+                "type": "label",
+                "position": [
+                  3,
+                  2
+                ],
+                "properties": {
+                  "text": "Addend",
+                  "color": "white"
+                }
+              },
+              {
+                "id": "label_sum",
+                "type": "label",
+                "position": [
+                  0,
+                  3
+                ],
+                "properties": {
+                  "text": "Sum",
+                  "color": "yellow"
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "move",
+                "target": "group_A",
+                "new_position": [
+                  0,
+                  0
+                ],
+                "duration": 1.5
+              },
+              {
+                "action": "move",
+                "target": "group_B",
+                "new_position": [
+                  0,
+                  0
+                ],
+                "duration": 1.5
+              },
+              {
+                "action": "wait",
+                "duration": 1.5
+              },
+              {
+                "action": "appear",
+                "target": "label_sum",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "label_addend1",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "label_addend2",
+                "duration": 0.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The screen clears. A dark gray background.",
+          "objects_and_properties": "The number '3' in white. The number '2' in white. A large '+' symbol in yellow.",
+          "motion_sequence": "The number '3' appears on the left. The number '2' appears on the right. The large yellow '+' symbol fades in between them.",
+          "labels_and_text": "The number '3' at [-2, 0]. The number '2' at [2, 0]. The symbol '+' at [0, 0].",
+          "pedagogical_focus": "To isolate and introduce the '+' symbol as the mathematical instruction for addition.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "num1",
+                "type": "label",
+                "position": [
+                  -2,
+                  0
+                ],
+                "properties": {
+                  "text": "3",
+                  "font_size": 96,
+                  "color": "white"
+                }
+              },
+              {
+                "id": "num2",
+                "type": "label",
+                "position": [
+                  2,
+                  0
+                ],
+                "properties": {
+                  "text": "2",
+                  "font_size": 96,
+                  "color": "white"
+                }
+              },
+              {
+                "id": "plus_sign",
+                "type": "label",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "text": "+",
+                  "font_size": 144,
+                  "color": "yellow"
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "num1",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "num2",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "plus_sign",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The expression '3 + 2' is on screen.",
+          "objects_and_properties": "A large '=' symbol in yellow. The number '5' in white.",
+          "motion_sequence": "The '=' symbol appears to the right of the expression. Then, the number '5' appears to the right of the equals sign. The '=' symbol briefly pulses with a glow.",
+          "labels_and_text": "The symbol '=' at [3.5, 0]. The number '5' at [5, 0].",
+          "pedagogical_focus": "To introduce the '=' symbol and its meaning: that the quantities on both sides are balanced or equal.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "eq_part1",
+                "type": "label",
+                "position": [
+                  -2,
+                  0
+                ],
+                "properties": {
+                  "text": "3 + 2",
+                  "font_size": 96,
+                  "color": "white"
+                }
+              },
+              {
+                "id": "equals_sign",
+                "type": "label",
+                "position": [
+                  1.5,
+                  0
+                ],
+                "properties": {
+                  "text": "=",
+                  "font_size": 144,
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "result",
+                "type": "label",
+                "position": [
+                  4,
+                  0
+                ],
+                "properties": {
+                  "text": "5",
+                  "font_size": 96,
+                  "color": "white"
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "transform",
+                "target": "previous_elements",
+                "final_target": "eq_part1",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "equals_sign",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "result",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target": "equals_sign",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 5,
+          "scene_setup": "The full equation '3 + 2 = 5' is on screen.",
+          "objects_and_properties": "The text labels 'Addend', 'Addend', and 'Sum' from beat 2.",
+          "motion_sequence": "The label 'Addend' appears and connects with a line to the '3'. Another 'Addend' label appears and connects to the '2'. Finally, the 'Sum' label appears and connects to the '5'. The full labeled equation is held on screen.",
+          "labels_and_text": "Label 'Addend' above '3'. Label 'Addend' above '2'. Label 'Sum' above '5'.",
+          "pedagogical_focus": "To bring all the concepts together, showing a complete, labeled addition equation.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "full_eq",
+                "type": "equation",
+                "latex": "3 + 2 = 5",
+                "position": "center"
+              },
+              {
+                "id": "label_addend1",
+                "type": "label",
+                "position": [
+                  -2.2,
+                  1
+                ],
+                "properties": {
+                  "text": "Addend",
+                  "color": "cyan"
+                }
+              },
+              {
+                "id": "label_addend2",
+                "type": "label",
+                "position": [
+                  0,
+                  1
+                ],
+                "properties": {
+                  "text": "Addend",
+                  "color": "cyan"
+                }
+              },
+              {
+                "id": "label_sum",
+                "type": "label",
+                "position": [
+                  2.2,
+                  1
+                ],
+                "properties": {
+                  "text": "Sum",
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "line1",
+                "type": "line",
+                "start": [
+                  -2.2,
+                  0.8
+                ],
+                "end": [
+                  -2.2,
+                  0.3
+                ]
+              },
+              {
+                "id": "line2",
+                "type": "line",
+                "start": [
+                  0,
+                  0.8
+                ],
+                "end": [
+                  0,
+                  0.3
+                ]
+              },
+              {
+                "id": "line3",
+                "type": "line",
+                "start": [
+                  2.2,
+                  0.8
+                ],
+                "end": [
+                  2.2,
+                  0.3
+                ]
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "full_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "label_addend1",
+                "duration": 0.5
+              },
+              {
+                "action": "draw_line",
+                "target": "line1",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "label_addend2",
+                "duration": 0.5
+              },
+              {
+                "action": "draw_line",
+                "target": "line2",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "label_sum",
+                "duration": 0.5
+              },
+              {
+                "action": "draw_line",
+                "target": "line3",
+                "duration": 0.5
+              }
+            ]
+          }
+        }
+      ],
+      "layout": {
+        "content_zone": {
+          "position": "left",
+          "width_percent": 65
+        },
+        "avatar_zone": {
+          "mode": "side",
+          "position": "right",
+          "width_percent": 35
+        }
+      },
+      "gesture_hints": [
+        {
+          "time": 3.0,
+          "action": "bring_hands_together"
+        },
+        {
+          "time": 15.0,
+          "action": "point_to_screen"
+        },
+        {
+          "time": 25.0,
+          "action": "make_plus_sign_with_fingers"
+        },
+        {
+          "time": 34.0,
+          "action": "make_equals_sign_with_hands"
+        },
+        {
+          "time": 45.0,
+          "action": "sweep_hand_across_screen"
+        }
+      ],
+      "explanation_plan": {
+        "wan_prompt": "Educational visualization for Understanding Addition",
+        "visual_beats": [
+          {
+            "segment_id": 1,
+            "scene_setup": "A dark gray background, split visually into two halves with a faint vertical line.",
+            "objects_and_properties": "On the left half, a group of 3 blue squares arranged neatly. On the right half, a group of 2 red squares arranged neatly.",
+            "motion_sequence": "First, the 3 blue squares appear on the left. Then, the 2 red squares appear on the right. An arrow animates from the right group towards the left group, indicating a combination.",
+            "labels_and_text": "No text labels initially.",
+            "pedagogical_focus": "To visually represent the core idea of addition as starting with separate collections of items.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "group_A",
+                  "type": "group",
+                  "position": [
+                    -3,
+                    0
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "square",
+                        "color": "blue"
+                      },
+                      {
+                        "type": "square",
+                        "color": "blue"
+                      },
+                      {
+                        "type": "square",
+                        "color": "blue"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "group_B",
+                  "type": "group",
+                  "position": [
+                    3,
+                    0
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "square",
+                        "color": "red"
+                      },
+                      {
+                        "type": "square",
+                        "color": "red"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "arrow_combine",
+                  "type": "vector",
+                  "position": [
+                    2,
+                    0
+                  ],
+                  "properties": {
+                    "end": [
+                      -1,
+                      0
+                    ],
+                    "color": "yellow"
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "appear",
+                  "target": "group_A",
+                  "duration": 1.0
+                },
+                {
+                  "action": "appear",
+                  "target": "group_B",
+                  "duration": 1.0
+                },
+                {
+                  "action": "draw_vector",
+                  "target": "arrow_combine",
+                  "duration": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 2,
+            "scene_setup": "The two groups of squares are on screen. The combining arrow fades out.",
+            "objects_and_properties": "The 3 blue squares and 2 red squares. Text labels 'Addend', 'Addend', and 'Sum'.",
+            "motion_sequence": "The two groups of squares move towards the center and merge into a single stack of 5 squares. As they merge, the label 'Sum' appears above the new stack. The labels 'Addend' then appear above the original positions of the two groups.",
+            "labels_and_text": "Label 'Addend' appears at [-3, 2]. Another 'Addend' label appears at [3, 2]. Label 'Sum' appears at [0, 3].",
+            "pedagogical_focus": "To introduce and define the key terms 'addend' and 'sum' in the context of the visual combination.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "group_A",
+                  "type": "group",
+                  "position": [
+                    -3,
+                    0
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "square",
+                        "color": "blue"
+                      },
+                      {
+                        "type": "square",
+                        "color": "blue"
+                      },
+                      {
+                        "type": "square",
+                        "color": "blue"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "group_B",
+                  "type": "group",
+                  "position": [
+                    3,
+                    0
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "square",
+                        "color": "red"
+                      },
+                      {
+                        "type": "square",
+                        "color": "red"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "label_addend1",
+                  "type": "label",
+                  "position": [
+                    -3,
+                    2
+                  ],
+                  "properties": {
+                    "text": "Addend",
+                    "color": "white"
+                  }
+                },
+                {
+                  "id": "label_addend2",
+                  "type": "label",
+                  "position": [
+                    3,
+                    2
+                  ],
+                  "properties": {
+                    "text": "Addend",
+                    "color": "white"
+                  }
+                },
+                {
+                  "id": "label_sum",
+                  "type": "label",
+                  "position": [
+                    0,
+                    3
+                  ],
+                  "properties": {
+                    "text": "Sum",
+                    "color": "yellow"
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "move",
+                  "target": "group_A",
+                  "new_position": [
+                    0,
+                    0
+                  ],
+                  "duration": 1.5
+                },
+                {
+                  "action": "move",
+                  "target": "group_B",
+                  "new_position": [
+                    0,
+                    0
+                  ],
+                  "duration": 1.5
+                },
+                {
+                  "action": "wait",
+                  "duration": 1.5
+                },
+                {
+                  "action": "appear",
+                  "target": "label_sum",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "label_addend1",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "label_addend2",
+                  "duration": 0.5
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 3,
+            "scene_setup": "The screen clears. A dark gray background.",
+            "objects_and_properties": "The number '3' in white. The number '2' in white. A large '+' symbol in yellow.",
+            "motion_sequence": "The number '3' appears on the left. The number '2' appears on the right. The large yellow '+' symbol fades in between them.",
+            "labels_and_text": "The number '3' at [-2, 0]. The number '2' at [2, 0]. The symbol '+' at [0, 0].",
+            "pedagogical_focus": "To isolate and introduce the '+' symbol as the mathematical instruction for addition.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "num1",
+                  "type": "label",
+                  "position": [
+                    -2,
+                    0
+                  ],
+                  "properties": {
+                    "text": "3",
+                    "font_size": 96,
+                    "color": "white"
+                  }
+                },
+                {
+                  "id": "num2",
+                  "type": "label",
+                  "position": [
+                    2,
+                    0
+                  ],
+                  "properties": {
+                    "text": "2",
+                    "font_size": 96,
+                    "color": "white"
+                  }
+                },
+                {
+                  "id": "plus_sign",
+                  "type": "label",
+                  "position": [
+                    0,
+                    0
+                  ],
+                  "properties": {
+                    "text": "+",
+                    "font_size": 144,
+                    "color": "yellow"
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "appear",
+                  "target": "num1",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "num2",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "plus_sign",
+                  "duration": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 4,
+            "scene_setup": "The expression '3 + 2' is on screen.",
+            "objects_and_properties": "A large '=' symbol in yellow. The number '5' in white.",
+            "motion_sequence": "The '=' symbol appears to the right of the expression. Then, the number '5' appears to the right of the equals sign. The '=' symbol briefly pulses with a glow.",
+            "labels_and_text": "The symbol '=' at [3.5, 0]. The number '5' at [5, 0].",
+            "pedagogical_focus": "To introduce the '=' symbol and its meaning: that the quantities on both sides are balanced or equal.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "eq_part1",
+                  "type": "label",
+                  "position": [
+                    -2,
+                    0
+                  ],
+                  "properties": {
+                    "text": "3 + 2",
+                    "font_size": 96,
+                    "color": "white"
+                  }
+                },
+                {
+                  "id": "equals_sign",
+                  "type": "label",
+                  "position": [
+                    1.5,
+                    0
+                  ],
+                  "properties": {
+                    "text": "=",
+                    "font_size": 144,
+                    "color": "yellow"
+                  }
+                },
+                {
+                  "id": "result",
+                  "type": "label",
+                  "position": [
+                    4,
+                    0
+                  ],
+                  "properties": {
+                    "text": "5",
+                    "font_size": 96,
+                    "color": "white"
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "transform",
+                  "target": "previous_elements",
+                  "final_target": "eq_part1",
+                  "duration": 1.0
+                },
+                {
+                  "action": "appear",
+                  "target": "equals_sign",
+                  "duration": 1.0
+                },
+                {
+                  "action": "appear",
+                  "target": "result",
+                  "duration": 1.0
+                },
+                {
+                  "action": "highlight",
+                  "target": "equals_sign",
+                  "duration": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 5,
+            "scene_setup": "The full equation '3 + 2 = 5' is on screen.",
+            "objects_and_properties": "The text labels 'Addend', 'Addend', and 'Sum' from beat 2.",
+            "motion_sequence": "The label 'Addend' appears and connects with a line to the '3'. Another 'Addend' label appears and connects to the '2'. Finally, the 'Sum' label appears and connects to the '5'. The full labeled equation is held on screen.",
+            "labels_and_text": "Label 'Addend' above '3'. Label 'Addend' above '2'. Label 'Sum' above '5'.",
+            "pedagogical_focus": "To bring all the concepts together, showing a complete, labeled addition equation.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "full_eq",
+                  "type": "equation",
+                  "latex": "3 + 2 = 5",
+                  "position": "center"
+                },
+                {
+                  "id": "label_addend1",
+                  "type": "label",
+                  "position": [
+                    -2.2,
+                    1
+                  ],
+                  "properties": {
+                    "text": "Addend",
+                    "color": "cyan"
+                  }
+                },
+                {
+                  "id": "label_addend2",
+                  "type": "label",
+                  "position": [
+                    0,
+                    1
+                  ],
+                  "properties": {
+                    "text": "Addend",
+                    "color": "cyan"
+                  }
+                },
+                {
+                  "id": "label_sum",
+                  "type": "label",
+                  "position": [
+                    2.2,
+                    1
+                  ],
+                  "properties": {
+                    "text": "Sum",
+                    "color": "yellow"
+                  }
+                },
+                {
+                  "id": "line1",
+                  "type": "line",
+                  "start": [
+                    -2.2,
+                    0.8
+                  ],
+                  "end": [
+                    -2.2,
+                    0.3
+                  ]
+                },
+                {
+                  "id": "line2",
+                  "type": "line",
+                  "start": [
+                    0,
+                    0.8
+                  ],
+                  "end": [
+                    0,
+                    0.3
+                  ]
+                },
+                {
+                  "id": "line3",
+                  "type": "line",
+                  "start": [
+                    2.2,
+                    0.8
+                  ],
+                  "end": [
+                    2.2,
+                    0.3
+                  ]
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "appear",
+                  "target": "full_eq",
+                  "duration": 1.0
+                },
+                {
+                  "action": "appear",
+                  "target": "label_addend1",
+                  "duration": 0.5
+                },
+                {
+                  "action": "draw_line",
+                  "target": "line1",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "label_addend2",
+                  "duration": 0.5
+                },
+                {
+                  "action": "draw_line",
+                  "target": "line2",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "label_sum",
+                  "duration": 0.5
+                },
+                {
+                  "action": "draw_line",
+                  "target": "line3",
+                  "duration": 0.5
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "duration": 30,
+      "segments": [
+        {
+          "start": 0.0,
+          "duration": 11,
+          "text": "So, what exactly is addition? At its heart, addition is simply the process of combining collections of items into one larger collection. Imagine you have a few objects, and your friend gives you a few more."
+        },
+        {
+          "start": 11.0,
+          "duration": 11,
+          "text": "Addition is the mathematical tool we use to figure out the total number of objects you have now. This total amount is called the 'sum'. The numbers that you are adding together are called 'addends'."
+        },
+        {
+          "start": 22.0,
+          "duration": 9,
+          "text": "To tell us we need to add, we use a special symbol: the plus sign, which looks like a small cross. It acts as an instruction, saying 'combine these quantities'."
+        },
+        {
+          "start": 31.0,
+          "duration": 11,
+          "text": "After we've done the combining, we use another symbol, the equals sign, which is two short horizontal lines. The equals sign tells us that what's on the left side has the exact same value as what's on the right side."
+        },
+        {
+          "start": 42.0,
+          "duration": 10,
+          "text": "So, when we write an equation like 'addend plus addend equals sum', we are telling a complete story: we started with some parts, we combined them, and now we have a new total."
+        }
+      ]
+    },
+    {
+      "section_type": "example",
+      "id": 4,
+      "title": "Example: 2 + 2 = 4",
+      "renderer": "manim",
+      "narration": "Let's walk through a classic example: two plus two. First, we start with our first number, which is two. We can visualize this as two distinct objects. Next, the plus sign tells us we are going to add. We are adding the number two again, so we can visualize another set of two objects. Now, we perform the addition, which means we combine both groups into one. Let's count them all together: one, two, three, four. We have a total of four objects. So, the result, or sum, is four. We write this complete mathematical sentence as: 2 plus 2 equals 4.",
+      "narration_segments": [
+        {
+          "id": 1,
+          "text": "Let's walk through a classic example: two plus two. First, we start with our first number, which is two. We can visualize this as two distinct objects.",
+          "duration": 8
+        },
+        {
+          "id": 2,
+          "text": "Next, the plus sign tells us we are going to add. We are adding the number two again, so we can visualize another set of two objects.",
+          "duration": 8
+        },
+        {
+          "id": 3,
+          "text": "Now, we perform the addition, which means we combine both groups into one. Let's count them all together: one, two, three, four. We have a total of four objects.",
+          "duration": 10
+        },
+        {
+          "id": 4,
+          "text": "So, the result, or sum, is four. We write this complete mathematical sentence as: 2 plus 2 equals 4.",
+          "duration": 7
+        }
+      ],
+      "visual_beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A clean dark gray background. The top half of the screen is reserved for the equation, and the bottom half for object visualization.",
+          "objects_and_properties": "The number '2' in a large white font. Below it, two blue circles, each with a radius of 0.4 units, positioned side-by-side.",
+          "motion_sequence": "The number '2' appears at the top left of the screen. Immediately after, the two blue circles fade in below it.",
+          "labels_and_text": "The number '2' is at position [-4, 2].",
+          "pedagogical_focus": "To connect the abstract number '2' with a concrete quantity of two objects.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "num1",
+                "type": "label",
+                "position": [
+                  -4,
+                  2
+                ],
+                "properties": {
+                  "text": "2",
+                  "font_size": 96,
+                  "color": "white"
+                }
+              },
+              {
+                "id": "circles1",
+                "type": "group",
+                "position": [
+                  -4,
+                  -1
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.4,
+                      "position": [
+                        -0.5,
+                        0
+                      ]
+                    },
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.4,
+                      "position": [
+                        0.5,
+                        0
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "num1",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "circles1",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The first number '2' and its two blue circles are on the left side of the screen.",
+          "objects_and_properties": "A '+' symbol in yellow. Another number '2' in white. Two red circles, each with a radius of 0.4 units.",
+          "motion_sequence": "The '+' symbol appears next to the first '2'. Then, the second '2' appears next to the plus sign. Finally, the two red circles fade in below the second '2'.",
+          "labels_and_text": "The '+' symbol is at [-2.5, 2]. The second '2' is at [-1, 2].",
+          "pedagogical_focus": "To build the expression part of the equation and introduce the second quantity to be added.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "num1",
+                "type": "label",
+                "position": [
+                  -4,
+                  2
+                ],
+                "properties": {
+                  "text": "2",
+                  "font_size": 96,
+                  "color": "white"
+                }
+              },
+              {
+                "id": "circles1",
+                "type": "group",
+                "position": [
+                  -4,
+                  -1
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.4,
+                      "position": [
+                        -0.5,
+                        0
+                      ]
+                    },
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.4,
+                      "position": [
+                        0.5,
+                        0
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "plus_sign",
+                "type": "label",
+                "position": [
+                  -2.5,
+                  2
+                ],
+                "properties": {
+                  "text": "+",
+                  "font_size": 96,
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "num2",
+                "type": "label",
+                "position": [
+                  -1,
+                  2
+                ],
+                "properties": {
+                  "text": "2",
+                  "font_size": 96,
+                  "color": "white"
+                }
+              },
+              {
+                "id": "circles2",
+                "type": "group",
+                "position": [
+                  -1,
+                  -1
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.4,
+                      "position": [
+                        -0.5,
+                        0
+                      ]
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.4,
+                      "position": [
+                        0.5,
+                        0
+                      ]
+                    }
+                  ]
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "plus_sign",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "num2",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "circles2",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The expression '2 + 2' is at the top, with the corresponding groups of circles below.",
+          "objects_and_properties": "A counter label, starting at '0'.",
+          "motion_sequence": "The two blue circles and two red circles slide towards the center of the bottom area, forming a single group of four. As each circle arrives, it flashes briefly and a counter at the very bottom of the screen ticks up: '1', '2', '3', '4'.",
+          "labels_and_text": "A counter label at [0, -3] updates from 0 to 4.",
+          "pedagogical_focus": "To visualize the physical act of combining and counting to find the sum.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "circles1",
+                "type": "group",
+                "position": [
+                  -4,
+                  -1
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.4,
+                      "position": [
+                        -0.5,
+                        0
+                      ]
+                    },
+                    {
+                      "type": "circle",
+                      "color": "blue",
+                      "radius": 0.4,
+                      "position": [
+                        0.5,
+                        0
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "circles2",
+                "type": "group",
+                "position": [
+                  -1,
+                  -1
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.4,
+                      "position": [
+                        -0.5,
+                        0
+                      ]
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red",
+                      "radius": 0.4,
+                      "position": [
+                        0.5,
+                        0
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "counter",
+                "type": "label",
+                "position": [
+                  0,
+                  -3
+                ],
+                "properties": {
+                  "text": "0",
+                  "font_size": 48,
+                  "color": "white"
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "move",
+                "target": "circles1",
+                "new_position": [
+                  0,
+                  -1
+                ],
+                "duration": 1.5
+              },
+              {
+                "action": "move",
+                "target": "circles2",
+                "new_position": [
+                  0,
+                  -1
+                ],
+                "duration": 1.5
+              },
+              {
+                "action": "wait",
+                "duration": 1.5
+              },
+              {
+                "action": "highlight_and_count",
+                "target": "circle_1",
+                "counter_id": "counter",
+                "count_to": 1,
+                "duration": 0.5
+              },
+              {
+                "action": "highlight_and_count",
+                "target": "circle_2",
+                "counter_id": "counter",
+                "count_to": 2,
+                "duration": 0.5
+              },
+              {
+                "action": "highlight_and_count",
+                "target": "circle_3",
+                "counter_id": "counter",
+                "count_to": 3,
+                "duration": 0.5
+              },
+              {
+                "action": "highlight_and_count",
+                "target": "circle_4",
+                "counter_id": "counter",
+                "count_to": 4,
+                "duration": 0.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The expression '2 + 2' is at the top. The four combined circles are at the bottom center.",
+          "objects_and_properties": "An '=' symbol in yellow. The number '4' in white.",
+          "motion_sequence": "The '=' symbol appears after '2 + 2'. Then the number '4' appears after the '='. The group of four circles below aligns itself under the result '4'. The entire equation '2 + 2 = 4' flashes once.",
+          "labels_and_text": "The '=' symbol at [0.5, 2]. The number '4' at [2, 2]. The full equation '2 + 2 = 4' is now visible.",
+          "pedagogical_focus": "To state the final result and show the complete, correct mathematical notation for the operation.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "full_equation",
+                "type": "equation",
+                "latex": "2 + 2 = 4",
+                "position": "top_center"
+              },
+              {
+                "id": "final_circles",
+                "type": "group",
+                "position": [
+                  2,
+                  -1
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "blue"
+                    },
+                    {
+                      "type": "circle",
+                      "color": "blue"
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red"
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red"
+                    }
+                  ]
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "transform",
+                "target": "previous_elements",
+                "final_target": "full_equation",
+                "duration": 1.5
+              },
+              {
+                "action": "move",
+                "target": "combined_circles",
+                "new_position": [
+                  2,
+                  -1
+                ],
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target": "full_equation",
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ],
+      "layout": {
+        "content_zone": {
+          "position": "center",
+          "width_percent": 90
+        },
+        "avatar_zone": {
+          "mode": "overlay",
+          "position": "bottom_right",
+          "width_percent": 25
+        }
+      },
+      "gesture_hints": [
+        {
+          "time": 2.0,
+          "action": "show_number_two_fingers"
+        },
+        {
+          "time": 10.0,
+          "action": "show_number_two_fingers_other_hand"
+        },
+        {
+          "time": 18.0,
+          "action": "bring_hands_together"
+        },
+        {
+          "time": 28.0,
+          "action": "point_to_final_equation"
+        }
+      ],
+      "explanation_plan": {
+        "wan_prompt": "Educational visualization for Example: 2 + 2 = 4",
+        "visual_beats": [
+          {
+            "segment_id": 1,
+            "scene_setup": "A clean dark gray background. The top half of the screen is reserved for the equation, and the bottom half for object visualization.",
+            "objects_and_properties": "The number '2' in a large white font. Below it, two blue circles, each with a radius of 0.4 units, positioned side-by-side.",
+            "motion_sequence": "The number '2' appears at the top left of the screen. Immediately after, the two blue circles fade in below it.",
+            "labels_and_text": "The number '2' is at position [-4, 2].",
+            "pedagogical_focus": "To connect the abstract number '2' with a concrete quantity of two objects.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "num1",
+                  "type": "label",
+                  "position": [
+                    -4,
+                    2
+                  ],
+                  "properties": {
+                    "text": "2",
+                    "font_size": 96,
+                    "color": "white"
+                  }
+                },
+                {
+                  "id": "circles1",
+                  "type": "group",
+                  "position": [
+                    -4,
+                    -1
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.4,
+                        "position": [
+                          -0.5,
+                          0
+                        ]
+                      },
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.4,
+                        "position": [
+                          0.5,
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "appear",
+                  "target": "num1",
+                  "duration": 1.0
+                },
+                {
+                  "action": "appear",
+                  "target": "circles1",
+                  "duration": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 2,
+            "scene_setup": "The first number '2' and its two blue circles are on the left side of the screen.",
+            "objects_and_properties": "A '+' symbol in yellow. Another number '2' in white. Two red circles, each with a radius of 0.4 units.",
+            "motion_sequence": "The '+' symbol appears next to the first '2'. Then, the second '2' appears next to the plus sign. Finally, the two red circles fade in below the second '2'.",
+            "labels_and_text": "The '+' symbol is at [-2.5, 2]. The second '2' is at [-1, 2].",
+            "pedagogical_focus": "To build the expression part of the equation and introduce the second quantity to be added.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "num1",
+                  "type": "label",
+                  "position": [
+                    -4,
+                    2
+                  ],
+                  "properties": {
+                    "text": "2",
+                    "font_size": 96,
+                    "color": "white"
+                  }
+                },
+                {
+                  "id": "circles1",
+                  "type": "group",
+                  "position": [
+                    -4,
+                    -1
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.4,
+                        "position": [
+                          -0.5,
+                          0
+                        ]
+                      },
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.4,
+                        "position": [
+                          0.5,
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "plus_sign",
+                  "type": "label",
+                  "position": [
+                    -2.5,
+                    2
+                  ],
+                  "properties": {
+                    "text": "+",
+                    "font_size": 96,
+                    "color": "yellow"
+                  }
+                },
+                {
+                  "id": "num2",
+                  "type": "label",
+                  "position": [
+                    -1,
+                    2
+                  ],
+                  "properties": {
+                    "text": "2",
+                    "font_size": 96,
+                    "color": "white"
+                  }
+                },
+                {
+                  "id": "circles2",
+                  "type": "group",
+                  "position": [
+                    -1,
+                    -1
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.4,
+                        "position": [
+                          -0.5,
+                          0
+                        ]
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.4,
+                        "position": [
+                          0.5,
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "appear",
+                  "target": "plus_sign",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "num2",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "circles2",
+                  "duration": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 3,
+            "scene_setup": "The expression '2 + 2' is at the top, with the corresponding groups of circles below.",
+            "objects_and_properties": "A counter label, starting at '0'.",
+            "motion_sequence": "The two blue circles and two red circles slide towards the center of the bottom area, forming a single group of four. As each circle arrives, it flashes briefly and a counter at the very bottom of the screen ticks up: '1', '2', '3', '4'.",
+            "labels_and_text": "A counter label at [0, -3] updates from 0 to 4.",
+            "pedagogical_focus": "To visualize the physical act of combining and counting to find the sum.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "circles1",
+                  "type": "group",
+                  "position": [
+                    -4,
+                    -1
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.4,
+                        "position": [
+                          -0.5,
+                          0
+                        ]
+                      },
+                      {
+                        "type": "circle",
+                        "color": "blue",
+                        "radius": 0.4,
+                        "position": [
+                          0.5,
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "circles2",
+                  "type": "group",
+                  "position": [
+                    -1,
+                    -1
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.4,
+                        "position": [
+                          -0.5,
+                          0
+                        ]
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red",
+                        "radius": 0.4,
+                        "position": [
+                          0.5,
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "counter",
+                  "type": "label",
+                  "position": [
+                    0,
+                    -3
+                  ],
+                  "properties": {
+                    "text": "0",
+                    "font_size": 48,
+                    "color": "white"
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "move",
+                  "target": "circles1",
+                  "new_position": [
+                    0,
+                    -1
+                  ],
+                  "duration": 1.5
+                },
+                {
+                  "action": "move",
+                  "target": "circles2",
+                  "new_position": [
+                    0,
+                    -1
+                  ],
+                  "duration": 1.5
+                },
+                {
+                  "action": "wait",
+                  "duration": 1.5
+                },
+                {
+                  "action": "highlight_and_count",
+                  "target": "circle_1",
+                  "counter_id": "counter",
+                  "count_to": 1,
+                  "duration": 0.5
+                },
+                {
+                  "action": "highlight_and_count",
+                  "target": "circle_2",
+                  "counter_id": "counter",
+                  "count_to": 2,
+                  "duration": 0.5
+                },
+                {
+                  "action": "highlight_and_count",
+                  "target": "circle_3",
+                  "counter_id": "counter",
+                  "count_to": 3,
+                  "duration": 0.5
+                },
+                {
+                  "action": "highlight_and_count",
+                  "target": "circle_4",
+                  "counter_id": "counter",
+                  "count_to": 4,
+                  "duration": 0.5
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 4,
+            "scene_setup": "The expression '2 + 2' is at the top. The four combined circles are at the bottom center.",
+            "objects_and_properties": "An '=' symbol in yellow. The number '4' in white.",
+            "motion_sequence": "The '=' symbol appears after '2 + 2'. Then the number '4' appears after the '='. The group of four circles below aligns itself under the result '4'. The entire equation '2 + 2 = 4' flashes once.",
+            "labels_and_text": "The '=' symbol at [0.5, 2]. The number '4' at [2, 2]. The full equation '2 + 2 = 4' is now visible.",
+            "pedagogical_focus": "To state the final result and show the complete, correct mathematical notation for the operation.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "full_equation",
+                  "type": "equation",
+                  "latex": "2 + 2 = 4",
+                  "position": "top_center"
+                },
+                {
+                  "id": "final_circles",
+                  "type": "group",
+                  "position": [
+                    2,
+                    -1
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "blue"
+                      },
+                      {
+                        "type": "circle",
+                        "color": "blue"
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red"
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "transform",
+                  "target": "previous_elements",
+                  "final_target": "full_equation",
+                  "duration": 1.5
+                },
+                {
+                  "action": "move",
+                  "target": "combined_circles",
+                  "new_position": [
+                    2,
+                    -1
+                  ],
+                  "duration": 1.0
+                },
+                {
+                  "action": "highlight",
+                  "target": "full_equation",
+                  "duration": 1.0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "duration": 30,
+      "segments": [
+        {
+          "start": 0.0,
+          "duration": 8,
+          "text": "Let's walk through a classic example: two plus two. First, we start with our first number, which is two. We can visualize this as two distinct objects."
+        },
+        {
+          "start": 8.0,
+          "duration": 8,
+          "text": "Next, the plus sign tells us we are going to add. We are adding the number two again, so we can visualize another set of two objects."
+        },
+        {
+          "start": 16.0,
+          "duration": 10,
+          "text": "Now, we perform the addition, which means we combine both groups into one. Let's count them all together: one, two, three, four. We have a total of four objects."
+        },
+        {
+          "start": 26.0,
+          "duration": 7,
+          "text": "So, the result, or sum, is four. We write this complete mathematical sentence as: 2 plus 2 equals 4."
+        }
+      ]
+    },
+    {
+      "section_type": "memory",
+      "id": 5,
+      "title": "Key Terms",
+      "renderer": "manim",
+      "narration": "Let's review the key terms from this lesson. Try to answer the question on your own before the answer is revealed. Ready?",
+      "narration_segments": [
+        {
+          "id": 1,
+          "text": "Let's review the key terms from this lesson. Try to answer the question on your own before the answer is revealed. Ready?",
+          "duration": 6
+        }
+      ],
+      "visual_beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A simple dark gray background. The center of the screen is empty.",
+          "objects_and_properties": "A stylized flashcard object in the center of the screen. It's a light gray rectangle with a soft shadow.",
+          "motion_sequence": "The flashcard animates as if being placed on a table. The text 'Key Terms' writes itself across the top of the card.",
+          "labels_and_text": "The title 'Key Terms' appears at the top of the flashcard.",
+          "pedagogical_focus": "To set up a familiar 'flashcard' context for memory recall.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "flashcard_bg",
+                "type": "rectangle",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "width": 10,
+                  "height": 6,
+                  "color": "light_gray",
+                  "fill_opacity": 1
+                }
+              },
+              {
+                "id": "flashcard_title",
+                "type": "label",
+                "position": [
+                  0,
+                  2
+                ],
+                "properties": {
+                  "text": "Key Terms",
+                  "font_size": 64,
+                  "color": "black"
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "flashcard_bg",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "flashcard_title",
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ],
+      "flashcards": [
+        {
+          "question": "What is the result of an addition problem called?",
+          "answer": "The Sum"
+        },
+        {
+          "question": "What are the numbers you add together called?",
+          "answer": "Addends"
+        },
+        {
+          "question": "What operation does the '+' symbol represent?",
+          "answer": "Addition (combining quantities)"
+        }
+      ],
+      "layout": {
+        "content_zone": {
+          "position": "left",
+          "width_percent": 65
+        },
+        "avatar_zone": {
+          "mode": "side",
+          "position": "right",
+          "width_percent": 35
+        }
+      },
+      "gesture_hints": [
+        {
+          "time": 2.0,
+          "action": "thinking_pose"
+        }
+      ],
+      "explanation_plan": {
+        "wan_prompt": "Educational visualization for Key Terms",
+        "visual_beats": [
+          {
+            "segment_id": 1,
+            "scene_setup": "A simple dark gray background. The center of the screen is empty.",
+            "objects_and_properties": "A stylized flashcard object in the center of the screen. It's a light gray rectangle with a soft shadow.",
+            "motion_sequence": "The flashcard animates as if being placed on a table. The text 'Key Terms' writes itself across the top of the card.",
+            "labels_and_text": "The title 'Key Terms' appears at the top of the flashcard.",
+            "pedagogical_focus": "To set up a familiar 'flashcard' context for memory recall.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "flashcard_bg",
+                  "type": "rectangle",
+                  "position": [
+                    0,
+                    0
+                  ],
+                  "properties": {
+                    "width": 10,
+                    "height": 6,
+                    "color": "light_gray",
+                    "fill_opacity": 1
+                  }
+                },
+                {
+                  "id": "flashcard_title",
+                  "type": "label",
+                  "position": [
+                    0,
+                    2
+                  ],
+                  "properties": {
+                    "text": "Key Terms",
+                    "font_size": 64,
+                    "color": "black"
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "appear",
+                  "target": "flashcard_bg",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "flashcard_title",
+                  "duration": 1.0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "duration": 30,
+      "segments": [
+        {
+          "start": 0.0,
+          "duration": 6,
+          "text": "Let's review the key terms from this lesson. Try to answer the question on your own before the answer is revealed. Ready?"
+        }
+      ]
+    },
+    {
+      "section_type": "recap",
+      "id": 6,
+      "title": "Lesson Recap",
+      "renderer": "manim",
+      "narration": "Let's quickly recap what we've learned. We established that addition is the fundamental mathematical operation for combining quantities. We visualized this by merging groups of objects together to find a total. We identified the key components of an addition equation: the addends, the plus sign, the equals sign, and the sum. We walked through the classic example, 2 + 2 = 4, seeing how two objects combined with two more objects results in a total of four objects. Mastering this simple idea is your first major step towards understanding all of mathematics.",
+      "narration_segments": [
+        {
+          "id": 1,
+          "text": "Let's quickly recap what we've learned. We established that addition is the fundamental mathematical operation for combining quantities. We visualized this by merging groups of objects together to find a total.",
+          "duration": 10
+        },
+        {
+          "id": 2,
+          "text": "We identified the key components of an addition equation: the addends, the plus sign, the equals sign, and the sum. We walked through the classic example, 2 + 2 = 4, seeing how two objects combined with two more objects results in a total of four objects.",
+          "duration": 13
+        },
+        {
+          "id": 3,
+          "text": "Mastering this simple idea is your first major step towards understanding all of mathematics.",
+          "duration": 5
+        }
+      ],
+      "visual_beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A dark gray background.",
+          "objects_and_properties": "A group of 2 blue circles on the left, and a group of 2 red circles on the right.",
+          "motion_sequence": "The two groups of circles appear. They then quickly slide to the center and merge into a single group of four. The word 'Combine' flashes above them as they merge.",
+          "labels_and_text": "Label: 'Combine' flashes momentarily at [0, 1].",
+          "pedagogical_focus": "To quickly remind students of the core visual metaphor for addition: combining groups.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "group1",
+                "type": "group",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "blue"
+                    },
+                    {
+                      "type": "circle",
+                      "color": "blue"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "group2",
+                "type": "group",
+                "position": [
+                  3,
+                  0
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "red"
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "combine_label",
+                "type": "label",
+                "position": [
+                  0,
+                  1
+                ],
+                "properties": {
+                  "text": "Combine",
+                  "color": "yellow"
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "group1",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "group2",
+                "duration": 0.5
+              },
+              {
+                "action": "move",
+                "target": "group1",
+                "new_position": [
+                  0,
+                  0
+                ],
+                "duration": 1.0
+              },
+              {
+                "action": "move",
+                "target": "group2",
+                "new_position": [
+                  0,
+                  0
+                ],
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target": "combine_label",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The background is dark gray.",
+          "objects_and_properties": "The full equation '2 + 2 = 4'. Below it, the group of four circles (2 blue, 2 red). Labels for 'Addend' and 'Sum'.",
+          "motion_sequence": "The equation '2 + 2 = 4' is written out quickly across the top of the screen. The group of four circles appears below. Then, the labels 'Addend' (pointing to the 2s) and 'Sum' (pointing to the 4) appear.",
+          "labels_and_text": "Equation: '2 + 2 = 4'. Labels: 'Addend', 'Sum'.",
+          "pedagogical_focus": "To summarize the complete mathematical representation of the example problem.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "recap_eq",
+                "type": "equation",
+                "latex": "2 + 2 = 4",
+                "position": "center"
+              },
+              {
+                "id": "recap_circles",
+                "type": "group",
+                "position": [
+                  0,
+                  -1.5
+                ],
+                "properties": {
+                  "objects": [
+                    {
+                      "type": "circle",
+                      "color": "blue"
+                    },
+                    {
+                      "type": "circle",
+                      "color": "blue"
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red"
+                    },
+                    {
+                      "type": "circle",
+                      "color": "red"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "label_A",
+                "type": "label",
+                "position": [
+                  -1.5,
+                  1
+                ],
+                "properties": {
+                  "text": "Addends",
+                  "color": "cyan"
+                }
+              },
+              {
+                "id": "label_S",
+                "type": "label",
+                "position": [
+                  1.5,
+                  1
+                ],
+                "properties": {
+                  "text": "Sum",
+                  "color": "yellow"
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "recap_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "recap_circles",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "label_A",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "label_S",
+                "duration": 0.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The final recap slide with the labeled equation is on screen.",
+          "objects_and_properties": "A large checkmark icon in green.",
+          "motion_sequence": "The labeled equation fades out, and a large green checkmark fades in, signifying completion and mastery of the concept.",
+          "labels_and_text": "No new text.",
+          "pedagogical_focus": "To provide a positive and encouraging conclusion to the lesson.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "checkmark",
+                "type": "icon",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "name": "checkmark",
+                  "color": "green",
+                  "scale": 3
+                }
+              }
+            ],
+            "forces": [],
+            "equations": [],
+            "animation_sequence": [
+              {
+                "action": "fade_out",
+                "target": "all_previous",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "checkmark",
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ],
+      "recap_scenes": [
+        {
+          "scene": 1,
+          "description": "Visual of two groups of circles merging into one larger group.",
+          "concept_title": "Addition is Combining"
+        },
+        {
+          "scene": 2,
+          "description": "The full equation 2 + 2 = 4 with objects shown below each number.",
+          "concept_title": "Mathematical Notation"
+        }
+      ],
+      "layout": {
+        "content_zone": {
+          "position": "left",
+          "width_percent": 65
+        },
+        "avatar_zone": {
+          "mode": "side",
+          "position": "right",
+          "width_percent": 35
+        }
+      },
+      "gesture_hints": [
+        {
+          "time": 1.0,
+          "action": "recap_gesture"
+        },
+        {
+          "time": 12.0,
+          "action": "point_to_screen"
+        },
+        {
+          "time": 25.0,
+          "action": "thumbs_up"
+        }
+      ],
+      "explanation_plan": {
+        "wan_prompt": "Educational visualization for Lesson Recap",
+        "visual_beats": [
+          {
+            "segment_id": 1,
+            "scene_setup": "A dark gray background.",
+            "objects_and_properties": "A group of 2 blue circles on the left, and a group of 2 red circles on the right.",
+            "motion_sequence": "The two groups of circles appear. They then quickly slide to the center and merge into a single group of four. The word 'Combine' flashes above them as they merge.",
+            "labels_and_text": "Label: 'Combine' flashes momentarily at [0, 1].",
+            "pedagogical_focus": "To quickly remind students of the core visual metaphor for addition: combining groups.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "group1",
+                  "type": "group",
+                  "position": [
+                    -3,
+                    0
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "blue"
+                      },
+                      {
+                        "type": "circle",
+                        "color": "blue"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "group2",
+                  "type": "group",
+                  "position": [
+                    3,
+                    0
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "red"
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "combine_label",
+                  "type": "label",
+                  "position": [
+                    0,
+                    1
+                  ],
+                  "properties": {
+                    "text": "Combine",
+                    "color": "yellow"
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "appear",
+                  "target": "group1",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "group2",
+                  "duration": 0.5
+                },
+                {
+                  "action": "move",
+                  "target": "group1",
+                  "new_position": [
+                    0,
+                    0
+                  ],
+                  "duration": 1.0
+                },
+                {
+                  "action": "move",
+                  "target": "group2",
+                  "new_position": [
+                    0,
+                    0
+                  ],
+                  "duration": 1.0
+                },
+                {
+                  "action": "highlight",
+                  "target": "combine_label",
+                  "duration": 1.0
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 2,
+            "scene_setup": "The background is dark gray.",
+            "objects_and_properties": "The full equation '2 + 2 = 4'. Below it, the group of four circles (2 blue, 2 red). Labels for 'Addend' and 'Sum'.",
+            "motion_sequence": "The equation '2 + 2 = 4' is written out quickly across the top of the screen. The group of four circles appears below. Then, the labels 'Addend' (pointing to the 2s) and 'Sum' (pointing to the 4) appear.",
+            "labels_and_text": "Equation: '2 + 2 = 4'. Labels: 'Addend', 'Sum'.",
+            "pedagogical_focus": "To summarize the complete mathematical representation of the example problem.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "recap_eq",
+                  "type": "equation",
+                  "latex": "2 + 2 = 4",
+                  "position": "center"
+                },
+                {
+                  "id": "recap_circles",
+                  "type": "group",
+                  "position": [
+                    0,
+                    -1.5
+                  ],
+                  "properties": {
+                    "objects": [
+                      {
+                        "type": "circle",
+                        "color": "blue"
+                      },
+                      {
+                        "type": "circle",
+                        "color": "blue"
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red"
+                      },
+                      {
+                        "type": "circle",
+                        "color": "red"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "label_A",
+                  "type": "label",
+                  "position": [
+                    -1.5,
+                    1
+                  ],
+                  "properties": {
+                    "text": "Addends",
+                    "color": "cyan"
+                  }
+                },
+                {
+                  "id": "label_S",
+                  "type": "label",
+                  "position": [
+                    1.5,
+                    1
+                  ],
+                  "properties": {
+                    "text": "Sum",
+                    "color": "yellow"
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "appear",
+                  "target": "recap_eq",
+                  "duration": 1.0
+                },
+                {
+                  "action": "appear",
+                  "target": "recap_circles",
+                  "duration": 1.0
+                },
+                {
+                  "action": "appear",
+                  "target": "label_A",
+                  "duration": 0.5
+                },
+                {
+                  "action": "appear",
+                  "target": "label_S",
+                  "duration": 0.5
+                }
+              ]
+            }
+          },
+          {
+            "segment_id": 3,
+            "scene_setup": "The final recap slide with the labeled equation is on screen.",
+            "objects_and_properties": "A large checkmark icon in green.",
+            "motion_sequence": "The labeled equation fades out, and a large green checkmark fades in, signifying completion and mastery of the concept.",
+            "labels_and_text": "No new text.",
+            "pedagogical_focus": "To provide a positive and encouraging conclusion to the lesson.",
+            "manim_scene_spec": {
+              "objects": [
+                {
+                  "id": "checkmark",
+                  "type": "icon",
+                  "position": [
+                    0,
+                    0
+                  ],
+                  "properties": {
+                    "name": "checkmark",
+                    "color": "green",
+                    "scale": 3
+                  }
+                }
+              ],
+              "forces": [],
+              "equations": [],
+              "animation_sequence": [
+                {
+                  "action": "fade_out",
+                  "target": "all_previous",
+                  "duration": 1.0
+                },
+                {
+                  "action": "appear",
+                  "target": "checkmark",
+                  "duration": 1.0
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "duration": 30,
+      "segments": [
+        {
+          "start": 0.0,
+          "duration": 10,
+          "text": "Let's quickly recap what we've learned. We established that addition is the fundamental mathematical operation for combining quantities. We visualized this by merging groups of objects together to find a total."
+        },
+        {
+          "start": 10.0,
+          "duration": 13,
+          "text": "We identified the key components of an addition equation: the addends, the plus sign, the equals sign, and the sum. We walked through the classic example, 2 + 2 = 4, seeing how two objects combined with two more objects results in a total of four objects."
+        },
+        {
+          "start": 23.0,
+          "duration": 5,
+          "text": "Mastering this simple idea is your first major step towards understanding all of mathematics."
+        }
+      ]
+    }
+  ],
+  "source_file": "test.md"
+}
