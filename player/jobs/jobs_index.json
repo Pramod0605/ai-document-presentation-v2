@@ -2684,5 +2684,161 @@
     "completed_at": "2025-12-17T13:30:08.835221",
     "error": "'NoneType' object has no attribute 'replace'",
     "result": null
+  },
+  "b8e6d961": {
+    "id": "b8e6d961",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Math",
+      "grade": "8",
+      "file_path": "/tmp/ai_education_jobs/336cb94912340cb1.md",
+      "source_file": "test.md"
+    },
+    "status": "completed",
+    "current_step": 1,
+    "current_step_name": "Rendering videos with AI...",
+    "steps_completed": 2,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-17T13:35:07.646289",
+    "started_at": "2025-12-17T13:35:07.653170",
+    "completed_at": "2025-12-17T13:38:18.373975",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "started_at": "2025-12-17T13:35:07.664961",
+      "source_file": "test.md",
+      "steps": [
+        {
+          "step": "generate_presentation_plan",
+          "status": "completed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b8e6d961/videos/topic_1.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": true,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b8e6d961/videos/topic_2.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": true,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 3 errors",
+              "visual_beats_used": 5,
+              "dry_run": true,
+              "compilation_errors": [
+                "Section 3, Beat 2: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 3, Beat 3: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 3, Beat 4: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation)."
+              ]
+            },
+            {
+              "topic_id": 4,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 3 errors",
+              "visual_beats_used": 5,
+              "dry_run": true,
+              "compilation_errors": [
+                "Section 4, Beat 1: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 4, Beat 3: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 4, Beat 4: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation)."
+              ]
+            },
+            {
+              "topic_id": 5,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 3 errors",
+              "visual_beats_used": 6,
+              "dry_run": true,
+              "compilation_errors": [
+                "Section 5, Beat 1: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 5, Beat 3: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 5, Beat 4: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation)."
+              ]
+            },
+            {
+              "topic_id": 6,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 5 errors",
+              "visual_beats_used": 6,
+              "dry_run": true,
+              "compilation_errors": [
+                "Section 6, Beat 0: Fields too short: ['scene_setup (3 words, need 4+)']. Each field must be at least 4 words.",
+                "Section 6, Beat 2: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 6, Beat 3: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 6, Beat 4: manim_scene_spec.objects is empty. Must define at least one object (charge, vector, equation).",
+                "Section 6, Beat 5: Fields too short: ['labels_and_text (2 words, need 4+)']. Each field must be at least 4 words."
+              ]
+            },
+            {
+              "topic_id": 7,
+              "section_type": "memory",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b8e6d961/videos/topic_7.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 6,
+              "dry_run": true,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 8,
+              "section_type": "recap",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b8e6d961/videos/topic_8.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 3,
+              "dry_run": true,
+              "compilation_errors": []
+            }
+          ],
+          "success_count": 4,
+          "fail_count": 4,
+          "dry_run": true
+        },
+        {
+          "step": "generate_audio",
+          "status": "skipped",
+          "reason": "dry_run"
+        }
+      ],
+      "completed_at": "2025-12-17T13:38:18.373949",
+      "presentation_path": "/home/runner/workspace/player/jobs/b8e6d961/presentation.json",
+      "trace_path": "/home/runner/workspace/player/jobs/b8e6d961/generation_trace.json",
+      "sections_count": 8,
+      "dry_run": true
+    }
   }
 }

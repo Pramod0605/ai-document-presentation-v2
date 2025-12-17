@@ -1,0 +1,15 @@
+DRY RUN - Manim section 2
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/b8e6d961/videos/topic_2.mp4
+
+--- SCENE CODE ---
+header1 = Text("1. Definition", font_size=28).move_to(np.array([-4, 2, 0]))
+def_eq = MathTex(r"ax^2 + bx + c = 0").move_to(np.array([-4, 0, 0]))
+
+# Animation sequence
+self.play(FadeIn(header1), run_time=1.0)
+self.play(Write(def_eq), run_time=2.0)
+self.play(Indicate(def_eq.a), run_time=0.5)
+self.play(Indicate(def_eq.b), run_time=0.5)
+self.play(Indicate(def_eq.c), run_time=0.5)
+self.wait(1)

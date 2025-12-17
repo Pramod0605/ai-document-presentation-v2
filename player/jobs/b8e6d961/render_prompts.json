@@ -1,0 +1,243 @@
+[
+  {
+    "timestamp": "2025-12-17T13:38:18.366030",
+    "section_id": 1,
+    "section_title": "Introduction to Quadratic Equations",
+    "renderer": "manim_spec",
+    "prompt": "axes = Axes(x_range=[-5, 5, 1], y_range=[-5, 5, 1], x_length=8, y_length=6, axis_config={\"include_tip\": True})\nlinear_graph = axes.plot(2*x - 1, color=BLUE)\nlinear_eq = MathTex(r\"y = mx + c\").move_to(UP * 3 + LEFT * 4)\n\n# Animation sequence\nself.play(FadeIn(axes), run_time=1.0)\nself.play(Write(linear_eq), run_time=1.5)\nself.play(FadeIn(linear_graph), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/b8e6d961/videos/topic_1.mp4",
+    "extra": {
+      "section_type": "intro",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "axes",
+            "type": "axes",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "x_range": [
+                -5,
+                5
+              ],
+              "y_range": [
+                -5,
+                5
+              ],
+              "color": "gray"
+            }
+          },
+          {
+            "id": "linear_graph",
+            "type": "graph",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "equation": "2*x - 1",
+              "color": "blue"
+            }
+          }
+        ],
+        "equations": [
+          {
+            "id": "linear_eq",
+            "latex": "y = mx + c",
+            "position": "top_left"
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "axes",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "linear_eq",
+            "duration": 1.5
+          },
+          {
+            "action": "draw_graph",
+            "target": "linear_graph",
+            "duration": 2.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T13:38:18.366851",
+    "section_id": 2,
+    "section_title": "Chapter Summary",
+    "renderer": "manim_spec",
+    "prompt": "header1 = Text(\"1. Definition\", font_size=28).move_to(np.array([-4, 2, 0]))\ndef_eq = MathTex(r\"ax^2 + bx + c = 0\").move_to(np.array([-4, 0, 0]))\n\n# Animation sequence\nself.play(FadeIn(header1), run_time=1.0)\nself.play(Write(def_eq), run_time=2.0)\nself.play(Indicate(def_eq.a), run_time=0.5)\nself.play(Indicate(def_eq.b), run_time=0.5)\nself.play(Indicate(def_eq.c), run_time=0.5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/b8e6d961/videos/topic_2.mp4",
+    "extra": {
+      "section_type": "summary",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "header1",
+            "type": "label",
+            "position": [
+              -4,
+              2
+            ],
+            "properties": {
+              "text": "1. Definition"
+            }
+          }
+        ],
+        "equations": [
+          {
+            "id": "def_eq",
+            "latex": "ax^2 + bx + c = 0",
+            "position": [
+              -4,
+              0
+            ]
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "header1",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "def_eq",
+            "duration": 2.0
+          },
+          {
+            "action": "highlight",
+            "target": "def_eq.a",
+            "duration": 0.5
+          },
+          {
+            "action": "highlight",
+            "target": "def_eq.b",
+            "duration": 0.5
+          },
+          {
+            "action": "highlight",
+            "target": "def_eq.c",
+            "duration": 0.5
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T13:38:18.368656",
+    "section_id": 7,
+    "section_title": "Key Concepts",
+    "renderer": "manim_spec",
+    "prompt": "card1_q = Dot(point=ORIGIN, color=BLUE)\n\n# Animation sequence\nself.play(FadeIn(card1_q), run_time=1.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/b8e6d961/videos/topic_7.mp4",
+    "extra": {
+      "section_type": "memory",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "card1_q",
+            "type": "flashcard",
+            "position": "center",
+            "properties": {
+              "question": "What is the standard form of a quadratic equation?"
+            }
+          }
+        ],
+        "equations": [],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "card1_q",
+            "duration": 1.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T13:38:18.373146",
+    "section_id": 8,
+    "section_title": "Chapter Recap",
+    "renderer": "manim_spec",
+    "prompt": "panel1 = VGroup(Rectangle(width=4, height=3, color=BLUE), Text(\"\", font_size=20)).move_to(np.array([-4, 0, 0]))\ndef_eq = MathTex(r\"ax^2+bx+c=0\").move_to(np.array([-4, 0, 0]))\nrule = MathTex(r\"a \\neq 0\").move_to(np.array([-4, -1, 0]))\n\n# Animation sequence\nself.play(FadeIn(panel1), run_time=1.0)\nself.play(Write(def_eq), run_time=1.0)\nself.play(Write(rule), run_time=1.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/b8e6d961/videos/topic_8.mp4",
+    "extra": {
+      "section_type": "recap",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "panel1",
+            "type": "panel",
+            "position": [
+              -4,
+              0
+            ],
+            "properties": {
+              "label": "Definition"
+            }
+          }
+        ],
+        "equations": [
+          {
+            "id": "def_eq",
+            "latex": "ax^2+bx+c=0",
+            "position": [
+              -4,
+              0
+            ]
+          },
+          {
+            "id": "rule",
+            "latex": "a \\neq 0",
+            "position": [
+              -4,
+              -1
+            ]
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "panel1",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "def_eq",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "rule",
+            "duration": 1.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  }
+]

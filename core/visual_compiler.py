@@ -373,10 +373,13 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
     animation_sequence = spec.get("animation_sequence", [])
     for anim in animation_sequence:
         action = anim.get("action", "appear")
-        target = anim.get("target", "")
+        target = anim.get("target") or ""
         duration = anim.get("duration", 1.0)
         
-        target_var = object_vars.get(target, target.replace("-", "_").replace(" ", "_"))
+        if not target and action != "wait":
+            continue
+        
+        target_var = object_vars.get(target, target.replace("-", "_").replace(" ", "_")) if target else "placeholder"
         
         if action == "appear":
             code_lines.append(f'self.play(FadeIn({target_var}), run_time={duration})')
@@ -402,9 +405,10 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
             code_lines.append(f'self.play({target_var}.animate.move_to(np.array([{new_pos[0]}, {new_pos[1]}, 0])), run_time={duration})')
         
         elif action == "transform":
-            to_target = anim.get("to", "")
-            to_var = object_vars.get(to_target, to_target.replace("-", "_").replace(" ", "_"))
-            code_lines.append(f'self.play(Transform({target_var}, {to_var}), run_time={duration})')
+            to_target = anim.get("to") or ""
+            if to_target:
+                to_var = object_vars.get(to_target, to_target.replace("-", "_").replace(" ", "_"))
+                code_lines.append(f'self.play(Transform({target_var}, {to_var}), run_time={duration})')
         
         elif action == "wait":
             code_lines.append(f'self.wait({duration})')
