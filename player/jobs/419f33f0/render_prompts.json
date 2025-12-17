@@ -1,0 +1,112 @@
+[
+  {
+    "timestamp": "2025-12-17T16:41:24.306140",
+    "section_id": 1,
+    "section_title": "Introduction to Quadratic Equations",
+    "renderer": "wan",
+    "prompt": "Educational visualization for Introduction to Quadratic Equations",
+    "output_path": "/home/runner/workspace/player/jobs/419f33f0/videos/topic_1.mp4",
+    "extra": {
+      "section_type": "intro",
+      "duration": 30,
+      "dry_run": true,
+      "skip_wan": true,
+      "source": "section_level"
+    }
+  },
+  {
+    "timestamp": "2025-12-17T16:41:25.164091",
+    "section_id": 2,
+    "section_title": "What We'll Cover",
+    "renderer": "manim_spec",
+    "prompt": "title = Text(\"Lesson Goals\", font_size=28).move_to(UP * 3)\nstandard_form = MathTex(r\"ax^2 + bx + c = 0\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(title), run_time=1.0)\nself.play(Write(standard_form), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/419f33f0/videos/topic_2.mp4",
+    "extra": {
+      "section_type": "summary",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "label",
+            "position": "top_center",
+            "properties": {
+              "text": "Lesson Goals",
+              "color": "white"
+            }
+          }
+        ],
+        "equations": [
+          {
+            "id": "standard_form",
+            "latex": "ax^2 + bx + c = 0",
+            "position": "center",
+            "properties": {
+              "color": "yellow"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "standard_form",
+            "duration": 2.0
+          }
+        ]
+      },
+      "from_compiled_plan": true
+    }
+  },
+  {
+    "timestamp": "2025-12-17T16:41:29.881925",
+    "section_id": 3,
+    "section_title": "Defining Quadratic Equations",
+    "renderer": "manim_spec",
+    "prompt": "standard_form = MathTex(r\"ax^2 + bx + c = 0\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(Write(standard_form), run_time=2.0)\nself.play(Indicate(standard_form), run_time=1.5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/419f33f0/videos/topic_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 5
+    }
+  },
+  {
+    "timestamp": "2025-12-17T16:41:35.241857",
+    "section_id": 4,
+    "section_title": "The Factoring Method",
+    "renderer": "manim_spec",
+    "prompt": "title = Text(\"Solving by Factoring\", font_size=28).move_to(UP * 3)\nzpp = MathTex(r\"\\text{Zero Product Property}\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(FadeIn(title), run_time=1.0)\nself.play(Write(zpp), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/419f33f0/videos/topic_4.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 6
+    }
+  },
+  {
+    "timestamp": "2025-12-17T16:41:40.863613",
+    "section_id": 5,
+    "section_title": "Example: Solving x\u00b2 + 5x + 6 = 0",
+    "renderer": "manim_spec",
+    "prompt": "problem_eq = MathTex(r\"x^2 + 5x + 6 = 0\").move_to(ORIGIN)\n\n# Animation sequence\nself.play(Write(problem_eq), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/419f33f0/videos/topic_5.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "spec_generated",
+      "duration": 30,
+      "dry_run": true,
+      "beat_count": 6
+    }
+  }
+]
