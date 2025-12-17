@@ -1,0 +1,29 @@
+[JOB 5415284c] JOB FAILED!
+[JOB 5415284c] Error: 'NoneType' object has no attribute 'replace'
+[JOB 5415284c] Traceback:
+Traceback (most recent call last):
+  File "/home/runner/workspace/core/job_manager.py", line 148, in worker
+    result = process_func(job_id=job_id, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/api/app.py", line 246, in process_markdown_job
+    return process_markdown_to_videos(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/core/pipeline.py", line 220, in process_markdown_to_videos
+    rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run, skip_wan=skip_wan, output_dir_base=output_dir)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/core/renderer_executor.py", line 93, in render_all_topics
+    result = execute_renderer(
+             ^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/core/renderer_executor.py", line 37, in execute_renderer
+    wan_prompt, manim_plan, compilation_errors = compile_section_visuals(topic)
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/core/visual_compiler.py", line 486, in compile_section_visuals
+    plan = compile_manim_plan(beat, section_id, i)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/core/visual_compiler.py", line 446, in compile_manim_plan
+    manim_code = translate_spec_to_manim_code(manim_scene_spec, section_id, beat_index)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/workspace/core/visual_compiler.py", line 379, in translate_spec_to_manim_code
+    target_var = object_vars.get(target, target.replace("-", "_").replace(" ", "_"))
+                                         ^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'replace'
