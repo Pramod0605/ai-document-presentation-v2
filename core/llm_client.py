@@ -230,26 +230,36 @@ REQUIRED_VISUAL_BEAT_FIELDS = [
 MIN_FIELD_WORDS = 2  # Relaxed - combined prompts are 40-80+ words total, individual fields can be brief
 
 
-def validate_visual_beat(beat: dict, section_id: int, beat_index: int, is_critical: bool = False, has_manim_spec: bool = False) -> list:
+def validate_visual_beat(beat: dict, section_id: int, beat_index: int, is_critical: bool = False, has_manim_spec: bool = False) -> tuple[list, list]:
     """Validate visual beat using 5-field structure (Gemini-safe).
     
     Args:
         has_manim_spec: If True, skip word-count validation since manim_scene_spec is authoritative
+    
+    Returns:
+        Tuple of (errors, warnings)
     """
     errors = []
+    warnings = []
     
     if "segment_id" not in beat or not isinstance(beat.get("segment_id"), (int, float)):
         errors.append(f"Section {section_id}: visual_beat[{beat_index}] missing or invalid 'segment_id' (must be numeric)")
     
-    # If has manim_scene_spec, validate the spec structure instead of prose word counts
     if has_manim_spec:
         spec = beat.get("manim_scene_spec")
         if spec:
+            has_5_fields = all(beat.get(f) for f in REQUIRED_VISUAL_BEAT_FIELDS)
             if not spec.get("objects") and not spec.get("equations"):
-                errors.append(f"Section {section_id}: visual_beat[{beat_index}] manim_scene_spec needs objects or equations")
+                if has_5_fields:
+                    warnings.append(f"Section {section_id}: visual_beat[{beat_index}] manim_scene_spec missing objects/equations (will use prose fallback)")
+                else:
+                    errors.append(f"Section {section_id}: visual_beat[{beat_index}] manim_scene_spec needs objects or equations")
             if not spec.get("animation_sequence"):
-                errors.append(f"Section {section_id}: visual_beat[{beat_index}] manim_scene_spec needs animation_sequence")
-        return errors
+                if has_5_fields:
+                    warnings.append(f"Section {section_id}: visual_beat[{beat_index}] manim_scene_spec missing animation_sequence (will use prose fallback)")
+                else:
+                    errors.append(f"Section {section_id}: visual_beat[{beat_index}] manim_scene_spec needs animation_sequence")
+        return errors, warnings
     
     if is_critical:
         missing_fields = []
@@ -286,7 +296,7 @@ def validate_visual_beat(beat: dict, section_id: int, beat_index: int, is_critic
                 f"Section {section_id}: visual_beat[{beat_index}] vague phrases in: {vague_fields}"
             )
     
-    return errors
+    return errors, warnings
 
 
 def validate_section_v2(section: dict) -> tuple[list, list]:
@@ -340,8 +350,9 @@ def validate_section_v2(section: dict) -> tuple[list, list]:
         is_manim = renderer == "manim"
         for i, beat in enumerate(visual_beats):
             has_spec = is_manim and beat.get("manim_scene_spec") is not None
-            beat_errors = validate_visual_beat(beat, section_id, i, is_critical=is_critical, has_manim_spec=has_spec)
+            beat_errors, beat_warnings = validate_visual_beat(beat, section_id, i, is_critical=is_critical, has_manim_spec=has_spec)
             errors.extend(beat_errors)
+            warnings.extend(beat_warnings)
         
         if narration_segments and visual_beats:
             segment_ids = {s.get("id") for s in narration_segments if s.get("id") is not None}
@@ -525,18 +536,44 @@ def validate_and_fix_presentation(presentation: dict, subject: str, grade: str) 
             
             REQUIRED_BEAT_FIELDS = ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']
             
+            def normalize_beat_field(value):
+                """Convert array/dict fields to string for compatibility."""
+                if isinstance(value, str):
+                    return value.strip()
+                elif isinstance(value, list):
+                    parts = []
+                    for item in value:
+                        if isinstance(item, dict):
+                            parts.append(json.dumps(item))
+                        else:
+                            parts.append(str(item))
+                    return " | ".join(parts)
+                elif isinstance(value, dict):
+                    return json.dumps(value)
+                return ""
+            
+            def field_has_content(beat, field):
+                """Check if field exists and has meaningful content."""
+                value = beat.get(field)
+                if value is None:
+                    return False
+                if isinstance(value, str):
+                    return bool(value.strip())
+                if isinstance(value, (list, dict)):
+                    return bool(value)
+                return False
+            
             valid_beats = []
             for beat in visual_beats:
-                has_all_fields = all(
-                    isinstance(beat.get(field), str) and beat.get(field, "").strip()
-                    for field in REQUIRED_BEAT_FIELDS
-                )
+                has_all_fields = all(field_has_content(beat, field) for field in REQUIRED_BEAT_FIELDS)
                 has_segment_id = isinstance(beat.get("segment_id"), (int, float))
                 
                 if has_all_fields and has_segment_id:
+                    for field in REQUIRED_BEAT_FIELDS:
+                        beat[field] = normalize_beat_field(beat.get(field))
                     valid_beats.append(beat)
                 else:
-                    missing = [f for f in REQUIRED_BEAT_FIELDS if not (isinstance(beat.get(f), str) and beat.get(f, "").strip())]
+                    missing = [f for f in REQUIRED_BEAT_FIELDS if not field_has_content(beat, f)]
                     log(f"[AUTO-REPAIR]: Removed incomplete visual_beat from section {section.get('id')} (missing: {missing})")
             
             section["visual_beats"] = valid_beats
@@ -621,7 +658,8 @@ Return ONLY valid JSON with chunk boundaries."""
             {"role": "user", "content": user_message}
         ],
         max_tokens=4096,
-        temperature=0.3
+        temperature=0.3,
+        response_format={"type": "json_object"}
     )
     
     response_text = response.choices[0].message.content or ""
@@ -797,7 +835,8 @@ Start section IDs from 1."""
             {"role": "user", "content": user_prompt}
         ],
         max_tokens=65536,
-        temperature=0.7
+        temperature=0.7,
+        response_format={"type": "json_object"}
     )
     
     response_text = response.choices[0].message.content or ""

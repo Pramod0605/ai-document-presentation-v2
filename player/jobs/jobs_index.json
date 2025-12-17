@@ -3594,5 +3594,547 @@
     "completed_at": "2025-12-17T17:06:19.967155",
     "error": "LLM returned invalid JSON: Expecting ',' delimiter: line 2370 column 246 (char 97970)",
     "result": null
+  },
+  "ddc881f2": {
+    "id": "ddc881f2",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Mathematics",
+      "grade": "Grade 10",
+      "file_path": "/tmp/ai_education_jobs/4c998a8e79c9f6e1.md",
+      "source_file": "test_quadratic.md"
+    },
+    "status": "completed",
+    "current_step": 2,
+    "current_step_name": "Generating audio narration...",
+    "steps_completed": 3,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-17T17:10:04.659921",
+    "started_at": "2025-12-17T17:10:04.683335",
+    "completed_at": "2025-12-17T17:14:00.950838",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "started_at": "2025-12-17T17:10:04.720262",
+      "source_file": "test_quadratic.md",
+      "steps": [
+        {
+          "step": "generate_presentation_plan",
+          "status": "completed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 1: Visual beat compilation failed - Missing required fields: ['objects_and_properties']. All visual beats must have: ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 311, in _compile_beats_to_manim_plan\n    plan = compile_manim_plan(beat, topic_id, 0)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 480, in compile_manim_plan\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 93, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 1, Beat 0: Missing required fields: ['objects_and_properties']. All visual beats must have: ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 120, in render_manim_video\n    manim_plan = _compile_beats_to_manim_plan(visual_beats, topic_id)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 314, in _compile_beats_to_manim_plan\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 1: Visual beat compilation failed - Missing required fields: ['objects_and_properties']. All visual beats must have: ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']\n"
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 2: Visual beat compilation failed - Missing required fields: ['objects_and_properties']. All visual beats must have: ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 311, in _compile_beats_to_manim_plan\n    plan = compile_manim_plan(beat, topic_id, 0)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 480, in compile_manim_plan\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 93, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 2, Beat 0: Missing required fields: ['objects_and_properties']. All visual beats must have: ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 120, in render_manim_video\n    manim_plan = _compile_beats_to_manim_plan(visual_beats, topic_id)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 314, in _compile_beats_to_manim_plan\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 2: Visual beat compilation failed - Missing required fields: ['objects_and_properties']. All visual beats must have: ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']\n"
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 6 errors",
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 3, Beat 0: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It lacks specific objects, equations, or motions that a video renderer can act on. For example, it doesn't specify *what* diagrams, *which* components, *what* key terms, or *what* steps.",
+                "Section 3, Beat 1: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It lacks specific objects, equations, or concrete motions that a video renderer can act on. The 'scene_setup' is also cut off and incomplete.",
+                "Section 3, Beat 2: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations' without specifying what these diagrams, components, elements, terms, or annotations actually are. No specific objects, equations, or motions are named.",
+                "Section 3, Beat 3: Flash validation failed: The visual beat uses only vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions that a video renderer can act on.",
+                "Section 3, Beat 4: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations' without specifying what these diagrams, components, elements, terms, or annotations are. It also lacks specific mathematical equations or concrete visual objects.",
+                "Section 3, Beat 5: Flash validation failed: The visual beat uses only vague phrases like 'clear diagrams', 'labeled components', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions that a video renderer can act on. The 'scene_setup' field is cut off and incomplete, making it impossible to assess its specificity."
+              ]
+            },
+            {
+              "topic_id": 4,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 7 errors",
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 4, Beat 0: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions that a video renderer can act on. The only specific object mentioned is 'x\u00b2 + 5', but its visual representation or interaction is not described.",
+                "Section 4, Beat 1: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions that a video renderer can act on. The pedagogical focus is also generic.",
+                "Section 4, Beat 2: Flash validation failed: The visual beat uses only vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions that a video renderer can act on. The pedagogical focus is also generic.",
+                "Section 4, Beat 3: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. The 'scene_setup' is cut off and doesn't provide enough context.",
+                "Section 4, Beat 4: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions. The 'scene_setup' is cut off and doesn't provide enough context.",
+                "Section 4, Beat 5: Flash validation failed: The visual beat uses vague phrases like 'Clear diagrams', 'labeled components', 'visual aids', 'Fade in elements sequentially', 'highlight key terms', 'animate transitions', 'Display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. The 'scene_setup' field is cut off and doesn't provide enough context to be specific.",
+                "Section 4, Beat 6: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', 'step-by-step annotations'. It does not name specific objects, equations, or motions. The pedagogical focus is also generic."
+              ]
+            },
+            {
+              "topic_id": 5,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 6 errors",
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 5, Beat 0: Flash validation failed: The visual beat uses only vague phrases like 'clear diagrams', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'step-by-step annotations'. It does not name any specific objects, equations, or motions that a video renderer can act on.",
+                "Section 5, Beat 1: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name concrete visual objects, specific equations, or describe specific motions. The pedagogical focus is also generic.",
+                "Section 5, Beat 2: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions that a video renderer can act on.",
+                "Section 5, Beat 3: Flash validation failed: The visual beat uses only vague phrases like 'clear diagrams', 'labeled components', 'fade in elements sequentially', 'highlight key terms', and 'animate transitions'. It lacks specific objects, equations, or motions that a video renderer can act on. The 'scene_setup' is also incomplete.",
+                "Section 5, Beat 4: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', 'step-by-step annotations'. It does not name specific objects, equations, or motions that a video renderer can act on. The pedagogical focus is also generic.",
+                "Section 5, Beat 5: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. The 'scene_setup' is cut off and incomplete."
+              ]
+            },
+            {
+              "topic_id": 6,
+              "section_type": "memory",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 6: Visual beat compilation failed - Missing required fields: ['objects_and_properties']. All visual beats must have: ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']",
+              "visual_beats_used": 1,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 311, in _compile_beats_to_manim_plan\n    plan = compile_manim_plan(beat, topic_id, 0)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 480, in compile_manim_plan\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 93, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 6, Beat 0: Missing required fields: ['objects_and_properties']. All visual beats must have: ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 120, in render_manim_video\n    manim_plan = _compile_beats_to_manim_plan(visual_beats, topic_id)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 314, in _compile_beats_to_manim_plan\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 6: Visual beat compilation failed - Missing required fields: ['objects_and_properties']. All visual beats must have: ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']\n"
+            },
+            {
+              "topic_id": 7,
+              "section_type": "recap",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 7: Visual beat compilation failed - Missing required fields: ['objects_and_properties']. All visual beats must have: ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 311, in _compile_beats_to_manim_plan\n    plan = compile_manim_plan(beat, topic_id, 0)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 480, in compile_manim_plan\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 93, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 7, Beat 0: Missing required fields: ['objects_and_properties']. All visual beats must have: ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 120, in render_manim_video\n    manim_plan = _compile_beats_to_manim_plan(visual_beats, topic_id)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 314, in _compile_beats_to_manim_plan\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 7: Visual beat compilation failed - Missing required fields: ['objects_and_properties']. All visual beats must have: ['scene_setup', 'objects_and_properties', 'motion_sequence', 'labels_and_text', 'pedagogical_focus']\n"
+            }
+          ],
+          "success_count": 0,
+          "fail_count": 7,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": 1,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/ddc881f2/audio/section_1.mp3"
+            },
+            {
+              "section_id": 2,
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/ddc881f2/audio/section_2.mp3"
+            },
+            {
+              "section_id": 3,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/ddc881f2/audio/section_3.mp3"
+            },
+            {
+              "section_id": 4,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/ddc881f2/audio/section_4.mp3"
+            },
+            {
+              "section_id": 5,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/ddc881f2/audio/section_5.mp3"
+            },
+            {
+              "section_id": 6,
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/ddc881f2/audio/section_6.mp3"
+            },
+            {
+              "section_id": 7,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/ddc881f2/audio/section_7.mp3"
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-17T17:14:00.950799",
+      "presentation_path": "/home/runner/workspace/player/jobs/ddc881f2/presentation.json",
+      "trace_path": "/home/runner/workspace/player/jobs/ddc881f2/generation_trace.json",
+      "sections_count": 7,
+      "dry_run": false
+    }
+  },
+  "b45a2c45": {
+    "id": "b45a2c45",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Mathematics",
+      "grade": "Grade 10",
+      "file_path": "/tmp/ai_education_jobs/b230db17dfa023ff.md",
+      "source_file": "test_quadratic.md"
+    },
+    "status": "failed",
+    "current_step": 0,
+    "current_step_name": "LLM generating presentation plan...",
+    "steps_completed": 0,
+    "total_steps": 3,
+    "progress": 0,
+    "created_at": "2025-12-17T17:15:54.685211",
+    "started_at": "2025-12-17T17:15:54.705553",
+    "completed_at": "2025-12-17T17:19:10.783147",
+    "error": "Validation failed with 1 critical errors:\nSection 5: visual_beat[4] manim_scene_spec needs objects or equations",
+    "result": null
+  },
+  "73e7cdbe": {
+    "id": "73e7cdbe",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Mathematics",
+      "grade": "Grade 10",
+      "file_path": "/tmp/ai_education_jobs/d24c2e9f706d1871.md",
+      "source_file": "test_quadratic.md"
+    },
+    "status": "completed",
+    "current_step": 2,
+    "current_step_name": "Generating audio narration...",
+    "steps_completed": 3,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-17T17:20:38.018752",
+    "started_at": "2025-12-17T17:20:38.027032",
+    "completed_at": "2025-12-17T17:24:51.427274",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "started_at": "2025-12-17T17:20:38.040621",
+      "source_file": "test_quadratic.md",
+      "steps": [
+        {
+          "step": "generate_presentation_plan",
+          "status": "completed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 1: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        ",
+              "visual_beats_used": 4,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 166, in render_manim_video\n    return _execute_spec_generated_render(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 391, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 1: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        \n"
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 2: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        ",
+              "visual_beats_used": 4,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 166, in render_manim_video\n    return _execute_spec_generated_render(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 391, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 2: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        \n"
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 3: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        ",
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 212, in render_manim_video\n    return _execute_spec_generated_render(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 391, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 3: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        \n"
+            },
+            {
+              "topic_id": 4,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 4: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        ",
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 212, in render_manim_video\n    return _execute_spec_generated_render(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 391, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 4: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        \n"
+            },
+            {
+              "topic_id": 5,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 5: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        ",
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 212, in render_manim_video\n    return _execute_spec_generated_render(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 391, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 5: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        \n"
+            },
+            {
+              "topic_id": 6,
+              "section_type": "memory",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/73e7cdbe/videos/topic_6.mp4",
+              "error": null,
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 7,
+              "section_type": "recap",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 7: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        ",
+              "visual_beats_used": 4,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 59, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 166, in render_manim_video\n    return _execute_spec_generated_render(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 391, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 7: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        \n"
+            }
+          ],
+          "success_count": 1,
+          "fail_count": 6,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": 1,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/73e7cdbe/audio/section_1.mp3"
+            },
+            {
+              "section_id": 2,
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/73e7cdbe/audio/section_2.mp3"
+            },
+            {
+              "section_id": 3,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/73e7cdbe/audio/section_3.mp3"
+            },
+            {
+              "section_id": 4,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/73e7cdbe/audio/section_4.mp3"
+            },
+            {
+              "section_id": 5,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/73e7cdbe/audio/section_5.mp3"
+            },
+            {
+              "section_id": 6,
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/73e7cdbe/audio/section_6.mp3"
+            },
+            {
+              "section_id": 7,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/73e7cdbe/audio/section_7.mp3"
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-17T17:24:51.426774",
+      "presentation_path": "/home/runner/workspace/player/jobs/73e7cdbe/presentation.json",
+      "trace_path": "/home/runner/workspace/player/jobs/73e7cdbe/generation_trace.json",
+      "sections_count": 7,
+      "dry_run": false
+    }
+  },
+  "69282513": {
+    "id": "69282513",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Mathematics",
+      "grade": "Grade 10",
+      "file_path": "/tmp/ai_education_jobs/babcb200c641ab9e.md",
+      "source_file": "test_quadratic.md"
+    },
+    "status": "completed",
+    "current_step": 2,
+    "current_step_name": "Generating audio narration...",
+    "steps_completed": 3,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-17T17:27:45.070469",
+    "started_at": "2025-12-17T17:27:45.080473",
+    "completed_at": "2025-12-17T17:31:44.948856",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "started_at": "2025-12-17T17:27:45.107220",
+      "source_file": "test_quadratic.md",
+      "steps": [
+        {
+          "step": "generate_presentation_plan",
+          "status": "completed"
+        },
+        {
+          "step": "render_videos",
+          "status": "completed",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/69282513/videos/topic_1.mp4",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/69282513/videos/topic_2.mp4",
+              "error": null,
+              "visual_beats_used": 3,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/69282513/videos/topic_3.mp4",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 4,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/69282513/videos/topic_4.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 5,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/69282513/videos/topic_5.mp4",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 6,
+              "section_type": "memory",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/69282513/videos/topic_6.mp4",
+              "error": null,
+              "visual_beats_used": 1,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 7,
+              "section_type": "recap",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/69282513/videos/topic_7.mp4",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": false,
+              "compilation_errors": []
+            }
+          ],
+          "success_count": 7,
+          "fail_count": 0,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": 1,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/69282513/audio/section_1.mp3"
+            },
+            {
+              "section_id": 2,
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/69282513/audio/section_2.mp3"
+            },
+            {
+              "section_id": 3,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/69282513/audio/section_3.mp3"
+            },
+            {
+              "section_id": 4,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/69282513/audio/section_4.mp3"
+            },
+            {
+              "section_id": 5,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/69282513/audio/section_5.mp3"
+            },
+            {
+              "section_id": 6,
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/69282513/audio/section_6.mp3"
+            },
+            {
+              "section_id": 7,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/69282513/audio/section_7.mp3"
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-17T17:31:44.948355",
+      "presentation_path": "/home/runner/workspace/player/jobs/69282513/presentation.json",
+      "trace_path": "/home/runner/workspace/player/jobs/69282513/generation_trace.json",
+      "sections_count": 7,
+      "dry_run": false
+    }
   }
 }

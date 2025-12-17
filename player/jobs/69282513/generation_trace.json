@@ -1,0 +1,2058 @@
+{
+  "prompt_version": "v2",
+  "system_prompt": "You are an Expert Educational Content Director and Visual Storyboarder.\n\nYour task is to convert textbook Markdown into a COMPLETE,\ntime-synchronized visual teaching plan for students.\n\nYou are NOT summarizing.\nYou are DIRECTING a teaching video.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nMANDATORY PEDAGOGY RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n1. Follow the Markdown structure strictly.\n   - Headings \u2192 sections\n   - Subheadings \u2192 micro-topics\n   - Worked examples \u2192 separate example sections\n   - Do NOT reorder concepts.\n\n2. One section = one teachable idea.\n   - If a section has multiple ideas, split it.\n\n3. CONTENT sections:\n   - Narration must be 150\u2013250 words minimum.\n   - Explain step-by-step.\n   - Include real-world intuition.\n   - Do NOT compress explanations.\n\n4. EXAMPLE sections (CRITICAL):\n   - Every worked example in Markdown MUST become a separate section.\n   - Examples are NOT narration-only.\n   - Examples MUST be visualized step-by-step.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nVISUALIZATION RULES (NON-NEGOTIABLE)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n5. Every narration segment MUST have a corresponding VISUAL BEAT.\n   - No narration without visuals.\n   - No visuals without narration.\n\n6. Visual beats MUST be CONCRETE and SPECIFIC:\n   - Describe EXACTLY what objects appear (shapes, colors, positions)\n   - Describe EXACTLY what motion occurs (direction, speed, sequence)\n   - Include numerical values where applicable\n   - Specify text labels and their positions\n\n7. BANNED VAGUE PHRASES (will cause VALIDATION FAILURE):\n   - \"detailed animation\"\n   - \"conceptual visualization\"\n   - \"dynamic visuals\"\n   - \"beautiful animation\"\n   - \"stunning visual\"\n   - \"show clearly\"\n   - \"demonstrate effectively\"\n   - \"visualize the concept\"\n   - \"illustrate the process\"\n\n8. VISUAL BEAT STRUCTURE (5 REQUIRED FIELDS):\n\n   Each visual beat MUST have these 5 fields:\n   - scene_setup: Describe background, coordinate system, initial state\n   - objects_and_properties: List ALL objects with colors, sizes, positions\n   - motion_sequence: Describe step-by-step animation order\n   - labels_and_text: List WHERE each label appears\n   - pedagogical_focus: What should the student understand?\n\n   BAD (will FAIL - missing fields):\n   {{\n     \"segment_id\": 1,\n     \"visual_instruction\": \"Show force interaction clearly\"\n   }}\n   \n   GOOD (will PASS - all 5 fields present):\n   {{\n     \"segment_id\": 1,\n     \"scene_setup\": \"A white background with a point A at center. Cartesian grid visible.\",\n     \"objects_and_properties\": \"A red arrow 10 units long from point A pointing right. A blue arrow 5 units long from point A pointing left. A green resultant arrow 5 units long pointing right.\",\n     \"motion_sequence\": \"First, point A appears. Then, red F1 arrow grows rightward. Then, blue F2 arrow grows leftward. Finally, green resultant arrow appears.\",\n     \"labels_and_text\": \"Label 'A' at the point. Label 'F1=10N' above red arrow. Label 'F2=5N' above blue arrow. Label 'F_net=5N' above green arrow.\",\n     \"pedagogical_focus\": \"Students understand that forces are vectors that add, and the resultant shows net force direction and magnitude.\"\n   }}\n\n9. FORMULA VISUALIZATION RULES:\n   - When narration mentions F=ma, show: \"F\", \"=\", \"m\", \"\u00d7\", \"a\" as separate animated symbols\n   - Show numerical substitution: F = 5kg \u00d7 2m/s\u00b2 = 10N\n   - Show geometry: vector arrows with magnitude labels\n   - Show units: always include units on numerical values\n\n10. If narration mentions:\n    - a formula \u2192 show symbols + substitution + result\n    - a variable \u2192 show it with label and value\n    - a force / field \u2192 show arrow with direction and magnitude label\n    - an example \u2192 visualize each calculation step\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nRENDERER DECISION RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n11. Use MANIM for:\n    - maths equations and formulas\n    - vectors and geometry\n    - graphs and plots\n    - numerical physics examples\n    - step-by-step calculations\n    - coordinate systems\n\n12. Use WAN for:\n    - biological processes (cells, organisms, ecosystems)\n    - physical phenomena (waves, light, motion)\n    - field visualizations (electric, magnetic, gravitational)\n    - chemistry reactions (molecules, bonds, reactions)\n\n\u26a0\ufe0f CRITICAL: When renderer=\"manim\", EVERY visual_beat MUST include manim_scene_spec.\nThis applies to ALL section types: content, example, summary, intro, recap.\nThere are NO exceptions. Prose-only beats for Manim sections will FAIL.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nMANIM SCENE SPEC (REQUIRED FOR renderer=manim)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nFor renderer=\"manim\", each visual_beat MUST include a \"manim_scene_spec\" object.\nThis is a STRUCTURED JSON spec - NOT prose descriptions.\n\nMANIM SCENE SPEC SCHEMA:\n{{\n  \"objects\": [\n    {{\n      \"id\": \"charge_q1\",\n      \"type\": \"point_charge\",  // point_charge, charged_sphere, point, vector, equation\n      \"position\": [-3, 0],     // [x, y] coordinates\n      \"properties\": {{\n        \"charge\": \"+2\u03bcC\",      // for charges\n        \"color\": \"blue\",\n        \"radius\": 0.3,\n        \"label\": \"q\u2081 = +2\u03bcC\"\n      }}\n    }}\n  ],\n  \"forces\": [\n    {{\n      \"id\": \"F12\",\n      \"type\": \"electrostatic\",  // electrostatic, gravitational, tension, normal\n      \"from_object\": \"charge_q1\",\n      \"to_object\": \"charge_q2\",\n      \"magnitude\": \"18 N\",\n      \"direction\": \"repulsive\",  // attractive, repulsive, or angle in degrees\n      \"color\": \"red\",\n      \"label\": \"F\u2081\u2082 = 18 N\"\n    }}\n  ],\n  \"equations\": [\n    {{\n      \"id\": \"coulombs_law\",\n      \"latex\": \"F = k \\\\\\\\frac{{q_1 q_2}}{{r^2}}\",\n      \"position\": \"top_center\",  // top_center, bottom_center, left, right\n      \"substitution\": \"F = 9 \\\\\\\\times 10^9 \\\\\\\\times \\\\\\\\frac{{2 \\\\\\\\times 10^{{-6}} \\\\\\\\times 3 \\\\\\\\times 10^{{-6}}}}{{(0.1)^2}}\"\n    }}\n  ],\n  \"animation_sequence\": [\n    {{ \"action\": \"appear\", \"target\": \"charge_q1\", \"duration\": 0.5 }},\n    {{ \"action\": \"appear\", \"target\": \"charge_q2\", \"duration\": 0.5 }},\n    {{ \"action\": \"draw_force\", \"target\": \"F12\", \"duration\": 1.0 }},\n    {{ \"action\": \"show_equation\", \"target\": \"coulombs_law\", \"duration\": 1.5 }},\n    {{ \"action\": \"substitute\", \"target\": \"coulombs_law\", \"duration\": 2.0 }},\n    {{ \"action\": \"highlight\", \"target\": \"F12\", \"duration\": 0.5 }}\n  ]\n}}\n\nSEMANTIC ANIMATION ACTIONS (use these, NOT raw Manim calls):\n- appear: Fade in an object\n- draw_force: Draw force arrow from one object toward another\n- show_equation: Display equation at specified position\n- substitute: Transform equation to show numerical substitution\n- highlight: Pulse/glow an object to draw attention\n- move: Move object to new position\n- transform: Morph one object into another\n- wait: Pause for specified duration\n\nOBJECT TYPES:\n- point_charge: A charged particle (specify charge, color, label)\n- charged_sphere: A sphere with distributed charge\n- point: A simple dot/marker\n- vector: An arrow (specify magnitude, direction, color)\n- equation: A LaTeX equation (rendered as MathTex)\n- label: Text label\n\nFORCE TYPES:\n- electrostatic: Coulomb force between charges\n- gravitational: Force due to gravity\n- tension: String/rope tension\n- normal: Normal force from surface\n- friction: Friction force\n- resultant: Net force (sum of forces)\n\nEXAMPLE (Coulomb's Law):\n{{\n  \"segment_id\": 1,\n  \"scene_setup\": \"Two point charges separated by distance r\",\n  \"objects_and_properties\": \"Blue +2\u03bcC charge at left, red +3\u03bcC charge at right\",\n  \"motion_sequence\": \"Charges appear, then force arrows, then equation\",\n  \"labels_and_text\": \"Labels show charge values and force magnitude\",\n  \"pedagogical_focus\": \"Demonstrate repulsive electrostatic force\",\n  \"manim_scene_spec\": {{\n    \"objects\": [\n      {{ \"id\": \"q1\", \"type\": \"point_charge\", \"position\": [-3, 0], \"properties\": {{ \"charge\": \"+2\u03bcC\", \"color\": \"blue\", \"radius\": 0.3, \"label\": \"q\u2081 = +2\u03bcC\" }} }},\n      {{ \"id\": \"q2\", \"type\": \"point_charge\", \"position\": [3, 0], \"properties\": {{ \"charge\": \"+3\u03bcC\", \"color\": \"red\", \"radius\": 0.3, \"label\": \"q\u2082 = +3\u03bcC\" }} }},\n      {{ \"id\": \"distance\", \"type\": \"vector\", \"position\": [-3, -1], \"properties\": {{ \"end\": [3, -1], \"color\": \"gray\", \"label\": \"r = 10 cm\" }} }}\n    ],\n    \"forces\": [\n      {{ \"id\": \"F12\", \"type\": \"electrostatic\", \"from_object\": \"q1\", \"to_object\": \"q2\", \"magnitude\": \"5.4 N\", \"direction\": \"repulsive\", \"color\": \"orange\", \"label\": \"F = 5.4 N\" }}\n    ],\n    \"equations\": [\n      {{ \"id\": \"coulomb\", \"latex\": \"F = k \\\\\\\\frac{{q_1 q_2}}{{r^2}}\", \"position\": \"top_center\", \"substitution\": \"F = 9 \\\\\\\\times 10^9 \\\\\\\\times \\\\\\\\frac{{2 \\\\\\\\times 3}}{{(0.1)^2}} \\\\\\\\times 10^{{-12}}\" }}\n    ],\n    \"animation_sequence\": [\n      {{ \"action\": \"appear\", \"target\": \"q1\", \"duration\": 0.5 }},\n      {{ \"action\": \"appear\", \"target\": \"q2\", \"duration\": 0.5 }},\n      {{ \"action\": \"appear\", \"target\": \"distance\", \"duration\": 0.5 }},\n      {{ \"action\": \"draw_force\", \"target\": \"F12\", \"duration\": 1.0 }},\n      {{ \"action\": \"show_equation\", \"target\": \"coulomb\", \"duration\": 1.0 }},\n      {{ \"action\": \"substitute\", \"target\": \"coulomb\", \"duration\": 2.0 }}\n    ]\n  }}\n}}\n\nFAIL CONDITIONS for Manim sections:\n- Missing manim_scene_spec \u2192 VALIDATION FAILURE\n- Empty objects array \u2192 VALIDATION FAILURE\n- No animation_sequence \u2192 VALIDATION FAILURE\n- Prose-only visual_beat (no structured spec) \u2192 VALIDATION FAILURE\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nVISUAL BEAT QUALITY CHECKLIST\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nBefore outputting each visual beat, verify ALL 5 FIELDS are present:\n\u25a1 scene_setup: Does it describe background and coordinate system?\n\u25a1 objects_and_properties: Are colors, sizes, and positions listed?\n\u25a1 motion_sequence: Is animation order described step-by-step?\n\u25a1 labels_and_text: Are label positions specified?\n\u25a1 pedagogical_focus: Is the learning goal explained?\n\nIf ANY field is missing or too short, add the missing content.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nOUTPUT RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nYou MUST output ONLY valid JSON.\nNo markdown.\nNo commentary.\nNo explanations.\n\nYour JSON will directly drive video generation.\nVague instructions will cause pipeline FAILURE.\n",
+  "user_prompt": "Create a COMPLETE Presentation Plan JSON from the given Markdown.\n\nINPUT:\n- Subject: Mathematics\n- Grade: Grade 10\n- Markdown content:\n# Quadratic Equations\n\n## Solving Quadratic Equations by Factoring\n\nA quadratic equation has the form ax\u00b2 + bx + c = 0. To solve by factoring:\n\n1. Write the equation in standard form\n2. Factor the left side into (x - r\u2081)(x - r\u2082) = 0\n3. Set each factor equal to zero\n4. Solve for x\n\n### Example: x\u00b2 + 5x + 6 = 0\n\nStep 1: Factor the expression\n- We need two numbers that multiply to 6 and add to 5\n- Those numbers are 2 and 3\n\nStep 2: Write as factors\n- x\u00b2 + 5x + 6 = (x + 2)(x + 3) = 0\n\nStep 3: Apply zero product property\n- Either (x + 2) = 0 or (x + 3) = 0\n\nStep 4: Solve each equation\n- x = -2 or x = -3\n\nThe solutions are x = -2 and x = -3.\n\n### Graphical Interpretation\n\nThe parabola y = x\u00b2 + 5x + 6 crosses the x-axis at x = -2 and x = -3. The vertex is at x = -2.5, which is the minimum point.\n\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nSECTION GENERATION RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nYou MUST generate sections in this order:\n\n1. intro\n2. summary\n3. content (multiple)\n4. example (multiple, if present in markdown)\n5. memory\n6. recap\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nSECTION TYPES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nEach section MUST include:\n\n- section_type: intro | summary | content | example | memory | recap\n- id: unique integer\n- title: descriptive title\n- renderer: manim | wan_video\n- narration: full narration text\n- narration_segments: array of timed text segments\n- visual_beats: array of renderer instructions (one per segment)\n- layout: content and avatar positioning\n- gesture_hints: avatar animation cues\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nCONTENT SECTION RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nFor section_type = \"content\":\n\n- Narration must be \u2265150 words.\n- Break narration into logical teaching segments.\n- EACH narration segment MUST have a visual beat.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nEXAMPLE SECTION RULES (CRITICAL)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nFor section_type = \"example\":\n\n- Renderer MUST be manim (unless biological).\n- Visualize the example step-by-step.\n- Each step = one visual beat.\n- Show:\n  \u2022 geometry with coordinates\n  \u2022 symbols with values\n  \u2022 vectors with magnitudes\n  \u2022 intermediate calculation results\n\nExamples must NEVER be explained only in words.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nVISUAL BEAT FORMAT (STRICT)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nEach visual beat MUST be decomposed into FIVE REQUIRED FIELDS.\nALL fields are MANDATORY and must be non-empty.\n\n- segment_id: integer matching narration_segments[].id\n\n- scene_setup: Describe the initial visual scene in 2-3 sentences.\n  What is the background? What coordinate system? What starting state?\n\n- objects_and_properties: List ALL objects with their colors, sizes, positions.\n  Example: \"A red arrow (10 units long) at origin pointing right. A blue circle (radius 2) at position (5,3).\"\n\n- motion_sequence: Describe animation step-by-step, in order.\n  Example: \"First, axes fade in. Then, the arrow grows from origin. Finally, the label appears.\"\n\n- labels_and_text: List EVERY label, symbol, text, and WHERE it appears.\n  Example: \"Label 'F=10N' above the arrow. Label 'Origin' at (0,0). Axis labels 'x' and 'y'.\"\n\n- pedagogical_focus: Explain what the learner should understand from this visual.\n  Example: \"Student should understand that force has both magnitude and direction.\"\n\nIf ANY field is missing or too short, the output is INVALID.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nCONCRETE VISUAL BEAT EXAMPLE\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n{\n  \"segment_id\": 1,\n  \"scene_setup\": \"A 2D Cartesian coordinate plane with x-axis from -5 to 5 and y-axis from -5 to 5. Grid lines are light gray. Background is white. Origin is marked with a small black dot.\",\n  \"objects_and_properties\": \"A blue velocity vector arrow, 3 units in magnitude, starting at origin (0,0) and pointing at 30 degrees above x-axis, ending at approximately (2.6, 1.5). Two dashed gray projection lines: one vertical from (2.6, 1.5) to (2.6, 0), one horizontal from (2.6, 1.5) to (0, 1.5). A red angle arc at origin showing the 30-degree angle.\",\n  \"motion_sequence\": \"First, the coordinate axes fade in with grid. Then, the velocity vector grows from the origin outward to its full length. Next, the dashed projection lines draw themselves. Finally, all component labels appear simultaneously.\",\n  \"labels_and_text\": \"Label 'O' at the origin. Label 'v = 3 m/s' above the blue arrow tip. Label 'vx = 2.6 m/s' below the x-axis at x=1.3. Label 'vy = 1.5 m/s' to the left of the y-projection. Label '30\u00b0' inside the angle arc. Axis labels 'x' and 'y' at the ends.\",\n  \"pedagogical_focus\": \"Students should understand that any velocity vector can be decomposed into independent horizontal (x) and vertical (y) components using trigonometry. The visual shows that vx = v*cos(30\u00b0) and vy = v*sin(30\u00b0).\"\n}\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nBANNED PATTERNS (VALIDATION FAILURE)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nThese will cause VALIDATION FAILURE:\n- Missing ANY of the 5 required fields\n- Empty or single-sentence fields\n- Vague phrases like \"show clearly\", \"animate smoothly\", \"visualize the concept\"\n- scene_setup that doesn't describe background/coordinate system\n- objects_and_properties that doesn't list colors and positions\n- motion_sequence that doesn't describe step-by-step order\n- labels_and_text that doesn't specify WHERE labels appear\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nLAYOUT RULES\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nDecide:\n- content position and width\n- avatar position and size\n- overlay vs side layout\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nOUTPUT SCHEMA\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n{\n  \"chapter_title\": \"string\",\n  \"subject\": \"Mathematics\",\n  \"grade\": \"Grade 10\",\n  \"language\": \"en-IN\",\n  \"sections\": [\n    {\n      \"section_type\": \"content | example\",\n      \"id\": 1,\n      \"title\": \"Section Title\",\n      \"renderer\": \"manim | wan_video\",\n      \"narration\": \"Full narration text...\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"First segment text...\",\n          \"duration\": 4\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A 2D coordinate plane with x-axis from -5 to 5 and y-axis from -5 to 5. White background with light gray grid lines.\",\n          \"objects_and_properties\": \"Two perpendicular black axis lines. Small black dot at origin. Tick marks every 1 unit on both axes.\",\n          \"motion_sequence\": \"First, the x-axis draws itself left to right. Then, the y-axis draws itself bottom to top. Finally, the grid and labels fade in.\",\n          \"labels_and_text\": \"Label 'x' at right end of x-axis. Label 'y' at top of y-axis. Label 'O' at origin.\",\n          \"pedagogical_focus\": \"Establish the coordinate system that will be used throughout this lesson for vector representation.\"\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": { \"position\": \"left\", \"width_percent\": 65 },\n        \"avatar_zone\": { \"mode\": \"side\", \"position\": \"right\", \"width_percent\": 35 }\n      },\n      \"gesture_hints\": [\n        { \"time\": 1.0, \"action\": \"point_to_screen\" }\n      ]\n    }\n  ]\n}\n\nFor memory sections, also include:\n\"flashcards\": [\n  { \"question\": \"What is X?\", \"answer\": \"Y\" }\n]\n\nFor recap sections, also include:\n\"recap_scenes\": [\n  { \"scene\": 1, \"description\": \"Scene visual...\", \"concept_title\": \"Key Concept\" }\n]\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nQUALITY GATE\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nBefore outputting, verify EACH visual beat has ALL 5 fields:\n1. scene_setup: Does it describe background and coordinate system?\n2. objects_and_properties: Does it list ALL objects with colors and positions?\n3. motion_sequence: Does it describe step-by-step animation order?\n4. labels_and_text: Does it list WHERE each label appears?\n5. pedagogical_focus: Does it explain what the student learns?\n\nIf ANY field is missing or too short, REWRITE that visual beat.\n\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nOUTPUT\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\nReturn ONLY valid JSON.\nNo explanations.\nNo markdown code blocks.\n",
+  "model": "google/gemini-2.5-pro",
+  "max_tokens": 32768,
+  "raw_response_length": 60686,
+  "raw_response": "{\n  \"chapter_title\": \"Quadratic Equations\",\n  \"subject\": \"Mathematics\",\n  \"grade\": \"Grade 10\",\n  \"language\": \"en-IN\",\n  \"sections\": [\n    {\n      \"section_type\": \"intro\",\n      \"id\": 1,\n      \"title\": \"Introduction to Quadratic Equations\",\n      \"renderer\": \"manim\",\n      \"narration\": \"Welcome! In this chapter, we're diving into one of the cornerstones of algebra: quadratic equations. You've likely seen linear equations before, which draw straight lines. But what happens when we add a squared term, like x-squared? We enter the world of parabolas, the beautiful curves that describe everything from the path of a thrown ball to the shape of a satellite dish. A quadratic equation has a standard form: ax\u00b2 + bx + c = 0. Our main goal is to 'solve' these equations, which means finding the specific values of 'x' that make the equation true. These solutions are also known as the 'roots' of the equation. In this lesson, we'll focus on a powerful and intuitive method for finding these roots: factoring. It\u2019s like being a detective, breaking down the equation into simpler parts to uncover the hidden values of x. Understanding this will build a strong foundation for more advanced topics in mathematics and science.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"Welcome! In this chapter, we're diving into one of the cornerstones of algebra: quadratic equations. You've likely seen linear equations before, which draw straight lines. But what happens when we add a squared term, like x-squared?\",\n          \"duration\": 12\n        },\n        {\n          \"id\": 2,\n          \"text\": \"We enter the world of parabolas, the beautiful curves that describe everything from the path of a thrown ball to the shape of a satellite dish. A quadratic equation has a standard form: ax\u00b2 + bx + c = 0.\",\n          \"duration\": 11\n        },\n        {\n          \"id\": 3,\n          \"text\": \"Our main goal is to 'solve' these equations, which means finding the specific values of 'x' that make the equation true. These solutions are also known as the 'roots' of the equation.\",\n          \"duration\": 10\n        },\n        {\n          \"id\": 4,\n          \"text\": \"In this lesson, we'll focus on a powerful and intuitive method for finding these roots: factoring. It\u2019s like being a detective, breaking down the equation into simpler parts to uncover the hidden values of x. Understanding this will build a strong foundation for more advanced topics in mathematics and science.\",\n          \"duration\": 15\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A clean, dark gray background. A 2D Cartesian coordinate system appears at the center.\",\n          \"objects_and_properties\": \"A blue line representing y=x+1, passing through (-1,0) and (0,1). The equation 'y = mx + c' in white text at the top left.\",\n          \"motion_sequence\": \"First, the axes fade in. Then, the blue line is drawn across the screen. The equation 'y = mx + c' appears. Then, the 'x' in the equation glows, and a '\u00b2' symbol animates into position next to it, changing the equation's nature.\",\n          \"labels_and_text\": \"Label 'y = mx + c' top left. Axis labels 'x' and 'y'.\",\n          \"pedagogical_focus\": \"Contrast a familiar linear equation with a quadratic to introduce the new concept of a squared term.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"axes\", \"type\": \"axes\", \"position\": [0, 0], \"properties\": { \"x_range\": [-5, 5], \"y_range\": [-5, 5] } },\n              { \"id\": \"linear_eq_text\", \"type\": \"equation\", \"latex\": \"y = mx + c\", \"position\": \"top_left\", \"properties\": { \"color\": \"white\" } },\n              { \"id\": \"linear_graph\", \"type\": \"graph\", \"function\": \"x+1\", \"properties\": { \"color\": \"blue\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"axes\", \"duration\": 1.0 },\n              { \"action\": \"show_equation\", \"target\": \"linear_eq_text\", \"duration\": 1.0 },\n              { \"action\": \"draw_graph\", \"target\": \"linear_graph\", \"duration\": 2.0 },\n              { \"action\": \"highlight\", \"target_id_from_latex\": \"x\", \"in_equation\": \"linear_eq_text\", \"duration\": 1.0 },\n              { \"action\": \"transform\", \"target\": \"linear_eq_text\", \"new_latex\": \"y = ax^2 + bx + c\", \"duration\": 2.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"The scene continues with the Cartesian coordinate system. The blue line fades away.\",\n          \"objects_and_properties\": \"A green parabola opening upwards, representing y = x\u00b2. The equation 'ax\u00b2 + bx + c = 0' is prominently displayed at the top.\",\n          \"motion_sequence\": \"The blue line fades out. The green parabola is drawn, starting from the left, dipping to the vertex, and rising to the right. The standard form equation 'ax\u00b2 + bx + c = 0' appears at the top of the screen.\",\n          \"labels_and_text\": \"Label 'ax\u00b2 + bx + c = 0' at the top center.\",\n          \"pedagogical_focus\": \"Introduce the visual shape of a quadratic (a parabola) and its standard algebraic form.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"axes\", \"type\": \"axes\", \"position\": [0, 0], \"properties\": { \"x_range\": [-5, 5], \"y_range\": [-2, 10] } },\n              { \"id\": \"parabola_graph\", \"type\": \"graph\", \"function\": \"x**2\", \"properties\": { \"color\": \"green\" } },\n              { \"id\": \"standard_form\", \"type\": \"equation\", \"latex\": \"ax^2 + bx + c = 0\", \"position\": \"top_center\", \"properties\": { \"color\": \"yellow\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"fade_out\", \"target\": \"linear_graph\", \"duration\": 1.0 },\n              { \"action\": \"draw_graph\", \"target\": \"parabola_graph\", \"duration\": 2.0 },\n              { \"action\": \"show_equation\", \"target\": \"standard_form\", \"duration\": 1.5 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"The parabola and axes remain. Focus shifts to the x-axis.\",\n          \"objects_and_properties\": \"The green parabola y = x\u00b2 - 4, which intersects the x-axis at -2 and 2. Two red dots at the intersection points (-2, 0) and (2, 0).\",\n          \"motion_sequence\": \"The previous parabola transforms into y = x\u00b2 - 4, shifting downwards to cross the x-axis. As it crosses, two red dots appear at the intersection points. Arrows point from the word 'solutions' or 'roots' to these dots.\",\n          \"labels_and_text\": \"Label 'Solutions' or 'Roots' appears, with arrows pointing to the red dots at x=-2 and x=2.\",\n          \"pedagogical_focus\": \"Visually define what 'solutions' or 'roots' are: the x-intercepts of the parabola.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"axes\", \"type\": \"axes\", \"position\": [0, 0], \"properties\": { \"x_range\": [-5, 5], \"y_range\": [-5, 5] } },\n              { \"id\": \"parabola_graph\", \"type\": \"graph\", \"function\": \"x**2\", \"properties\": { \"color\": \"green\" } },\n              { \"id\": \"root1\", \"type\": \"point\", \"position\": [-2, 0], \"properties\": { \"color\": \"red\" } },\n              { \"id\": \"root2\", \"type\": \"point\", \"position\": [2, 0], \"properties\": { \"color\": \"red\" } },\n              { \"id\": \"roots_label\", \"type\": \"label\", \"text\": \"Roots / Solutions\", \"position\": [0, 2], \"properties\": { \"color\": \"white\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"transform\", \"target\": \"parabola_graph\", \"new_function\": \"x**2 - 4\", \"duration\": 2.0 },\n              { \"action\": \"appear\", \"target\": \"root1\", \"duration\": 0.5 },\n              { \"action\": \"appear\", \"target\": \"root2\", \"duration\": 0.5 },\n              { \"action\": \"show_label\", \"target\": \"roots_label\", \"duration\": 1.0 },\n              { \"action\": \"draw_arrow\", \"from_object\": \"roots_label\", \"to_object\": \"root1\", \"duration\": 1.0 },\n              { \"action\": \"draw_arrow\", \"from_object\": \"roots_label\", \"to_object\": \"root2\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The graph scene fades out, leaving a clean background.\",\n          \"objects_and_properties\": \"The equation 'ax\u00b2 + bx + c' at the center. Two sets of parentheses '(  )(  )' appear below it.\",\n          \"motion_sequence\": \"The graph fades. The expression 'ax\u00b2 + bx + c' appears. The word 'Factoring' animates on screen. The expression then visually breaks apart into two parenthetical factors '(   )(   )'. This visually introduces the main technique of the lesson.\",\n          \"labels_and_text\": \"Text 'Factoring' appears prominently.\",\n          \"pedagogical_focus\": \"Introduce the core technique to be taught in the lesson: factoring.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"expression\", \"type\": \"equation\", \"latex\": \"ax^2 + bx + c\", \"position\": [0, 1], \"properties\": { \"color\": \"white\" } },\n              { \"id\": \"factors\", \"type\": \"equation\", \"latex\": \"(x - r_1)(x - r_2)\", \"position\": [0, -1], \"properties\": { \"color\": \"yellow\" } },\n              { \"id\": \"factoring_title\", \"type\": \"label\", \"text\": \"Method: Factoring\", \"position\": \"top_center\", \"properties\": { \"color\": \"cyan\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"fade_out\", \"target\": \"all\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"factoring_title\", \"duration\": 1.0 },\n              { \"action\": \"show_equation\", \"target\": \"expression\", \"duration\": 1.5 },\n              { \"action\": \"transform\", \"target\": \"expression\", \"target_id_from_latex\": \"ax^2 + bx + c\", \"new_target_id\": \"factors\", \"duration\": 2.0 }\n            ]\n          }\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": { \"position\": \"center\", \"width_percent\": 90 },\n        \"avatar_zone\": { \"mode\": \"overlay\", \"position\": \"bottom_right\", \"size\": \"small\" }\n      },\n      \"gesture_hints\": [\n        { \"time\": 15.0, \"action\": \"point_to_screen\" },\n        { \"time\": 25.0, \"action\": \"thinking_pose\" },\n        { \"time\": 35.0, \"action\": \"open_hand_gesture\" }\n      ]\n    },\n    {\n      \"section_type\": \"summary\",\n      \"id\": 2,\n      \"title\": \"Lesson Overview\",\n      \"renderer\": \"manim\",\n      \"narration\": \"Before we begin, let's quickly go over our plan for this lesson. We will start by defining the four key steps required to solve a quadratic equation by factoring. This is our main strategy. Then, to make sure the steps are perfectly clear, we will walk through a complete example together, solving the equation x\u00b2 + 5x + 6 = 0 from start to finish. Finally, we'll connect the algebra back to geometry by looking at the graphical interpretation. We will see exactly how the solutions we find correspond to points on a graph. By the end, you'll be able to solve similar quadratic equations and understand what your answers truly mean.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"Before we begin, let's quickly go over our plan for this lesson. We will start by defining the four key steps required to solve a quadratic equation by factoring. This is our main strategy.\",\n          \"duration\": 9\n        },\n        {\n          \"id\": 2,\n          \"text\": \"Then, to make sure the steps are perfectly clear, we will walk through a complete example together, solving the equation x\u00b2 + 5x + 6 = 0 from start to finish.\",\n          \"duration\": 9\n        },\n        {\n          \"id\": 3,\n          \"text\": \"Finally, we'll connect the algebra back to geometry by looking at the graphical interpretation. We will see exactly how the solutions we find correspond to points on a graph. By the end, you'll be able to solve similar quadratic equations and understand what your answers truly mean.\",\n          \"duration\": 13\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A dark background with a title 'Lesson Plan' at the top.\",\n          \"objects_and_properties\": \"A numbered list with the first item appearing.\",\n          \"motion_sequence\": \"The title 'Lesson Plan' fades in. The first list item '1. The 4 Steps of Factoring' animates in.\",\n          \"labels_and_text\": \"Title: 'Lesson Plan'. List item 1: 'The 4 Steps of Factoring'.\",\n          \"pedagogical_focus\": \"Introduce the first part of the lesson plan.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"title\", \"type\": \"label\", \"text\": \"Lesson Plan\", \"position\": \"top_center\", \"properties\": { \"color\": \"yellow\" } },\n              { \"id\": \"item1\", \"type\": \"label\", \"text\": \"1. The 4 Steps of Factoring\", \"position\": [-3, 1], \"properties\": { \"align\": \"left\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"title\", \"duration\": 1.0 },\n              { \"action\": \"show_label\", \"target\": \"item1\", \"duration\": 1.5 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"The scene continues from the previous beat.\",\n          \"objects_and_properties\": \"The second item appears in the numbered list.\",\n          \"motion_sequence\": \"The second list item '2. Worked Example: x\u00b2 + 5x + 6 = 0' animates in below the first one.\",\n          \"labels_and_text\": \"List item 2: 'Worked Example: x\u00b2 + 5x + 6 = 0'.\",\n          \"pedagogical_focus\": \"Introduce the second part of the lesson plan.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"title\", \"type\": \"label\", \"text\": \"Lesson Plan\", \"position\": \"top_center\", \"properties\": { \"color\": \"yellow\" } },\n              { \"id\": \"item1\", \"type\": \"label\", \"text\": \"1. The 4 Steps of Factoring\", \"position\": [-3, 1], \"properties\": { \"align\": \"left\" } },\n              { \"id\": \"item2\", \"type\": \"label\", \"text\": \"2. Worked Example: x\u00b2 + 5x + 6 = 0\", \"position\": [-3, 0], \"properties\": { \"align\": \"left\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"show_label\", \"target\": \"item2\", \"duration\": 1.5 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"The scene continues from the previous beat.\",\n          \"objects_and_properties\": \"The third item appears, completing the list.\",\n          \"motion_sequence\": \"The third list item '3. Graphical Interpretation' animates in below the second one. After a pause, the whole list glows briefly.\",\n          \"labels_and_text\": \"List item 3: 'Graphical Interpretation'.\",\n          \"pedagogical_focus\": \"Introduce the final part of the lesson plan and summarize the full scope.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"title\", \"type\": \"label\", \"text\": \"Lesson Plan\", \"position\": \"top_center\", \"properties\": { \"color\": \"yellow\" } },\n              { \"id\": \"item1\", \"type\": \"label\", \"text\": \"1. The 4 Steps of Factoring\", \"position\": [-3, 1], \"properties\": { \"align\": \"left\" } },\n              { \"id\": \"item2\", \"type\": \"label\", \"text\": \"2. Worked Example: x\u00b2 + 5x + 6 = 0\", \"position\": [-3, 0], \"properties\": { \"align\": \"left\" } },\n              { \"id\": \"item3\", \"type\": \"label\", \"text\": \"3. Graphical Interpretation\", \"position\": [-3, -1], \"properties\": { \"align\": \"left\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"show_label\", \"target\": \"item3\", \"duration\": 1.5 },\n              { \"action\": \"highlight\", \"target\": [\"item1\", \"item2\", \"item3\"], \"duration\": 1.0 }\n            ]\n          }\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": { \"position\": \"left\", \"width_percent\": 70 },\n        \"avatar_zone\": { \"mode\": \"side\", \"position\": \"right\", \"width_percent\": 30 }\n      },\n      \"gesture_hints\": [\n        { \"time\": 3.0, \"action\": \"counting_1\" },\n        { \"time\": 10.0, \"action\": \"counting_2\" },\n        { \"time\": 19.0, \"action\": \"counting_3\" }\n      ]\n    },\n    {\n      \"section_type\": \"content\",\n      \"id\": 3,\n      \"title\": \"Solving Quadratic Equations by Factoring\",\n      \"renderer\": \"manim\",\n      \"narration\": \"Let's break down the method of solving quadratic equations by factoring into four clear steps. This process is a reliable way to find the roots for many common quadratics. First, and most importantly, you must write the equation in standard form, which is ax\u00b2 + bx + c = 0. This means you need to move all the terms to one side of the equation, leaving zero on the other. This step is crucial because our entire method relies on the 'Zero Product Property'. Second, you need to factor the quadratic expression on the left side. You're looking for two binomials that multiply together to give you your original expression. We'll often write this as (x - r\u2081)(x - r\u2082) = 0. Third, you apply the Zero Product Property. This is a simple but powerful idea: if two numbers multiply to make zero, at least one of them must be zero. So, if (x - r\u2081) times (x - r\u2082) equals zero, then either (x - r\u2081) must be zero, or (x - r\u2082) must be zero. Finally, the fourth step is to solve the two simpler linear equations you just created. Setting each factor to zero and solving for x gives you the two roots of the original quadratic equation.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"Let's break down the method of solving quadratic equations by factoring into four clear steps. This process is a reliable way to find the roots for many common quadratics. First, and most importantly, you must write the equation in standard form, which is ax\u00b2 + bx + c = 0. This means you need to move all the terms to one side of the equation, leaving zero on the other. This step is crucial because our entire method relies on the 'Zero Product Property'.\",\n          \"duration\": 22\n        },\n        {\n          \"id\": 2,\n          \"text\": \"Second, you need to factor the quadratic expression on the left side. You're looking for two binomials that multiply together to give you your original expression. We'll often write this as (x - r\u2081)(x - r\u2082) = 0.\",\n          \"duration\": 12\n        },\n        {\n          \"id\": 3,\n          \"text\": \"Third, you apply the Zero Product Property. This is a simple but powerful idea: if two numbers multiply to make zero, at least one of them must be zero. So, if (x - r\u2081) times (x - r\u2082) equals zero, then either (x - r\u2081) must be zero, or (x - r\u2082) must be zero.\",\n          \"duration\": 18\n        },\n        {\n          \"id\": 4,\n          \"text\": \"Finally, the fourth step is to solve the two simpler linear equations you just created. Setting each factor to zero and solving for x gives you the two roots of the original quadratic equation.\",\n          \"duration\": 11\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A dark background. A title 'Step 1: Standard Form' is at the top.\",\n          \"objects_and_properties\": \"An equation 'ax\u00b2 + bx = -c' in the center. A large '0' on the right side.\",\n          \"motion_sequence\": \"The title appears. The equation 'ax\u00b2 + bx = -c' is shown. The '-c' term then animates, moving from the right side to the left side, changing its sign to '+c'. This leaves a '0' on the right, and the final equation 'ax\u00b2 + bx + c = 0' is highlighted.\",\n          \"labels_and_text\": \"Title: 'Step 1: Standard Form'. Equation labels as they transform.\",\n          \"pedagogical_focus\": \"Emphasize the importance of setting the equation to zero to get the standard form.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"title\", \"type\": \"label\", \"text\": \"Step 1: Standard Form\", \"position\": \"top_center\", \"properties\": { \"color\": \"yellow\" } },\n              { \"id\": \"initial_eq\", \"type\": \"equation\", \"latex\": \"ax^2 + bx = -c\", \"position\": [0, 0], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"show_label\", \"target\": \"title\", \"duration\": 1.0 },\n              { \"action\": \"show_equation\", \"target\": \"initial_eq\", \"duration\": 2.0 },\n              { \"action\": \"transform\", \"target\": \"initial_eq\", \"new_latex\": \"ax^2 + bx + c = 0\", \"duration\": 2.5 },\n              { \"action\": \"highlight\", \"target\": \"initial_eq\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"The standard form equation 'ax\u00b2 + bx + c = 0' remains. A title 'Step 2: Factor' appears.\",\n          \"objects_and_properties\": \"The expression 'ax\u00b2 + bx + c' on the left. Two empty parentheses '(   )(   )' on the right.\",\n          \"motion_sequence\": \"The title changes to 'Step 2: Factor'. The 'ax\u00b2 + bx + c' part of the equation is highlighted. An arrow points from it to the right, where it transforms into the factored form '(x - r\u2081)(x - r\u2082)' which then replaces the original expression in the equation.\",\n          \"labels_and_text\": \"Title: 'Step 2: Factor'. Equation 'ax\u00b2 + bx + c = 0' transforms into '(x - r\u2081)(x - r\u2082) = 0'.\",\n          \"pedagogical_focus\": \"Show the goal of factoring: to convert the trinomial into a product of two binomials.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"title\", \"type\": \"label\", \"text\": \"Step 2: Factor\", \"position\": \"top_center\", \"properties\": { \"color\": \"yellow\" } },\n              { \"id\": \"current_eq\", \"type\": \"equation\", \"latex\": \"ax^2 + bx + c = 0\", \"position\": [0, 0], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"transform\", \"target_id_from_text\": \"Step 1: Standard Form\", \"new_text\": \"Step 2: Factor\", \"duration\": 1.0 },\n              { \"action\": \"highlight\", \"target_id_from_latex\": \"ax^2 + bx + c\", \"in_equation\": \"current_eq\", \"duration\": 1.0 },\n              { \"action\": \"transform\", \"target\": \"current_eq\", \"new_latex\": \"(x - r_1)(x - r_2) = 0\", \"duration\": 2.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"The factored equation '(x - r\u2081)(x - r\u2082) = 0' is at the center. Title 'Step 3: Zero Product Property'.\",\n          \"objects_and_properties\": \"The two factors '(x - r\u2081)' and '(x - r\u2082)' are colored differently (e.g., blue and green). A box labeled 'A' appears around the first factor, and a box 'B' appears around the second.\",\n          \"motion_sequence\": \"The title changes. A box 'A' encloses '(x - r\u2081)'. A box 'B' encloses '(x - r\u2082)'. The equation now looks like 'A * B = 0'. Then, the scene splits, showing two possible outcomes: 'A = 0' on the left and 'B = 0' on the right. These then transform back to '(x - r\u2081) = 0' and '(x - r\u2082) = 0'.\",\n          \"labels_and_text\": \"Title: 'Step 3: Zero Product Property'. Labels 'A' and 'B'. Equations 'A=0', 'B=0', '(x - r\u2081) = 0', '(x - r\u2082) = 0'.\",\n          \"pedagogical_focus\": \"Explain the logic of the Zero Product Property by abstracting the factors to 'A' and 'B'.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"title\", \"type\": \"label\", \"text\": \"Step 3: Zero Product Property\", \"position\": \"top_center\", \"properties\": { \"color\": \"yellow\" } },\n              { \"id\": \"factored_eq\", \"type\": \"equation\", \"latex\": \"(x - r_1)(x - r_2) = 0\", \"position\": [0, 1], \"properties\": {} },\n              { \"id\": \"split_eq1\", \"type\": \"equation\", \"latex\": \"x - r_1 = 0\", \"position\": [-3, -1], \"properties\": {} },\n              { \"id\": \"split_eq2\", \"type\": \"equation\", \"latex\": \"x - r_2 = 0\", \"position\": [3, -1], \"properties\": {} },\n              { \"id\": \"or_text\", \"type\": \"label\", \"text\": \"OR\", \"position\": [0, -1], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"transform\", \"target_id_from_text\": \"Step 2: Factor\", \"new_text\": \"Step 3: Zero Product Property\", \"duration\": 1.0 },\n              { \"action\": \"highlight\", \"target\": \"factored_eq\", \"duration\": 1.0 },\n              { \"action\": \"split_equation\", \"source\": \"factored_eq\", \"targets\": [\"split_eq1\", \"split_eq2\"], \"duration\": 2.0 },\n              { \"action\": \"appear\", \"target\": \"or_text\", \"duration\": 0.5 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The two separate equations '(x - r\u2081) = 0' and '(x - r\u2082) = 0' are on screen. Title 'Step 4: Solve'.\",\n          \"objects_and_properties\": \"The two linear equations from the previous step.\",\n          \"motion_sequence\": \"The title changes. On the left, the '-r\u2081' animates over to the right side, becoming '+r\u2081', leaving 'x = r\u2081'. Simultaneously on the right, '-r\u2082' animates over, becoming '+r\u2082', leaving 'x = r\u2082'. The two final solutions are then enclosed in boxes.\",\n          \"labels_and_text\": \"Title: 'Step 4: Solve'. Final solutions 'x = r\u2081' and 'x = r\u2082' are boxed.\",\n          \"pedagogical_focus\": \"Demonstrate the final, simple algebraic step to isolate x and find the two roots.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"title\", \"type\": \"label\", \"text\": \"Step 4: Solve\", \"position\": \"top_center\", \"properties\": { \"color\": \"yellow\" } },\n              { \"id\": \"eq1_to_solve\", \"type\": \"equation\", \"latex\": \"x - r_1 = 0\", \"position\": [-3, 0], \"properties\": {} },\n              { \"id\": \"eq2_to_solve\", \"type\": \"equation\", \"latex\": \"x - r_2 = 0\", \"position\": [3, 0], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"transform\", \"target_id_from_text\": \"Step 3: Zero Product Property\", \"new_text\": \"Step 4: Solve\", \"duration\": 1.0 },\n              { \"action\": \"transform\", \"target\": \"eq1_to_solve\", \"new_latex\": \"x = r_1\", \"duration\": 2.0 },\n              { \"action\": \"transform\", \"target\": \"eq2_to_solve\", \"new_latex\": \"x = r_2\", \"duration\": 2.0 },\n              { \"action\": \"highlight\", \"target\": \"eq1_to_solve\", \"highlight_type\": \"box\", \"duration\": 1.0 },\n              { \"action\": \"highlight\", \"target\": \"eq2_to_solve\", \"highlight_type\": \"box\", \"duration\": 1.0 }\n            ]\n          }\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": { \"position\": \"center\", \"width_percent\": 90 },\n        \"avatar_zone\": { \"mode\": \"overlay\", \"position\": \"bottom_right\", \"size\": \"small\" }\n      },\n      \"gesture_hints\": [\n        { \"time\": 5.0, \"action\": \"counting_1\" },\n        { \"time\": 23.0, \"action\": \"counting_2\" },\n        { \"time\": 35.0, \"action\": \"counting_3\" },\n        { \"time\": 53.0, \"action\": \"counting_4\" }\n      ]\n    },\n    {\n      \"section_type\": \"example\",\n      \"id\": 4,\n      \"title\": \"Example: Solving x\u00b2 + 5x + 6 = 0\",\n      \"renderer\": \"manim\",\n      \"narration\": \"Now let's apply these four steps to a concrete example: solve the equation x\u00b2 + 5x + 6 = 0. First, we check the form. It's already in standard form, so step one is done. For step two, we need to factor the expression x\u00b2 + 5x + 6. We're looking for two numbers that multiply to the constant term, which is 6, and add up to the coefficient of the x term, which is 5. Let's think about the factors of 6: 1 and 6, or 2 and 3. Which pair adds up to 5? That's right, 2 and 3. So, we can rewrite our expression as (x + 2) times (x + 3). Our equation is now (x + 2)(x + 3) = 0. Step three is to apply the zero product property. This means that either the first part, (x + 2), is equal to zero, or the second part, (x + 3), is equal to zero. This gives us two simple equations to solve. For our final step, step four, we solve them. If x + 2 = 0, we subtract 2 from both sides to get x = -2. If x + 3 = 0, we subtract 3 from both sides to get x = -3. So, the two solutions, or roots, of the equation x\u00b2 + 5x + 6 = 0 are x = -2 and x = -3.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"Now let's apply these four steps to a concrete example: solve the equation x\u00b2 + 5x + 6 = 0. First, we check the form. It's already in standard form, so step one is done.\",\n          \"duration\": 10\n        },\n        {\n          \"id\": 2,\n          \"text\": \"For step two, we need to factor the expression x\u00b2 + 5x + 6. We're looking for two numbers that multiply to the constant term, which is 6, and add up to the coefficient of the x term, which is 5.\",\n          \"duration\": 12\n        },\n        {\n          \"id\": 3,\n          \"text\": \"Let's think about the factors of 6: 1 and 6, or 2 and 3. Which pair adds up to 5? That's right, 2 and 3. So, we can rewrite our expression as (x + 2) times (x + 3).\",\n          \"duration\": 11\n        },\n        {\n          \"id\": 4,\n          \"text\": \"Our equation is now (x + 2)(x + 3) = 0. Step three is to apply the zero product property. This means that either the first part, (x + 2), is equal to zero, or the second part, (x + 3), is equal to zero.\",\n          \"duration\": 13\n        },\n        {\n          \"id\": 5,\n          \"text\": \"For our final step, step four, we solve them. If x + 2 = 0, we subtract 2 from both sides to get x = -2. If x + 3 = 0, we subtract 3 from both sides to get x = -3. So, the two solutions, or roots, of the equation x\u00b2 + 5x + 6 = 0 are x = -2 and x = -3.\",\n          \"duration\": 16\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A dark background. The title 'Example: Solve x\u00b2 + 5x + 6 = 0' is at the top.\",\n          \"objects_and_properties\": \"The equation 'x\u00b2 + 5x + 6 = 0' is centered on screen. A label 'Step 1: Standard Form' appears and a green checkmark animates next to it.\",\n          \"motion_sequence\": \"The title and equation appear. The label for Step 1 fades in. A green checkmark is drawn next to the label, confirming the step is complete.\",\n          \"labels_and_text\": \"Title: 'Example: Solve x\u00b2 + 5x + 6 = 0'. Equation: 'x\u00b2 + 5x + 6 = 0'. Label: 'Step 1: Standard Form \u2714'.\",\n          \"pedagogical_focus\": \"Show the initial problem and confirm that the first step of the process is already satisfied.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"title\", \"type\": \"label\", \"text\": \"Example: Solve x\u00b2 + 5x + 6 = 0\", \"position\": \"top_center\", \"properties\": { \"color\": \"yellow\" } },\n              { \"id\": \"main_eq\", \"type\": \"equation\", \"latex\": \"x^2 + 5x + 6 = 0\", \"position\": [0, 1], \"properties\": {} },\n              { \"id\": \"step1_label\", \"type\": \"label\", \"text\": \"Step 1: Standard Form \u2714\", \"position\": [-3, -1], \"properties\": { \"color\": \"green\", \"align\": \"left\"} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"title\", \"duration\": 1.0 },\n              { \"action\": \"show_equation\", \"target\": \"main_eq\", \"duration\": 1.0 },\n              { \"action\": \"show_label\", \"target\": \"step1_label\", \"duration\": 1.5 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"The scene continues. A new label for Step 2 appears.\",\n          \"objects_and_properties\": \"The numbers '5' and '6' in the main equation are highlighted in different colors (e.g., blue and red). Two placeholder sentences appear: 'Numbers that add to 5' and 'Numbers that multiply to 6'.\",\n          \"motion_sequence\": \"The 'Step 2: Factor' label appears. The '5' in the equation glows blue and moves down next to the 'add to' sentence. The '6' glows red and moves down next to the 'multiply to' sentence.\",\n          \"labels_and_text\": \"Label: 'Step 2: Factor'. Text: 'Find two numbers that:'. 'Add to 5'. 'Multiply to 6'.\",\n          \"pedagogical_focus\": \"Clearly state the objective for factoring this specific trinomial: finding two numbers with a specific sum and product.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"main_eq\", \"type\": \"equation\", \"latex\": \"x^2 + 5x + 6 = 0\", \"position\": [0, 2], \"properties\": {} },\n              { \"id\": \"step2_label\", \"type\": \"label\", \"text\": \"Step 2: Factor\", \"position\": [-4, 1], \"properties\": { \"align\": \"left\" } },\n              { \"id\": \"add_target\", \"type\": \"equation\", \"latex\": \"\\\\text{Add to } 5\", \"position\": [-2, 0], \"properties\": {} },\n              { \"id\": \"mul_target\", \"type\": \"equation\", \"latex\": \"\\\\text{Multiply to } 6\", \"position\": [2, 0], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"show_label\", \"target\": \"step2_label\", \"duration\": 1.0 },\n              { \"action\": \"highlight\", \"target_id_from_latex\": \"5\", \"in_equation\": \"main_eq\", \"color\": \"blue\", \"duration\": 1.0 },\n              { \"action\": \"highlight\", \"target_id_from_latex\": \"6\", \"in_equation\": \"main_eq\", \"color\": \"red\", \"duration\": 1.0 },\n              { \"action\": \"show_equation\", \"target\": \"add_target\", \"duration\": 1.0 },\n              { \"action\": \"show_equation\", \"target\": \"mul_target\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"The scene continues from the previous beat. A 'thought process' area appears.\",\n          \"objects_and_properties\": \"A box appears showing factor pairs of 6: '(1, 6)' and '(2, 3)'. The equation 'x\u00b2 + 5x + 6' is on the left, and '(x + 2)(x + 3)' is on the right.\",\n          \"motion_sequence\": \"The factor pairs of 6 appear. The pair '(1, 6)' is checked: 1+6=7 (a red X appears). The pair '(2, 3)' is checked: 2+3=5 (a green checkmark appears). The expression 'x\u00b2 + 5x + 6' then transforms into its factored form '(x + 2)(x + 3)'.\",\n          \"labels_and_text\": \"Factor pairs: '(1, 6) \u2794 1+6=7 \u274c', '(2, 3) \u2794 2+3=5 \u2714'.\",\n          \"pedagogical_focus\": \"Visualize the trial-and-error process of finding the correct numbers for factoring.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"main_eq\", \"type\": \"equation\", \"latex\": \"x^2 + 5x + 6 = 0\", \"position\": \"top_center\", \"properties\": {} },\n              { \"id\": \"thought_box\", \"type\": \"box\", \"content_id\": [\"factors_list\"], \"position\": [0, 0], \"properties\": {\"label\": \"Factors of 6\"} },\n              { \"id\": \"factors_list\", \"type\": \"label\", \"text\": \"1 x 6  -> 1+6=7 \u274c\\n2 x 3  -> 2+3=5 \u2714\", \"position\": [0, 0], \"properties\": {} },\n              { \"id\": \"factored_eq\", \"type\": \"equation\", \"latex\": \"(x+2)(x+3) = 0\", \"position\": \"bottom_center\", \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"thought_box\", \"duration\": 1.0 },\n              { \"action\": \"show_label\", \"target\": \"factors_list\", \"duration\": 2.0 },\n              { \"action\": \"highlight\", \"target_id_from_text\": \"2 x 3\", \"in_label\": \"factors_list\", \"duration\": 1.0 },\n              { \"action\": \"transform\", \"target\": \"main_eq\", \"new_latex\": \"(x+2)(x+3) = 0\", \"duration\": 2.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The factored equation '(x + 2)(x + 3) = 0' is centered.\",\n          \"objects_and_properties\": \"The two factors '(x + 2)' and '(x + 3)' are colored blue and green.\",\n          \"motion_sequence\": \"The 'Step 3' label appears. The equation '(x + 2)(x + 3) = 0' splits into two separate equations on either side of the screen: 'x + 2 = 0' and 'x + 3 = 0'. An 'OR' text appears between them.\",\n          \"labels_and_text\": \"Label: 'Step 3: Zero Product Property'. The two new equations 'x + 2 = 0' and 'x + 3 = 0'. Text 'OR'.\",\n          \"pedagogical_focus\": \"Show the application of the Zero Product Property to the specific factors from the example.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"factored_eq\", \"type\": \"equation\", \"latex\": \"(x+2)(x+3) = 0\", \"position\": [0, 1], \"properties\": {} },\n              { \"id\": \"step3_label\", \"type\": \"label\", \"text\": \"Step 3: Zero Product Property\", \"position\": \"top_center\", \"properties\": {} },\n              { \"id\": \"split_eq1\", \"type\": \"equation\", \"latex\": \"x + 2 = 0\", \"position\": [-3, -1], \"properties\": { \"color\": \"cyan\" } },\n              { \"id\": \"split_eq2\", \"type\": \"equation\", \"latex\": \"x + 3 = 0\", \"position\": [3, -1], \"properties\": { \"color\": \"lightgreen\" } },\n              { \"id\": \"or_text\", \"type\": \"label\", \"text\": \"OR\", \"position\": [0, -1], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"fade_out\", \"target\": [\"thought_box\", \"factors_list\"], \"duration\": 0.5 },\n              { \"action\": \"move\", \"target\": \"factored_eq\", \"new_position\": [0, 1], \"duration\": 1.0 },\n              { \"action\": \"show_label\", \"target\": \"step3_label\", \"duration\": 1.0 },\n              { \"action\": \"split_equation\", \"source\": \"factored_eq\", \"targets\": [\"split_eq1\", \"split_eq2\"], \"duration\": 2.0 },\n              { \"action\": \"appear\", \"target\": \"or_text\", \"duration\": 0.5 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 5,\n          \"scene_setup\": \"The two simple equations 'x + 2 = 0' and 'x + 3 = 0' are on screen.\",\n          \"objects_and_properties\": \"The two equations and their solutions.\",\n          \"motion_sequence\": \"The 'Step 4' label appears. Under 'x + 2 = 0', text animates to show '-2' on both sides, resulting in 'x = -2'. Simultaneously, under 'x + 3 = 0', text animates to show '-3' on both sides, resulting in 'x = -3'. The final answers 'x = -2' and 'x = -3' are enclosed in glowing boxes.\",\n          \"labels_and_text\": \"Label: 'Step 4: Solve'. Final solutions 'x = -2' and 'x = -3' are boxed.\",\n          \"pedagogical_focus\": \"Clearly demonstrate the final algebraic steps to find the numerical solutions and state the final answer.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"step4_label\", \"type\": \"label\", \"text\": \"Step 4: Solve\", \"position\": \"top_center\", \"properties\": {} },\n              { \"id\": \"solve_eq1\", \"type\": \"equation\", \"latex\": \"x + 2 = 0\", \"position\": [-3, 1], \"properties\": { \"color\": \"cyan\" } },\n              { \"id\": \"solve_eq2\", \"type\": \"equation\", \"latex\": \"x + 3 = 0\", \"position\": [3, 1], \"properties\": { \"color\": \"lightgreen\" } },\n              { \"id\": \"solution1\", \"type\": \"equation\", \"latex\": \"x = -2\", \"position\": [-3, -1], \"properties\": {} },\n              { \"id\": \"solution2\", \"type\": \"equation\", \"latex\": \"x = -3\", \"position\": [3, -1], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"show_label\", \"target\": \"step4_label\", \"duration\": 1.0 },\n              { \"action\": \"transform\", \"target\": \"solve_eq1\", \"new_latex\": \"x = -2\", \"new_position\": [-3, -1], \"duration\": 2.0 },\n              { \"action\": \"transform\", \"target\": \"solve_eq2\", \"new_latex\": \"x = -3\", \"new_position\": [3, -1], \"duration\": 2.0 },\n              { \"action\": \"highlight\", \"target\": \"solution1\", \"highlight_type\": \"box\", \"color\": \"yellow\", \"duration\": 1.0 },\n              { \"action\": \"highlight\", \"target\": \"solution2\", \"highlight_type\": \"box\", \"color\": \"yellow\", \"duration\": 1.0 }\n            ]\n          }\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": { \"position\": \"center\", \"width_percent\": 90 },\n        \"avatar_zone\": { \"mode\": \"overlay\", \"position\": \"bottom_right\", \"size\": \"small\" }\n      },\n      \"gesture_hints\": [\n        { \"time\": 2.0, \"action\": \"open_hand_gesture\" },\n        { \"time\": 15.0, \"action\": \"thinking_pose\" },\n        { \"time\": 25.0, \"action\": \"point_to_screen\" },\n        { \"time\": 35.0, \"action\": \"nod\" },\n        { \"time\": 47.0, \"action\": \"show_two_fingers\" }\n      ]\n    },\n    {\n      \"section_type\": \"content\",\n      \"id\": 5,\n      \"title\": \"Graphical Interpretation\",\n      \"renderer\": \"manim\",\n      \"narration\": \"So we found the solutions x = -2 and x = -3. What does this actually mean visually? This is where the graphical interpretation becomes so important. It connects the abstract algebra to a concrete picture. The equation we solved was x\u00b2 + 5x + 6 = 0. If we think of the expression on the left as a function, y = x\u00b2 + 5x + 6, its graph is a parabola. The solutions, or roots, of the equation are the x-values where y is equal to zero. And where is y equal to zero? Precisely on the x-axis. So, the roots we found, -2 and -3, are the x-intercepts of the parabola. They are the exact points where the graph of the function crosses the horizontal axis. Furthermore, every parabola has a point of symmetry, the vertex. For this graph, the vertex is exactly halfway between the roots, at x = -2.5. This is the lowest point on this upward-opening parabola. This visual connection is incredibly powerful. It confirms our algebraic solution and gives it a physical meaning in space.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"So we found the solutions x = -2 and x = -3. What does this actually mean visually? This is where the graphical interpretation becomes so important. It connects the abstract algebra to a concrete picture.\",\n          \"duration\": 12\n        },\n        {\n          \"id\": 2,\n          \"text\": \"The equation we solved was x\u00b2 + 5x + 6 = 0. If we think of the expression on the left as a function, y = x\u00b2 + 5x + 6, its graph is a parabola.\",\n          \"duration\": 11\n        },\n        {\n          \"id\": 3,\n          \"text\": \"The solutions, or roots, of the equation are the x-values where y is equal to zero. And where is y equal to zero? Precisely on the x-axis. So, the roots we found, -2 and -3, are the x-intercepts of the parabola. They are the exact points where the graph of the function crosses the horizontal axis.\",\n          \"duration\": 20\n        },\n        {\n          \"id\": 4,\n          \"text\": \"Furthermore, every parabola has a point of symmetry, the vertex. For this graph, the vertex is exactly halfway between the roots, at x = -2.5. This is the lowest point on this upward-opening parabola. This visual connection is incredibly powerful. It confirms our algebraic solution and gives it a physical meaning in space.\",\n          \"duration\": 19\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A dark background. The two solutions from the previous example are displayed.\",\n          \"objects_and_properties\": \"The text 'Solutions: x = -2, x = -3' is at the top. A large question mark animates next to it.\",\n          \"motion_sequence\": \"The solutions 'x = -2, x = -3' fade in. A large, glowing question mark appears next to them, prompting the question of their meaning.\",\n          \"labels_and_text\": \"'Solutions: x = -2, x = -3'.\",\n          \"pedagogical_focus\": \"Pose the question of what the algebraic solutions mean in a different context.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"solutions_text\", \"type\": \"label\", \"text\": \"Solutions: x = -2, x = -3\", \"position\": [0, 1], \"properties\": {} },\n              { \"id\": \"question_mark\", \"type\": \"label\", \"text\": \"?\", \"position\": [3, 1], \"properties\": { \"scale\": 3, \"color\": \"yellow\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"solutions_text\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"question_mark\", \"duration\": 1.0, \"effect\": \"glow\" }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"The text fades, replaced by a 2D Cartesian coordinate system. Axes range from -6 to 2 for x, and -2 to 8 for y.\",\n          \"objects_and_properties\": \"A green parabola representing the function 'y = x\u00b2 + 5x + 6'. The function label is visible.\",\n          \"motion_sequence\": \"The previous text fades out. The coordinate axes are drawn. Then, the green parabola is drawn from left to right across the screen. The equation 'y = x\u00b2 + 5x + 6' appears next to the curve.\",\n          \"labels_and_text\": \"Axes labels 'x' and 'y'. Equation label 'y = x\u00b2 + 5x + 6'.\",\n          \"pedagogical_focus\": \"Introduce the graph of the function corresponding to the solved equation.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"axes\", \"type\": \"axes\", \"position\": [0, 0], \"properties\": { \"x_range\": [-6, 2], \"y_range\": [-2, 8] } },\n              { \"id\": \"parabola\", \"type\": \"graph\", \"function\": \"x**2 + 5*x + 6\", \"properties\": { \"color\": \"green\" } },\n              { \"id\": \"graph_label\", \"type\": \"equation\", \"latex\": \"y = x^2 + 5x + 6\", \"position\": [-3, 4], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"fade_out\", \"target\": [\"solutions_text\", \"question_mark\"], \"duration\": 0.5 },\n              { \"action\": \"appear\", \"target\": \"axes\", \"duration\": 1.0 },\n              { \"action\": \"draw_graph\", \"target\": \"parabola\", \"duration\": 2.0 },\n              { \"action\": \"show_equation\", \"target\": \"graph_label\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"The graph of the parabola is on screen.\",\n          \"objects_and_properties\": \"Two red dots appear at the points where the parabola intersects the x-axis. Dotted lines drop from the solutions 'x=-2, x=-3' at the top to these red dots.\",\n          \"motion_sequence\": \"The solutions 'x=-2, x=-3' reappear at the top. The parabola's intersection points with the x-axis start to flash. Two red dots are placed on them. Dotted lines are drawn from the text 'x=-3' down to the point (-3, 0) and from 'x=-2' down to the point (-2, 0).\",\n          \"labels_and_text\": \"Labels 'x = -3' and 'x = -2' are explicitly placed at the intersection points on the x-axis. Text 'x-intercepts' or 'Roots' points to these dots.\",\n          \"pedagogical_focus\": \"Directly connect the calculated roots to the x-intercepts of the graph.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"axes\", \"type\": \"axes\", \"position\": [0, 0], \"properties\": { \"x_range\": [-6, 2], \"y_range\": [-2, 8] } },\n              { \"id\": \"parabola\", \"type\": \"graph\", \"function\": \"x**2 + 5*x + 6\", \"properties\": { \"color\": \"green\" } },\n              { \"id\": \"root1_dot\", \"type\": \"point\", \"position\": [-3, 0], \"properties\": { \"color\": \"red\" } },\n              { \"id\": \"root2_dot\", \"type\": \"point\", \"position\": [-2, 0], \"properties\": { \"color\": \"red\" } },\n              { \"id\": \"root1_label\", \"type\": \"label\", \"text\": \"x = -3\", \"position\": [-3, -0.5], \"properties\": {} },\n              { \"id\": \"root2_label\", \"type\": \"label\", \"text\": \"x = -2\", \"position\": [-2, -0.5], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"root1_dot\", \"effect\": \"flash\", \"duration\": 1.0 },\n              { \"action\": \"appear\", \"target\": \"root2_dot\", \"effect\": \"flash\", \"duration\": 1.0 },\n              { \"action\": \"show_label\", \"target\": \"root1_label\", \"duration\": 1.0 },\n              { \"action\": \"show_label\", \"target\": \"root2_label\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The graph with its roots highlighted remains.\",\n          \"objects_and_properties\": \"A yellow dot at the parabola's minimum point. A vertical dashed line passing through this point.\",\n          \"motion_sequence\": \"A yellow dot appears at the vertex, (-2.5, -0.25). A vertical dashed line for the axis of symmetry is drawn through this point. The vertex coordinates are labeled.\",\n          \"labels_and_text\": \"Label 'Vertex' pointing to the yellow dot. Label '(-2.5, -0.25)' next to the vertex. Label 'Axis of Symmetry' next to the dashed line.\",\n          \"pedagogical_focus\": \"Introduce the related concepts of vertex and axis of symmetry, showing that the vertex lies exactly between the roots.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"axes\", \"type\": \"axes\", \"position\": [0, 0], \"properties\": { \"x_range\": [-6, 2], \"y_range\": [-2, 8] } },\n              { \"id\": \"parabola\", \"type\": \"graph\", \"function\": \"x**2 + 5*x + 6\", \"properties\": { \"color\": \"green\" } },\n              { \"id\": \"root1_dot\", \"type\": \"point\", \"position\": [-3, 0], \"properties\": { \"color\": \"red\" } },\n              { \"id\": \"root2_dot\", \"type\": \"point\", \"position\": [-2, 0], \"properties\": { \"color\": \"red\" } },\n              { \"id\": \"vertex_dot\", \"type\": \"point\", \"position\": [-2.5, -0.25], \"properties\": { \"color\": \"yellow\" } },\n              { \"id\": \"axis_of_sym\", \"type\": \"line\", \"start\": [-2.5, -2], \"end\": [-2.5, 8], \"properties\": { \"dashed\": true, \"color\": \"gray\" } },\n              { \"id\": \"vertex_label\", \"type\": \"label\", \"text\": \"Vertex (-2.5, -0.25)\", \"position\": [-2.5, -1.5], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"appear\", \"target\": \"vertex_dot\", \"duration\": 1.0 },\n              { \"action\": \"draw_line\", \"target\": \"axis_of_sym\", \"duration\": 1.5 },\n              { \"action\": \"show_label\", \"target\": \"vertex_label\", \"duration\": 1.0 }\n            ]\n          }\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": { \"position\": \"left\", \"width_percent\": 65 },\n        \"avatar_zone\": { \"mode\": \"side\", \"position\": \"right\", \"width_percent\": 35 }\n      },\n      \"gesture_hints\": [\n        { \"time\": 4.0, \"action\": \"thinking_pose\" },\n        { \"time\": 15.0, \"action\": \"draw_curve\" },\n        { \"time\": 27.0, \"action\": \"point_to_screen\" },\n        { \"time\": 45.0, \"action\": \"palms_up\" }\n      ]\n    },\n    {\n      \"section_type\": \"memory\",\n      \"id\": 6,\n      \"title\": \"Key Concepts Check\",\n      \"renderer\": \"manim\",\n      \"narration\": \"Great job. Now let's pause for a moment and check our memory on the key concepts we've covered. Try to answer these questions before the answer appears.\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"Great job. Now let's pause for a moment and check our memory on the key concepts we've covered. Try to answer these questions before the answer appears.\",\n          \"duration\": 8\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A simple background with a title 'Memory Check'.\",\n          \"objects_and_properties\": \"Flashcards appear one by one.\",\n          \"motion_sequence\": \"The title appears. The first flashcard with the question 'What is the standard form of a quadratic equation?' flips over to reveal the answer 'ax\u00b2 + bx + c = 0'. The second card appears and flips. The third card appears and flips.\",\n          \"labels_and_text\": \"Flashcard questions and answers.\",\n          \"pedagogical_focus\": \"Reinforce the key definitions and properties from the lesson through active recall.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"title\", \"type\": \"label\", \"text\": \"Memory Check\", \"position\": \"top_center\", \"properties\": { \"color\": \"yellow\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"show_label\", \"target\": \"title\", \"duration\": 1.0 },\n              { \"action\": \"flashcard\", \"question\": \"What is the standard form?\", \"answer\": \"ax\u00b2 + bx + c = 0\", \"duration\": 2.0 },\n              { \"action\": \"flashcard\", \"question\": \"What is the Zero Product Property?\", \"answer\": \"If A \u00d7 B = 0, then A = 0 or B = 0\", \"duration\": 2.0 },\n              { \"action\": \"flashcard\", \"question\": \"What are the roots on a graph?\", \"answer\": \"The x-intercepts\", \"duration\": 2.0 }\n            ]\n          }\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": { \"position\": \"center\", \"width_percent\": 90 },\n        \"avatar_zone\": { \"mode\": \"overlay\", \"position\": \"bottom_left\", \"size\": \"small\" }\n      },\n      \"gesture_hints\": [\n        { \"time\": 3.0, \"action\": \"thinking_pose\" }\n      ],\n      \"flashcards\": [\n        {\n          \"question\": \"What is the standard form of a quadratic equation?\",\n          \"answer\": \"ax\u00b2 + bx + c = 0\"\n        },\n        {\n          \"question\": \"What does the Zero Product Property state?\",\n          \"answer\": \"If A \u00d7 B = 0, then either A = 0 or B = 0 (or both).\"\n        },\n        {\n          \"question\": \"What do the solutions to a quadratic equation represent on a graph?\",\n          \"answer\": \"The x-intercepts of the parabola.\"\n        }\n      ]\n    },\n    {\n      \"section_type\": \"recap\",\n      \"id\": 7,\n      \"title\": \"Lesson Recap\",\n      \"renderer\": \"manim\",\n      \"narration\": \"Let's quickly recap what we've learned. We introduced quadratic equations, which take the form ax\u00b2 + bx + c = 0. We then outlined a four-step process for solving them by factoring: first, ensure the equation is in standard form; second, factor the quadratic expression; third, apply the zero product property to create two simpler equations; and fourth, solve those simple equations to find the roots. We worked through the example x\u00b2 + 5x + 6 = 0, finding the roots x = -2 and x = -3. Finally, we saw that these algebraic roots are not just numbers; they are the x-intercepts where the parabola y = x\u00b2 + 5x + 6 crosses the x-axis. You are now equipped with a powerful method to solve a whole new class of equations!\",\n      \"narration_segments\": [\n        {\n          \"id\": 1,\n          \"text\": \"Let's quickly recap what we've learned. We introduced quadratic equations, which take the form ax\u00b2 + bx + c = 0.\",\n          \"duration\": 7\n        },\n        {\n          \"id\": 2,\n          \"text\": \"We then outlined a four-step process for solving them by factoring: first, ensure the equation is in standard form; second, factor the quadratic expression; third, apply the zero product property to create two simpler equations; and fourth, solve those simple equations to find the roots.\",\n          \"duration\": 16\n        },\n        {\n          \"id\": 3,\n          \"text\": \"We worked through the example x\u00b2 + 5x + 6 = 0, finding the roots x = -2 and x = -3.\",\n          \"duration\": 7\n        },\n        {\n          \"id\": 4,\n          \"text\": \"Finally, we saw that these algebraic roots are not just numbers; they are the x-intercepts where the parabola y = x\u00b2 + 5x + 6 crosses the x-axis. You are now equipped with a powerful method to solve a whole new class of equations!\",\n          \"duration\": 14\n        }\n      ],\n      \"visual_beats\": [\n        {\n          \"segment_id\": 1,\n          \"scene_setup\": \"A dark background with the title 'Recap'.\",\n          \"objects_and_properties\": \"The standard form equation 'ax\u00b2 + bx + c = 0' shown prominently.\",\n          \"motion_sequence\": \"The title 'Recap' appears. The standard form equation 'ax\u00b2 + bx + c = 0' is written out on screen.\",\n          \"labels_and_text\": \"Title: 'Recap'. Equation: 'ax\u00b2 + bx + c = 0'.\",\n          \"pedagogical_focus\": \"Remind students of the fundamental form of a quadratic equation.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"title\", \"type\": \"label\", \"text\": \"Recap\", \"position\": \"top_center\", \"properties\": { \"color\": \"yellow\" } },\n              { \"id\": \"recap_eq_form\", \"type\": \"equation\", \"latex\": \"ax^2 + bx + c = 0\", \"position\": [0, 0], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"show_label\", \"target\": \"title\", \"duration\": 1.0 },\n              { \"action\": \"show_equation\", \"target\": \"recap_eq_form\", \"duration\": 1.5 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 2,\n          \"scene_setup\": \"The screen splits into four quadrants.\",\n          \"objects_and_properties\": \"Each quadrant shows a key visual from the four steps: Q1 has 'ax\u00b2+bx+c=0', Q2 has '(x-r\u2081)(x-r\u2082)=0', Q3 has 'x-r\u2081=0' and 'x-r\u2082=0', Q4 has 'x=r\u2081' and 'x=r\u2082' boxed.\",\n          \"motion_sequence\": \"The four quadrants fade in one by one, corresponding to the narration of each step.\",\n          \"labels_and_text\": \"Labels 'Step 1', 'Step 2', 'Step 3', 'Step 4' in each quadrant.\",\n          \"pedagogical_focus\": \"Summarize the entire 4-step factoring process in a single, comprehensive visual.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"step1_recap\", \"type\": \"equation\", \"latex\": \"\\\\text{1. } ax^2+bx+c=0\", \"position\": [-3, 2], \"properties\": {} },\n              { \"id\": \"step2_recap\", \"type\": \"equation\", \"latex\": \"\\\\text{2. } (x-r_1)(x-r_2)=0\", \"position\": [3, 2], \"properties\": {} },\n              { \"id\": \"step3_recap\", \"type\": \"equation\", \"latex\": \"\\\\text{3. } x-r_1=0 \\\\text{ or } x-r_2=0\", \"position\": [-3, -1], \"properties\": {} },\n              { \"id\": \"step4_recap\", \"type\": \"equation\", \"latex\": \"\\\\text{4. } x=r_1, x=r_2\", \"position\": [3, -1], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"fade_out\", \"target\": \"all\", \"duration\": 0.5 },\n              { \"action\": \"show_equation\", \"target\": \"step1_recap\", \"duration\": 1.0 },\n              { \"action\": \"show_equation\", \"target\": \"step2_recap\", \"duration\": 1.0 },\n              { \"action\": \"show_equation\", \"target\": \"step3_recap\", \"duration\": 1.0 },\n              { \"action\": \"show_equation\", \"target\": \"step4_recap\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 3,\n          \"scene_setup\": \"The four quadrants fade out. The example equation is shown.\",\n          \"objects_and_properties\": \"The equation 'x\u00b2 + 5x + 6 = 0' transforms into '(x+2)(x+3)=0' and then to the final boxed solutions 'x=-2' and 'x=-3'.\",\n          \"motion_sequence\": \"A rapid animation shows the key transformations from the example: equation -> factors -> solutions.\",\n          \"labels_and_text\": \"The key equations from the example.\",\n          \"pedagogical_focus\": \"Quickly remind students of the result from the worked example.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"example_recap\", \"type\": \"equation\", \"latex\": \"x^2 + 5x + 6 = 0\", \"position\": [0, 0], \"properties\": {} }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"fade_out\", \"target\": \"all\", \"duration\": 0.5 },\n              { \"action\": \"show_equation\", \"target\": \"example_recap\", \"duration\": 1.0 },\n              { \"action\": \"transform\", \"target\": \"example_recap\", \"new_latex\": \"(x+2)(x+3)=0\", \"duration\": 1.5 },\n              { \"action\": \"transform\", \"target\": \"example_recap\", \"new_latex\": \"x=-2, x=-3\", \"duration\": 1.5 },\n              { \"action\": \"highlight\", \"target\": \"example_recap\", \"highlight_type\": \"box\", \"duration\": 1.0 }\n            ]\n          }\n        },\n        {\n          \"segment_id\": 4,\n          \"scene_setup\": \"The text fades, replaced by the graph of the parabola.\",\n          \"objects_and_properties\": \"The graph of 'y = x\u00b2 + 5x + 6' with the roots at x=-2 and x=-3 highlighted with red dots.\",\n          \"motion_sequence\": \"The final graph from the 'Graphical Interpretation' section fades in, with the parabola and the two red dots at the x-intercepts clearly visible.\",\n          \"labels_and_text\": \"Labels for the roots 'x=-3' and 'x=-2' on the x-axis.\",\n          \"pedagogical_focus\": \"Reinforce the crucial link between the algebraic solution and the graphical representation.\",\n          \"manim_scene_spec\": {\n            \"objects\": [\n              { \"id\": \"axes\", \"type\": \"axes\", \"position\": [0, 0], \"properties\": { \"x_range\": [-6, 2], \"y_range\": [-2, 8] } },\n              { \"id\": \"parabola\", \"type\": \"graph\", \"function\": \"x**2 + 5*x + 6\", \"properties\": { \"color\": \"green\" } },\n              { \"id\": \"root1_dot\", \"type\": \"point\", \"position\": [-3, 0], \"properties\": { \"color\": \"red\" } },\n              { \"id\": \"root2_dot\", \"type\": \"point\", \"position\": [-2, 0], \"properties\": { \"color\": \"red\" } },\n              { \"id\": \"final_label\", \"type\": \"label\", \"text\": \"Algebraic Roots = Graphical X-Intercepts\", \"position\": [0, 3], \"properties\": { \"color\": \"cyan\" } }\n            ],\n            \"animation_sequence\": [\n              { \"action\": \"fade_out\", \"target\": \"all\", \"duration\": 0.5 },\n              { \"action\": \"appear\", \"target\": \"axes\", \"duration\": 1.0 },\n              { \"action\": \"draw_graph\", \"target\": \"parabola\", \"duration\": 1.5 },\n              { \"action\": \"appear\", \"target\": \"root1_dot\", \"duration\": 0.5 },\n              { \"action\": \"appear\", \"target\": \"root2_dot\", \"duration\": 0.5 },\n              { \"action\": \"show_label\", \"target\": \"final_label\", \"duration\": 1.0 }\n            ]\n          }\n        }\n      ],\n      \"layout\": {\n        \"content_zone\": { \"position\": \"left\", \"width_percent\": 70 },\n        \"avatar_zone\": { \"mode\": \"side\", \"position\": \"right\", \"width_percent\": 30 }\n      },\n      \"gesture_hints\": [\n        { \"time\": 5.0, \"action\": \"nod\" },\n        { \"time\": 15.0, \"action\": \"counting_4\" },\n        { \"time\": 25.0, \"action\": \"point_to_screen\" },\n        { \"time\": 35.0, \"action\": \"celebrate\" }\n      ],\n      \"recap_scenes\": [\n        {\n          \"scene\": 1,\n          \"description\": \"The four-step process for factoring is displayed in a list.\",\n          \"concept_title\": \"Factoring Process\"\n        },\n        {\n          \"scene\": 2,\n          \"description\": \"The equation x\u00b2+5x+6=0 transforms into its factored form and then into its solutions.\",\n          \"concept_title\": \"Worked Example\"\n        },\n        {\n          \"scene\": 3,\n          \"description\": \"The graph of the parabola y=x\u00b2+5x+6 is shown with its x-intercepts highlighted.\",\n          \"concept_title\": \"Graphical Roots\"\n        }\n      ]\n    }\n  ]\n}",
+  "sections_generated": 7,
+  "truncation": {
+    "detected": false,
+    "details": null
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "passed": true
+  },
+  "section_decisions": [
+    {
+      "section_id": 1,
+      "title": "Introduction to Quadratic Equations",
+      "section_type": "intro",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 158,
+        "meets_requirement": true,
+        "min_required": 0
+      },
+      "visual_beats_count": 4,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: intro"
+    },
+    {
+      "section_id": 2,
+      "title": "Lesson Overview",
+      "section_type": "summary",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 112,
+        "meets_requirement": true,
+        "min_required": 0
+      },
+      "visual_beats_count": 3,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: summary"
+    },
+    {
+      "section_id": 3,
+      "title": "Solving Quadratic Equations by Factoring",
+      "section_type": "content",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 211,
+        "meets_requirement": true,
+        "min_required": 150
+      },
+      "visual_beats_count": 4,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: content"
+    },
+    {
+      "section_id": 4,
+      "title": "Example: Solving x\u00b2 + 5x + 6 = 0",
+      "section_type": "example",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 235,
+        "meets_requirement": true,
+        "min_required": 150
+      },
+      "visual_beats_count": 5,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: example"
+    },
+    {
+      "section_id": 5,
+      "title": "Graphical Interpretation",
+      "section_type": "content",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 181,
+        "meets_requirement": true,
+        "min_required": 150
+      },
+      "visual_beats_count": 4,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: content"
+    },
+    {
+      "section_id": 6,
+      "title": "Key Concepts Check",
+      "section_type": "memory",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 27,
+        "meets_requirement": true,
+        "min_required": 0
+      },
+      "visual_beats_count": 1,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: memory"
+    },
+    {
+      "section_id": 7,
+      "title": "Lesson Recap",
+      "section_type": "recap",
+      "renderer_decision": {
+        "chosen": "manim",
+        "reason": "math/geometry content"
+      },
+      "narration_stats": {
+        "word_count": 132,
+        "meets_requirement": true,
+        "min_required": 0
+      },
+      "visual_beats_count": 4,
+      "prompts_used": {
+        "wan_prompt": null,
+        "manim_plan": {}
+      },
+      "pedagogy_notes": "Section type: recap"
+    }
+  ],
+  "visual_beats_audit": [
+    {
+      "section_id": 1,
+      "section_type": "intro",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A clean, dark gray background. A 2D Cartesian coordinate system appears at the center.",
+          "objects_and_properties": "A blue line representing y=x+1, passing through (-1,0) and (0,1). The equation 'y = mx + c' in white text at the top left.",
+          "motion_sequence": "First, the axes fade in. Then, the blue line is drawn across the screen. The equation 'y = mx + c' appears. Then, the 'x' in the equation glows, and a '\u00b2' symbol animates into position next to it, changing the equation's nature.",
+          "labels_and_text": "Label 'y = mx + c' top left. Axis labels 'x' and 'y'.",
+          "pedagogical_focus": "Contrast a familiar linear equation with a quadratic to introduce the new concept of a squared term.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "axes",
+                "type": "axes",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "x_range": [
+                    -5,
+                    5
+                  ],
+                  "y_range": [
+                    -5,
+                    5
+                  ]
+                }
+              },
+              {
+                "id": "linear_eq_text",
+                "type": "equation",
+                "latex": "y = mx + c",
+                "position": "top_left",
+                "properties": {
+                  "color": "white"
+                }
+              },
+              {
+                "id": "linear_graph",
+                "type": "graph",
+                "function": "x+1",
+                "properties": {
+                  "color": "blue"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "axes",
+                "duration": 1.0
+              },
+              {
+                "action": "show_equation",
+                "target": "linear_eq_text",
+                "duration": 1.0
+              },
+              {
+                "action": "draw_graph",
+                "target": "linear_graph",
+                "duration": 2.0
+              },
+              {
+                "action": "highlight",
+                "target_id_from_latex": "x",
+                "in_equation": "linear_eq_text",
+                "duration": 1.0
+              },
+              {
+                "action": "transform",
+                "target": "linear_eq_text",
+                "new_latex": "y = ax^2 + bx + c",
+                "duration": 2.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The scene continues with the Cartesian coordinate system. The blue line fades away.",
+          "objects_and_properties": "A green parabola opening upwards, representing y = x\u00b2. The equation 'ax\u00b2 + bx + c = 0' is prominently displayed at the top.",
+          "motion_sequence": "The blue line fades out. The green parabola is drawn, starting from the left, dipping to the vertex, and rising to the right. The standard form equation 'ax\u00b2 + bx + c = 0' appears at the top of the screen.",
+          "labels_and_text": "Label 'ax\u00b2 + bx + c = 0' at the top center.",
+          "pedagogical_focus": "Introduce the visual shape of a quadratic (a parabola) and its standard algebraic form.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "axes",
+                "type": "axes",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "x_range": [
+                    -5,
+                    5
+                  ],
+                  "y_range": [
+                    -2,
+                    10
+                  ]
+                }
+              },
+              {
+                "id": "parabola_graph",
+                "type": "graph",
+                "function": "x**2",
+                "properties": {
+                  "color": "green"
+                }
+              },
+              {
+                "id": "standard_form",
+                "type": "equation",
+                "latex": "ax^2 + bx + c = 0",
+                "position": "top_center",
+                "properties": {
+                  "color": "yellow"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "fade_out",
+                "target": "linear_graph",
+                "duration": 1.0
+              },
+              {
+                "action": "draw_graph",
+                "target": "parabola_graph",
+                "duration": 2.0
+              },
+              {
+                "action": "show_equation",
+                "target": "standard_form",
+                "duration": 1.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The parabola and axes remain. Focus shifts to the x-axis.",
+          "objects_and_properties": "The green parabola y = x\u00b2 - 4, which intersects the x-axis at -2 and 2. Two red dots at the intersection points (-2, 0) and (2, 0).",
+          "motion_sequence": "The previous parabola transforms into y = x\u00b2 - 4, shifting downwards to cross the x-axis. As it crosses, two red dots appear at the intersection points. Arrows point from the word 'solutions' or 'roots' to these dots.",
+          "labels_and_text": "Label 'Solutions' or 'Roots' appears, with arrows pointing to the red dots at x=-2 and x=2.",
+          "pedagogical_focus": "Visually define what 'solutions' or 'roots' are: the x-intercepts of the parabola.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "axes",
+                "type": "axes",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "x_range": [
+                    -5,
+                    5
+                  ],
+                  "y_range": [
+                    -5,
+                    5
+                  ]
+                }
+              },
+              {
+                "id": "parabola_graph",
+                "type": "graph",
+                "function": "x**2",
+                "properties": {
+                  "color": "green"
+                }
+              },
+              {
+                "id": "root1",
+                "type": "point",
+                "position": [
+                  -2,
+                  0
+                ],
+                "properties": {
+                  "color": "red"
+                }
+              },
+              {
+                "id": "root2",
+                "type": "point",
+                "position": [
+                  2,
+                  0
+                ],
+                "properties": {
+                  "color": "red"
+                }
+              },
+              {
+                "id": "roots_label",
+                "type": "label",
+                "text": "Roots / Solutions",
+                "position": [
+                  0,
+                  2
+                ],
+                "properties": {
+                  "color": "white"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "transform",
+                "target": "parabola_graph",
+                "new_function": "x**2 - 4",
+                "duration": 2.0
+              },
+              {
+                "action": "appear",
+                "target": "root1",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "root2",
+                "duration": 0.5
+              },
+              {
+                "action": "show_label",
+                "target": "roots_label",
+                "duration": 1.0
+              },
+              {
+                "action": "draw_arrow",
+                "from_object": "roots_label",
+                "to_object": "root1",
+                "duration": 1.0
+              },
+              {
+                "action": "draw_arrow",
+                "from_object": "roots_label",
+                "to_object": "root2",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The graph scene fades out, leaving a clean background.",
+          "objects_and_properties": "The equation 'ax\u00b2 + bx + c' at the center. Two sets of parentheses '(  )(  )' appear below it.",
+          "motion_sequence": "The graph fades. The expression 'ax\u00b2 + bx + c' appears. The word 'Factoring' animates on screen. The expression then visually breaks apart into two parenthetical factors '(   )(   )'. This visually introduces the main technique of the lesson.",
+          "labels_and_text": "Text 'Factoring' appears prominently.",
+          "pedagogical_focus": "Introduce the core technique to be taught in the lesson: factoring.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "expression",
+                "type": "equation",
+                "latex": "ax^2 + bx + c",
+                "position": [
+                  0,
+                  1
+                ],
+                "properties": {
+                  "color": "white"
+                }
+              },
+              {
+                "id": "factors",
+                "type": "equation",
+                "latex": "(x - r_1)(x - r_2)",
+                "position": [
+                  0,
+                  -1
+                ],
+                "properties": {
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "factoring_title",
+                "type": "label",
+                "text": "Method: Factoring",
+                "position": "top_center",
+                "properties": {
+                  "color": "cyan"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "fade_out",
+                "target": "all",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "factoring_title",
+                "duration": 1.0
+              },
+              {
+                "action": "show_equation",
+                "target": "expression",
+                "duration": 1.5
+              },
+              {
+                "action": "transform",
+                "target": "expression",
+                "target_id_from_latex": "ax^2 + bx + c",
+                "new_target_id": "factors",
+                "duration": 2.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 2,
+      "section_type": "summary",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A dark background with a title 'Lesson Plan' at the top.",
+          "objects_and_properties": "A numbered list with the first item appearing.",
+          "motion_sequence": "The title 'Lesson Plan' fades in. The first list item '1. The 4 Steps of Factoring' animates in.",
+          "labels_and_text": "Title: 'Lesson Plan'. List item 1: 'The 4 Steps of Factoring'.",
+          "pedagogical_focus": "Introduce the first part of the lesson plan.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title",
+                "type": "label",
+                "text": "Lesson Plan",
+                "position": "top_center",
+                "properties": {
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "item1",
+                "type": "label",
+                "text": "1. The 4 Steps of Factoring",
+                "position": [
+                  -3,
+                  1
+                ],
+                "properties": {
+                  "align": "left"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "title",
+                "duration": 1.0
+              },
+              {
+                "action": "show_label",
+                "target": "item1",
+                "duration": 1.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The scene continues from the previous beat.",
+          "objects_and_properties": "The second item appears in the numbered list.",
+          "motion_sequence": "The second list item '2. Worked Example: x\u00b2 + 5x + 6 = 0' animates in below the first one.",
+          "labels_and_text": "List item 2: 'Worked Example: x\u00b2 + 5x + 6 = 0'.",
+          "pedagogical_focus": "Introduce the second part of the lesson plan.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title",
+                "type": "label",
+                "text": "Lesson Plan",
+                "position": "top_center",
+                "properties": {
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "item1",
+                "type": "label",
+                "text": "1. The 4 Steps of Factoring",
+                "position": [
+                  -3,
+                  1
+                ],
+                "properties": {
+                  "align": "left"
+                }
+              },
+              {
+                "id": "item2",
+                "type": "label",
+                "text": "2. Worked Example: x\u00b2 + 5x + 6 = 0",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {
+                  "align": "left"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "show_label",
+                "target": "item2",
+                "duration": 1.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The scene continues from the previous beat.",
+          "objects_and_properties": "The third item appears, completing the list.",
+          "motion_sequence": "The third list item '3. Graphical Interpretation' animates in below the second one. After a pause, the whole list glows briefly.",
+          "labels_and_text": "List item 3: 'Graphical Interpretation'.",
+          "pedagogical_focus": "Introduce the final part of the lesson plan and summarize the full scope.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title",
+                "type": "label",
+                "text": "Lesson Plan",
+                "position": "top_center",
+                "properties": {
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "item1",
+                "type": "label",
+                "text": "1. The 4 Steps of Factoring",
+                "position": [
+                  -3,
+                  1
+                ],
+                "properties": {
+                  "align": "left"
+                }
+              },
+              {
+                "id": "item2",
+                "type": "label",
+                "text": "2. Worked Example: x\u00b2 + 5x + 6 = 0",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {
+                  "align": "left"
+                }
+              },
+              {
+                "id": "item3",
+                "type": "label",
+                "text": "3. Graphical Interpretation",
+                "position": [
+                  -3,
+                  -1
+                ],
+                "properties": {
+                  "align": "left"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "show_label",
+                "target": "item3",
+                "duration": 1.5
+              },
+              {
+                "action": "highlight",
+                "target": [
+                  "item1",
+                  "item2",
+                  "item3"
+                ],
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 3,
+      "section_type": "content",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A dark background. A title 'Step 1: Standard Form' is at the top.",
+          "objects_and_properties": "An equation 'ax\u00b2 + bx = -c' in the center. A large '0' on the right side.",
+          "motion_sequence": "The title appears. The equation 'ax\u00b2 + bx = -c' is shown. The '-c' term then animates, moving from the right side to the left side, changing its sign to '+c'. This leaves a '0' on the right, and the final equation 'ax\u00b2 + bx + c = 0' is highlighted.",
+          "labels_and_text": "Title: 'Step 1: Standard Form'. Equation labels as they transform.",
+          "pedagogical_focus": "Emphasize the importance of setting the equation to zero to get the standard form.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title",
+                "type": "label",
+                "text": "Step 1: Standard Form",
+                "position": "top_center",
+                "properties": {
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "initial_eq",
+                "type": "equation",
+                "latex": "ax^2 + bx = -c",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "show_label",
+                "target": "title",
+                "duration": 1.0
+              },
+              {
+                "action": "show_equation",
+                "target": "initial_eq",
+                "duration": 2.0
+              },
+              {
+                "action": "transform",
+                "target": "initial_eq",
+                "new_latex": "ax^2 + bx + c = 0",
+                "duration": 2.5
+              },
+              {
+                "action": "highlight",
+                "target": "initial_eq",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The standard form equation 'ax\u00b2 + bx + c = 0' remains. A title 'Step 2: Factor' appears.",
+          "objects_and_properties": "The expression 'ax\u00b2 + bx + c' on the left. Two empty parentheses '(   )(   )' on the right.",
+          "motion_sequence": "The title changes to 'Step 2: Factor'. The 'ax\u00b2 + bx + c' part of the equation is highlighted. An arrow points from it to the right, where it transforms into the factored form '(x - r\u2081)(x - r\u2082)' which then replaces the original expression in the equation.",
+          "labels_and_text": "Title: 'Step 2: Factor'. Equation 'ax\u00b2 + bx + c = 0' transforms into '(x - r\u2081)(x - r\u2082) = 0'.",
+          "pedagogical_focus": "Show the goal of factoring: to convert the trinomial into a product of two binomials.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title",
+                "type": "label",
+                "text": "Step 2: Factor",
+                "position": "top_center",
+                "properties": {
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "current_eq",
+                "type": "equation",
+                "latex": "ax^2 + bx + c = 0",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "transform",
+                "target_id_from_text": "Step 1: Standard Form",
+                "new_text": "Step 2: Factor",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target_id_from_latex": "ax^2 + bx + c",
+                "in_equation": "current_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "transform",
+                "target": "current_eq",
+                "new_latex": "(x - r_1)(x - r_2) = 0",
+                "duration": 2.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The factored equation '(x - r\u2081)(x - r\u2082) = 0' is at the center. Title 'Step 3: Zero Product Property'.",
+          "objects_and_properties": "The two factors '(x - r\u2081)' and '(x - r\u2082)' are colored differently (e.g., blue and green). A box labeled 'A' appears around the first factor, and a box 'B' appears around the second.",
+          "motion_sequence": "The title changes. A box 'A' encloses '(x - r\u2081)'. A box 'B' encloses '(x - r\u2082)'. The equation now looks like 'A * B = 0'. Then, the scene splits, showing two possible outcomes: 'A = 0' on the left and 'B = 0' on the right. These then transform back to '(x - r\u2081) = 0' and '(x - r\u2082) = 0'.",
+          "labels_and_text": "Title: 'Step 3: Zero Product Property'. Labels 'A' and 'B'. Equations 'A=0', 'B=0', '(x - r\u2081) = 0', '(x - r\u2082) = 0'.",
+          "pedagogical_focus": "Explain the logic of the Zero Product Property by abstracting the factors to 'A' and 'B'.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title",
+                "type": "label",
+                "text": "Step 3: Zero Product Property",
+                "position": "top_center",
+                "properties": {
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "factored_eq",
+                "type": "equation",
+                "latex": "(x - r_1)(x - r_2) = 0",
+                "position": [
+                  0,
+                  1
+                ],
+                "properties": {}
+              },
+              {
+                "id": "split_eq1",
+                "type": "equation",
+                "latex": "x - r_1 = 0",
+                "position": [
+                  -3,
+                  -1
+                ],
+                "properties": {}
+              },
+              {
+                "id": "split_eq2",
+                "type": "equation",
+                "latex": "x - r_2 = 0",
+                "position": [
+                  3,
+                  -1
+                ],
+                "properties": {}
+              },
+              {
+                "id": "or_text",
+                "type": "label",
+                "text": "OR",
+                "position": [
+                  0,
+                  -1
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "transform",
+                "target_id_from_text": "Step 2: Factor",
+                "new_text": "Step 3: Zero Product Property",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target": "factored_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "split_equation",
+                "source": "factored_eq",
+                "targets": [
+                  "split_eq1",
+                  "split_eq2"
+                ],
+                "duration": 2.0
+              },
+              {
+                "action": "appear",
+                "target": "or_text",
+                "duration": 0.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The two separate equations '(x - r\u2081) = 0' and '(x - r\u2082) = 0' are on screen. Title 'Step 4: Solve'.",
+          "objects_and_properties": "The two linear equations from the previous step.",
+          "motion_sequence": "The title changes. On the left, the '-r\u2081' animates over to the right side, becoming '+r\u2081', leaving 'x = r\u2081'. Simultaneously on the right, '-r\u2082' animates over, becoming '+r\u2082', leaving 'x = r\u2082'. The two final solutions are then enclosed in boxes.",
+          "labels_and_text": "Title: 'Step 4: Solve'. Final solutions 'x = r\u2081' and 'x = r\u2082' are boxed.",
+          "pedagogical_focus": "Demonstrate the final, simple algebraic step to isolate x and find the two roots.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title",
+                "type": "label",
+                "text": "Step 4: Solve",
+                "position": "top_center",
+                "properties": {
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "eq1_to_solve",
+                "type": "equation",
+                "latex": "x - r_1 = 0",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {}
+              },
+              {
+                "id": "eq2_to_solve",
+                "type": "equation",
+                "latex": "x - r_2 = 0",
+                "position": [
+                  3,
+                  0
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "transform",
+                "target_id_from_text": "Step 3: Zero Product Property",
+                "new_text": "Step 4: Solve",
+                "duration": 1.0
+              },
+              {
+                "action": "transform",
+                "target": "eq1_to_solve",
+                "new_latex": "x = r_1",
+                "duration": 2.0
+              },
+              {
+                "action": "transform",
+                "target": "eq2_to_solve",
+                "new_latex": "x = r_2",
+                "duration": 2.0
+              },
+              {
+                "action": "highlight",
+                "target": "eq1_to_solve",
+                "highlight_type": "box",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target": "eq2_to_solve",
+                "highlight_type": "box",
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 4,
+      "section_type": "example",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A dark background. The title 'Example: Solve x\u00b2 + 5x + 6 = 0' is at the top.",
+          "objects_and_properties": "The equation 'x\u00b2 + 5x + 6 = 0' is centered on screen. A label 'Step 1: Standard Form' appears and a green checkmark animates next to it.",
+          "motion_sequence": "The title and equation appear. The label for Step 1 fades in. A green checkmark is drawn next to the label, confirming the step is complete.",
+          "labels_and_text": "Title: 'Example: Solve x\u00b2 + 5x + 6 = 0'. Equation: 'x\u00b2 + 5x + 6 = 0'. Label: 'Step 1: Standard Form \u2714'.",
+          "pedagogical_focus": "Show the initial problem and confirm that the first step of the process is already satisfied.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title",
+                "type": "label",
+                "text": "Example: Solve x\u00b2 + 5x + 6 = 0",
+                "position": "top_center",
+                "properties": {
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "main_eq",
+                "type": "equation",
+                "latex": "x^2 + 5x + 6 = 0",
+                "position": [
+                  0,
+                  1
+                ],
+                "properties": {}
+              },
+              {
+                "id": "step1_label",
+                "type": "label",
+                "text": "Step 1: Standard Form \u2714",
+                "position": [
+                  -3,
+                  -1
+                ],
+                "properties": {
+                  "color": "green",
+                  "align": "left"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "title",
+                "duration": 1.0
+              },
+              {
+                "action": "show_equation",
+                "target": "main_eq",
+                "duration": 1.0
+              },
+              {
+                "action": "show_label",
+                "target": "step1_label",
+                "duration": 1.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The scene continues. A new label for Step 2 appears.",
+          "objects_and_properties": "The numbers '5' and '6' in the main equation are highlighted in different colors (e.g., blue and red). Two placeholder sentences appear: 'Numbers that add to 5' and 'Numbers that multiply to 6'.",
+          "motion_sequence": "The 'Step 2: Factor' label appears. The '5' in the equation glows blue and moves down next to the 'add to' sentence. The '6' glows red and moves down next to the 'multiply to' sentence.",
+          "labels_and_text": "Label: 'Step 2: Factor'. Text: 'Find two numbers that:'. 'Add to 5'. 'Multiply to 6'.",
+          "pedagogical_focus": "Clearly state the objective for factoring this specific trinomial: finding two numbers with a specific sum and product.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "main_eq",
+                "type": "equation",
+                "latex": "x^2 + 5x + 6 = 0",
+                "position": [
+                  0,
+                  2
+                ],
+                "properties": {}
+              },
+              {
+                "id": "step2_label",
+                "type": "label",
+                "text": "Step 2: Factor",
+                "position": [
+                  -4,
+                  1
+                ],
+                "properties": {
+                  "align": "left"
+                }
+              },
+              {
+                "id": "add_target",
+                "type": "equation",
+                "latex": "\\text{Add to } 5",
+                "position": [
+                  -2,
+                  0
+                ],
+                "properties": {}
+              },
+              {
+                "id": "mul_target",
+                "type": "equation",
+                "latex": "\\text{Multiply to } 6",
+                "position": [
+                  2,
+                  0
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "show_label",
+                "target": "step2_label",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target_id_from_latex": "5",
+                "in_equation": "main_eq",
+                "color": "blue",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target_id_from_latex": "6",
+                "in_equation": "main_eq",
+                "color": "red",
+                "duration": 1.0
+              },
+              {
+                "action": "show_equation",
+                "target": "add_target",
+                "duration": 1.0
+              },
+              {
+                "action": "show_equation",
+                "target": "mul_target",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The scene continues from the previous beat. A 'thought process' area appears.",
+          "objects_and_properties": "A box appears showing factor pairs of 6: '(1, 6)' and '(2, 3)'. The equation 'x\u00b2 + 5x + 6' is on the left, and '(x + 2)(x + 3)' is on the right.",
+          "motion_sequence": "The factor pairs of 6 appear. The pair '(1, 6)' is checked: 1+6=7 (a red X appears). The pair '(2, 3)' is checked: 2+3=5 (a green checkmark appears). The expression 'x\u00b2 + 5x + 6' then transforms into its factored form '(x + 2)(x + 3)'.",
+          "labels_and_text": "Factor pairs: '(1, 6) \u2794 1+6=7 \u274c', '(2, 3) \u2794 2+3=5 \u2714'.",
+          "pedagogical_focus": "Visualize the trial-and-error process of finding the correct numbers for factoring.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "main_eq",
+                "type": "equation",
+                "latex": "x^2 + 5x + 6 = 0",
+                "position": "top_center",
+                "properties": {}
+              },
+              {
+                "id": "thought_box",
+                "type": "box",
+                "content_id": [
+                  "factors_list"
+                ],
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "label": "Factors of 6"
+                }
+              },
+              {
+                "id": "factors_list",
+                "type": "label",
+                "text": "1 x 6  -> 1+6=7 \u274c\n2 x 3  -> 2+3=5 \u2714",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {}
+              },
+              {
+                "id": "factored_eq",
+                "type": "equation",
+                "latex": "(x+2)(x+3) = 0",
+                "position": "bottom_center",
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "thought_box",
+                "duration": 1.0
+              },
+              {
+                "action": "show_label",
+                "target": "factors_list",
+                "duration": 2.0
+              },
+              {
+                "action": "highlight",
+                "target_id_from_text": "2 x 3",
+                "in_label": "factors_list",
+                "duration": 1.0
+              },
+              {
+                "action": "transform",
+                "target": "main_eq",
+                "new_latex": "(x+2)(x+3) = 0",
+                "duration": 2.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The factored equation '(x + 2)(x + 3) = 0' is centered.",
+          "objects_and_properties": "The two factors '(x + 2)' and '(x + 3)' are colored blue and green.",
+          "motion_sequence": "The 'Step 3' label appears. The equation '(x + 2)(x + 3) = 0' splits into two separate equations on either side of the screen: 'x + 2 = 0' and 'x + 3 = 0'. An 'OR' text appears between them.",
+          "labels_and_text": "Label: 'Step 3: Zero Product Property'. The two new equations 'x + 2 = 0' and 'x + 3 = 0'. Text 'OR'.",
+          "pedagogical_focus": "Show the application of the Zero Product Property to the specific factors from the example.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "factored_eq",
+                "type": "equation",
+                "latex": "(x+2)(x+3) = 0",
+                "position": [
+                  0,
+                  1
+                ],
+                "properties": {}
+              },
+              {
+                "id": "step3_label",
+                "type": "label",
+                "text": "Step 3: Zero Product Property",
+                "position": "top_center",
+                "properties": {}
+              },
+              {
+                "id": "split_eq1",
+                "type": "equation",
+                "latex": "x + 2 = 0",
+                "position": [
+                  -3,
+                  -1
+                ],
+                "properties": {
+                  "color": "cyan"
+                }
+              },
+              {
+                "id": "split_eq2",
+                "type": "equation",
+                "latex": "x + 3 = 0",
+                "position": [
+                  3,
+                  -1
+                ],
+                "properties": {
+                  "color": "lightgreen"
+                }
+              },
+              {
+                "id": "or_text",
+                "type": "label",
+                "text": "OR",
+                "position": [
+                  0,
+                  -1
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "fade_out",
+                "target": [
+                  "thought_box",
+                  "factors_list"
+                ],
+                "duration": 0.5
+              },
+              {
+                "action": "move",
+                "target": "factored_eq",
+                "new_position": [
+                  0,
+                  1
+                ],
+                "duration": 1.0
+              },
+              {
+                "action": "show_label",
+                "target": "step3_label",
+                "duration": 1.0
+              },
+              {
+                "action": "split_equation",
+                "source": "factored_eq",
+                "targets": [
+                  "split_eq1",
+                  "split_eq2"
+                ],
+                "duration": 2.0
+              },
+              {
+                "action": "appear",
+                "target": "or_text",
+                "duration": 0.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 5,
+          "scene_setup": "The two simple equations 'x + 2 = 0' and 'x + 3 = 0' are on screen.",
+          "objects_and_properties": "The two equations and their solutions.",
+          "motion_sequence": "The 'Step 4' label appears. Under 'x + 2 = 0', text animates to show '-2' on both sides, resulting in 'x = -2'. Simultaneously, under 'x + 3 = 0', text animates to show '-3' on both sides, resulting in 'x = -3'. The final answers 'x = -2' and 'x = -3' are enclosed in glowing boxes.",
+          "labels_and_text": "Label: 'Step 4: Solve'. Final solutions 'x = -2' and 'x = -3' are boxed.",
+          "pedagogical_focus": "Clearly demonstrate the final algebraic steps to find the numerical solutions and state the final answer.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "step4_label",
+                "type": "label",
+                "text": "Step 4: Solve",
+                "position": "top_center",
+                "properties": {}
+              },
+              {
+                "id": "solve_eq1",
+                "type": "equation",
+                "latex": "x + 2 = 0",
+                "position": [
+                  -3,
+                  1
+                ],
+                "properties": {
+                  "color": "cyan"
+                }
+              },
+              {
+                "id": "solve_eq2",
+                "type": "equation",
+                "latex": "x + 3 = 0",
+                "position": [
+                  3,
+                  1
+                ],
+                "properties": {
+                  "color": "lightgreen"
+                }
+              },
+              {
+                "id": "solution1",
+                "type": "equation",
+                "latex": "x = -2",
+                "position": [
+                  -3,
+                  -1
+                ],
+                "properties": {}
+              },
+              {
+                "id": "solution2",
+                "type": "equation",
+                "latex": "x = -3",
+                "position": [
+                  3,
+                  -1
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "show_label",
+                "target": "step4_label",
+                "duration": 1.0
+              },
+              {
+                "action": "transform",
+                "target": "solve_eq1",
+                "new_latex": "x = -2",
+                "new_position": [
+                  -3,
+                  -1
+                ],
+                "duration": 2.0
+              },
+              {
+                "action": "transform",
+                "target": "solve_eq2",
+                "new_latex": "x = -3",
+                "new_position": [
+                  3,
+                  -1
+                ],
+                "duration": 2.0
+              },
+              {
+                "action": "highlight",
+                "target": "solution1",
+                "highlight_type": "box",
+                "color": "yellow",
+                "duration": 1.0
+              },
+              {
+                "action": "highlight",
+                "target": "solution2",
+                "highlight_type": "box",
+                "color": "yellow",
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 5,
+      "section_type": "content",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A dark background. The two solutions from the previous example are displayed.",
+          "objects_and_properties": "The text 'Solutions: x = -2, x = -3' is at the top. A large question mark animates next to it.",
+          "motion_sequence": "The solutions 'x = -2, x = -3' fade in. A large, glowing question mark appears next to them, prompting the question of their meaning.",
+          "labels_and_text": "'Solutions: x = -2, x = -3'.",
+          "pedagogical_focus": "Pose the question of what the algebraic solutions mean in a different context.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "solutions_text",
+                "type": "label",
+                "text": "Solutions: x = -2, x = -3",
+                "position": [
+                  0,
+                  1
+                ],
+                "properties": {}
+              },
+              {
+                "id": "question_mark",
+                "type": "label",
+                "text": "?",
+                "position": [
+                  3,
+                  1
+                ],
+                "properties": {
+                  "scale": 3,
+                  "color": "yellow"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "solutions_text",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "question_mark",
+                "duration": 1.0,
+                "effect": "glow"
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The text fades, replaced by a 2D Cartesian coordinate system. Axes range from -6 to 2 for x, and -2 to 8 for y.",
+          "objects_and_properties": "A green parabola representing the function 'y = x\u00b2 + 5x + 6'. The function label is visible.",
+          "motion_sequence": "The previous text fades out. The coordinate axes are drawn. Then, the green parabola is drawn from left to right across the screen. The equation 'y = x\u00b2 + 5x + 6' appears next to the curve.",
+          "labels_and_text": "Axes labels 'x' and 'y'. Equation label 'y = x\u00b2 + 5x + 6'.",
+          "pedagogical_focus": "Introduce the graph of the function corresponding to the solved equation.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "axes",
+                "type": "axes",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "x_range": [
+                    -6,
+                    2
+                  ],
+                  "y_range": [
+                    -2,
+                    8
+                  ]
+                }
+              },
+              {
+                "id": "parabola",
+                "type": "graph",
+                "function": "x**2 + 5*x + 6",
+                "properties": {
+                  "color": "green"
+                }
+              },
+              {
+                "id": "graph_label",
+                "type": "equation",
+                "latex": "y = x^2 + 5x + 6",
+                "position": [
+                  -3,
+                  4
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "fade_out",
+                "target": [
+                  "solutions_text",
+                  "question_mark"
+                ],
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "axes",
+                "duration": 1.0
+              },
+              {
+                "action": "draw_graph",
+                "target": "parabola",
+                "duration": 2.0
+              },
+              {
+                "action": "show_equation",
+                "target": "graph_label",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The graph of the parabola is on screen.",
+          "objects_and_properties": "Two red dots appear at the points where the parabola intersects the x-axis. Dotted lines drop from the solutions 'x=-2, x=-3' at the top to these red dots.",
+          "motion_sequence": "The solutions 'x=-2, x=-3' reappear at the top. The parabola's intersection points with the x-axis start to flash. Two red dots are placed on them. Dotted lines are drawn from the text 'x=-3' down to the point (-3, 0) and from 'x=-2' down to the point (-2, 0).",
+          "labels_and_text": "Labels 'x = -3' and 'x = -2' are explicitly placed at the intersection points on the x-axis. Text 'x-intercepts' or 'Roots' points to these dots.",
+          "pedagogical_focus": "Directly connect the calculated roots to the x-intercepts of the graph.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "axes",
+                "type": "axes",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "x_range": [
+                    -6,
+                    2
+                  ],
+                  "y_range": [
+                    -2,
+                    8
+                  ]
+                }
+              },
+              {
+                "id": "parabola",
+                "type": "graph",
+                "function": "x**2 + 5*x + 6",
+                "properties": {
+                  "color": "green"
+                }
+              },
+              {
+                "id": "root1_dot",
+                "type": "point",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {
+                  "color": "red"
+                }
+              },
+              {
+                "id": "root2_dot",
+                "type": "point",
+                "position": [
+                  -2,
+                  0
+                ],
+                "properties": {
+                  "color": "red"
+                }
+              },
+              {
+                "id": "root1_label",
+                "type": "label",
+                "text": "x = -3",
+                "position": [
+                  -3,
+                  -0.5
+                ],
+                "properties": {}
+              },
+              {
+                "id": "root2_label",
+                "type": "label",
+                "text": "x = -2",
+                "position": [
+                  -2,
+                  -0.5
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "root1_dot",
+                "effect": "flash",
+                "duration": 1.0
+              },
+              {
+                "action": "appear",
+                "target": "root2_dot",
+                "effect": "flash",
+                "duration": 1.0
+              },
+              {
+                "action": "show_label",
+                "target": "root1_label",
+                "duration": 1.0
+              },
+              {
+                "action": "show_label",
+                "target": "root2_label",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The graph with its roots highlighted remains.",
+          "objects_and_properties": "A yellow dot at the parabola's minimum point. A vertical dashed line passing through this point.",
+          "motion_sequence": "A yellow dot appears at the vertex, (-2.5, -0.25). A vertical dashed line for the axis of symmetry is drawn through this point. The vertex coordinates are labeled.",
+          "labels_and_text": "Label 'Vertex' pointing to the yellow dot. Label '(-2.5, -0.25)' next to the vertex. Label 'Axis of Symmetry' next to the dashed line.",
+          "pedagogical_focus": "Introduce the related concepts of vertex and axis of symmetry, showing that the vertex lies exactly between the roots.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "axes",
+                "type": "axes",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "x_range": [
+                    -6,
+                    2
+                  ],
+                  "y_range": [
+                    -2,
+                    8
+                  ]
+                }
+              },
+              {
+                "id": "parabola",
+                "type": "graph",
+                "function": "x**2 + 5*x + 6",
+                "properties": {
+                  "color": "green"
+                }
+              },
+              {
+                "id": "root1_dot",
+                "type": "point",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {
+                  "color": "red"
+                }
+              },
+              {
+                "id": "root2_dot",
+                "type": "point",
+                "position": [
+                  -2,
+                  0
+                ],
+                "properties": {
+                  "color": "red"
+                }
+              },
+              {
+                "id": "vertex_dot",
+                "type": "point",
+                "position": [
+                  -2.5,
+                  -0.25
+                ],
+                "properties": {
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "axis_of_sym",
+                "type": "line",
+                "start": [
+                  -2.5,
+                  -2
+                ],
+                "end": [
+                  -2.5,
+                  8
+                ],
+                "properties": {
+                  "dashed": true,
+                  "color": "gray"
+                }
+              },
+              {
+                "id": "vertex_label",
+                "type": "label",
+                "text": "Vertex (-2.5, -0.25)",
+                "position": [
+                  -2.5,
+                  -1.5
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "appear",
+                "target": "vertex_dot",
+                "duration": 1.0
+              },
+              {
+                "action": "draw_line",
+                "target": "axis_of_sym",
+                "duration": 1.5
+              },
+              {
+                "action": "show_label",
+                "target": "vertex_label",
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 6,
+      "section_type": "memory",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A simple background with a title 'Memory Check'.",
+          "objects_and_properties": "Flashcards appear one by one.",
+          "motion_sequence": "The title appears. The first flashcard with the question 'What is the standard form of a quadratic equation?' flips over to reveal the answer 'ax\u00b2 + bx + c = 0'. The second card appears and flips. The third card appears and flips.",
+          "labels_and_text": "Flashcard questions and answers.",
+          "pedagogical_focus": "Reinforce the key definitions and properties from the lesson through active recall.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title",
+                "type": "label",
+                "text": "Memory Check",
+                "position": "top_center",
+                "properties": {
+                  "color": "yellow"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "show_label",
+                "target": "title",
+                "duration": 1.0
+              },
+              {
+                "action": "flashcard",
+                "question": "What is the standard form?",
+                "answer": "ax\u00b2 + bx + c = 0",
+                "duration": 2.0
+              },
+              {
+                "action": "flashcard",
+                "question": "What is the Zero Product Property?",
+                "answer": "If A \u00d7 B = 0, then A = 0 or B = 0",
+                "duration": 2.0
+              },
+              {
+                "action": "flashcard",
+                "question": "What are the roots on a graph?",
+                "answer": "The x-intercepts",
+                "duration": 2.0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "section_id": 7,
+      "section_type": "recap",
+      "renderer": "manim",
+      "beats": [
+        {
+          "segment_id": 1,
+          "scene_setup": "A dark background with the title 'Recap'.",
+          "objects_and_properties": "The standard form equation 'ax\u00b2 + bx + c = 0' shown prominently.",
+          "motion_sequence": "The title 'Recap' appears. The standard form equation 'ax\u00b2 + bx + c = 0' is written out on screen.",
+          "labels_and_text": "Title: 'Recap'. Equation: 'ax\u00b2 + bx + c = 0'.",
+          "pedagogical_focus": "Remind students of the fundamental form of a quadratic equation.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "title",
+                "type": "label",
+                "text": "Recap",
+                "position": "top_center",
+                "properties": {
+                  "color": "yellow"
+                }
+              },
+              {
+                "id": "recap_eq_form",
+                "type": "equation",
+                "latex": "ax^2 + bx + c = 0",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "show_label",
+                "target": "title",
+                "duration": 1.0
+              },
+              {
+                "action": "show_equation",
+                "target": "recap_eq_form",
+                "duration": 1.5
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_setup": "The screen splits into four quadrants.",
+          "objects_and_properties": "Each quadrant shows a key visual from the four steps: Q1 has 'ax\u00b2+bx+c=0', Q2 has '(x-r\u2081)(x-r\u2082)=0', Q3 has 'x-r\u2081=0' and 'x-r\u2082=0', Q4 has 'x=r\u2081' and 'x=r\u2082' boxed.",
+          "motion_sequence": "The four quadrants fade in one by one, corresponding to the narration of each step.",
+          "labels_and_text": "Labels 'Step 1', 'Step 2', 'Step 3', 'Step 4' in each quadrant.",
+          "pedagogical_focus": "Summarize the entire 4-step factoring process in a single, comprehensive visual.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "step1_recap",
+                "type": "equation",
+                "latex": "\\text{1. } ax^2+bx+c=0",
+                "position": [
+                  -3,
+                  2
+                ],
+                "properties": {}
+              },
+              {
+                "id": "step2_recap",
+                "type": "equation",
+                "latex": "\\text{2. } (x-r_1)(x-r_2)=0",
+                "position": [
+                  3,
+                  2
+                ],
+                "properties": {}
+              },
+              {
+                "id": "step3_recap",
+                "type": "equation",
+                "latex": "\\text{3. } x-r_1=0 \\text{ or } x-r_2=0",
+                "position": [
+                  -3,
+                  -1
+                ],
+                "properties": {}
+              },
+              {
+                "id": "step4_recap",
+                "type": "equation",
+                "latex": "\\text{4. } x=r_1, x=r_2",
+                "position": [
+                  3,
+                  -1
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "fade_out",
+                "target": "all",
+                "duration": 0.5
+              },
+              {
+                "action": "show_equation",
+                "target": "step1_recap",
+                "duration": 1.0
+              },
+              {
+                "action": "show_equation",
+                "target": "step2_recap",
+                "duration": 1.0
+              },
+              {
+                "action": "show_equation",
+                "target": "step3_recap",
+                "duration": 1.0
+              },
+              {
+                "action": "show_equation",
+                "target": "step4_recap",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_setup": "The four quadrants fade out. The example equation is shown.",
+          "objects_and_properties": "The equation 'x\u00b2 + 5x + 6 = 0' transforms into '(x+2)(x+3)=0' and then to the final boxed solutions 'x=-2' and 'x=-3'.",
+          "motion_sequence": "A rapid animation shows the key transformations from the example: equation -> factors -> solutions.",
+          "labels_and_text": "The key equations from the example.",
+          "pedagogical_focus": "Quickly remind students of the result from the worked example.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "example_recap",
+                "type": "equation",
+                "latex": "x^2 + 5x + 6 = 0",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {}
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "fade_out",
+                "target": "all",
+                "duration": 0.5
+              },
+              {
+                "action": "show_equation",
+                "target": "example_recap",
+                "duration": 1.0
+              },
+              {
+                "action": "transform",
+                "target": "example_recap",
+                "new_latex": "(x+2)(x+3)=0",
+                "duration": 1.5
+              },
+              {
+                "action": "transform",
+                "target": "example_recap",
+                "new_latex": "x=-2, x=-3",
+                "duration": 1.5
+              },
+              {
+                "action": "highlight",
+                "target": "example_recap",
+                "highlight_type": "box",
+                "duration": 1.0
+              }
+            ]
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_setup": "The text fades, replaced by the graph of the parabola.",
+          "objects_and_properties": "The graph of 'y = x\u00b2 + 5x + 6' with the roots at x=-2 and x=-3 highlighted with red dots.",
+          "motion_sequence": "The final graph from the 'Graphical Interpretation' section fades in, with the parabola and the two red dots at the x-intercepts clearly visible.",
+          "labels_and_text": "Labels for the roots 'x=-3' and 'x=-2' on the x-axis.",
+          "pedagogical_focus": "Reinforce the crucial link between the algebraic solution and the graphical representation.",
+          "manim_scene_spec": {
+            "objects": [
+              {
+                "id": "axes",
+                "type": "axes",
+                "position": [
+                  0,
+                  0
+                ],
+                "properties": {
+                  "x_range": [
+                    -6,
+                    2
+                  ],
+                  "y_range": [
+                    -2,
+                    8
+                  ]
+                }
+              },
+              {
+                "id": "parabola",
+                "type": "graph",
+                "function": "x**2 + 5*x + 6",
+                "properties": {
+                  "color": "green"
+                }
+              },
+              {
+                "id": "root1_dot",
+                "type": "point",
+                "position": [
+                  -3,
+                  0
+                ],
+                "properties": {
+                  "color": "red"
+                }
+              },
+              {
+                "id": "root2_dot",
+                "type": "point",
+                "position": [
+                  -2,
+                  0
+                ],
+                "properties": {
+                  "color": "red"
+                }
+              },
+              {
+                "id": "final_label",
+                "type": "label",
+                "text": "Algebraic Roots = Graphical X-Intercepts",
+                "position": [
+                  0,
+                  3
+                ],
+                "properties": {
+                  "color": "cyan"
+                }
+              }
+            ],
+            "animation_sequence": [
+              {
+                "action": "fade_out",
+                "target": "all",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "axes",
+                "duration": 1.0
+              },
+              {
+                "action": "draw_graph",
+                "target": "parabola",
+                "duration": 1.5
+              },
+              {
+                "action": "appear",
+                "target": "root1_dot",
+                "duration": 0.5
+              },
+              {
+                "action": "appear",
+                "target": "root2_dot",
+                "duration": 0.5
+              },
+              {
+                "action": "show_label",
+                "target": "final_label",
+                "duration": 1.0
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "narration_validation": {
+    "total_sections": 7,
+    "content_sections": 2,
+    "content_meeting_requirement": 2,
+    "content_below_requirement": 0
+  }
+}
