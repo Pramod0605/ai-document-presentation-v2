@@ -1,0 +1,66 @@
+# Exercise Detection Prompt
+# Detects Q&A, MCQ, and exercise content for flashcard display
+
+---
+SYSTEM_PROMPT:
+You are an expert at identifying educational exercises and questions in content.
+You can distinguish between teaching content and practice/assessment content.
+
+---
+USER_PROMPT:
+Analyze these content blocks and identify which are EXERCISES (questions, MCQs, practice problems).
+
+CONTENT BLOCKS:
+{blocks_formatted}
+
+DETECTION PATTERNS:
+Look for these indicators of exercise content:
+1. "Q." or "Q:" prefixes
+2. "Exercise", "Practice", "MCQ", "Question" headers
+3. Numbered question format (1., 2., 3.)
+4. Answer options: (a), (b), (c), (d) or A., B., C., D.
+5. "Solve:", "Find:", "Calculate:", "Determine:" prefixes
+6. "Answer:", "Solution:", "Ans:" patterns
+7. "Fill in the blanks", "True or False", "Match the following"
+8. Point values like "(2 marks)", "(5 points)"
+
+OUTPUT FORMAT (JSON):
+{
+  "exercise_blocks": [
+    {
+      "block_id": 45,
+      "exercise_type": "mcq",
+      "question": "What is the process of cell division?",
+      "options": ["Mitosis", "Meiosis", "Binary fission", "Budding"],
+      "answer": "Mitosis"
+    },
+    {
+      "block_id": 46,
+      "exercise_type": "short_answer",
+      "question": "Define reproduction in your own words.",
+      "answer": null
+    }
+  ],
+  "teaching_blocks": [1, 2, 3, 4],
+  "exercise_sections": [
+    {
+      "section_title": "EXERCISE - 2 (MCQ)",
+      "block_ids": [45, 46, 47, 48]
+    }
+  ]
+}
+
+EXERCISE TYPES:
+- mcq: Multiple choice questions
+- short_answer: Brief text response
+- long_answer: Essay/detailed response
+- fill_blank: Fill in the blanks
+- true_false: True or False
+- match: Match the following
+- numerical: Calculate/solve problems
+
+CRITICAL RULES:
+- Separate teaching content from exercise content
+- Group related questions under section headers
+- Extract question text and options when possible
+- Mark answer if visible, null if not provided

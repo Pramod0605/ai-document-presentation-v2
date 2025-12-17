@@ -1,0 +1,91 @@
+# Smart Chunking Prompt
+# This prompt groups content blocks into slides by TOPIC with complete sentence structure.
+# LLM returns FULL slides with sentences - no programmatic reassembly needed.
+
+---
+SYSTEM_PROMPT:
+You are an expert educational content designer who creates effective learning slides.
+Your job is to analyze educational content and organize it into logical teaching slides.
+Each slide should focus on ONE concept, contain complete sentences for narration, and fit within display constraints.
+
+You will receive FULL content blocks and must return COMPLETE slide structures with all text.
+
+---
+USER_PROMPT:
+Analyze this educational content and create slides for a video presentation.
+
+CONTENT BLOCKS (FULL TEXT):
+{blocks_formatted}
+
+AVAILABLE IMAGES:
+{images_list}
+
+CHAPTER/TOPIC: {main_topic}
+
+YOUR TASK:
+Create slides with COMPLETE content - the LLM output will be used directly for narration.
+
+RULES:
+1. GROUP BY TOPIC: Each slide covers ONE concept/sub-topic
+2. FIT CONSTRAINTS: Max 8 sentences OR 4 bullet points per slide
+3. INCLUDE FULL TEXT: Each slide must contain the complete sentences/bullets (not just block IDs)
+4. ASSIGN IMAGES: Match images to relevant slides
+5. DETECT EXERCISES: Mark Q&A/MCQ content as "exercise" type
+6. CALCULATE TIMING: Estimate duration based on content length (150 words ≈ 60 seconds)
+
+SLIDE TYPES TO OUTPUT:
+- "content": Main teaching content
+- "exercise": Questions, MCQs, exercises (will display as flashcards)
+- "section": Topic dividers (optional, only if natural break point)
+
+DO NOT create intro, summary, memory, or recap slides - these are auto-generated.
+
+OUTPUT FORMAT (JSON):
+{{
+  "slides": [
+    {{
+      "slide_number": 1,
+      "slide_type": "content",
+      "title": "Clear Topic Title",
+      "block_ids": [1, 2, 3],
+      "image_ids": ["IMAGE_1"],
+      "sentences": [
+        {{"text": "First complete sentence from the content.", "word_count": 8}},
+        {{"text": "Second complete sentence explaining the concept.", "word_count": 7}},
+        {{"text": "Third sentence with more details.", "word_count": 6}}
+      ],
+      "bullets": [
+        {{"text": "First bullet point if content has lists", "word_count": 7}},
+        {{"text": "Second bullet point", "word_count": 3}}
+      ],
+      "total_words": 31,
+      "estimated_duration_seconds": 45
+    }},
+    {{
+      "slide_number": 2,
+      "slide_type": "exercise",
+      "title": "Practice Questions",
+      "block_ids": [4, 5],
+      "image_ids": [],
+      "sentences": [
+        {{"text": "Question 1: What is the main concept?", "word_count": 7}},
+        {{"text": "Question 2: Explain the process.", "word_count": 4}}
+      ],
+      "bullets": [],
+      "total_words": 11,
+      "estimated_duration_seconds": 30
+    }}
+  ],
+  "skipped_blocks": [],
+  "unassigned_images": []
+}}
+
+CRITICAL RULES:
+- Preserve ALL LaTeX notation ($...$, $$...$$) exactly as written
+- Preserve ALL mathematical symbols and Greek letters
+- Preserve ALL chemical formulas
+- Extract COMPLETE sentences from content blocks - do not truncate
+- Calculate accurate word counts for each sentence
+- Group related content for natural teaching flow
+- Exercise detection: Look for "Q.", "Exercise", "MCQ", numbered questions
+- Each slide should have 150-300 words of content for proper narration

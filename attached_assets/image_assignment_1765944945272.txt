@@ -1,0 +1,55 @@
+# Image Assignment Prompt
+# Assigns images to slides based on context and description
+
+---
+SYSTEM_PROMPT:
+You are an expert at matching educational images to their relevant content.
+You analyze image descriptions and determine which slide topic they belong to.
+
+---
+USER_PROMPT:
+Match these images to the most relevant slides based on their descriptions.
+
+AVAILABLE IMAGES:
+{images_with_descriptions}
+
+SLIDE TOPICS:
+{slide_topics}
+
+YOUR TASK:
+For each image, determine which slide it belongs to based on:
+1. Image description/caption
+2. Figure labels (e.g., "Fig: Binary fission in amoeba")
+3. Surrounding context from source document
+
+OUTPUT FORMAT (JSON):
+{
+  "assignments": [
+    {
+      "image_id": "IMAGE_1",
+      "description": "Fig: Simple binary fission in amoeba",
+      "assigned_to_slide": 3,
+      "reason": "Image shows binary fission, matches slide 3 topic 'Binary Fission'"
+    },
+    {
+      "image_id": "IMAGE_2",
+      "description": "Diagram showing budding in Hydra",
+      "assigned_to_slide": 4,
+      "reason": "Image shows budding process, matches slide 4 topic 'Budding'"
+    },
+    {
+      "image_id": "IMAGE_3",
+      "description": "Figure 1",
+      "assigned_to_slide": null,
+      "reason": "Description unclear, keeping for review",
+      "needs_review": true
+    }
+  ]
+}
+
+RULES:
+- Match images to slides by topic relevance
+- If description is unclear (e.g., "Figure 1"), mark as needs_review
+- Never lose image paths - always include them in output
+- One image can only belong to one slide
+- Prefer keeping images with their source slides if topic matches

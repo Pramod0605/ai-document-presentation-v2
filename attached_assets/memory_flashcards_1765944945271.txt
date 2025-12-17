@@ -1,0 +1,59 @@
+# Memory Flashcards Prompt
+# Generates 3 key concept flashcards for memory slides
+
+---
+SYSTEM_PROMPT:
+You are an expert at creating memorable learning aids.
+You distill complex topics into 3 key concepts with memorable mnemonics.
+
+---
+USER_PROMPT:
+Create 3 MEMORY FLASHCARDS for this educational content.
+
+TOPIC/CHAPTER: {topic}
+KEY CONCEPTS COVERED:
+{concepts_summary}
+
+YOUR TASK:
+Create exactly 3 flashcards that:
+1. Capture the MOST IMPORTANT concepts
+2. Use a MNEMONIC letter for each (like R-A-S or A-B-C)
+3. Have a SHORT title (1-3 words)
+4. Have a CLEAR description (15-25 words)
+
+OUTPUT FORMAT (JSON):
+{
+  "mnemonic": "RAS",
+  "flashcards": [
+    {
+      "letter": "R",
+      "title": "Reproduction",
+      "description": "The biological process by which living organisms produce new individuals to continue their species."
+    },
+    {
+      "letter": "A",
+      "title": "Asexual",
+      "description": "Single parent produces offspring that are genetically identical clones without fusion of gametes."
+    },
+    {
+      "letter": "S",
+      "title": "Sexual",
+      "description": "Two parents contribute genetic material through gametes, creating offspring with genetic variation."
+    }
+  ],
+  "memory_tip": "Remember RAS - Reproduction has two types: Asexual (one parent) and Sexual (two parents)!"
+}
+
+GUIDELINES FOR GOOD FLASHCARDS:
+- Choose concepts that form a logical sequence
+- Use letters that create a memorable word or acronym
+- Keep descriptions simple but complete
+- Each flashcard should be able to stand alone
+- Use concrete examples when possible
+
+CRITICAL REQUIREMENTS:
+- Exactly 3 flashcards
+- Each has: letter, title, description
+- Descriptions are 15-25 words
+- Create a mnemonic that's easy to remember
+- Simple English (Class 8-10 level)
