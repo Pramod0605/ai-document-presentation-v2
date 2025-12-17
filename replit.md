@@ -38,3 +38,16 @@ The `Presentation` JSON schema includes a `sections` array, where each section s
 - **Tenacity**: For retry logic in API calls.
 - **Requests**: HTTP client library.
 - **python-dotenv**: For managing environment variables.
+
+## Recent Changes (Dec 17, 2025)
+- **Upload Dialog Fix**: Upload overlay now starts hidden, only shows when no existing presentation found (eliminates flash on page load)
+- **TTS Voice Update**: gTTS fallback now uses UK English TLD (co.uk) for a different voice profile
+- **Avatar Positioning**: CSS updated to keep avatar on right side (max 25% width) with content constrained to 75% - prevents overlap
+- **Memory Slide Enhancements**: Player now supports both legacy (question/answer) and new mnemonic-style flashcard schemas (letter/title/mnemonic/explanation). New CSS styling for mnemonic cards.
+- **Recap Prompts**: Updated Director prompts require exactly 5 WAN video scenes in recap sections
+- **Display Mode**: Added display_mode field support in player (video_primary, text_primary, video_only) - only applies when valid video assets exist
+- **Timing Sync Rules**: Director prompts now include guidance for matching video duration to narration segments
+
+## Known Limitations
+- **Validator Schema**: flash_validator.py still accepts old flashcard formats; future update needed to enforce new 3-flashcard memory requirement
+- **Video Timing**: Animation durations in visual beats may still not perfectly match narration - requires iterative testing with real content
