@@ -539,13 +539,17 @@ function handleTimeUpdate(e) {
       if (isPlaying && inlineVideo.paused) inlineVideo.play().catch(e => {});
       if (!isPlaying && !inlineVideo.paused) inlineVideo.pause();
       
-      // Toggle text visibility based on video playback
-      // For single video: hide text while video plays, show on pause
       if (!slide.beat_videos || slide.beat_videos.length <= 1) {
-        if (isPlaying && !inlineVideo.paused) {
+        const singleBeat = slide.visual_beats && slide.visual_beats[0];
+        const singleDisplayMode = singleBeat?.display_mode || 'video_primary';
+        
+        stage.classList.remove('video-swap');
+        stage.classList.remove('video-focus');
+        
+        if (singleDisplayMode === 'video_only') {
           stage.classList.add('video-focus');
-        } else {
-          stage.classList.remove('video-focus');
+        } else if (singleDisplayMode === 'text_primary') {
+          stage.classList.add('video-swap');
         }
       }
     }
@@ -576,8 +580,18 @@ function handleTimeUpdate(e) {
         inlineVideo.load();
         inlineVideo.playbackRate = 0.7;
         inlineVideo.play().catch(e => console.log("Beat video play fail", e));
-        
-        stage.classList.toggle('video-swap', targetBeatIndex % 2 === 1);
+      }
+      
+      const activeBeat = slide.visual_beats && slide.visual_beats[targetBeatIndex];
+      const beatDisplayMode = activeBeat?.display_mode || 'video_primary';
+      
+      stage.classList.remove('video-swap');
+      stage.classList.remove('video-focus');
+      
+      if (beatDisplayMode === 'video_only') {
+        stage.classList.add('video-focus');
+      } else if (beatDisplayMode === 'text_primary') {
+        stage.classList.add('video-swap');
       }
     }
   }

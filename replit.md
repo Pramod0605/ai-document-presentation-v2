@@ -40,6 +40,12 @@ The `Presentation` JSON schema includes a `sections` array, where each section s
 
 ## Recent Changes (Dec 18, 2025)
 
+### Per-Beat Display Mode Toggling
+- Player now updates text/video visibility on EVERY beat, not just the first
+- `display_mode` values: `video_only` (hide text), `text_primary` (swap layout), `video_primary` (default)
+- Text highlights during narration, then vanishes when video_only beat plays, returns for next point
+- Fixed: Previously used arbitrary modulo-based toggling instead of actual beat display_mode
+
 ### Fail-Fast Policy (CRITICAL)
 The system now enforces strict fail-fast behavior with NO fallbacks:
 
