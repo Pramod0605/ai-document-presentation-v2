@@ -816,32 +816,50 @@ async function checkExistingPresentation() {
       
       if (!lessonData.slides) {
         if (lessonData.sections) {
-          lessonData.slides = lessonData.sections.map(section => ({
-            slide_number: section.id,
-            section_type: section.section_type || 'content',
-            slide_type: section.section_type || 'content',
-            title: section.title,
-            segments: section.segments,
-            flashcards: section.flashcards,
-            recap_scenes: section.recap_scenes,
-            visual_beats: section.visual_beats || [],
-            narration_segments: section.narration_segments || [],
-            timed_segments: section.timed_segments || null,
-            audio_path: BASE_PATH + `audio/section_${section.id}.mp3`,
-            content_video_path: section.section_type === 'recap' 
-              ? BASE_PATH + `videos/recap_${section.id}_scene_1.mp4`
-              : (section.renderer === 'wan_video' || section.renderer === 'manim') ? BASE_PATH + `videos/topic_${section.id}.mp4` : null,
-            has_content_video: section.section_type === 'recap' || (section.renderer === 'wan_video' || section.renderer === 'manim'),
-            recap_video_paths: section.section_type === 'recap' && section.recap_scenes 
-              ? section.recap_scenes.map((s, i) => BASE_PATH + `videos/recap_${section.id}_scene_${s.scene || i+1}.mp4`)
-              : [],
-            section_id: section.id,
-            id: section.id,
-            beat_videos: [],
-            audio_duration: section.duration,
-            full_narration: section.narration,
-            visual_content: section.visual_content || {}
-          }));
+          lessonData.slides = lessonData.sections.map(section => {
+            // Build timed_segments from LLM's narration_segments (LLM is the "brain" for timing)
+            let timed_segments = null;
+            if (section.narration_segments && section.narration_segments.length > 0) {
+              let cumulativeTime = 0;
+              timed_segments = section.narration_segments.map(seg => {
+                const duration = seg.duration || 4;  // LLM provides duration
+                const start = cumulativeTime;
+                cumulativeTime += duration;
+                return {
+                  visual: seg.text || '',
+                  start_time: start,
+                  end_time: cumulativeTime
+                };
+              });
+            }
+            
+            return {
+              slide_number: section.id,
+              section_type: section.section_type || 'content',
+              slide_type: section.section_type || 'content',
+              title: section.title,
+              segments: section.segments,
+              flashcards: section.flashcards,
+              recap_scenes: section.recap_scenes,
+              visual_beats: section.visual_beats || [],
+              narration_segments: section.narration_segments || [],
+              timed_segments: timed_segments,
+              audio_path: BASE_PATH + `audio/section_${section.id}.mp3`,
+              content_video_path: section.section_type === 'recap' 
+                ? BASE_PATH + `videos/recap_${section.id}_scene_1.mp4`
+                : (section.renderer === 'wan_video' || section.renderer === 'manim') ? BASE_PATH + `videos/topic_${section.id}.mp4` : null,
+              has_content_video: section.section_type === 'recap' || (section.renderer === 'wan_video' || section.renderer === 'manim'),
+              recap_video_paths: section.section_type === 'recap' && section.recap_scenes 
+                ? section.recap_scenes.map((s, i) => BASE_PATH + `videos/recap_${section.id}_scene_${s.scene || i+1}.mp4`)
+                : [],
+              section_id: section.id,
+              id: section.id,
+              beat_videos: [],
+              audio_duration: section.duration,
+              full_narration: section.narration,
+              visual_content: section.visual_content || {}
+            };
+          });
         } else if (lessonData.topics) {
           lessonData.slides = lessonData.topics.map(topic => ({
             slide_number: topic.id,

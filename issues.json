@@ -3,7 +3,7 @@
     {
       "id": "ISS-001",
       "title": "Narration timing must come from LLM, not calculated from TTS",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-18",
       "description": "The LLM (brain) should provide authoritative timing for each narration_segment via the 'duration' field. The player should use these durations directly. We should NOT recalculate or scale timings based on actual TTS audio duration.",
       "root_cause": "Agent incorrectly added code to recalculate timed_segments by scaling LLM durations based on actual Narakeet audio duration. This contradicts the 'LLM as brain' architecture.",
