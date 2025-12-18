@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Animated Education - V4 Player</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    #stage-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #080808;
+    }
+
+    #stage {
+      width: 1280px;
+      height: 720px;
+      background: radial-gradient(circle at center, #1e3c72 0%, #2a5298 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+      perspective: 1000px;
+      border: 2px solid #333;
+    }
+
+    #bg-image-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      z-index: 0;
+    }
+
+    #scene-label {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      padding: 15px 25px;
+      border-left: 5px solid #fbbf24;
+      border-radius: 0 10px 10px 0;
+      font-size: 1.5rem;
+      color: white;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 2;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    #content-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      padding-left: 60px;
+      transition: all 0.6s ease;
+    }
+
+    #content-box {
+      width: 55%;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 40px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      transform-origin: center left;
+      transition: transform 0.2s ease-out;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #content-box.example-section {
+      border: 2px solid #10b981;
+      background: rgba(16, 185, 129, 0.1);
+      position: relative;
+    }
+
+    #content-box.example-section::before {
+      content: "WORKED EXAMPLE";
+      position: absolute;
+      top: -12px;
+      left: 20px;
+      background: #10b981;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    #content-box.example-section h1 {
+      color: #10b981;
+    }
+
+    #slide-image-container {
+      margin-bottom: 20px;
+      text-align: center;
+      display: none;
+    }
+
+    #slide-image-container img {
+      max-height: 250px;
+      max-width: 100%;
+      border-radius: 8px;
+      border: 2px solid rgba(251, 191, 36, 0.5);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin: 0 0 25px 0;
+      color: #fbbf24;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+      line-height: 1.1;
+    }
+
+    .segment-item {
+      font-size: 1.5rem;
+      margin-bottom: 18px;
+      padding: 12px 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      border-left: 4px solid transparent;
+      opacity: 0.4;
+      transform: translateX(-10px);
+      transition: all 0.4s ease;
+    }
+
+    .segment-item.active {
+      opacity: 1;
+      transform: translateX(0);
+      border-left-color: #fbbf24;
+      background: rgba(251, 191, 36, 0.15);
+    }
+
+    .segment-item.read {
+      opacity: 0.7;
+      transform: translateX(0);
+    }
+
+    .flashcard-container {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .flashcard {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      border-radius: 12px;
+      flex: 1;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      text-align: center;
+      opacity: 0.3;
+      transform: scale(0.95);
+      transition: all 0.5s ease;
+    }
+
+    .flashcard.active {
+      opacity: 1;
+      transform: scale(1.05);
+      background: rgba(251, 191, 36, 0.15);
+      border-color: #fbbf24;
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+
+    .flashcard.read {
+      opacity: 0.8;
+      transform: scale(1);
+    }
+
+    .fc-letter {
+      font-size: 2.5rem;
+      color: #fbbf24;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .fc-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+
+    .fc-desc {
+      font-size: 0.9rem;
+      color: #ccc;
+      line-height: 1.3;
+    }
+    
+    .fc-mnemonic {
+      font-size: 1rem;
+      color: #fbbf24;
+      font-style: italic;
+      margin-bottom: 8px;
+      padding: 8px;
+      background: rgba(251, 191, 36, 0.1);
+      border-radius: 6px;
+    }
+    
+    .fc-question {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    
+    .fc-answer {
+      font-size: 0.95rem;
+      color: #10b981;
+    }
+
+    #avatar-canvas {
+      position: absolute;
+      bottom: 0;
+      z-index: 20;
+      pointer-events: none;
+      transition: left 0.8s ease-in-out, height 0.8s ease;
+      filter: drop-shadow(-20px 5px 25px rgba(0, 0, 0, 0.6));
+      transform-origin: bottom center;
+    }
+
+    .mode-center #avatar-canvas {
+      left: 50%;
+      height: 95%;
+      transform: translateX(-50%);
+    }
+
+    .mode-center #content-wrapper {
+      opacity: 1;
+      transform: translateY(0);
+      z-index: 25;
+      display: flex;
+      justify-content: center;
+      padding-left: 0;
+      text-align: center;
+    }
+
+    .mode-center #content-box {
+      width: auto;
+      max-width: 80%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(5px);
+      align-items: center;
+    }
+
+    .mode-center #scene-label {
+      opacity: 0;
+    }
+
+    .mode-side #avatar-canvas {
+      left: auto;
+      right: 0px;
+      height: 85%;
+      transform: translateX(0);
+    }
+
+    .mode-side #content-wrapper {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mode-side #scene-label {
+      opacity: 0;
+    }
+
+    .mode-image #avatar-canvas {
+      left: auto;
+      right: 0px;
+      height: 80%;
+      transform: translateX(0);
+    }
+
+    .mode-image #content-wrapper {
+      opacity: 0;
+    }
+
+    .mode-image #bg-image-layer {
+      opacity: 1;
+    }
+
+    .mode-image #scene-label {
+      opacity: 1;
+    }
+
+    .khan-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      transition: opacity 0.5s ease;
+    }
+
+    .mode-khan #content-wrapper {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+
+    .mode-khan #scene-video {
+      opacity: 1 !important;
+    }
+
+    .mode-khan #avatar-canvas {
+      z-index: 50;
+    }
+
+    .mode-content-video #content-wrapper {
+      opacity: 1;
+      z-index: 25;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 20px 40px;
+      gap: 20px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .mode-content-video #content-box {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      flex: 1;
+      min-width: 40%;
+      max-width: 55%;
+      transition: all 0.5s ease;
+    }
+
+    .mode-content-video #video-box {
+      display: block;
+      flex: 1;
+      min-width: 35%;
+      max-width: 50%;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid rgba(251, 191, 36, 0.3);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      transition: all 0.5s ease;
+    }
+
+    .mode-content-video #video-box video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .mode-content-video #scene-video {
+      opacity: 0 !important;
+    }
+
+    .mode-content-video.video-swap #content-wrapper {
+      flex-direction: row-reverse;
+    }
+
+    .mode-content-video.video-swap #content-box {
+      max-width: 40%;
+      opacity: 0.15;
+      transform: scale(0.85);
+      pointer-events: none;
+    }
+
+    .mode-content-video.video-swap #video-box {
+      max-width: 70%;
+      min-width: 65%;
+    }
+    
+    .mode-content-video #content-box {
+      transition: opacity 0.4s ease, max-width 0.4s ease, min-width 0.4s ease;
+    }
+    
+    .mode-content-video.video-focus #content-box {
+      opacity: 0;
+      max-width: 0;
+      min-width: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    
+    .mode-content-video.video-focus #video-box {
+      max-width: 85%;
+      min-width: 80%;
+    }
+
+    .mode-content-video #avatar-canvas {
+      position: absolute;
+      z-index: 50;
+      left: auto;
+      right: 0;
+      bottom: 0;
+      height: 60%;
+      max-width: 25%;
+      transform: translateX(0);
+    }
+    
+    .mode-content-video #content-wrapper {
+      max-width: 75%;
+      margin-right: 25%;
+    }
+
+    #video-box {
+      display: none;
+      height: fit-content;
+      max-height: 60vh;
+    }
+    
+    .mode-side #video-box {
+      display: none;
+    }
+    
+    .mode-center #video-box {
+      display: none;
+    }
+
+    #controls-bar {
+      height: 60px;
+      background: #111;
+      border-top: 1px solid #333;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 15px;
+      z-index: 100;
+    }
+
+    button {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #555;
+    }
+
+    .progress-container {
+      flex: 1;
+      height: 6px;
+      background: #444;
+      border-radius: 3px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .progress-filled {
+      height: 100%;
+      background: #e50914;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    .slide-list-container {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      max-width: 400px;
+      scrollbar-width: thin;
+      scrollbar-color: #555 #222;
+    }
+
+    .slide-thumb {
+      min-width: 60px;
+      padding: 5px 10px;
+      background: #222;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 11px;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .slide-thumb:hover {
+      background: #333;
+    }
+
+    .slide-thumb.active {
+      border-color: #e50914;
+      background: #333;
+    }
+
+    .slide-thumb .num {
+      color: #e50914;
+      font-weight: bold;
+    }
+
+    .slide-thumb .type {
+      color: #888;
+      text-transform: uppercase;
+      font-size: 9px;
+    }
+
+    #image-display-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .slide-image {
+      max-width: 45%;
+      max-height: 70%;
+      object-fit: contain;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s ease;
+      border-radius: 12px;
+      pointer-events: auto;
+    }
+    
+    .slide-image.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .slide-image:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    }
+    
+    .mode-content-video #image-display-layer {
+      left: 0;
+      width: 50%;
+    }
+    
+    .mode-side #image-display-layer {
+      left: 0;
+      width: 60%;
+    }
+    
+    .mode-center #image-display-layer {
+      display: none;
+    }
+
+    #dev-panel {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 280px;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #444;
+      font-size: 13px;
+      z-index: 2000;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #dev-panel.show {
+      display: flex;
+    }
+
+    .dev-header {
+      color: #fbbf24;
+      font-weight: bold;
+      border-bottom: 1px solid #444;
+      padding-bottom: 5px;
+    }
+
+    .slider-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    input[type=range] {
+      flex: 1;
+      margin-right: 10px;
+    }
+
+    .keyboard-hint {
+      font-size: 11px;
+      color: #666;
+      margin-left: auto;
+    }
+
+    .upload-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 5000;
+    }
+
+    .upload-overlay.hidden {
+      display: none;
+    }
+
+    .upload-box {
+      background: #1a1a1a;
+      border: 2px dashed #444;
+      border-radius: 16px;
+      padding: 60px;
+      text-align: center;
+      max-width: 500px;
+    }
+
+    .upload-box h2 {
+      margin-bottom: 20px;
+      color: #fbbf24;
+    }
+
+    .upload-box p {
+      color: #888;
+      margin-bottom: 30px;
+    }
+
+    .upload-btn {
+      background: #e50914;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 10px;
+    }
+
+    .upload-btn:hover {
+      background: #ff1a1a;
+    }
+
+    .upload-selects {
+      margin-top: 20px;
+    }
+
+    .upload-selects select {
+      padding: 10px;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      margin: 5px;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #333;
+      border-top-color: #e50914;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .progress-container {
+      width: 100%;
+      max-width: 400px;
+      margin: 20px 0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #333;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e50914, #ff6b6b);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      color: #888;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    .step-indicator {
+      color: #fbbf24;
+      font-size: 0.85rem;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="upload-overlay hidden" id="upload-overlay">
+    <div class="upload-box" id="upload-box">
+      <h2>AI Animated Education</h2>
+      <p>Upload PDF or Markdown file to generate educational videos</p>
+      <input type="file" id="fileInput" accept=".pdf,.md,.markdown,.txt" style="display:none">
+      <div style="margin-bottom: 15px;">
+        <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Upload PDF or Markdown</button>
+      </div>
+      <button class="upload-btn" style="background:#333" onclick="useSampleContent()">Try Sample Content</button>
+      <div class="upload-selects">
+        <select id="subjectSelect">
+          <option value="General Science">General Science</option>
+          <option value="Mathematics">Mathematics</option>
+          <option value="Physics">Physics</option>
+          <option value="Chemistry">Chemistry</option>
+          <option value="Biology">Biology</option>
+        </select>
+        <select id="gradeSelect">
+          <option value="8">Grade 8</option>
+          <option value="9" selected>Grade 9</option>
+          <option value="10">Grade 10</option>
+        </select>
+      </div>
+      <p style="color:#666; font-size:0.8rem; margin-top:15px;">Supports: .pdf, .md, .markdown, .txt files</p>
+    </div>
+  </div>
+
+  <div id="stage-container">
+    <div id="stage" class="mode-side">
+      <video id="scene-video" class="khan-video" loop muted playsinline style="opacity:0"></video>
+      <img id="bg-image-layer" src="">
+
+      <div id="scene-label">Scene Title</div>
+
+      <div id="image-display-layer"></div>
+
+      <div id="content-wrapper">
+        <div id="content-box">
+          <h1 id="slide-title">Loading...</h1>
+          <div id="slide-image-container"></div>
+          <div id="segments-list"></div>
+        </div>
+        <div id="video-box">
+          <video id="inline-video" muted playsinline></video>
+        </div>
+      </div>
+
+      <canvas id="avatar-canvas"></canvas>
+
+      <video id="raw-avatar-video" loop muted playsinline style="display:none"></video>
+      <audio id="main-audio"></audio>
+    </div>
+  </div>
+
+  <div id="controls-bar">
+    <button id="btn-new" title="Upload New Content" style="background:#10b981;">+ New</button>
+    <button id="btn-play">Play</button>
+    <button id="btn-prev">Prev</button>
+    <button id="btn-next">Next</button>
+    <span id="time-display">0:00</span>
+    <div class="progress-container" id="progress-container">
+      <div class="progress-filled" id="timeline-fill"></div>
+    </div>
+    <div class="slide-list-container" id="slide-list"></div>
+    <button id="btn-dev" title="Toggle Dev Panel">Dev</button>
+    <span class="keyboard-hint">Space: Play | Arrows: Navigate | D: Dev Panel</span>
+    <button id="btn-fullscreen" title="Fullscreen">FS</button>
+  </div>
+
+  <div id="dev-panel">
+    <div class="dev-header">DIRECTOR CONTROLS</div>
+
+    <label>Avatar Size</label>
+    <div class="slider-row"><input type="range" id="av-scale" min="0.5" max="1.8" step="0.05" value="1.0"
+        oninput="updateVisuals()"></div>
+
+    <label>Avatar Offset (Left/Right)</label>
+    <div class="slider-row"><input type="range" id="av-x" min="-200" max="200" step="10" value="0"
+        oninput="updateVisuals()"></div>
+
+    <label>Content Size</label>
+    <div class="slider-row"><input type="range" id="con-scale" min="0.5" max="1.5" step="0.05" value="1.0"
+        oninput="updateVisuals()"></div>
+
+    <label>Green Screen Cutoff</label>
+    <div class="slider-row"><input type="range" id="av-green" min="0" max="200" step="1" value="60"></div>
+  </div>
+
+  <script src="/player/player.js"></script>
+</body>
+
+</html>

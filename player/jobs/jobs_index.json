@@ -4340,5 +4340,239 @@
       "sections_count": 9,
       "dry_run": false
     }
+  },
+  "4373439e": {
+    "id": "4373439e",
+    "type": "pdf",
+    "params": {
+      "subject": "Mathematics",
+      "grade": "10",
+      "file_path": "/tmp/ai_education_jobs/7ce37b859e24bdd5.pdf",
+      "source_file": "3-Page-Maths_1766058757638.pdf"
+    },
+    "status": "completed",
+    "current_step": 3,
+    "current_step_name": "Generating audio narration...",
+    "steps_completed": 4,
+    "total_steps": 4,
+    "progress": 100,
+    "created_at": "2025-12-18T12:13:55.345629",
+    "started_at": "2025-12-18T12:13:55.368339",
+    "completed_at": "2025-12-18T12:23:51.642753",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "started_at": "2025-12-18T12:13:55.493670",
+      "source_file": "3-Page-Maths_1766058757638.pdf",
+      "steps": [
+        {
+          "step": "pdf_to_markdown",
+          "status": "completed"
+        },
+        {
+          "step": "extract_images",
+          "status": "completed",
+          "count": 0
+        },
+        {
+          "step": "generate_presentation_plan",
+          "status": "completed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'intro' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'summary' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/4373439e/videos/topic_3.mp4",
+              "error": null,
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 4,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 1 errors",
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 4, Beat 6: Flash validation failed: The specific formulas for the six trigonometric ratios are not provided. The visual beat should list them out explicitly."
+              ]
+            },
+            {
+              "topic_id": 5,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 5: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/pyth \u2502\n\u2502 on3.11/site-packages/manim/cli/render/comma \u2502\n\u2502 nds.py:125 in render                        \u2502\n\u2502                                             \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                      \u2502\n\u2502   123 \u2502   \u2502   \u2502   \u2502   with tempconfig({}):  \u2502\n\u2502   124 \u2502   \u2502   \u2502   \u2502   \u2502   scene = SceneClas \u2502\n\u2502 \u2771 125 \u2502   \u2502   \u2502   \u2502   \u2502   scene.render()    \u2502\n\u2502   126 \u2502   \u2502   \u2502   except Exception:         \u2502\n\u2502   127 \u2502   \u2502   \u2502   ",
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 109, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 212, in render_manim_video\n    return _execute_spec_generated_render(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 391, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 5: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/pyth \u2502\n\u2502 on3.11/site-packages/manim/cli/render/comma \u2502\n\u2502 nds.py:125 in render                        \u2502\n\u2502                                             \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                      \u2502\n\u2502   123 \u2502   \u2502   \u2502   \u2502   with tempconfig({}):  \u2502\n\u2502   124 \u2502   \u2502   \u2502   \u2502   \u2502   scene = SceneClas \u2502\n\u2502 \u2771 125 \u2502   \u2502   \u2502   \u2502   \u2502   scene.render()    \u2502\n\u2502   126 \u2502   \u2502   \u2502   except Exception:         \u2502\n\u2502   127 \u2502   \u2502   \u2502   \n"
+            },
+            {
+              "topic_id": 6,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 6: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/pyth \u2502\n\u2502 on3.11/site-packages/manim/cli/render/comma \u2502\n\u2502 nds.py:125 in render                        \u2502\n\u2502                                             \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                      \u2502\n\u2502   123 \u2502   \u2502   \u2502   \u2502   with tempconfig({}):  \u2502\n\u2502   124 \u2502   \u2502   \u2502   \u2502   \u2502   scene = SceneClas \u2502\n\u2502 \u2771 125 \u2502   \u2502   \u2502   \u2502   \u2502   scene.render()    \u2502\n\u2502   126 \u2502   \u2502   \u2502   except Exception:         \u2502\n\u2502   127 \u2502   \u2502   \u2502   ",
+              "visual_beats_used": 9,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 109, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 212, in render_manim_video\n    return _execute_spec_generated_render(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 391, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 6: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/pyth \u2502\n\u2502 on3.11/site-packages/manim/cli/render/comma \u2502\n\u2502 nds.py:125 in render                        \u2502\n\u2502                                             \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                      \u2502\n\u2502   123 \u2502   \u2502   \u2502   \u2502   with tempconfig({}):  \u2502\n\u2502   124 \u2502   \u2502   \u2502   \u2502   \u2502   scene = SceneClas \u2502\n\u2502 \u2771 125 \u2502   \u2502   \u2502   \u2502   \u2502   scene.render()    \u2502\n\u2502   126 \u2502   \u2502   \u2502   except Exception:         \u2502\n\u2502   127 \u2502   \u2502   \u2502   \n"
+            },
+            {
+              "topic_id": 7,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/4373439e/videos/topic_7.mp4",
+              "error": null,
+              "visual_beats_used": 8,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 8,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 8: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/pyth \u2502\n\u2502 on3.11/site-packages/manim/cli/render/comma \u2502\n\u2502 nds.py:125 in render                        \u2502\n\u2502                                             \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                      \u2502\n\u2502   123 \u2502   \u2502   \u2502   \u2502   with tempconfig({}):  \u2502\n\u2502   124 \u2502   \u2502   \u2502   \u2502   \u2502   scene = SceneClas \u2502\n\u2502 \u2771 125 \u2502   \u2502   \u2502   \u2502   \u2502   scene.render()    \u2502\n\u2502   126 \u2502   \u2502   \u2502   except Exception:         \u2502\n\u2502   127 \u2502   \u2502   \u2502   ",
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 109, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 212, in render_manim_video\n    return _execute_spec_generated_render(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 391, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 8: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/pyth \u2502\n\u2502 on3.11/site-packages/manim/cli/render/comma \u2502\n\u2502 nds.py:125 in render                        \u2502\n\u2502                                             \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                      \u2502\n\u2502   123 \u2502   \u2502   \u2502   \u2502   with tempconfig({}):  \u2502\n\u2502   124 \u2502   \u2502   \u2502   \u2502   \u2502   scene = SceneClas \u2502\n\u2502 \u2771 125 \u2502   \u2502   \u2502   \u2502   \u2502   scene.render()    \u2502\n\u2502   126 \u2502   \u2502   \u2502   except Exception:         \u2502\n\u2502   127 \u2502   \u2502   \u2502   \n"
+            },
+            {
+              "topic_id": 9,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 1 errors",
+              "visual_beats_used": 10,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 9, Beat 1: Flash validation failed: The visual beat mentions 'The triangle and given info are on screen' but does not specify what the triangle looks like (e.g., right-angled, specific vertices) or what 'given info' entails (e.g., side lengths, angle measures). It also doesn't specify where the text 'Find: sin Q, cos Q' appears on screen."
+              ]
+            },
+            {
+              "topic_id": 10,
+              "section_type": "memory",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'memory' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 11,
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/4373439e/videos/topic_11.mp4",
+              "error": null,
+              "visual_beats_used": 1,
+              "dry_run": false,
+              "compilation_errors": []
+            }
+          ],
+          "success_count": 6,
+          "fail_count": 5,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": 1,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/4373439e/audio/section_1.mp3"
+            },
+            {
+              "section_id": 2,
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/4373439e/audio/section_2.mp3"
+            },
+            {
+              "section_id": 3,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/4373439e/audio/section_3.mp3"
+            },
+            {
+              "section_id": 4,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/4373439e/audio/section_4.mp3"
+            },
+            {
+              "section_id": 5,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/4373439e/audio/section_5.mp3"
+            },
+            {
+              "section_id": 6,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/4373439e/audio/section_6.mp3"
+            },
+            {
+              "section_id": 7,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/4373439e/audio/section_7.mp3"
+            },
+            {
+              "section_id": 8,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/4373439e/audio/section_8.mp3"
+            },
+            {
+              "section_id": 9,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/4373439e/audio/section_9.mp3"
+            },
+            {
+              "section_id": 10,
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/4373439e/audio/section_10.mp3"
+            },
+            {
+              "section_id": 11,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/4373439e/audio/section_11.mp3"
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-18T12:23:51.642104",
+      "presentation_path": "/home/runner/workspace/player/jobs/4373439e/presentation.json",
+      "trace_path": "/home/runner/workspace/player/jobs/4373439e/generation_trace.json",
+      "sections_count": 11,
+      "dry_run": false
+    }
   }
 }
