@@ -79,6 +79,26 @@ The `Presentation` JSON schema includes a `sections` array, where each section s
 - **Recap Video Display**: Fixed `showVideoBox` logic to include recap sections when they have valid video
 - **Memory Flashcards**: Simplified to show only letter, title, and mnemonic (removed verbose explanation)
 
+### Recap Pipeline Overhaul
+**Problem Fixed:** Recap was generating a single 5-second placeholder instead of 5 proper WAN videos.
+
+**Root Causes:**
+1. WAN runner ignored `recap_scenes` array - only looked for single `wan_prompt`
+2. Fallback code created placeholder scenes if LLM didn't generate them
+3. No validation that each scene has proper `wan_prompt`
+
+**Solutions Implemented:**
+1. **wan_runner.py**: New `_render_recap_scenes()` iterates through all 5 scenes, renders each `wan_prompt` as `recap_{id}_scene_{1-5}.mp4`
+2. **llm_client.py**: Fail-fast validation - raises error if recap_scenes missing or scenes lack wan_prompt (no more placeholder fallback)
+3. **player.js**: Sequences through 5 recap videos based on playback time, switching video source at each scene boundary
+
+**Prompt Improvements (Subject-Adaptive Visualization):**
+- Biology/Process: Show actual process (cell splitting, plant growing)
+- Math/Physics: Use PHYSICAL ANALOGY (weighing scale for equations, water pipe for current)  
+- History: Re-enact the scene (court of emperor, independence rally)
+- Mandatory art style: "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background"
+- Character consistency: Same description across all 5 scenes
+
 ### Fail-Fast Policy (CRITICAL)
 The system now enforces strict fail-fast behavior with NO fallbacks:
 
