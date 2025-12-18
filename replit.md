@@ -39,15 +39,42 @@ The `Presentation` JSON schema includes a `sections` array, where each section s
 - **Requests**: HTTP client library.
 - **python-dotenv**: For managing environment variables.
 
-## Recent Changes (Dec 17, 2025)
-- **Upload Dialog Fix**: Upload overlay now starts hidden, only shows when no existing presentation found (eliminates flash on page load)
-- **TTS Voice Update**: gTTS fallback now uses UK English TLD (co.uk) for a different voice profile
-- **Avatar Positioning**: CSS updated to keep avatar on right side (max 25% width) with content constrained to 75% - prevents overlap
-- **Memory Slide Enhancements**: Player now supports both legacy (question/answer) and new mnemonic-style flashcard schemas (letter/title/mnemonic/explanation). New CSS styling for mnemonic cards.
-- **Recap Prompts**: Updated Director prompts require exactly 5 WAN video scenes in recap sections
-- **Display Mode**: Added display_mode field support in player (video_primary, text_primary, video_only) - only applies when valid video assets exist
-- **Timing Sync Rules**: Director prompts now include guidance for matching video duration to narration segments
+## Recent Changes (Dec 18, 2025)
+- **Image Handling Pipeline**: Added complete image extraction and display system
+  - Extracts base64 images from markdown, saves with green background for chroma key
+  - Images display with fade-in animation, synced to narration timing
+  - Subtle hover effect (scale + shadow) for interactivity
+  - LLM receives image placeholders (IMAGE_1, IMAGE_2) - not raw base64 data
+  - Pipeline: PDF → markdown → extract images → strip base64 → send text to LLM
+- **Section Type Rendering Rules**:
+  - INTRO/SUMMARY/MEMORY: Text-only (no video/manim rendering)
+  - CONTENT: Text + video/images with swapping
+  - RECAP: Video-only (5 WAN scenes)
+- **Image Display Layer**: New separate #image-display-layer in player, positioned alongside content without overlap
+- **Male-Only Narration**: Narakeet "ravi" voice primary, gTTS UK male fallback
+
+## Previous Changes (Dec 17, 2025)
+- Upload Dialog Fix, TTS Voice Update, Avatar Positioning
+- Memory Slide Enhancements (dual flashcard schema support)
+- Recap Prompts (5 WAN video scenes)
+- Display Mode field support in player
+
+## Image Handling Architecture
+```
+PDF/Markdown → Datalab API → base64 images in markdown
+    ↓
+Extract images → Save with green background (rembg + PIL)
+    ↓
+Create placeholders → "IMAGE_1: filename.png"
+    ↓
+Send ONLY text to LLM (no base64 data)
+    ↓
+LLM assigns images with timing → {"image_ref": "IMAGE_1", "image_appear_time": 2.0}
+    ↓
+Player displays images synced to narration, one at a time, with hover effect
+```
 
 ## Known Limitations
-- **Validator Schema**: flash_validator.py still accepts old flashcard formats; future update needed to enforce new 3-flashcard memory requirement
-- **Video Timing**: Animation durations in visual beats may still not perfectly match narration - requires iterative testing with real content
+- **Validator Schema**: flash_validator.py still accepts old flashcard formats
+- **Video Timing**: Animation durations may not perfectly match narration
+- **Image Generation**: Currently extracts from source only - AI image generation not implemented

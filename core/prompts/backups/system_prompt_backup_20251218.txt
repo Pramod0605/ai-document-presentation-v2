@@ -250,37 +250,10 @@ RECAP SECTION RULES
     - wan_prompt should describe a 5-second visual animation
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-IMAGE DISPLAY RULES
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-15. SOURCE IMAGES from the document:
-    - Images are provided as placeholders: IMAGE_1, IMAGE_2, etc.
-    - You decide WHEN each image appears (synced to narration timing)
-    - Assign images to visual beats using image_ref field
-    - Specify appear_time_offset (seconds from beat start)
-
-    Example visual beat with image:
-    {{
-      "segment_id": 1,
-      "narration": "The cell membrane is the protective barrier...",
-      "image_ref": "IMAGE_1",
-      "image_appear_time": 2.0,
-      "scene_setup": "...",
-      ...
-    }}
-
-16. SECTION TYPE RENDERING RULES:
-    - INTRO: Text-only (no video/manim)
-    - SUMMARY: Text-only (no video/manim)
-    - MEMORY: Text-only, 3 mnemonic flashcards (no video/manim)
-    - CONTENT: Text + video/images with swapping
-    - RECAP: Video-only (5 WAN scenes)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 VIDEO-NARRATION TIMING
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-17. Animation duration MUST match narration:
+15. Animation duration MUST match narration:
     - Sum of animation_sequence durations ≈ narration segment duration
     - Add "wait" actions if animation is shorter than narration
     - Include display_mode: "text_primary" | "video_primary" | "video_only"

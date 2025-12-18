@@ -7,6 +7,7 @@ from typing import Optional, Union
 from core.datalab_client import pdf_to_markdown
 from core.llm_client import generate_chunked_presentation, ValidationError
 from core.renderer_executor import render_all_topics
+from core.image_processor import extract_images_from_markdown, strip_base64_from_markdown, create_image_list_for_llm
 from tts.generate_audio import generate_all_audio
 from render.render_trace import clear_render_trace
 
@@ -29,9 +30,11 @@ def process_pdf_to_videos(
     output_dir = output_dir or str(PLAYER_ASSETS_DIR)
     videos_dir = Path(output_dir) / "videos"
     audio_dir = Path(output_dir) / "audio"
+    images_dir = Path(output_dir) / "images"
     
     os.makedirs(videos_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
+    os.makedirs(images_dir, exist_ok=True)
     
     clear_render_trace(output_dir)
     
@@ -50,6 +53,18 @@ def process_pdf_to_videos(
         markdown_content = pdf_to_markdown(pdf_path)
         job_status["steps"][-1]["status"] = "completed"
         
+        images_mapping = {}
+        images_list_text = ""
+        try:
+            images_mapping = extract_images_from_markdown(markdown_content, str(images_dir))
+            images_list_text = create_image_list_for_llm(images_mapping)
+            markdown_for_llm = strip_base64_from_markdown(markdown_content)
+            job_status["steps"].append({"step": "extract_images", "status": "completed", "count": len(images_mapping)})
+        except Exception as e:
+            print(f"[Pipeline] Image extraction failed: {e}")
+            markdown_for_llm = markdown_content
+            job_status["steps"].append({"step": "extract_images", "status": "failed", "error": str(e)})
+        
         if job_id:
             job_manager.complete_step(job_id, 0)
             job_manager.set_step(job_id, "LLM generating presentation plan...", 1)
@@ -62,11 +77,19 @@ def process_pdf_to_videos(
         validation_error_msg = None
         
         try:
+            llm_content = markdown_for_llm
+            if images_list_text:
+                llm_content = f"{images_list_text}\n\n---\n\n{markdown_for_llm}"
+            
             presentation, generation_trace = generate_chunked_presentation(
-                markdown_content=markdown_content,
+                markdown_content=llm_content,
                 subject=subject,
                 grade=grade
             )
+            
+            if presentation and images_mapping:
+                presentation["images_mapping"] = {k: v for k, v in images_mapping.items()}
+            
             job_status["steps"][-1]["status"] = "completed"
         except ValidationError as ve:
             validation_failed = True
@@ -157,9 +180,11 @@ def process_markdown_to_videos(
     output_dir = output_dir or str(PLAYER_ASSETS_DIR)
     videos_dir = Path(output_dir) / "videos"
     audio_dir = Path(output_dir) / "audio"
+    images_dir = Path(output_dir) / "images"
     
     os.makedirs(videos_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
+    os.makedirs(images_dir, exist_ok=True)
     
     clear_render_trace(output_dir)
     
@@ -171,6 +196,18 @@ def process_markdown_to_videos(
     }
     
     try:
+        images_mapping = {}
+        images_list_text = ""
+        try:
+            images_mapping = extract_images_from_markdown(markdown_content, str(images_dir))
+            images_list_text = create_image_list_for_llm(images_mapping)
+            markdown_for_llm = strip_base64_from_markdown(markdown_content)
+            job_status["steps"].append({"step": "extract_images", "status": "completed", "count": len(images_mapping)})
+        except Exception as e:
+            print(f"[Pipeline] Image extraction failed: {e}")
+            markdown_for_llm = markdown_content
+            job_status["steps"].append({"step": "extract_images", "status": "failed", "error": str(e)})
+        
         if job_id:
             job_manager.set_step(job_id, "LLM generating presentation plan...", 0)
         
@@ -182,11 +219,19 @@ def process_markdown_to_videos(
         validation_error_msg = None
         
         try:
+            llm_content = markdown_for_llm
+            if images_list_text:
+                llm_content = f"{images_list_text}\n\n---\n\n{markdown_for_llm}"
+            
             presentation, generation_trace = generate_chunked_presentation(
-                markdown_content=markdown_content,
+                markdown_content=llm_content,
                 subject=subject,
                 grade=grade
             )
+            
+            if presentation and images_mapping:
+                presentation["images_mapping"] = {k: v for k, v in images_mapping.items()}
+            
             job_status["steps"][-1]["status"] = "completed"
         except ValidationError as ve:
             validation_failed = True

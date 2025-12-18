@@ -50,6 +50,83 @@ const audio = document.getElementById('main-audio');
 const ctx = avatarCanvas.getContext('2d', { willReadFrequently: true });
 
 let currentMedia = audio;
+let currentVisibleImage = null;
+
+function updateSlideImages(slide, currentTime) {
+  const imageLayer = document.getElementById('image-display-layer');
+  if (!imageLayer) return;
+  
+  const sectionType = slide.section_type || slide.slide_type || 'content';
+  if (sectionType === 'intro' || sectionType === 'memory' || sectionType === 'recap' || sectionType === 'summary') {
+    imageLayer.innerHTML = '';
+    currentVisibleImage = null;
+    return;
+  }
+  
+  if (!slide.images || slide.images.length === 0) {
+    if (!slide.visual_beats) return;
+    const hasImages = slide.visual_beats.some(vb => vb.image_ref || vb.image_filename);
+    if (!hasImages) return;
+  }
+  
+  let imagesToShow = [];
+  
+  if (slide.images && slide.images.length > 0) {
+    slide.images.forEach((img, i) => {
+      const appearTime = img.appear_time || (slide.timed_segments?.[i]?.start_time) || 0;
+      if (currentTime >= appearTime) {
+        imagesToShow.push({
+          src: `${BASE_PATH}images/${img.filename}`,
+          alt: img.alt_text || `Image ${i + 1}`,
+          id: img.image_ref || `img-${i}`
+        });
+      }
+    });
+  }
+  
+  if (slide.visual_beats) {
+    slide.visual_beats.forEach((vb, i) => {
+      if (vb.image_ref && vb.image_filename) {
+        const segStart = slide.timed_segments?.[i]?.start_time || 0;
+        const appearOffset = vb.image_appear_time || 0;
+        const appearTime = segStart + appearOffset;
+        
+        if (currentTime >= appearTime) {
+          imagesToShow.push({
+            src: `${BASE_PATH}images/${vb.image_filename}`,
+            alt: vb.image_ref,
+            id: vb.image_ref
+          });
+        }
+      }
+    });
+  }
+  
+  const latestImage = imagesToShow.length > 0 ? imagesToShow[imagesToShow.length - 1] : null;
+  
+  if (latestImage && latestImage.id !== currentVisibleImage) {
+    currentVisibleImage = latestImage.id;
+    
+    const existingImgs = imageLayer.querySelectorAll('.slide-image');
+    existingImgs.forEach(img => img.classList.remove('visible'));
+    
+    let imgEl = imageLayer.querySelector(`img[data-id="${latestImage.id}"]`);
+    if (!imgEl) {
+      imgEl = document.createElement('img');
+      imgEl.className = 'slide-image';
+      imgEl.src = latestImage.src;
+      imgEl.alt = latestImage.alt;
+      imgEl.dataset.id = latestImage.id;
+      imageLayer.appendChild(imgEl);
+    }
+    
+    setTimeout(() => imgEl.classList.add('visible'), 50);
+  } else if (!latestImage && currentVisibleImage) {
+    currentVisibleImage = null;
+    const existingImgs = imageLayer.querySelectorAll('.slide-image');
+    existingImgs.forEach(img => img.classList.remove('visible'));
+  }
+}
 
 function setupContentOverflowHandler() {
   const contentWrapper = document.getElementById('content-wrapper');
@@ -522,6 +599,8 @@ function handleTimeUpdate(e) {
       }
     });
   }
+
+  updateSlideImages(slide, t);
 
   const scenes = slide.recap_scenes || slide.storyboard_scenes;
   if (scenes && slide.timed_segments) {
