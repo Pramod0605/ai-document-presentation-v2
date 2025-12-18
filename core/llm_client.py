@@ -490,14 +490,20 @@ def validate_and_fix_presentation(presentation: dict, subject: str, grade: str) 
                 {"question": "Key concept 3?", "answer": "Answer 3"}
             ]
         
-        if section["section_type"] == "recap" and "recap_scenes" not in section:
-            section["recap_scenes"] = [
-                {"scene": 1, "description": "Opening scene"},
-                {"scene": 2, "description": "Development"},
-                {"scene": 3, "description": "Key moment"},
-                {"scene": 4, "description": "Resolution"},
-                {"scene": 5, "description": "Conclusion"}
-            ]
+        if section["section_type"] == "recap":
+            if "recap_scenes" not in section or len(section.get("recap_scenes", [])) == 0:
+                raise ValueError(
+                    f"Section {section.get('id', '?')}: Recap section MUST have recap_scenes. "
+                    f"LLM failed to generate 5 recap scenes. This is a critical error - no fallback allowed."
+                )
+            if len(section["recap_scenes"]) != 5:
+                print(f"[WARN] Section {section.get('id')}: Expected 5 recap scenes, got {len(section['recap_scenes'])}")
+            for i, scene in enumerate(section["recap_scenes"]):
+                if not scene.get("wan_prompt"):
+                    raise ValueError(
+                        f"Section {section.get('id', '?')}, Scene {i+1}: Missing wan_prompt. "
+                        f"Each recap scene must have a wan_prompt for video generation."
+                    )
         
         if "narration_segments" in section and section["narration_segments"]:
             section["segments"] = []

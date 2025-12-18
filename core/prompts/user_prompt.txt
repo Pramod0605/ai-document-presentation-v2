@@ -205,27 +205,53 @@ RECAP SECTION RULES (CRITICAL)
 
 For section_type = "recap":
 
-- MUST include EXACTLY 5 recap scenes
-- Each scene summarizes a KEY CONCEPT from the chapter
+- MUST include EXACTLY 5 recap scenes covering the ENTIRE chapter
+- Each scene summarizes ONE KEY CONCEPT from the chapter
 - Renderer: wan_video (generates 5 short conceptual videos)
 - Each scene will become a separate WAN video
 
+*** SUBJECT-ADAPTIVE VISUALIZATION RULES ***
+A) BIOLOGY/PROCESS: Show the actual process (cell splitting, plant growing)
+B) MATH/PHYSICS: Use PHYSICAL ANALOGY (weighing scale for equations, water pipe for current)
+C) HISTORY: Re-enact the scene (court of emperor, independence rally)
+
+*** ART STYLE (MANDATORY) ***
+ALL wan_prompts MUST start with:
+"Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background."
+
+*** CHARACTER CONSISTENCY (CRITICAL) ***
+If a character appears in multiple scenes, describe them EXACTLY the same way each time:
+- "Boy in blue school uniform with black hair" (same in every scene)
+- "Elderly shopkeeper in white kurta with grey beard" (same in every scene)
+
+EXAMPLE - Math (using analogy):
 "recap_scenes": [
   {{
     "scene": 1,
-    "concept_title": "What is Force?",
-    "description": "A push or pull that can change an object's motion. Show hands pushing a ball, making it roll.",
-    "wan_prompt": "Hands pushing a red ball on a table, the ball starts rolling. Educational animation style, clean background.",
-    "narration": "Force is simply a push or pull that changes how objects move."
+    "concept_title": "What is a Linear Equation?",
+    "description": "Use weighing scale analogy - both sides must balance",
+    "wan_prompt": "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background. A traditional Indian market weighing scale (tarazu) with 'x + 5' on left pan and '10' on right pan, perfectly balanced. Small equation 'x + 5 = 10' in corner.",
+    "narration": "Think of a linear equation like a weighing scale - both sides must always balance."
   }},
   {{
     "scene": 2,
-    "concept_title": "Newton's First Law",
-    "description": "Objects at rest stay at rest unless acted upon by force. Show a book on table remaining still.",
-    "wan_prompt": "A book resting on a wooden table, completely still. Then a hand comes and pushes it. Educational style.",
-    "narration": "Objects at rest stay at rest until a force acts on them - that's Newton's First Law."
+    "concept_title": "Solving for x",
+    "description": "Remove weights from both sides equally",
+    "wan_prompt": "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background. Same weighing scale, hand removing '5' from left side and '5' from right side simultaneously. Arrow showing 'x = 5' result.",
+    "narration": "To find x, we remove the same amount from both sides - keeping the balance."
   }},
-  ... (3 more scenes)
+  ... (3 more scenes covering remaining concepts)
+]
+
+EXAMPLE - Biology (showing process):
+"recap_scenes": [
+  {{
+    "scene": 1,
+    "concept_title": "Cell Division Begins",
+    "description": "Show amoeba starting to stretch",
+    "wan_prompt": "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background. A friendly Amoeba character with visible nucleus, beginning to stretch in the middle. Label 'Binary Fission' in corner.",
+    "narration": "Cell division in amoeba begins when the cell starts to stretch in the middle."
+  }}
 ]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━

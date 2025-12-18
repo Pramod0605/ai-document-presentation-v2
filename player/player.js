@@ -607,6 +607,31 @@ function handleTimeUpdate(e) {
         }
       }
     }
+    
+    // Handle recap video sequencing - switch between 5 recap scene videos
+    const sectionType = slide.section_type || slide.slide_type || 'content';
+    if (sectionType === 'recap' && slide.recap_video_paths && slide.recap_video_paths.length > 1) {
+      const recapScenes = slide.recap_scenes || [];
+      const numScenes = slide.recap_video_paths.length;
+      const sceneDuration = duration / numScenes;
+      
+      let targetRecapIndex = Math.min(Math.floor(t / sceneDuration), numScenes - 1);
+      
+      if (targetRecapIndex !== currentBeatIndex && inlineVideo) {
+        currentBeatIndex = targetRecapIndex;
+        const newRecapPath = slide.recap_video_paths[targetRecapIndex];
+        console.log(`Switching to recap scene ${targetRecapIndex + 1}: ${newRecapPath}`);
+        inlineVideo.src = newRecapPath;
+        inlineVideo.load();
+        inlineVideo.play().catch(e => console.log("Recap video play fail", e));
+        
+        // Update the displayed scene info if we have scene data
+        if (recapScenes[targetRecapIndex]) {
+          const scene = recapScenes[targetRecapIndex];
+          console.log(`Recap Scene ${targetRecapIndex + 1}: ${scene.concept_title || 'Scene'}`);
+        }
+      }
+    }
   }
 
   let hasActiveSegment = false;
@@ -802,8 +827,13 @@ async function checkExistingPresentation() {
             visual_beats: section.visual_beats || [],
             narration_segments: section.narration_segments || [],
             audio_path: BASE_PATH + `audio/section_${section.id}.mp3`,
-            content_video_path: (section.renderer === 'wan_video' || section.renderer === 'manim') ? BASE_PATH + `videos/topic_${section.id}.mp4` : null,
-            has_content_video: (section.renderer === 'wan_video' || section.renderer === 'manim'),
+            content_video_path: section.section_type === 'recap' 
+              ? BASE_PATH + `videos/recap_${section.id}_scene_1.mp4`
+              : (section.renderer === 'wan_video' || section.renderer === 'manim') ? BASE_PATH + `videos/topic_${section.id}.mp4` : null,
+            has_content_video: section.section_type === 'recap' || (section.renderer === 'wan_video' || section.renderer === 'manim'),
+            recap_video_paths: section.section_type === 'recap' && section.recap_scenes 
+              ? section.recap_scenes.map((s, i) => BASE_PATH + `videos/recap_${section.id}_scene_${s.scene || i+1}.mp4`)
+              : [],
             section_id: section.id,
             id: section.id,
             beat_videos: [],

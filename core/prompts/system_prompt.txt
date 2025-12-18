@@ -243,11 +243,49 @@ MEMORY SECTION RULES
 RECAP SECTION RULES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-14. RECAP sections MUST have EXACTLY 5 recap scenes:
-    - Each scene summarizes ONE key concept from the chapter
-    - Renderer: wan_video (generates 5 conceptual videos)
-    - Each scene includes: concept_title, description, wan_prompt, narration
-    - wan_prompt should describe a 5-second visual animation
+14. RECAP sections MUST have EXACTLY 5 recap scenes covering the ENTIRE chapter.
+    Each scene summarizes ONE key concept from the chapter.
+    
+    *** SUBJECT-ADAPTIVE VISUALIZATION RULES ***
+    Choose visualization style based on subject matter:
+    
+    A) BIOLOGY/PROCESS: Show the actual process or organism
+       - Cell splitting, plant growing, blood circulation
+       - Example: "Cell Division" → Amoeba stretching and splitting with visible nucleus
+    
+    B) MATH/PHYSICS/CODING: Use PHYSICAL ANALOGY or METAPHOR
+       - "Linear Equation" → Weighing balance scale (tarazu) 
+       - "Variable" → Empty box waiting to be filled
+       - "Current/Voltage" → Water flowing through a pipe
+       - "Function" → Machine with input/output
+    
+    C) HISTORY/LITERATURE: Re-enact the scene or show the setting
+       - "Mughal Era" → Court of Emperor Akbar with ministers
+       - "Independence Movement" → Crowd with Indian flags
+    
+    *** ART STYLE (MANDATORY) ***
+    ALL wan_prompts MUST start with:
+    "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background."
+    
+    *** CHARACTER CONSISTENCY (CRITICAL) ***
+    If ANY character appears in multiple scenes, describe them EXACTLY the same way:
+    - "Boy in blue school uniform with black hair" (not just "a boy")
+    - "Elderly shopkeeper in white kurta" (not just "a man")
+    - "Teacher with glasses and green saree" (not just "the teacher")
+    Use the SAME description in every scene where that character appears.
+    
+    *** DUAL CODING (IMPORTANT) ***
+    Include a visual icon of the academic concept overlaying the story scene:
+    - Small diagram in corner
+    - Connecting arrows with labels
+    - Formula/equation overlay
+    - Timeline markers for history
+    
+    *** RECAP SCENE SCHEMA ***
+    Each scene MUST include: concept_title, description, wan_prompt, narration
+    - wan_prompt describes a 5-second visual animation
+    - narration is what the narrator says (10-20 seconds per scene)
+    - Distribute narration time proportionally across all 5 scenes
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 IMAGE DISPLAY RULES

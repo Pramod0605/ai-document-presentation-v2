@@ -51,6 +51,19 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             duration=duration
         )
     
+    # For recap sections, render each recap_scene as a separate video
+    recap_scenes = topic.get("recap_scenes", [])
+    if section_type == "recap" and recap_scenes:
+        return _render_recap_scenes(
+            topic_id=topic_id,
+            topic_title=topic_title,
+            recap_scenes=recap_scenes,
+            output_dir=output_dir,
+            dry_run=dry_run,
+            skip_wan=skip_wan,
+            trace_output_dir=trace_output_dir
+        )
+    
     # For other section types, use section-level prompt
     wan_prompt = explanation_plan.get("wan_prompt")
     
@@ -190,6 +203,141 @@ def _render_visual_beats(
     
     # Return path to first beat (player will handle stitching or sequencing)
     return video_paths[0] if video_paths else None
+
+
+def _render_recap_scenes(
+    topic_id: int,
+    topic_title: str,
+    recap_scenes: list,
+    output_dir: str,
+    dry_run: bool,
+    skip_wan: bool,
+    trace_output_dir: str
+) -> str:
+    """
+    Render each recap scene as a separate WAN video.
+    
+    Recap sections have exactly 5 scenes, each covering one key concept.
+    Each scene has: concept_title, description, wan_prompt, narration
+    
+    Creates: recap_{topic_id}_scene_{1..5}.mp4
+    Returns path to first video (player sequences all 5).
+    """
+    if not recap_scenes:
+        raise WanRenderError(
+            f"Section {topic_id}: Recap section has no recap_scenes. "
+            f"LLM must generate exactly 5 recap scenes."
+        )
+    
+    if len(recap_scenes) != 5:
+        print(f"[WARN] Section {topic_id}: Expected 5 recap scenes, got {len(recap_scenes)}")
+    
+    print(f"[WAN] Rendering {len(recap_scenes)} recap scenes for section {topic_id}")
+    
+    video_paths = []
+    client = WANClient() if not skip_wan and not dry_run else None
+    scene_duration = 5  # Each recap scene is 5 seconds
+    
+    for scene_idx, scene in enumerate(recap_scenes):
+        scene_num = scene.get("scene", scene_idx + 1)
+        concept_title = scene.get("concept_title", f"Concept {scene_num}")
+        wan_prompt = scene.get("wan_prompt", "")
+        
+        if not wan_prompt:
+            raise WanRenderError(
+                f"Section {topic_id}, Recap Scene {scene_num}: Missing wan_prompt. "
+                f"Each recap scene must have a wan_prompt for video generation."
+            )
+        
+        # Generate output path for this scene
+        scene_output_path = str(Path(output_dir) / f"recap_{topic_id}_scene_{scene_num}.mp4")
+        
+        # Log the prompt
+        log_render_prompt(
+            section_id=topic_id,
+            section_title=f"{topic_title} - Recap Scene {scene_num}: {concept_title}",
+            renderer="wan_recap",
+            prompt=wan_prompt,
+            output_path=scene_output_path,
+            extra_data={
+                "section_type": "recap",
+                "scene_number": scene_num,
+                "scene_total": len(recap_scenes),
+                "concept_title": concept_title,
+                "duration": scene_duration,
+                "dry_run": dry_run,
+                "skip_wan": skip_wan
+            },
+            trace_output_dir=trace_output_dir
+        )
+        
+        print(f"  [Recap Scene {scene_num}] {concept_title}: {wan_prompt[:60]}...")
+        
+        if dry_run:
+            marker_path = scene_output_path.replace(".mp4", ".dry_run.txt")
+            with open(marker_path, "w") as f:
+                f.write(f"DRY RUN - Section {topic_id}, Recap Scene {scene_num}\n")
+                f.write(f"Concept: {concept_title}\n")
+                f.write(f"Prompt: {wan_prompt}\n")
+            video_paths.append(marker_path)
+            continue
+        
+        if skip_wan:
+            _create_recap_placeholder(scene_num, topic_id, concept_title, scene_output_path, scene_duration)
+            video_paths.append(scene_output_path)
+            continue
+        
+        # Generate actual video
+        result_path = client.generate_video(
+            prompt=wan_prompt,
+            duration=scene_duration,
+            output_path=scene_output_path
+        )
+        video_paths.append(result_path)
+    
+    print(f"[WAN] Completed {len(video_paths)} recap scene videos for section {topic_id}")
+    
+    # Return path to first scene (player will sequence all 5)
+    return video_paths[0] if video_paths else None
+
+
+def _create_recap_placeholder(scene_num: int, topic_id: int, concept_title: str, output_path: str, duration: int) -> str:
+    """Create placeholder video for a recap scene."""
+    try:
+        from moviepy import ColorClip, TextClip, CompositeVideoClip
+        
+        # Purple/blue gradient colors for recap scenes
+        colors = [(60, 30, 90), (45, 45, 100), (30, 60, 90), (50, 40, 95), (40, 50, 90)]
+        color = colors[(scene_num - 1) % len(colors)]
+        
+        bg = ColorClip(size=(1280, 720), color=color, duration=duration)
+        
+        try:
+            txt = TextClip(
+                text=f"Recap {scene_num}: {concept_title[:30]}",
+                font_size=36,
+                color="white",
+                size=(1280, 720)
+            )
+            txt = txt.with_position("center").with_duration(duration)
+            video = CompositeVideoClip([bg, txt])
+        except Exception:
+            video = bg
+        
+        video.write_videofile(
+            output_path,
+            fps=24,
+            codec="libx264",
+            audio=False,
+            verbose=False,
+            logger=None
+        )
+        video.close()
+        return output_path
+        
+    except Exception as e:
+        print(f"Recap placeholder error: {e}")
+        return _create_ffmpeg_placeholder(output_path, duration)
 
 
 def _create_beat_placeholder(beat_idx: int, topic_id: int, output_path: str, duration: int) -> str:
