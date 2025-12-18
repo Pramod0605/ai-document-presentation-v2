@@ -1,63 +1,62 @@
 import os
 import requests
 from pathlib import Path
-from pypdf import PdfReader
 
 DATALAB_API_KEY = os.environ.get("DATALAB_API_KEY", "")
 DATALAB_API_URL = "https://api.datalab.to/api/v1/marker"
+MIN_MARKDOWN_LENGTH = 100
+
+
+class DatalabConversionError(Exception):
+    """Raised when Datalab PDF conversion fails - NO fallback allowed."""
+    pass
+
 
 def pdf_to_markdown(pdf_path: str) -> str:
-    if DATALAB_API_KEY:
-        try:
-            return _convert_with_datalab(pdf_path)
-        except Exception as e:
-            print(f"Datalab API failed: {e}, using local extraction")
-            return _local_pdf_extraction(pdf_path)
-    else:
-        return _local_pdf_extraction(pdf_path)
+    """Convert PDF to markdown using Datalab API.
+    
+    FAIL-FAST: No fallback to local extraction. Raises DatalabConversionError if:
+    - DATALAB_API_KEY not configured
+    - API request fails
+    - Returned markdown is less than MIN_MARKDOWN_LENGTH chars
+    """
+    if not DATALAB_API_KEY:
+        raise DatalabConversionError(
+            "DATALAB_API_KEY not configured. PDF conversion requires Datalab API."
+        )
+    
+    markdown = _convert_with_datalab(pdf_path)
+    
+    if len(markdown) < MIN_MARKDOWN_LENGTH:
+        raise DatalabConversionError(
+            f"Datalab returned insufficient content ({len(markdown)} chars). "
+            f"Minimum required: {MIN_MARKDOWN_LENGTH} chars. "
+            "PDF may be image-only or corrupted."
+        )
+    
+    return markdown
 
 def _convert_with_datalab(pdf_path: str) -> str:
-    with open(pdf_path, "rb") as f:
-        files = {"file": (Path(pdf_path).name, f, "application/pdf")}
-        headers = {"X-Api-Key": DATALAB_API_KEY}
-        
-        response = requests.post(
-            DATALAB_API_URL,
-            files=files,
-            headers=headers,
-            data={"output_format": "markdown"}
-        )
-        
-        if response.status_code == 200:
-            result = response.json()
-            return result.get("markdown", result.get("text", ""))
-        else:
-            raise Exception(f"Datalab API error: {response.status_code} - {response.text}")
-
-def _local_pdf_extraction(pdf_path: str) -> str:
-    reader = PdfReader(pdf_path)
-    text_parts = []
-    
-    for page in reader.pages:
-        page_text = page.extract_text()
-        if page_text:
-            text_parts.append(page_text)
-    
-    full_text = "\n\n".join(text_parts)
-    
-    filename = Path(pdf_path).stem
-    lines = full_text.split('\n')
-    markdown_lines = [f"# {filename}\n"]
-    
-    for line in lines:
-        line = line.strip()
-        if not line:
-            continue
-        if line.isupper() and len(line) > 3:
-            markdown_lines.append(f"\n## {line.title()}\n")
-        elif line.endswith(':') and len(line) < 60:
-            markdown_lines.append(f"\n### {line[:-1]}\n")
-        else:
-            markdown_lines.append(line)
-    
-    return "\n".join(markdown_lines)
+    """Call Datalab API to convert PDF to markdown."""
+    try:
+        with open(pdf_path, "rb") as f:
+            files = {"file": (Path(pdf_path).name, f, "application/pdf")}
+            headers = {"X-Api-Key": DATALAB_API_KEY}
+            
+            response = requests.post(
+                DATALAB_API_URL,
+                files=files,
+                headers=headers,
+                data={"output_format": "markdown"},
+                timeout=120
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                return result.get("markdown", result.get("text", ""))
+            else:
+                raise DatalabConversionError(
+                    f"Datalab API error: {response.status_code} - {response.text[:500]}"
+                )
+    except requests.exceptions.RequestException as e:
+        raise DatalabConversionError(f"Datalab API request failed: {e}")

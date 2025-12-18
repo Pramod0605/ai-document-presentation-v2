@@ -6,6 +6,50 @@ from render.manim.manim_runner import render_manim_video
 from core.visual_compiler import compile_section_visuals, VisualCompilationError
 
 
+MATH_PHYSICS_SUBJECTS = [
+    "mathematics", "maths", "math", "algebra", "geometry", "calculus",
+    "trigonometry", "statistics", "physics", "mechanics", "electrostatics",
+    "electromagnetism", "thermodynamics", "optics", "quantum", "kinematics",
+    "chemistry"
+]
+
+
+def enforce_renderer_policy(presentation: dict) -> dict:
+    """Enforce renderer selection based on subject and section type.
+    
+    POLICY:
+    - For math/physics subjects: Force Manim for content/example sections
+    - Recap sections: Always use WAN (storyboard visualization)
+    - Intro/Summary/Memory: Text-only (no video rendering needed)
+    
+    This overrides the LLM Director's renderer choice to ensure consistency.
+    """
+    subject = presentation.get("subject", "").lower()
+    is_math_physics = any(subj in subject for subj in MATH_PHYSICS_SUBJECTS)
+    
+    if not is_math_physics:
+        return presentation
+    
+    sections = presentation.get("sections", presentation.get("topics", []))
+    changes_made = 0
+    
+    for section in sections:
+        section_type = section.get("section_type", "content")
+        current_renderer = section.get("renderer", "wan_video")
+        
+        if section_type in ("content", "example"):
+            if current_renderer != "manim":
+                section["renderer"] = "manim"
+                section["renderer_override_reason"] = f"Math/physics subject '{subject}' requires Manim for {section_type} sections"
+                changes_made += 1
+                print(f"[RENDERER POLICY] Section {section.get('id')}: Forced WAN -> Manim (math/physics subject)")
+    
+    if changes_made > 0:
+        print(f"[RENDERER POLICY] Applied {changes_made} renderer overrides for subject: {subject}")
+    
+    return presentation
+
+
 def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, trace_output_dir: str = None, strict_mode: bool = True) -> dict:
     os.makedirs(output_dir, exist_ok=True)
     
