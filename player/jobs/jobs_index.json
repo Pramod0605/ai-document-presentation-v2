@@ -4146,16 +4146,199 @@
       "file_path": "/tmp/ai_education_jobs/27b248e6d1867bbc.pdf",
       "source_file": "3-Page-Maths.pdf"
     },
-    "status": "processing",
-    "current_step": null,
-    "current_step_name": "Initializing...",
-    "steps_completed": 0,
+    "status": "completed",
+    "current_step": 3,
+    "current_step_name": "Generating audio narration...",
+    "steps_completed": 4,
     "total_steps": 4,
-    "progress": 0,
+    "progress": 100,
     "created_at": "2025-12-18T03:04:58.369590",
     "started_at": "2025-12-18T03:04:58.381335",
-    "completed_at": null,
+    "completed_at": "2025-12-18T03:25:39.344951",
     "error": null,
-    "result": null
+    "result": {
+      "status": "completed",
+      "started_at": "2025-12-18T03:04:58.396631",
+      "source_file": "3-Page-Maths.pdf",
+      "steps": [
+        {
+          "step": "pdf_to_markdown",
+          "status": "completed"
+        },
+        {
+          "step": "extract_images",
+          "status": "completed",
+          "count": 0
+        },
+        {
+          "step": "generate_presentation_plan",
+          "status": "completed"
+        },
+        {
+          "step": "render_videos",
+          "status": "completed",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/05b72093/videos/topic_1.mp4",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/05b72093/videos/topic_2.mp4",
+              "error": null,
+              "visual_beats_used": 3,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/05b72093/videos/topic_3_beat_0.mp4",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 4,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/05b72093/videos/topic_4.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 5,
+              "section_type": "content",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/05b72093/videos/topic_5_beat_0.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 6,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/05b72093/videos/topic_6.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 7,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/05b72093/videos/topic_7.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 8,
+              "section_type": "memory",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/05b72093/videos/topic_8.mp4",
+              "error": null,
+              "visual_beats_used": 1,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 9,
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/05b72093/videos/topic_9.mp4",
+              "error": null,
+              "visual_beats_used": 1,
+              "dry_run": false,
+              "compilation_errors": []
+            }
+          ],
+          "success_count": 9,
+          "fail_count": 0,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": 1,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/05b72093/audio/section_1.mp3"
+            },
+            {
+              "section_id": 2,
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/05b72093/audio/section_2.mp3"
+            },
+            {
+              "section_id": 3,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/05b72093/audio/section_3.mp3"
+            },
+            {
+              "section_id": 4,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/05b72093/audio/section_4.mp3"
+            },
+            {
+              "section_id": 5,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/05b72093/audio/section_5.mp3"
+            },
+            {
+              "section_id": 6,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/05b72093/audio/section_6.mp3"
+            },
+            {
+              "section_id": 7,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/05b72093/audio/section_7.mp3"
+            },
+            {
+              "section_id": 8,
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/05b72093/audio/section_8.mp3"
+            },
+            {
+              "section_id": 9,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/05b72093/audio/section_9.mp3"
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-18T03:25:39.343127",
+      "presentation_path": "/home/runner/workspace/player/jobs/05b72093/presentation.json",
+      "trace_path": "/home/runner/workspace/player/jobs/05b72093/generation_trace.json",
+      "sections_count": 9,
+      "dry_run": false
+    }
   }
 }
