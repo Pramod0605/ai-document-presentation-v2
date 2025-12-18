@@ -337,6 +337,43 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
                 pos_name = POSITION_MAP.get(obj_position, "ORIGIN")
                 code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to({pos_name})')
         
+        elif obj_type == "polygon":
+            vertices = obj.get("vertices", [[0,0], [1,0], [0.5, 1]])
+            vertices_str = ", ".join([f"[{v[0]}, {v[1]}, 0]" for v in vertices])
+            code_lines.append(f'{var_name} = Polygon({vertices_str}, color={color})')
+            if label_text:
+                code_lines.append(f'{var_name}_label = Text("{label_text}", font_size=20).move_to({var_name}.get_center())')
+        
+        elif obj_type == "square":
+            side = props.get("side", 1)
+            rotation = props.get("rotation", 0)
+            code_lines.append(f'{var_name} = Square(side_length={side}, color={color})')
+            if isinstance(position, list):
+                code_lines.append(f'{var_name}.move_to(np.array([{position[0]}, {position[1]}, 0]))')
+            if rotation:
+                code_lines.append(f'{var_name}.rotate({rotation} * DEGREES)')
+            if label_text:
+                code_lines.append(f'{var_name}_label = Text("{label_text}", font_size=18).move_to({var_name}.get_center())')
+        
+        elif obj_type == "circle":
+            radius = props.get("radius", 1)
+            fill_opacity = props.get("fill_opacity", 0)
+            code_lines.append(f'{var_name} = Circle(radius={radius}, color={color}, fill_opacity={fill_opacity})')
+            if isinstance(position, list):
+                code_lines.append(f'{var_name}.move_to(np.array([{position[0]}, {position[1]}, 0]))')
+            if label_text:
+                code_lines.append(f'{var_name}_label = Text("{label_text}", font_size=18).next_to({var_name}, DOWN)')
+        
+        elif obj_type == "line":
+            point = props.get("point", [0, 0])
+            slope = props.get("slope", 1)
+            length = props.get("length", 3)
+            code_lines.append(f'{var_name}_start = np.array([{point[0] - length/2}, {point[1] - slope*length/2}, 0])')
+            code_lines.append(f'{var_name}_end = np.array([{point[0] + length/2}, {point[1] + slope*length/2}, 0])')
+            code_lines.append(f'{var_name} = Line({var_name}_start, {var_name}_end, color={color})')
+            if label_text:
+                code_lines.append(f'{var_name}_label = Text("{label_text}", font_size=18).next_to({var_name}, UP)')
+        
         else:
             if isinstance(position, list):
                 code_lines.append(f'{var_name} = Dot(point=np.array([{position[0]}, {position[1]}, 0]), color={color})')
@@ -380,6 +417,7 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
         eq_id = eq["id"]
         latex = eq.get("latex", "")
         position = eq.get("position", "top_center")
+        animation_style = eq.get("animation_style", "write")
         
         var_name = eq_id.replace("-", "_").replace(" ", "_")
         object_vars[eq_id] = var_name
@@ -388,7 +426,24 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
             pos_name = f"np.array([{position[0] if len(position) > 0 else 0}, {position[1] if len(position) > 1 else 0}, 0])"
         else:
             pos_name = POSITION_MAP.get(position, "UP * 3")
-        code_lines.append(f'{var_name} = MathTex(r"{latex}").move_to({pos_name})')
+        
+        if animation_style == "element_reveal" and eq.get("reveal_steps"):
+            reveal_steps = eq["reveal_steps"]
+            code_lines.append(f'{var_name} = MathTex(r"{latex}").move_to({pos_name})')
+            code_lines.append(f'{var_name}_reveal_count = {len(reveal_steps)}')
+            code_lines.append(f'{var_name}_reveal_steps = {[step.get("at_time", i * 0.3) for i, step in enumerate(reveal_steps)]}')
+            for i, step in enumerate(reveal_steps):
+                at_time = step.get("at_time", i * 0.3)
+                object_vars[f"{eq_id}_part_{i}"] = f'{var_name}'
+        elif animation_style == "synchronized" and eq.get("latex_elements"):
+            latex_elements = eq["latex_elements"]
+            code_lines.append(f'{var_name} = MathTex(r"{latex}").move_to({pos_name})')
+            code_lines.append(f'{var_name}_sync_count = {len(latex_elements)}')
+            code_lines.append(f'{var_name}_sync_times = {[elem.get("start_time", i * 0.5) for i, elem in enumerate(latex_elements)]}')
+            for i, elem in enumerate(latex_elements):
+                object_vars[f"{eq_id}_elem_{i}"] = var_name
+        else:
+            code_lines.append(f'{var_name} = MathTex(r"{latex}").move_to({pos_name})')
         
         if eq.get("substitution"):
             sub_latex = eq["substitution"]
@@ -423,7 +478,79 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
                 code_lines.append(f'self.play(FadeIn({target_var}_label), run_time=0.3)')
         
         elif action == "show_equation":
-            code_lines.append(f'self.play(Write({target_var}), run_time={duration})')
+            style = anim.get("style", "write")
+            if style == "element_reveal":
+                eq_spec = None
+                for eq in spec.get("equations", []):
+                    if eq.get("id") == target_str:
+                        eq_spec = eq
+                        break
+                
+                if eq_spec and eq_spec.get("reveal_steps"):
+                    reveal_steps = eq_spec["reveal_steps"]
+                    n_steps = len(reveal_steps)
+                    code_lines.append(f'# Element reveal animation: {n_steps} timing points')
+                    code_lines.append(f'{target_var}_submobs = list({target_var}.submobjects)')
+                    code_lines.append(f'{target_var}_n = len({target_var}_submobs)')
+                    code_lines.append(f'{target_var}_chunk_size = max(1, {target_var}_n // {n_steps})')
+                    
+                    for i, step in enumerate(reveal_steps):
+                        at_time = step.get("at_time", i * 0.3)
+                        if i + 1 < n_steps:
+                            next_time = reveal_steps[i + 1].get("at_time", (i + 1) * 0.3)
+                        else:
+                            next_time = at_time + 0.5
+                        write_duration = max(0.2, round(next_time - at_time, 2))
+                        
+                        if i > 0:
+                            prev_end = reveal_steps[i - 1].get("at_time", (i - 1) * 0.3) + 0.2
+                            wait_time = at_time - prev_end
+                            if wait_time > 0.01:
+                                code_lines.append(f'self.wait({round(wait_time, 2)})')
+                        
+                        code_lines.append(f'{target_var}_start = {i} * {target_var}_chunk_size')
+                        code_lines.append(f'{target_var}_end = min(({i}+1) * {target_var}_chunk_size, {target_var}_n)')
+                        code_lines.append(f'{target_var}_chunk = VGroup(*{target_var}_submobs[{target_var}_start:{target_var}_end])')
+                        code_lines.append(f'self.play(Write({target_var}_chunk), run_time={write_duration})')
+                else:
+                    code_lines.append(f'self.play(Write({target_var}), run_time={duration})')
+            elif style == "synchronized":
+                eq_spec = None
+                for eq in spec.get("equations", []):
+                    if eq.get("id") == target_str:
+                        eq_spec = eq
+                        break
+                
+                if eq_spec and eq_spec.get("latex_elements"):
+                    latex_elements = eq_spec["latex_elements"]
+                    n_elems = len(latex_elements)
+                    code_lines.append(f'# Synchronized animation: {n_elems} timing points')
+                    code_lines.append(f'{target_var}_submobs = list({target_var}.submobjects)')
+                    code_lines.append(f'{target_var}_n = len({target_var}_submobs)')
+                    code_lines.append(f'{target_var}_chunk_size = max(1, {target_var}_n // {n_elems})')
+                    
+                    for i, elem in enumerate(latex_elements):
+                        start_time = elem.get("start_time", i * 0.5)
+                        if i + 1 < n_elems:
+                            next_time = latex_elements[i + 1].get("start_time", (i + 1) * 0.5)
+                        else:
+                            next_time = start_time + 0.5
+                        write_duration = max(0.2, round(next_time - start_time, 2))
+                        
+                        if i > 0:
+                            prev_end = latex_elements[i - 1].get("start_time", (i - 1) * 0.5) + 0.2
+                            wait_time = start_time - prev_end
+                            if wait_time > 0.01:
+                                code_lines.append(f'self.wait({round(wait_time, 2)})')
+                        
+                        code_lines.append(f'{target_var}_start = {i} * {target_var}_chunk_size')
+                        code_lines.append(f'{target_var}_end = min(({i}+1) * {target_var}_chunk_size, {target_var}_n)')
+                        code_lines.append(f'{target_var}_chunk = VGroup(*{target_var}_submobs[{target_var}_start:{target_var}_end])')
+                        code_lines.append(f'self.play(Write({target_var}_chunk), run_time={write_duration})')
+                else:
+                    code_lines.append(f'self.play(Write({target_var}), run_time={duration})')
+            else:
+                code_lines.append(f'self.play(Write({target_var}), run_time={duration})')
         
         elif action == "substitute":
             code_lines.append(f'self.play(TransformMatchingShapes({target_var}, {target_var}_sub), run_time={duration})')

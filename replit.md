@@ -40,6 +40,25 @@ The `Presentation` JSON schema includes a `sections` array, where each section s
 
 ## Recent Changes (Dec 18, 2025)
 
+### Synchronized LaTeX Animation for Math Content
+- New `animation_style` field for equations: `write` (default), `element_reveal`, `synchronized`
+- **element_reveal**: Breaks formula into parts (e.g., `x`, `=`, `\frac{-b}{...}`) with timed reveals
+- **synchronized**: Each LaTeX element appears as narrator speaks the corresponding word
+- Each reveal_step has `at_time` offset that controls wait duration between elements
+- Example: For "x equals negative b..." narration, `x` appears at 0.0s, `=` at 0.3s, `-b` at 0.6s
+
+### New Manim Object Types
+- `polygon`: Define vertices for custom shapes (triangles, pentagons, etc.)
+- `square`: With side length and rotation
+- `circle`: With radius and fill opacity
+- `line`: With point, slope, and length for tangent lines
+
+### Manim Test Infrastructure
+- New `scripts/test_manim_only.py` for isolated testing
+- Tests visual compiler separately from LLM/PDF/TTS pipeline
+- Validates geometry, calculus graphs, synchronized LaTeX
+- Can run in dry-run mode or actual Manim rendering
+
 ### Per-Beat Display Mode Toggling
 - Player now updates text/video visibility on EVERY beat, not just the first
 - `display_mode` values: `video_only` (hide text), `text_primary` (swap layout), `video_primary` (default)

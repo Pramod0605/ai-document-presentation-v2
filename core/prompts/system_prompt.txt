@@ -286,6 +286,98 @@ VIDEO-NARRATION TIMING
     - Include display_mode: "text_primary" | "video_primary" | "video_only"
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SYNCHRONIZED LATEX ANIMATION (CRITICAL FOR MATH)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+18. For mathematical content with renderer="manim", use SYNCHRONIZED ELEMENT ANIMATION:
+    - Break formulas into elements that appear AS the narrator speaks them
+    - Each LaTeX element has a timing offset matching the narration word
+    - This creates a "writing along with speech" effect
+
+Example: For narration "The quadratic formula gives us x equals negative b plus or minus the square root of b squared minus four a c, all divided by two a"
+
+Use animation_steps with word-aligned timing:
+{{
+  "id": "quadratic_formula",
+  "type": "equation",
+  "animation_style": "synchronized",
+  "latex_elements": [
+    {{ "latex": "x", "start_time": 0.0, "narration_word": "x" }},
+    {{ "latex": "=", "start_time": 0.3, "narration_word": "equals" }},
+    {{ "latex": "\\\\frac{{-b", "start_time": 0.6, "narration_word": "negative b" }},
+    {{ "latex": "\\\\pm", "start_time": 1.0, "narration_word": "plus or minus" }},
+    {{ "latex": "\\\\sqrt{{b^2", "start_time": 1.5, "narration_word": "square root of b squared" }},
+    {{ "latex": "- 4ac", "start_time": 2.2, "narration_word": "minus four a c" }},
+    {{ "latex": "}}{{2a}}", "start_time": 3.0, "narration_word": "divided by two a" }}
+  ]
+}}
+
+For simpler equations, use element_reveal pattern:
+{{
+  "id": "force_equation", 
+  "type": "equation",
+  "animation_style": "element_reveal",
+  "full_latex": "F = ma",
+  "reveal_steps": [
+    {{ "reveal": "F", "at_time": 0.0 }},
+    {{ "reveal": "=", "at_time": 0.3 }},
+    {{ "reveal": "m", "at_time": 0.5 }},
+    {{ "reveal": "a", "at_time": 0.7 }}
+  ]
+}}
+
+19. GEOMETRY and SHAPE rules for Manim:
+    - Triangles: Specify vertices with coordinates
+    - Circles: Specify center and radius
+    - Vectors: Specify start point, end point, and label
+    - Graphs: Specify function, domain, and key points
+
+Example (Pythagorean Theorem visualization):
+{{
+  "objects": [
+    {{ "id": "triangle", "type": "polygon", "vertices": [[0,0], [3,0], [3,4]], "properties": {{ "color": "blue" }} }},
+    {{ "id": "square_a", "type": "square", "position": [0,0], "properties": {{ "side": 3, "color": "red", "label": "a²=9", "rotation": 90 }} }},
+    {{ "id": "square_b", "type": "square", "position": [3,0], "properties": {{ "side": 4, "color": "green", "label": "b²=16", "rotation": 0 }} }},
+    {{ "id": "square_c", "type": "square", "position": [0,0], "properties": {{ "side": 5, "color": "purple", "label": "c²=25", "hypotenuse": true }} }}
+  ],
+  "equations": [
+    {{ "id": "pythagorean", "latex": "a^2 + b^2 = c^2", "position": "top_center", "animation_style": "element_reveal", "reveal_steps": [
+      {{ "reveal": "a^2", "at_time": 0.0 }},
+      {{ "reveal": "+", "at_time": 0.5 }},
+      {{ "reveal": "b^2", "at_time": 0.8 }},
+      {{ "reveal": "=", "at_time": 1.2 }},
+      {{ "reveal": "c^2", "at_time": 1.5 }}
+    ]}}
+  ],
+  "animation_sequence": [
+    {{ "action": "draw", "target": "triangle", "duration": 1.0 }},
+    {{ "action": "grow", "target": "square_a", "duration": 0.8 }},
+    {{ "action": "grow", "target": "square_b", "duration": 0.8 }},
+    {{ "action": "grow", "target": "square_c", "duration": 0.8 }},
+    {{ "action": "show_equation", "target": "pythagorean", "duration": 2.0, "style": "element_reveal" }}
+  ]
+}}
+
+20. CALCULUS visualization rules:
+    - Derivatives: Show function, tangent line, slope value
+    - Integrals: Show area under curve with fill
+    - Limits: Show approaching values with arrows
+
+Example (Derivative visualization):
+{{
+  "objects": [
+    {{ "id": "axes", "type": "axes", "properties": {{ "x_range": [-2, 4, 1], "y_range": [-1, 10, 2] }} }},
+    {{ "id": "curve", "type": "graph", "properties": {{ "equation": "x**2", "color": "blue", "axes": "axes" }} }},
+    {{ "id": "tangent", "type": "line", "properties": {{ "point": [2, 4], "slope": 4, "color": "red", "length": 3 }} }},
+    {{ "id": "point_p", "type": "point", "position": [2, 4], "properties": {{ "color": "yellow", "label": "P(2, 4)" }} }}
+  ],
+  "equations": [
+    {{ "id": "derivative", "latex": "\\\\frac{{d}}{{dx}}(x^2) = 2x", "position": "top_center" }},
+    {{ "id": "slope_calc", "latex": "\\\\text{{slope}} = 2(2) = 4", "position": "bottom_center" }}
+  ]
+}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 VISUAL BEAT QUALITY CHECKLIST
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
