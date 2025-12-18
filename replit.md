@@ -40,6 +40,12 @@ The `Presentation` JSON schema includes a `sections` array, where each section s
 
 ## Recent Changes (Dec 18, 2025)
 
+### Manim LaTeX Rendering Fix
+- **Root cause**: A corrupted local `standalone.cls` file (only containing `\endinput`) was being loaded instead of the system's TexLive standalone class
+- **Symptom**: LaTeX error "The font size command \normalsize is not defined" during Manim renders
+- **Solution**: Removed the broken local file; Nix's texliveFull package provides a working standalone.cls at `/nix/store/.../tex/latex/standalone/standalone.cls`
+- **Note**: Never create local `.cls` files in the working directory as they override system LaTeX classes
+
 ### Synchronized LaTeX Animation for Math Content
 - New `animation_style` field for equations: `write` (default), `element_reveal`, `synchronized`
 - **element_reveal**: Progressively reveals equation in chunks based on timing metadata

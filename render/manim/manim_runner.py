@@ -347,6 +347,49 @@ def _validate_not_placeholder(params: dict, topic_id: int, topic_title: str):
         )
 
 
+def _sanitize_manim_code(manim_code: str) -> str:
+    """
+    Sanitize Manim code to fix common LaTeX issues.
+    
+    Fixes:
+    1. Replace MathTex with Tex when \text{} is used (prevents LaTeX errors)
+    2. Escape problematic characters in \text{} content
+    """
+    import re
+    
+    lines = manim_code.split('\n')
+    fixed_lines = []
+    
+    for line in lines:
+        # Check if line contains MathTex with \text{} - these need to be Tex instead
+        if 'MathTex' in line and r'\text{' in line:
+            # Replace MathTex with Tex for lines containing \text{}
+            line = line.replace('MathTex', 'Tex')
+        
+        # Also handle cases where \text{} contains problematic chars
+        # Replace common issues in \text{} blocks
+        if r'\text{' in line:
+            # Fix unescaped commas/periods that can cause issues
+            line = re.sub(r'\\text\{([^}]*)\}', lambda m: r'\text{' + m.group(1).replace(',', r'{,}') + '}', line)
+        
+        fixed_lines.append(line)
+    
+    return '\n'.join(fixed_lines)
+
+
+def _get_texinputs_env() -> dict:
+    """Get environment with TEXINPUTS including vendored LaTeX files."""
+    import os
+    templates_dir = Path(__file__).parent / "templates"
+    current_texinputs = os.environ.get("TEXINPUTS", "")
+    new_texinputs = f"{templates_dir}:{current_texinputs}:" if current_texinputs else f"{templates_dir}::"
+    env = os.environ.copy()
+    env["TEXINPUTS"] = new_texinputs
+    return env
+
+
+
+
 def _execute_spec_generated_render(
     manim_code: str,
     duration: int,
@@ -355,14 +398,20 @@ def _execute_spec_generated_render(
 ) -> str:
     """Execute Manim render from spec-generated code."""
     
+    # Sanitize the code to fix common LaTeX issues
+    sanitized_code = _sanitize_manim_code(manim_code)
+    
     scene_wrapper = f'''
 from manim import *
 import numpy as np
 
 class SpecGeneratedScene(Scene):
     def construct(self):
-{chr(10).join("        " + line for line in manim_code.split(chr(10)))}
+{chr(10).join("        " + line for line in sanitized_code.split(chr(10)))}
 '''
+    
+    # Get environment with vendored LaTeX files
+    env = _get_texinputs_env()
     
     with tempfile.TemporaryDirectory() as tmpdir:
         scene_file = Path(tmpdir) / "scene.py"
@@ -384,7 +433,8 @@ class SpecGeneratedScene(Scene):
                 capture_output=True,
                 text=True,
                 timeout=120,
-                cwd=tmpdir
+                cwd=tmpdir,
+                env=env
             )
             
             if result.returncode != 0:
@@ -420,6 +470,9 @@ def _execute_manim_render(
 ) -> str:
     """Execute Manim render - raises ManimRenderError on failure."""
     
+    # Get environment with vendored LaTeX files
+    env = _get_texinputs_env()
+    
     with tempfile.TemporaryDirectory() as tmpdir:
         scene_file = Path(tmpdir) / "scene.py"
         with open(scene_file, "w") as f:
@@ -447,7 +500,8 @@ def _execute_manim_render(
                 capture_output=True,
                 text=True,
                 timeout=120,
-                cwd=tmpdir
+                cwd=tmpdir,
+                env=env
             )
             
             if result.returncode != 0:
