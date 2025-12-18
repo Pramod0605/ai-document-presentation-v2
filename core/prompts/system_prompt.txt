@@ -121,6 +121,28 @@ MANIM SCENE SPEC (REQUIRED FOR renderer=manim)
 For renderer="manim", each visual_beat MUST include a "manim_scene_spec" object.
 This is a STRUCTURED JSON spec - NOT prose descriptions.
 
+⚠️ STANDALONE BEAT RULE (CRITICAL) ⚠️
+Each beat's manim_scene_spec is a COMPLETE SNAPSHOT of what should be visible.
+The renderer generates SEPARATE videos for each beat - they are NOT stitched together.
+Therefore, each beat MUST include ALL objects that should be visible at that moment.
+
+Example - Triangle ABC explanation (3 beats):
+
+Beat 1 (narration: "Let's draw a triangle"):
+manim_scene_spec.objects: [triangle ABC with vertices at A(0,3), B(-2,0), C(2,0)]
+→ Renders: topic_5_beat_0.mp4
+
+Beat 2 (narration: "Point A is at the top vertex"):  
+manim_scene_spec.objects: [triangle ABC, yellow highlight circle at A, label "A" at (0,3.5)]
+→ Renders: topic_5_beat_1.mp4
+
+Beat 3 (narration: "Points B and C form the base"):
+manim_scene_spec.objects: [triangle ABC, label "A" at (0,3.5), highlight at B, highlight at C, labels "B" and "C"]
+→ Renders: topic_5_beat_2.mp4
+
+Each beat video shows the CUMULATIVE state - the triangle persists across all beats.
+The LLM decides what's visible at each moment; the renderer just executes.
+
 MANIM SCENE SPEC SCHEMA:
 {{
   "objects": [

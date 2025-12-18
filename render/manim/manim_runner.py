@@ -89,7 +89,7 @@ BANNED_PLACEHOLDER_EQUATIONS = [
 ]
 
 
-def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trace_output_dir: str | None = None) -> str:
+def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trace_output_dir: str | None = None) -> str | list[str]:
     """
     Render Manim video for a section with visual beats.
     
@@ -98,7 +98,8 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
     - Plan uses generic/placeholder equations
     - Manim execution fails
     
-    Handles multi_beat plans by rendering first beat (TODO: stitch all beats).
+    Multi-beat rendering: Each visual_beat renders as topic_{id}_beat_{i}.mp4
+    Returns list of paths for multi-beat, single path for single-beat.
     """
     topic_id = topic.get("id", 1)
     topic_title = topic.get("title", "Untitled")
@@ -106,6 +107,23 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
     explanation_plan = topic.get("explanation_plan", {})
     visual_beats = topic.get("visual_beats", [])
     duration = topic.get("duration", 30)
+    
+    # Get narration_segments for per-beat duration lookup
+    narration_segments = topic.get("narration_segments", [])
+    
+    # Multi-beat rendering: each beat gets its own video file
+    if len(visual_beats) > 1:
+        return _render_all_beats(
+            visual_beats=visual_beats,
+            topic_id=topic_id,
+            topic_title=topic_title,
+            section_type=section_type,
+            total_duration=duration,
+            narration_segments=narration_segments,
+            output_dir=output_dir,
+            dry_run=dry_run,
+            trace_output_dir=trace_output_dir
+        )
     
     # Check for compiled Manim plan from visual_compiler
     compiled_manim_plan = explanation_plan.get("compiled_manim_plan")
@@ -125,6 +143,21 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
             )
     
     scene_type = manim_plan.get("scene_type", "equation")
+    
+    # Handle multi_beat compiled plans with beats array (but no visual_beats)
+    if scene_type == "multi_beat":
+        beats = manim_plan.get("beats", [])
+        if beats and len(beats) > 1:
+            return _render_compiled_multi_beat(
+                beats=beats,
+                topic_id=topic_id,
+                topic_title=topic_title,
+                section_type=section_type,
+                total_duration=duration,
+                output_dir=output_dir,
+                dry_run=dry_run,
+                trace_output_dir=trace_output_dir
+            )
     
     # Handle spec_generated plans - use pre-generated Manim code
     if scene_type == "spec_generated":
@@ -297,14 +330,306 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
     return result
 
 
+def _get_beat_duration(beat_index: int, visual_beats: list, narration_segments: list, total_duration: float) -> float:
+    """
+    Get duration for a specific beat from LLM-provided data.
+    
+    Priority:
+    1. visual_beat.duration (if LLM provided it)
+    2. Matching narration_segment.duration (by segment_id)
+    3. Fallback: total_duration / beat_count
+    
+    NOTE: Preserves fractional durations - LLM timing is authoritative.
+    """
+    beat = visual_beats[beat_index] if beat_index < len(visual_beats) else {}
+    
+    # Check beat-level duration (preserve float)
+    if beat.get("duration"):
+        return float(beat["duration"])
+    
+    # Check matching narration segment (segment_id is 1-indexed usually)
+    segment_id = beat.get("segment_id", beat_index + 1)
+    for seg in narration_segments:
+        if seg.get("id") == segment_id:
+            if seg.get("duration"):
+                return float(seg["duration"])
+    
+    # Fallback: uniform distribution (preserve float)
+    return float(total_duration) / len(visual_beats) if visual_beats else float(total_duration)
+
+
+def _render_all_beats(
+    visual_beats: list,
+    topic_id: int,
+    topic_title: str,
+    section_type: str,
+    total_duration: float,
+    narration_segments: list,
+    output_dir: str,
+    dry_run: bool = False,
+    trace_output_dir: str | None = None
+) -> list[str]:
+    """
+    Render ALL visual beats as separate video files.
+    
+    Each beat renders as topic_{id}_beat_{i}.mp4 where i is 0-indexed.
+    The player detects these files and switches between them based on timing.
+    
+    STANDALONE BEAT RULE: Each beat's manim_scene_spec is a complete snapshot
+    of what should be visible at that moment. The LLM decides what persists;
+    we just render each beat independently.
+    
+    Duration is sourced from LLM-provided visual_beat.duration or narration_segments.
+    """
+    from core.visual_compiler import compile_manim_plan, VisualCompilationError
+    
+    rendered_paths = []
+    
+    print(f"[MANIM] Multi-beat rendering: {len(visual_beats)} beats for section {topic_id}")
+    
+    for beat_index, beat in enumerate(visual_beats):
+        output_path = str(Path(output_dir) / f"topic_{topic_id}_beat_{beat_index}.mp4")
+        
+        # Get duration from LLM-provided data (not uniform division)
+        beat_duration = _get_beat_duration(beat_index, visual_beats, narration_segments, total_duration)
+        
+        try:
+            plan = compile_manim_plan(beat, topic_id, beat_index)
+        except VisualCompilationError as e:
+            raise ManimRenderError(
+                f"Section {topic_id} beat {beat_index}: Compilation failed - {e.reason}"
+            )
+        
+        scene_type = plan.get("scene_type", "equation")
+        
+        if scene_type == "spec_generated":
+            manim_code = plan.get("manim_code", "")
+            params = plan.get("params", {})
+            
+            if not manim_code:
+                raise ManimRenderError(
+                    f"Section {topic_id} beat {beat_index}: spec_generated has no manim_code"
+                )
+            
+            print(f"[MANIM] Beat {beat_index}: {params.get('object_count', 0)} objects, "
+                  f"{params.get('force_count', 0)} forces, "
+                  f"{params.get('equation_count', 0)} equations, duration={beat_duration}s")
+            
+            log_render_prompt(
+                section_id=topic_id,
+                section_title=f"{topic_title} (beat {beat_index})",
+                renderer="manim_spec",
+                prompt=manim_code,
+                output_path=output_path,
+                extra_data={
+                    "section_type": section_type,
+                    "scene_type": "spec_generated",
+                    "beat_index": beat_index,
+                    "beat_count": len(visual_beats),
+                    "duration": beat_duration,
+                    "dry_run": dry_run
+                },
+                trace_output_dir=trace_output_dir
+            )
+            
+            if dry_run:
+                print(f"[DRY RUN] Manim beat {beat_index} for section {topic_id}")
+                marker_path = _create_dry_run_marker(topic_id, output_path, beat_duration, manim_code)
+                rendered_paths.append(marker_path)
+            else:
+                result = _execute_spec_generated_render(
+                    manim_code=manim_code,
+                    duration=beat_duration,
+                    output_path=output_path,
+                    topic_id=topic_id
+                )
+                rendered_paths.append(result)
+                print(f"[MANIM] Rendered beat {beat_index}: {result}")
+        else:
+            # Legacy template-based rendering
+            params = plan.get("params", {})
+            _validate_not_placeholder(params, topic_id, topic_title)
+            
+            template = MANIM_TEMPLATES.get(scene_type, MANIM_TEMPLATES["equation"])
+            render_params = {
+                "wait_time": max(1, beat_duration - 5),
+                **params
+            }
+            
+            try:
+                scene_code = template.format(**render_params)
+            except KeyError as e:
+                raise ManimRenderError(
+                    f"Section {topic_id} beat {beat_index}: Missing Manim parameter: {e}"
+                )
+            
+            log_render_prompt(
+                section_id=topic_id,
+                section_title=f"{topic_title} (beat {beat_index})",
+                renderer="manim_code",
+                prompt=scene_code,
+                output_path=output_path,
+                extra_data={
+                    "scene_type": scene_type,
+                    "beat_index": beat_index,
+                    "duration": beat_duration,
+                    "dry_run": dry_run
+                },
+                trace_output_dir=trace_output_dir
+            )
+            
+            if dry_run:
+                print(f"[DRY RUN] Manim beat {beat_index} for section {topic_id}")
+                marker_path = _create_dry_run_marker(topic_id, output_path, beat_duration, scene_code)
+                rendered_paths.append(marker_path)
+            else:
+                result = _execute_manim_render(
+                    scene_type=scene_type,
+                    params=params,
+                    duration=beat_duration,
+                    output_path=output_path,
+                    topic_id=topic_id,
+                    scene_code=scene_code
+                )
+                rendered_paths.append(result)
+                print(f"[MANIM] Rendered beat {beat_index}: {result}")
+    
+    print(f"[MANIM] Completed {len(rendered_paths)} beat videos for section {topic_id}")
+    return rendered_paths
+
+
+def _render_compiled_multi_beat(
+    beats: list,
+    topic_id: int,
+    topic_title: str,
+    section_type: str,
+    total_duration: float,
+    output_dir: str,
+    dry_run: bool = False,
+    trace_output_dir: str | None = None
+) -> list[str]:
+    """
+    Render compiled multi-beat plans (from manim_plan['beats'] array).
+    
+    This handles the case where visual_beats is empty but manim_plan contains
+    a pre-compiled 'beats' array with scene_type="multi_beat".
+    
+    NOTE: Preserves fractional durations - LLM timing is authoritative.
+    """
+    rendered_paths = []
+    beat_count = len(beats)
+    
+    print(f"[MANIM] Compiled multi-beat rendering: {beat_count} beats for section {topic_id}")
+    
+    for beat_index, beat_plan in enumerate(beats):
+        output_path = str(Path(output_dir) / f"topic_{topic_id}_beat_{beat_index}.mp4")
+        
+        # Get duration from beat plan or uniform fallback (preserve float)
+        beat_duration = float(beat_plan.get("duration", float(total_duration) / beat_count))
+        scene_type = beat_plan.get("scene_type", "equation")
+        
+        if scene_type == "spec_generated":
+            manim_code = beat_plan.get("manim_code", "")
+            params = beat_plan.get("params", {})
+            
+            if not manim_code:
+                raise ManimRenderError(
+                    f"Section {topic_id} beat {beat_index}: spec_generated has no manim_code"
+                )
+            
+            print(f"[MANIM] Compiled beat {beat_index}: duration={beat_duration}s")
+            
+            log_render_prompt(
+                section_id=topic_id,
+                section_title=f"{topic_title} (compiled beat {beat_index})",
+                renderer="manim_spec",
+                prompt=manim_code,
+                output_path=output_path,
+                extra_data={
+                    "section_type": section_type,
+                    "scene_type": "spec_generated",
+                    "beat_index": beat_index,
+                    "beat_count": beat_count,
+                    "duration": beat_duration,
+                    "dry_run": dry_run
+                },
+                trace_output_dir=trace_output_dir
+            )
+            
+            if dry_run:
+                print(f"[DRY RUN] Compiled Manim beat {beat_index} for section {topic_id}")
+                marker_path = _create_dry_run_marker(topic_id, output_path, beat_duration, manim_code)
+                rendered_paths.append(marker_path)
+            else:
+                result = _execute_spec_generated_render(
+                    manim_code=manim_code,
+                    duration=beat_duration,
+                    output_path=output_path,
+                    topic_id=topic_id
+                )
+                rendered_paths.append(result)
+                print(f"[MANIM] Rendered compiled beat {beat_index}: {result}")
+        else:
+            # Legacy template-based rendering
+            params = beat_plan.get("params", {})
+            _validate_not_placeholder(params, topic_id, topic_title)
+            
+            template = MANIM_TEMPLATES.get(scene_type, MANIM_TEMPLATES["equation"])
+            render_params = {
+                "wait_time": max(1, beat_duration - 5),
+                **params
+            }
+            
+            try:
+                scene_code = template.format(**render_params)
+            except KeyError as e:
+                raise ManimRenderError(
+                    f"Section {topic_id} beat {beat_index}: Missing Manim parameter: {e}"
+                )
+            
+            log_render_prompt(
+                section_id=topic_id,
+                section_title=f"{topic_title} (compiled beat {beat_index})",
+                renderer="manim_code",
+                prompt=scene_code,
+                output_path=output_path,
+                extra_data={
+                    "scene_type": scene_type,
+                    "beat_index": beat_index,
+                    "duration": beat_duration,
+                    "dry_run": dry_run
+                },
+                trace_output_dir=trace_output_dir
+            )
+            
+            if dry_run:
+                print(f"[DRY RUN] Compiled Manim beat {beat_index} for section {topic_id}")
+                marker_path = _create_dry_run_marker(topic_id, output_path, beat_duration, scene_code)
+                rendered_paths.append(marker_path)
+            else:
+                result = _execute_manim_render(
+                    scene_type=scene_type,
+                    params=params,
+                    duration=beat_duration,
+                    output_path=output_path,
+                    topic_id=topic_id,
+                    scene_code=scene_code
+                )
+                rendered_paths.append(result)
+                print(f"[MANIM] Rendered compiled beat {beat_index}: {result}")
+    
+    print(f"[MANIM] Completed {len(rendered_paths)} compiled beat videos for section {topic_id}")
+    return rendered_paths
+
+
 def _compile_beats_to_manim_plan(visual_beats: list, topic_id: int) -> dict:
-    """Compile visual beats into a Manim plan."""
+    """Compile a single visual beat into a Manim plan."""
     from core.visual_compiler import compile_manim_plan, VisualCompilationError
     
     if not visual_beats:
         raise ManimRenderError(f"Section {topic_id}: No visual beats to compile")
     
-    # For now, compile first beat (multi-beat Manim is complex)
+    # Compile first beat for single-beat rendering
     beat = visual_beats[0]
     
     try:
@@ -392,7 +717,7 @@ def _get_texinputs_env() -> dict:
 
 def _execute_spec_generated_render(
     manim_code: str,
-    duration: int,
+    duration: float,
     output_path: str,
     topic_id: int
 ) -> str:
@@ -463,7 +788,7 @@ class SpecGeneratedScene(Scene):
 def _execute_manim_render(
     scene_type: str, 
     params: dict, 
-    duration: int, 
+    duration: float, 
     output_path: str, 
     topic_id: int,
     scene_code: str
@@ -532,7 +857,7 @@ def _execute_manim_render(
             )
 
 
-def _create_dry_run_marker(topic_id: int, output_path: str, duration: int, scene_code: str) -> str:
+def _create_dry_run_marker(topic_id: int, output_path: str, duration: float, scene_code: str) -> str:
     """Create marker file for dry run mode with full scene code."""
     marker_path = output_path.replace(".mp4", ".dry_run.txt")
     with open(marker_path, "w") as f:

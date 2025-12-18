@@ -20,19 +20,27 @@
     {
       "id": "ISS-002",
       "title": "Manim only renders FIRST visual beat - multi-beat rendering not implemented",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-18",
-      "description": "The manim_runner.py has a comment 'For now, compile first beat (multi-beat Manim is complex)' - meaning only the first visual beat is rendered for Manim sections.",
-      "root_cause": "Incomplete implementation - multi-beat Manim rendering was deferred.",
-      "solution": "TBD - needs user input on priority",
+      "resolved": "2025-12-18",
+      "description": "The manim_runner.py previously only rendered the first visual beat for Manim sections, ignoring subsequent beats.",
+      "root_cause": "Incomplete implementation - multi-beat Manim rendering was deferred with TODO comment.",
+      "solution": "1. Added _render_all_beats() function in manim_runner.py that iterates through ALL visual_beats. 2. Each beat renders as topic_{id}_beat_{i}.mp4 (0-indexed). 3. Added STANDALONE BEAT RULE to prompts: each beat's manim_scene_spec must include ALL objects visible at that moment (cumulative state). 4. Player already supports beat_videos array with detectBeatVideos() that auto-discovers these files.",
       "affected_files": [
-        "render/manim/manim_runner.py"
+        "render/manim/manim_runner.py",
+        "core/prompts/system_prompt.txt",
+        "core/prompts/user_prompt.txt"
       ],
-      "reference_docs": []
+      "reference_docs": [],
+      "key_decisions": [
+        "STANDALONE BEAT RULE: Each beat video is a complete snapshot, not a delta",
+        "LLM decides what persists across beats; renderer just executes each beat independently",
+        "Player switches between beat videos based on timed_segments timing"
+      ]
     }
   ],
   "metadata": {
     "last_updated": "2025-12-18",
-    "version": "1.0"
+    "version": "1.1"
   }
 }

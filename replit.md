@@ -51,6 +51,26 @@ The `Presentation` JSON schema includes a `sections` array, where each section s
 
 ## Recent Changes (Dec 18, 2025)
 
+### Multi-Beat Manim Rendering (ISS-002 RESOLVED)
+**Problem Fixed:** Manim only rendered the FIRST visual beat, ignoring subsequent beats.
+
+**Solution - Standalone Beat Rule:**
+Each beat's `manim_scene_spec` is a COMPLETE SNAPSHOT of what should be visible at that moment.
+The renderer generates SEPARATE videos for each beat - they are NOT stitched together.
+
+**Implementation:**
+1. `manim_runner.py`: New `_render_all_beats()` function iterates ALL visual_beats
+2. Each beat renders as `topic_{id}_beat_{i}.mp4` (0-indexed)
+3. Player auto-discovers beat videos via `detectBeatVideos()` function
+4. Player switches between beat videos based on `timed_segments` timing
+
+**Example - Triangle ABC (3 beats):**
+- Beat 0: Triangle only → `topic_5_beat_0.mp4`
+- Beat 1: Triangle + highlight on A + label "A" → `topic_5_beat_1.mp4`
+- Beat 2: Triangle + labels A, B, C + highlights on B, C → `topic_5_beat_2.mp4`
+
+**Key Principle:** LLM decides what persists across beats; renderer just executes each beat independently.
+
 ### Manim LaTeX Rendering Fix
 - **Root cause**: A corrupted local `standalone.cls` file (only containing `\endinput`) was being loaded instead of the system's TexLive standalone class
 - **Symptom**: LaTeX error "The font size command \normalsize is not defined" during Manim renders

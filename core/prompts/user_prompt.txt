@@ -102,6 +102,72 @@ CONCRETE VISUAL BEAT EXAMPLE
 }}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STANDALONE BEAT RULE (CRITICAL FOR MANIM)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Each visual beat renders as a SEPARATE video file. The player switches between them.
+Therefore, each beat's manim_scene_spec must be a COMPLETE SNAPSHOT of what's visible.
+
+EXAMPLE - Explaining a Triangle with vertices A, B, C:
+
+Beat 1 (narration: "Consider triangle ABC"):
+{{
+  "segment_id": 1,
+  "manim_scene_spec": {{
+    "objects": [
+      {{ "id": "triangle", "type": "polygon", "vertices": [[0,3], [-2,0], [2,0]], "properties": {{ "color": "blue" }} }}
+    ],
+    "animation_sequence": [{{ "action": "draw", "target": "triangle", "duration": 2.0 }}]
+  }}
+}}
+→ Renders: topic_5_beat_0.mp4 (just the triangle)
+
+Beat 2 (narration: "Vertex A is at the top"):
+{{
+  "segment_id": 2,
+  "manim_scene_spec": {{
+    "objects": [
+      {{ "id": "triangle", "type": "polygon", "vertices": [[0,3], [-2,0], [2,0]], "properties": {{ "color": "blue" }} }},
+      {{ "id": "highlight_a", "type": "circle", "position": [0, 3], "properties": {{ "color": "yellow", "radius": 0.3 }} }},
+      {{ "id": "label_a", "type": "label", "position": [0, 3.5], "properties": {{ "text": "A" }} }}
+    ],
+    "animation_sequence": [
+      {{ "action": "appear", "target": "triangle", "duration": 0.5 }},
+      {{ "action": "highlight", "target": "highlight_a", "duration": 1.0 }},
+      {{ "action": "appear", "target": "label_a", "duration": 0.5 }}
+    ]
+  }}
+}}
+→ Renders: topic_5_beat_1.mp4 (triangle + A highlighted + label)
+
+Beat 3 (narration: "B and C form the base"):
+{{
+  "segment_id": 3,
+  "manim_scene_spec": {{
+    "objects": [
+      {{ "id": "triangle", "type": "polygon", "vertices": [[0,3], [-2,0], [2,0]], "properties": {{ "color": "blue" }} }},
+      {{ "id": "label_a", "type": "label", "position": [0, 3.5], "properties": {{ "text": "A" }} }},
+      {{ "id": "highlight_b", "type": "circle", "position": [-2, 0], "properties": {{ "color": "green", "radius": 0.3 }} }},
+      {{ "id": "label_b", "type": "label", "position": [-2, -0.5], "properties": {{ "text": "B" }} }},
+      {{ "id": "highlight_c", "type": "circle", "position": [2, 0], "properties": {{ "color": "green", "radius": 0.3 }} }},
+      {{ "id": "label_c", "type": "label", "position": [2, -0.5], "properties": {{ "text": "C" }} }}
+    ],
+    "animation_sequence": [
+      {{ "action": "appear", "target": "triangle", "duration": 0.3 }},
+      {{ "action": "appear", "target": "label_a", "duration": 0.3 }},
+      {{ "action": "highlight", "target": "highlight_b", "duration": 0.8 }},
+      {{ "action": "highlight", "target": "highlight_c", "duration": 0.8 }},
+      {{ "action": "appear", "target": "label_b", "duration": 0.3 }},
+      {{ "action": "appear", "target": "label_c", "duration": 0.3 }}
+    ]
+  }}
+}}
+→ Renders: topic_5_beat_2.mp4 (triangle + A label + B/C highlighted + labels)
+
+RULE: Each beat includes ALL objects from prior beats that should still be visible.
+The LLM decides what persists; the renderer just executes each beat independently.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 BANNED PATTERNS (VALIDATION FAILURE)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
