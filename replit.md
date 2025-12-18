@@ -73,6 +73,12 @@ The `Presentation` JSON schema includes a `sections` array, where each section s
 - Text highlights during narration, then vanishes when video_only beat plays, returns for next point
 - Fixed: Previously used arbitrary modulo-based toggling instead of actual beat display_mode
 
+### Player Display Fixes
+- **Text/Video Toggle**: Updated CSS so `.mode-content-video` hides text pane by default, showing video-only
+- **Avatar Sizing**: Changed to `width: auto` with `max-width: 30%` to preserve aspect ratio without overflow
+- **Recap Video Display**: Fixed `showVideoBox` logic to include recap sections when they have valid video
+- **Memory Flashcards**: Simplified to show only letter, title, and mnemonic (removed verbose explanation)
+
 ### Fail-Fast Policy (CRITICAL)
 The system now enforces strict fail-fast behavior with NO fallbacks:
 
