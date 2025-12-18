@@ -4574,5 +4574,559 @@
       "sections_count": 11,
       "dry_run": false
     }
+  },
+  "2345dab4": {
+    "id": "2345dab4",
+    "type": "pdf",
+    "params": {
+      "subject": "Mathematics",
+      "grade": "10",
+      "file_path": "/tmp/ai_education_jobs/0bd81a22c2200323.pdf",
+      "source_file": "3-Page-Maths_1766058757638.pdf"
+    },
+    "status": "completed",
+    "current_step": 3,
+    "current_step_name": "Generating audio narration...",
+    "steps_completed": 4,
+    "total_steps": 4,
+    "progress": 100,
+    "created_at": "2025-12-18T18:02:14.478539",
+    "started_at": "2025-12-18T18:02:14.489611",
+    "completed_at": "2025-12-18T18:15:44.220006",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "started_at": "2025-12-18T18:02:14.500488",
+      "source_file": "3-Page-Maths_1766058757638.pdf",
+      "steps": [
+        {
+          "step": "pdf_to_markdown",
+          "status": "completed"
+        },
+        {
+          "step": "extract_images",
+          "status": "completed",
+          "count": 0
+        },
+        {
+          "step": "generate_presentation_plan",
+          "status": "completed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'intro' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'summary' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 4 errors",
+              "visual_beats_used": 8,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 3, Beat 4: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations' without specifying what these diagrams, components, elements, terms, or annotations actually are. It lacks concrete objects, specific motions, or mathematical equations.",
+                "Section 3, Beat 5: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions. The pedagogical focus is also generic.",
+                "Section 3, Beat 6: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It lacks specific objects, equations, or motions that a video renderer can act on. For example, it doesn't specify what 'clear diagrams' should depict, which 'components' should be labeled, or what 'key terms' should be highlighted.",
+                "Section 3, Beat 7: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It lacks specific objects, equations, or motions that a video renderer can act on. For example, it doesn't specify *what* diagrams, *which* components, *what* key terms, or *what* transitions."
+              ]
+            },
+            {
+              "topic_id": 4,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 6 errors",
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 4, Beat 0: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It lacks specific objects, equations, or motions that a video renderer can act on. For example, it doesn't specify *which* diagrams, *what* components, *which* key terms, or *what* topic title.",
+                "Section 4, Beat 1: Flash validation failed: The visual beat uses only vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions that a video renderer can act on. For example, it mentions 'The term reciprocal is just a mathematical way of saying one divided by', but doesn't specify how this should be visually represented (e.g., 'Show the word 'reciprocal' next to '1/x'').",
+                "Section 4, Beat 2: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. For example, it mentions 'Cosecant, written as csc A, is the reciprocal of sin A' but doesn't specify how this relationship should be visually represented (e.g., two fractions flipping, an arrow connecting them). It also mentions 'sin A is Opposite' but doesn't complete the thought or specify the visual representation of 'Opposite'.",
+                "Section 4, Beat 3: Flash validation failed: The visual beat uses only vague phrases like 'clear diagrams', 'labeled components', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions that a video renderer can act on. For example, it mentions 'sec A' and 'cos A' but doesn't specify how they should be visually represented or what 'clear diagrams' entail.",
+                "Section 4, Beat 4: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'step-by-step annotations'. It does not name any specific objects, equations, or motions. It lacks concrete details for rendering a video.",
+                "Section 4, Beat 5: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It lacks specific objects, equations, or motions that a video renderer can act on. For example, it doesn't specify *what* diagrams, *which* components, or *what* key terms to highlight."
+              ]
+            },
+            {
+              "topic_id": 5,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 8 errors",
+              "visual_beats_used": 8,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 5, Beat 0: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It lacks specific objects, equations, or motions that a video renderer can act on. For example, it doesn't specify what 'clear diagrams' should depict or what 'key terms' should be highlighted.",
+                "Section 5, Beat 1: Flash validation failed: The 'objects_and_properties', 'motion_sequence', and 'labels_and_text' fields are very vague. They use generic phrases like 'Clear diagrams', 'Fade in elements sequentially', and 'Display topic title' without specifying what diagrams, elements, or topic titles. The 'scene_setup' mentions a 'right-angled triangle ABC' but doesn't complete the description, leaving it unclear what the 'r' refers to. More specific objects, motions, and text are needed.",
+                "Section 5, Beat 2: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name concrete visual objects, specific equations, or describe specific motions. The 'scene_setup' provides text but doesn't describe how it should be visually presented beyond 'educational scene showing'.",
+                "Section 5, Beat 3: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. For example, it doesn't specify what the 'clear diagrams' are diagrams of, what 'labeled components' are being labeled, or what 'key terms' should be highlighted.",
+                "Section 5, Beat 4: Flash validation failed: The 'objects_and_properties', 'motion_sequence', and 'labels_and_text' fields are very vague. They use generic phrases like 'clear diagrams', 'fade in elements sequentially', and 'display topic title' without specifying what diagrams, elements, or topic titles. The 'scene_setup' is cut off and doesn't provide a complete description of what should be shown.",
+                "Section 5, Beat 5: Manim section missing manim_scene_spec. For renderer=manim, each visual_beat must include a structured manim_scene_spec JSON with objects, forces, equations, and animation_sequence. Prose-only descriptions are not allowed for Manim sections.",
+                "Section 5, Beat 6: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'step-by-step annotations'. It does not name any specific objects, equations, or motions. The pedagogical focus is also generic.",
+                "Section 5, Beat 7: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'step-by-step annotations'. It lacks specific objects, equations, or motions that a video renderer can act on. For example, it doesn't specify *what* diagrams, *which* components, or *what* transitions."
+              ]
+            },
+            {
+              "topic_id": 6,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 11 errors",
+              "visual_beats_used": 11,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 6, Beat 0: Flash validation failed: The visual beat uses only vague phrases like 'clear diagrams', 'labeled components', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions that a video renderer can act on.",
+                "Section 6, Beat 1: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. The 'scene_setup' is cut off and incomplete.",
+                "Section 6, Beat 2: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'step-by-step annotations'. It does not name specific objects, equations, or motions. For example, it mentions 'sin B = sin Q' but doesn't specify how this equation should be presented or what 'Opposite over Hy' refers to visually.",
+                "Section 6, Beat 3: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions that a video renderer can act on. The only specific text is 'AC/PR = AB/PQ', but it's unclear how this relates to the 'swapping AB and PR' mentioned in the scene setup.",
+                "Section 6, Beat 4: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. The pedagogical focus is also generic.",
+                "Section 6, Beat 5: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'step-by-step annotations'. It does not name specific objects (e.g., 'triangle ABC', 'side BC', 'side AB', 'side AC'), equations (e.g., 'BC = sqrt(AB^2 - AC^2)'), or specific motions for these objects.",
+                "Section 6, Beat 6: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions. The pedagogical focus is also generic.",
+                "Section 6, Beat 7: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions. The 'scene_setup' mentions 'k-squared from under the root, which becomes k outside the root' but doesn't specify how this mathematical operation should be visually represented.",
+                "Section 6, Beat 8: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', 'step-by-step annotations'. It does not name any specific objects, equations, or motions. The 'scene_setup' is cut off and incomplete.",
+                "Section 6, Beat 9: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It lacks specific objects, equations, or motions that a video renderer can act on. For example, it doesn't specify *what* diagrams, *which* components, or *what* key terms to highlight.",
+                "Section 6, Beat 10: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', 'step-by-step annotations'. It lacks specific objects, equations, or motions that a video renderer can act on. For example, it mentions 'triangle ABC' but doesn't specify its appearance or properties, nor does it specify what 'elements' should fade in or what 'key terms' should be highlighted."
+              ]
+            },
+            {
+              "topic_id": 7,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 11 errors",
+              "visual_beats_used": 11,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 7, Beat 0: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions that a video renderer can act on.",
+                "Section 7, Beat 1: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions. For example, it mentions 'cos-squared theta' but doesn't specify how it should be visually represented or what 'diagrams' or 'components' are needed for it.",
+                "Section 7, Beat 2: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions. For example, it doesn't specify what the 'clear diagrams' are of, what 'components' are labeled, what 'elements' fade in, or what 'key terms' are highlighted.",
+                "Section 7, Beat 3: Flash validation failed: The 'objects_and_properties', 'motion_sequence', and 'labels_and_text' fields are generic and lack specific details. For example, 'Clear diagrams' doesn't specify what diagrams, 'Fade in elements sequentially' doesn't say which elements, and 'Display topic title' doesn't provide the title. The 'scene_setup' mentions '29 squared minus 21 squared' but doesn't specify how this calculation should be presented visually.",
+                "Section 7, Beat 4: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. The pedagogical focus is also generic.",
+                "Section 7, Beat 5: Flash validation failed: The visual beat uses vague phrases like 'Clear diagrams', 'labeled components', 'visual aids', 'Fade in elements sequentially', 'highlight key terms', 'animate transitions', 'Display topic title', 'key terms highlighted', 'step-by-step annotations'. It does not name specific objects, equations, or motions. For example, it doesn't specify *what* diagrams, *which* components, or *what* elements should fade in.",
+                "Section 7, Beat 6: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions. The 'scene_setup' field is incomplete and seems to be a transcript rather than a visual description.",
+                "Section 7, Beat 7: Flash validation failed: The 'objects_and_properties', 'motion_sequence', and 'labels_and_text' fields are very vague. They use generic phrases like 'Clear diagrams', 'Fade in elements sequentially', and 'Display topic title' without specifying what diagrams, elements, or topic titles should be shown. The 'scene_setup' is also incomplete, ending abruptly.",
+                "Section 7, Beat 8: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', 'step-by-step annotations'. It does not name specific objects, equations, or motions. The pedagogical focus is also generic.",
+                "Section 7, Beat 9: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. The pedagogical focus is also generic.",
+                "Section 7, Beat 10: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations' without specifying what these diagrams, components, aids, elements, terms, transitions, title, or annotations actually are. No specific objects, equations, or motions are named."
+              ]
+            },
+            {
+              "topic_id": 8,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 9 errors",
+              "visual_beats_used": 9,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 8, Beat 0: Flash validation failed: The visual beat uses only vague phrases like 'clear diagrams', 'labeled components', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'step-by-step annotations'. It does not name any specific objects, equations, or motions that a video renderer can act on.",
+                "Section 8, Beat 1: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It lacks specific objects, equations, or motions that a video renderer can act on. For example, it doesn't specify what the 'clear diagrams' should depict, what 'components' should be labeled, or what 'key terms' should be highlighted.",
+                "Section 8, Beat 2: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions. For example, it mentions 'isosceles right-angled triangle' but doesn't specify how it should be drawn or what its 'labeled components' are.",
+                "Section 8, Beat 3: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. For example, it mentions 'AC squared = AB' but doesn't complete the equation or specify what 'AC' and 'AB' refer to visually. It also doesn't specify what 'elements' fade in or what 'key terms' are highlighted.",
+                "Section 8, Beat 4: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. The 'scene_setup' field is incomplete and grammatically incorrect, making it impossible to understand what specific equation or concept is being presented.",
+                "Section 8, Beat 5: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects (e.g., 'right-angled triangle', 'sides labeled A, B, C'), equations, or precise motions. The 'scene_setup' is incomplete and cuts off mid-sentence, making it unclear what specific mathematical content should be shown.",
+                "Section 8, Beat 6: Flash validation failed: The beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It lacks specific objects, equations, or motions. For example, it mentions 'Cos A is Adjacent over Hypotenuse, which is AB/AC, also k divided by k\u221a2', but doesn't specify what 'A', 'B', 'C', 'k', or 'k\u221a2' refer to visually (e.g., a right-angled triangle with vertices A, B, C, where AB is adjacent, AC is hypotenuse, and lengths are k and k\u221a2).",
+                "Section 8, Beat 7: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. The pedagogical focus is also generic.",
+                "Section 8, Beat 8: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', 'step-by-step annotations'. It does not name any specific objects, equations, or motions. The pedagogical focus is also generic."
+              ]
+            },
+            {
+              "topic_id": 9,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 11 errors",
+              "visual_beats_used": 11,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 9, Beat 0: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions that a video renderer can act on. The 'scene_setup' mentions 'triangle OPQ, which is right-angled at P' but this is not specific enough to render without further details on its appearance or properties.",
+                "Section 9, Beat 1: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'step-by-step annotations'. It lacks specific objects, equations, or motions that a video renderer can act on. For example, it mentions 'hypotenuse OQ m' but doesn't specify what 'm' is or how it relates to the scene setup.",
+                "Section 9, Beat 2: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific objects, equations, or motions. For example, it mentions 'OQ - PQ = 1' but doesn't specify how this relationship is visually represented or what 'OQ' and 'PQ' refer to in a diagram.",
+                "Section 9, Beat 3: Flash validation failed: The visual beat uses vague phrases like 'Clear diagrams', 'labeled components', 'visual aids', 'Fade in elements sequentially', 'highlight key terms', 'animate transitions', 'Display topic title', 'key terms highlighted', 'step-by-step annotations'. It does not name specific objects (e.g., 'triangle OPQ' is mentioned in scene_setup but not in objects_and_properties), equations, or motions. The pedagogical focus is also generic.",
+                "Section 9, Beat 4: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. The 'scene_setup' field is incomplete and seems to be a sentence fragment from a script rather than a visual description.",
+                "Section 9, Beat 5: Flash validation failed: The 'objects_and_properties', 'motion_sequence', and 'labels_and_text' fields are generic and lack specific details. They use vague phrases like 'clear diagrams', 'labeled components', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', and 'step-by-step annotations' without specifying what diagrams, components, terms, or annotations should be shown. The 'scene_setup' provides some text but doesn't describe the visual layout or objects.",
+                "Section 9, Beat 6: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name any specific mathematical equations, concrete visual objects, or specific motions. The pedagogical focus is also generic.",
+                "Section 9, Beat 7: Flash validation failed: The scene_setup is cut off and incomplete. The objects_and_properties, motion_sequence, and labels_and_text are all vague and generic, lacking specific objects, motions, or text to display. For example, 'Clear diagrams' doesn't specify what diagrams, and 'highlight key terms' doesn't say which terms.",
+                "Section 9, Beat 8: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', 'step-by-step annotations'. It does not name specific objects, equations, or motions. The pedagogical focus is also generic.",
+                "Section 9, Beat 9: Flash validation failed: The visual beat uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations'. It does not name specific objects, equations, or motions. The pedagogical focus is also generic.",
+                "Section 9, Beat 10: Flash validation failed: The description uses vague phrases like 'clear diagrams', 'labeled components', 'visual aids', 'fade in elements sequentially', 'highlight key terms', 'animate transitions', 'display topic title', 'key terms highlighted', and 'step-by-step annotations' without specifying what these diagrams, components, elements, terms, or annotations actually are. It lacks concrete objects, equations, or specific motions."
+              ]
+            },
+            {
+              "topic_id": 10,
+              "section_type": "memory",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'memory' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 11,
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/2345dab4/videos/recap_11_scene_1.mp4",
+              "error": null,
+              "visual_beats_used": 0,
+              "dry_run": false,
+              "compilation_errors": []
+            }
+          ],
+          "success_count": 4,
+          "fail_count": 7,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": 1,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/2345dab4/audio/section_1.mp3"
+            },
+            {
+              "section_id": 2,
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/2345dab4/audio/section_2.mp3"
+            },
+            {
+              "section_id": 3,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/2345dab4/audio/section_3.mp3"
+            },
+            {
+              "section_id": 4,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/2345dab4/audio/section_4.mp3"
+            },
+            {
+              "section_id": 5,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/2345dab4/audio/section_5.mp3"
+            },
+            {
+              "section_id": 6,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/2345dab4/audio/section_6.mp3"
+            },
+            {
+              "section_id": 7,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/2345dab4/audio/section_7.mp3"
+            },
+            {
+              "section_id": 8,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/2345dab4/audio/section_8.mp3"
+            },
+            {
+              "section_id": 9,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/2345dab4/audio/section_9.mp3"
+            },
+            {
+              "section_id": 10,
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/2345dab4/audio/section_10.mp3"
+            },
+            {
+              "section_id": 11,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/2345dab4/audio/section_11.mp3"
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-18T18:15:44.219475",
+      "presentation_path": "/home/runner/workspace/player/jobs/2345dab4/presentation.json",
+      "trace_path": "/home/runner/workspace/player/jobs/2345dab4/generation_trace.json",
+      "sections_count": 11,
+      "dry_run": false
+    }
+  },
+  "072ca685": {
+    "id": "072ca685",
+    "type": "pdf",
+    "params": {
+      "subject": "Mathematics",
+      "grade": "10",
+      "file_path": "/tmp/ai_education_jobs/11e0f9037ce00c8d.pdf",
+      "source_file": "3-Page-Maths_1766058757638.pdf"
+    },
+    "status": "completed",
+    "current_step": 3,
+    "current_step_name": "Generating audio narration...",
+    "steps_completed": 4,
+    "total_steps": 4,
+    "progress": 100,
+    "created_at": "2025-12-18T18:17:27.338306",
+    "started_at": "2025-12-18T18:17:27.349815",
+    "completed_at": "2025-12-18T18:32:03.686794",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "started_at": "2025-12-18T18:17:27.366527",
+      "source_file": "3-Page-Maths_1766058757638.pdf",
+      "steps": [
+        {
+          "step": "pdf_to_markdown",
+          "status": "completed"
+        },
+        {
+          "step": "extract_images",
+          "status": "completed",
+          "count": 0
+        },
+        {
+          "step": "generate_presentation_plan",
+          "status": "completed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'intro' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'summary' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": [
+                "/home/runner/workspace/player/jobs/072ca685/videos/topic_3_beat_0.mp4",
+                "/home/runner/workspace/player/jobs/072ca685/videos/topic_3_beat_1.mp4",
+                "/home/runner/workspace/player/jobs/072ca685/videos/topic_3_beat_2.mp4",
+                "/home/runner/workspace/player/jobs/072ca685/videos/topic_3_beat_3.mp4",
+                "/home/runner/workspace/player/jobs/072ca685/videos/topic_3_beat_4.mp4",
+                "/home/runner/workspace/player/jobs/072ca685/videos/topic_3_beat_5.mp4",
+                "/home/runner/workspace/player/jobs/072ca685/videos/topic_3_beat_6.mp4"
+              ],
+              "error": null,
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": []
+            },
+            {
+              "topic_id": 4,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 4: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        ",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 109, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 116, in render_manim_video\n    return _render_all_beats(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 440, in _render_all_beats\n    result = _execute_spec_generated_render(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 766, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 4: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        \n"
+            },
+            {
+              "topic_id": 5,
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 5: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        ",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 109, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 116, in render_manim_video\n    return _render_all_beats(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 440, in _render_all_beats\n    result = _execute_spec_generated_render(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 766, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 5: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        \n"
+            },
+            {
+              "topic_id": 6,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 6: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        ",
+              "visual_beats_used": 8,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 109, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 116, in render_manim_video\n    return _render_all_beats(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 440, in _render_all_beats\n    result = _execute_spec_generated_render(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 766, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 6: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        \n"
+            },
+            {
+              "topic_id": 7,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 1 errors",
+              "visual_beats_used": 11,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 7, Beat 10: Flash validation failed: The 'scene_setup' and 'motion_sequence' are vague. 'Scene with the similarity statement' doesn't specify what the similarity statement is or how it's presented. 'The screen clears except for the two triangles' doesn't specify which triangles or their initial state. 'The similarity symbol fades' doesn't specify which symbol. 'The two triangles slide together and overlap perfectly' is a good start but lacks detail on how they overlap (e.g., which vertices align). 'Final conclusion 'Angle B = Angle Q' appears in large, triumphant text' is good for the text but 'triumphant' is subjective and not a renderable instruction."
+              ]
+            },
+            {
+              "topic_id": 8,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 8 beat 0: Compilation failed - Flash validation failed: The motion_sequence describes drawing a right-angled triangle, but the objects_and_properties defines a triangle that is not right-angled at C based on the given vertices. The side lengths are also mentioned in motion_sequence but not in objects_and_properties, and the labels_and_text should reflect the side lengths as well. The motion_sequence also describes labeling the angle theta, which should be reflected in objects_and_properties or labels_and_text.",
+              "visual_beats_used": 10,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 397, in _render_all_beats\n    plan = compile_manim_plan(beat, topic_id, beat_index)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 607, in compile_manim_plan\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 110, in validate_visual_beat_structure\n    raise VisualCompilationError(section_id, beat_index, f\"Flash validation failed: {reason}\")\ncore.visual_compiler.VisualCompilationError: Section 8, Beat 0: Flash validation failed: The motion_sequence describes drawing a right-angled triangle, but the objects_and_properties defines a triangle that is not right-angled at C based on the given vertices. The side lengths are also mentioned in motion_sequence but not in objects_and_properties, and the labels_and_text should reflect the side lengths as well. The motion_sequence also describes labeling the angle theta, which should be reflected in objects_and_properties or labels_and_text.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 109, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 116, in render_manim_video\n    return _render_all_beats(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 399, in _render_all_beats\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 8 beat 0: Compilation failed - Flash validation failed: The motion_sequence describes drawing a right-angled triangle, but the objects_and_properties defines a triangle that is not right-angled at C based on the given vertices. The side lengths are also mentioned in motion_sequence but not in objects_and_properties, and the labels_and_text should reflect the side lengths as well. The motion_sequence also describes labeling the angle theta, which should be reflected in objects_and_properties or labels_and_text.\n"
+            },
+            {
+              "topic_id": 9,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 9: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        ",
+              "visual_beats_used": 10,
+              "dry_run": false,
+              "compilation_errors": [],
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 109, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 116, in render_manim_video\n    return _render_all_beats(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 440, in _render_all_beats\n    result = _execute_spec_generated_render(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 766, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 9: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        \n"
+            },
+            {
+              "topic_id": 10,
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "compilation_failed",
+              "video_path": null,
+              "error": "Visual compilation failed: 1 errors",
+              "visual_beats_used": 11,
+              "dry_run": false,
+              "compilation_errors": [
+                "Section 10, Beat 5: Flash validation failed: The motion_sequence is vague. It says 'The equation transforms to show the expansion of (1+PQ)\u00b2 and the calculation of 7\u00b2' but doesn't specify how this transformation happens visually. Does it highlight parts, animate terms, or show intermediate steps? The 'objects_and_properties' only lists the final substituted equation, not the initial form or the 7\u00b2 term."
+              ]
+            },
+            {
+              "topic_id": 11,
+              "section_type": "memory",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'memory' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 12,
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/072ca685/videos/recap_12_scene_1.mp4",
+              "error": null,
+              "visual_beats_used": 0,
+              "dry_run": false,
+              "compilation_errors": []
+            }
+          ],
+          "success_count": 5,
+          "fail_count": 7,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": 1,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/072ca685/audio/section_1.mp3"
+            },
+            {
+              "section_id": 2,
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/072ca685/audio/section_2.mp3"
+            },
+            {
+              "section_id": 3,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/072ca685/audio/section_3.mp3"
+            },
+            {
+              "section_id": 4,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/072ca685/audio/section_4.mp3"
+            },
+            {
+              "section_id": 5,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/072ca685/audio/section_5.mp3"
+            },
+            {
+              "section_id": 6,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/072ca685/audio/section_6.mp3"
+            },
+            {
+              "section_id": 7,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/072ca685/audio/section_7.mp3"
+            },
+            {
+              "section_id": 8,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/072ca685/audio/section_8.mp3"
+            },
+            {
+              "section_id": 9,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/072ca685/audio/section_9.mp3"
+            },
+            {
+              "section_id": 10,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/072ca685/audio/section_10.mp3"
+            },
+            {
+              "section_id": 11,
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/072ca685/audio/section_11.mp3"
+            },
+            {
+              "section_id": 12,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/072ca685/audio/section_12.mp3"
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-18T18:32:03.686291",
+      "presentation_path": "/home/runner/workspace/player/jobs/072ca685/presentation.json",
+      "trace_path": "/home/runner/workspace/player/jobs/072ca685/generation_trace.json",
+      "sections_count": 12,
+      "dry_run": false
+    }
   }
 }

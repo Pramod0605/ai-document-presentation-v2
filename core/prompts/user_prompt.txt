@@ -174,11 +174,23 @@ BANNED PATTERNS (VALIDATION FAILURE)
 These will cause VALIDATION FAILURE:
 - Missing ANY of the 5 required fields
 - Empty or single-sentence fields
-- Vague phrases like "show clearly", "animate smoothly", "visualize the concept"
 - scene_setup that doesn't describe background/coordinate system
 - objects_and_properties that doesn't list colors and positions
 - motion_sequence that doesn't describe step-by-step order
 - labels_and_text that doesn't specify WHERE labels appear
+
+BANNED VAGUE PHRASES (will FAIL validation):
+- "clear diagrams" → Instead: "right-angled triangle ABC at origin"
+- "labeled components" → Instead: "label 'A' at vertex (0,3)"  
+- "visual aids" → Instead: "a blue arrow from origin to (3,0)"
+- "fade in elements sequentially" → Instead: "first the triangle appears, then vertex A highlights"
+- "highlight key terms" → Instead: "the word 'hypotenuse' in yellow at position (2,2)"
+- "animate transitions" → Instead: "the equation transforms: sin(30°) → 1/2"
+- "display topic title" → Instead: "title 'Pythagorean Theorem' at top center"
+- "key terms highlighted" → Instead: "label 'opposite' in red next to side BC"
+- "step-by-step annotations" → Instead: "step 1 label appears, then step 2 arrow draws"
+
+The validator checks for these exact phrases. Replace them with SPECIFIC descriptions.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 LAYOUT RULES
@@ -350,17 +362,35 @@ For content and example sections with videos:
 ]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-QUALITY GATE
+QUALITY GATE (MANDATORY SELF-CHECK)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Before outputting, verify EACH visual beat has ALL 5 fields:
+Before outputting, you MUST verify EACH visual beat passes these checks:
+
+STRUCTURE CHECK - Each beat has ALL 5 fields:
 1. scene_setup: Does it describe background and coordinate system?
 2. objects_and_properties: Does it list ALL objects with colors and positions?
 3. motion_sequence: Does it describe step-by-step animation order?
 4. labels_and_text: Does it list WHERE each label appears?
 5. pedagogical_focus: Does it explain what the student learns?
 
-If ANY field is missing or too short, REWRITE that visual beat.
+BANNED PHRASE CHECK - Scan each field for these phrases (WILL FAIL):
+- "clear diagrams", "labeled components", "visual aids"
+- "fade in elements sequentially", "highlight key terms"
+- "animate transitions", "display topic title"
+- "key terms highlighted", "step-by-step annotations"
+
+If you find ANY banned phrase, REPLACE it with specific details:
+- What EXACT shape/object? (e.g., "triangle ABC with vertices...")
+- What EXACT position? (e.g., "at coordinates (3, 4)")
+- What EXACT animation? (e.g., "the triangle draws itself clockwise starting from vertex A")
+
+MANIM SPEC CHECK - For renderer="manim":
+- Does manim_scene_spec have objects array with coordinates?
+- Does each object have id, type, position, and properties?
+- Does animation_sequence list specific actions with durations?
+
+If ANY check fails, REWRITE that visual beat before outputting.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OUTPUT
