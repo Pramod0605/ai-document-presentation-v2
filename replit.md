@@ -16,7 +16,7 @@ The system utilizes a two-model LLM pipeline via OpenRouter: Gemini 2.5 Flash fo
 - **Frontend**: Vanilla HTML5/JavaScript video player with a YouTube-style interface. The player supports dynamic layouts for different section types, subtitle synchronization, and chroma key avatar overlay.
 - **LLM Pipeline**: Large documents are processed in chunks to avoid truncation. A Flash Chunker identifies logical topic boundaries, a Pro Director generates presentation JSON for each chunk, and a Merger combines outputs. A Flash LLM Validator semantically checks visual beat content.
 - **Video Rendering**: A dual renderer system is employed: Manim for mathematical animations and WAN/kie.ai for conceptual science videos. The system supports per-beat video rendering.
-- **Audio**: Narakeet TTS is primarily used with an Indian male voice (ravi), with gTTS as a fallback.
+- **Audio**: Narakeet TTS with Indian male voice (ravi). Uses streaming API for short text, polling API for long text. No fallback - fails if API unavailable.
 - **Job Processing**: An asynchronous job processing system allows for submitting PDF/Markdown files and polling for real-time progress updates. Each job creates a self-contained folder with all generated assets.
 
 ### UI/UX Decisions
@@ -27,8 +27,7 @@ The `Presentation` JSON schema includes a `sections` array, where each section s
 
 ## External Dependencies
 - **OpenRouter**: For accessing Gemini 2.5 Flash and Gemini 2.5 Pro LLMs.
-- **Narakeet API**: Primary Text-to-Speech service for high-quality voice generation.
-- **Google Text-to-Speech (gTTS)**: Fallback TTS service.
+- **Narakeet API**: Text-to-Speech service for voice generation (streaming + polling APIs).
 - **Kie.ai API (WAN)**: For generating conceptual videos.
 - **Datalab API**: Used for PDF to Markdown conversion.
 - **Flask**: Web framework for the backend API.
@@ -40,18 +39,37 @@ The `Presentation` JSON schema includes a `sections` array, where each section s
 - **python-dotenv**: For managing environment variables.
 
 ## Recent Changes (Dec 18, 2025)
-- **Image Handling Pipeline**: Added complete image extraction and display system
-  - Extracts base64 images from markdown, saves with green background for chroma key
-  - Images display with fade-in animation, synced to narration timing
-  - Subtle hover effect (scale + shadow) for interactivity
-  - LLM receives image placeholders (IMAGE_1, IMAGE_2) - not raw base64 data
-  - Pipeline: PDF → markdown → extract images → strip base64 → send text to LLM
-- **Section Type Rendering Rules**:
-  - INTRO/SUMMARY/MEMORY: Text-only (no video/manim rendering)
-  - CONTENT: Text + video/images with swapping
-  - RECAP: Video-only (5 WAN scenes)
-- **Image Display Layer**: New separate #image-display-layer in player, positioned alongside content without overlap
-- **Male-Only Narration**: Narakeet "ravi" voice primary, gTTS UK male fallback
+
+### Fail-Fast Policy (CRITICAL)
+The system now enforces strict fail-fast behavior with NO fallbacks:
+
+| Component | Behavior | Error Handling |
+|-----------|----------|----------------|
+| Datalab PDF→MD | API only | FAIL job if API fails or < 100 chars |
+| Narakeet TTS | Streaming (<1024) or Polling (>1024) | FAIL job - no gTTS fallback |
+| Manim rendering | Scene spec required | FAIL if spec missing/invalid |
+| WAN rendering | Visual beats required | FAIL if generation fails |
+
+### Renderer Policy (Enforced)
+| Section Type | Renderer | Notes |
+|--------------|----------|-------|
+| intro | TEXT-ONLY | No video rendering |
+| summary | TEXT-ONLY | No video rendering |
+| memory | TEXT-ONLY | No video rendering - just flashcards |
+| content | LLM Director choice | WAN for concepts, Manim for math/LaTeX |
+| example | LLM Director choice | Usually Manim for calculations |
+| recap | WAN | 5 storyboard scenes |
+
+### Image Handling Pipeline
+- Extracts base64 images from markdown, saves with green background for chroma key
+- Images display with fade-in animation, synced to narration timing
+- Subtle hover effect (scale + shadow) for interactivity
+- LLM receives image placeholders (IMAGE_1, IMAGE_2) - not raw base64 data
+- Pipeline: PDF → markdown → extract images → strip base64 → send text to LLM
+
+### Other Changes
+- Image Display Layer: New separate #image-display-layer in player
+- Male-Only Narration: Narakeet "ravi" voice (streaming or polling API)
 
 ## Previous Changes (Dec 17, 2025)
 - Upload Dialog Fix, TTS Voice Update, Avatar Positioning

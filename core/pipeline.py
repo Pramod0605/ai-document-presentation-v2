@@ -6,7 +6,7 @@ from typing import Optional, Union
 
 from core.datalab_client import pdf_to_markdown
 from core.llm_client import generate_chunked_presentation, ValidationError
-from core.renderer_executor import render_all_topics
+from core.renderer_executor import render_all_topics, enforce_renderer_policy
 from core.image_processor import extract_images_from_markdown, strip_base64_from_markdown, create_image_list_for_llm
 from tts.generate_audio import generate_all_audio
 from render.render_trace import clear_render_trace
@@ -119,11 +119,13 @@ def process_pdf_to_videos(
         
         presentation["skip_avatar"] = skip_avatar
         
+        presentation = enforce_renderer_policy(presentation)
+        
         job_status["steps"].append({"step": "render_videos", "status": "started"})
         rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run, skip_wan=skip_wan, output_dir_base=output_dir)
         
-        success_count = sum(1 for v in rendered_videos if v.get("status") == "success")
-        fail_count = len(rendered_videos) - success_count
+        success_count = sum(1 for v in rendered_videos if v.get("status") in ("success", "skipped"))
+        fail_count = sum(1 for v in rendered_videos if v.get("status") not in ("success", "skipped"))
         
         job_status["steps"][-1]["status"] = "completed" if fail_count == 0 else "partial"
         job_status["steps"][-1]["videos"] = rendered_videos
@@ -261,11 +263,13 @@ def process_markdown_to_videos(
         
         presentation["skip_avatar"] = skip_avatar
         
+        presentation = enforce_renderer_policy(presentation)
+        
         job_status["steps"].append({"step": "render_videos", "status": "started"})
         rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run, skip_wan=skip_wan, output_dir_base=output_dir)
         
-        success_count = sum(1 for v in rendered_videos if v.get("status") == "success")
-        fail_count = len(rendered_videos) - success_count
+        success_count = sum(1 for v in rendered_videos if v.get("status") in ("success", "skipped"))
+        fail_count = sum(1 for v in rendered_videos if v.get("status") not in ("success", "skipped"))
         
         job_status["steps"][-1]["status"] = "completed" if fail_count == 0 else "partial"
         job_status["steps"][-1]["videos"] = rendered_videos

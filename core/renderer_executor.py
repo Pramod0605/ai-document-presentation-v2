@@ -6,30 +6,19 @@ from render.manim.manim_runner import render_manim_video
 from core.visual_compiler import compile_section_visuals, VisualCompilationError
 
 
-MATH_PHYSICS_SUBJECTS = [
-    "mathematics", "maths", "math", "algebra", "geometry", "calculus",
-    "trigonometry", "statistics", "physics", "mechanics", "electrostatics",
-    "electromagnetism", "thermodynamics", "optics", "quantum", "kinematics",
-    "chemistry"
-]
+TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory"]
 
 
 def enforce_renderer_policy(presentation: dict) -> dict:
-    """Enforce renderer selection based on subject and section type.
+    """Enforce renderer selection based on section type.
     
-    POLICY:
-    - For math/physics subjects: Force Manim for content/example sections
-    - Recap sections: Always use WAN (storyboard visualization)
-    - Intro/Summary/Memory: Text-only (no video rendering needed)
+    POLICY (as agreed):
+    - INTRO/SUMMARY/MEMORY: TEXT-ONLY (no video rendering)
+    - CONTENT/EXAMPLE: Use LLM Director's choice (WAN for physics concepts, Manim for math/LaTeX)
+    - RECAP: Always WAN (5 storyboard scenes)
     
-    This overrides the LLM Director's renderer choice to ensure consistency.
+    This enforces text-only sections but trusts the LLM Director for content/example.
     """
-    subject = presentation.get("subject", "").lower()
-    is_math_physics = any(subj in subject for subj in MATH_PHYSICS_SUBJECTS)
-    
-    if not is_math_physics:
-        return presentation
-    
     sections = presentation.get("sections", presentation.get("topics", []))
     changes_made = 0
     
@@ -37,15 +26,22 @@ def enforce_renderer_policy(presentation: dict) -> dict:
         section_type = section.get("section_type", "content")
         current_renderer = section.get("renderer", "wan_video")
         
-        if section_type in ("content", "example"):
-            if current_renderer != "manim":
-                section["renderer"] = "manim"
-                section["renderer_override_reason"] = f"Math/physics subject '{subject}' requires Manim for {section_type} sections"
+        if section_type in TEXT_ONLY_SECTION_TYPES:
+            if current_renderer and current_renderer != "none":
+                section["renderer"] = "none"
+                section["renderer_override_reason"] = f"Section type '{section_type}' is text-only (no video rendering)"
                 changes_made += 1
-                print(f"[RENDERER POLICY] Section {section.get('id')}: Forced WAN -> Manim (math/physics subject)")
+                print(f"[RENDERER POLICY] Section {section.get('id')} ({section_type}): Forced to TEXT-ONLY")
+        
+        elif section_type == "recap":
+            if current_renderer != "wan_video" and current_renderer != "wan":
+                section["renderer"] = "wan_video"
+                section["renderer_override_reason"] = "Recap sections use WAN for storyboard visualization"
+                changes_made += 1
+                print(f"[RENDERER POLICY] Section {section.get('id')}: Forced to WAN (recap)")
     
     if changes_made > 0:
-        print(f"[RENDERER POLICY] Applied {changes_made} renderer overrides for subject: {subject}")
+        print(f"[RENDERER POLICY] Applied {changes_made} renderer overrides")
     
     return presentation
 
@@ -57,6 +53,16 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     renderer = topic.get("renderer", "wan_video")
     section_type = topic.get("section_type", "content")
     visual_beats = topic.get("visual_beats", [])
+    
+    if renderer == "none" or section_type in TEXT_ONLY_SECTION_TYPES:
+        return {
+            "topic_id": topic_id,
+            "section_type": section_type,
+            "renderer": "none",
+            "status": "skipped",
+            "video_path": None,
+            "reason": f"Section type '{section_type}' is text-only (no video rendering)"
+        }
     
     if visual_beats:
         if "explanation_plan" not in topic:
@@ -146,12 +152,15 @@ def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False
         if result["status"] == "success":
             success_count += 1
             print(f"  -> Success: {result['video_path']}")
+        elif result["status"] == "skipped":
+            success_count += 1
+            print(f"  -> Skipped (text-only): {result.get('reason', 'No video needed')}")
         elif result["status"] == "compilation_failed":
             compile_fail_count += 1
             print(f"  -> Compilation Failed: {result['error']}")
         else:
             fail_count += 1
-            print(f"  -> Failed: {result['error']}")
+            print(f"  -> Failed: {result.get('error', 'Unknown error')}")
     
     print(f"{mode_label}{skip_label}{strict_label}Rendering complete: {success_count} success, {compile_fail_count} compilation failures, {fail_count} render failures")
     return rendered_videos
