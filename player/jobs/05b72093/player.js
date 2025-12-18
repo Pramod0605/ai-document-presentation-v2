@@ -593,11 +593,14 @@ function handleTimeUpdate(e) {
       } else if (beatDisplayMode === 'text_primary') {
         stage.classList.add('video-swap');
       } else if (beatDisplayMode === 'video_primary') {
-        const activeSeg = slide.timed_segments?.find(seg => t >= seg.start_time && t < seg.end_time);
+        const activeSeg = slide.timed_segments?.[targetBeatIndex];
         if (activeSeg) {
-          stage.classList.remove('video-focus');
-        } else {
-          stage.classList.add('video-focus');
+          const timeIntoSegment = t - activeSeg.start_time;
+          const textShowDuration = 3.0;
+          
+          if (timeIntoSegment > textShowDuration) {
+            stage.classList.add('video-focus');
+          }
         }
       }
     }
@@ -627,11 +630,16 @@ function handleTimeUpdate(e) {
     const singleBeat = slide.visual_beats && slide.visual_beats[0];
     const mode = singleBeat?.display_mode || 'video_primary';
     
-    if (mode === 'video_primary') {
-      if (hasActiveSegment) {
+    if (mode === 'video_primary' && slide.timed_segments) {
+      const activeSeg = slide.timed_segments.find(seg => t >= seg.start_time && t < seg.end_time);
+      if (activeSeg) {
+        const timeIntoSegment = t - activeSeg.start_time;
+        const textShowDuration = 3.0;
+        
         stage.classList.remove('video-focus');
-      } else {
-        stage.classList.add('video-focus');
+        if (timeIntoSegment > textShowDuration) {
+          stage.classList.add('video-focus');
+        }
       }
     }
   }
