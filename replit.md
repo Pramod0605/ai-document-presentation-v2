@@ -6,6 +6,17 @@ This project aims to develop a production-grade AI pipeline that transforms PDF 
 ## User Preferences
 The user wants an iterative development process. The agent should prioritize clear, concise, and accurate communication. Before making any major architectural changes or introducing new dependencies, the agent must ask for explicit approval. The user prefers detailed explanations for complex technical decisions. The agent should ensure that all code is well-documented and follows best practices for maintainability and readability.
 
+### NON-NEGOTIABLE RULES (CRITICAL)
+1. **Before proposing ANY solution**, the agent MUST check:
+   - `attached_assets/` folder for specification documents (especially LLM brain prompts)
+   - `replit.md` for documented architecture and decisions
+   - Existing prompt files in `core/prompts/`
+   - `issues.json` for tracked problems and their agreed solutions
+2. The agent must NOT assume or invent solutions - all proposals must reference documented specifications.
+3. Nothing is a "solution" until the user explicitly agrees.
+4. When in doubt, ASK the user - do not proceed with assumptions.
+5. The LLM is the "brain" - timing, durations, and creative decisions come from LLM output, not from post-processing calculations.
+
 ## System Architecture
 
 ### Core Design

@@ -1,0 +1,38 @@
+{
+  "issues": [
+    {
+      "id": "ISS-001",
+      "title": "Narration timing must come from LLM, not calculated from TTS",
+      "status": "open",
+      "created": "2025-12-18",
+      "description": "The LLM (brain) should provide authoritative timing for each narration_segment via the 'duration' field. The player should use these durations directly. We should NOT recalculate or scale timings based on actual TTS audio duration.",
+      "root_cause": "Agent incorrectly added code to recalculate timed_segments by scaling LLM durations based on actual Narakeet audio duration. This contradicts the 'LLM as brain' architecture.",
+      "solution": "1. Remove _generate_timed_segments() function from tts/generate_audio.py. 2. Remove duration scaling logic. 3. Player should convert LLM's narration_segments[].duration to timed_segments with start_time/end_time directly.",
+      "affected_files": [
+        "tts/generate_audio.py",
+        "core/pipeline.py",
+        "player/player.js"
+      ],
+      "reference_docs": [
+        "attached_assets/Pasted-FINAL-LLM-BRAIN-PROMPTS-RULES-This-is-what-you-plug-int_1765773040531.txt"
+      ]
+    },
+    {
+      "id": "ISS-002",
+      "title": "Manim only renders FIRST visual beat - multi-beat rendering not implemented",
+      "status": "open",
+      "created": "2025-12-18",
+      "description": "The manim_runner.py has a comment 'For now, compile first beat (multi-beat Manim is complex)' - meaning only the first visual beat is rendered for Manim sections.",
+      "root_cause": "Incomplete implementation - multi-beat Manim rendering was deferred.",
+      "solution": "TBD - needs user input on priority",
+      "affected_files": [
+        "render/manim/manim_runner.py"
+      ],
+      "reference_docs": []
+    }
+  ],
+  "metadata": {
+    "last_updated": "2025-12-18",
+    "version": "1.0"
+  }
+}
