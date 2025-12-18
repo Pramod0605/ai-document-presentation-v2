@@ -42,10 +42,12 @@ The `Presentation` JSON schema includes a `sections` array, where each section s
 
 ### Synchronized LaTeX Animation for Math Content
 - New `animation_style` field for equations: `write` (default), `element_reveal`, `synchronized`
-- **element_reveal**: Breaks formula into parts (e.g., `x`, `=`, `\frac{-b}{...}`) with timed reveals
-- **synchronized**: Each LaTeX element appears as narrator speaks the corresponding word
-- Each reveal_step has `at_time` offset that controls wait duration between elements
-- Example: For "x equals negative b..." narration, `x` appears at 0.0s, `=` at 0.3s, `-b` at 0.6s
+- **element_reveal**: Progressively reveals equation in chunks based on timing metadata
+- **synchronized**: Similar to element_reveal but uses `latex_elements` with `start_time` offsets
+- LLM Director provides `reveal_steps` array with `at_time` offsets for each logical part
+- Animation timing: `run_time` derived from gap to next step, `self.wait()` fills gaps between steps
+- Chunking approach: MathTex submobjects split proportionally across timing points
+- Example output: `self.wait(0.7); self.play(Write(chunk), run_time=1.0)` for a 0.7s gap and 1.0s element
 
 ### New Manim Object Types
 - `polygon`: Define vertices for custom shapes (triangles, pentagons, etc.)
@@ -121,3 +123,4 @@ Player displays images synced to narration, one at a time, with hover effect
 - **Validator Schema**: flash_validator.py still accepts old flashcard formats
 - **Video Timing**: Animation durations may not perfectly match narration
 - **Image Generation**: Currently extracts from source only - AI image generation not implemented
+- **LaTeX-to-Submobject Mapping**: Manim's MathTex doesn't provide index_of_substr for arbitrary LaTeX fragments, so synchronized reveal uses proportional chunking rather than exact element boundaries. Complex structures (fractions, radicals) may not reveal precisely at logical boundaries.
