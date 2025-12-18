@@ -594,7 +594,9 @@ function handleTimeUpdate(e) {
         stage.classList.add('video-swap');
       } else if (beatDisplayMode === 'video_primary') {
         const activeSeg = slide.timed_segments?.find(seg => t >= seg.start_time && t < seg.end_time);
-        if (!activeSeg) {
+        if (activeSeg) {
+          stage.classList.remove('video-focus');
+        } else {
           stage.classList.add('video-focus');
         }
       }
