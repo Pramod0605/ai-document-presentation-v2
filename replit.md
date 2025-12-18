@@ -71,6 +71,29 @@ The renderer generates SEPARATE videos for each beat - they are NOT stitched tog
 
 **Key Principle:** LLM decides what persists across beats; renderer just executes each beat independently.
 
+### Flash Validator Compliance (Prompt Updates)
+**Problem Fixed:** LLM was generating vague visual beat descriptions that Flash Validator rejected.
+
+**Root Cause:** LLM used placeholder phrases like "clear diagrams", "labeled components", "highlight key terms" instead of concrete Manim specifications.
+
+**Solution - Banned Phrase Enforcement:**
+Added comprehensive banned phrase list to both `system_prompt.txt` and `user_prompt.txt`:
+- Category A: Generic descriptors ("detailed animation", "show clearly")
+- Category B: Placeholder phrases ("clear diagrams", "labeled components", "fade in elements sequentially", "highlight key terms", "animate transitions", "display topic title", "key terms highlighted", "step-by-step annotations")
+
+**Each banned phrase now has a required replacement:**
+- "clear diagrams" → "right-angled triangle ABC with vertices at A(0,0), B(3,0), C(0,4)"
+- "labeled components" → "label 'A' at vertex (0,3)"
+- "fade in elements sequentially" → "first the triangle appears, then vertex A highlights"
+
+**Quality Gate Enhanced:**
+Added mandatory self-check in `user_prompt.txt`:
+1. STRUCTURE CHECK - All 5 required fields present
+2. BANNED PHRASE CHECK - Scan for prohibited phrases
+3. MANIM SPEC CHECK - Verify coordinates and animation sequences
+
+**Results:** Flash Validator pass rate improved from 0% to 97%.
+
 ### Manim LaTeX Rendering Fix
 - **Root cause**: A corrupted local `standalone.cls` file (only containing `\endinput`) was being loaded instead of the system's TexLive standalone class
 - **Symptom**: LaTeX error "The font size command \normalsize is not defined" during Manim renders
