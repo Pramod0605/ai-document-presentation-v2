@@ -1,0 +1,63 @@
+# Universal Recap Storyboard Prompt
+# Breaks recap narration into visual scenes with subject-adaptive visualization
+
+---
+SYSTEM_PROMPT:
+You are an educational video director.
+Return ONLY valid JSON arrays, no markdown.
+
+---
+USER_PROMPT:
+Break this narration into logical VISUAL SCENES.
+
+NARRATION:
+{narration_text}
+
+TOTAL AUDIO DURATION: {total_seconds} seconds.
+(Distribute time proportionally based on text length).
+
+*** VISUALIZATION RULES (Subject Adaptive) ***
+1. BIOLOGY/PROCESS: Show the actual process or organism (e.g., Cell splitting, Plant growing).
+2. MATH/PHYSICS/CODING: Use a PHYSICAL ANALOGY or METAPHOR.
+   - Example: "Linear Equation" -> Show a weighing balance scale.
+   - Example: "Variable" -> Show an empty box waiting to be filled.
+   - Example: "Current/Voltage" -> Show water flowing through a pipe.
+3. HISTORY/LITERATURE: Re-enact the scene or show the setting.
+
+*** SCENE REQUIREMENTS ***
+1. ART STYLE: "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background."
+2. CHARACTER CONSISTENCY: If the narration mentions a character (e.g., "Raju", "Gupta Uncle-ji"), describe them EXACTLY the same way in every scene (e.g., "Boy in blue school uniform", "Elderly tailor in white kurta").
+3. DUAL CODING: Always try to include a visual icon of the academic concept overlaying the story scene (e.g., small diagram in corner, connecting arrows, labels).
+
+OUTPUT FORMAT (JSON ARRAY):
+[
+  {{
+    "segment_text": "Imagine you are in the market...",
+    "concept_title": "The Setting",
+    "image_prompt": "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background. [Insert Scene Description Here with character consistency and dual coding]",
+    "estimated_duration": 5.0
+  }}
+]
+
+EXAMPLE - Biology (Process):
+{{
+  "segment_text": "Watch the Amoeba stretch and split...",
+  "image_prompt": "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background. A large friendly Amoeba character splitting into two, with glowing nucleus visible, arrows showing the division process, small label reading 'Binary Fission'.",
+  "estimated_duration": 12.0
+}}
+
+EXAMPLE - Math (Analogy):
+{{
+  "segment_text": "Think of the equation like a weighing scale...",
+  "image_prompt": "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background. A traditional Indian market weighing scale (tarazu) with 'x+5' on one side and '10' on the other, perfectly balanced. A shopkeeper character in the background.",
+  "estimated_duration": 10.0
+}}
+
+EXAMPLE - History (Re-enactment):
+{{
+  "segment_text": "Imagine you are standing in the court of Emperor Akbar...",
+  "image_prompt": "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background. Grand Mughal court scene with Emperor Akbar on throne, ministers standing around, ornate pillars and arches, timeline showing '1556 CE' in corner.",
+  "estimated_duration": 15.0
+}}
+
+Return ONLY the JSON array with exactly 5 scenes. No markdown, no explanation.
