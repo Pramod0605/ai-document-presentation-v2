@@ -592,10 +592,16 @@ function handleTimeUpdate(e) {
         stage.classList.add('video-focus');
       } else if (beatDisplayMode === 'text_primary') {
         stage.classList.add('video-swap');
+      } else if (beatDisplayMode === 'video_primary') {
+        const activeSeg = slide.timed_segments?.find(seg => t >= seg.start_time && t < seg.end_time);
+        if (!activeSeg) {
+          stage.classList.add('video-focus');
+        }
       }
     }
   }
 
+  let hasActiveSegment = false;
   if (slide.timed_segments) {
     slide.timed_segments.forEach((seg, i) => {
       const el = document.getElementById(`seg-${i}`);
@@ -604,6 +610,7 @@ function handleTimeUpdate(e) {
       if (t >= seg.start_time && t < seg.end_time) {
         el.classList.add('active');
         el.classList.remove('read');
+        hasActiveSegment = true;
       } else if (t >= seg.end_time) {
         el.classList.remove('active');
         el.classList.add('read');
@@ -612,6 +619,19 @@ function handleTimeUpdate(e) {
         el.classList.remove('read');
       }
     });
+  }
+  
+  if (stage.classList.contains('mode-content-video') && (!slide.beat_videos || slide.beat_videos.length <= 1)) {
+    const singleBeat = slide.visual_beats && slide.visual_beats[0];
+    const mode = singleBeat?.display_mode || 'video_primary';
+    
+    if (mode === 'video_primary') {
+      if (hasActiveSegment) {
+        stage.classList.remove('video-focus');
+      } else {
+        stage.classList.add('video-focus');
+      }
+    }
   }
 
   updateSlideImages(slide, t);
