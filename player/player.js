@@ -826,6 +826,7 @@ async function checkExistingPresentation() {
             recap_scenes: section.recap_scenes,
             visual_beats: section.visual_beats || [],
             narration_segments: section.narration_segments || [],
+            timed_segments: section.timed_segments || null,
             audio_path: BASE_PATH + `audio/section_${section.id}.mp3`,
             content_video_path: section.section_type === 'recap' 
               ? BASE_PATH + `videos/recap_${section.id}_scene_1.mp4`

@@ -222,7 +222,7 @@ def generate_all_audio(presentation: dict, output_dir: str) -> list:
     for section in sections:
         result = generate_section_audio(section, output_dir)
         
-        section["audio_duration"] = result["duration"]
+        section["duration"] = result["duration"]
         section["timed_segments"] = result["timed_segments"]
         
         audio_files.append({
