@@ -249,7 +249,6 @@ function loadSlide(index) {
           <div class="fc-letter">${fc.letter}</div>
           <div class="fc-title">${fc.title || ''}</div>
           <div class="fc-mnemonic">${fc.mnemonic || ''}</div>
-          <div class="fc-desc">${fc.explanation || ''}</div>
         `;
       } else {
         card.innerHTML = `
@@ -281,10 +280,9 @@ function loadSlide(index) {
           <div class="fc-letter">${fc.letter}</div>
           <div class="fc-title">${fc.title || ''}</div>
           <div class="fc-mnemonic">${fc.mnemonic || ''}</div>
-          <div class="fc-desc">${fc.explanation || ''}</div>
         `;
       } else {
-        card.innerHTML = `<div class="fc-letter">${fc.letter || ''}</div><div class="fc-title">${fc.title || ''}</div><div class="fc-desc">${fc.description || ''}</div>`;
+        card.innerHTML = `<div class="fc-letter">${fc.letter || ''}</div><div class="fc-title">${fc.title || ''}</div>`;
       }
       container.appendChild(card);
     });
@@ -399,16 +397,20 @@ function loadSlide(index) {
     stage.className = 'mode-center';
     document.getElementById('content-box').style.width = '80%';
   } else if (sectionType === 'recap') {
-    stage.className = 'mode-image';
-    const scenes = slide.recap_scenes || slide.storyboard_scenes;
-    if (scenes && scenes.length > 0) {
-      if (scenes[0].image_url) {
-        bgImg.src = scenes[0].image_url;
-        bgImg.style.opacity = 1;
-      }
-      if (sceneLabel) {
-        sceneLabel.innerText = scenes[0].concept_title || scenes[0].description || 'Scene 1';
-        sceneLabel.style.opacity = 1;
+    if (slide.has_content_video || slide.content_video_path) {
+      stage.className = 'mode-side';
+    } else {
+      stage.className = 'mode-image';
+      const scenes = slide.recap_scenes || slide.storyboard_scenes;
+      if (scenes && scenes.length > 0) {
+        if (scenes[0].image_url) {
+          bgImg.src = scenes[0].image_url;
+          bgImg.style.opacity = 1;
+        }
+        if (sceneLabel) {
+          sceneLabel.innerText = scenes[0].concept_title || scenes[0].description || 'Scene 1';
+          sceneLabel.style.opacity = 1;
+        }
       }
     }
   } else if (sectionType === 'summary') {
@@ -444,7 +446,8 @@ function loadSlide(index) {
   const inlineVideo = document.getElementById('inline-video');
   const videoBox = document.getElementById('video-box');
   
-  const showVideoBox = (sectionType !== 'intro' && sectionType !== 'memory' && sectionType !== 'recap');
+  const showVideoBox = (sectionType !== 'intro' && sectionType !== 'memory') || 
+                       (sectionType === 'recap' && (slide.has_content_video || slide.content_video_path));
 
   const hasValidVideoAsset = contentVidPath && slide.has_content_video;
   
