@@ -13,8 +13,11 @@ class TTSGenerationError(Exception):
     pass
 
 
-def _narakeet_streaming(narration: str, output_path: str, section_id: int) -> str:
-    """Use Narakeet streaming API for short text (<= 1024 chars)."""
+def _narakeet_streaming(narration: str, output_path: str, section_id: int) -> tuple:
+    """Use Narakeet streaming API for short text (<= 1024 chars).
+    
+    Returns: (output_path, duration_seconds)
+    """
     response = requests.post(
         f"https://api.narakeet.com/text-to-speech/mp3?voice={NARAKEET_VOICE}",
         headers={
@@ -29,17 +32,24 @@ def _narakeet_streaming(narration: str, output_path: str, section_id: int) -> st
     if response.status_code == 200:
         with open(output_path, 'wb') as f:
             f.write(response.content)
-        duration = response.headers.get('x-duration-seconds', 'unknown')
+        duration_str = response.headers.get('x-duration-seconds', '0')
+        try:
+            duration = float(duration_str)
+        except (ValueError, TypeError):
+            duration = 0.0
         print(f"[TTS] Section {section_id}: Narakeet streaming SUCCESS - {output_path} ({duration}s)")
-        return output_path
+        return output_path, duration
     else:
         raise TTSGenerationError(
             f"Narakeet streaming API failed: {response.status_code} - {response.text[:200]}"
         )
 
 
-def _narakeet_polling(narration: str, output_path: str, section_id: int) -> str:
-    """Use Narakeet polling API for long text (> 1024 chars)."""
+def _narakeet_polling(narration: str, output_path: str, section_id: int) -> tuple:
+    """Use Narakeet polling API for long text (> 1024 chars).
+    
+    Returns: (output_path, duration_seconds)
+    """
     print(f"[TTS] Section {section_id}: Using Narakeet polling API (text_len={len(narration)})")
     
     response = requests.post(
@@ -96,9 +106,13 @@ def _narakeet_polling(narration: str, output_path: str, section_id: int) -> str:
                 with open(output_path, 'wb') as f:
                     f.write(audio_response.content)
                 
-                duration = status_data.get('durationInSeconds', 'unknown')
+                duration = status_data.get('durationInSeconds', 0.0)
+                try:
+                    duration = float(duration)
+                except (ValueError, TypeError):
+                    duration = 0.0
                 print(f"[TTS] Section {section_id}: Narakeet polling SUCCESS - {output_path} ({duration}s)")
-                return output_path
+                return output_path, duration
             else:
                 raise TTSGenerationError("Narakeet polling task failed")
         
@@ -108,11 +122,13 @@ def _narakeet_polling(narration: str, output_path: str, section_id: int) -> str:
     raise TTSGenerationError(f"Narakeet polling timed out after {max_wait}s")
 
 
-def generate_section_audio(section: dict, output_dir: str) -> str:
+def generate_section_audio(section: dict, output_dir: str) -> dict:
     """Generate audio for a section using Narakeet TTS.
     
     FAIL-FAST: No fallback to gTTS. Raises TTSGenerationError if Narakeet fails.
     Uses streaming API for short text, polling API for long text.
+    
+    Returns: dict with audio_path, duration, and timed_segments
     """
     section_id = section.get("id", 1)
     narration = section.get("narration", "")
@@ -135,26 +151,88 @@ def generate_section_audio(section: dict, output_dir: str) -> str:
     
     try:
         if len(narration) <= NARAKEET_STREAMING_LIMIT:
-            return _narakeet_streaming(narration, output_path, section_id)
+            audio_path, duration = _narakeet_streaming(narration, output_path, section_id)
         else:
-            return _narakeet_polling(narration, output_path, section_id)
+            audio_path, duration = _narakeet_polling(narration, output_path, section_id)
+        
+        timed_segments = _generate_timed_segments(section, duration)
+        
+        return {
+            "audio_path": audio_path,
+            "duration": duration,
+            "timed_segments": timed_segments
+        }
     except requests.exceptions.RequestException as e:
         raise TTSGenerationError(f"Narakeet API request failed: {e}")
 
 
+def _generate_timed_segments(section: dict, actual_duration: float) -> list:
+    """Generate timed_segments by scaling LLM segment durations to actual audio duration.
+    
+    Uses narration_segments if available, otherwise divides by segments or equally.
+    """
+    narration_segments = section.get("narration_segments", [])
+    segments = section.get("segments", [])
+    
+    if narration_segments:
+        source = narration_segments
+        estimated_total = sum(seg.get("duration", 3.0) for seg in source)
+    elif segments:
+        source = segments
+        estimated_total = sum(seg.get("duration", 3.0) for seg in source)
+    else:
+        return []
+    
+    if estimated_total <= 0 or actual_duration <= 0:
+        return []
+    
+    scale_factor = actual_duration / estimated_total
+    
+    timed_segments = []
+    current_time = 0.0
+    
+    for seg in source:
+        text = seg.get("text", "")
+        estimated_duration = seg.get("duration", 3.0)
+        scaled_duration = estimated_duration * scale_factor
+        
+        timed_segments.append({
+            "visual": text,
+            "start_time": round(current_time, 2),
+            "end_time": round(current_time + scaled_duration, 2)
+        })
+        current_time += scaled_duration
+    
+    if timed_segments and actual_duration > 0:
+        timed_segments[-1]["end_time"] = round(actual_duration, 2)
+    
+    return timed_segments
+
+
 def generate_all_audio(presentation: dict, output_dir: str) -> list:
-    """Generate audio for all sections in presentation."""
+    """Generate audio for all sections in presentation.
+    
+    Also updates each section with actual audio_duration and timed_segments.
+    """
     os.makedirs(output_dir, exist_ok=True)
     
     audio_files = []
     sections = presentation.get("sections", presentation.get("topics", []))
     
     for section in sections:
-        audio_path = generate_section_audio(section, output_dir)
+        result = generate_section_audio(section, output_dir)
+        
+        section["audio_duration"] = result["duration"]
+        section["timed_segments"] = result["timed_segments"]
+        
         audio_files.append({
             "section_id": section.get("id"),
             "section_type": section.get("section_type", "content"),
-            "audio_path": audio_path
+            "audio_path": result["audio_path"],
+            "duration": result["duration"],
+            "timed_segments_count": len(result["timed_segments"])
         })
+        
+        print(f"[TTS] Section {section.get('id')}: Added {len(result['timed_segments'])} timed_segments (duration={result['duration']:.1f}s)")
     
     return audio_files

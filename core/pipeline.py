@@ -149,6 +149,11 @@ def process_pdf_to_videos(
             job_status["steps"][-1]["audio_files"] = audio_files
             if job_id:
                 job_manager.complete_step(job_id, 3)
+            
+            # Re-save presentation with timed_segments from TTS
+            with open(presentation_path, "w") as f:
+                json.dump(presentation, f, indent=2)
+            print(f"[PIPELINE] Updated presentation.json with timed_segments")
         
         job_status["status"] = "completed"
         job_status["completed_at"] = datetime.now().isoformat()
@@ -292,6 +297,11 @@ def process_markdown_to_videos(
             job_status["steps"][-1]["audio_files"] = audio_files
             if job_id:
                 job_manager.complete_step(job_id, 2)
+            
+            # Re-save presentation with timed_segments from TTS
+            with open(presentation_path, "w") as f:
+                json.dump(presentation, f, indent=2)
+            print(f"[PIPELINE] Updated presentation.json with timed_segments")
         
         job_status["status"] = "completed"
         job_status["completed_at"] = datetime.now().isoformat()
