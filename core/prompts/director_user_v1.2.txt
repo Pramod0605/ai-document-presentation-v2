@@ -1,0 +1,27 @@
+Create a complete teaching plan from the following chunks.
+
+INPUT:
+- Subject metadata (subject, grade, chapter)
+- Chunked textbook content (JSON)
+
+TASK:
+- Design the lesson flow.
+- Create sections with:
+  - section_type (intro, content, example, quiz, memory, recap)
+  - narration
+  - narration_segments with duration
+  - visual_beats (descriptive, no code)
+  - renderer choice + reasoning
+  - layout
+  - gesture hints
+
+OUTPUT:
+- One JSON object only.
+- Must conform to llm_output_requirements_v1.2.
+
+SUBJECT: {subject}
+GRADE: {grade}
+CHAPTER: {chapter}
+
+CHUNKS:
+{chunks_json}

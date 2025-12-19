@@ -1,0 +1,24 @@
+Generate a video prompt for the following visual beat.
+
+INPUT:
+- Narration text
+- Visual beat description
+- Target duration
+
+SECTION DATA:
+{section_json}
+
+OUTPUT FORMAT:
+{
+  "section_id": number,
+  "video_prompts": [
+    {
+      "beat_id": number,
+      "prompt": "string",
+      "duration_seconds": number,
+      "style": "educational | realistic | animated"
+    }
+  ]
+}
+
+No extra text.

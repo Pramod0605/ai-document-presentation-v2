@@ -1,0 +1,24 @@
+Generate a manim_scene_spec from the following input.
+
+INPUT:
+- Narration text
+- Narration duration
+- Visual beats (descriptive)
+- Symbolic overlays allowed
+
+REQUIREMENTS:
+- One scene spec per section.
+- Animate steps in order.
+- Match duration exactly.
+
+SECTION DATA:
+{section_json}
+
+Output JSON only. Structure:
+{
+  "section_id": number,
+  "manim_scene_spec": {
+    "objects": [...],
+    "animation_sequence": [...]
+  }
+}
