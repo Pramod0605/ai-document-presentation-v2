@@ -133,14 +133,49 @@
       "resolved": "2025-12-19",
       "spec_reference": "docs/llm_output_requirements.json v1.1 - traceability",
       "solution": "Created core/traceability.py implementing: 1) generation_trace_required via TraceabilityLogger class, 2) render_prompts_logged via log_render_prompt(), 3) renderer_decisions_logged via log_renderer_decision(), 4) validation_results_logged via log_validation(). Integrated into both pipeline functions with init_traceability(), log_event(), log_hard_fail(), complete_trace()."
+    },
+    {
+      "id": "ISS-018",
+      "title": "Avatar hidden behind content box in intro/memory modes",
+      "status": "open",
+      "created": "2025-12-19",
+      "description": "In intro and memory section modes, the avatar appears behind the content box instead of in front. The content box needs lower z-index or avatar needs higher z-index for these modes.",
+      "screenshot": "attached_assets/image_1766159777484.png",
+      "plan": "1) Increase avatar z-index for mode-center to be above content-box, 2) Ensure content-box z-index is lower, 3) Test intro/memory sections"
+    },
+    {
+      "id": "ISS-019",
+      "title": "Text content not displaying when sharing/loading videos",
+      "status": "open",
+      "created": "2025-12-19",
+      "description": "When accessing the player via shared URL, text content doesn't appear in content-box. May be race condition with displayItems population or typewriter initialization.",
+      "screenshot": "attached_assets/image_1766159991340.png",
+      "plan": "1) Debug displayItems population timing, 2) Ensure typewriter waits for content, 3) Check if segments array is populated correctly"
+    },
+    {
+      "id": "ISS-020",
+      "title": "Player initial load is very slow",
+      "status": "open",
+      "created": "2025-12-19",
+      "description": "Player takes too long to load initially. Likely caused by preloading all audio files upfront instead of on-demand.",
+      "plan": "1) Implement lazy audio loading - only load audio for current section, 2) Add loading skeleton, 3) Defer non-critical assets"
+    },
+    {
+      "id": "ISS-021",
+      "title": "Avatar too small in video-primary mode and blank video at start",
+      "status": "open",
+      "created": "2025-12-19",
+      "description": "When video plays, avatar is super tiny. Also blank video box appears before content loads. Avatar should be larger and content should appear instantly.",
+      "screenshot": "attached_assets/image_1766159974072.png",
+      "plan": "1) Increase default avatar size for video modes, 2) Hide video-box until video is ready, 3) Ensure instant content render"
     }
   ],
   "metadata": {
     "last_updated": "2025-12-19",
-    "version": "3.0",
+    "version": "4.0",
     "spec_version": "v1.1",
     "spec_file": "docs/llm_output_requirements.json",
     "resolved_count": 17,
-    "open_count": 0
+    "open_count": 4
   }
 }
