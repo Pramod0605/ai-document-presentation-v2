@@ -230,14 +230,55 @@
       "description": "When avatar is resized or repositioned, it appears stretched or loses quality. Aspect ratio should be maintained.",
       "screenshot": "attached_assets/image_1766161709938.png",
       "solution": "Added image-rendering: -webkit-optimize-contrast and image-rendering: crisp-edges to #avatar-canvas for better quality during canvas rendering."
+    },
+    {
+      "id": "ISS-028",
+      "title": "v1.2 Architecture Upgrade - 3-Pass LLM Pipeline",
+      "status": "resolved",
+      "created": "2025-12-19",
+      "resolved": "2025-12-19",
+      "description": "Upgrade from 2-LLM architecture to 3-pass architecture with role-pure separation of concerns. Pass 0: Chunker (Gemini Flash), Pass 1: Director (Gemini Pro) for pedagogy only, Pass 2: Specialized renderers (Claude Sonnet for Manim/Remotion, Gemini Pro for Video).",
+      "spec_reference": "docs/llm_output_requirements.json v1.2",
+      "solution": "Created: 1) core/llm_client_v12.py with 3-pass pipeline functions, 2) core/analytics.py for per-phase cost/time tracking, 3) core/pipeline_v12.py for production use, 4) 10 new prompt files in core/prompts/, 5) Backed up v1.1 to pipeline_v11.py and prompts/v1.1_backup/. Added validation to strip renderer fields from Director output and verify renderer output exists after Pass 2.",
+      "files_created": [
+        "core/llm_client_v12.py",
+        "core/analytics.py",
+        "core/pipeline_v12.py",
+        "core/prompts/chunker_system_v1.2.txt",
+        "core/prompts/chunker_user_v1.2.txt",
+        "core/prompts/director_system_v1.2.txt",
+        "core/prompts/director_user_v1.2.txt",
+        "core/prompts/manim_renderer_system_v1.2.txt",
+        "core/prompts/manim_renderer_user_v1.2.txt",
+        "core/prompts/remotion_renderer_system_v1.2.txt",
+        "core/prompts/remotion_renderer_user_v1.2.txt",
+        "core/prompts/video_renderer_system_v1.2.txt",
+        "core/prompts/video_renderer_user_v1.2.txt"
+      ],
+      "files_backed_up": [
+        "core/pipeline_v11.py",
+        "core/prompts/v1.1_backup/",
+        "docs/llm_output_requirements_v1.1.json"
+      ],
+      "test_results": {
+        "input": "attached_assets/Sample_subjects.md",
+        "chunks_created": 14,
+        "sections_generated": 7,
+        "renderer_distribution": {"manim": 3, "remotion": 3, "video": 1},
+        "total_duration_seconds": 176.6,
+        "total_cost_usd": 0.14,
+        "total_tokens": 25160,
+        "phases_completed": 8,
+        "phases_failed": 0
+      }
     }
   ],
   "metadata": {
     "last_updated": "2025-12-19",
-    "version": "7.0",
-    "spec_version": "v1.1",
+    "version": "8.0",
+    "spec_version": "v1.2",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 27,
+    "resolved_count": 28,
     "open_count": 1
   }
 }

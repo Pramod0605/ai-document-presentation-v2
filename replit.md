@@ -131,9 +131,12 @@ core/
 │   ├── remotion_renderer_user_v1.2.txt
 │   ├── video_renderer_system_v1.2.txt
 │   └── video_renderer_user_v1.2.txt
-├── analytics.py             # Cost/time tracking (NEW)
-├── pipeline.py              # Main pipeline orchestrator
-├── llm_client.py            # OpenRouter LLM calls
+├── analytics.py             # Cost/time tracking per phase
+├── pipeline_v12.py          # v1.2 3-pass pipeline (CURRENT)
+├── pipeline_v11.py          # v1.1 pipeline backup
+├── pipeline.py              # Original pipeline (legacy)
+├── llm_client_v12.py        # v1.2 3-pass LLM calls
+├── llm_client.py            # v1.1 LLM calls (legacy)
 ├── hard_fail_validator.py   # Validation rules
 ├── traceability.py          # Generation trace logging
 └── latex_to_speech.py       # LaTeX→speakable text for TTS
