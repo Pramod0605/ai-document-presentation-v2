@@ -147,19 +147,21 @@
     {
       "id": "ISS-019",
       "title": "Text content not displaying when sharing/loading videos",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
+      "resolved": "2025-12-19",
       "description": "When accessing the player via shared URL, text content doesn't appear in content-box. May be race condition with displayItems population or typewriter initialization.",
       "screenshot": "attached_assets/image_1766159991340.png",
-      "plan": "1) Debug displayItems population timing, 2) Ensure typewriter waits for content, 3) Check if segments array is populated correctly"
+      "solution": "Root cause: segment-item and flashcard had very low default opacity (0.3-0.4) making them nearly invisible on dark background. Fixed by: 1) Increased base opacity to 0.7-0.75, 2) Added logic to mark first segment/flashcard as active on load for full visibility."
     },
     {
       "id": "ISS-020",
       "title": "Player initial load is very slow",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
+      "resolved": "2025-12-19",
       "description": "Player takes too long to load initially. Likely caused by preloading all audio files upfront instead of on-demand.",
-      "plan": "1) Implement lazy audio loading - only load audio for current section, 2) Add loading skeleton, 3) Defer non-critical assets"
+      "solution": "Implemented lazy video detection: 1) Only detect videos for current slide before showing UI, 2) Added detectVideosForSlide() with caching, 3) Background detection for remaining slides via detectRemainingVideosInBackground(), 4) Made loadSlide async to support on-demand detection."
     },
     {
       "id": "ISS-021",
@@ -177,7 +179,7 @@
     "version": "4.0",
     "spec_version": "v1.1",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 19,
-    "open_count": 2
+    "resolved_count": 21,
+    "open_count": 0
   }
 }

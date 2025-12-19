@@ -24,7 +24,13 @@ let isPlaying = false;
 let currentBeatIndex = 0;
 let beatVideoPaths = [];
 
+const videoDetectionCache = {};
+
 async function detectBeatVideos(sectionId) {
+  if (videoDetectionCache[sectionId]) {
+    return videoDetectionCache[sectionId];
+  }
+  
   const beats = [];
   for (let i = 0; i < 20; i++) {
     const path = BASE_PATH + `videos/topic_${sectionId}_beat_${i}.mp4`;
@@ -39,7 +45,34 @@ async function detectBeatVideos(sectionId) {
       break;
     }
   }
+  videoDetectionCache[sectionId] = beats;
   return beats;
+}
+
+async function detectVideosForSlide(slide) {
+  const sectionId = slide.section_id || slide.id;
+  if (!sectionId || slide._videoDetected) return;
+  
+  try {
+    const beats = await detectBeatVideos(sectionId);
+    if (beats.length > 0) {
+      slide.beat_videos = beats;
+      slide.content_video_path = beats[0];
+      slide.has_content_video = true;
+      console.log(`Section ${sectionId}: Found ${beats.length} beat videos`);
+    } else {
+      const singleVideoPath = `${BASE_PATH}videos/topic_${sectionId}.mp4`;
+      const resp = await fetch(singleVideoPath, { method: 'HEAD' });
+      if (resp.ok) {
+        slide.content_video_path = singleVideoPath;
+        slide.has_content_video = true;
+        console.log(`Section ${sectionId}: Found single video`);
+      }
+    }
+    slide._videoDetected = true;
+  } catch (e) {
+    console.log(`Video detection error for ${sectionId}:`, e);
+  }
 }
 
 const stage = document.getElementById('stage');
@@ -397,8 +430,14 @@ function loadSlide(index) {
           };
         });
       }
+      
+      const firstSeg = document.getElementById('seg-0');
+      if (firstSeg) firstSeg.classList.add('active');
     }
   }
+
+  const firstFlashcard = document.querySelector('.flashcard');
+  if (firstFlashcard) firstFlashcard.classList.add('active');
 
   if (window.MathJax) MathJax.typesetPromise();
 
@@ -576,6 +615,14 @@ function loadSlide(index) {
 
   adjustContentScale();
   renderAvatar();
+  
+  if (!slide._videoDetected) {
+    detectVideosForSlide(slide).then(() => {
+      if (currentSlideIndex === index && slide.has_content_video) {
+        loadSlide(index);
+      }
+    });
+  }
 }
 
 function handleTimeUpdate(e) {
@@ -997,7 +1044,6 @@ async function checkExistingPresentation() {
       }
       
       if (lessonData.slides && lessonData.slides.length > 0) {
-        await detectAllBeatVideos();
         document.getElementById('upload-overlay').classList.add('hidden');
         buildSlideList();
         
@@ -1006,8 +1052,11 @@ async function checkExistingPresentation() {
         if (hashMatch) {
           startSlide = Math.max(0, Math.min(parseInt(hashMatch[1]) - 1, lessonData.slides.length - 1));
         }
+        
         loadSlide(startSlide);
         updateVisuals();
+        
+        detectRemainingVideosInBackground(startSlide);
       } else {
         document.getElementById('upload-overlay').classList.remove('hidden');
       }
@@ -1020,28 +1069,10 @@ async function checkExistingPresentation() {
   }
 }
 
-async function detectAllBeatVideos() {
-  for (const slide of lessonData.slides) {
-    const sectionId = slide.section_id || slide.id;
-    if (sectionId) {
-      const beats = await detectBeatVideos(sectionId);
-      if (beats.length > 0) {
-        slide.beat_videos = beats;
-        slide.content_video_path = beats[0];
-        slide.has_content_video = true;
-        console.log(`Section ${sectionId}: Found ${beats.length} beat videos`);
-      } else {
-        const singleVideoPath = `${BASE_PATH}videos/topic_${sectionId}.mp4`;
-        try {
-          const resp = await fetch(singleVideoPath, { method: 'HEAD' });
-          if (resp.ok) {
-            slide.content_video_path = singleVideoPath;
-            slide.has_content_video = true;
-            console.log(`Section ${sectionId}: Found single video`);
-          }
-        } catch (e) {}
-      }
-    }
+async function detectRemainingVideosInBackground(skipIndex) {
+  for (let i = 0; i < lessonData.slides.length; i++) {
+    if (i === skipIndex) continue;
+    await detectVideosForSlide(lessonData.slides[i]);
   }
 }
 
