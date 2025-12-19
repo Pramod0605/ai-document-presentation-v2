@@ -31,10 +31,183 @@
       "created": "2025-12-18",
       "root_cause": "Player handles summary correctly. Summary IS slide #2 in presentation. User may need to navigate to it.",
       "solution": "No code change needed - player already supports summary sections."
+    },
+    {
+      "id": "ISS-005",
+      "title": "Intro/summary sections displaying narration_segments instead of visual_content",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1",
+      "root_cause": "Player falls back to narration_segments when visual_content is missing. v1.1 specifies no_fallbacks_allowed=true.",
+      "required_changes": {
+        "prompts": "Must require visual_content field for intro (empty {}), summary (bullet_points), memory (flashcards)",
+        "player": "Must NOT fall back to narration_segments. Show error if required visual_content missing."
+      }
+    },
+    {
+      "id": "ISS-006",
+      "title": "Duration field naming mismatch: v1.1 uses duration_seconds, code uses duration",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - narration_segments.required_fields, visual_beat_structure",
+      "locations": {
+        "prompts": "user_prompt.txt line 234-235 uses 'duration'",
+        "player": "player.js line 334 reads 'item.duration'"
+      },
+      "required_changes": {
+        "prompts": "Change all 'duration' to 'duration_seconds'",
+        "player": "Read 'duration_seconds' instead of 'duration'"
+      }
+    },
+    {
+      "id": "ISS-007",
+      "title": "Section ID field mismatch: v1.1 uses section_id, code uses id",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - section_structure.common_fields",
+      "locations": {
+        "prompts": "user_prompt.txt line 39 uses 'id'",
+        "player": "player.js references 'slide.id'"
+      },
+      "required_changes": {
+        "prompts": "Change section 'id' to 'section_id'",
+        "player": "Read 'section_id' instead of 'id'"
+      }
+    },
+    {
+      "id": "ISS-008",
+      "title": "renderer_reasoning field missing",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - section_structure.common_fields",
+      "required_changes": {
+        "prompts": "Add renderer_reasoning as required field in output schema"
+      }
+    },
+    {
+      "id": "ISS-009",
+      "title": "Quiz section type not implemented",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - section_types includes 'quiz', quiz_handling_rules",
+      "required_changes": {
+        "prompts": "Add quiz section type with handling rules",
+        "player": "Add quiz section rendering"
+      }
+    },
+    {
+      "id": "ISS-010",
+      "title": "Flashcard limit mismatch: v1.1 says 5, prompts say 3",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - memory_section_rules.flashcard_limit = 5",
+      "locations": {
+        "prompts": "system_prompt.txt line 296 says 'EXACTLY 3 mnemonic flashcards'"
+      },
+      "required_changes": {
+        "prompts": "Change flashcard requirement from 3 to 5, update format to acronym_based"
+      }
+    },
+    {
+      "id": "ISS-011",
+      "title": "Visual beat purpose field naming: v1.1 uses 'purpose', code uses 'pedagogical_focus'",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - visual_beat_structure.purpose",
+      "locations": {
+        "prompts": "Both prompts use 'pedagogical_focus'",
+        "visual_compiler": "REQUIRED_VISUAL_BEAT_FIELDS includes 'pedagogical_focus'"
+      },
+      "decision_needed": "Align to v1.1 ('purpose') or keep 'pedagogical_focus'?"
+    },
+    {
+      "id": "ISS-012",
+      "title": "Visual beat missing duration_seconds field",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - visual_beat_structure.duration_seconds",
+      "required_changes": {
+        "prompts": "Add duration_seconds to visual beat required fields"
+      }
+    },
+    {
+      "id": "ISS-013",
+      "title": "Example section missing 5-step structure requirement",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - example_section_rules.example_steps",
+      "v1.1_steps": ["identify_known_quantities", "draw_geometry", "apply_formula", "solve_stepwise", "state_conclusion"],
+      "required_changes": {
+        "prompts": "Add explicit 5-step requirement for example sections"
+      }
+    },
+    {
+      "id": "ISS-014",
+      "title": "Display fitness rules not enforced",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - display_fitness_rules",
+      "v1.1_rules": {
+        "max_text_lines_on_screen": 4,
+        "max_words_per_line": 12,
+        "if_text_exceeds_limits": "split_into_additional_segments"
+      },
+      "required_changes": {
+        "prompts": "Add display fitness rules to prompt",
+        "player": "Optionally validate/warn on display limits"
+      }
+    },
+    {
+      "id": "ISS-015",
+      "title": "Allowed gestures not constrained to v1.1 list",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - avatar_gesture_rules.allowed_gestures",
+      "v1.1_allowed": ["point_left", "point_right", "point_center", "open_palms", "nod", "emphasize", "idle"],
+      "required_changes": {
+        "prompts": "Add explicit list of allowed gestures"
+      }
+    },
+    {
+      "id": "ISS-016",
+      "title": "Hard fail validation conditions not fully implemented",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - validation_rules.hard_fail_conditions",
+      "v1.1_conditions": [
+        "content_or_example_narration_below_minimum",
+        "missing_visual_beats",
+        "example_without_step_visualization",
+        "formula_mentioned_but_not_visualized",
+        "vague_visual_language_detected",
+        "manim_section_without_scene_spec"
+      ],
+      "current_status": "Partial - visual_compiler.py has some checks but not all",
+      "required_changes": {
+        "validators": "Implement all 6 hard fail conditions"
+      }
+    },
+    {
+      "id": "ISS-017",
+      "title": "Traceability logging not implemented",
+      "status": "open",
+      "created": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - traceability",
+      "v1.1_requirements": {
+        "generation_trace_required": true,
+        "render_prompts_logged": true,
+        "renderer_decisions_logged": true,
+        "validation_results_logged": true
+      },
+      "required_changes": {
+        "pipeline": "Add structured logging for traceability"
+      }
     }
   ],
   "metadata": {
     "last_updated": "2025-12-19",
-    "version": "1.6"
+    "version": "2.0",
+    "spec_version": "v1.1",
+    "spec_file": "docs/llm_output_requirements.json"
   }
 }
