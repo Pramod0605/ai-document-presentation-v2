@@ -9,6 +9,7 @@ The user wants an iterative development process. The agent should prioritize cle
 ### NON-NEGOTIABLE RULES (CRITICAL)
 1. **Before proposing ANY solution**, the agent MUST check:
    - `attached_assets/` folder for specification documents (especially LLM brain prompts)
+   - `docs/llm_output_requirements.json` for definitive LLM output specification
    - `replit.md` for documented architecture and decisions
    - Existing prompt files in `core/prompts/`
    - `issues.json` for tracked problems and their agreed solutions
@@ -16,6 +17,8 @@ The user wants an iterative development process. The agent should prioritize cle
 3. Nothing is a "solution" until the user explicitly agrees.
 4. When in doubt, ASK the user - do not proceed with assumptions.
 5. The LLM is the "brain" - timing, durations, and creative decisions come from LLM output, not from post-processing calculations.
+6. **ALL LLM OUTPUTS MUST CONFORM TO `docs/llm_output_requirements.json` OR FAIL** - this is non-negotiable. There are NO FALLBACKS. Missing required fields = generation failure.
+7. **Player is a DUMB display layer** - it consumes LLM output without modification. No duration calculations, no content fallbacks, no graceful degradation.
 
 ## System Architecture
 
