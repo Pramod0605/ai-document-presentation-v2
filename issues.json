@@ -172,14 +172,48 @@
       "description": "When video plays, avatar is super tiny. Also blank video box appears before content loads. Avatar should be larger and content should appear instantly.",
       "screenshot": "attached_assets/image_1766159974072.png",
       "solution": "1) Increased mode-content-video avatar size to 55% height and 35% max-width, 2) Added video-box opacity:0 by default with .video-ready class for opacity:1, 3) Added oncanplay event to add video-ready class when video is ready to play."
+    },
+    {
+      "id": "ISS-022",
+      "title": "LaTeX symbols in narration text cause TTS to read raw LaTeX",
+      "status": "open",
+      "created": "2025-12-19",
+      "description": "Mathematical symbols like $h$ are passed to TTS as-is, so narration says 'dollar h dollar' instead of 'h'. Need to strip/convert LaTeX before sending to TTS.",
+      "screenshot": "attached_assets/image_1766161709938.png",
+      "implementation_plan": "1) Create core/latex_to_speech.py utility to convert LaTeX to speakable text, 2) Integrate into TTS pipeline before Narakeet API call, 3) Handle common patterns: $x$->x, \\frac{a}{b}->a over b, ^2->squared, etc."
+    },
+    {
+      "id": "ISS-023",
+      "title": "Add dev mode position/size stats overlay for layout debugging",
+      "status": "open",
+      "created": "2025-12-19",
+      "description": "When toggling dev mode, display real-time position and size statistics for content wrapper and avatar so user can provide feedback on layout adjustments.",
+      "implementation_plan": "1) Add dev mode toggle button in player UI, 2) Create stats overlay showing: content-wrapper position/size, avatar position/size/aspect-ratio, video-box dimensions, 3) Update stats in real-time on resize/mode changes."
+    },
+    {
+      "id": "ISS-024",
+      "title": "Manim video sometimes cuts off at bottom",
+      "status": "open",
+      "created": "2025-12-19",
+      "description": "Manim-rendered videos sometimes have content that extends below the visible area. Need dynamic vertical centering or adjustment based on video content.",
+      "implementation_plan": "1) Ensure video-box uses object-fit: contain with proper centering, 2) Add CSS to vertically center video content within its container, 3) Consider aspect ratio constraints."
+    },
+    {
+      "id": "ISS-025",
+      "title": "Avatar loses resolution/aspect ratio when resized",
+      "status": "open",
+      "created": "2025-12-19",
+      "description": "When avatar is resized or repositioned, it appears stretched or loses quality. Aspect ratio should be maintained.",
+      "screenshot": "attached_assets/image_1766161709938.png",
+      "implementation_plan": "1) Use object-fit: contain on avatar video element, 2) Set explicit aspect-ratio CSS property, 3) Ensure width/height constraints maintain ratio."
     }
   ],
   "metadata": {
     "last_updated": "2025-12-19",
-    "version": "4.0",
+    "version": "5.0",
     "spec_version": "v1.1",
     "spec_file": "docs/llm_output_requirements.json",
     "resolved_count": 21,
-    "open_count": 0
+    "open_count": 4
   }
 }
