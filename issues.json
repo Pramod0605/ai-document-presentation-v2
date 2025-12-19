@@ -16,11 +16,13 @@
     {
       "id": "ISS-003",
       "title": "Recap narration only 5 seconds - LLM not generating full recap narration",
-      "status": "fix_implemented",
+      "status": "resolved",
       "created": "2025-12-18",
+      "resolved": "2025-12-19",
       "root_cause": "1) TTS used section-level narration instead of combining recap_scenes[].narration. 2) Prompt too long (~8k tokens) - critical rules buried deep. 3) Examples showed short narrations despite 60-100 word requirement.",
       "solution": "1) tts/generate_audio.py: combines recap_scenes[].narration for TTS. 2) Added CRITICAL COMPLIANCE CHECKLIST at TOP of both prompts. 3) Added word_count field requirement in each recap_scene. 4) Updated examples with word_count fields.",
-      "affected_files": ["tts/generate_audio.py", "core/prompts/system_prompt.txt", "core/prompts/user_prompt.txt"]
+      "affected_files": ["tts/generate_audio.py", "core/prompts/system_prompt.txt", "core/prompts/user_prompt.txt"],
+      "verification": "Test job e4df96f5: 5 recap scenes with 448 total words (target 300-500). Each scene 85-96 words with word_count field."
     },
     {
       "id": "ISS-004",

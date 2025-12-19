@@ -1,0 +1,210 @@
+[
+  {
+    "timestamp": "2025-12-19T03:45:46.713226",
+    "section_id": 3,
+    "section_title": "The Quadratic Formula (beat 0)",
+    "renderer": "manim_spec",
+    "prompt": "std_form = MathTex(r\"ax^2 + bx + c = 0\").move_to(np.array([0, 0, 0]))\n\n# Animation sequence\nself.play(Write(std_form), run_time=3.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_3_beat_0.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 0,
+      "beat_count": 4,
+      "duration": 18.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:46:04.650641",
+    "section_id": 3,
+    "section_title": "The Quadratic Formula (beat 1)",
+    "renderer": "manim_spec",
+    "prompt": "std_form = MathTex(r\"ax^2 + bx + c = 0\").move_to(np.array([-5, 3, 0]))\nquad_formula = MathTex(r\"x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}\").move_to(np.array([0, 0, 0]))\n\n# Animation sequence\nself.play(FadeIn(std_form), run_time=0.5)\nself.play(Write(quad_formula), run_time=4.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_3_beat_1.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 1,
+      "beat_count": 4,
+      "duration": 17.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:46:09.613405",
+    "section_id": 3,
+    "section_title": "The Quadratic Formula (beat 2)",
+    "renderer": "manim_spec",
+    "prompt": "quad_formula = MathTex(r\"x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}\").move_to(np.array([0, 0, 0]))\ndiscriminant_box = Dot(point=np.array([0, 0, 0]), color=YELLOW)\ndiscriminant_label = Text(\"Discriminant\", font_size=28).move_to(np.array([3, 1, 0]))\n\n# Animation sequence\nself.play(FadeIn(quad_formula), run_time=0.1)\nself.play(Create(discriminant_box), run_time=1.5)\nself.play(FadeIn(discriminant_label), run_time=1.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_3_beat_2.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 2,
+      "beat_count": 4,
+      "duration": 9.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:46:13.913893",
+    "section_id": 3,
+    "section_title": "The Quadratic Formula (beat 3)",
+    "renderer": "manim_spec",
+    "prompt": "quad_formula = MathTex(r\"x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}\").move_to(np.array([0, 3, 0]))\ncase1 = MathTex(r\"b^2 - 4ac > 0 \\rightarrow 2 \\text{ real solutions}\").move_to(np.array([-3, 1, 0]))\ncase2 = MathTex(r\"b^2 - 4ac = 0 \\rightarrow 1 \\text{ real solution}\").move_to(np.array([-3, -0.5, 0]))\ncase3 = MathTex(r\"b^2 - 4ac < 0 \\rightarrow 2 \\text{ complex solutions}\").move_to(np.array([-3, -2, 0]))\n\n# Animation sequence\nself.play(FadeIn(quad_formula), run_time=0.5)\nself.play(Write(case1), run_time=3.0)\nself.wait(2.0)\nself.play(Write(case2), run_time=3.0)\nself.wait(2.0)\nself.play(Write(case3), run_time=3.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_3_beat_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 3,
+      "beat_count": 4,
+      "duration": 22.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:46:26.498787",
+    "section_id": 4,
+    "section_title": "Example: Solving a Quadratic Equation (beat 0)",
+    "renderer": "manim_spec",
+    "prompt": "problem_eq = MathTex(r\"\\text{Solve: } 2x^2 + 5x - 3 = 0\").move_to(np.array([0, 3, 0]))\n\n# Animation sequence\nself.play(Write(problem_eq), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_4_beat_0.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "spec_generated",
+      "beat_index": 0,
+      "beat_count": 6,
+      "duration": 8.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:46:35.063488",
+    "section_id": 5,
+    "section_title": "Pythagorean Theorem (beat 0)",
+    "renderer": "manim_spec",
+    "prompt": "triangle = Polygon([-2, -1.5, 0], [2, -1.5, 0], [2, 1.5, 0], color=BLUE)\nright_angle_symbol = Square(side_length=0.3, color=WHITE)\nright_angle_symbol.move_to(np.array([2, -1.5, 0]))\n\n# Animation sequence\nself.play(Create(triangle), run_time=2.0)\nself.play(Create(right_angle_symbol), run_time=1.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_5_beat_0.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 0,
+      "beat_count": 5,
+      "duration": 15.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:46:37.528573",
+    "section_id": 5,
+    "section_title": "Pythagorean Theorem (beat 1)",
+    "renderer": "manim_spec",
+    "prompt": "triangle = Polygon([-2, -1.5, 0], [2, -1.5, 0], [2, 1.5, 0], color=BLUE)\nlabel_a = Text(\"a\", font_size=28).move_to(np.array([2.3, 0, 0]))\nlabel_b = Text(\"b\", font_size=28).move_to(np.array([0, -1.8, 0]))\nlabel_c = Text(\"c (hypotenuse)\", font_size=28).move_to(np.array([-0.2, 0.2, 0]))\nformula = MathTex(r\"a^2 + b^2 = c^2\").move_to(np.array([0, 2.5, 0]))\n\n# Animation sequence\nself.play(FadeIn(triangle), run_time=0.1)\nself.play(FadeIn(label_a), run_time=1.0)\nself.play(FadeIn(label_b), run_time=1.0)\nself.play(FadeIn(label_c), run_time=1.0)\nself.play(Write(formula), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_5_beat_1.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 1,
+      "beat_count": 5,
+      "duration": 22.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:46:41.546965",
+    "section_id": 5,
+    "section_title": "Pythagorean Theorem (beat 2)",
+    "renderer": "manim_spec",
+    "prompt": "large_square_outline = Square(side_length=6, color=GRAY)\nlarge_square_outline.move_to(np.array([0, 0, 0]))\ntri1 = Polygon([-3, 3, 0], [-3, -1, 0], [1, 3, 0], color=BLUE)\ntri2 = Polygon([3, 3, 0], [-1, 3, 0], [3, -1, 0], color=GREEN)\ntri3 = Polygon([3, -3, 0], [3, 1, 0], [-1, -3, 0], color=RED)\ntri4 = Polygon([-3, -3, 0], [1, -3, 0], [-3, 1, 0], color=PURPLE)\ninner_square = Polygon([1, 3, 0], [-1, 3, 0], [-1, -3, 0], [1, -3, 0], color=YELLOW)\nlabel_c = Text(\"c\", font_size=28).move_to(np.array([0, 0, 0]))\nlabel_ab = Text(\"a+b\", font_size=28).move_to(np.array([0, 3.3, 0]))\n\n# Animation sequence\nself.play(Create(large_square_outline), run_time=1.0)\nself.play(FadeIn(label_ab), run_time=0.5)\nself.play(Create(tri1), run_time=1.5)\nself.play(Create(tri2), run_time=1.5)\nself.play(Create(tri3), run_time=1.5)\nself.play(Create(tri4), run_time=1.5)\nself.play(FadeIn(inner_square), run_time=1.0)\nself.play(FadeIn(label_c), run_time=0.5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_5_beat_2.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 2,
+      "beat_count": 5,
+      "duration": 20.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:46:44.910186",
+    "section_id": 5,
+    "section_title": "Pythagorean Theorem (beat 3)",
+    "renderer": "manim_spec",
+    "prompt": "construction_group = Dot(point=np.array([0, 0, 0]), color=BLUE)\narea_calc1 = MathTex(r\"\\text{Area} = 4 \\times (\\frac{1}{2}ab) + c^2\").move_to(np.array([3, 1, 0]))\narea_calc2 = MathTex(r\"\\text{Area} = 2ab + c^2\").move_to(np.array([3, -1, 0]))\n\n# Animation sequence\nself.play(FadeIn(construction_group), run_time=0.1)\nself.play(Write(area_calc1), run_time=3.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_5_beat_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 3,
+      "beat_count": 5,
+      "duration": 12.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:46:53.166135",
+    "section_id": 6,
+    "section_title": "Derivatives and Calculus (beat 0)",
+    "renderer": "manim_spec",
+    "prompt": "axes = Axes(x_range=[0, 5, 1], y_range=[0, 10, 2], x_length=8, y_length=6, axis_config={\"include_tip\": True})\ncurve = axes.plot(lambda x: 0.5 * x**2 + 1, color=BLUE)\npoint_p = Dot(point=np.array([3, 5.5, 0]), color=YELLOW)\ntangent_line_start = np.array([1.0, -0.5, 0])\ntangent_line_end = np.array([5.0, 11.5, 0])\ntangent_line = Line(tangent_line_start, tangent_line_end, color=RED)\nslope_label = Text(\"Slope = Derivative\", font_size=28).move_to(np.array([4, 7, 0]))\n\n# Animation sequence\nself.play(Create(axes), run_time=1.0)\nself.play(Create(curve), run_time=2.0)\nself.play(FadeIn(point_p), run_time=0.5)\nself.play(Create(tangent_line), run_time=1.5)\nself.play(FadeIn(slope_label), run_time=1.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_6_beat_0.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 0,
+      "beat_count": 5,
+      "duration": 15.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:46:56.367446",
+    "section_id": 6,
+    "section_title": "Derivatives and Calculus (beat 1)",
+    "renderer": "manim_spec",
+    "prompt": "road_start = np.array([-1.5, -1.5, 0])\nroad_end = np.array([1.5, 1.5, 0])\nroad = Line(road_start, road_end, color=GRAY)\ncar = Text(\"\ud83d\ude97\", font_size=28).move_to(np.array([-5, -1.5, 0]))\nspeedometer = Dot(point=np.array([0, 0, 0]), color=BLUE)\n\n# Animation sequence\nself.play(Create(road), run_time=0.5)\nself.play(FadeIn(car), run_time=0.5)\nself.play(FadeIn(speedometer), run_time=0.5)\nself.play(car.animate.move_to(np.array([0, 0, 0])), run_time=4.0)\nself.play(FadeIn(speedometer), run_time=2.0)\nself.play(FadeIn(speedometer), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_6_beat_1.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 1,
+      "beat_count": 5,
+      "duration": 10.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:47:01.131527",
+    "section_id": 6,
+    "section_title": "Derivatives and Calculus (beat 2)",
+    "renderer": "manim_spec",
+    "prompt": "power_rule = MathTex(r\"\\frac{d}{dx}(x^n) = nx^{n-1}\").move_to(np.array([0, 1, 0]))\nexample = MathTex(r\"\\frac{d}{dx}(x^3) = 3x^{2}\").move_to(np.array([0, -2, 0]))\n\n# Animation sequence\nself.play(Write(power_rule), run_time=3.0)\nself.play(Write(example), run_time=4.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_6_beat_2.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 2,
+      "beat_count": 5,
+      "duration": 22.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:47:05.850460",
+    "section_id": 6,
+    "section_title": "Derivatives and Calculus (beat 3)",
+    "renderer": "manim_spec",
+    "prompt": "outer_func = Circle(radius=1.5, color=BLUE, fill_opacity=0.5)\nouter_func.move_to(np.array([-3, 0, 0]))\ninner_func = Square(side_length=1.5, color=GREEN)\ninner_func.move_to(np.array([-3, 0, 0]))\nlabel_f = Text(\"f(...)\", font_size=28).move_to(np.array([-3, 2, 0]))\nlabel_g = Text(\"g(x)\", font_size=28).move_to(np.array([-3, 0, 0]))\nchain_rule = MathTex(r\"\\frac{d}{dx}[f(g(x))] = f'(g(x)) \\cdot g'(x)\").move_to(np.array([2, 0, 0]))\n\n# Animation sequence\nself.play(FadeIn(outer_func), run_time=1.0)\nself.play(FadeIn(inner_func), run_time=1.0)\nself.play(FadeIn(label_f), run_time=0.5)\nself.play(FadeIn(label_g), run_time=0.5)\nself.play(Write(chain_rule), run_time=4.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_6_beat_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 3,
+      "beat_count": 5,
+      "duration": 25.0,
+      "dry_run": false
+    }
+  }
+]
