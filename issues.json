@@ -271,14 +271,65 @@
         "phases_completed": 8,
         "phases_failed": 0
       }
+    },
+    {
+      "id": "ISS-029",
+      "title": "v1.2 Hard Fail Validator Updates for 3-Pass Architecture",
+      "status": "resolved",
+      "created": "2025-12-19",
+      "resolved": "2025-12-19",
+      "description": "Updated hard_fail_validator.py to support v1.2 output format: section-level scene specs instead of beat-level, embedded visual_beats inside narration_segments, and refined formula/vague detection.",
+      "issues_fixed": [
+        {
+          "error": "manim_section_without_scene_spec (12 occurrences)",
+          "cause": "Validator looked for beat-level manim_scene_spec, but v1.2 uses section-level",
+          "fix": "Updated check to look for section.manim_scene_spec first"
+        },
+        {
+          "error": "missing_visual_beats (5 occurrences)",
+          "cause": "Validator looked for separate visual_beats array, but v1.2 embeds them in narration_segments[].visual_beat",
+          "fix": "Added effective_visual_beats extraction from narration_segments"
+        },
+        {
+          "error": "content_or_example_narration_below_minimum (5 occurrences)",
+          "cause": "Director generating 109-120 word narrations instead of 150+",
+          "fix": "Updated director_system_v1.2.txt with HARD REQUIREMENTS section"
+        },
+        {
+          "error": "formula_mentioned_but_not_visualized (false positives)",
+          "cause": "Pattern matching too broad, triggering on 'equilibrium' in chemistry",
+          "fix": "Refined FORMULA_PATTERNS with word boundaries and stricter matches"
+        },
+        {
+          "error": "vague_visual_language_detected (false positives)",
+          "cause": "Words like 'simple', 'like', 'general' flagged in valid contexts",
+          "fix": "Changed VAGUE_PHRASES to multi-word phrases only"
+        }
+      ],
+      "files_modified": [
+        "core/hard_fail_validator.py",
+        "core/prompts/director_system_v1.2.txt"
+      ],
+      "test_results_after_fix": {
+        "input": "attached_assets/Sample_subjects.md",
+        "chunks_created": 16,
+        "sections_generated": 7,
+        "renderer_distribution": {"manim": 3, "remotion": 3, "video": 1},
+        "total_duration_seconds": 225.4,
+        "total_cost_usd": 0.26,
+        "total_tokens": 33886,
+        "phases_completed": 8,
+        "phases_failed": 0,
+        "hard_fail_validations": 0
+      }
     }
   ],
   "metadata": {
     "last_updated": "2025-12-19",
-    "version": "8.0",
+    "version": "9.0",
     "spec_version": "v1.2",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 28,
-    "open_count": 1
+    "resolved_count": 29,
+    "open_count": 0
   }
 }

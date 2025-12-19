@@ -1,5 +1,5 @@
 """
-Hard Fail Validator - Implements all 6 v1.1 hard fail conditions.
+Hard Fail Validator - Implements hard fail conditions for v1.1 and v1.2.
 
 These conditions MUST cause generation to fail - no fallbacks allowed.
 Reference: docs/llm_output_requirements.json validation_rules.hard_fail_conditions
@@ -10,7 +10,9 @@ Hard Fail Conditions:
 3. example_without_step_visualization
 4. formula_mentioned_but_not_visualized
 5. vague_visual_language_detected
-6. manim_section_without_scene_spec
+6. manim_section_without_scene_spec (v1.2: checks section-level spec)
+7. remotion_section_without_scene_spec (v1.2 NEW)
+8. video_section_without_prompts (v1.2 NEW)
 """
 
 import re
@@ -21,12 +23,12 @@ EXAMPLE_MIN_WORDS = 100
 EXAMPLE_REQUIRED_STEPS = 5
 
 VAGUE_PHRASES = [
-    "appropriate", "suitable", "relevant", "necessary", "various",
-    "etc", "and so on", "similar", "such as", "like", "properly",
-    "correctly", "accordingly", "respectively", "as needed",
-    "as required", "generic", "general", "typical", "standard",
-    "normal", "usual", "common", "basic", "simple", "complex",
-    "some kind of", "some sort of", "a type of"
+    "appropriate animation", "suitable visual", "relevant content",
+    "necessary elements", "various objects", "etc", "and so on",
+    "properly animated", "correctly displayed", "accordingly",
+    "as needed", "as required", "generic visual", "typical animation",
+    "standard display", "some kind of", "some sort of", "a type of",
+    "appropriate visual", "suitable animation", "relevant visual"
 ]
 
 FORMULA_PATTERNS = [
@@ -34,14 +36,15 @@ FORMULA_PATTERNS = [
     r'E\s*=\s*m\s*c\s*²',
     r'v\s*=\s*u\s*[+\-]\s*a\s*t',
     r's\s*=\s*ut\s*[+\-]',
-    r'[a-zA-Z]\s*=\s*[a-zA-Z0-9\s\+\-\*/\^]+',
+    r'[A-Z]\s*=\s*[A-Z0-9\s\+\-\*/\^]{3,}',
     r'\\frac\{',
     r'\\sum',
     r'\\int',
-    r'formula',
-    r'equation',
-    r'calculate',
-    r'compute',
+    r'\bformula\b',
+    r'\bequation\b',
+    r'\bcalculate the\b',
+    r'\bcompute the\b',
+    r'\bderivation\b',
 ]
 
 
@@ -98,6 +101,13 @@ def validate_hard_fail_conditions(section: dict) -> List[HardFailError]:
     visual_beats = section.get("visual_beats", [])
     narration_segments = section.get("narration_segments", [])
     
+    embedded_visual_beats = [
+        seg.get("visual_beat") for seg in narration_segments 
+        if seg.get("visual_beat")
+    ]
+    
+    effective_visual_beats = visual_beats if visual_beats else embedded_visual_beats
+    
     if section_type == "content":
         if word_count < CONTENT_MIN_WORDS:
             errors.append(HardFailError(
@@ -106,7 +116,7 @@ def validate_hard_fail_conditions(section: dict) -> List[HardFailError]:
                 f"Content section has {word_count} words, minimum is {CONTENT_MIN_WORDS}"
             ))
         
-        if narration_segments and not visual_beats:
+        if narration_segments and not effective_visual_beats:
             errors.append(HardFailError(
                 "missing_visual_beats",
                 section_id,
@@ -121,29 +131,39 @@ def validate_hard_fail_conditions(section: dict) -> List[HardFailError]:
                 f"Example section has {word_count} words, minimum is {EXAMPLE_MIN_WORDS}"
             ))
         
-        if not visual_beats:
+        if not effective_visual_beats:
             errors.append(HardFailError(
                 "example_without_step_visualization",
                 section_id,
                 "Example section has no visual beats - examples must be visualized step-by-step"
             ))
-        elif len(visual_beats) < EXAMPLE_REQUIRED_STEPS:
+        elif len(effective_visual_beats) < EXAMPLE_REQUIRED_STEPS:
             errors.append(HardFailError(
                 "example_without_step_visualization",
                 section_id,
-                f"Example section has {len(visual_beats)} visual beats, need {EXAMPLE_REQUIRED_STEPS} for 5-step structure"
+                f"Example section has {len(effective_visual_beats)} visual beats, need {EXAMPLE_REQUIRED_STEPS} for 5-step structure"
             ))
     
     if section_type in ["content", "example"] and check_formula_in_narration(narration):
         has_formula_visual = False
-        for beat in visual_beats:
-            labels = beat.get("labels_and_text", "")
-            manim_spec = beat.get("manim_scene_spec", {})
-            equations = manim_spec.get("equations", []) if manim_spec else []
-            
-            if equations or re.search(r'[a-zA-Z]\s*=', labels):
-                has_formula_visual = True
-                break
+        
+        section_manim_spec = section.get("manim_scene_spec", {})
+        if section_manim_spec:
+            objects = section_manim_spec.get("objects", [])
+            for obj in objects:
+                if obj.get("type") == "equation" or obj.get("properties", {}).get("latex"):
+                    has_formula_visual = True
+                    break
+        
+        if not has_formula_visual:
+            for beat in effective_visual_beats:
+                labels = beat.get("labels_and_text", "") or beat.get("description", "")
+                manim_spec = beat.get("manim_scene_spec", {})
+                equations = manim_spec.get("equations", []) if manim_spec else []
+                
+                if equations or re.search(r'[a-zA-Z]\s*=', labels):
+                    has_formula_visual = True
+                    break
         
         if not has_formula_visual:
             errors.append(HardFailError(
@@ -153,8 +173,8 @@ def validate_hard_fail_conditions(section: dict) -> List[HardFailError]:
             ))
     
     if section_type in ["content", "example"]:
-        for i, beat in enumerate(visual_beats):
-            fields_to_check = ["scene_setup", "objects_and_properties", "motion_sequence", "labels_and_text"]
+        for i, beat in enumerate(effective_visual_beats):
+            fields_to_check = ["scene_setup", "objects_and_properties", "motion_sequence", "labels_and_text", "description"]
             for field in fields_to_check:
                 value = beat.get(field, "")
                 if value:
@@ -168,32 +188,50 @@ def validate_hard_fail_conditions(section: dict) -> List[HardFailError]:
                         break
     
     if renderer == "manim" and section_type in ["content", "example"]:
-        for i, beat in enumerate(visual_beats):
-            manim_spec = beat.get("manim_scene_spec")
-            if not manim_spec:
+        section_manim_spec = section.get("manim_scene_spec")
+        
+        if section_manim_spec:
+            objects = section_manim_spec.get("objects", [])
+            equations = section_manim_spec.get("equations", [])
+            forces = section_manim_spec.get("forces", [])
+            animation_seq = section_manim_spec.get("animation_sequence", [])
+            
+            if not objects and not equations and not forces:
                 errors.append(HardFailError(
                     "manim_section_without_scene_spec",
                     section_id,
-                    f"Visual beat {i} uses manim renderer but has no manim_scene_spec"
+                    "Section manim_scene_spec has no renderable content (objects/equations/forces)"
                 ))
-            else:
-                objects = manim_spec.get("objects", [])
-                equations = manim_spec.get("equations", [])
-                forces = manim_spec.get("forces", [])
-                animation_seq = manim_spec.get("animation_sequence", [])
-                
-                if not objects and not equations and not forces:
-                    errors.append(HardFailError(
-                        "manim_section_without_scene_spec",
-                        section_id,
-                        f"Visual beat {i} manim_scene_spec has no renderable content (objects/equations/forces)"
-                    ))
-                if not animation_seq:
-                    errors.append(HardFailError(
-                        "manim_section_without_scene_spec",
-                        section_id,
-                        f"Visual beat {i} manim_scene_spec has no animation_sequence"
-                    ))
+            if not animation_seq:
+                errors.append(HardFailError(
+                    "manim_section_without_scene_spec",
+                    section_id,
+                    "Section manim_scene_spec has no animation_sequence"
+                ))
+        else:
+            has_beat_level_spec = any(beat.get("manim_scene_spec") for beat in visual_beats)
+            if not has_beat_level_spec:
+                errors.append(HardFailError(
+                    "manim_section_without_scene_spec",
+                    section_id,
+                    "Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+                ))
+    
+    if renderer == "remotion" and section_type in ["content", "example"]:
+        if not section.get("remotion_scene_spec"):
+            errors.append(HardFailError(
+                "remotion_section_without_scene_spec",
+                section_id,
+                "Remotion section has no remotion_scene_spec"
+            ))
+    
+    if renderer in ["video", "wan", "wan_video"] and section_type in ["content", "example"]:
+        if not section.get("video_prompts") and not section.get("recap_scenes"):
+            errors.append(HardFailError(
+                "video_section_without_prompts",
+                section_id,
+                "Video section has no video_prompts"
+            ))
     
     return errors
 
