@@ -5,17 +5,9 @@
       "title": "Narration timing must come from LLM, not calculated from TTS",
       "status": "resolved",
       "created": "2025-12-18",
-      "description": "The LLM (brain) should provide authoritative timing for each narration_segment via the 'duration' field. The player should use these durations directly. We should NOT recalculate or scale timings based on actual TTS audio duration.",
-      "root_cause": "Agent incorrectly added code to recalculate timed_segments by scaling LLM durations based on actual Narakeet audio duration. This contradicts the 'LLM as brain' architecture.",
-      "solution": "1. Remove _generate_timed_segments() function from tts/generate_audio.py. 2. Remove duration scaling logic. 3. Player should convert LLM's narration_segments[].duration to timed_segments with start_time/end_time directly.",
-      "affected_files": [
-        "tts/generate_audio.py",
-        "core/pipeline.py",
-        "player/player.js"
-      ],
-      "reference_docs": [
-        "attached_assets/Pasted-FINAL-LLM-BRAIN-PROMPTS-RULES-This-is-what-you-plug-int_1765773040531.txt"
-      ]
+      "description": "The LLM (brain) should provide authoritative timing for each narration_segment via the 'duration' field.",
+      "root_cause": "Agent incorrectly added code to recalculate timed_segments by scaling LLM durations based on actual Narakeet audio duration.",
+      "solution": "Remove _generate_timed_segments() function from tts/generate_audio.py. Player uses LLM's narration_segments[].duration directly."
     },
     {
       "id": "ISS-002",
@@ -23,24 +15,32 @@
       "status": "resolved",
       "created": "2025-12-18",
       "resolved": "2025-12-18",
-      "description": "The manim_runner.py previously only rendered the first visual beat for Manim sections, ignoring subsequent beats.",
-      "root_cause": "Incomplete implementation - multi-beat Manim rendering was deferred with TODO comment.",
-      "solution": "1. Added _render_all_beats() function in manim_runner.py that iterates through ALL visual_beats. 2. Each beat renders as topic_{id}_beat_{i}.mp4 (0-indexed). 3. Added STANDALONE BEAT RULE to prompts: each beat's manim_scene_spec must include ALL objects visible at that moment (cumulative state). 4. Player already supports beat_videos array with detectBeatVideos() that auto-discovers these files.",
-      "affected_files": [
-        "render/manim/manim_runner.py",
-        "core/prompts/system_prompt.txt",
-        "core/prompts/user_prompt.txt"
-      ],
-      "reference_docs": [],
-      "key_decisions": [
-        "STANDALONE BEAT RULE: Each beat video is a complete snapshot, not a delta",
-        "LLM decides what persists across beats; renderer just executes each beat independently",
-        "Player switches between beat videos based on timed_segments timing"
-      ]
+      "description": "The manim_runner.py previously only rendered the first visual beat for Manim sections.",
+      "solution": "Added _render_all_beats() function in manim_runner.py that renders each beat as topic_{id}_beat_{i}.mp4."
+    },
+    {
+      "id": "ISS-003",
+      "title": "Recap narration only 5 seconds - LLM not generating full recap narration",
+      "status": "fix_implemented",
+      "created": "2025-12-18",
+      "description": "Recap section narration is only 68 chars instead of full narration for all 5 recap scenes.",
+      "root_cause": "1) TTS used section-level narration instead of combining recap_scenes[].narration. 2) Prompt examples showed short one-sentence narrations despite 60-100 word requirement.",
+      "solution": "1) tts/generate_audio.py now combines all recap_scenes[].narration for TTS. 2) user_prompt.txt updated with full 60-100 word narration examples.",
+      "affected_files": ["tts/generate_audio.py", "core/prompts/user_prompt.txt"]
+    },
+    {
+      "id": "ISS-004",
+      "title": "Summary slide not displaying in player",
+      "status": "investigation_complete",
+      "created": "2025-12-18",
+      "description": "User reported summary section not appearing in player.",
+      "root_cause": "CONFIRMED: Player handles summary correctly at lines 60, 416-418. All sections are mapped to slides at line 819. There is NO ALLOWED_SECTION_TYPES filter.",
+      "solution": "No code change needed. Summary IS included in slides. User may need to navigate to slide #2 to see it, or there may be a different issue.",
+      "investigation_notes": "Verified player.js - summary is handled. Screenshot shows slide thumbnails include summary. Issue may be user navigation or display issue."
     }
   ],
   "metadata": {
     "last_updated": "2025-12-18",
-    "version": "1.1"
+    "version": "1.4"
   }
 }

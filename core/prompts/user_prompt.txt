@@ -308,33 +308,39 @@ If a character appears in multiple scenes, describe them EXACTLY the same way ea
 - "Boy in blue school uniform with black hair" (same in every scene)
 - "Elderly shopkeeper in white kurta with grey beard" (same in every scene)
 
-EXAMPLE - Math (using analogy):
+*** RECAP NARRATION REQUIREMENT (CRITICAL) ***
+- Each scene's "narration" field MUST be 60-100 words (NOT one sentence!)
+- The narration explains the concept shown in the video
+- TTS will combine ALL scene narrations for the recap audio
+- If narrations are too short, the recap video will have mismatched timing!
+
+EXAMPLE - Math (using analogy) with FULL narration:
 "recap_scenes": [
   {{
     "scene": 1,
     "concept_title": "What is a Linear Equation?",
     "description": "Use weighing scale analogy - both sides must balance",
     "wan_prompt": "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background. A traditional Indian market weighing scale (tarazu) with 'x + 5' on left pan and '10' on right pan, perfectly balanced. Small equation 'x + 5 = 10' in corner.",
-    "narration": "Think of a linear equation like a weighing scale - both sides must always balance."
+    "narration": "Imagine a traditional weighing scale, called a tarazu, perfectly balanced with weights on both sides. A linear equation works exactly like this - whatever you have on the left side must equal what is on the right side. When we write x plus five equals ten, we are saying these two quantities are perfectly balanced. This balance is the heart of algebra, and understanding it helps you solve any equation."
   }},
   {{
     "scene": 2,
     "concept_title": "Solving for x",
     "description": "Remove weights from both sides equally",
     "wan_prompt": "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background. Same weighing scale, hand removing '5' from left side and '5' from right side simultaneously. Arrow showing 'x = 5' result.",
-    "narration": "To find x, we remove the same amount from both sides - keeping the balance."
+    "narration": "To find the value of x, we need to isolate it on one side of the scale. The trick is simple - whatever we do to one side, we must do to the other side too. If we remove five from the left pan, we must also remove five from the right pan. This keeps our scale balanced. After removing five from both sides, we see that x alone equals five. This is how we solve linear equations!"
   }},
-  ... (3 more scenes covering remaining concepts)
+  ... (3 more scenes, each with 60-100 word narration)
 ]
 
-EXAMPLE - Biology (showing process):
+EXAMPLE - Biology (showing process) with FULL narration:
 "recap_scenes": [
   {{
     "scene": 1,
     "concept_title": "Cell Division Begins",
     "description": "Show amoeba starting to stretch",
     "wan_prompt": "Flat vector illustration, bright colors, Indian educational textbook style, purple and blue gradient background. A friendly Amoeba character with visible nucleus, beginning to stretch in the middle. Label 'Binary Fission' in corner.",
-    "narration": "Cell division in amoeba begins when the cell starts to stretch in the middle."
+    "narration": "Let us watch how a single-celled organism like an amoeba reproduces. The amoeba does not need a partner - it simply splits into two identical copies. This process is called binary fission. First, the amoeba begins to stretch in the middle. You can see its single nucleus, which contains all the genetic information. This stretching is the first visible sign that cell division is about to begin."
   }}
 ]
 

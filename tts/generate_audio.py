@@ -126,7 +126,17 @@ def generate_section_audio(section: dict, output_dir: str) -> str:
     Returns: audio file path
     """
     section_id = section.get("id", 1)
+    section_type = section.get("section_type", "content")
     narration = section.get("narration", "")
+    
+    # ISS-003 FIX: For recap sections, combine narration from all recap_scenes
+    if section_type == "recap":
+        recap_scenes = section.get("recap_scenes", [])
+        if recap_scenes:
+            scene_narrations = [scene.get("narration", "") for scene in recap_scenes if scene.get("narration")]
+            if scene_narrations:
+                narration = " ".join(scene_narrations)
+                print(f"[TTS] Section {section_id}: Recap - combined {len(scene_narrations)} scene narrations (total={len(narration)} chars)")
     
     if not narration:
         segments = section.get("segments", [])
