@@ -1,0 +1,1091 @@
+{
+  "llm_output_version": "1.2",
+  "lesson_title": "A Tour of Science & Math",
+  "subject": "Multi-subject",
+  "grade": "9",
+  "chapter": "Educational Content",
+  "sections": [
+    {
+      "section_id": "sec_intro_01",
+      "section_type": "intro",
+      "renderer": "remotion",
+      "renderer_reasoning": "Remotion is best for a dynamic, motion-graphics-based introduction to set the stage and engage the viewer from the start.",
+      "layout": "avatar_right",
+      "narration": "Welcome! Today, we're going on a rapid tour of five foundational concepts from mathematics, geometry, physics, chemistry, and biology. We'll see how each field uses unique formulas and theories to describe the world around us. Let's get started!",
+      "narration_segments": [
+        {
+          "start_time": 0,
+          "end_time": 6.5,
+          "text": "Welcome! Today, we're going on a rapid tour of five foundational concepts from mathematics, geometry, physics, chemistry, and biology.",
+          "visual_beat": "Title card appears: 'A Tour of Science & Math'. Five icons representing each subject (integral, cylinder, wave, molecule, cell) animate into place below the title.",
+          "gesture": "open_palms"
+        },
+        {
+          "start_time": 6.5,
+          "end_time": 11,
+          "text": "We'll see how each field uses unique formulas and theories to describe the world around us. Let's get started!",
+          "visual_beat": "Each icon briefly glows as it's mentioned conceptually. The screen then wipes to transition to the first section.",
+          "gesture": "nod"
+        }
+      ]
+    },
+    {
+      "section_id": "sec_math_01",
+      "section_type": "content",
+      "renderer": "manim",
+      "renderer_reasoning": "Manim is the ideal renderer for visualizing calculus concepts. It can precisely draw functions, shade areas, and animate the relationship between integration and the final formula.",
+      "layout": "main_screen_only",
+      "narration": "First up, mathematics. The Fundamental Theorem of Calculus is a game-changer because it connects two big ideas: differentiation and integration. It tells us that if we want to find the exact area under the curve of a function, we don't need to add up infinite tiny rectangles. Instead, we can use an antiderivative, which is like the reverse of a derivative. The theorem states that the definite integral of a function from point 'a' to 'b' is simply the value of its antiderivative at 'b' minus its value at 'a'.",
+      "narration_segments": [
+        {
+          "start_time": 0,
+          "end_time": 6,
+          "text": "First up, mathematics. The Fundamental Theorem of Calculus is a game-changer because it connects two big ideas: differentiation and integration.",
+          "visual_beat": "A 2D coordinate plane appears. A smooth, continuous curve representing a function f(x) is drawn.",
+          "gesture": "idle"
+        },
+        {
+          "start_time": 6,
+          "end_time": 11,
+          "text": "It tells us that if we want to find the exact area under the curve of a function, we don't need to add up infinite tiny rectangles.",
+          "visual_beat": "Two vertical lines drop from the curve to the x-axis, at points labeled 'a' and 'b'. The area between them under the curve is shaded.",
+          "gesture": "idle"
+        },
+        {
+          "start_time": 11,
+          "end_time": 19,
+          "text": "Instead, we can use an antiderivative, which is like the reverse of a derivative. The theorem states that the definite integral of a function from point 'a' to 'b' is simply the value of its antiderivative at 'b' minus its value at 'a'.",
+          "visual_beat": "The symbolic overlay '\u222b[a,b] f(x)dx' appears over the shaded area. Then, it transforms into the final equation: 'F(b) - F(a)'. The labels F(b) and F(a) briefly glow.",
+          "gesture": "idle"
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "axes",
+            "type": "graph",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "x_range": [
+                -5,
+                5
+              ],
+              "y_range": [
+                -3,
+                3
+              ],
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "function_curve",
+            "type": "graph",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "function": "0.5*x*sin(x)",
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "point_a",
+            "type": "point",
+            "position": [
+              -2,
+              0
+            ],
+            "properties": {
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "point_b",
+            "type": "point",
+            "position": [
+              2,
+              0
+            ],
+            "properties": {
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "label_a",
+            "type": "label",
+            "position": [
+              -2,
+              -0.5
+            ],
+            "properties": {
+              "latex": "a",
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "label_b",
+            "type": "label",
+            "position": [
+              2,
+              -0.5
+            ],
+            "properties": {
+              "latex": "b",
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "vertical_lines",
+            "type": "shape",
+            "properties": {
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "shaded_area",
+            "type": "shape",
+            "properties": {
+              "color": "BLUE",
+              "opacity": 0.3
+            }
+          },
+          {
+            "id": "integral_equation",
+            "type": "equation",
+            "position": [
+              0,
+              2
+            ],
+            "properties": {
+              "latex": "\\int_a^b f(x)dx",
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "final_equation",
+            "type": "equation",
+            "position": [
+              0,
+              2
+            ],
+            "properties": {
+              "latex": "F(b) - F(a)",
+              "color": "WHITE"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "axes",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "function_curve",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 3
+          },
+          {
+            "action": "appear",
+            "target": "point_a",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "point_b",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "label_a",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "label_b",
+            "duration": 0.5
+          },
+          {
+            "action": "draw",
+            "target": "vertical_lines",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "shaded_area",
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "integral_equation",
+            "duration": 1
+          },
+          {
+            "action": "transform",
+            "target": "integral_equation",
+            "target_transform": "final_equation",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "final_equation",
+            "duration": 1,
+            "color": "YELLOW"
+          },
+          {
+            "action": "wait",
+            "duration": 3
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "sec_geom_01",
+      "section_type": "content",
+      "renderer": "manim",
+      "renderer_reasoning": "Manim is perfect for constructing and animating geometric shapes. It can clearly show the components of a sector and demonstrate the extrusion of a 2D circle into a 3D cylinder.",
+      "layout": "main_screen_only",
+      "narration": "Next, in geometry, we often work with circles and curves. A sector of a circle is like a slice of pizza, enclosed by two radii and an arc. Its area depends on the radius and the angle between the radii. If the angle is in radians, the area is one-half times the radius squared, times the angle theta. Now, let's go 3D. A cylinder is essentially a stack of circles. To find its volume, we just take the area of its circular base, which is pi times radius squared, and multiply it by the cylinder's height.",
+      "narration_segments": [
+        {
+          "start_time": 0,
+          "end_time": 6,
+          "text": "Next, in geometry, we often work with circles and curves. A sector of a circle is like a slice of pizza, enclosed by two radii and an arc.",
+          "visual_beat": "A circle is drawn with its center point. Two radii animate out from the center, forming a wedge shape. The radius is labeled 'r'.",
+          "gesture": "idle"
+        },
+        {
+          "start_time": 6,
+          "end_time": 11,
+          "text": "Its area depends on the radius and the angle between the radii. If the angle is in radians, the area is one-half times the radius squared, times the angle theta.",
+          "visual_beat": "The angle between the radii is marked with an arc and labeled '\u03b8'. The sector is colored in. The formula 'A = \u00bd r\u00b2 \u03b8' appears next to it.",
+          "gesture": "idle"
+        },
+        {
+          "start_time": 11,
+          "end_time": 18,
+          "text": "Now, let's go 3D. A cylinder is essentially a stack of circles. To find its volume, we just take the area of its circular base, which is pi times radius squared, and multiply it by the cylinder's height.",
+          "visual_beat": "The 2D circle transitions to a 3D perspective. It is extruded upwards to form a cylinder. The height is labeled 'h'. The formula 'V = \u03c0 r\u00b2 h' appears.",
+          "gesture": "idle"
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "circle",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "center_point",
+            "type": "point",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "radius1",
+            "type": "vector",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "radius2",
+            "type": "vector",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "r_label",
+            "type": "label",
+            "position": [
+              0.5,
+              0.3
+            ],
+            "properties": {
+              "latex": "r",
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "theta_arc",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "theta_label",
+            "type": "label",
+            "position": [
+              0.3,
+              0.3
+            ],
+            "properties": {
+              "latex": "\\theta",
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "sector_area",
+            "type": "equation",
+            "position": [
+              3,
+              2
+            ],
+            "properties": {
+              "latex": "A = \\frac{1}{2}r^2\\theta",
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "cylinder_volume",
+            "type": "equation",
+            "position": [
+              3,
+              2
+            ],
+            "properties": {
+              "latex": "V = \\pi r^2h",
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "height_label",
+            "type": "label",
+            "position": [
+              1,
+              1
+            ],
+            "properties": {
+              "latex": "h",
+              "color": "WHITE"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "draw",
+            "target": "circle",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "center_point",
+            "duration": 0.5
+          },
+          {
+            "action": "draw",
+            "target": "radius1",
+            "duration": 1.0
+          },
+          {
+            "action": "draw",
+            "target": "radius2",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "r_label",
+            "duration": 0.5
+          },
+          {
+            "action": "wait",
+            "duration": 2.0
+          },
+          {
+            "action": "draw",
+            "target": "theta_arc",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "theta_label",
+            "duration": 0.5
+          },
+          {
+            "action": "show_equation",
+            "target": "sector_area",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "duration": 2.0
+          },
+          {
+            "action": "transform",
+            "target": "circle",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "height_label",
+            "duration": 0.5
+          },
+          {
+            "action": "show_equation",
+            "target": "cylinder_volume",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "duration": 3.0
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "sec_phys_01",
+      "section_type": "content",
+      "renderer": "manim",
+      "renderer_reasoning": "Manim excels at animating wave functions and their properties. It can visually demonstrate wavelength and period in a dynamic and clear way, linking them directly to the formulas.",
+      "layout": "avatar_right",
+      "narration": "In physics, waves are all about energy transfer. The relationship between a wave's speed, its frequency, and its wavelength is key. The formula is simple: wave speed 'v' equals frequency 'f' times wavelength 'lambda'. Wavelength is the distance from one peak of the wave to the next. Another important concept is the period, 'T', which is the time it takes for one full wave cycle to pass a specific point. The period is simply the inverse of the frequency, so if you know one, you can always find the other.",
+      "narration_segments": [
+        {
+          "start_time": 0,
+          "end_time": 6,
+          "text": "In physics, waves are all about energy transfer. The relationship between a wave's speed, its frequency, and its wavelength is key.",
+          "visual_beat": "A sine wave animates, propagating from left to right across the screen. The formula 'v = f \u03bb' appears at the top.",
+          "gesture": "point_center"
+        },
+        {
+          "start_time": 6,
+          "end_time": 9,
+          "text": "Wavelength is the distance from one peak of the wave to the next.",
+          "visual_beat": "The wave freezes. A brace appears between two consecutive peaks, and it is labeled with the Greek letter '\u03bb' (lambda).",
+          "gesture": "point_left"
+        },
+        {
+          "start_time": 9,
+          "end_time": 16,
+          "text": "Another important concept is the period, 'T', which is the time it takes for one full wave cycle to pass a specific point. The period is simply the inverse of the frequency...",
+          "visual_beat": "The wave resumes its animation. A vertical line appears as a reference point. One full wave cycle is highlighted as it passes the line. The time taken is labeled 'Period T'.",
+          "gesture": "point_center"
+        },
+        {
+          "start_time": 16,
+          "end_time": 18,
+          "text": "...so if you know one, you can always find the other.",
+          "visual_beat": "The formula 'T = 1/f' appears on screen, linking the two concepts.",
+          "gesture": "nod"
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "wave",
+            "type": "graph",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "function": "sin",
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "wave_equation",
+            "type": "equation",
+            "position": [
+              0,
+              2
+            ],
+            "properties": {
+              "latex": "v = f\\lambda",
+              "color": "WHITE",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "wavelength_brace",
+            "type": "shape",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "type": "brace",
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "lambda_label",
+            "type": "label",
+            "position": [
+              0,
+              -1
+            ],
+            "properties": {
+              "latex": "\\lambda",
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "reference_line",
+            "type": "vector",
+            "position": [
+              1,
+              0
+            ],
+            "properties": {
+              "direction": [
+                0,
+                2
+              ],
+              "color": "RED"
+            }
+          },
+          {
+            "id": "period_label",
+            "type": "label",
+            "position": [
+              1,
+              2
+            ],
+            "properties": {
+              "latex": "\\text{Period }T",
+              "color": "GREEN"
+            }
+          },
+          {
+            "id": "period_equation",
+            "type": "equation",
+            "position": [
+              -3,
+              2
+            ],
+            "properties": {
+              "latex": "T = \\frac{1}{f}",
+              "color": "WHITE"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "draw",
+            "target": "wave",
+            "duration": 3
+          },
+          {
+            "action": "show_equation",
+            "target": "wave_equation",
+            "duration": 3
+          },
+          {
+            "action": "wait",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "wavelength_brace",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "lambda_label",
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "reference_line",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "period_label",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "wave",
+            "duration": 4,
+            "color": "GREEN"
+          },
+          {
+            "action": "show_equation",
+            "target": "period_equation",
+            "duration": 2
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "sec_chem_01",
+      "section_type": "content",
+      "renderer": "remotion",
+      "renderer_reasoning": "Remotion is ideal for creating a conceptual, metaphorical animation. The balance scale is a motion graphics concept, not a literal simulation, making it perfect for Remotion's capabilities.",
+      "layout": "avatar_right",
+      "narration": "Moving to chemistry, let's talk about equilibrium. Many chemical reactions are reversible, meaning they can go forwards and backwards. They eventually reach a state of equilibrium where the forward reaction rate equals the reverse reaction rate. For a general reaction where 'a' moles of A and 'b' moles of B react to form 'c' moles of C and 'd' moles of D, we can describe this balance using the equilibrium constant, Kc. It's a ratio of the concentration of the products to the concentration of the reactants, with each raised to the power of its coefficient from the balanced equation.",
+      "narration_segments": [
+        {
+          "start_time": 0,
+          "end_time": 7,
+          "text": "Moving to chemistry, let's talk about equilibrium. Many chemical reactions are reversible, meaning they can go forwards and backwards. They eventually reach a state of equilibrium where the forward reaction rate equals the reverse reaction rate.",
+          "visual_beat": "A stylized balance scale appears. On the left, icons for 'Reactants' (A, B). On the right, icons for 'Products' (C, D). A large arrow points right, a small arrow points left. The scale is balanced.",
+          "gesture": "open_palms"
+        },
+        {
+          "start_time": 7,
+          "end_time": 13,
+          "text": "For a general reaction where 'a' moles of A and 'b' moles of B react to form 'c' moles of C and 'd' moles of D, we can describe this balance using the equilibrium constant, Kc.",
+          "visual_beat": "The generic balanced equation 'aA + bB \u21cc cC + dD' appears above the scale. The coefficients a, b, c, and d are highlighted.",
+          "gesture": "point_center"
+        },
+        {
+          "start_time": 13,
+          "end_time": 20,
+          "text": "It's a ratio of the concentration of the products to the concentration of the reactants, with each raised to the power of its coefficient from the balanced equation.",
+          "visual_beat": "The scale fades, and the formula for Kc appears: 'Kc = [C]\u1d9c[D]\u1d48 / [A]\u1d43[B]\u1d47'. The product concentrations animate to the numerator, and reactant concentrations to the denominator.",
+          "gesture": "point_center"
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 600,
+        "elements": [
+          {
+            "id": "scale_base",
+            "type": "shape",
+            "content": "triangle",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "fill": "#666666",
+              "width": 100,
+              "height": 60
+            },
+            "animation": {
+              "enter": "fade_in",
+              "enter_frame": 30,
+              "exit_frame": 390
+            }
+          },
+          {
+            "id": "scale_beam",
+            "type": "shape",
+            "content": "rectangle",
+            "position": {
+              "x": 400,
+              "y": 250
+            },
+            "style": {
+              "fill": "#444444",
+              "width": 400,
+              "height": 10
+            },
+            "animation": {
+              "enter": "fade_in",
+              "enter_frame": 45,
+              "exit_frame": 390
+            }
+          },
+          {
+            "id": "reactants_label",
+            "type": "text",
+            "content": "A, B",
+            "position": {
+              "x": 250,
+              "y": 220
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#2244AA"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "enter_frame": 60,
+              "exit_frame": 390
+            }
+          },
+          {
+            "id": "products_label",
+            "type": "text",
+            "content": "C, D",
+            "position": {
+              "x": 550,
+              "y": 220
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#AA4422"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "enter_frame": 60,
+              "exit_frame": 390
+            }
+          },
+          {
+            "id": "forward_arrow",
+            "type": "icon",
+            "content": "arrow_right",
+            "position": {
+              "x": 400,
+              "y": 180
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#2244AA"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "enter_frame": 90,
+              "exit_frame": 390
+            }
+          },
+          {
+            "id": "reverse_arrow",
+            "type": "icon",
+            "content": "arrow_left",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 30,
+              "color": "#AA4422"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "enter_frame": 90,
+              "exit_frame": 390
+            }
+          },
+          {
+            "id": "balanced_equation",
+            "type": "text",
+            "content": "aA + bB \u21cc cC + dD",
+            "position": {
+              "x": 400,
+              "y": 120
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#000000",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "enter_frame": 210,
+              "exit_frame": 390
+            }
+          },
+          {
+            "id": "kc_equation",
+            "type": "text",
+            "content": "Kc = [C]\u1d9c[D]\u1d48 / [A]\u1d43[B]\u1d47",
+            "position": {
+              "x": 400,
+              "y": 250
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#000000",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "enter_frame": 390,
+              "exit_frame": 600
+            }
+          }
+        ],
+        "background": {
+          "color": "#FFFFFF"
+        }
+      }
+    },
+    {
+      "section_id": "sec_bio_01",
+      "section_type": "content",
+      "renderer": "video",
+      "renderer_reasoning": "Video is the only renderer suitable for telling a complex biological story like endosymbiosis. It allows for fluid, organic animation of cells and processes that cannot be represented with simple geometry or motion graphics.",
+      "layout": "main_screen_only",
+      "narration": "Finally, in biology, the Endosymbiotic Theory explains a pivotal moment in the history of life: the origin of complex eukaryotic cells. The theory proposes that organelles like mitochondria, our cells' powerhouses, were once free-living bacteria. A large ancestral host cell engulfed one of these bacteria. But instead of being digested, the bacterium survived inside, forming a symbiotic relationship. It provided energy for the host, and the host provided protection and nutrients. Over millions of years, this arrangement became permanent, and the bacterium evolved into the mitochondrion we know today. The same process is thought to have happened with chloroplasts in plant cells.",
+      "narration_segments": [
+        {
+          "start_time": 0,
+          "end_time": 6,
+          "text": "Finally, in biology, the Endosymbiotic Theory explains a pivotal moment in the history of life: the origin of complex eukaryotic cells.",
+          "visual_beat": "Animation shows a simple, large ancestral host cell floating in a primordial soup environment.",
+          "gesture": "idle"
+        },
+        {
+          "start_time": 6,
+          "end_time": 10,
+          "text": "The theory proposes that organelles like mitochondria, our cells' powerhouses, were once free-living bacteria.",
+          "visual_beat": "A small, free-living bacterium (labeled 'Proto-Mitochondrion') is shown swimming nearby.",
+          "gesture": "idle"
+        },
+        {
+          "start_time": 10,
+          "end_time": 16,
+          "text": "A large ancestral host cell engulfed one of these bacteria. But instead of being digested, the bacterium survived inside, forming a symbiotic relationship.",
+          "visual_beat": "The host cell's membrane folds inward, engulfing the bacterium in a vesicle. Inside, the bacterium is shown intact, not being broken down.",
+          "gesture": "idle"
+        },
+        {
+          "start_time": 16,
+          "end_time": 24,
+          "text": "It provided energy for the host, and the host provided protection and nutrients. Over millions of years, this arrangement became permanent, and the bacterium evolved into the mitochondrion we know today.",
+          "visual_beat": "The bacterium begins to glow and emit 'energy' particles (ATP). A 'fast-forward' clock appears, and the bacterium's shape morphs into the familiar folded structure of a mitochondrion.",
+          "gesture": "idle"
+        },
+        {
+          "start_time": 24,
+          "end_time": 27,
+          "text": "The same process is thought to have happened with chloroplasts in plant cells.",
+          "visual_beat": "A quick cutaway shows another cell engulfing a cyanobacterium, which becomes a chloroplast.",
+          "gesture": "idle"
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": 1,
+          "prompt": "A full-screen view of a dark blue, murky fluid environment with small, out-of-focus particles drifting. In the center, a large, translucent, pale-yellow, amoeba-like cell floats. It has a visible outer membrane and a small, dark, circular nucleus inside. The cell drifts slowly from the center towards the right over the duration.",
+          "duration_seconds": 6,
+          "style": "animated"
+        },
+        {
+          "beat_id": 2,
+          "prompt": "The large, pale-yellow host cell is positioned on the left side of the screen. From the right edge of the frame, a small, reddish-brown, pill-shaped bacterium enters. It has a single, thin tail that wiggles, propelling it towards the host cell. The text label 'Proto-Mitochondrion' appears next to the bacterium with a line pointing to it.",
+          "duration_seconds": 4,
+          "style": "animated"
+        },
+        {
+          "beat_id": 3,
+          "prompt": "The reddish-brown bacterium makes contact with the surface of the large host cell. The host cell's membrane visibly pushes inward, forming a cup-like shape around the bacterium. The edges of the cup extend and fuse together, enclosing the bacterium completely within a new, circular vesicle inside the host cell. The vesicle, containing the intact bacterium, detaches from the outer membrane and floats deeper into the cell's interior.",
+          "duration_seconds": 6,
+          "style": "animated"
+        },
+        {
+          "beat_id": 4,
+          "prompt": "The vesicle surrounding the bacterium dissolves. The bacterium begins to pulse with a soft, yellow light and emits small, glowing yellow particles that radiate outwards into the cell. A small clock icon appears in the top-right corner, its hands spinning rapidly. As the clock spins, the bacterium's smooth, pill-like shape transforms: its inner membrane folds repeatedly inward, creating a complex, maze-like internal structure. The label 'Proto-Mitochondrion' fades and is replaced by 'Mitochondrion'. The new mitochondrion continues to emit glowing yellow particles.",
+          "duration_seconds": 8,
+          "style": "animated"
+        },
+        {
+          "beat_id": 5,
+          "prompt": "A quick cut to a new scene. A different host cell is shown engulfing a small, green, spherical bacterium labeled 'Cyanobacterium'. In a fast-motion sequence, the cyanobacterium is enclosed, and once inside, it immediately transforms into a green, oval-shaped chloroplast with visible internal stacks. A label 'Chloroplast' appears.",
+          "duration_seconds": 3,
+          "style": "animated"
+        }
+      ]
+    },
+    {
+      "section_id": "sec_recap_01",
+      "section_type": "recap",
+      "renderer": "remotion",
+      "renderer_reasoning": "Remotion is perfect for a fast-paced, visually engaging recap. It can quickly animate cards or tiles with key information, reinforcing the main takeaways of the lesson.",
+      "layout": "avatar_right",
+      "narration": "Great work! Let's do a quick recap. We saw how calculus gives us a shortcut to find area under a curve. We reviewed the formulas for the area of a sector and the volume of a cylinder. We learned how wave speed, frequency, and period are all related. We defined chemical equilibrium with the constant Kc. And finally, we explored how endosymbiosis explains the origin of complex cells. That's our tour for today!",
+      "narration_segments": [
+        {
+          "start_time": 0,
+          "end_time": 3,
+          "text": "Great work! Let's do a quick recap. We saw how calculus gives us a shortcut to find area under a curve.",
+          "visual_beat": "A card animates onto the screen showing the calculus formula: '\u222b[a,b] f(x)dx = F(b) - F(a)'.",
+          "gesture": "nod"
+        },
+        {
+          "start_time": 3,
+          "end_time": 6,
+          "text": "We reviewed the formulas for the area of a sector and the volume of a cylinder.",
+          "visual_beat": "A second card appears with the geometry formulas: 'A = \u00bd r\u00b2 \u03b8' and 'V = \u03c0 r\u00b2 h'.",
+          "gesture": "point_center"
+        },
+        {
+          "start_time": 6,
+          "end_time": 9,
+          "text": "We learned how wave speed, frequency, and period are all related.",
+          "visual_beat": "A third card appears with the physics formulas: 'v = f \u03bb' and 'T = 1/f'.",
+          "gesture": "point_center"
+        },
+        {
+          "start_time": 9,
+          "end_time": 11,
+          "text": "We defined chemical equilibrium with the constant Kc.",
+          "visual_beat": "A fourth card shows the chemistry formula for Kc.",
+          "gesture": "point_center"
+        },
+        {
+          "start_time": 11,
+          "end_time": 15,
+          "text": "And finally, we explored how endosymbiosis explains the origin of complex cells. That's our tour for today!",
+          "visual_beat": "A fifth card shows a simple icon of a cell containing a mitochondrion, labeled 'Endosymbiotic Theory'. All cards arrange neatly on screen.",
+          "gesture": "open_palms"
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 450,
+        "elements": [
+          {
+            "id": "card_calculus",
+            "type": "text",
+            "content": "\u222b[a,b] f(x)dx = F(b) - F(a)",
+            "position": {
+              "x": 100,
+              "y": 100
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 440
+            }
+          },
+          {
+            "id": "card_geometry",
+            "type": "text",
+            "content": "A = \u00bdr\u00b2\u03b8    V = \u03c0r\u00b2h",
+            "position": {
+              "x": 100,
+              "y": 180
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 90,
+              "exit_frame": 440
+            }
+          },
+          {
+            "id": "card_waves",
+            "type": "text",
+            "content": "v = f\u03bb    T = 1/f",
+            "position": {
+              "x": 100,
+              "y": 260
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 180,
+              "exit_frame": 440
+            }
+          },
+          {
+            "id": "card_chemistry",
+            "type": "text",
+            "content": "Kc = [Products]/[Reactants]",
+            "position": {
+              "x": 100,
+              "y": 340
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 270,
+              "exit_frame": 440
+            }
+          },
+          {
+            "id": "card_biology",
+            "type": "text",
+            "content": "Endosymbiotic Theory",
+            "position": {
+              "x": 100,
+              "y": 420
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 330,
+              "exit_frame": 440
+            }
+          },
+          {
+            "id": "cell_icon",
+            "type": "icon",
+            "content": "cell_with_mitochondria",
+            "position": {
+              "x": 300,
+              "y": 420
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#666666"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 330,
+              "exit_frame": 440
+            }
+          }
+        ],
+        "background": {
+          "color": "#FFFFFF"
+        }
+      }
+    }
+  ],
+  "pipeline_version": "1.2",
+  "job_id": "54c946a9"
+}
