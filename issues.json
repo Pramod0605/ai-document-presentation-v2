@@ -195,11 +195,31 @@
     {
       "id": "ISS-024",
       "title": "Manim video sometimes cuts off at bottom",
+      "status": "reopened",
+      "created": "2025-12-19",
+      "reopened": "2025-12-19",
+      "description": "Manim-rendered videos sometimes have content that extends below the visible area. Need dynamic vertical centering or adjustment based on video content.",
+      "prior_attempt": "Added object-fit: contain but video-box container height was still constrained by max-height: 60vh.",
+      "screenshot": "attached_assets/image_1766162907961.png"
+    },
+    {
+      "id": "ISS-026",
+      "title": "Manim video cutoff - video-box height constraint too small",
       "status": "resolved",
       "created": "2025-12-19",
       "resolved": "2025-12-19",
-      "description": "Manim-rendered videos sometimes have content that extends below the visible area. Need dynamic vertical centering or adjustment based on video content.",
-      "solution": "Added object-fit: contain and object-position: center center to .mode-content-video #video-box video. Added flexbox centering (align-items/justify-content: center) to video-box container."
+      "description": "Video-box had max-height: 60vh which was too small for taller Manim animations. Content at bottom of video was clipped.",
+      "screenshot": "attached_assets/image_1766162907961.png",
+      "solution": "Increased max-height from 60vh to 80vh globally, added max-height: 85vh specifically for mode-content-video video-box."
+    },
+    {
+      "id": "ISS-027",
+      "title": "Text not displayed in content-video mode",
+      "status": "resolved",
+      "created": "2025-12-19",
+      "resolved": "2025-12-19",
+      "description": "In mode-content-video, the content-box was hidden by default (max-width: 0, opacity: 0). Text only appeared when .text-visible class was manually added.",
+      "solution": "Changed default content-box styling in mode-content-video to show text by default: min-width: 30%, max-width: 40%, opacity: 1, padding: 20px."
     },
     {
       "id": "ISS-025",
@@ -214,10 +234,10 @@
   ],
   "metadata": {
     "last_updated": "2025-12-19",
-    "version": "6.0",
+    "version": "7.0",
     "spec_version": "v1.1",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 25,
-    "open_count": 0
+    "resolved_count": 27,
+    "open_count": 1
   }
 }
