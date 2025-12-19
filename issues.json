@@ -210,7 +210,7 @@
       "resolved": "2025-12-19",
       "description": "Video-box had max-height: 60vh which was too small for taller Manim animations. Content at bottom of video was clipped.",
       "screenshot": "attached_assets/image_1766162907961.png",
-      "solution": "Increased max-height from 60vh to 80vh globally, added max-height: 85vh specifically for mode-content-video video-box."
+      "solution": "Changed #stage from fixed height: 720px to min-height: 720px, height: auto, max-height: 90vh. This allows stage to expand for taller videos. Combined with max-height: 90vh on .mode-content-video #video-box for contained presentation."
     },
     {
       "id": "ISS-027",
@@ -219,7 +219,7 @@
       "created": "2025-12-19",
       "resolved": "2025-12-19",
       "description": "In mode-content-video, the content-box was hidden by default (max-width: 0, opacity: 0). Text only appeared when .text-visible class was manually added.",
-      "solution": "Changed default content-box styling in mode-content-video to show text by default: min-width: 30%, max-width: 40%, opacity: 1, padding: 20px."
+      "solution": "Modified player.js loadSlide() to synchronously detect rendered content (segments-list children, flashcards, quiz-containers) after DOM population. Adds .text-visible class when content exists, removes when empty. No setTimeout - runs immediately after content insertion."
     },
     {
       "id": "ISS-025",

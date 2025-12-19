@@ -31,7 +31,10 @@
 
     #stage {
       width: 1280px;
-      height: 720px;
+      max-width: 100%;
+      min-height: 720px;
+      height: auto;
+      max-height: 90vh;
       background: #0a0a0a;
       position: relative;
       overflow: hidden;
@@ -452,10 +455,10 @@
       background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(8px);
       flex: 1;
-      min-width: 30%;
-      max-width: 40%;
-      opacity: 1;
-      padding: 20px;
+      min-width: 0;
+      max-width: 0;
+      opacity: 0;
+      padding: 0;
       overflow: hidden;
       transition: all 0.5s ease;
     }
@@ -464,8 +467,8 @@
       display: block;
       flex: 1;
       min-width: 55%;
-      max-width: 65%;
-      max-height: 85vh;
+      max-width: 70%;
+      max-height: 90vh;
       background: rgba(0, 0, 0, 0.9);
       border-radius: 16px;
       overflow: hidden;
@@ -564,7 +567,6 @@
     #video-box {
       display: none;
       height: fit-content;
-      max-height: 80vh;
     }
     
     .mode-side #video-box {

@@ -497,6 +497,21 @@ function loadSlide(index) {
 
   const firstFlashcard = document.querySelector('.flashcard');
   if (firstFlashcard) firstFlashcard.classList.add('active');
+  
+  // Toggle text-visible class based on whether content-box has visible content
+  const stageForText = document.getElementById('stage');
+  const segmentsList = document.getElementById('segments-list');
+  if (stageForText) {
+    const hasSegments = segmentsList && segmentsList.children.length > 0;
+    const hasFlashcards = document.querySelector('.flashcard') !== null;
+    const hasQuiz = document.querySelector('.quiz-container') !== null;
+    
+    if (hasSegments || hasFlashcards || hasQuiz) {
+      stageForText.classList.add('text-visible');
+    } else {
+      stageForText.classList.remove('text-visible');
+    }
+  }
 
   if (window.MathJax) MathJax.typesetPromise();
 
