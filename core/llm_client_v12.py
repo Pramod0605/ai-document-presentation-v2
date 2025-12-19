@@ -200,12 +200,23 @@ def pass1_director(
     section_count = len(presentation.get("sections", []))
     log(f"[Pass 1] Director complete: {section_count} sections created")
     
+    RENDERER_FIELDS = ["manim_scene_spec", "remotion_scene_spec", "video_prompts", "wan_prompt"]
+    stripped_count = 0
     renderer_counts = {}
     for section in presentation.get("sections", []):
+        for rf in RENDERER_FIELDS:
+            if rf in section:
+                del section[rf]
+                stripped_count += 1
+        
         renderer = section.get("renderer", "unknown")
         if isinstance(renderer, dict):
             renderer = renderer.get("type", renderer.get("name", "unknown"))
+            section["renderer"] = renderer
         renderer_counts[str(renderer)] = renderer_counts.get(str(renderer), 0) + 1
+    
+    if stripped_count > 0:
+        log(f"[Pass 1] WARNING: Stripped {stripped_count} renderer fields from Director output (v1.2 violation)")
     log(f"[Pass 1] Renderer distribution: {renderer_counts}")
     
     return presentation
@@ -355,7 +366,36 @@ def pass2_dispatch_renderers(
             log(f"[Pass 2] ERROR in section {section_id}: {e}")
             section["renderer_error"] = str(e)
     
-    log("[Pass 2] Renderer dispatch complete")
+    render_success = 0
+    render_errors = 0
+    for section in sections:
+        section_id = section.get("section_id") or section.get("id", "?")
+        section_type = section.get("section_type", "")
+        renderer = str(section.get("renderer", "")).lower()
+        
+        if section_type in ["intro", "summary", "memory"]:
+            continue
+        
+        if "renderer_error" in section:
+            render_errors += 1
+            continue
+            
+        if renderer == "manim" and not section.get("manim_scene_spec"):
+            log(f"[Pass 2] FAIL: Section {section_id} missing manim_scene_spec after render")
+            section["renderer_error"] = "manim_scene_spec not generated"
+            render_errors += 1
+        elif renderer == "remotion" and not section.get("remotion_scene_spec"):
+            log(f"[Pass 2] FAIL: Section {section_id} missing remotion_scene_spec after render")
+            section["renderer_error"] = "remotion_scene_spec not generated"
+            render_errors += 1
+        elif renderer in ["video", "wan", "wan_video"] and not section.get("video_prompts"):
+            log(f"[Pass 2] FAIL: Section {section_id} missing video_prompts after render")
+            section["renderer_error"] = "video_prompts not generated"
+            render_errors += 1
+        else:
+            render_success += 1
+    
+    log(f"[Pass 2] Renderer dispatch complete: {render_success} success, {render_errors} errors")
     return presentation
 
 

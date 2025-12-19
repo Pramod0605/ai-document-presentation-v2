@@ -12,13 +12,10 @@ from dataclasses import dataclass, field, asdict
 
 # Model pricing per 1M tokens (as of Dec 2024)
 MODEL_PRICING = {
-    "gemini-2.5-flash": {"input": 0.075, "output": 0.30},
-    "gemini-2.5-pro": {"input": 1.25, "output": 5.00},
-    "google/gemini-2.5-flash-preview": {"input": 0.075, "output": 0.30},
-    "google/gemini-2.5-pro-preview": {"input": 1.25, "output": 5.00},
-    "anthropic/claude-sonnet-4": {"input": 3.00, "output": 15.00},
+    "google/gemini-2.5-flash": {"input": 0.30, "output": 2.50},
+    "google/gemini-2.5-pro": {"input": 1.25, "output": 10.00},
     "anthropic/claude-3.5-sonnet": {"input": 3.00, "output": 15.00},
-    "anthropic/claude-3-sonnet": {"input": 3.00, "output": 15.00},
+    "anthropic/claude-sonnet-4": {"input": 3.00, "output": 15.00},
     "openai/gpt-4o": {"input": 2.50, "output": 10.00},
     "openai/gpt-4o-mini": {"input": 0.15, "output": 0.60},
 }
