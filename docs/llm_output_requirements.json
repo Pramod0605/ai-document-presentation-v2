@@ -1,311 +1,207 @@
 {
-  "version": "1.0",
-  "last_updated": "2025-12-19",
-  "description": "Definitive LLM output requirements for AI Animated Education pipeline. LLM is the 'brain' - all timing, durations, and creative decisions come from LLM output. Player is a dumb display layer with NO FALLBACKS.",
-
-  "global_rules": {
-    "llm_is_brain": {
-      "description": "LLM is the sole source of truth for ALL timing and durations",
-      "rules": [
-        "Player consumes LLM output without modification",
-        "No duration calculations in player or post-processing",
-        "beat.duration and narration_segments[].duration are authoritative",
-        "If timing is wrong, fix the LLM prompt, not the player"
-      ]
+    "version": "1.1",
+    "role": "LLM Director",
+    "description": "Authoritative contract for converting textbook Markdown into synchronized educational videos, narration, gestures, and presentation structure.",
+    "subject_metadata": {
+        "subject": "Physics | Biology | Maths | Chemistry",
+        "grade": "8 | 9 | 10",
+        "chapter": "string",
+        "difficulty": "introductory | standard | advanced"
     },
-    "no_fallbacks": {
-      "description": "There are NO FALLBACKS. Missing required fields = LLM generation failure",
-      "rules": [
-        "If visual_content is missing for intro/summary/memory, it's a BUG in LLM output",
-        "If recap_scenes is missing for recap, it's a BUG in LLM output",
-        "Player should NOT gracefully degrade - it should fail loudly",
-        "Do not fall back to narration_segments when visual_content is required"
-      ]
+    "global_principles": {
+        "llm_is_director": true,
+        "renderers_are_executors": true,
+        "player_is_dumb": true,
+        "no_fallbacks_allowed": true,
+        "fail_fast_on_quality_violation": true
     },
-    "standalone_beat_rule": {
-      "description": "Each beat video is a complete snapshot (cumulative state), not a delta",
-      "rules": [
-        "LLM decides what persists from beat to beat",
-        "Renderer shows complete state for each beat",
-        "No implicit accumulation across beats"
-      ]
+    "display_fitness_rules": {
+        "max_text_lines_on_screen": 4,
+        "max_words_per_line": 12,
+        "no_simultaneous_dense_text_and_complex_visual": true,
+        "if_text_exceeds_limits": "split_into_additional_segments"
     },
-    "banned_vague_phrases": [
-      "detailed animation",
-      "conceptual visualization", 
-      "dynamic visuals",
-      "beautiful animation",
-      "stunning visual",
-      "show clearly",
-      "clear diagrams",
-      "labeled components",
-      "fade in elements sequentially",
-      "proper formatting",
-      "appropriate styling",
-      "nice transitions"
-    ]
-  },
-
-  "section_types": {
-    "intro": {
-      "section_type": "intro",
-      "description": "Welcome message, avatar speaking only - NO visual content displayed",
-      "required_fields": {
-        "id": "unique integer",
-        "section_type": "intro",
-        "title": "string",
-        "renderer": "TEXT-ONLY (no video rendering)",
-        "visual_content": "{} (empty object - required but empty)",
-        "narration": "Full narration text (15-25 words welcoming students)",
-        "narration_segments": "Array with duration for each segment",
-        "layout": "Layout specification",
-        "gesture_hints": "Avatar animation cues"
-      },
-      "display_behavior": {
-        "visual_display": "NOTHING - just avatar speaking",
-        "audio": "TTS from narration field"
-      },
-      "example": {
-        "visual_content": {},
-        "narration": "Namaste students! Welcome to today's lesson on Linear Equations. Please take out your notebooks and pens. Let's begin!",
-        "narration_segments": [
-          {"id": 1, "text": "Namaste students! Welcome to today's lesson on Linear Equations.", "duration": 4},
-          {"id": 2, "text": "Please take out your notebooks and pens. Let's begin!", "duration": 3}
+    "pedagogical_sequence_rule": {
+        "content_sections": "explain_with_text_then_visualize",
+        "example_sections": "visualize_step_by_step_with_minimal_text",
+        "never_show_full_text_and_complex_visual_simultaneously": true
+    },
+    "section_types": [
+        "intro",
+        "summary",
+        "content",
+        "example",
+        "quiz",
+        "memory",
+        "recap"
+    ],
+    "renderer_decision_rules": {
+        "manim": [
+            "math",
+            "vectors",
+            "geometry",
+            "graphs",
+            "numerical_physics_examples"
+        ],
+        "wan_video": [
+            "biology_processes",
+            "physical_phenomena",
+            "chemistry_reactions",
+            "conceptual_fields",
+            "recap_storytelling"
         ]
-      }
     },
-
-    "summary": {
-      "section_type": "summary",
-      "description": "Learning objectives displayed as bullet points",
-      "required_fields": {
-        "id": "unique integer",
-        "section_type": "summary",
-        "title": "string (e.g., 'Learning Objectives')",
-        "renderer": "TEXT-ONLY",
-        "visual_content": {"bullet_points": ["3-5 learning objectives"]},
-        "narration": "Full narration reading each objective with context",
-        "narration_segments": "Array with duration for each segment (one per bullet)",
-        "layout": "Layout specification",
-        "gesture_hints": "Avatar animation cues"
-      },
-      "display_behavior": {
-        "visual_display": "visual_content.bullet_points rendered as list",
-        "audio": "TTS from narration field"
-      },
-      "example": {
-        "visual_content": {
-          "bullet_points": [
-            "Understand what a linear equation represents",
-            "Learn to solve equations using balance method",
-            "Apply linear equations to real-world problems"
-          ]
-        },
-        "narration": "In this lesson, we will cover three main objectives. First, we will understand what a linear equation represents...",
-        "narration_segments": [
-          {"id": 1, "text": "In this lesson, we will cover three main objectives.", "duration": 3},
-          {"id": 2, "text": "First, we will understand what a linear equation represents.", "duration": 4},
-          {"id": 3, "text": "Second, we will learn to solve equations using the balance method.", "duration": 4},
-          {"id": 4, "text": "Third, we will apply linear equations to real-world problems.", "duration": 4}
+    "avatar_gesture_rules": {
+        "gesture_scope": "semantic_only",
+        "allowed_gestures": [
+            "point_left",
+            "point_right",
+            "point_center",
+            "open_palms",
+            "nod",
+            "emphasize",
+            "idle"
+        ],
+        "gesture_binding": "per_narration_segment",
+        "no_engine_specific_names": true
+    },
+    "section_structure": {
+        "common_fields": [
+            "section_id",
+            "section_type",
+            "title",
+            "renderer",
+            "renderer_reasoning",
+            "layout",
+            "narration",
+            "narration_segments"
         ]
-      }
     },
-
-    "content": {
-      "section_type": "content",
-      "description": "Main teaching content with synchronized visuals",
-      "required_fields": {
-        "id": "unique integer",
-        "section_type": "content",
-        "title": "string",
-        "renderer": "manim | wan_video (LLM decides based on subject)",
-        "narration": "Full narration (150-250 words minimum)",
-        "narration_segments": "Array with id, text, duration for each segment",
-        "visual_beats": "Array of renderer instructions (one per narration_segment)",
-        "layout": "Layout specification",
-        "gesture_hints": "Avatar animation cues"
-      },
-      "visual_beat_structure": {
+    "narration_segments": {
+        "required_fields": [
+            "id",
+            "text",
+            "duration_seconds"
+        ],
+        "optional_fields": [
+            "gesture_hint"
+        ]
+    },
+    "gesture_hint": {
+        "type": "one_of_allowed_gestures",
+        "intent": "string"
+    },
+    "content_section_rules": {
+        "minimum_narration_words": 150,
+        "maximum_narration_words": 250,
+        "must_have_visual_beats": true
+    },
+    "visual_beat_structure": {
         "segment_id": "matches narration_segment.id",
-        "duration": "float seconds (LLM decides)",
-        "visual_instruction": "EXACTLY what appears - concrete, specific",
-        "labels_and_text": "Text labels shown on screen",
-        "motion": "What motion occurs (direction, speed)",
-        "display_mode": "video_primary | text_primary | video_only",
-        "purpose": "Pedagogical purpose of this visual"
-      },
-      "display_behavior": {
-        "visual_display": "Rendered video OR visual_beats.labels_and_text/pedagogical_focus",
-        "audio": "TTS from narration field",
-        "timing": "Segments synchronized using narration_segments[].duration"
-      }
+        "scene_setup": "initial state of the scene",
+        "objects_and_properties": "all objects, positions, colors, sizes",
+        "motion_sequence": "step-by-step animation description",
+        "labels_and_text": "all visible labels and symbols",
+        "purpose": "pedagogical goal of this beat",
+        "duration_seconds": "float"
     },
-
-    "example": {
-      "section_type": "example",
-      "description": "Worked example with step-by-step visualization",
-      "required_fields": {
-        "id": "unique integer",
-        "section_type": "example",
-        "title": "string (problem statement)",
-        "renderer": "manim (unless biological content)",
-        "narration": "Full narration explaining each step",
-        "narration_segments": "Array with duration for each step",
-        "visual_beats": "Array of step visualizations (one per narration_segment)",
-        "layout": "Layout specification",
-        "gesture_hints": "Avatar animation cues"
-      },
-      "rules": [
-        "Examples MUST be visualized step-by-step",
-        "Each step = one visual beat",
-        "Show geometry, symbols, vectors, intermediate results",
-        "Examples must NEVER be explained only in words"
-      ],
-      "display_behavior": {
-        "visual_display": "Manim-rendered step-by-step animation",
-        "audio": "TTS from narration field"
-      }
+    "example_section_rules": {
+        "must_have_example_steps": true,
+        "example_steps": [
+            "identify_known_quantities",
+            "draw_geometry",
+            "apply_formula",
+            "solve_stepwise",
+            "state_conclusion"
+        ],
+        "renderer": "manim",
+        "each_step_requires_visual_beat": true
     },
-
-    "memory": {
-      "section_type": "memory",
-      "description": "3 flashcards for memory anchoring (R-A-S format)",
-      "required_fields": {
-        "id": "unique integer",
-        "section_type": "memory",
-        "title": "string (e.g., 'Key Concepts to Remember')",
-        "renderer": "TEXT-ONLY",
-        "visual_content": {
-          "flashcards": [
-            {"letter": "R", "title": "Key Term 1", "description": "Brief explanation"},
-            {"letter": "A", "title": "Key Term 2", "description": "Brief explanation"},
-            {"letter": "S", "title": "Key Term 3", "description": "Brief explanation"}
-          ]
+    "manim_scene_spec": {
+        "coordinate_system": {
+            "type": "cartesian",
+            "origin": [
+                0,
+                0
+            ],
+            "scale": 1.0
         },
-        "narration": "Full narration explaining each flashcard",
-        "narration_segments": "Array with duration for each flashcard explanation",
-        "layout": "Layout specification",
-        "gesture_hints": "Avatar animation cues"
-      },
-      "display_behavior": {
-        "visual_display": "visual_content.flashcards rendered as cards",
-        "audio": "TTS from narration field"
-      },
-      "example": {
-        "visual_content": {
-          "flashcards": [
-            {"letter": "R", "title": "Remember Balance", "description": "Both sides of equation must stay equal"},
-            {"letter": "A", "title": "Apply Operations", "description": "Do same operation on both sides"},
-            {"letter": "S", "title": "Solve for Variable", "description": "Isolate the unknown step by step"}
-          ]
-        }
-      }
-    },
-
-    "recap": {
-      "section_type": "recap",
-      "description": "Mental movie storytelling with 5 animated scenes using WAN video generation",
-      "required_fields": {
-        "id": "unique integer",
-        "section_type": "recap",
-        "title": "string (e.g., 'Chapter Recap')",
-        "renderer": "wan_video",
-        "recap_scenes": "Array of 5 scene objects",
-        "narration": "Combined narration from all scenes (300-500 words total)"
-      },
-      "recap_scenes_structure": {
-        "scene": "integer 1-5",
-        "concept_title": "What concept this scene covers",
-        "description": "Brief scene description",
-        "wan_prompt": "CONCRETE video generation prompt (no vague phrases)",
-        "narration": "60-100 words for this scene",
-        "word_count": "integer - actual word count of narration (required for validation)"
-      },
-      "deprecated": {
-        "infographic_prompt": "DEPRECATED - use recap_scenes with wan_prompt instead"
-      },
-      "display_behavior": {
-        "visual_display": "WAN-generated video for each scene",
-        "audio": "TTS from combined recap_scenes[].narration"
-      },
-      "validation": {
-        "scene_count": "exactly 5 scenes",
-        "words_per_scene": "60-100 words",
-        "total_words": "300-500 words",
-        "word_count_field": "REQUIRED in each scene for self-audit"
-      },
-      "example": {
-        "recap_scenes": [
-          {
-            "scene": 1,
-            "concept_title": "What is a Linear Equation?",
-            "description": "Weighing scale analogy",
-            "wan_prompt": "Flat vector illustration, bright colors, Indian educational textbook style, purple gradient background. Traditional weighing scale (tarazu) with 'x + 5' on left pan and '10' on right pan, perfectly balanced. Equation 'x + 5 = 10' in corner.",
-            "narration": "Imagine a traditional weighing scale, called a tarazu, perfectly balanced with weights on both sides. A linear equation works exactly like this - whatever you have on the left side must equal what is on the right side. When we write x plus five equals ten, we are saying these two quantities are perfectly balanced. This balance is the heart of algebra.",
-            "word_count": 68
-          }
+        "objects": [
+            {
+                "type": "point_charge | shape | graph_element",
+                "id": "string",
+                "position": [
+                    0,
+                    0
+                ],
+                "properties": {}
+            }
+        ],
+        "forces": [
+            {
+                "id": "string",
+                "on": "object_id",
+                "direction": "towards:object_id | away_from:object_id",
+                "label": "string",
+                "color": "string"
+            }
+        ],
+        "equations": [
+            {
+                "id": "string",
+                "latex": "string",
+                "position": [
+                    0,
+                    0
+                ]
+            }
+        ],
+        "animation_sequence": [
+            {
+                "action": "appear | draw_force | show_equation | transform | emphasize",
+                "target": "object_or_equation_id"
+            }
         ]
-      }
-    }
-  },
-
-  "validation_checklist": {
-    "structure": [
-      "intro section exists",
-      "summary section exists",
-      "at least one content section exists",
-      "memory section exists",
-      "recap section exists"
-    ],
-    "intro": [
-      "visual_content is empty object {}",
-      "narration exists"
-    ],
-    "summary": [
-      "visual_content.bullet_points exists and has 3-5 items",
-      "narration exists"
-    ],
-    "content": [
-      "narration >= 150 words",
-      "narration_segments count == visual_beats count",
-      "each visual_beat has concrete visual_instruction (no banned phrases)"
-    ],
-    "example": [
-      "renderer is manim (unless biological)",
-      "visual_beats exist for each step",
-      "no narration-only examples"
-    ],
-    "memory": [
-      "visual_content.flashcards exists",
-      "exactly 3 flashcards with letter, title, description"
-    ],
-    "recap": [
-      "recap_scenes exists with exactly 5 scenes",
-      "each scene has narration with 60-100 words",
-      "each scene has word_count field",
-      "total narration is 300-500 words",
-      "each wan_prompt has no banned vague phrases"
-    ]
-  },
-
-  "player_implementation_notes": {
-    "display_priority": {
-      "intro": "Show nothing - avatar only",
-      "summary": "Show visual_content.bullet_points ONLY",
-      "content": "Show visual_beats.labels_and_text or rendered video",
-      "example": "Show rendered Manim video",
-      "memory": "Show visual_content.flashcards",
-      "recap": "Show WAN-generated video from recap_scenes"
     },
-    "no_fallbacks": [
-      "Do NOT fall back to narration_segments if visual_content missing",
-      "Do NOT fall back to narration if bullet_points missing",
-      "If required field missing, show error state"
-    ],
-    "timing": [
-      "Use narration_segments[].duration for segment timing",
-      "Use beat.duration for visual beat timing",
-      "Do NOT calculate durations from audio length"
-    ]
-  }
+    "quiz_handling_rules": {
+        "one_question_per_section": true,
+        "answer_hidden_initially": true,
+        "solution_revealed_stepwise": true,
+        "visual_style": "flash_card_or_blackboard"
+    },
+    "memory_section_rules": {
+        "format": "flashcards",
+        "flashcard_limit": 5,
+        "acronym_based": true
+    },
+    "recap_section_rules": {
+        "renderer": "wan_video",
+        "scene_count": 5,
+        "scene_narration_words_range": [
+            60,
+            100
+        ],
+        "storytelling_mode": true,
+        "no_text_slides": true,
+        "mental_movie_goal": true
+    },
+    "validation_rules": {
+        "hard_fail_conditions": [
+            "content_or_example_narration_below_minimum",
+            "missing_visual_beats",
+            "example_without_step_visualization",
+            "formula_mentioned_but_not_visualized",
+            "vague_visual_language_detected",
+            "manim_section_without_scene_spec"
+        ],
+        "soft_warn_conditions": [
+            "intro_summary_memory_recap_length_variation"
+        ]
+    },
+    "traceability": {
+        "generation_trace_required": true,
+        "render_prompts_logged": true,
+        "renderer_decisions_logged": true,
+        "validation_results_logged": true
+    }
 }
