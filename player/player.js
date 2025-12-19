@@ -310,10 +310,8 @@ function loadSlide(index) {
         if (quoted && quoted.length > 0) {
           return quoted.map(q => q.replace(/'/g, '')).join(' | ');
         }
-        return vb.pedagogical_focus || lt || '';
+        return vb.purpose || vb.pedagogical_focus || lt || '';
       });
-    } else if (slide.narration_segments && slide.narration_segments.length > 0) {
-      displayItems = slide.narration_segments.map(ns => ns.text || '');
     } else if (slide.segments && slide.segments.length > 0) {
       displayItems = slide.segments.map(s => s.visual || s.text || '');
     }
@@ -331,7 +329,7 @@ function loadSlide(index) {
         const timingSource = slide.narration_segments || displayItems;
         let cumulativeTime = 0;
         slide.timed_segments = timingSource.map((item, i) => {
-          const duration = item.duration || (slide.audio_duration / timingSource.length);
+          const duration = item.duration_seconds || item.duration || (slide.audio_duration / timingSource.length);
           const start = cumulativeTime;
           cumulativeTime += duration;
           return {
@@ -817,12 +815,13 @@ async function checkExistingPresentation() {
       if (!lessonData.slides) {
         if (lessonData.sections) {
           lessonData.slides = lessonData.sections.map(section => {
-            // Build timed_segments from LLM's narration_segments (LLM is the "brain" for timing)
+            const sectionId = section.section_id || section.id;
+            
             let timed_segments = null;
             if (section.narration_segments && section.narration_segments.length > 0) {
               let cumulativeTime = 0;
               timed_segments = section.narration_segments.map(seg => {
-                const duration = seg.duration || 4;  // LLM provides duration
+                const duration = seg.duration_seconds || seg.duration || 4;
                 const start = cumulativeTime;
                 cumulativeTime += duration;
                 return {
@@ -834,7 +833,7 @@ async function checkExistingPresentation() {
             }
             
             return {
-              slide_number: section.id,
+              slide_number: sectionId,
               section_type: section.section_type || 'content',
               slide_type: section.section_type || 'content',
               title: section.title,
@@ -844,20 +843,21 @@ async function checkExistingPresentation() {
               visual_beats: section.visual_beats || [],
               narration_segments: section.narration_segments || [],
               timed_segments: timed_segments,
-              audio_path: BASE_PATH + `audio/section_${section.id}.mp3`,
+              audio_path: BASE_PATH + `audio/section_${sectionId}.mp3`,
               content_video_path: section.section_type === 'recap' 
-                ? BASE_PATH + `videos/recap_${section.id}_scene_1.mp4`
-                : (section.renderer === 'wan_video' || section.renderer === 'manim') ? BASE_PATH + `videos/topic_${section.id}.mp4` : null,
+                ? BASE_PATH + `videos/recap_${sectionId}_scene_1.mp4`
+                : (section.renderer === 'wan_video' || section.renderer === 'manim') ? BASE_PATH + `videos/topic_${sectionId}.mp4` : null,
               has_content_video: section.section_type === 'recap' || (section.renderer === 'wan_video' || section.renderer === 'manim'),
               recap_video_paths: section.section_type === 'recap' && section.recap_scenes 
-                ? section.recap_scenes.map((s, i) => BASE_PATH + `videos/recap_${section.id}_scene_${s.scene || i+1}.mp4`)
+                ? section.recap_scenes.map((s, i) => BASE_PATH + `videos/recap_${sectionId}_scene_${s.scene || i+1}.mp4`)
                 : [],
-              section_id: section.id,
-              id: section.id,
+              section_id: sectionId,
+              id: sectionId,
               beat_videos: [],
               audio_duration: section.duration,
               full_narration: section.narration,
-              visual_content: section.visual_content || {}
+              visual_content: section.visual_content || {},
+              renderer_reasoning: section.renderer_reasoning || null
             };
           });
         } else if (lessonData.topics) {

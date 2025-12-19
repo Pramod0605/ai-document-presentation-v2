@@ -20,6 +20,13 @@ You are DIRECTING a teaching video.
 ║  3. CONTENT NARRATION: Each content section needs 150-250 words. ║
 ║                                                                  ║
 ║  4. BEFORE OUTPUTTING: Count words in recap narrations!          ║
+║                                                                  ║
+║  5. DISPLAY FITNESS: Max 4 lines on screen, max 12 words/line.   ║
+║     If text exceeds limits, split into additional segments.      ║
+║                                                                  ║
+║  6. GESTURES: Only use allowed gestures from this list:          ║
+║     point_left, point_right, point_center, open_palms,           ║
+║     nod, emphasize, idle                                         ║
 ╚══════════════════════════════════════════════════════════════════╝
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -45,6 +52,12 @@ MANDATORY PEDAGOGY RULES
    - Every worked example in Markdown MUST become a separate section.
    - Examples are NOT narration-only.
    - Examples MUST be visualized step-by-step.
+   - MUST follow the 5-step example structure:
+     1. identify_known_quantities - List given values
+     2. draw_geometry - Create visual with coordinates
+     3. apply_formula - Show relevant formula
+     4. solve_stepwise - Calculate step by step
+     5. state_conclusion - Final answer with units
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 VISUALIZATION RULES (NON-NEGOTIABLE)
@@ -95,12 +108,13 @@ VISUALIZATION RULES (NON-NEGOTIABLE)
 
 8. VISUAL BEAT STRUCTURE (5 REQUIRED FIELDS):
 
-   Each visual beat MUST have these 5 fields:
+   Each visual beat MUST have these 6 fields:
    - scene_setup: Describe background, coordinate system, initial state
    - objects_and_properties: List ALL objects with colors, sizes, positions
    - motion_sequence: Describe step-by-step animation order
    - labels_and_text: List WHERE each label appears
-   - pedagogical_focus: What should the student understand?
+   - purpose: What should the student understand?
+   - duration_seconds: Float indicating display duration
 
    BAD (will FAIL - missing fields):
    {{
@@ -115,7 +129,8 @@ VISUALIZATION RULES (NON-NEGOTIABLE)
      "objects_and_properties": "A red arrow 10 units long from point A pointing right. A blue arrow 5 units long from point A pointing left. A green resultant arrow 5 units long pointing right.",
      "motion_sequence": "First, point A appears. Then, red F1 arrow grows rightward. Then, blue F2 arrow grows leftward. Finally, green resultant arrow appears.",
      "labels_and_text": "Label 'A' at the point. Label 'F1=10N' above red arrow. Label 'F2=5N' above blue arrow. Label 'F_net=5N' above green arrow.",
-     "pedagogical_focus": "Students understand that forces are vectors that add, and the resultant shows net force direction and magnitude."
+     "purpose": "Students understand that forces are vectors that add, and the resultant shows net force direction and magnitude.",
+     "duration_seconds": 10.0
    }}
 
 9. FORMULA VISUALIZATION RULES:
@@ -293,9 +308,9 @@ FAIL CONDITIONS for Manim sections:
 MEMORY SECTION RULES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-13. MEMORY sections MUST have EXACTLY 3 mnemonic flashcards:
+13. MEMORY sections MUST have EXACTLY 5 mnemonic flashcards (acronym-based):
     - Each uses a MNEMONIC device (acronym, rhyme, visual association)
-    - Format: letter (A, B, C) + title + mnemonic phrase + explanation
+    - Format: letter (A, B, C, D, E) + title + mnemonic phrase + explanation
     - Make mnemonics MEMORABLE and FUN for students
     - No video rendering - text-only with animations
 
@@ -485,12 +500,13 @@ Example (Derivative visualization):
 VISUAL BEAT QUALITY CHECKLIST
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Before outputting each visual beat, verify ALL 5 FIELDS are present:
+Before outputting each visual beat, verify ALL 6 FIELDS are present:
 □ scene_setup: Does it describe background and coordinate system?
 □ objects_and_properties: Are colors, sizes, and positions listed?
 □ motion_sequence: Is animation order described step-by-step?
 □ labels_and_text: Are label positions specified?
-□ pedagogical_focus: Is the learning goal explained?
+□ purpose: Is the learning goal explained?
+□ duration_seconds: Is the display duration specified?
 
 If ANY field is missing or too short, add the missing content.
 

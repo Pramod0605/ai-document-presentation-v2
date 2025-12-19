@@ -120,12 +120,12 @@ def generate_section_audio(section: dict, output_dir: str) -> str:
     FAIL-FAST: No fallback to gTTS. Raises TTSGenerationError if Narakeet fails.
     Uses streaming API for short text, polling API for long text.
     
-    NOTE: Timing information comes from LLM's narration_segments[].duration field.
+    NOTE: Timing information comes from LLM's narration_segments[].duration_seconds field.
     TTS does NOT calculate or override timing - the LLM is the "brain" for timing decisions.
     
     Returns: audio file path
     """
-    section_id = section.get("id", 1)
+    section_id = section.get("section_id") or section.get("id", 1)
     section_type = section.get("section_type", "content")
     narration = section.get("narration", "")
     
@@ -167,7 +167,7 @@ def generate_all_audio(presentation: dict, output_dir: str) -> list:
     """Generate audio for all sections in presentation.
     
     NOTE: This function only generates audio files. It does NOT modify timing data.
-    Timing comes from the LLM's narration_segments[].duration field.
+    Timing comes from the LLM's narration_segments[].duration_seconds field.
     The player uses LLM-provided durations directly.
     """
     os.makedirs(output_dir, exist_ok=True)

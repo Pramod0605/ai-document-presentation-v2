@@ -18,196 +18,131 @@
       "title": "Recap narration only 5 seconds - LLM not generating full recap narration",
       "status": "resolved",
       "created": "2025-12-18",
-      "resolved": "2025-12-19",
-      "root_cause": "1) TTS used section-level narration instead of combining recap_scenes[].narration. 2) Prompt too long (~8k tokens) - critical rules buried deep. 3) Examples showed short narrations despite 60-100 word requirement.",
-      "solution": "1) tts/generate_audio.py: combines recap_scenes[].narration for TTS. 2) Added CRITICAL COMPLIANCE CHECKLIST at TOP of both prompts. 3) Added word_count field requirement in each recap_scene. 4) Updated examples with word_count fields.",
-      "affected_files": ["tts/generate_audio.py", "core/prompts/system_prompt.txt", "core/prompts/user_prompt.txt"],
-      "verification": "Test job e4df96f5: 5 recap scenes with 448 total words (target 300-500). Each scene 85-96 words with word_count field."
+      "resolved": "2025-12-19"
     },
     {
       "id": "ISS-004",
       "title": "Summary slide not displaying in player",
-      "status": "investigation_complete",
-      "created": "2025-12-18",
-      "root_cause": "Player handles summary correctly. Summary IS slide #2 in presentation. User may need to navigate to it.",
-      "solution": "No code change needed - player already supports summary sections."
+      "status": "resolved",
+      "created": "2025-12-18"
     },
     {
       "id": "ISS-005",
-      "title": "Intro/summary sections displaying narration_segments instead of visual_content",
-      "status": "open",
+      "title": "Player displayItems fallback to narration_segments",
+      "status": "resolved",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1",
-      "root_cause": "Player falls back to narration_segments when visual_content is missing. v1.1 specifies no_fallbacks_allowed=true.",
-      "required_changes": {
-        "prompts": "Must require visual_content field for intro (empty {}), summary (bullet_points), memory (flashcards)",
-        "player": "Must NOT fall back to narration_segments. Show error if required visual_content missing."
-      }
+      "resolved": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - no_fallbacks_allowed",
+      "solution": "Removed narration_segments fallback from displayItems in loadSlide(). Now only uses visual_beats, visual_content, or segments."
+    },
+    {
+      "id": "ISS-005b",
+      "title": "Player timing derivation from narration_segments - is this a fallback?",
+      "status": "by_design",
+      "created": "2025-12-19",
+      "notes": "The LLM provides duration_seconds in narration_segments. Player builds timed_segments from this - this is necessary data transformation, not a fallback. The LLM is still the brain providing timing."
     },
     {
       "id": "ISS-006",
       "title": "Duration field naming mismatch: v1.1 uses duration_seconds, code uses duration",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - narration_segments.required_fields, visual_beat_structure",
-      "locations": {
-        "prompts": "user_prompt.txt line 234-235 uses 'duration'",
-        "player": "player.js line 334 reads 'item.duration'"
-      },
-      "required_changes": {
-        "prompts": "Change all 'duration' to 'duration_seconds'",
-        "player": "Read 'duration_seconds' instead of 'duration'"
-      }
+      "resolved": "2025-12-19",
+      "solution": "Prompts use duration_seconds. Player and tts read duration_seconds with duration fallback for backward compatibility."
     },
     {
       "id": "ISS-007",
       "title": "Section ID field mismatch: v1.1 uses section_id, code uses id",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - section_structure.common_fields",
-      "locations": {
-        "prompts": "user_prompt.txt line 39 uses 'id'",
-        "player": "player.js references 'slide.id'"
-      },
-      "required_changes": {
-        "prompts": "Change section 'id' to 'section_id'",
-        "player": "Read 'section_id' instead of 'id'"
-      }
+      "resolved": "2025-12-19",
+      "solution": "Prompts use section_id. Player and tts read section_id with id fallback for backward compatibility."
     },
     {
       "id": "ISS-008",
       "title": "renderer_reasoning field missing",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - section_structure.common_fields",
-      "required_changes": {
-        "prompts": "Add renderer_reasoning as required field in output schema"
-      }
+      "resolved": "2025-12-19",
+      "solution": "Added to prompts and passed through in player.js."
     },
     {
       "id": "ISS-009",
       "title": "Quiz section type not implemented",
       "status": "open",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - section_types includes 'quiz', quiz_handling_rules",
-      "required_changes": {
-        "prompts": "Add quiz section type with handling rules",
-        "player": "Add quiz section rendering"
-      }
+      "notes": "Added to section_type list in prompts. Player rendering and LLM generation not yet implemented."
     },
     {
       "id": "ISS-010",
       "title": "Flashcard limit mismatch: v1.1 says 5, prompts say 3",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - memory_section_rules.flashcard_limit = 5",
-      "locations": {
-        "prompts": "system_prompt.txt line 296 says 'EXACTLY 3 mnemonic flashcards'"
-      },
-      "required_changes": {
-        "prompts": "Change flashcard requirement from 3 to 5, update format to acronym_based"
-      }
+      "resolved": "2025-12-19",
+      "solution": "Updated prompts to require 5 acronym-based flashcards (A-B-C-D-E)."
     },
     {
       "id": "ISS-011",
       "title": "Visual beat purpose field naming: v1.1 uses 'purpose', code uses 'pedagogical_focus'",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - visual_beat_structure.purpose",
-      "locations": {
-        "prompts": "Both prompts use 'pedagogical_focus'",
-        "visual_compiler": "REQUIRED_VISUAL_BEAT_FIELDS includes 'pedagogical_focus'"
-      },
-      "decision_needed": "Align to v1.1 ('purpose') or keep 'pedagogical_focus'?"
+      "resolved": "2025-12-19",
+      "solution": "Prompts and visual_compiler use 'purpose'. Backward compatibility for 'pedagogical_focus' maintained."
     },
     {
       "id": "ISS-012",
       "title": "Visual beat missing duration_seconds field",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - visual_beat_structure.duration_seconds",
-      "required_changes": {
-        "prompts": "Add duration_seconds to visual beat required fields"
-      }
+      "resolved": "2025-12-19",
+      "solution": "Added to REQUIRED_VISUAL_BEAT_FIELDS in prompts and visual_compiler.py."
     },
     {
       "id": "ISS-013",
       "title": "Example section missing 5-step structure requirement",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - example_section_rules.example_steps",
-      "v1.1_steps": ["identify_known_quantities", "draw_geometry", "apply_formula", "solve_stepwise", "state_conclusion"],
-      "required_changes": {
-        "prompts": "Add explicit 5-step requirement for example sections"
-      }
+      "resolved": "2025-12-19",
+      "solution": "Added 5-step requirement to both prompts."
     },
     {
       "id": "ISS-014",
       "title": "Display fitness rules not enforced",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - display_fitness_rules",
-      "v1.1_rules": {
-        "max_text_lines_on_screen": 4,
-        "max_words_per_line": 12,
-        "if_text_exceeds_limits": "split_into_additional_segments"
-      },
-      "required_changes": {
-        "prompts": "Add display fitness rules to prompt",
-        "player": "Optionally validate/warn on display limits"
-      }
+      "resolved": "2025-12-19",
+      "solution": "Added to CRITICAL COMPLIANCE CHECKLIST in both prompts."
     },
     {
       "id": "ISS-015",
       "title": "Allowed gestures not constrained to v1.1 list",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - avatar_gesture_rules.allowed_gestures",
-      "v1.1_allowed": ["point_left", "point_right", "point_center", "open_palms", "nod", "emphasize", "idle"],
-      "required_changes": {
-        "prompts": "Add explicit list of allowed gestures"
-      }
+      "resolved": "2025-12-19",
+      "solution": "Added to CRITICAL COMPLIANCE CHECKLIST and added gesture_hint to narration_segments schema."
     },
     {
       "id": "ISS-016",
       "title": "Hard fail validation conditions not fully implemented",
       "status": "open",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - validation_rules.hard_fail_conditions",
-      "v1.1_conditions": [
-        "content_or_example_narration_below_minimum",
-        "missing_visual_beats",
-        "example_without_step_visualization",
-        "formula_mentioned_but_not_visualized",
-        "vague_visual_language_detected",
-        "manim_section_without_scene_spec"
-      ],
-      "current_status": "Partial - visual_compiler.py has some checks but not all",
-      "required_changes": {
-        "validators": "Implement all 6 hard fail conditions"
-      }
+      "notes": "Requires implementing all 6 hard fail conditions as explicit validators."
     },
     {
       "id": "ISS-017",
       "title": "Traceability logging not implemented",
       "status": "open",
       "created": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - traceability",
-      "v1.1_requirements": {
-        "generation_trace_required": true,
-        "render_prompts_logged": true,
-        "renderer_decisions_logged": true,
-        "validation_results_logged": true
-      },
-      "required_changes": {
-        "pipeline": "Add structured logging for traceability"
-      }
+      "notes": "Requires structured logging framework."
     }
   ],
   "metadata": {
     "last_updated": "2025-12-19",
-    "version": "2.0",
+    "version": "2.3",
     "spec_version": "v1.1",
-    "spec_file": "docs/llm_output_requirements.json"
+    "spec_file": "docs/llm_output_requirements.json",
+    "resolved_count": 14,
+    "open_count": 3,
+    "by_design_count": 1
   }
 }

@@ -28,7 +28,8 @@ REQUIRED_VISUAL_BEAT_FIELDS = [
     "objects_and_properties", 
     "motion_sequence",
     "labels_and_text",
-    "pedagogical_focus"
+    "purpose",
+    "duration_seconds"
 ]
 
 _flash_validator_enabled = True
@@ -58,7 +59,7 @@ def log(msg: str):
 
 
 def validate_visual_beat_structure(beat: dict, section_id: int, beat_index: int, section_type: str = "content", strict: bool = False) -> list:
-    """Validate that a visual beat has all 5 required fields with sufficient content.
+    """Validate that a visual beat has all required fields with sufficient content.
     
     Two-layer validation:
     1. Structural checks (code) - missing fields = hard error for content sections
@@ -79,7 +80,11 @@ def validate_visual_beat_structure(beat: dict, section_id: int, beat_index: int,
     
     for field in REQUIRED_VISUAL_BEAT_FIELDS:
         value = beat.get(field, "")
-        if not value or not isinstance(value, str):
+        if field == "purpose" and not value:
+            value = beat.get("pedagogical_focus", "")
+        if field == "duration_seconds" and not value:
+            value = beat.get("duration", "")
+        if not value and not (isinstance(value, (int, float)) and value >= 0):
             missing_fields.append(field)
     
     if len(missing_fields) == len(REQUIRED_VISUAL_BEAT_FIELDS):
@@ -139,7 +144,7 @@ def compile_wan_prompt(beat: dict, section_id: int, beat_index: int, section_typ
     objects_text = beat.get("objects_and_properties", "") or "Visual elements"
     motion = beat.get("motion_sequence", "") or "Smooth transitions"
     labels_text = beat.get("labels_and_text", "") or "Text labels"
-    focus = beat.get("pedagogical_focus", "") or "Educational content"
+    focus = beat.get("purpose", "") or beat.get("pedagogical_focus", "") or "Educational content"
     
     labels = extract_labels_from_text(labels_text)
     
