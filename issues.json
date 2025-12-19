@@ -137,11 +137,12 @@
     {
       "id": "ISS-018",
       "title": "Avatar hidden behind content box in intro/memory modes",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
+      "resolved": "2025-12-19",
       "description": "In intro and memory section modes, the avatar appears behind the content box instead of in front. The content box needs lower z-index or avatar needs higher z-index for these modes.",
       "screenshot": "attached_assets/image_1766159777484.png",
-      "plan": "1) Increase avatar z-index for mode-center to be above content-box, 2) Ensure content-box z-index is lower, 3) Test intro/memory sections"
+      "solution": "Repositioned mode-center layout: avatar now on right side (right: 5%, height: 85%, z-index: 15), content-wrapper on left side (z-index: 10, padding-left: 5%, max-width: 65%). This gives the avatar clear visibility alongside content rather than hidden behind it."
     },
     {
       "id": "ISS-019",
@@ -163,11 +164,12 @@
     {
       "id": "ISS-021",
       "title": "Avatar too small in video-primary mode and blank video at start",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
+      "resolved": "2025-12-19",
       "description": "When video plays, avatar is super tiny. Also blank video box appears before content loads. Avatar should be larger and content should appear instantly.",
       "screenshot": "attached_assets/image_1766159974072.png",
-      "plan": "1) Increase default avatar size for video modes, 2) Hide video-box until video is ready, 3) Ensure instant content render"
+      "solution": "1) Increased mode-content-video avatar size to 55% height and 35% max-width, 2) Added video-box opacity:0 by default with .video-ready class for opacity:1, 3) Added oncanplay event to add video-ready class when video is ready to play."
     }
   ],
   "metadata": {
@@ -175,7 +177,7 @@
     "version": "4.0",
     "spec_version": "v1.1",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 17,
-    "open_count": 4
+    "resolved_count": 19,
+    "open_count": 2
   }
 }

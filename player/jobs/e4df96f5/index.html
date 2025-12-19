@@ -346,27 +346,29 @@
     }
 
     .mode-center #avatar-canvas {
-      left: 50%;
-      height: 95%;
-      transform: translateX(-50%);
+      left: auto;
+      right: 5%;
+      height: 85%;
+      transform: translateX(0);
+      z-index: 15;
     }
 
     .mode-center #content-wrapper {
       opacity: 1;
       transform: translateY(0);
-      z-index: 25;
+      z-index: 10;
       display: flex;
-      justify-content: center;
-      padding-left: 0;
-      text-align: center;
+      justify-content: flex-start;
+      padding-left: 5%;
+      text-align: left;
     }
 
     .mode-center #content-box {
       width: auto;
-      max-width: 80%;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(5px);
-      align-items: center;
+      max-width: 65%;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(8px);
+      align-items: flex-start;
     }
 
     .mode-center #scene-label {
@@ -467,6 +469,23 @@
       border: 2px solid rgba(0, 212, 255, 0.25);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 212, 255, 0.1);
       transition: all 0.5s ease;
+      opacity: 0;
+    }
+
+    .mode-content-video #video-box.video-ready {
+      opacity: 1;
+    }
+
+    .mode-content-video #avatar-canvas {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: auto;
+      height: 55%;
+      width: auto;
+      max-width: 35%;
+      z-index: 50;
+      transform: translateX(0);
     }
     
     .mode-content-video.text-visible #content-box {
@@ -524,18 +543,6 @@
       min-width: 80%;
     }
 
-    .mode-content-video #avatar-canvas {
-      position: absolute;
-      z-index: 50;
-      left: auto;
-      right: 0;
-      bottom: 0;
-      height: 60%;
-      width: auto;
-      max-width: 30%;
-      object-fit: contain;
-      transform: translateX(0);
-    }
     
     .mode-content-video #content-wrapper {
       max-width: 75%;

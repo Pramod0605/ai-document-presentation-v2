@@ -528,6 +528,9 @@ function loadSlide(index) {
     
     console.log(`Loading video for section ${slide.id}: ${contentVidPath}, display_mode: ${displayMode}`);
     
+    if (videoBox) {
+      videoBox.classList.remove('video-ready');
+    }
     if (inlineVideo && contentVidPath && !inlineVideo.src.includes(contentVidPath)) {
       inlineVideo.src = contentVidPath;
       inlineVideo.load();
@@ -535,7 +538,13 @@ function loadSlide(index) {
     if (inlineVideo) {
       inlineVideo.muted = true;
       inlineVideo.playbackRate = 0.7;
-      // Delay play to avoid AbortError race condition
+      inlineVideo.oncanplay = () => {
+        if (videoBox) videoBox.classList.add('video-ready');
+        inlineVideo.oncanplay = null;
+      };
+      if (inlineVideo.readyState >= 3) {
+        if (videoBox) videoBox.classList.add('video-ready');
+      }
       setTimeout(() => {
         if (inlineVideo.paused) {
           inlineVideo.play().catch(e => {});
