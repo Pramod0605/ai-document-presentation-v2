@@ -1,7 +1,7 @@
-# AI Animated Education - Phase 1
+# AI Animated Education - Phase 1 (v1.2)
 
 ## Overview
-This project develops an AI pipeline to transform PDF chapters into pedagogically structured, animated explanation videos with synchronized narration. It uses Large Language Models (LLMs) as a "Director" for creative decisions, aiming to automate and revolutionize educational content delivery by creating engaging learning videos for the digital education market.
+This project develops an AI pipeline to transform PDF chapters into pedagogically structured, animated explanation videos with synchronized narration. It uses a **3-pass LLM architecture** with role-pure separation of concerns. Version 1.2 introduces specialized renderers and analytics tracking.
 
 ## User Preferences
 The user wants an iterative development process. The agent should prioritize clear, concise, and accurate communication. Before making any major architectural changes or introducing new dependencies, the agent must ask for explicit approval. The user prefers detailed explanations for complex technical decisions. The agent should ensure that all code is well-documented and follows best practices for maintainability and readability.
@@ -9,9 +9,9 @@ The user wants an iterative development process. The agent should prioritize cle
 ### NON-NEGOTIABLE RULES (CRITICAL)
 1. **Before proposing ANY solution**, the agent MUST check:
    - `attached_assets/` folder for specification documents (especially LLM brain prompts)
-   - `docs/llm_output_requirements.json` for definitive LLM output specification
+   - `docs/llm_output_requirements.json` for definitive LLM output specification (v1.2)
    - `replit.md` for documented architecture and decisions
-   - Existing prompt files in `core/prompts/`
+   - Existing prompt files in `core/prompts/` (v1.2 prompts)
    - `issues.json` for tracked problems and their agreed solutions
 2. The agent must NOT assume or invent solutions - all proposals must reference documented specifications.
 3. Nothing is a "solution" until the user explicitly agrees.
@@ -20,21 +20,67 @@ The user wants an iterative development process. The agent should prioritize cle
 6. **ALL LLM OUTPUTS MUST CONFORM TO `docs/llm_output_requirements.json` OR FAIL** - this is non-negotiable. There are NO FALLBACKS. Missing required fields = generation failure.
 7. **Player is a DUMB display layer** - it consumes LLM output without modification. No duration calculations, no content fallbacks, no graceful degradation.
 
-## System Architecture
+## System Architecture (v1.2)
 
-### Core Design
-The system employs a two-model LLM pipeline via OpenRouter: Gemini 2.5 Flash for topic chunking and Gemini 2.5 Pro for visual and narration generation. Content follows a mandatory 5-section pedagogical flow: Intro, Summary, Content, Memory, and Recap.
+### 3-Pass LLM Pipeline
+The system uses a role-pure 3-pass architecture with clear separation of concerns:
+
+| Pass | LLM | Model | Role | Output |
+|------|-----|-------|------|--------|
+| **Pass 0** | Chunker | Gemini 2.5 Flash | Pure preprocessing - split markdown | Chunked JSON |
+| **Pass 1** | Director | Gemini 2.5 Pro | Pedagogy + structure + timing + renderer choice | presentation.json (NO code) |
+| **Pass 2a** | Manim Renderer | Claude 3.5 Sonnet | Math/physics visuals → scene spec | manim_scene_spec JSON |
+| **Pass 2b** | Remotion Renderer | Claude 3.5 Sonnet | Motion graphics → scene spec | remotion_scene_spec JSON |
+| **Pass 2c** | Video Renderer | Gemini 2.5 Pro | Biology/chemistry/recap → prompts | video_prompt JSON |
+
+### Key Design Principles (v1.2)
+- **Chunker**: Does NOT summarize, explain, or invent. Preserves wording exactly.
+- **Director**: Decides pedagogy but does NOT generate renderer code.
+- **Renderers**: Do NOT change narration or invent pedagogy. Pure execution.
+- **Clean separation**: No mixed schemas, no self-review hallucinations.
+
+### Prompt Files (v1.2)
+Located in `core/prompts/`:
+- `chunker_system_v1.2.txt` / `chunker_user_v1.2.txt`
+- `director_system_v1.2.txt` / `director_user_v1.2.txt`
+- `manim_renderer_system_v1.2.txt` / `manim_renderer_user_v1.2.txt`
+- `remotion_renderer_system_v1.2.txt` / `remotion_renderer_user_v1.2.txt`
+- `video_renderer_system_v1.2.txt` / `video_renderer_user_v1.2.txt`
+
+Backups of v1.1 prompts stored in `core/prompts/v1.1_backup/`.
+
+### Analytics Layer (NEW in v1.2)
+The `core/analytics.py` module tracks per-phase metrics:
+- **Time**: Start/end timestamps, duration_seconds
+- **Cost**: Input tokens, output tokens, model pricing (USD)
+- **Status**: Pass/fail per phase with error details
+
+Model pricing stored for: Gemini 2.5 Flash, Gemini 2.5 Pro, Claude 3.5 Sonnet, GPT-4o.
 
 ### Technical Implementation
 - **Backend**: Python Flask API.
 - **Frontend**: Vanilla HTML5/JavaScript video player with dynamic layouts, subtitle synchronization, and chroma key avatar overlay.
-- **LLM Pipeline**: Processes large documents in chunks. A Flash Chunker identifies topic boundaries, a Pro Director generates presentation JSON, and a Merger combines outputs. A Flash LLM Validator semantically checks visual beat content.
-- **Video Rendering**: Uses a dual renderer system: Manim for mathematical animations and WAN/kie.ai for conceptual science videos, supporting per-beat rendering.
-- **Audio**: Narakeet TTS (Indian male voice "ravi") using streaming for short text and polling for long text. No fallback is implemented; failure results if the API is unavailable.
+- **LLM Pipeline**: 3-pass architecture via OpenRouter. Chunker → Director → Renderers.
+- **Video Rendering**: Dual renderer system: Manim for mathematical animations, Remotion for motion graphics, WAN/kie.ai for conceptual science videos.
+- **Audio**: Narakeet TTS (Indian male voice "ravi") using streaming for short text and polling for long text. No fallback - failure results if API unavailable.
 - **Job Processing**: Asynchronous system for PDF/Markdown file submission, progress polling, and asset generation into self-contained job folders.
-- **Fail-Fast Policy**: Strict fail-fast behavior with no fallbacks for critical components like Datalab PDF→MD, Narakeet TTS, Manim, and WAN rendering.
-- **Renderer Policy**: Enforces specific renderers per section type (TEXT-ONLY for intro, summary, memory; LLM Director choice for content/example; WAN for recap).
-- **Image Handling**: Extracts base64 images from markdown, processes them (green background for chroma key), creates placeholders for LLM, and displays them synced to narration in the player.
+- **Fail-Fast Policy**: Strict fail-fast behavior with no fallbacks for critical components.
+- **Image Handling**: Extracts base64 images from markdown, processes them (green background for chroma key), creates placeholders for LLM, displays synced to narration.
+
+### Renderer Decision Rules
+| Renderer | Use Cases |
+|----------|-----------|
+| **Manim** | Math, vectors, geometry, graphs, derivations, numerical physics |
+| **Remotion** | Intro motion graphics, summary animations, quiz displays, formula reveals |
+| **Video (WAN)** | Biology processes, chemistry reactions, physical phenomena, recap storytelling |
+
+### Symbolic Overlay Rule
+During complex visuals, allow ONLY:
+- Math symbols (a =, F =)
+- Equation fragments
+- Variable labels
+- Step labels
+- **Max 4 words. No sentences.**
 
 ### UI/UX Decisions
 The video player features a two-pane layout (video and content) with position swapping and dynamic layout adaptation based on `section_type`. The dashboard supports file uploads, subject/grade inputs, job status display, and video playback. The player also supports per-beat display mode toggling (video-only, text-primary, video-primary).
@@ -51,17 +97,48 @@ The player uses a blackboard-inspired dark theme:
 - Original blue theme backed up in `backups/index.html.v1_blue` and `backups/player.js.v1_blue`
 
 ### Data Structure
-The `Presentation` JSON schema includes a `sections` array, specifying `section_type`, `id`, `title`, `renderer`, `explanation_plan`, `layout`, `narration`, `segments`, `flashcards`, `recap_scenes`, and `manim_scene_spec` for Manim sections.
+The `Presentation` JSON schema includes a `sections` array, specifying `section_type`, `id`, `title`, `renderer`, `renderer_reasoning`, `layout`, `narration`, `narration_segments`, `visual_beats`, and renderer-specific specs (`manim_scene_spec`, `remotion_scene_spec`, or `video_prompts`).
+
+## Version History
+- **v1.1**: Two-LLM architecture (Chunker + Director). Director generated both pedagogy AND renderer specs.
+- **v1.2**: Three-pass architecture with specialized renderers. Adds analytics tracking.
 
 ## External Dependencies
-- **OpenRouter**: For Gemini 2.5 Flash and Gemini 2.5 Pro LLMs.
+- **OpenRouter**: For Gemini 2.5 Flash, Gemini 2.5 Pro, and Claude Sonnet LLMs.
 - **Narakeet API**: Text-to-Speech service.
 - **Kie.ai API (WAN)**: For conceptual video generation.
 - **Datalab API**: For PDF to Markdown conversion.
 - **Flask**: Backend web framework.
 - **Flask-CORS**: Handles Cross-Origin Resource Sharing.
 - **MoviePy**: Video editing tasks.
-- **OpenAI Python Client**: For OpenAI services (though OpenRouter is primary LLM gateway).
+- **OpenAI Python Client**: For OpenRouter gateway.
 - **Tenacity**: For API call retry logic.
 - **Requests**: HTTP client library.
 - **python-dotenv**: For environment variables.
+
+## File Structure
+```
+core/
+├── prompts/
+│   ├── v1.1_backup/         # Backed up v1.1 prompts
+│   ├── chunker_system_v1.2.txt
+│   ├── chunker_user_v1.2.txt
+│   ├── director_system_v1.2.txt
+│   ├── director_user_v1.2.txt
+│   ├── manim_renderer_system_v1.2.txt
+│   ├── manim_renderer_user_v1.2.txt
+│   ├── remotion_renderer_system_v1.2.txt
+│   ├── remotion_renderer_user_v1.2.txt
+│   ├── video_renderer_system_v1.2.txt
+│   └── video_renderer_user_v1.2.txt
+├── analytics.py             # Cost/time tracking (NEW)
+├── pipeline.py              # Main pipeline orchestrator
+├── llm_client.py            # OpenRouter LLM calls
+├── hard_fail_validator.py   # Validation rules
+├── traceability.py          # Generation trace logging
+└── latex_to_speech.py       # LaTeX→speakable text for TTS
+
+docs/
+├── llm_output_requirements.json      # v1.2 specification (current)
+└── llm_output_requirements_v1.1.json # v1.1 backup
+```
