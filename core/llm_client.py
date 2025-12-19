@@ -46,6 +46,14 @@ def fix_malformed_json(json_text: str) -> str:
     text = re.sub(r'\[\s*,', '[', text)
     text = re.sub(r'{\s*,', '{', text)
     
+    text = re.sub(r'"\s*\n\s*"', '",\n"', text)
+    text = re.sub(r'}\s*\n\s*"', '},\n"', text)
+    text = re.sub(r']\s*\n\s*"', '],\n"', text)
+    text = re.sub(r'(\d)\s*\n\s*"', r'\1,\n"', text)
+    text = re.sub(r'(true|false|null)\s*\n\s*"', r'\1,\n"', text)
+    text = re.sub(r'}\s*\n\s*{', '},\n{', text)
+    text = re.sub(r']\s*\n\s*{', '],\n{', text)
+    
     open_braces = text.count('{')
     close_braces = text.count('}')
     open_brackets = text.count('[')
@@ -214,8 +222,9 @@ def validate_narration_segment(segment: dict, section_id: int, segment_index: in
         errors.append(f"Section {section_id}: narration_segment[{segment_index}] missing or invalid 'id' (must be numeric)")
     if "text" not in segment or not isinstance(segment.get("text"), str) or not segment.get("text", "").strip():
         errors.append(f"Section {section_id}: narration_segment[{segment_index}] missing or empty 'text'")
-    if "duration" not in segment or not isinstance(segment.get("duration"), (int, float)):
-        errors.append(f"Section {section_id}: narration_segment[{segment_index}] missing or invalid 'duration' (must be numeric)")
+    duration_val = segment.get("duration_seconds") or segment.get("duration")
+    if duration_val is None or not isinstance(duration_val, (int, float)):
+        errors.append(f"Section {section_id}: narration_segment[{segment_index}] missing or invalid 'duration_seconds' (must be numeric)")
     return errors
 
 
