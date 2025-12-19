@@ -39,6 +39,17 @@ The system employs a two-model LLM pipeline via OpenRouter: Gemini 2.5 Flash for
 ### UI/UX Decisions
 The video player features a two-pane layout (video and content) with position swapping and dynamic layout adaptation based on `section_type`. The dashboard supports file uploads, subject/grade inputs, job status display, and video playback. The player also supports per-beat display mode toggling (video-only, text-primary, video-primary).
 
+### Khan Academy-Style Theme (Dec 2025)
+The player uses a blackboard-inspired dark theme:
+- **Background**: #0a0a0a (near-black)
+- **Fonts**: Lato (body text), Caveat (handwritten-style headers)
+- **Primary Text**: #f0f0e8 (chalk-white)
+- **Accent Green**: #00ff88 (headers, new button, step indicators)
+- **Accent Cyan**: #00d4ff (active items, borders, progress bar)
+- **Yellow**: #ffff00 (flashcard highlights)
+- **Orange**: #ff6b35 (alerts, quiz feedback)
+- Original blue theme backed up in `backups/index.html.v1_blue` and `backups/player.js.v1_blue`
+
 ### Data Structure
 The `Presentation` JSON schema includes a `sections` array, specifying `section_type`, `id`, `title`, `renderer`, `explanation_plan`, `layout`, `narration`, `segments`, `flashcards`, `recap_scenes`, and `manim_scene_spec` for Manim sections.
 
