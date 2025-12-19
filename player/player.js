@@ -57,7 +57,7 @@ function updateSlideImages(slide, currentTime) {
   if (!imageLayer) return;
   
   const sectionType = slide.section_type || slide.slide_type || 'content';
-  if (sectionType === 'intro' || sectionType === 'memory' || sectionType === 'recap' || sectionType === 'summary') {
+  if (sectionType === 'intro' || sectionType === 'memory' || sectionType === 'recap' || sectionType === 'summary' || sectionType === 'quiz') {
     imageLayer.innerHTML = '';
     currentVisibleImage = null;
     return;
@@ -237,7 +237,65 @@ function loadSlide(index) {
     document.getElementById('content-box').classList.remove('example-section');
   }
 
-  if (sectionType === 'memory' && slide.flashcards) {
+  if (sectionType === 'quiz' && slide.quiz) {
+    const quiz = slide.quiz;
+    const container = document.createElement('div');
+    container.className = 'quiz-container';
+    
+    const questionDiv = document.createElement('div');
+    questionDiv.className = 'quiz-question';
+    questionDiv.innerHTML = `<span class="quiz-q-mark">Q:</span> ${quiz.question?.text || quiz.question || ''}`;
+    container.appendChild(questionDiv);
+    
+    const choicesDiv = document.createElement('div');
+    choicesDiv.className = 'quiz-choices';
+    (quiz.choices || []).forEach((choice, i) => {
+      const choiceEl = document.createElement('div');
+      choiceEl.className = 'quiz-choice';
+      choiceEl.id = `choice-${choice.id || i}`;
+      choiceEl.dataset.choiceId = choice.id || String.fromCharCode(65 + i);
+      choiceEl.innerHTML = `<span class="choice-letter">${choice.id || String.fromCharCode(65 + i)}</span> ${choice.text}`;
+      choicesDiv.appendChild(choiceEl);
+    });
+    container.appendChild(choicesDiv);
+    
+    if (quiz.answer_reveal && quiz.answer_reveal.reveal_steps) {
+      const revealDiv = document.createElement('div');
+      revealDiv.className = 'quiz-reveal-steps';
+      revealDiv.id = 'quiz-reveal-container';
+      quiz.answer_reveal.reveal_steps.forEach((step, i) => {
+        const stepEl = document.createElement('div');
+        stepEl.className = 'quiz-reveal-step';
+        stepEl.id = `reveal-step-${i}`;
+        stepEl.innerHTML = `<strong>${step.title || `Step ${step.step_id}`}:</strong> ${step.explanation || ''}`;
+        revealDiv.appendChild(stepEl);
+      });
+      container.appendChild(revealDiv);
+      
+      slide.quizData = {
+        correctChoiceId: quiz.correct_choice_id,
+        revealStepCount: quiz.answer_reveal.reveal_steps.length,
+        choices: quiz.choices || []
+      };
+    }
+    
+    document.querySelectorAll('.quiz-choice').forEach(ch => {
+      ch.classList.remove('correct', 'incorrect', 'active');
+    });
+    
+    list.appendChild(container);
+    document.getElementById('content-box').style.width = '75%';
+    
+    if (slide.narration_segments && slide.narration_segments.length > 0) {
+      let cumulativeTime = 0;
+      slide.timed_segments = slide.narration_segments.map(seg => {
+        const duration = seg.duration_seconds || seg.duration || 5;
+        const start = cumulativeTime;
+        cumulativeTime += duration;
+        return { start_time: start, end_time: cumulativeTime, step_id: seg.id };
+      });
+    }
+  } else if (sectionType === 'memory' && slide.flashcards) {
     const container = document.createElement('div');
     container.className = 'flashcard-container';
     slide.flashcards.forEach((fc, i) => {
@@ -650,6 +708,55 @@ function handleTimeUpdate(e) {
         el.classList.remove('read');
       }
     });
+  }
+  
+  const sType = slide.section_type || slide.slide_type || 'content';
+  if (sType === 'quiz' && slide.quizData && slide.timed_segments) {
+    const totalSteps = slide.quizData.revealStepCount || 3;
+    const correctId = slide.quizData.correctChoiceId;
+    
+    let activeStep = -1;
+    slide.timed_segments.forEach((seg, i) => {
+      const stepEl = document.getElementById(`reveal-step-${i}`);
+      if (stepEl) {
+        if (t >= seg.start_time && t < (seg.end_time || Infinity)) {
+          stepEl.classList.add('active');
+          activeStep = i;
+        } else if (t >= (seg.end_time || Infinity)) {
+          stepEl.classList.add('active');
+          stepEl.classList.add('read');
+        } else {
+          stepEl.classList.remove('active');
+          stepEl.classList.remove('read');
+        }
+      }
+    });
+    
+    document.querySelectorAll('.quiz-choice').forEach(ch => {
+      ch.classList.remove('active');
+    });
+    if (activeStep >= 0 && activeStep < slide.quizData.choices.length) {
+      const activeChoiceId = slide.quizData.choices[activeStep]?.id;
+      if (activeChoiceId) {
+        const activeChoice = document.getElementById(`choice-${activeChoiceId}`);
+        if (activeChoice) activeChoice.classList.add('active');
+      }
+    }
+    
+    const lastSeg = slide.timed_segments[totalSteps - 1];
+    if (lastSeg && t >= lastSeg.start_time && correctId) {
+      const correctChoice = document.getElementById(`choice-${correctId}`);
+      if (correctChoice) {
+        correctChoice.classList.add('correct');
+        correctChoice.classList.remove('active');
+      }
+      document.querySelectorAll('.quiz-choice').forEach(ch => {
+        if (ch.dataset.choiceId !== correctId) {
+          ch.classList.add('incorrect');
+          ch.classList.remove('active');
+        }
+      });
+    }
   }
   
   if (stage.classList.contains('mode-content-video') && (!slide.beat_videos || slide.beat_videos.length <= 1)) {

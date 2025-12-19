@@ -8,6 +8,8 @@ from core.datalab_client import pdf_to_markdown
 from core.llm_client import generate_chunked_presentation, ValidationError
 from core.renderer_executor import render_all_topics, enforce_renderer_policy
 from core.image_processor import extract_images_from_markdown, strip_base64_from_markdown, create_image_list_for_llm
+from core.hard_fail_validator import validate_presentation_hard_fails, format_hard_fail_report, HardFailError
+from core.traceability import init_traceability, log_event, log_validation, log_hard_fail, complete_trace
 from tts.generate_audio import generate_all_audio
 from render.render_trace import clear_render_trace
 
@@ -35,6 +37,16 @@ def process_pdf_to_videos(
     os.makedirs(videos_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
     os.makedirs(images_dir, exist_ok=True)
+    
+    trace_logger = init_traceability(job_id or "pdf_job", output_dir)
+    log_event("pipeline_start", {
+        "pipeline_type": "pdf",
+        "source_file": source_file,
+        "subject": subject,
+        "grade": grade,
+        "dry_run": dry_run,
+        "skip_wan": skip_wan
+    })
     
     clear_render_trace(output_dir)
     
@@ -111,15 +123,44 @@ def process_pdf_to_videos(
                 json.dump(generation_trace, f, indent=2)
         
         if validation_failed:
-            raise ValidationError(validation_error_msg, presentation, generation_trace)
+            raise ValidationError(validation_error_msg or "Validation failed", presentation, generation_trace)
+        
+        if presentation:
+            is_valid, hard_fails = validate_presentation_hard_fails(presentation)
+            if not is_valid:
+                for hf in hard_fails:
+                    log_hard_fail(hf.condition, hf.section_id, hf.details)
+                    log_validation("hard_fail_check", hf.section_id, False, 
+                                  [str(hf)], [])
+                report = format_hard_fail_report(hard_fails)
+                print(report)
+                job_status["steps"].append({
+                    "step": "hard_fail_validation",
+                    "status": "failed",
+                    "errors": [str(hf) for hf in hard_fails]
+                })
+                complete_trace("hard_fail")
+                raise ValidationError(
+                    f"HARD FAIL: {len(hard_fails)} validation failures - generation aborted. " + 
+                    "; ".join([str(hf) for hf in hard_fails[:3]]),
+                    presentation, generation_trace
+                )
+            else:
+                log_validation("hard_fail_check", None, True, [], [])
+                job_status["steps"].append({
+                    "step": "hard_fail_validation",
+                    "status": "passed"
+                })
         
         if job_id:
             job_manager.complete_step(job_id, 1)
             job_manager.set_step(job_id, "Rendering videos with AI...", 2)
         
-        presentation["skip_avatar"] = skip_avatar
+        log_event("render_start", {"dry_run": dry_run, "skip_wan": skip_wan})
         
-        presentation = enforce_renderer_policy(presentation)
+        if presentation:
+            presentation["skip_avatar"] = skip_avatar
+            presentation = enforce_renderer_policy(presentation)
         
         job_status["steps"].append({"step": "render_videos", "status": "started"})
         rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run, skip_wan=skip_wan, output_dir_base=output_dir)
@@ -157,10 +198,14 @@ def process_pdf_to_videos(
         job_status["sections_count"] = len(presentation.get("sections", []))
         job_status["dry_run"] = dry_run
         
+        complete_trace("completed")
+        log_event("pipeline_complete", {"status": "success"})
+        
     except Exception as e:
         job_status["status"] = "failed"
         job_status["error"] = str(e)
         job_status["failed_at"] = datetime.now().isoformat()
+        complete_trace("failed")
         raise
     
     return job_status
@@ -187,6 +232,16 @@ def process_markdown_to_videos(
     os.makedirs(videos_dir, exist_ok=True)
     os.makedirs(audio_dir, exist_ok=True)
     os.makedirs(images_dir, exist_ok=True)
+    
+    trace_logger = init_traceability(job_id or "md_job", output_dir)
+    log_event("pipeline_start", {
+        "pipeline_type": "markdown",
+        "source_file": source_file,
+        "subject": subject,
+        "grade": grade,
+        "dry_run": dry_run,
+        "skip_wan": skip_wan
+    })
     
     clear_render_trace(output_dir)
     
@@ -255,15 +310,44 @@ def process_markdown_to_videos(
                 json.dump(generation_trace, f, indent=2)
         
         if validation_failed:
-            raise ValidationError(validation_error_msg, presentation, generation_trace)
+            raise ValidationError(validation_error_msg or "Validation failed", presentation, generation_trace)
+        
+        if presentation:
+            is_valid, hard_fails = validate_presentation_hard_fails(presentation)
+            if not is_valid:
+                for hf in hard_fails:
+                    log_hard_fail(hf.condition, hf.section_id, hf.details)
+                    log_validation("hard_fail_check", hf.section_id, False, 
+                                  [str(hf)], [])
+                report = format_hard_fail_report(hard_fails)
+                print(report)
+                job_status["steps"].append({
+                    "step": "hard_fail_validation",
+                    "status": "failed",
+                    "errors": [str(hf) for hf in hard_fails]
+                })
+                complete_trace("hard_fail")
+                raise ValidationError(
+                    f"HARD FAIL: {len(hard_fails)} validation failures - generation aborted. " + 
+                    "; ".join([str(hf) for hf in hard_fails[:3]]),
+                    presentation, generation_trace
+                )
+            else:
+                log_validation("hard_fail_check", None, True, [], [])
+                job_status["steps"].append({
+                    "step": "hard_fail_validation",
+                    "status": "passed"
+                })
         
         if job_id:
             job_manager.complete_step(job_id, 0)
             job_manager.set_step(job_id, "Rendering videos with AI...", 1)
         
-        presentation["skip_avatar"] = skip_avatar
+        log_event("render_start", {"dry_run": dry_run, "skip_wan": skip_wan})
         
-        presentation = enforce_renderer_policy(presentation)
+        if presentation:
+            presentation["skip_avatar"] = skip_avatar
+            presentation = enforce_renderer_policy(presentation)
         
         job_status["steps"].append({"step": "render_videos", "status": "started"})
         rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run, skip_wan=skip_wan, output_dir_base=output_dir)
@@ -300,10 +384,14 @@ def process_markdown_to_videos(
         job_status["sections_count"] = len(presentation.get("sections", []))
         job_status["dry_run"] = dry_run
         
+        complete_trace("completed")
+        log_event("pipeline_complete", {"status": "success"})
+        
     except Exception as e:
         job_status["status"] = "failed"
         job_status["error"] = str(e)
         job_status["failed_at"] = datetime.now().isoformat()
+        complete_trace("failed")
         raise
     
     return job_status

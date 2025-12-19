@@ -318,6 +318,59 @@ For section_type = "memory":
 ]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+QUIZ SECTION RULES (CRITICAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For section_type = "quiz":
+
+- ONE question per quiz section
+- Answer is hidden initially, revealed stepwise
+- Visual style: flashcard or blackboard layout
+- Renderer: NONE (text-only display)
+
+REQUIRED quiz object structure:
+"quiz": {{
+  "question": {{
+    "text": "What is the SI unit of force?",
+    "difficulty": "easy | medium | hard"
+  }},
+  "choices": [
+    {{ "id": "A", "text": "Kilogram", "rationale": "Kilogram is a unit of mass, not force" }},
+    {{ "id": "B", "text": "Newton", "rationale": "Correct! Newton (N) is the SI unit of force" }},
+    {{ "id": "C", "text": "Joule", "rationale": "Joule is a unit of energy, not force" }},
+    {{ "id": "D", "text": "Watt", "rationale": "Watt is a unit of power, not force" }}
+  ],
+  "correct_choice_id": "B",
+  "answer_reveal": {{
+    "initial_state": "Question and all choices visible, answer hidden",
+    "reveal_steps": [
+      {{
+        "step_id": 1,
+        "title": "Think about it",
+        "explanation": "Pause and consider each option. What do you know about force?",
+        "visual_cue": "Highlight question"
+      }},
+      {{
+        "step_id": 2,
+        "title": "Eliminate wrong answers",
+        "explanation": "Kilogram measures mass, Joule measures energy, Watt measures power.",
+        "visual_cue": "Dim choices A, C, D"
+      }},
+      {{
+        "step_id": 3,
+        "title": "Reveal answer",
+        "explanation": "Newton is the correct answer! Named after Isaac Newton, it measures force.",
+        "visual_cue": "Highlight choice B with green"
+      }}
+    ]
+  }},
+  "visual_style": "flashcard"
+}}
+
+Quiz narration_segments must align with reveal_steps.
+Each reveal step maps to one narration segment.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 RECAP SECTION RULES (CRITICAL)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

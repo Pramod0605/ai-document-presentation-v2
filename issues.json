@@ -33,14 +33,7 @@
       "created": "2025-12-19",
       "resolved": "2025-12-19",
       "spec_reference": "docs/llm_output_requirements.json v1.1 - no_fallbacks_allowed",
-      "solution": "Removed narration_segments fallback from displayItems in loadSlide(). Now only uses visual_beats, visual_content, or segments."
-    },
-    {
-      "id": "ISS-005b",
-      "title": "Player timing derivation from narration_segments - is this a fallback?",
-      "status": "by_design",
-      "created": "2025-12-19",
-      "notes": "The LLM provides duration_seconds in narration_segments. Player builds timed_segments from this - this is necessary data transformation, not a fallback. The LLM is still the brain providing timing."
+      "solution": "Removed narration_segments fallback from displayItems in loadSlide()."
     },
     {
       "id": "ISS-006",
@@ -48,7 +41,7 @@
       "status": "resolved",
       "created": "2025-12-19",
       "resolved": "2025-12-19",
-      "solution": "Prompts use duration_seconds. Player and tts read duration_seconds with duration fallback for backward compatibility."
+      "solution": "Prompts use duration_seconds. Player and tts read duration_seconds with duration fallback."
     },
     {
       "id": "ISS-007",
@@ -56,7 +49,7 @@
       "status": "resolved",
       "created": "2025-12-19",
       "resolved": "2025-12-19",
-      "solution": "Prompts use section_id. Player and tts read section_id with id fallback for backward compatibility."
+      "solution": "Prompts use section_id. Player and tts read section_id with id fallback."
     },
     {
       "id": "ISS-008",
@@ -69,9 +62,11 @@
     {
       "id": "ISS-009",
       "title": "Quiz section type not implemented",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
-      "notes": "Added to section_type list in prompts. Player rendering and LLM generation not yet implemented."
+      "resolved": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - quiz_handling_rules",
+      "solution": "Implemented quiz section with: 1) Quiz rules in user_prompt.txt with question/choices/reveal_steps structure, 2) Quiz rendering in player.js with timed reveal steps, 3) Quiz CSS in index.html, 4) Quiz validation in llm_client.py validate_section_v2()"
     },
     {
       "id": "ISS-010",
@@ -87,7 +82,7 @@
       "status": "resolved",
       "created": "2025-12-19",
       "resolved": "2025-12-19",
-      "solution": "Prompts and visual_compiler use 'purpose'. Backward compatibility for 'pedagogical_focus' maintained."
+      "solution": "Prompts and visual_compiler use 'purpose'. Backward compatibility maintained."
     },
     {
       "id": "ISS-012",
@@ -119,30 +114,33 @@
       "status": "resolved",
       "created": "2025-12-19",
       "resolved": "2025-12-19",
-      "solution": "Added to CRITICAL COMPLIANCE CHECKLIST and added gesture_hint to narration_segments schema."
+      "solution": "Added to CRITICAL COMPLIANCE CHECKLIST with allowed gestures list."
     },
     {
       "id": "ISS-016",
       "title": "Hard fail validation conditions not fully implemented",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
-      "notes": "Requires implementing all 6 hard fail conditions as explicit validators."
+      "resolved": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - validation_rules.hard_fail_conditions",
+      "solution": "Created core/hard_fail_validator.py implementing all 6 conditions: 1) content_or_example_narration_below_minimum, 2) missing_visual_beats, 3) example_without_step_visualization, 4) formula_mentioned_but_not_visualized, 5) vague_visual_language_detected, 6) manim_section_without_scene_spec. Integrated into both pipeline functions."
     },
     {
       "id": "ISS-017",
       "title": "Traceability logging not implemented",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
-      "notes": "Requires structured logging framework."
+      "resolved": "2025-12-19",
+      "spec_reference": "docs/llm_output_requirements.json v1.1 - traceability",
+      "solution": "Created core/traceability.py implementing: 1) generation_trace_required via TraceabilityLogger class, 2) render_prompts_logged via log_render_prompt(), 3) renderer_decisions_logged via log_renderer_decision(), 4) validation_results_logged via log_validation(). Integrated into both pipeline functions with init_traceability(), log_event(), log_hard_fail(), complete_trace()."
     }
   ],
   "metadata": {
     "last_updated": "2025-12-19",
-    "version": "2.3",
+    "version": "3.0",
     "spec_version": "v1.1",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 14,
-    "open_count": 3,
-    "by_design_count": 1
+    "resolved_count": 17,
+    "open_count": 0
   }
 }

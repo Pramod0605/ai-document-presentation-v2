@@ -303,7 +303,7 @@ def validate_section_v2(section: dict) -> tuple[list, list]:
     errors = []
     warnings = []
     
-    section_id = section.get("id", 0)
+    section_id = section.get("section_id") or section.get("id", 0)
     section_type = section.get("section_type", "unknown")
     is_critical = section_type in CRITICAL_SECTION_TYPES
     renderer = section.get("renderer", "")
@@ -312,6 +312,22 @@ def validate_section_v2(section: dict) -> tuple[list, list]:
     word_count = count_words(narration)
     narration_segments = section.get("narration_segments", [])
     visual_beats = section.get("visual_beats", [])
+    
+    if section_type == "quiz":
+        quiz = section.get("quiz")
+        if not quiz:
+            errors.append(f"Section {section_id} (quiz): missing required 'quiz' object")
+        else:
+            if not quiz.get("question"):
+                errors.append(f"Section {section_id} (quiz): missing 'question' in quiz object")
+            choices = quiz.get("choices", [])
+            if len(choices) < 4:
+                errors.append(f"Section {section_id} (quiz): must have at least 4 choices (A, B, C, D)")
+            if not quiz.get("correct_choice_id"):
+                errors.append(f"Section {section_id} (quiz): missing 'correct_choice_id'")
+            answer_reveal = quiz.get("answer_reveal", {})
+            if not answer_reveal.get("reveal_steps"):
+                errors.append(f"Section {section_id} (quiz): missing 'answer_reveal.reveal_steps' for stepwise solution reveal")
     
     if section_type == "content":
         if word_count < CONTENT_MIN_WORDS:
