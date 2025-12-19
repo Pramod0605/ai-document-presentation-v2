@@ -1,7 +1,11 @@
 import os
+import sys
 import time
 import requests
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from core.latex_to_speech import latex_to_speech
 
 NARAKEET_API_KEY = os.environ.get("NARAKEET_API_KEY", "")
 NARAKEET_VOICE = "ravi"
@@ -144,6 +148,11 @@ def generate_section_audio(section: dict, output_dir: str) -> str:
     
     if not narration:
         narration = f"Section {section_id}: {section.get('title', 'Educational content')}"
+    
+    original_len = len(narration)
+    narration = latex_to_speech(narration)
+    if len(narration) != original_len:
+        print(f"[TTS] Section {section_id}: LaTeX converted ({original_len} -> {len(narration)} chars)")
     
     output_path = str(Path(output_dir) / f"section_{section_id}.mp3")
     

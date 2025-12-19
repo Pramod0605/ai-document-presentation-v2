@@ -208,7 +208,66 @@ function updateVisuals() {
 
   avatarCanvas.style.transform = `translateX(${aX}px) scale(${aScale})`;
   contentBox.style.transform = `scale(${cScale})`;
+  updateDevStats();
 }
+
+function updateDevStats() {
+  const overlay = document.getElementById('dev-stats-overlay');
+  if (!overlay || !overlay.classList.contains('visible')) return;
+  
+  const avatar = document.getElementById('avatar-canvas');
+  const content = document.getElementById('content-box');
+  const videoBox = document.getElementById('video-box');
+  const stageEl = document.getElementById('stage');
+  
+  const modeClasses = ['mode-center', 'mode-side', 'mode-khan', 'mode-content-video', 'mode-image'];
+  let currentMode = 'unknown';
+  for (const mode of modeClasses) {
+    if (stageEl.classList.contains(mode)) {
+      currentMode = mode.replace('mode-', '');
+      break;
+    }
+  }
+  
+  const slide = lessonData?.slides?.[currentSlideIndex];
+  const sectionType = slide?.section_type || slide?.slide_type || '-';
+  
+  document.getElementById('stat-mode').textContent = currentMode;
+  document.getElementById('stat-section').textContent = sectionType;
+  
+  if (avatar) {
+    const rect = avatar.getBoundingClientRect();
+    const stageRect = stageEl.getBoundingClientRect();
+    const relRight = Math.round(stageRect.right - rect.right);
+    const relBottom = Math.round(stageRect.bottom - rect.bottom);
+    document.getElementById('stat-avatar-pos').textContent = `R:${relRight}px B:${relBottom}px`;
+    document.getElementById('stat-avatar-size').textContent = `${Math.round(rect.width)}x${Math.round(rect.height)}`;
+    const aspect = rect.height > 0 ? (rect.width / rect.height).toFixed(2) : '-';
+    document.getElementById('stat-avatar-aspect').textContent = aspect;
+  }
+  
+  if (content) {
+    const rect = content.getBoundingClientRect();
+    const stageRect = stageEl.getBoundingClientRect();
+    const relLeft = Math.round(rect.left - stageRect.left);
+    const relTop = Math.round(rect.top - stageRect.top);
+    document.getElementById('stat-content-pos').textContent = `L:${relLeft}px T:${relTop}px`;
+    document.getElementById('stat-content-size').textContent = `${Math.round(rect.width)}x${Math.round(rect.height)}`;
+  }
+  
+  if (videoBox) {
+    const rect = videoBox.getBoundingClientRect();
+    const isVisible = stageEl.classList.contains('mode-content-video') && rect.width > 0;
+    document.getElementById('stat-video-size').textContent = `${Math.round(rect.width)}x${Math.round(rect.height)}`;
+    document.getElementById('stat-video-visible').textContent = isVisible ? 'Yes' : 'No';
+  }
+}
+
+setInterval(() => {
+  if (document.getElementById('dev-stats-overlay')?.classList.contains('visible')) {
+    updateDevStats();
+  }
+}, 500);
 
 function renderAvatar() {
   if ((!video.paused && !video.ended) || video.readyState >= 2) {
@@ -923,6 +982,8 @@ document.getElementById('btn-prev').onclick = prevSlide;
 document.getElementById('btn-next').onclick = nextSlide;
 document.getElementById('btn-dev').onclick = () => {
   document.getElementById('dev-panel').classList.toggle('show');
+  document.getElementById('dev-stats-overlay').classList.toggle('visible');
+  updateDevStats();
 };
 document.getElementById('btn-fullscreen').onclick = toggleFullScreen;
 
@@ -951,7 +1012,11 @@ document.addEventListener('keydown', (e) => {
   if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
   if (e.code === 'ArrowLeft') prevSlide();
   if (e.code === 'ArrowRight') nextSlide();
-  if (e.code === 'KeyD') document.getElementById('dev-panel').classList.toggle('show');
+  if (e.code === 'KeyD') {
+    document.getElementById('dev-panel').classList.toggle('show');
+    document.getElementById('dev-stats-overlay').classList.toggle('visible');
+    updateDevStats();
+  }
 });
 
 function buildSlideList() {

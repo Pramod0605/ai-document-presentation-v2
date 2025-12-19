@@ -176,44 +176,48 @@
     {
       "id": "ISS-022",
       "title": "LaTeX symbols in narration text cause TTS to read raw LaTeX",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
+      "resolved": "2025-12-19",
       "description": "Mathematical symbols like $h$ are passed to TTS as-is, so narration says 'dollar h dollar' instead of 'h'. Need to strip/convert LaTeX before sending to TTS.",
       "screenshot": "attached_assets/image_1766161709938.png",
-      "implementation_plan": "1) Create core/latex_to_speech.py utility to convert LaTeX to speakable text, 2) Integrate into TTS pipeline before Narakeet API call, 3) Handle common patterns: $x$->x, \\frac{a}{b}->a over b, ^2->squared, etc."
+      "solution": "Created core/latex_to_speech.py that converts LaTeX to speakable text (fractions, powers, Greek letters, operators). Integrated into tts/generate_audio.py to process narration before Narakeet API call."
     },
     {
       "id": "ISS-023",
       "title": "Add dev mode position/size stats overlay for layout debugging",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
+      "resolved": "2025-12-19",
       "description": "When toggling dev mode, display real-time position and size statistics for content wrapper and avatar so user can provide feedback on layout adjustments.",
-      "implementation_plan": "1) Add dev mode toggle button in player UI, 2) Create stats overlay showing: content-wrapper position/size, avatar position/size/aspect-ratio, video-box dimensions, 3) Update stats in real-time on resize/mode changes."
+      "solution": "Added #dev-stats-overlay in player HTML showing layout mode, avatar position/size/aspect, content position/size, video box dimensions. Stats update every 500ms when visible. Toggle with D key or Dev button."
     },
     {
       "id": "ISS-024",
       "title": "Manim video sometimes cuts off at bottom",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
+      "resolved": "2025-12-19",
       "description": "Manim-rendered videos sometimes have content that extends below the visible area. Need dynamic vertical centering or adjustment based on video content.",
-      "implementation_plan": "1) Ensure video-box uses object-fit: contain with proper centering, 2) Add CSS to vertically center video content within its container, 3) Consider aspect ratio constraints."
+      "solution": "Added object-fit: contain and object-position: center center to .mode-content-video #video-box video. Added flexbox centering (align-items/justify-content: center) to video-box container."
     },
     {
       "id": "ISS-025",
       "title": "Avatar loses resolution/aspect ratio when resized",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-19",
+      "resolved": "2025-12-19",
       "description": "When avatar is resized or repositioned, it appears stretched or loses quality. Aspect ratio should be maintained.",
       "screenshot": "attached_assets/image_1766161709938.png",
-      "implementation_plan": "1) Use object-fit: contain on avatar video element, 2) Set explicit aspect-ratio CSS property, 3) Ensure width/height constraints maintain ratio."
+      "solution": "Added image-rendering: -webkit-optimize-contrast and image-rendering: crisp-edges to #avatar-canvas for better quality during canvas rendering."
     }
   ],
   "metadata": {
     "last_updated": "2025-12-19",
-    "version": "5.0",
+    "version": "6.0",
     "spec_version": "v1.1",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 21,
-    "open_count": 4
+    "resolved_count": 25,
+    "open_count": 0
   }
 }

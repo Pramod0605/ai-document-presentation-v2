@@ -343,6 +343,8 @@
       transition: left 0.8s ease-in-out, height 0.8s ease;
       filter: drop-shadow(-20px 5px 25px rgba(0, 0, 0, 0.6));
       transform-origin: bottom center;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
     }
 
     .mode-center #avatar-canvas {
@@ -502,8 +504,17 @@
 
     .mode-content-video #video-box video {
       width: 100%;
-      height: auto;
+      height: 100%;
+      max-height: 100%;
       display: block;
+      object-fit: contain;
+      object-position: center center;
+    }
+
+    .mode-content-video #video-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .mode-content-video #scene-video {
@@ -857,6 +868,54 @@
       font-size: 0.85rem;
       margin-top: 5px;
     }
+
+    #dev-stats-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 1px solid #00ff88;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: #00ff88;
+      z-index: 1000;
+      pointer-events: none;
+      display: none;
+      min-width: 280px;
+      box-shadow: 0 4px 20px rgba(0, 255, 136, 0.2);
+    }
+
+    #dev-stats-overlay.visible {
+      display: block;
+    }
+
+    #dev-stats-overlay h4 {
+      margin: 0 0 8px 0;
+      color: #00d4ff;
+      font-size: 12px;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+      padding-bottom: 4px;
+    }
+
+    #dev-stats-overlay .stat-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 3px 0;
+    }
+
+    #dev-stats-overlay .stat-label {
+      color: #888;
+    }
+
+    #dev-stats-overlay .stat-value {
+      color: #f0f0e8;
+    }
+
+    #dev-stats-overlay .stat-section {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 
@@ -910,6 +969,30 @@
       </div>
 
       <canvas id="avatar-canvas"></canvas>
+
+      <div id="dev-stats-overlay">
+        <div class="stat-section">
+          <h4>LAYOUT MODE</h4>
+          <div class="stat-row"><span class="stat-label">Mode:</span><span class="stat-value" id="stat-mode">-</span></div>
+          <div class="stat-row"><span class="stat-label">Section:</span><span class="stat-value" id="stat-section">-</span></div>
+        </div>
+        <div class="stat-section">
+          <h4>AVATAR</h4>
+          <div class="stat-row"><span class="stat-label">Position:</span><span class="stat-value" id="stat-avatar-pos">-</span></div>
+          <div class="stat-row"><span class="stat-label">Size:</span><span class="stat-value" id="stat-avatar-size">-</span></div>
+          <div class="stat-row"><span class="stat-label">Aspect:</span><span class="stat-value" id="stat-avatar-aspect">-</span></div>
+        </div>
+        <div class="stat-section">
+          <h4>CONTENT</h4>
+          <div class="stat-row"><span class="stat-label">Position:</span><span class="stat-value" id="stat-content-pos">-</span></div>
+          <div class="stat-row"><span class="stat-label">Size:</span><span class="stat-value" id="stat-content-size">-</span></div>
+        </div>
+        <div class="stat-section">
+          <h4>VIDEO BOX</h4>
+          <div class="stat-row"><span class="stat-label">Size:</span><span class="stat-value" id="stat-video-size">-</span></div>
+          <div class="stat-row"><span class="stat-label">Visible:</span><span class="stat-value" id="stat-video-visible">-</span></div>
+        </div>
+      </div>
 
       <video id="raw-avatar-video" loop muted playsinline style="display:none"></video>
       <audio id="main-audio"></audio>
