@@ -206,5 +206,53 @@
       "duration": 25.0,
       "dry_run": false
     }
+  },
+  {
+    "timestamp": "2025-12-19T03:47:12.237281",
+    "section_id": 6,
+    "section_title": "Derivatives and Calculus (beat 4)",
+    "renderer": "manim_spec",
+    "prompt": "physics_label = Text(\"Physics (Velocity)\", font_size=28).move_to(np.array([-4, 2, 0]))\necon_label = Text(\"Economics (Marginal Cost)\", font_size=28).move_to(np.array([0, -2, 0]))\neng_label = Text(\"Engineering (Optimization)\", font_size=28).move_to(np.array([4, 2, 0]))\n\n# Animation sequence\nself.play(FadeIn(physics_label), run_time=1.0)\nself.wait(2.0)\nself.play(FadeIn(econ_label), run_time=1.0)\nself.wait(2.0)\nself.play(FadeIn(eng_label), run_time=1.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_6_beat_4.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "spec_generated",
+      "beat_index": 4,
+      "beat_count": 5,
+      "duration": 12.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:47:23.565858",
+    "section_id": 7,
+    "section_title": "Example: Derivative of the Area of a Circle (beat 0)",
+    "renderer": "manim_spec",
+    "prompt": "circle = Circle(radius=2, color=BLUE, fill_opacity=0.5)\ncircle.move_to(np.array([0, 0, 0]))\nradius_line_start = np.array([-1.5, -1.5, 0])\nradius_line_end = np.array([1.5, 1.5, 0])\nradius_line = Line(radius_line_start, radius_line_end, color=WHITE)\nradius_label = Text(\"r\", font_size=28).move_to(np.array([1, 0.2, 0]))\narea_formula = MathTex(r\"A = \\pi r^2\").move_to(np.array([0, 3, 0]))\n\n# Animation sequence\nself.play(Create(circle), run_time=1.0)\nself.play(Create(radius_line), run_time=1.0)\nself.play(FadeIn(radius_label), run_time=0.5)\nself.play(Write(area_formula), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_7_beat_0.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "spec_generated",
+      "beat_index": 0,
+      "beat_count": 5,
+      "duration": 13.0,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-19T03:47:27.342761",
+    "section_id": 7,
+    "section_title": "Example: Derivative of the Area of a Circle (beat 1)",
+    "renderer": "manim_spec",
+    "prompt": "circle = Circle(radius=2, color=BLUE, fill_opacity=0.5)\ncircle.move_to(np.array([0, 1, 0]))\nderivative_question = MathTex(r\"\\frac{dA}{dr} = ?\").move_to(np.array([0, -2, 0]))\n\n# Animation sequence\nself.play(FadeIn(circle), run_time=0.1)\nself.play(FadeIn(circle), run_time=2.0)\nself.play(Write(derivative_question), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/e4df96f5/videos/topic_7_beat_1.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "spec_generated",
+      "beat_index": 1,
+      "beat_count": 5,
+      "duration": 16.0,
+      "dry_run": false
+    }
   }
 ]
