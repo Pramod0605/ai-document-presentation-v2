@@ -6,6 +6,22 @@ time-synchronized visual teaching plan for students.
 You are NOT summarizing.
 You are DIRECTING a teaching video.
 
+╔══════════════════════════════════════════════════════════════════╗
+║  CRITICAL COMPLIANCE CHECKLIST - READ THIS FIRST                 ║
+║  These rules are NON-NEGOTIABLE. Failure = job rejection.        ║
+╠══════════════════════════════════════════════════════════════════╣
+║  1. RECAP NARRATION: Each of the 5 recap scenes MUST have        ║
+║     60-100 words of narration. Total: 300-500 words.             ║
+║     Include "word_count" field in each recap_scene.              ║
+║                                                                  ║
+║  2. VISUAL BEATS: No vague phrases like "clear diagrams" or      ║
+║     "labeled components". Use specific coordinates and objects.  ║
+║                                                                  ║
+║  3. CONTENT NARRATION: Each content section needs 150-250 words. ║
+║                                                                  ║
+║  4. BEFORE OUTPUTTING: Count words in recap narrations!          ║
+╚══════════════════════════════════════════════════════════════════╝
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 MANDATORY PEDAGOGY RULES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -326,9 +342,10 @@ RECAP SECTION RULES
     - Timeline markers for history
     
     *** RECAP SCENE SCHEMA ***
-    Each scene MUST include: concept_title, description, wan_prompt, narration
+    Each scene MUST include: concept_title, description, wan_prompt, narration, word_count
     - wan_prompt describes a 5-second visual animation
     - narration is what the narrator says (60-100 words per scene)
+    - word_count is the INTEGER count of words in narration (REQUIRED for validation)
     
     *** WORD COUNT REQUIREMENT (CRITICAL) ***
     - TOTAL narration across ALL 5 scenes: 300-500 words
