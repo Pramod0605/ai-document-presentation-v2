@@ -360,16 +360,18 @@
         {
           "id": "ISS-030b",
           "title": "Visual Compiler fails on v1.2 beat format",
-          "status": "open",
+          "status": "resolved",
+          "resolved": "2025-12-20",
           "description": "Visual compiler expects v1.1 beat format but v1.2 uses {time, description} objects",
-          "fix": "Update visual_compiler.py to handle v1.2 beat objects"
+          "fix": "renderer_executor.py now detects v1.2 specs (manim_scene_spec, video_prompts) and bypasses Visual Compiler entirely. Visual Compiler only used as fallback for legacy v1.1 content."
         },
         {
           "id": "ISS-030c",
           "title": "render_prompts.json not generated in v1.2 pipeline",
-          "status": "open",
+          "status": "resolved",
+          "resolved": "2025-12-20",
           "description": "Traceability module not writing render_prompts.json for WAN prompt auditing",
-          "fix": "Re-enable render prompt logging in pipeline_v12.py"
+          "fix": "Added save_render_prompts_json() to traceability.py, integrated into pipeline_v12.py at completion, added log_render_prompt() calls in renderer_executor.py for both manim and video prompts"
         },
         {
           "id": "ISS-030d",
