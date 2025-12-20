@@ -1,12 +1,14 @@
 """
-LLM Client v1.2 - 3-Pass Architecture
+LLM Client v1.2 - 3-Phase Architecture (Parse → Direct → Render)
 
-Pass 0: Chunker (Gemini 2.5 Flash) - Split markdown into teachable chunks
-Pass 1: Director (Gemini 2.5 Pro) - Create pedagogy, structure, timing (NO renderer code)
-Pass 2: Renderers - Generate actual scene specs:
+Parse: Chunker (Gemini 2.5 Flash) - Split markdown into teachable chunks
+Direct: Director (Gemini 2.5 Pro) - Create pedagogy, structure, timing (NO renderer code)
+Render: Specialized Renderers - Generate actual scene specs:
     - Manim Renderer (Claude 3.5 Sonnet) - Math/physics scenes
-    - Remotion Renderer (Claude 3.5 Sonnet) - Motion graphics
+    - Remotion Renderer (Claude 3.5 Sonnet) - Motion graphics (when enabled)
     - Video Renderer (Gemini 2.5 Pro) - WAN video prompts
+
+When use_remotion=False (default), Remotion content routes to Video (WAN) instead.
 """
 
 import os
@@ -136,7 +138,7 @@ def pass0_chunker(
     tracker: Optional[AnalyticsTracker] = None
 ) -> Dict:
     """Pass 0: Split markdown into teachable chunks."""
-    log("[Pass 0] Starting Chunker...")
+    log("[Parse] Starting Chunker...")
     
     system_prompt = load_prompt("chunker_system")
     user_template = load_prompt("chunker_user")
@@ -159,7 +161,7 @@ def pass0_chunker(
             raise PipelineError("Chunker output missing 'chunks' array", "chunker")
     
     chunk_count = len(chunks.get("chunks", []))
-    log(f"[Pass 0] Chunker complete: {chunk_count} chunks created")
+    log(f"[Parse] Chunker complete: {chunk_count} chunks created")
     
     return chunks
 
@@ -172,7 +174,7 @@ def pass1_director(
     tracker: Optional[AnalyticsTracker] = None
 ) -> Dict:
     """Pass 1: Create pedagogy, structure, timing, renderer choices."""
-    log("[Pass 1] Starting Director...")
+    log("[Direct] Starting Director...")
     
     system_prompt = load_prompt("director_system")
     user_template = load_prompt("director_user")
@@ -198,7 +200,7 @@ def pass1_director(
         raise PipelineError("Director output missing 'sections' array", "director")
     
     section_count = len(presentation.get("sections", []))
-    log(f"[Pass 1] Director complete: {section_count} sections created")
+    log(f"[Direct] Director complete: {section_count} sections created")
     
     RENDERER_FIELDS = ["manim_scene_spec", "remotion_scene_spec", "video_prompts", "wan_prompt"]
     stripped_count = 0
@@ -216,8 +218,8 @@ def pass1_director(
         renderer_counts[str(renderer)] = renderer_counts.get(str(renderer), 0) + 1
     
     if stripped_count > 0:
-        log(f"[Pass 1] WARNING: Stripped {stripped_count} renderer fields from Director output (v1.2 violation)")
-    log(f"[Pass 1] Renderer distribution: {renderer_counts}")
+        log(f"[Direct] WARNING: Stripped {stripped_count} renderer fields from Director output (v1.2 violation)")
+    log(f"[Direct] Renderer distribution: {renderer_counts}")
     
     return presentation
 
@@ -228,7 +230,7 @@ def pass2_manim_renderer(
 ) -> Dict:
     """Pass 2a: Generate manim_scene_spec for a section."""
     section_id = section.get("section_id") or section.get("id", 0)
-    log(f"[Pass 2a] Manim Renderer for section {section_id}...")
+    log(f"[Render:Manim] Section {section_id}...")
     
     system_prompt = load_prompt("manim_renderer_system")
     user_template = load_prompt("manim_renderer_user")
@@ -253,7 +255,7 @@ def pass2_manim_renderer(
             {"section_id": section_id}
         )
     
-    log(f"[Pass 2a] Manim scene spec generated for section {section_id}")
+    log(f"[Render:Manim] Scene spec generated for section {section_id}")
     return result
 
 
@@ -263,7 +265,7 @@ def pass2_remotion_renderer(
 ) -> Dict:
     """Pass 2b: Generate remotion_scene_spec for a section."""
     section_id = section.get("section_id") or section.get("id", 0)
-    log(f"[Pass 2b] Remotion Renderer for section {section_id}...")
+    log(f"[Render:Remotion] Section {section_id}...")
     
     system_prompt = load_prompt("remotion_renderer_system")
     user_template = load_prompt("remotion_renderer_user")
@@ -288,7 +290,7 @@ def pass2_remotion_renderer(
             {"section_id": section_id}
         )
     
-    log(f"[Pass 2b] Remotion scene spec generated for section {section_id}")
+    log(f"[Render:Remotion] Scene spec generated for section {section_id}")
     return result
 
 
@@ -298,7 +300,7 @@ def pass2_video_renderer(
 ) -> Dict:
     """Pass 2c: Generate video prompts for a section."""
     section_id = section.get("section_id") or section.get("id", 0)
-    log(f"[Pass 2c] Video Renderer for section {section_id}...")
+    log(f"[Render:Video] Section {section_id}...")
     
     system_prompt = load_prompt("video_renderer_system")
     user_template = load_prompt("video_renderer_user")
@@ -316,16 +318,21 @@ def pass2_video_renderer(
     
     result = parse_json_response(response_text, f"video_renderer_s{section_id}")
     
-    log(f"[Pass 2c] Video prompts generated for section {section_id}")
+    log(f"[Render:Video] Prompts generated for section {section_id}")
     return result
 
 
 def pass2_dispatch_renderers(
     presentation: Dict,
-    tracker: Optional[AnalyticsTracker] = None
+    tracker: Optional[AnalyticsTracker] = None,
+    use_remotion: bool = False
 ) -> Dict:
-    """Dispatch Pass 2 to appropriate renderers based on section renderer choice."""
-    log("[Pass 2] Dispatching to renderers...")
+    """Dispatch Render phase to appropriate renderers based on section renderer choice.
+    
+    Args:
+        use_remotion: If False (default), Remotion sections route to Video (WAN) instead.
+    """
+    log("[Render] Dispatching to renderers...")
     
     sections = presentation.get("sections", [])
     
@@ -338,19 +345,26 @@ def pass2_dispatch_renderers(
         section_type = section.get("section_type", "")
         
         if section_type in ["intro", "summary", "memory"]:
-            log(f"[Pass 2] Section {section_id} ({section_type}): TEXT-ONLY, no renderer needed")
+            log(f"[Render] Section {section_id} ({section_type}): TEXT-ONLY, no renderer needed")
             continue
         
+        effective_renderer = renderer
+        if renderer == "remotion" and not use_remotion:
+            log(f"[Render] Section {section_id}: Remotion disabled, routing to Video (WAN)")
+            effective_renderer = "video"
+            section["renderer"] = "video"
+            section["renderer_override"] = "remotion_to_video"
+        
         try:
-            if renderer == "manim":
+            if effective_renderer == "manim":
                 result = pass2_manim_renderer(section, tracker)
                 section["manim_scene_spec"] = result.get("manim_scene_spec")
                 
-            elif renderer == "remotion":
+            elif effective_renderer == "remotion":
                 result = pass2_remotion_renderer(section, tracker)
                 section["remotion_scene_spec"] = result.get("remotion_scene_spec")
                 
-            elif renderer in ["video", "wan", "wan_video"]:
+            elif effective_renderer in ["video", "wan", "wan_video"]:
                 result = pass2_video_renderer(section, tracker)
                 if "video_prompts" in result:
                     section["video_prompts"] = result.get("video_prompts")
@@ -360,10 +374,10 @@ def pass2_dispatch_renderers(
                     section["video_prompts"] = result
                     
             else:
-                log(f"[Pass 2] Section {section_id}: Unknown renderer '{renderer}', skipping")
+                log(f"[Render] Section {section_id}: Unknown renderer '{renderer}', skipping")
                 
         except PipelineError as e:
-            log(f"[Pass 2] ERROR in section {section_id}: {e}")
+            log(f"[Render] ERROR in section {section_id}: {e}")
             section["renderer_error"] = str(e)
     
     render_success = 0
@@ -381,21 +395,21 @@ def pass2_dispatch_renderers(
             continue
             
         if renderer == "manim" and not section.get("manim_scene_spec"):
-            log(f"[Pass 2] FAIL: Section {section_id} missing manim_scene_spec after render")
+            log(f"[Render] FAIL: Section {section_id} missing manim_scene_spec after render")
             section["renderer_error"] = "manim_scene_spec not generated"
             render_errors += 1
         elif renderer == "remotion" and not section.get("remotion_scene_spec"):
-            log(f"[Pass 2] FAIL: Section {section_id} missing remotion_scene_spec after render")
+            log(f"[Render] FAIL: Section {section_id} missing remotion_scene_spec after render")
             section["renderer_error"] = "remotion_scene_spec not generated"
             render_errors += 1
         elif renderer in ["video", "wan", "wan_video"] and not section.get("video_prompts"):
-            log(f"[Pass 2] FAIL: Section {section_id} missing video_prompts after render")
+            log(f"[Render] FAIL: Section {section_id} missing video_prompts after render")
             section["renderer_error"] = "video_prompts not generated"
             render_errors += 1
         else:
             render_success += 1
     
-    log(f"[Pass 2] Renderer dispatch complete: {render_success} success, {render_errors} errors")
+    log(f"[Render] Dispatch complete: {render_success} success, {render_errors} errors")
     return presentation
 
 
@@ -403,10 +417,14 @@ def generate_presentation_v12(
     markdown_content: str,
     subject: str = "General Science",
     grade: str = "9",
-    chapter: str = ""
+    chapter: str = "",
+    use_remotion: bool = False
 ) -> Tuple[Dict, AnalyticsTracker]:
     """
-    Main entry point for v1.2 3-pass pipeline.
+    Main entry point for v1.2 3-phase pipeline (Parse → Direct → Render).
+    
+    Args:
+        use_remotion: If False (default), Remotion content routes to Video (WAN).
     
     Returns:
         Tuple of (presentation dict, analytics tracker)
@@ -422,7 +440,7 @@ def generate_presentation_v12(
         
         presentation = pass1_director(chunks, subject, grade, chapter, tracker)
         
-        presentation = pass2_dispatch_renderers(presentation, tracker)
+        presentation = pass2_dispatch_renderers(presentation, tracker, use_remotion=use_remotion)
         
         presentation["subject"] = subject
         presentation["grade"] = grade

@@ -22,16 +22,21 @@ The user wants an iterative development process. The agent should prioritize cle
 
 ## System Architecture (v1.2)
 
-### 3-Pass LLM Pipeline
-The system uses a role-pure 3-pass architecture with clear separation of concerns:
+### 3-Phase LLM Pipeline (Parse → Direct → Render)
+The system uses a role-pure 3-phase architecture with clear separation of concerns:
 
-| Pass | LLM | Model | Role | Output |
-|------|-----|-------|------|--------|
-| **Pass 0** | Chunker | Gemini 2.5 Flash | Pure preprocessing - split markdown | Chunked JSON |
-| **Pass 1** | Director | Gemini 2.5 Pro | Pedagogy + structure + timing + renderer choice | presentation.json (NO code) |
-| **Pass 2a** | Manim Renderer | Claude 3.5 Sonnet | Math/physics visuals → scene spec | manim_scene_spec JSON |
-| **Pass 2b** | Remotion Renderer | Claude 3.5 Sonnet | Motion graphics → scene spec | remotion_scene_spec JSON |
-| **Pass 2c** | Video Renderer | Gemini 2.5 Pro | Biology/chemistry/recap → prompts | video_prompt JSON |
+| Phase | LLM | Model | Role | Output |
+|-------|-----|-------|------|--------|
+| **Parse** | Chunker | Gemini 2.5 Flash | Pure preprocessing - split markdown | Chunked JSON |
+| **Direct** | Director | Gemini 2.5 Pro | Pedagogy + structure + timing + renderer choice | presentation.json (NO code) |
+| **Render:Manim** | Manim Renderer | Claude 3.5 Sonnet | Math/physics visuals → scene spec | manim_scene_spec JSON |
+| **Render:Remotion** | Remotion Renderer | Claude 3.5 Sonnet | Motion graphics → scene spec (when enabled) | remotion_scene_spec JSON |
+| **Render:Video** | Video Renderer | Gemini 2.5 Pro | Biology/chemistry/recap → prompts | video_prompt JSON |
+
+### Remotion Flag
+- `use_remotion=False` (default): Remotion content routes to Video (WAN) instead
+- `use_remotion=True`: Remotion renderer is used for motion graphics
+- This allows development to proceed without Remotion installation
 
 ### Key Design Principles (v1.2)
 - **Chunker**: Does NOT summarize, explain, or invent. Preserves wording exactly.

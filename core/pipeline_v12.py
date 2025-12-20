@@ -1,13 +1,15 @@
 """
-Pipeline v1.2 - 3-Pass LLM Architecture
+Pipeline v1.2 - 3-Phase LLM Architecture (Parse → Direct → Render)
 
 This pipeline uses the v1.2 architecture with clear separation of concerns:
-- Pass 0: Chunker (Gemini Flash) - Split markdown into chunks
-- Pass 1: Director (Gemini Pro) - Pedagogy, structure, timing (NO renderer code)
-- Pass 2: Specialized Renderers - Generate scene specs
+- Parse: Chunker (Gemini Flash) - Split markdown into chunks
+- Direct: Director (Gemini Pro) - Pedagogy, structure, timing (NO renderer code)
+- Render: Specialized Renderers - Generate scene specs
     - Manim Renderer (Claude Sonnet) - Math/physics
-    - Remotion Renderer (Claude Sonnet) - Motion graphics
+    - Remotion Renderer (Claude Sonnet) - Motion graphics (when enabled)
     - Video Renderer (Gemini Pro) - WAN video prompts
+
+When use_remotion=False (default), Remotion content routes to Video (WAN) instead.
 
 For v1.1 pipeline, see pipeline_v11.py (backup).
 """
@@ -39,9 +41,14 @@ def process_pdf_to_videos_v12(
     dry_run: bool = False,
     skip_wan: bool = False,
     skip_avatar: bool = False,
-    source_file: str = None
+    source_file: str = None,
+    use_remotion: bool = False
 ) -> dict:
-    """Process PDF through v1.2 3-pass pipeline."""
+    """Process PDF through v1.2 3-phase pipeline (Parse → Direct → Render).
+    
+    Args:
+        use_remotion: If False (default), Remotion content routes to Video (WAN).
+    """
     from core.job_manager import job_manager
     
     output_dir = output_dir or str(PLAYER_ASSETS_DIR)
@@ -107,12 +114,14 @@ def process_pdf_to_videos_v12(
         presentation, analytics_tracker = generate_presentation_v12(
             markdown_content=llm_content,
             subject=subject,
-            grade=grade
+            grade=grade,
+            use_remotion=use_remotion
         )
         
         if presentation and images_mapping:
             presentation["images_mapping"] = {k: v for k, v in images_mapping.items()}
         
+        presentation["use_remotion"] = use_remotion
         job_status["steps"][-1]["status"] = "completed"
         job_status["steps"][-1]["analytics"] = analytics_tracker.get_summary()
         
@@ -216,9 +225,14 @@ def process_markdown_to_videos_v12(
     dry_run: bool = False,
     skip_wan: bool = False,
     skip_avatar: bool = False,
-    source_file: str = None
+    source_file: str = None,
+    use_remotion: bool = False
 ) -> dict:
-    """Process Markdown through v1.2 3-pass pipeline."""
+    """Process Markdown through v1.2 3-phase pipeline (Parse → Direct → Render).
+    
+    Args:
+        use_remotion: If False (default), Remotion content routes to Video (WAN).
+    """
     from core.job_manager import job_manager
     
     output_dir = output_dir or str(PLAYER_ASSETS_DIR)
@@ -276,12 +290,14 @@ def process_markdown_to_videos_v12(
         presentation, analytics_tracker = generate_presentation_v12(
             markdown_content=llm_content,
             subject=subject,
-            grade=grade
+            grade=grade,
+            use_remotion=use_remotion
         )
         
         if presentation and images_mapping:
             presentation["images_mapping"] = {k: v for k, v in images_mapping.items()}
         
+        presentation["use_remotion"] = use_remotion
         job_status["steps"][-1]["status"] = "completed"
         job_status["steps"][-1]["analytics"] = analytics_tracker.get_summary()
         
