@@ -6,10 +6,12 @@ from typing import Optional
 
 DEFAULT_TRACE_PATH = "player/assets/render_prompts.json"
 _current_trace_path = DEFAULT_TRACE_PATH
+_current_output_dir = None
 
 def set_trace_output_dir(output_dir: str):
     """Set the output directory for render trace."""
-    global _current_trace_path
+    global _current_trace_path, _current_output_dir
+    _current_output_dir = output_dir
     _current_trace_path = os.path.join(output_dir, "render_prompts.json")
 
 def get_trace_path(output_dir: Optional[str] = None) -> str:
@@ -54,9 +56,15 @@ def log_render_prompt(section_id: int, section_title: str, renderer: str,
     print(f"[RENDER TRACE] Logged {renderer} prompt for section {section_id}: {section_title}")
 
 def clear_render_trace(output_dir: Optional[str] = None):
-    """Clear the render trace file for a new job."""
-    global _current_trace_path
-    _current_trace_path = DEFAULT_TRACE_PATH
+    """Clear the render trace file for a new job and set the output directory."""
+    global _current_trace_path, _current_output_dir
+    
+    if output_dir:
+        _current_output_dir = output_dir
+        _current_trace_path = os.path.join(output_dir, "render_prompts.json")
+    else:
+        _current_output_dir = None
+        _current_trace_path = DEFAULT_TRACE_PATH
     
     trace_path = get_trace_path(output_dir)
     if os.path.exists(trace_path):
