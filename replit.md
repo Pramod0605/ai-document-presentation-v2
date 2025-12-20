@@ -1,7 +1,7 @@
-# AI Animated Education - Phase 1 (v1.2)
+# AI Animated Education - Phase 1 (v1.3)
 
 ## Overview
-This project develops an AI pipeline to transform PDF chapters into pedagogically structured, animated explanation videos with synchronized narration. It uses a **3-pass LLM architecture** with role-pure separation of concerns. Version 1.2 introduces specialized renderers and analytics tracking.
+This project develops a **Deterministic Educational Film Engine** that transforms PDF chapters into pedagogically structured, animated explanation videos with synchronized narration. It uses a **3-pass LLM architecture** with strict role separation. Version 1.3 introduces display_directives for layer control, mandatory section validation, and avatar rules per section type.
 
 ## User Preferences
 The user wants an iterative development process. The agent should prioritize clear, concise, and accurate communication. Before making any major architectural changes or introducing new dependencies, the agent must ask for explicit approval. The user prefers detailed explanations for complex technical decisions. The agent should ensure that all code is well-documented and follows best practices for maintainability and readability.
@@ -9,112 +9,130 @@ The user wants an iterative development process. The agent should prioritize cle
 ### NON-NEGOTIABLE RULES (CRITICAL)
 1. **Before proposing ANY solution**, the agent MUST check:
    - `attached_assets/` folder for specification documents (especially LLM brain prompts)
-   - `docs/llm_output_requirements.json` for definitive LLM output specification (v1.2)
+   - `docs/llm_output_requirements_v1.3.json` for definitive LLM output specification (v1.3)
    - `replit.md` for documented architecture and decisions
-   - Existing prompt files in `core/prompts/` (v1.2 prompts)
+   - Existing prompt files in `core/prompts/` (v1.3 prompts)
    - `issues.json` for tracked problems and their agreed solutions
 2. The agent must NOT assume or invent solutions - all proposals must reference documented specifications.
 3. Nothing is a "solution" until the user explicitly agrees.
 4. When in doubt, ASK the user - do not proceed with assumptions.
 5. The LLM is the "brain" - timing, durations, and creative decisions come from LLM output, not from post-processing calculations.
-6. **ALL LLM OUTPUTS MUST CONFORM TO `docs/llm_output_requirements.json` OR FAIL** - this is non-negotiable. There are NO FALLBACKS. Missing required fields = generation failure.
+6. **ALL LLM OUTPUTS MUST CONFORM TO `docs/llm_output_requirements_v1.3.json` OR FAIL** - this is non-negotiable. There are NO FALLBACKS. Missing required fields = generation failure.
 7. **Player is a DUMB display layer** - it consumes LLM output without modification. No duration calculations, no content fallbacks, no graceful degradation.
 
-## System Architecture (v1.2)
+## System Architecture (v1.3)
 
-### 3-Phase LLM Pipeline (Parse → Direct → Render)
-The system uses a role-pure 3-phase architecture with clear separation of concerns:
+### Pipeline Architecture (v1.3 Deterministic Film Engine)
 
-| Phase | LLM | Model | Role | Output |
-|-------|-----|-------|------|--------|
-| **Parse** | Chunker | Gemini 2.5 Flash | Pure preprocessing - split markdown | Chunked JSON |
-| **Direct** | Director | Gemini 2.5 Pro | Pedagogy + structure + timing + renderer choice | presentation.json (NO code) |
-| **Render:Manim** | Manim Renderer | Claude 3.5 Sonnet | Math/physics visuals → scene spec | manim_scene_spec JSON |
-| **Render:Remotion** | Remotion Renderer | Claude 3.5 Sonnet | Motion graphics → scene spec (when enabled) | remotion_scene_spec JSON |
-| **Render:Video** | Video Renderer | Gemini 2.5 Pro | Biology/chemistry/recap → prompts | video_prompt JSON |
+| Pass | Phase | Model | Role | Output |
+|------|-------|-------|------|--------|
+| **0** | Chunker | Gemini 2.5 Flash | Pure preprocessing - split markdown | Chunked JSON |
+| **1** | Director | Gemini 2.5 Pro | Pedagogy + structure + timing + display_directives | presentation.json (v1.3 schema) |
+| **2** | Renderers | Various | Deterministic rendering (NO creative LLM decisions) | MP4 videos |
+| **3** | Player | N/A | DUMB execution - follows JSON instructions exactly | Video playback |
 
-### Remotion Flag
-- `use_remotion=False` (default): Remotion content routes to Video (WAN) instead
-- `use_remotion=True`: Remotion renderer is used for motion graphics
-- This allows development to proceed without Remotion installation
+### v1.3 Key Changes (NEW)
+1. **display_directives** - Every narration segment MUST have:
+   - `text_layer`: show | hide | swap
+   - `visual_layer`: show | hide | replace
+   - `avatar_layer`: show | hide | gesture_only
+   - **Rule**: Text MUST hide BEFORE complex visuals appear
 
-### Key Design Principles (v1.2)
-- **Chunker**: Does NOT summarize, explain, or invent. Preserves wording exactly.
-- **Director**: Decides pedagogy but does NOT generate renderer code.
-- **Renderers**: Do NOT change narration or invent pedagogy. Pure execution.
-- **Clean separation**: No mixed schemas, no self-review hallucinations.
+2. **Mandatory Sections** (hard fail if missing):
+   - intro
+   - summary
+   - memory (5 flashcards)
+   - recap (5 scenes, 300-500 words)
 
-### Prompt Files (v1.2)
+3. **Avatar Rules per Section Type**:
+   - **INTRO**: visible, center/overlay, ≥50% width
+   - **CONTENT**: side position, 30-40% width
+   - **EXAMPLE**: side small OR gesture_only
+   - **QUIZ**: hidden or minimal
+   - **MEMORY**: optional
+   - **RECAP**: hidden (video only)
+
+4. **Manim Hard Rule**: If renderer=manim, EVERY visual beat MUST include manim_scene_spec. Prose-only = HARD FAILURE.
+
+### Core Principles (v1.3)
+- **PLAYER IS DUMB**: Does NOT decide layout, timing, or pedagogy. Only executes JSON.
+- **ONE PRIMARY ATTENTION LAYER AT A TIME**: Text OR visual - never together.
+- **TEACH → THEN SHOW**: First explain with narration, THEN visualize.
+- **EVERYTHING IS TIMED**: Every segment has duration_seconds, visuals align to timing.
+
+### Prompt Files (v1.3)
 Located in `core/prompts/`:
-- `chunker_system_v1.2.txt` / `chunker_user_v1.2.txt`
-- `director_system_v1.2.txt` / `director_user_v1.2.txt`
-- `manim_renderer_system_v1.2.txt` / `manim_renderer_user_v1.2.txt`
-- `remotion_renderer_system_v1.2.txt` / `remotion_renderer_user_v1.2.txt`
-- `video_renderer_system_v1.2.txt` / `video_renderer_user_v1.2.txt`
+- `director_system_v1.3.txt` / `director_user_v1.3.txt` (NEW v1.3)
+- `chunker_system_v1.2.txt` / `chunker_user_v1.2.txt` (unchanged)
+- `manim_renderer_system_v1.2.txt` / `manim_renderer_user_v1.2.txt` (unchanged)
+- `remotion_renderer_system_v1.2.txt` / `remotion_renderer_user_v1.2.txt` (unchanged)
+- `video_renderer_system_v1.2.txt` / `video_renderer_user_v1.2.txt` (unchanged)
 
-Backups of v1.1 prompts stored in `core/prompts/v1.1_backup/`.
+Backups stored in `core/prompts/v1.1_backup/` and `core/prompts/v1.2_backup/`.
 
-### Analytics Layer (NEW in v1.2)
-The `core/analytics.py` module tracks per-phase metrics:
-- **Time**: Start/end timestamps, duration_seconds
-- **Cost**: Input tokens, output tokens, model pricing (USD)
-- **Status**: Pass/fail per phase with error details
+### Hard Fail Validation (v1.3)
+The `core/hard_fail_validator.py` now enforces:
 
-Model pricing stored for: Gemini 2.5 Flash, Gemini 2.5 Pro, Claude 3.5 Sonnet, GPT-4o.
+**Structure Checks:**
+- missing_intro_section → FAIL
+- missing_summary_section → FAIL
+- missing_memory_section → FAIL
+- missing_recap_section → FAIL
 
-### WAN Prompt Quality Validation (NEW in v1.2)
-The `core/wan_prompt_validator.py` module validates video generation prompts:
-- **Banned phrases**: Detects vague language like "something like", "kind of", "abstract representation"
-- **Length check**: Minimum 50 chars for quality video generation
-- **Quality scoring**: Checks for cinematographic direction (zoom, pan, fade, etc.)
+**Narration Checks:**
+- content narration < 150 words → FAIL
+- recap total narration < 300 or > 500 words → FAIL
 
-Integrated into `renderer_executor.py` for automatic quality logging during v1.2 pipeline runs.
+**Display Directive Checks:**
+- narration segment missing display_directives → FAIL
+- text and visuals shown simultaneously → FAIL
+
+**Avatar Checks:**
+- intro avatar not visible or < 50% → FAIL
+- recap avatar visible → FAIL
+
+**Renderer Checks:**
+- manim section without manim_scene_spec → FAIL
+
+### Renderer Decision Rules
+| Renderer | Use Cases |
+|----------|-----------|
+| **Manim** | Formulas, equations, graphs, vectors, geometry, numeric physics |
+| **Video (WAN)** | Biology processes, chemistry reactions, physical phenomena, recap storytelling |
+| **Remotion** | Motion graphics, intro animations, summary animations (when enabled) |
 
 ### Technical Implementation
 - **Backend**: Python Flask API.
 - **Frontend**: Vanilla HTML5/JavaScript video player with dynamic layouts, subtitle synchronization, and chroma key avatar overlay.
 - **LLM Pipeline**: 3-pass architecture via OpenRouter. Chunker → Director → Renderers.
-- **Video Rendering**: Dual renderer system: Manim for mathematical animations, Remotion for motion graphics, WAN/kie.ai for conceptual science videos.
-- **Audio**: Narakeet TTS (Indian male voice "ravi") using streaming for short text and polling for long text. No fallback - failure results if API unavailable.
-- **Job Processing**: Asynchronous system for PDF/Markdown file submission, progress polling, and asset generation into self-contained job folders.
+- **Video Rendering**: Dual renderer system: Manim for mathematical animations, WAN/kie.ai for conceptual science videos.
+- **Audio**: Narakeet TTS (Indian male voice "ravi") using streaming for short text and polling for long text.
+- **Job Processing**: Asynchronous system for PDF/Markdown file submission, progress polling, and asset generation.
 - **Fail-Fast Policy**: Strict fail-fast behavior with no fallbacks for critical components.
-- **Image Handling**: Extracts base64 images from markdown, processes them (green background for chroma key), creates placeholders for LLM, displays synced to narration.
 
-### Renderer Decision Rules
-| Renderer | Use Cases |
-|----------|-----------|
-| **Manim** | Math, vectors, geometry, graphs, derivations, numerical physics |
-| **Remotion** | Intro motion graphics, summary animations, quiz displays, formula reveals |
-| **Video (WAN)** | Biology processes, chemistry reactions, physical phenomena, recap storytelling |
-
-### Symbolic Overlay Rule
-During complex visuals, allow ONLY:
-- Math symbols (a =, F =)
-- Equation fragments
-- Variable labels
-- Step labels
-- **Max 4 words. No sentences.**
-
-### UI/UX Decisions
-The video player features a two-pane layout (video and content) with position swapping and dynamic layout adaptation based on `section_type`. The dashboard supports file uploads, subject/grade inputs, job status display, and video playback. The player also supports per-beat display mode toggling (video-only, text-primary, video-primary).
-
-### Khan Academy-Style Theme (Dec 2025)
+### Khan Academy-Style Theme
 The player uses a blackboard-inspired dark theme:
 - **Background**: #0a0a0a (near-black)
 - **Fonts**: Lato (body text), Caveat (handwritten-style headers)
 - **Primary Text**: #f0f0e8 (chalk-white)
 - **Accent Green**: #00ff88 (headers, new button, step indicators)
 - **Accent Cyan**: #00d4ff (active items, borders, progress bar)
-- **Yellow**: #ffff00 (flashcard highlights)
-- **Orange**: #ff6b35 (alerts, quiz feedback)
-- Original blue theme backed up in `backups/index.html.v1_blue` and `backups/player.js.v1_blue`
 
-### Data Structure
-The `Presentation` JSON schema includes a `sections` array, specifying `section_type`, `id`, `title`, `renderer`, `renderer_reasoning`, `layout`, `narration`, `narration_segments`, `visual_beats`, and renderer-specific specs (`manim_scene_spec`, `remotion_scene_spec`, or `video_prompts`).
+### Data Structure (v1.3)
+The `Presentation` JSON schema includes:
+- `spec_version`: "v1.3"
+- `title`, `subject`, `grade`
+- `sections` array with:
+  - `section_id`, `section_type`, `title`
+  - `renderer`, `renderer_reasoning`
+  - `layout` (content_zone, avatar_zone)
+  - `narration`, `narration_segments` with `display_directives`
+  - `visual_beats` with `manim_scene_spec` for manim sections
 
 ## Version History
-- **v1.1**: Two-LLM architecture (Chunker + Director). Director generated both pedagogy AND renderer specs.
+- **v1.1**: Two-LLM architecture (Chunker + Director).
 - **v1.2**: Three-pass architecture with specialized renderers. Adds analytics tracking.
+- **v1.3**: Deterministic Film Engine. Adds display_directives, mandatory sections, avatar rules per section type. Hard-fail validation for missing sections.
 
 ## External Dependencies
 - **OpenRouter**: For Gemini 2.5 Flash, Gemini 2.5 Pro, and Claude Sonnet LLMs.
@@ -126,18 +144,17 @@ The `Presentation` JSON schema includes a `sections` array, specifying `section_
 - **MoviePy**: Video editing tasks.
 - **OpenAI Python Client**: For OpenRouter gateway.
 - **Tenacity**: For API call retry logic.
-- **Requests**: HTTP client library.
-- **python-dotenv**: For environment variables.
 
 ## File Structure
 ```
 core/
 ├── prompts/
-│   ├── v1.1_backup/         # Backed up v1.1 prompts
+│   ├── v1.1_backup/              # v1.1 prompt backups
+│   ├── v1.2_backup/              # v1.2 prompt backups
+│   ├── director_system_v1.3.txt  # NEW v1.3
+│   ├── director_user_v1.3.txt    # NEW v1.3
 │   ├── chunker_system_v1.2.txt
 │   ├── chunker_user_v1.2.txt
-│   ├── director_system_v1.2.txt
-│   ├── director_user_v1.2.txt
 │   ├── manim_renderer_system_v1.2.txt
 │   ├── manim_renderer_user_v1.2.txt
 │   ├── remotion_renderer_system_v1.2.txt
@@ -145,16 +162,14 @@ core/
 │   ├── video_renderer_system_v1.2.txt
 │   └── video_renderer_user_v1.2.txt
 ├── analytics.py             # Cost/time tracking per phase
-├── pipeline_v12.py          # v1.2 3-pass pipeline (CURRENT)
-├── pipeline_v11.py          # v1.1 pipeline backup
-├── pipeline.py              # Original pipeline (legacy)
-├── llm_client_v12.py        # v1.2 3-pass LLM calls
-├── llm_client.py            # v1.1 LLM calls (legacy)
-├── hard_fail_validator.py   # Validation rules
+├── pipeline_v12.py          # v1.3 pipeline (uses v1.3 prompts)
+├── llm_client_v12.py        # v1.3 LLM calls
+├── hard_fail_validator.py   # v1.3 validation rules
 ├── traceability.py          # Generation trace logging
 └── latex_to_speech.py       # LaTeX→speakable text for TTS
 
 docs/
-├── llm_output_requirements.json      # v1.2 specification (current)
-└── llm_output_requirements_v1.1.json # v1.1 backup
+├── llm_output_requirements_v1.3.json  # v1.3 specification (CURRENT)
+├── llm_output_requirements.json       # v1.2 backup
+└── llm_output_requirements_v1.1.json  # v1.1 backup
 ```

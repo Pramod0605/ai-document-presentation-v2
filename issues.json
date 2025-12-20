@@ -546,14 +546,53 @@
       "source": "User feedback with screenshot attached_assets/image_1766235678827.png",
       "fix_required": "Update Manim renderer prompt to specify label positioning rules: labels should not overlap with formulas, use arrows to point from labels to formula parts.",
       "solution": "Added LABEL POSITIONING rules requiring 0.8+ unit separation. Re-rendered content_02 has discriminant_label at y=1 (above formula elements at y=0.5 and below)."
+    },
+    {
+      "id": "ISS-045",
+      "title": "Avatar missing (null) in presentation.json",
+      "status": "resolved",
+      "created": "2025-12-20",
+      "resolved": "2025-12-20",
+      "priority": "critical",
+      "description": "Job b5042fd3 has avatar: null in presentation.json. Director LLM did not set avatar metadata, causing avatar not to display.",
+      "source": "User feedback on job b5042fd3",
+      "root_cause": "Director prompts (v1.2) did not explicitly require avatar field. LLM inferred it sometimes but not consistently.",
+      "fix_required": "Update Director prompts to mandate avatar field. Add hard-fail validation for null avatar.",
+      "solution": "Created v1.3 Director prompts with explicit AVATAR RULES section per section type. Added avatar validation in hard_fail_validator.py."
+    },
+    {
+      "id": "ISS-046",
+      "title": "Summary section missing from presentation",
+      "status": "resolved",
+      "created": "2025-12-20",
+      "resolved": "2025-12-20",
+      "priority": "critical",
+      "description": "Job b5042fd3 has no summary section. Director LLM did not generate a summary section at all.",
+      "source": "User feedback on job b5042fd3",
+      "root_cause": "Director prompts (v1.2) mentioned summary but did not enforce as mandatory with hard-fail validation.",
+      "fix_required": "Update Director prompts to mandate summary section. Add hard-fail validation for missing sections.",
+      "solution": "Created v1.3 Director prompts with MANDATORY SECTION ORDER and hard failure rule. Added validate_v13_structure() to check for intro, summary, memory, recap."
+    },
+    {
+      "id": "ISS-047",
+      "title": "Intro text not displayed properly",
+      "status": "resolved",
+      "created": "2025-12-20",
+      "resolved": "2025-12-20",
+      "priority": "high",
+      "description": "Intro section visual_beats contain descriptive text instead of display text. Player cannot render proper intro overlays.",
+      "source": "User feedback on job b5042fd3",
+      "root_cause": "v1.2 prompts allowed LLM to output scene descriptions instead of structured display_directives.",
+      "fix_required": "Update Director prompts to require display_directives for every narration segment with text_layer, visual_layer, avatar_layer.",
+      "solution": "Created v1.3 with DISPLAY DIRECTION section requiring display_directives on every segment. Added validate_v13_section_rules() to check for missing directives."
     }
   ],
   "metadata": {
     "last_updated": "2025-12-20",
-    "version": "10.9",
-    "spec_version": "v1.2",
-    "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 44,
+    "version": "11.0",
+    "spec_version": "v1.3",
+    "spec_file": "docs/llm_output_requirements_v1.3.json",
+    "resolved_count": 47,
     "open_count": 0
   }
 }
