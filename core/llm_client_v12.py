@@ -21,6 +21,7 @@ from openai import OpenAI
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from core.analytics import AnalyticsTracker, create_tracker
+from core.traceability import save_raw_llm_response
 
 
 def log(msg: str):
@@ -258,6 +259,14 @@ def pass2_manim_renderer(
         tracker=tracker
     )
     
+    save_raw_llm_response(
+        renderer_type="manim",
+        section_id=str(section_id),
+        raw_response=response_text,
+        model=MODELS["manim_renderer"],
+        usage=usage
+    )
+    
     result = parse_json_response(response_text, f"manim_renderer_s{section_id}")
     
     if "manim_scene_spec" not in result:
@@ -293,6 +302,14 @@ def pass2_remotion_renderer(
         tracker=tracker
     )
     
+    save_raw_llm_response(
+        renderer_type="remotion",
+        section_id=str(section_id),
+        raw_response=response_text,
+        model=MODELS["remotion_renderer"],
+        usage=usage
+    )
+    
     result = parse_json_response(response_text, f"remotion_renderer_s{section_id}")
     
     if "remotion_scene_spec" not in result:
@@ -326,6 +343,14 @@ def pass2_video_renderer(
         user_prompt=user_prompt,
         phase=f"video_renderer_s{section_id}",
         tracker=tracker
+    )
+    
+    save_raw_llm_response(
+        renderer_type="video",
+        section_id=str(section_id),
+        raw_response=response_text,
+        model=MODELS["video_renderer"],
+        usage=usage
     )
     
     result = parse_json_response(response_text, f"video_renderer_s{section_id}")

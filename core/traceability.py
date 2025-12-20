@@ -259,3 +259,55 @@ def save_render_prompts_json():
             print(f"[TRACE] Saved {len(_current_logger.trace['render_prompts'])} render prompts to {render_prompts_file}")
         except Exception as e:
             print(f"[TRACE] Failed to save render_prompts.json: {e}")
+
+
+def save_raw_llm_response(
+    renderer_type: str,
+    section_id: str,
+    raw_response: str,
+    model: str,
+    usage: Dict[str, Any],
+    parsed_result: Optional[Dict] = None
+):
+    """Save raw LLM response to job folder for debugging and validation.
+    
+    Creates: llm_responses/{renderer_type}_section_{id}_raw.json
+    
+    Args:
+        renderer_type: 'manim', 'video', 'remotion', 'chunker', 'director'
+        section_id: Section identifier
+        raw_response: The raw text returned by LLM before parsing
+        model: The model used
+        usage: Token usage dict
+        parsed_result: The parsed JSON result (optional, for comparison)
+    """
+    if not _current_logger:
+        print(f"[TRACE] No logger initialized, skipping raw response save for {renderer_type}")
+        return
+    
+    llm_responses_dir = _current_logger.output_dir / "llm_responses"
+    llm_responses_dir.mkdir(parents=True, exist_ok=True)
+    
+    filename = f"{renderer_type}_section_{section_id}_raw.json"
+    filepath = llm_responses_dir / filename
+    
+    response_data = {
+        "timestamp": datetime.now().isoformat(),
+        "job_id": _current_logger.job_id,
+        "renderer_type": renderer_type,
+        "section_id": section_id,
+        "model": model,
+        "usage": usage,
+        "raw_response_length": len(raw_response),
+        "raw_response": raw_response,
+    }
+    
+    if parsed_result:
+        response_data["parsed_result"] = parsed_result
+    
+    try:
+        with open(filepath, 'w') as f:
+            json.dump(response_data, f, indent=2)
+        print(f"[TRACE] Saved raw {renderer_type} response for section {section_id}: {filepath}")
+    except Exception as e:
+        print(f"[TRACE] Failed to save raw response: {e}")
