@@ -5908,5 +5908,162 @@
       "total_cost_usd": 0.201628,
       "dry_run": true
     }
+  },
+  "4f3411e9": {
+    "id": "4f3411e9",
+    "type": "markdown",
+    "params": {
+      "subject": "Math",
+      "grade": "10",
+      "dry_run": true
+    },
+    "status": "completed",
+    "current_step": 1,
+    "current_step_name": "Rendering videos with AI...",
+    "steps_completed": 2,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-20T11:46:38.263050",
+    "started_at": "2025-12-20T11:46:38.275859",
+    "completed_at": "2025-12-20T11:48:56.633865",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "pipeline_version": "1.2",
+      "started_at": "2025-12-20T11:46:38.292844",
+      "source_file": null,
+      "steps": [
+        {
+          "step": "extract_images",
+          "status": "completed",
+          "count": 0
+        },
+        {
+          "step": "generate_presentation_v12",
+          "status": "completed",
+          "analytics": {
+            "job_id": "f7cf477d",
+            "status": "completed",
+            "total_duration_seconds": 138.29,
+            "total_cost_usd": 0.1739,
+            "total_tokens": 22719,
+            "phases_completed": 6,
+            "phases_failed": 0,
+            "cost_breakdown": {
+              "chunker": {
+                "cost_usd": 0.0008,
+                "duration_seconds": 1.79,
+                "tokens": 711
+              },
+              "director": {
+                "cost_usd": 0.0761,
+                "duration_seconds": 60.27,
+                "tokens": 8712
+              },
+              "manim_renderer_scontent_01": {
+                "cost_usd": 0.0248,
+                "duration_seconds": 20.57,
+                "tokens": 3062
+              },
+              "manim_renderer_scontent_02": {
+                "cost_usd": 0.0177,
+                "duration_seconds": 14.03,
+                "tokens": 2655
+              },
+              "manim_renderer_sexample_01": {
+                "cost_usd": 0.0247,
+                "duration_seconds": 18.72,
+                "tokens": 3411
+              },
+              "video_renderer_srecap_01": {
+                "cost_usd": 0.0298,
+                "duration_seconds": 22.9,
+                "tokens": 4168
+              }
+            }
+          }
+        },
+        {
+          "step": "hard_fail_validation",
+          "status": "passed"
+        },
+        {
+          "step": "render_videos",
+          "status": "completed",
+          "videos": [
+            {
+              "topic_id": "intro_01",
+              "section_type": "intro",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'intro' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": "content_01",
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/4f3411e9/videos/topic_content_01.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 8,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            },
+            {
+              "topic_id": "content_02",
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/4f3411e9/videos/topic_content_02.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 9,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            },
+            {
+              "topic_id": "example_01",
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/4f3411e9/videos/topic_example_01.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 11,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            },
+            {
+              "topic_id": "recap_01",
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/4f3411e9/videos/topic_recap_01.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 7,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            }
+          ],
+          "success_count": 5,
+          "fail_count": 0,
+          "dry_run": true
+        },
+        {
+          "step": "generate_audio",
+          "status": "skipped",
+          "reason": "dry_run"
+        }
+      ],
+      "completed_at": "2025-12-20T11:48:56.630840",
+      "presentation_path": "/home/runner/workspace/player/jobs/4f3411e9/presentation.json",
+      "analytics_path": "/home/runner/workspace/player/jobs/4f3411e9/analytics.json",
+      "sections_count": 5,
+      "total_cost_usd": 0.17391900000000002,
+      "dry_run": true
+    }
   }
 }

@@ -1,0 +1,36 @@
+DRY RUN - Manim section content_01
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/4f3411e9/videos/topic_content_01.mp4
+
+--- SCENE CODE ---
+main_equation = MathTex(r"ax^2 + bx + c = 0").move_to(np.array([0, 0, 0]))
+a_label = MathTex(r"\text{coefficient of }x^2").scale(0.8).move_to(np.array([-3, -1, 0]))
+b_label = MathTex(r"\text{coefficient of }x").scale(0.8).move_to(np.array([0, -1, 0]))
+c_label = MathTex(r"\text{constant term}").scale(0.8).move_to(np.array([3, -1, 0]))
+a_arrow = Arrow(start=np.array([-3, -0.5, 0]), end=np.array([-2.5, -0.2, 0]), color=BLUE, buff=0)
+b_arrow = Arrow(start=np.array([0, -0.5, 0]), end=np.array([0, -0.2, 0]), color=BLUE, buff=0)
+c_arrow = Arrow(start=np.array([3, -0.5, 0]), end=np.array([2.5, -0.2, 0]), color=BLUE, buff=0)
+a_not_zero = MathTex(r"a \neq 0").move_to(np.array([0, 1.5, 0]))
+
+# Animation sequence
+self.wait(8)
+self.play(Write(main_equation), run_time=2)
+self.wait(7)
+self.play(Indicate(main_equation), run_time=2)
+self.wait(4)
+self.play(Indicate(main_equation), run_time=1)
+self.play(FadeIn(a_arrow), run_time=1)
+self.play(FadeIn(a_label), run_time=1)
+self.play(Indicate(main_equation), run_time=1)
+self.play(FadeIn(b_arrow), run_time=1)
+self.play(FadeIn(b_label), run_time=1)
+self.play(Indicate(main_equation), run_time=1)
+self.play(FadeIn(c_arrow), run_time=1)
+self.play(FadeIn(c_label), run_time=1)
+self.wait(3)
+self.play(FadeIn(a_not_zero), run_time=1)
+self.play(Indicate(main_equation), run_time=2)
+self.wait(4)
+self.play(main_equation.animate.move_to(np.array([0, 0, 0])), run_time=2)
+self.wait(3)
+self.wait(1)

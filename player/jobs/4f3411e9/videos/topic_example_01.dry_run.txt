@@ -1,0 +1,28 @@
+DRY RUN - Manim section example_01
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/4f3411e9/videos/topic_example_01.mp4
+
+--- SCENE CODE ---
+original_equation = MathTex(r"x^2 + 5x + 6 = 0").move_to(np.array([0, 2, 0]))
+coef_a = MathTex(r"a = 1").move_to(np.array([-3, 1, 0]))
+coef_b = MathTex(r"b = 5").move_to(np.array([0, 1, 0]))
+coef_c = MathTex(r"c = 6").move_to(np.array([3, 1, 0]))
+quadratic_formula = MathTex(r"x = \frac{-5 \pm \sqrt{5^2 - 4(1)(6)}}{2(1)}").move_to(np.array([0, 0, 0]))
+simplified_sqrt = MathTex(r"x = \frac{-5 \pm \sqrt{25 - 24}}{2}").move_to(np.array([0, 0, 0]))
+final_form = MathTex(r"x = \frac{-5 \pm 1}{2}").move_to(np.array([0, 0, 0]))
+plus_path = MathTex(r"x = \frac{-5 + 1}{2} = \frac{-4}{2} = -2").move_to(np.array([-3, -1, 0]))
+minus_path = MathTex(r"x = \frac{-5 - 1}{2} = \frac{-6}{2} = -3").move_to(np.array([3, -1, 0]))
+final_answer_box_1 = Dot(point=np.array([-3, -2, 0]), color=BLUE)
+final_answer_box_2 = Dot(point=np.array([3, -2, 0]), color=BLUE)
+
+# Animation sequence
+self.play(Write(original_equation), run_time=1)
+self.play(Write(coef_a), run_time=2)
+self.play(Write(coef_b), run_time=2)
+self.play(Write(coef_c), run_time=2)
+self.play(Write(quadratic_formula), run_time=3)
+self.play(Write(plus_path), run_time=3)
+self.play(Write(minus_path), run_time=3)
+self.play(FadeIn(final_answer_box_1), run_time=1)
+self.play(FadeIn(final_answer_box_2), run_time=1)
+self.wait(1)
