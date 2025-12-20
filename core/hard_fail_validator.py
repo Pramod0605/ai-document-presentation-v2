@@ -346,6 +346,10 @@ def validate_v13_structure(sections: List[Dict]) -> List[HardFailError]:
 def validate_v13_section_rules(section: Dict) -> List[HardFailError]:
     """
     v1.3 Section-level Validation - display_directives and avatar rules.
+    Enforces:
+    - display_directives on ALL section types with narration_segments
+    - text_layer must hide BEFORE visual_layer shows (mutual exclusion)
+    - avatar rules per section type at both layout and segment level
     """
     errors = []
     section_id = section.get("section_id") or section.get("id", 0)
@@ -354,31 +358,58 @@ def validate_v13_section_rules(section: Dict) -> List[HardFailError]:
     layout = section.get("layout", {})
     avatar_zone = layout.get("avatar_zone", {})
     
-    if section_type in ["content", "example"]:
-        for i, segment in enumerate(narration_segments):
-            display_directives = segment.get("display_directives")
-            if not display_directives:
+    for i, segment in enumerate(narration_segments):
+        display_directives = segment.get("display_directives")
+        if not display_directives:
+            errors.append(HardFailError(
+                "missing_display_directives",
+                section_id,
+                f"Narration segment {i} ({section_type}) is missing display_directives (v1.3 required)"
+            ))
+        else:
+            if not isinstance(display_directives, dict):
                 errors.append(HardFailError(
-                    "missing_display_directives",
+                    "invalid_display_directives",
                     section_id,
-                    f"Narration segment {i} is missing display_directives (v1.3 required)"
+                    f"Narration segment {i} display_directives must be an object"
                 ))
             else:
-                if not isinstance(display_directives, dict):
+                required_layers = ["text_layer", "visual_layer", "avatar_layer"]
+                for layer in required_layers:
+                    if layer not in display_directives:
+                        errors.append(HardFailError(
+                            "missing_display_directives",
+                            section_id,
+                            f"Narration segment {i} display_directives missing '{layer}'"
+                        ))
+                
+                text_layer = display_directives.get("text_layer", "")
+                visual_layer = display_directives.get("visual_layer", "")
+                
+                if text_layer == "show" and visual_layer in ["show", "replace"]:
                     errors.append(HardFailError(
-                        "invalid_display_directives",
+                        "text_and_visuals_simultaneous",
                         section_id,
-                        f"Narration segment {i} display_directives must be an object"
+                        f"Narration segment {i}: text_layer=show + visual_layer={visual_layer} violates mutual exclusion rule"
                     ))
-                else:
-                    required_layers = ["text_layer", "visual_layer", "avatar_layer"]
-                    for layer in required_layers:
-                        if layer not in display_directives:
-                            errors.append(HardFailError(
-                                "missing_display_directives",
-                                section_id,
-                                f"Narration segment {i} display_directives missing '{layer}'"
-                            ))
+                
+                if section_type == "intro":
+                    avatar_layer = display_directives.get("avatar_layer", "")
+                    if avatar_layer == "hide":
+                        errors.append(HardFailError(
+                            "intro_avatar_not_visible",
+                            section_id,
+                            f"Narration segment {i}: intro avatar_layer cannot be 'hide'"
+                        ))
+                
+                if section_type == "recap":
+                    avatar_layer = display_directives.get("avatar_layer", "")
+                    if avatar_layer in ["show", "gesture_only"]:
+                        errors.append(HardFailError(
+                            "recap_avatar_visible",
+                            section_id,
+                            f"Narration segment {i}: recap avatar_layer must be 'hide', not '{avatar_layer}'"
+                        ))
     
     if section_type == "intro":
         avatar_mode = avatar_zone.get("mode", "")
@@ -389,7 +420,7 @@ def validate_v13_section_rules(section: Dict) -> List[HardFailError]:
             errors.append(HardFailError(
                 "intro_avatar_not_visible",
                 section_id,
-                "Intro section must have visible avatar (center or overlay, ≥50% width)"
+                "Intro section layout.avatar_zone must have visible avatar (center or overlay, ≥50% width)"
             ))
         elif avatar_width and avatar_width < 50:
             errors.append(HardFailError(
@@ -407,7 +438,7 @@ def validate_v13_section_rules(section: Dict) -> List[HardFailError]:
                 errors.append(HardFailError(
                     "recap_avatar_visible",
                     section_id,
-                    "Recap section must have hidden avatar (video only)"
+                    "Recap section layout.avatar_zone must have hidden avatar (video only)"
                 ))
     
     return errors
