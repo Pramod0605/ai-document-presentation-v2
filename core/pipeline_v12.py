@@ -32,6 +32,31 @@ from render.render_trace import clear_render_trace
 PLAYER_ASSETS_DIR = Path(__file__).parent.parent / "player" / "assets"
 
 
+def _reconcile_video_paths(presentation: dict, rendered_videos: list):
+    """Update presentation sections with their rendered video paths.
+    
+    Matches rendered_videos results back to sections using section_id/topic_id.
+    """
+    sections = presentation.get("sections", presentation.get("topics", []))
+    
+    video_map = {}
+    for result in rendered_videos:
+        topic_id = result.get("topic_id")
+        if topic_id and result.get("video_path"):
+            video_map[str(topic_id)] = result.get("video_path")
+    
+    for section in sections:
+        section_id = section.get("section_id", section.get("id"))
+        if section_id and str(section_id) in video_map:
+            video_path = video_map[str(section_id)]
+            video_filename = Path(video_path).name if video_path else None
+            if video_filename:
+                section["content_video_path"] = f"videos/{video_filename}"
+                section["has_content_video"] = True
+    
+    print(f"[RECONCILE] Updated {len(video_map)} sections with video paths")
+
+
 def process_pdf_to_videos_v12(
     pdf_path: str,
     subject: str = "General Science",
@@ -169,6 +194,11 @@ def process_pdf_to_videos_v12(
         
         job_status["steps"].append({"step": "render_videos", "status": "started"})
         rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run, skip_wan=skip_wan, output_dir_base=output_dir)
+        
+        _reconcile_video_paths(presentation, rendered_videos)
+        
+        with open(presentation_path, "w") as f:
+            json.dump(presentation, f, indent=2)
         
         success_count = sum(1 for v in rendered_videos if v.get("status") in ("success", "skipped"))
         fail_count = sum(1 for v in rendered_videos if v.get("status") not in ("success", "skipped"))
@@ -346,6 +376,11 @@ def process_markdown_to_videos_v12(
         
         job_status["steps"].append({"step": "render_videos", "status": "started"})
         rendered_videos = render_all_topics(presentation, str(videos_dir), dry_run=dry_run, skip_wan=skip_wan, output_dir_base=output_dir)
+        
+        _reconcile_video_paths(presentation, rendered_videos)
+        
+        with open(presentation_path, "w") as f:
+            json.dump(presentation, f, indent=2)
         
         success_count = sum(1 for v in rendered_videos if v.get("status") in ("success", "skipped"))
         fail_count = sum(1 for v in rendered_videos if v.get("status") not in ("success", "skipped"))

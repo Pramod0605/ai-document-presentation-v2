@@ -467,6 +467,34 @@
       "description": "Current architecture uses single in-process JobManager with file-based storage. Cannot handle 50,000+ concurrent jobs due to: serialized execution, no cleanup mechanism, inode exhaustion risk, slow I/O under load.",
       "phase": "Phase 2 - Scalability",
       "recommended_solution": "Externalize job metadata to PostgreSQL, use Redis/SQS job queue with worker processes, move media to S3 + CDN, make API stateless."
+    },
+    {
+      "id": "ISS-038",
+      "title": "All video sections overwrite same file (topic_1.mp4)",
+      "status": "open",
+      "created": "2025-12-20",
+      "priority": "critical",
+      "description": "renderer_executor.py uses topic.get('id', 1) but director outputs section_id (e.g. content_01). All sections fall back to id=1, causing all videos to overwrite topic_1.mp4. Player shows black screen.",
+      "symptoms": ["Only 1 video file in videos folder", "Player shows black screen", "All Manim sections logged as topic_1"],
+      "fix_required": "Use section_id for video filenames: topic_content_01.mp4, topic_example_01.mp4, etc."
+    },
+    {
+      "id": "ISS-039",
+      "title": "presentation.json missing content_video_path for sections",
+      "status": "open",
+      "created": "2025-12-20",
+      "priority": "critical",
+      "description": "Pipeline does not write content_video_path back into presentation.json sections after rendering. Player cannot find videos.",
+      "fix_required": "After rendering, update each section with content_video_path pointing to its video file."
+    },
+    {
+      "id": "ISS-040",
+      "title": "render_prompts.json mislabels Manim specs as wan_prompt",
+      "status": "open",
+      "created": "2025-12-20",
+      "priority": "medium",
+      "description": "TraceabilityLogger.log_render_prompt defaults prompt_type to wan_prompt even for Manim scene specs. Also truncates prompts to preview only.",
+      "fix_required": "Pass correct prompt_type from renderer, store full LLM response in job folder."
     }
   ],
   "metadata": {

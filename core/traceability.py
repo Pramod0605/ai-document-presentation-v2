@@ -64,9 +64,25 @@ class TraceabilityLogger:
             "error": error
         })
     
-    def log_render_prompt(self, section_id: int, beat_index: int, renderer: str, 
-                          prompt: str, prompt_type: str = "wan_prompt"):
-        """Log a render prompt for traceability."""
+    def log_render_prompt(self, section_id, beat_index: int, renderer: str, 
+                          prompt: str, prompt_type: str = None):
+        """Log a render prompt for traceability.
+        
+        Args:
+            section_id: Section identifier (can be string like 'content_01' or int)
+            beat_index: Beat index within the section
+            renderer: Renderer type ('manim', 'video', 'wan')
+            prompt: Full prompt/spec content
+            prompt_type: Override prompt type, auto-detected if None
+        """
+        if prompt_type is None:
+            if renderer == "manim":
+                prompt_type = "manim_scene_spec"
+            elif renderer == "video":
+                prompt_type = "wan_video_prompt"
+            else:
+                prompt_type = f"{renderer}_prompt"
+        
         entry = {
             "timestamp": datetime.now().isoformat(),
             "section_id": section_id,
@@ -74,7 +90,8 @@ class TraceabilityLogger:
             "renderer": renderer,
             "prompt_type": prompt_type,
             "prompt_preview": prompt[:500] if len(prompt) > 500 else prompt,
-            "prompt_length": len(prompt)
+            "prompt_length": len(prompt),
+            "full_prompt": prompt
         }
         self.trace["render_prompts"].append(entry)
         self._save()

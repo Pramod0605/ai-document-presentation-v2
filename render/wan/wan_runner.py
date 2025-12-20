@@ -27,7 +27,7 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
       - Uses section-level wan_prompt if provided
       - Fails if no prompt available (no fallback to generic)
     """
-    topic_id = topic.get("id", 1)
+    topic_id = topic.get("section_id", topic.get("id", 1))
     topic_title = topic.get("title", "Untitled")
     section_type = topic.get("section_type", "content")
     explanation_plan = topic.get("explanation_plan", {})

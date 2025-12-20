@@ -181,7 +181,7 @@ def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False
     strict_label = "[STRICT] " if strict_mode else ""
     
     for topic in topics:
-        topic_id = topic.get("id", 1)
+        topic_id = topic.get("section_id", topic.get("id", 1))
         print(f"{mode_label}{skip_label}{strict_label}Rendering topic {topic_id}: {topic.get('title', 'Untitled')}")
         
         result = execute_renderer(

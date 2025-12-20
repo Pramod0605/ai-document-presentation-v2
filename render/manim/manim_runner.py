@@ -106,7 +106,7 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
     """
     from core.visual_compiler import translate_spec_to_manim_code, validate_manim_scene_spec
     
-    topic_id = topic.get("id", 1)
+    topic_id = topic.get("section_id", topic.get("id", 1))
     topic_title = topic.get("title", "Untitled")
     section_type = topic.get("section_type", "content")
     explanation_plan = topic.get("explanation_plan", {})
