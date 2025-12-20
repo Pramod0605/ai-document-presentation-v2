@@ -1,14 +1,19 @@
 """
-LLM Client v1.2 - 3-Phase Architecture (Parse → Direct → Render)
+LLM Client v1.3 - Deterministic Educational Film Engine
 
-Parse: Chunker (Gemini 2.5 Flash) - Split markdown into teachable chunks
-Direct: Director (Gemini 2.5 Pro) - Create pedagogy, structure, timing (NO renderer code)
-Render: Specialized Renderers - Generate actual scene specs:
-    - Manim Renderer (Claude 3.5 Sonnet) - Math/physics scenes
+Pipeline Phases:
+- Pass 0: Chunker (Gemini 2.5 Flash) - Split markdown into clean chunks
+- Pass 1: Director (Gemini 2.5 Pro) - Create pedagogy, structure, timing, display_directives
+- Pass 2: Renderers - Deterministic rendering (NO creative LLM decisions):
+    - Manim Renderer (Claude 3.5 Sonnet) - Math/physics code from manim_scene_spec
     - Remotion Renderer (Claude 3.5 Sonnet) - Motion graphics (when enabled)
-    - Video Renderer (Gemini 2.5 Pro) - WAN video prompts
+    - Video Renderer (Gemini 2.5 Pro) - WAN prompts from visual_beats
 
-When use_remotion=False (default), Remotion content routes to Video (WAN) instead.
+v1.3 Key Changes:
+- display_directives for every narration segment (text_layer, visual_layer, avatar_layer)
+- Mandatory intro, summary, memory, recap sections (hard fail if missing)
+- Avatar rules per section type (intro=center/large, content=side, recap=hidden)
+- Manim sections MUST have manim_scene_spec - prose-only = HARD FAILURE
 """
 
 import os
@@ -56,11 +61,16 @@ class PipelineError(Exception):
         self.details = details or {}
 
 
-def load_prompt(name: str, version: str = "v1.2") -> str:
-    """Load a prompt file."""
+def load_prompt(name: str, version: str = "v1.3") -> str:
+    """Load a prompt file. Falls back to v1.2 if v1.3 doesn't exist."""
     path = PROMPTS_DIR / f"{name}_{version}.txt"
     if not path.exists():
-        raise FileNotFoundError(f"Prompt file not found: {path}")
+        fallback_path = PROMPTS_DIR / f"{name}_v1.2.txt"
+        if fallback_path.exists():
+            log(f"[Prompts] Using v1.2 fallback for {name}")
+            path = fallback_path
+        else:
+            raise FileNotFoundError(f"Prompt file not found: {path}")
     with open(path, "r") as f:
         return f.read()
 

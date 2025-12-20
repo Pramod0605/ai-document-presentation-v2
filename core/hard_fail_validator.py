@@ -1,18 +1,38 @@
 """
-Hard Fail Validator - Implements hard fail conditions for v1.1 and v1.2.
+Hard Fail Validator - Implements hard fail conditions for v1.3.
 
 These conditions MUST cause generation to fail - no fallbacks allowed.
-Reference: docs/llm_output_requirements.json validation_rules.hard_fail_conditions
+Reference: docs/llm_output_requirements_v1.3.json
 
-Hard Fail Conditions:
-1. content_or_example_narration_below_minimum
-2. missing_visual_beats
-3. example_without_step_visualization
-4. formula_mentioned_but_not_visualized
-5. vague_visual_language_detected
-6. manim_section_without_scene_spec (v1.2: checks section-level spec)
-7. remotion_section_without_scene_spec (v1.2 NEW)
-8. video_section_without_prompts (v1.2 NEW)
+Hard Fail Conditions (v1.3):
+STRUCTURE CHECKS:
+1. missing_intro_section
+2. missing_summary_section
+3. missing_recap_section
+4. missing_memory_section
+
+NARRATION CHECKS:
+5. content_or_example_narration_below_minimum
+6. recap_narration_out_of_range
+
+DISPLAY DIRECTIVE CHECKS:
+7. missing_display_directives
+8. text_and_visuals_simultaneous (v1.3: text must hide before visuals)
+
+VISUAL BEAT CHECKS:
+9. missing_visual_beats
+10. example_without_step_visualization
+11. formula_mentioned_but_not_visualized
+12. vague_visual_language_detected
+
+RENDERER CHECKS:
+13. manim_section_without_scene_spec
+14. remotion_section_without_scene_spec
+15. video_section_without_prompts
+
+AVATAR CHECKS:
+16. intro_avatar_not_visible
+17. recap_avatar_visible
 """
 
 import re
@@ -28,8 +48,16 @@ VAGUE_PHRASES = [
     "properly animated", "correctly displayed", "accordingly",
     "as needed", "as required", "generic visual", "typical animation",
     "standard display", "some kind of", "some sort of", "a type of",
-    "appropriate visual", "suitable animation", "relevant visual"
+    "appropriate visual", "suitable animation", "relevant visual",
+    "clear diagram"
 ]
+
+REQUIRED_SECTION_TYPES = ["intro", "summary", "memory", "recap"]
+
+RECAP_MIN_WORDS = 300
+RECAP_MAX_WORDS = 500
+RECAP_SCENE_COUNT = 5
+MEMORY_FLASHCARD_COUNT = 5
 
 FORMULA_PATTERNS = [
     r'F\s*=\s*m\s*[*×·]\s*a',
@@ -250,11 +278,139 @@ def validate_presentation_hard_fails(presentation: dict) -> Tuple[bool, List[Har
     all_errors = []
     sections = presentation.get("sections", [])
     
+    structure_errors = validate_v13_structure(sections)
+    all_errors.extend(structure_errors)
+    
     for section in sections:
         section_errors = validate_hard_fail_conditions(section)
         all_errors.extend(section_errors)
+        
+        v13_errors = validate_v13_section_rules(section)
+        all_errors.extend(v13_errors)
     
     return len(all_errors) == 0, all_errors
+
+
+def validate_v13_structure(sections: List[Dict]) -> List[HardFailError]:
+    """
+    v1.3 Structure Validation - Check mandatory sections exist.
+    """
+    errors = []
+    section_types = [s.get("section_type") for s in sections]
+    
+    for required_type in REQUIRED_SECTION_TYPES:
+        if required_type not in section_types:
+            errors.append(HardFailError(
+                f"missing_{required_type}_section",
+                0,
+                f"Presentation is missing required '{required_type}' section"
+            ))
+    
+    recap_sections = [s for s in sections if s.get("section_type") == "recap"]
+    for recap in recap_sections:
+        recap_scenes = recap.get("recap_scenes", [])
+        if len(recap_scenes) != RECAP_SCENE_COUNT:
+            errors.append(HardFailError(
+                "recap_scene_count_wrong",
+                recap.get("section_id", 0),
+                f"Recap section has {len(recap_scenes)} scenes, must be exactly {RECAP_SCENE_COUNT}"
+            ))
+        
+        total_words = sum(count_words(scene.get("narration", "")) for scene in recap_scenes)
+        if total_words < RECAP_MIN_WORDS:
+            errors.append(HardFailError(
+                "recap_narration_below_minimum",
+                recap.get("section_id", 0),
+                f"Recap total narration is {total_words} words, minimum is {RECAP_MIN_WORDS}"
+            ))
+        if total_words > RECAP_MAX_WORDS:
+            errors.append(HardFailError(
+                "recap_narration_above_maximum",
+                recap.get("section_id", 0),
+                f"Recap total narration is {total_words} words, maximum is {RECAP_MAX_WORDS}"
+            ))
+    
+    memory_sections = [s for s in sections if s.get("section_type") == "memory"]
+    for memory in memory_sections:
+        flashcards = memory.get("flashcards", [])
+        if len(flashcards) != MEMORY_FLASHCARD_COUNT:
+            errors.append(HardFailError(
+                "memory_flashcard_count_wrong",
+                memory.get("section_id", 0),
+                f"Memory section has {len(flashcards)} flashcards, must be exactly {MEMORY_FLASHCARD_COUNT}"
+            ))
+    
+    return errors
+
+
+def validate_v13_section_rules(section: Dict) -> List[HardFailError]:
+    """
+    v1.3 Section-level Validation - display_directives and avatar rules.
+    """
+    errors = []
+    section_id = section.get("section_id") or section.get("id", 0)
+    section_type = section.get("section_type", "unknown")
+    narration_segments = section.get("narration_segments", [])
+    layout = section.get("layout", {})
+    avatar_zone = layout.get("avatar_zone", {})
+    
+    if section_type in ["content", "example"]:
+        for i, segment in enumerate(narration_segments):
+            display_directives = segment.get("display_directives")
+            if not display_directives:
+                errors.append(HardFailError(
+                    "missing_display_directives",
+                    section_id,
+                    f"Narration segment {i} is missing display_directives (v1.3 required)"
+                ))
+            else:
+                if not isinstance(display_directives, dict):
+                    errors.append(HardFailError(
+                        "invalid_display_directives",
+                        section_id,
+                        f"Narration segment {i} display_directives must be an object"
+                    ))
+                else:
+                    required_layers = ["text_layer", "visual_layer", "avatar_layer"]
+                    for layer in required_layers:
+                        if layer not in display_directives:
+                            errors.append(HardFailError(
+                                "missing_display_directives",
+                                section_id,
+                                f"Narration segment {i} display_directives missing '{layer}'"
+                            ))
+    
+    if section_type == "intro":
+        avatar_mode = avatar_zone.get("mode", "")
+        avatar_width = avatar_zone.get("width_percent", 0)
+        avatar_visibility = avatar_zone.get("visibility", "visible")
+        
+        if avatar_visibility == "hidden" or avatar_mode == "hidden":
+            errors.append(HardFailError(
+                "intro_avatar_not_visible",
+                section_id,
+                "Intro section must have visible avatar (center or overlay, ≥50% width)"
+            ))
+        elif avatar_width and avatar_width < 50:
+            errors.append(HardFailError(
+                "intro_avatar_too_small",
+                section_id,
+                f"Intro avatar width is {avatar_width}%, must be ≥50%"
+            ))
+    
+    if section_type == "recap":
+        avatar_mode = avatar_zone.get("mode", "")
+        avatar_visibility = avatar_zone.get("visibility", "")
+        
+        if avatar_mode not in ["hidden", ""] and avatar_visibility != "hidden":
+            if avatar_zone:
+                errors.append(HardFailError(
+                    "recap_avatar_visible",
+                    section_id,
+                    "Recap section must have hidden avatar (video only)"
+                ))
+    
+    return errors
 
 
 def format_hard_fail_report(errors: List[HardFailError]) -> str:
