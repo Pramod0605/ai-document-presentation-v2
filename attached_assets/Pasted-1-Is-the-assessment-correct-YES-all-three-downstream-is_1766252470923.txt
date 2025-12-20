@@ -1,0 +1,193 @@
+1️⃣ Is the assessment correct?
+✅ YES — all three downstream issues are real and expected
+A. Player still uses legacy fields
+
+“Still uses legacy fields (content_video_path)”
+
+✔ Correct
+Your player was built for section-level, single-video logic
+v1.3 introduces:
+
+beat-level assets
+
+display_directives
+
+layer swapping per narration segment
+
+So the player must be updated. This is not optional.
+
+B. Pipeline collapses Remotion → WAN
+
+“Collapses remotion to WAN when use_remotion=False”
+
+✔ Correct
+This is a v1.2-era shortcut that must be removed.
+
+In v1.3:
+
+renderer is authoritative
+
+Director decides renderer
+
+Pipeline must obey
+
+No auto-fallbacks
+
+This is a necessary correction, not a bug.
+
+C. Normalization back-fills missing fields
+
+“Must shift to pass-through mode”
+
+✔ Correct
+Normalization was useful when prompts were weak.
+Now it is dangerous.
+
+v1.3 requires:
+
+missing structure → hard fail
+
+no invention
+
+no silent repair
+
+This aligns with compiler semantics.
+
+2️⃣ What is REQUIRED vs EXPECTED (important distinction)
+
+Let’s separate must-do from nice-to-have.
+
+🔴 REQUIRED (must be done for v1.3 to work)
+
+These are non-negotiable:
+
+Player updates
+
+Support:
+
+beat-level assets
+
+display_directives
+
+layer show/hide/swap
+
+Stop using content_video_path
+
+Pipeline updates
+
+Respect renderer exactly
+
+Add Remotion execution path
+
+Remove renderer collapse logic
+
+Normalization changes
+
+No back-filling
+
+No inferred defaults
+
+Pass-through only
+
+Validation-first execution
+
+Schema → semantic → retry → fail
+
+Without these, v1.3 cannot function as designed.
+
+🟡 EXPECTED (good engineering, but not blockers)
+
+These are good, but not critical blockers:
+
+Tool for naming with parameters
+
+Dedicated data structure checker CLI
+
+Fancy logging layers
+
+Multiple test jobs
+
+Nice to have, but they can follow.
+
+3️⃣ Cleaned-up implementation plan (recommended order)
+
+Here’s the correct execution order, so Replit doesn’t thrash.
+
+Phase 1 — Contract Enforcement
+
+Add canonical JSON example to Director prompt
+
+Add presentation_v1.3.schema.json
+
+Wire schema validation
+
+Wire retry logic
+
+👉 At this point, Director output is stable.
+
+Phase 2 — Pipeline Compliance
+
+Remove Remotion → WAN collapse
+
+Add explicit Remotion renderer path
+
+Enforce renderer obedience
+
+Disable normalization repair
+
+👉 At this point, assets are generated correctly.
+
+Phase 3 — Player Upgrade
+
+Replace section-level video handling
+
+Implement:
+
+beat-level asset playback
+
+display_directives interpreter
+
+layer swapping
+
+Keep player “dumb”
+
+👉 At this point, film direction works visually.
+
+Phase 4 — End-to-End Test
+
+Run one full chapter
+
+Verify:
+
+intro → content → example → recap
+
+text swaps correctly
+
+visuals replace text
+
+avatar obeys directives
+
+Fix only bugs, not architecture
+
+4️⃣ Key reassurance (important)
+
+None of this means v1.3 was wrong.
+
+This is the normal cost of moving from:
+
+“slide/video generator”
+to
+
+deterministic film engine
+
+You cannot keep a legacy player when the contract evolves — and you identified that correctly.
+
+5️⃣ Final verdict (direct answer)
+
+“Is this correct?”
+
+✔ Yes — completely correct
+✔ The issues identified are real
+✔ The plan is sound
+✔ This is expected, not a failure
+✔ You are doing this at the right time

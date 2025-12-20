@@ -1,0 +1,311 @@
+I’ll give you two concrete deliverables:
+
+A JSON Schema validator that matches your v1.3 Director output (including the canonical section structure)
+
+Exact Gemini 2.5 Pro parameter tuning that maximizes structural compliance and minimizes creative drift
+
+No fluff, no theory.
+
+PART 1 — v1.3 JSON SCHEMA VALIDATOR (Director Output)
+
+This schema is strict by design.
+If the LLM omits renderer, visual_beats, or display_directives, validation FAILS immediately.
+
+You can save this as:
+
+schemas/presentation_v1.3.schema.json
+
+✅ presentation_v1.3.schema.json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "presentation_id",
+    "subject",
+    "grade",
+    "chapter_title",
+    "avatar_global",
+    "sections"
+  ],
+  "properties": {
+    "spec_version": {
+      "const": "v1.3"
+    },
+    "presentation_id": { "type": "string" },
+    "subject": { "type": "string" },
+    "grade": { "type": "string" },
+    "chapter_title": { "type": "string" },
+
+    "avatar_global": {
+      "type": "object",
+      "required": [
+        "style",
+        "default_position",
+        "default_width_percent",
+        "gesture_enabled"
+      ],
+      "properties": {
+        "style": { "enum": ["teacher", "guide"] },
+        "default_position": { "enum": ["left", "right"] },
+        "default_width_percent": { "type": "number", "minimum": 20, "maximum": 60 },
+        "gesture_enabled": { "type": "boolean" }
+      }
+    },
+
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/section" }
+    }
+  },
+
+  "$defs": {
+    "section": {
+      "type": "object",
+      "required": [
+        "section_id",
+        "section_type",
+        "title",
+        "renderer",
+        "avatar_layout",
+        "narration",
+        "visual_beats",
+        "display_directives"
+      ],
+      "properties": {
+        "section_id": { "type": "number" },
+        "section_type": {
+          "enum": ["intro", "content", "example", "quiz", "memory", "recap", "summary"]
+        },
+        "title": { "type": "string" },
+        "renderer": { "enum": ["manim", "remotion", "video"] },
+
+        "avatar_layout": {
+          "type": "object",
+          "required": ["visibility", "mode"],
+          "properties": {
+            "visibility": { "enum": ["required", "optional", "hidden"] },
+            "mode": { "enum": ["side", "overlay", "hidden"] },
+            "position": { "enum": ["left", "right", "center"] },
+            "width_percent": { "type": "number", "minimum": 10, "maximum": 70 }
+          }
+        },
+
+        "narration": {
+          "type": "object",
+          "required": ["full_text", "segments"],
+          "properties": {
+            "full_text": { "type": "string", "minLength": 50 },
+            "segments": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/narration_segment" }
+            }
+          }
+        },
+
+        "visual_beats": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/visual_beat" }
+        },
+
+        "display_directives": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/display_directive" }
+        }
+      }
+    },
+
+    "narration_segment": {
+      "type": "object",
+      "required": ["segment_id", "text", "duration_seconds"],
+      "properties": {
+        "segment_id": { "type": "number" },
+        "text": { "type": "string", "minLength": 10 },
+        "duration_seconds": { "type": "number", "minimum": 1 },
+        "gesture_hint": {
+          "enum": [
+            "point_left",
+            "point_right",
+            "point_center",
+            "open_palms",
+            "nod",
+            "emphasize",
+            "idle"
+          ]
+        }
+      }
+    },
+
+    "visual_beat": {
+      "type": "object",
+      "required": [
+        "beat_id",
+        "segment_id",
+        "visual_beat_type",
+        "description"
+      ],
+      "properties": {
+        "beat_id": { "type": "string" },
+        "segment_id": { "type": "number" },
+        "visual_beat_type": {
+          "enum": [
+            "diagram",
+            "formula",
+            "process",
+            "example_step",
+            "motion_graphic"
+          ]
+        },
+        "description": { "type": "string", "minLength": 10 },
+        "symbolic_overlay": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "content": {
+              "type": "array",
+              "items": { "type": "string" },
+              "maxItems": 4
+            },
+            "max_words": { "type": "number", "maximum": 4 }
+          }
+        }
+      }
+    },
+
+    "display_directive": {
+      "type": "object",
+      "required": ["segment_id", "text_layer", "visual_layer", "avatar_layer"],
+      "properties": {
+        "segment_id": { "type": "number" },
+
+        "text_layer": {
+          "type": "object",
+          "required": ["action"],
+          "properties": {
+            "action": { "enum": ["show", "hide", "swap"] },
+            "animation": { "enum": ["fade_in", "fade_out", "cut"] }
+          }
+        },
+
+        "visual_layer": {
+          "type": "object",
+          "required": ["action"],
+          "properties": {
+            "action": { "enum": ["show", "hide", "replace"] },
+            "animation": { "enum": ["cut", "fade", "slide"] }
+          }
+        },
+
+        "avatar_layer": {
+          "type": "object",
+          "required": ["action"],
+          "properties": {
+            "action": { "enum": ["show", "hide", "gesture_only"] }
+          }
+        }
+      }
+    }
+  }
+}
+
+🔒 What this schema enforces
+
+renderer can never be missing
+
+visual_beats can never be missing
+
+display_directives can never be missing
+
+Narration + visuals must exist together
+
+Structure cannot drift
+
+PART 2 — Gemini 2.5 Pro PARAMETER TUNING (CRITICAL)
+
+This is just as important as the schema.
+
+✅ Recommended Gemini Parameters (Director)
+
+Use these exact values:
+
+{
+  "model": "gemini-2.5-pro",
+  "temperature": 0.2,
+  "top_p": 0.9,
+  "top_k": 40,
+  "max_output_tokens": 8192,
+  "candidate_count": 1
+}
+
+🧠 Why these values work
+🔹 temperature: 0.2
+
+Low creativity
+
+High determinism
+
+Strong schema adherence
+
+Prevents “creative structure”
+
+❌ Do NOT use temperature ≥0.4 for this task.
+
+🔹 top_p: 0.9
+
+Keeps language natural
+
+Avoids repetition
+
+Does not affect structure negatively
+
+🔹 top_k: 40
+
+Prevents overly narrow decoding
+
+Helps narration quality
+
+Still safe for structured output
+
+🔹 max_output_tokens: 8192
+
+Prevents truncation
+
+v1.3 JSON is large
+
+Especially important for recap sections
+
+🔹 candidate_count: 1
+
+Multiple candidates increase divergence
+
+You want one deterministic output
+
+❌ What NOT to do with Gemini
+
+❌ Do not rely on “self-checklists” alone
+
+❌ Do not raise temperature for creativity
+
+❌ Do not ask Gemini to generate renderer code
+
+❌ Do not allow partial JSON outputs
+
+FINAL CHECKLIST (YOU ARE NOW SOLID)
+
+✔ Canonical JSON example in prompt
+✔ Hard JSON Schema validation
+✔ Low-temperature deterministic decoding
+✔ Clear pass separation
+✔ Dumb presentation layer
+
+At this point, LLM failures become data issues, not logic issues.
+
+If you want next
+
+I can:
+
+add cross-field validation (e.g. segment_id must exist in narration)

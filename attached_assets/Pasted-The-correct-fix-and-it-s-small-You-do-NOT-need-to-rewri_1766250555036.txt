@@ -1,0 +1,95 @@
+The correct fix (and it’s small)
+
+You do NOT need to rewrite the whole prompt.
+
+You need to add one canonical JSON example to the Director system prompt.
+
+This is the single most effective way to force structure.
+
+🎯 Where to add it
+
+Add a new section near the end of director_system_v1.3.txt, titled something like:
+
+MANDATORY OUTPUT STRUCTURE EXAMPLE
+
+LLMs strongly respect examples placed near the end.
+
+🧩 What the example MUST show (minimum)
+
+The example should demonstrate:
+
+section_type
+
+renderer
+
+narration.segments[]
+
+visual_beats[]
+
+linkage via segment_id
+
+display_directives[]
+
+You do not need to show a full chapter — one section is enough.
+
+✅ Recommended minimal example (copy-paste)
+
+You can add exactly this to the Director system prompt:
+
+EXAMPLE OF A VALID SECTION OBJECT (STRUCTURE MUST MATCH):
+
+{
+  "section_id": 2,
+  "section_type": "content",
+  "title": "Coulomb’s Law",
+  "renderer": "manim",
+
+  "avatar_layout": {
+    "visibility": "required",
+    "mode": "side",
+    "position": "right",
+    "width_percent": 35
+  },
+
+  "narration": {
+    "full_text": "Long-form narration text here...",
+    "segments": [
+      {
+        "segment_id": 1,
+        "text": "Let us define the force between two charges.",
+        "duration_seconds": 6,
+        "gesture_hint": "point_center"
+      }
+    ]
+  },
+
+  "visual_beats": [
+    {
+      "beat_id": "2A",
+      "segment_id": 1,
+      "visual_beat_type": "formula",
+      "description": "Display Coulomb’s law formula between two charges.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": ["F = kq₁q₂ / r²"],
+        "max_words": 4
+      }
+    }
+  ],
+
+  "display_directives": [
+    {
+      "segment_id": 1,
+      "text_layer": { "action": "hide", "animation": "fade_out" },
+      "visual_layer": { "action": "show", "animation": "cut" },
+      "avatar_layer": { "action": "gesture_only" }
+    }
+  ]
+}
+
+
+Then add one sentence after it:
+
+All sections MUST follow this structural pattern. Missing renderer, visual_beats, or display_directives is a HARD FAILURE.
+
+That’s it
