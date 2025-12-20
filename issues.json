@@ -490,19 +490,62 @@
     {
       "id": "ISS-040",
       "title": "render_prompts.json mislabels Manim specs as wan_prompt",
+      "status": "resolved",
+      "created": "2025-12-20",
+      "resolved": "2025-12-20",
+      "priority": "medium",
+      "description": "TraceabilityLogger.log_render_prompt defaults prompt_type to wan_prompt even for Manim scene specs. Also truncates prompts to preview only.",
+      "fix_required": "Pass correct prompt_type from renderer, store full LLM response in job folder.",
+      "solution": "Added save_raw_llm_response() to traceability.py. Now stores full raw LLM responses in llm_responses/ folder within each job."
+    },
+    {
+      "id": "ISS-041",
+      "title": "Manim animation starts with 8-second blank screen",
+      "status": "open",
+      "created": "2025-12-20",
+      "priority": "high",
+      "description": "LLM generates 'wait' action of 8 seconds at the start of animation_sequence. This causes blank screen before content appears. Equations should appear earlier to match narration start.",
+      "source": "User feedback on job 4f3411e9 topic_content_01.mp4",
+      "fix_required": "Update Manim renderer prompt to prohibit long initial wait actions and start animation immediately with first visual element."
+    },
+    {
+      "id": "ISS-042",
+      "title": "Manim animation has idle period at end with no visual activity",
       "status": "open",
       "created": "2025-12-20",
       "priority": "medium",
-      "description": "TraceabilityLogger.log_render_prompt defaults prompt_type to wan_prompt even for Manim scene specs. Also truncates prompts to preview only.",
-      "fix_required": "Pass correct prompt_type from renderer, store full LLM response in job folder."
+      "description": "Animation ends with static visuals while narration continues. The 4-6 seconds at the end have no visual motion to accompany the closing recap narration.",
+      "source": "Architect review of job 4f3411e9",
+      "fix_required": "Update Manim renderer prompt to include closing animation (e.g., fade out, summary highlight, or recap motion) during final seconds."
+    },
+    {
+      "id": "ISS-043",
+      "title": "Manim layout overcrowding - equations and labels overlap",
+      "status": "open",
+      "created": "2025-12-20",
+      "priority": "high",
+      "description": "In topic_example_01.mp4 (screenshot 3), multiple equations and steps are rendered too close together, making the screen cluttered and hard to read. Text overlaps and spacing is insufficient.",
+      "source": "User feedback with screenshot attached_assets/image_1766235808549.png",
+      "good_example": "topic_content_01.mp4 (screenshot 2) shows clean layout with clear spacing between equation, labels, and arrows",
+      "fix_required": "Update Manim renderer prompt with layout/spacing guidelines: minimum 1.0 unit vertical spacing between elements, use VGroup for organizing related elements, avoid placing more than 3-4 equation lines on screen simultaneously."
+    },
+    {
+      "id": "ISS-044",
+      "title": "Manim content_02 Discriminant label overlaps formula",
+      "status": "open",
+      "created": "2025-12-20",
+      "priority": "medium",
+      "description": "In topic_content_02.mp4 (screenshot 1), the 'Discriminant' label is positioned inside the square root sign area, overlapping with the formula. Label should be positioned above or beside the formula with an arrow.",
+      "source": "User feedback with screenshot attached_assets/image_1766235678827.png",
+      "fix_required": "Update Manim renderer prompt to specify label positioning rules: labels should not overlap with formulas, use arrows to point from labels to formula parts."
     }
   ],
   "metadata": {
     "last_updated": "2025-12-20",
-    "version": "10.7",
+    "version": "10.8",
     "spec_version": "v1.2",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 39,
-    "open_count": 1
+    "resolved_count": 40,
+    "open_count": 4
   }
 }

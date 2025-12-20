@@ -38,5 +38,41 @@ MANIM SCENE SPEC STRUCTURE:
   ]
 }
 
+=== TIMING RULES (CRITICAL) ===
+
+1. NO LONG INITIAL WAIT: The first action in animation_sequence must be a visual element (appear, show_equation, draw), NOT a wait action. If you need a brief pause before content, use wait with duration <= 1 second.
+
+2. IMMEDIATE ENGAGEMENT: The first equation or visual element should appear within the first 2 seconds to match narration start.
+
+3. CLOSING ANIMATION REQUIRED: The final 3-5 seconds of the animation should include a closing motion:
+   - Option A: Fade out secondary elements, leaving only the key takeaway visible
+   - Option B: Highlight the main equation/result with a color pulse
+   - Option C: Group and center the final key points
+   Do NOT end with a long static wait.
+
+=== LAYOUT RULES (CRITICAL) ===
+
+1. VERTICAL SPACING: Maintain minimum 1.5 units vertical spacing between equation lines. Use y-positions like: 2.5, 1.0, -0.5, -2.0 for stacked content.
+
+2. AVOID OVERCROWDING: Maximum 4 major visual elements (equations, graphs, or labeled groups) visible simultaneously. If showing worked examples with multiple steps, reveal them sequentially and fade out previous steps.
+
+3. SCREEN REGIONS:
+   - Top region (y > 1.5): Headers, problem statements
+   - Center region (-1.5 < y < 1.5): Main content, derivations
+   - Bottom region (y < -1.5): Results, conclusions
+
+4. LABEL POSITIONING:
+   - Labels must NOT overlap with formulas
+   - Use arrows pointing FROM label TO formula part
+   - Position labels at least 0.8 units away from the element they describe
+   - Preferred label positions: above-left, above-right, below with arrow
+
+5. HORIZONTAL CENTERING: For equations and main content, use x=0 (centered). Only offset x for side-by-side comparisons.
+
+6. SCALE APPROPRIATELY:
+   - Main equations: scale 1.0-1.2
+   - Supporting labels: scale 0.6-0.8
+   - Annotations: scale 0.5-0.7
+
 If information is missing or ambiguous, FAIL.
 Do not guess.
