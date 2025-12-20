@@ -225,3 +225,20 @@ def complete_trace(status: str = "completed"):
     """Complete the current trace."""
     if _current_logger:
         _current_logger.complete(status)
+
+
+def save_render_prompts_json():
+    """Save render prompts to a separate JSON file for easy auditing."""
+    if _current_logger and _current_logger.trace["render_prompts"]:
+        render_prompts_file = _current_logger.output_dir / "render_prompts.json"
+        try:
+            with open(render_prompts_file, 'w') as f:
+                json.dump({
+                    "job_id": _current_logger.job_id,
+                    "generated_at": datetime.now().isoformat(),
+                    "total_prompts": len(_current_logger.trace["render_prompts"]),
+                    "prompts": _current_logger.trace["render_prompts"]
+                }, f, indent=2)
+            print(f"[TRACE] Saved {len(_current_logger.trace['render_prompts'])} render prompts to {render_prompts_file}")
+        except Exception as e:
+            print(f"[TRACE] Failed to save render_prompts.json: {e}")

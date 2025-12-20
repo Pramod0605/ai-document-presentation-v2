@@ -1,9 +1,11 @@
 import os
+import json
 import traceback
 from pathlib import Path
 from render.wan.wan_runner import render_wan_video
 from render.manim.manim_runner import render_manim_video
 from core.visual_compiler import compile_section_visuals, VisualCompilationError
+from core.traceability import log_render_prompt
 
 
 TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory"]
@@ -49,10 +51,14 @@ def enforce_renderer_policy(presentation: dict) -> dict:
 def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, trace_output_dir: str = None, strict_mode: bool = True) -> dict:
     os.makedirs(output_dir, exist_ok=True)
     
-    topic_id = topic.get("id", 1)
+    topic_id = topic.get("section_id", topic.get("id", 1))
     renderer = topic.get("renderer", "wan_video")
     section_type = topic.get("section_type", "content")
     visual_beats = topic.get("visual_beats", [])
+    
+    manim_scene_spec = topic.get("manim_scene_spec")
+    video_prompts = topic.get("video_prompts")
+    has_v12_specs = bool(manim_scene_spec or video_prompts)
     
     if renderer == "none" or section_type in TEXT_ONLY_SECTION_TYPES:
         return {
@@ -78,10 +84,41 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
         "error": None,
         "visual_beats_used": len(visual_beats) if visual_beats else 0,
         "dry_run": dry_run,
-        "compilation_errors": []
+        "compilation_errors": [],
+        "v12_specs_used": has_v12_specs
     }
     
-    if section_type in ["content", "example"] and visual_beats and strict_mode:
+    if has_v12_specs:
+        print(f"[v1.2 MODE] Section {topic_id} has pre-compiled renderer specs - bypassing Visual Compiler")
+        if "explanation_plan" not in topic:
+            topic["explanation_plan"] = {}
+        
+        if manim_scene_spec and renderer == "manim":
+            topic["explanation_plan"]["compiled_manim_plan"] = manim_scene_spec
+            print(f"  [OK] Using v1.2 manim_scene_spec: {len(manim_scene_spec.get('objects', []))} objects, {len(manim_scene_spec.get('animation_sequence', []))} animations")
+            log_render_prompt(topic_id, 0, "manim", json.dumps(manim_scene_spec, indent=2))
+        elif video_prompts:
+            if isinstance(video_prompts, list):
+                combined_prompts = "\n\n".join([
+                    f"[Beat {p.get('beat_id', i)}]: {p.get('prompt', '')}" 
+                    for i, p in enumerate(video_prompts)
+                ])
+                topic["explanation_plan"]["compiled_wan_prompt"] = combined_prompts
+                topic["explanation_plan"]["video_prompts_list"] = video_prompts
+                print(f"  [OK] Using v1.2 video_prompts: {len(video_prompts)} beat prompts")
+                for i, p in enumerate(video_prompts):
+                    log_render_prompt(topic_id, i, "video", p.get("prompt", ""))
+            elif isinstance(video_prompts, dict):
+                prompt_text = video_prompts.get("prompt", "")
+                topic["explanation_plan"]["compiled_wan_prompt"] = prompt_text
+                print(f"  [OK] Using v1.2 video_prompts: {len(prompt_text)} chars")
+                log_render_prompt(topic_id, 0, "video", prompt_text)
+            else:
+                topic["explanation_plan"]["compiled_wan_prompt"] = str(video_prompts)
+                print(f"  [OK] Using v1.2 video_prompts: {len(str(video_prompts))} chars")
+                log_render_prompt(topic_id, 0, "video", str(video_prompts))
+    
+    elif section_type in ["content", "example"] and visual_beats and strict_mode:
         print(f"[VISUAL COMPILER] Compiling {len(visual_beats)} visual beats for section {topic_id}")
         
         wan_prompt, manim_plan, compilation_errors = compile_section_visuals(topic)

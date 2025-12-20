@@ -25,7 +25,7 @@ from core.llm_client_v12 import generate_presentation_v12, PipelineError
 from core.renderer_executor import render_all_topics, enforce_renderer_policy
 from core.image_processor import extract_images_from_markdown, strip_base64_from_markdown, create_image_list_for_llm
 from core.hard_fail_validator import validate_presentation_hard_fails, format_hard_fail_report
-from core.traceability import init_traceability, log_event, log_validation, log_hard_fail, complete_trace
+from core.traceability import init_traceability, log_event, log_validation, log_hard_fail, complete_trace, save_render_prompts_json
 from tts.generate_audio import generate_all_audio
 from render.render_trace import clear_render_trace
 
@@ -203,6 +203,7 @@ def process_pdf_to_videos_v12(
         job_status["total_cost_usd"] = analytics_tracker.analytics.total_cost_usd
         job_status["dry_run"] = dry_run
         
+        save_render_prompts_json()
         complete_trace("completed")
         log_event("pipeline_complete", {"status": "success", "pipeline_version": "1.2"})
         
@@ -379,6 +380,7 @@ def process_markdown_to_videos_v12(
         job_status["total_cost_usd"] = analytics_tracker.analytics.total_cost_usd
         job_status["dry_run"] = dry_run
         
+        save_render_prompts_json()
         complete_trace("completed")
         log_event("pipeline_complete", {"status": "success", "pipeline_version": "1.2"})
         
