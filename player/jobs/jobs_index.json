@@ -6065,5 +6065,236 @@
       "total_cost_usd": 0.17391900000000002,
       "dry_run": true
     }
+  },
+  "b5042fd3": {
+    "id": "b5042fd3",
+    "type": "markdown_file",
+    "params": {
+      "subject": "General Science",
+      "grade": "12",
+      "file_path": "/tmp/ai_education_jobs/316e5165e5de3925.md",
+      "source_file": "Sample_subjects.md"
+    },
+    "status": "completed",
+    "current_step": 2,
+    "current_step_name": "Generating audio narration...",
+    "steps_completed": 3,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-20T13:26:59.014864",
+    "started_at": "2025-12-20T13:26:59.028764",
+    "completed_at": "2025-12-20T13:31:54.743544",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "pipeline_version": "1.2",
+      "started_at": "2025-12-20T13:26:59.040708",
+      "source_file": "Sample_subjects.md",
+      "steps": [
+        {
+          "step": "extract_images",
+          "status": "completed",
+          "count": 0
+        },
+        {
+          "step": "generate_presentation_v12",
+          "status": "completed",
+          "analytics": {
+            "job_id": "8d4f52fb",
+            "status": "completed",
+            "total_duration_seconds": 217.76,
+            "total_cost_usd": 0.2779,
+            "total_tokens": 39637,
+            "phases_completed": 8,
+            "phases_failed": 0,
+            "cost_breakdown": {
+              "chunker": {
+                "cost_usd": 0.0037,
+                "duration_seconds": 6.25,
+                "tokens": 2400
+              },
+              "director": {
+                "cost_usd": 0.1077,
+                "duration_seconds": 81.31,
+                "tokens": 12807
+              },
+              "video_renderer_scontent_01_biology": {
+                "cost_usd": 0.0301,
+                "duration_seconds": 24.45,
+                "tokens": 4391
+              },
+              "manim_renderer_scontent_02_calculus": {
+                "cost_usd": 0.0269,
+                "duration_seconds": 19.64,
+                "tokens": 3928
+              },
+              "manim_renderer_scontent_03_geometry": {
+                "cost_usd": 0.0299,
+                "duration_seconds": 23.43,
+                "tokens": 4188
+              },
+              "manim_renderer_scontent_04_physics": {
+                "cost_usd": 0.0261,
+                "duration_seconds": 19.75,
+                "tokens": 3800
+              },
+              "video_renderer_scontent_05_chemistry": {
+                "cost_usd": 0.0308,
+                "duration_seconds": 24.41,
+                "tokens": 4533
+              },
+              "video_renderer_srecap_01": {
+                "cost_usd": 0.0227,
+                "duration_seconds": 18.5,
+                "tokens": 3590
+              }
+            }
+          }
+        },
+        {
+          "step": "hard_fail_validation",
+          "status": "passed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": "intro_01",
+              "section_type": "intro",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'intro' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": "content_01_biology",
+              "section_type": "content",
+              "renderer": "video",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section content_01_biology, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.",
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 150, in _render_visual_beats\n    wan_prompt = compile_wan_prompt(beat, topic_id, beat_idx)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 139, in compile_wan_prompt\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 91, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section content_01_biology, Beat 0: Visual beat has no content. All fields are empty or missing.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 155, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 42, in render_wan_video\n    return _render_visual_beats(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 152, in _render_visual_beats\n    raise WanRenderError(\nrender.wan.wan_runner.WanRenderError: Section content_01_biology, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.\n"
+            },
+            {
+              "topic_id": "content_02_calculus",
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section content_02_calculus: Manim spec render failed. Return code: 1. Stderr: \nAnimation 0: Create(Axes of 2 submobjects):   0%|          | 0/15 [00:00<?, ?it/s]\n                                                                                  \n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/co \u2502\n\u2502 mmands.py:125 in render                                                             \u2502\n\u2502                                                                    ",
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 153, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 123, in render_manim_video\n    return _render_v12_manim_spec(\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 414, in _render_v12_manim_spec\n    result = _execute_spec_generated_render(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 856, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section content_02_calculus: Manim spec render failed. Return code: 1. Stderr: \nAnimation 0: Create(Axes of 2 submobjects):   0%|          | 0/15 [00:00<?, ?it/s]\n                                                                                  \n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/co \u2502\n\u2502 mmands.py:125 in render                                                             \u2502\n\u2502                                                                    \n"
+            },
+            {
+              "topic_id": "content_03_geometry",
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b5042fd3/videos/topic_content_03_geometry.mp4",
+              "error": null,
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            },
+            {
+              "topic_id": "content_04_physics",
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b5042fd3/videos/topic_content_04_physics.mp4",
+              "error": null,
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            },
+            {
+              "topic_id": "content_05_chemistry",
+              "section_type": "content",
+              "renderer": "video",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section content_05_chemistry, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.",
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 150, in _render_visual_beats\n    wan_prompt = compile_wan_prompt(beat, topic_id, beat_idx)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 139, in compile_wan_prompt\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 91, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section content_05_chemistry, Beat 0: Visual beat has no content. All fields are empty or missing.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 155, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 42, in render_wan_video\n    return _render_visual_beats(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 152, in _render_visual_beats\n    raise WanRenderError(\nrender.wan.wan_runner.WanRenderError: Section content_05_chemistry, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.\n"
+            },
+            {
+              "topic_id": "recap_01",
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/b5042fd3/videos/topic_recap_01.mp4",
+              "error": null,
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            }
+          ],
+          "success_count": 4,
+          "fail_count": 3,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": null,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/b5042fd3/audio/section_intro_01.mp3"
+            },
+            {
+              "section_id": null,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/b5042fd3/audio/section_content_01_biology.mp3"
+            },
+            {
+              "section_id": null,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/b5042fd3/audio/section_content_02_calculus.mp3"
+            },
+            {
+              "section_id": null,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/b5042fd3/audio/section_content_03_geometry.mp3"
+            },
+            {
+              "section_id": null,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/b5042fd3/audio/section_content_04_physics.mp3"
+            },
+            {
+              "section_id": null,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/b5042fd3/audio/section_content_05_chemistry.mp3"
+            },
+            {
+              "section_id": null,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/b5042fd3/audio/section_recap_01.mp3"
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-20T13:31:54.735472",
+      "presentation_path": "/home/runner/workspace/player/jobs/b5042fd3/presentation.json",
+      "analytics_path": "/home/runner/workspace/player/jobs/b5042fd3/analytics.json",
+      "sections_count": 7,
+      "total_cost_usd": 0.277927,
+      "dry_run": false
+    }
   }
 }
