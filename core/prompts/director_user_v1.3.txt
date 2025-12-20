@@ -1,0 +1,59 @@
+Create a COMPLETE Educational Film Plan in JSON.
+
+INPUT:
+- Subject: {subject}
+- Grade: {grade}
+- Markdown Content:
+{markdown_content}
+
+Your output MUST follow spec_version "v1.3".
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRITICAL CHECKLIST (VERIFY BEFORE OUTPUT)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ Intro section present
+□ Summary section present
+□ Content sections ≥150 words each
+□ Example sections visualized step-by-step
+□ Memory section has EXACTLY 5 flashcards
+□ Recap has EXACTLY 5 scenes
+□ Recap narration total 300–500 words
+□ Each narration segment has duration_seconds
+□ Each visual beat has display directives
+□ Avatar rules respected per section type
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONTENT EXPECTATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Split content into teachable micro-topics
+• One idea per section
+• Worked problems MUST become example sections
+• Do NOT merge examples into content narration
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DISPLAY DIRECTION (MANDATORY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For EVERY narration segment, include display_directives:
+
+Example:
+{
+  "segment_id": 2,
+  "text_layer": { "action": "hide", "animation": "fade_out" },
+  "visual_layer": { "action": "show", "animation": "cut" },
+  "avatar_layer": { "action": "gesture_only" }
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+QUALITY SELF-CHECK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Before outputting:
+• Ensure text disappears before visuals
+• Ensure examples are VISUAL, not verbal
+• Ensure no vague phrases like "clear diagram"
+• Ensure Manim sections include manim_scene_spec
+
+Return ONLY valid JSON.
