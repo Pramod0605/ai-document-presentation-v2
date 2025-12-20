@@ -1,0 +1,43 @@
+{
+  "job_id": "7cd4e3e3",
+  "started_at": "2025-12-20T18:34:52.517245",
+  "completed_at": "2025-12-20T18:39:15.204814",
+  "duration_seconds": 262.69,
+  "status": "failed",
+  "generation_events": [
+    {
+      "timestamp": "2025-12-20T18:34:52.517267",
+      "elapsed_seconds": 0.0,
+      "event_type": "pipeline_start",
+      "details": {
+        "pipeline_version": "1.2",
+        "pipeline_type": "markdown",
+        "source_file": "Sample_subjects.md",
+        "subject": "Science",
+        "grade": "8",
+        "dry_run": true,
+        "skip_wan": false
+      }
+    }
+  ],
+  "render_prompts": [],
+  "renderer_decisions": [],
+  "validation_results": [
+    {
+      "timestamp": "2025-12-20T18:39:15.204306",
+      "validation_type": "schema_validation",
+      "section_id": null,
+      "passed": false,
+      "error_count": 3,
+      "warning_count": 0,
+      "errors": [
+        "sections -> 5 -> avatar_layout -> mode: 'gesture_only' is not one of ['side', 'overlay', 'hidden', 'center']",
+        "sections -> 6 -> avatar_layout: 'mode' is a required property",
+        "sections -> 7 -> avatar_layout: 'mode' is a required property"
+      ],
+      "warnings": []
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

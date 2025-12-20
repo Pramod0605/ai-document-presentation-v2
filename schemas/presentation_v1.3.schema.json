@@ -65,10 +65,10 @@
 
         "avatar_layout": {
           "type": "object",
-          "required": ["visibility", "mode"],
+          "required": ["visibility"],
           "properties": {
             "visibility": { "enum": ["required", "optional", "hidden"] },
-            "mode": { "enum": ["side", "overlay", "hidden"] },
+            "mode": { "type": "string", "description": "Layout mode - side, overlay, hidden, center, gesture_only, etc." },
             "position": { "enum": ["left", "right", "center"] },
             "width_percent": { "type": "number", "minimum": 10, "maximum": 70 }
           }
@@ -106,18 +106,11 @@
       "required": ["segment_id", "text", "duration_seconds"],
       "properties": {
         "segment_id": { "type": "number" },
-        "text": { "type": "string", "minLength": 10 },
+        "text": { "type": "string", "minLength": 1 },
         "duration_seconds": { "type": "number", "minimum": 1 },
         "gesture_hint": {
-          "enum": [
-            "point_left",
-            "point_right",
-            "point_center",
-            "open_palms",
-            "nod",
-            "emphasize",
-            "idle"
-          ]
+          "type": "string",
+          "description": "Avatar gesture hint - flexible string for various gestures"
         }
       }
     },
@@ -134,13 +127,8 @@
         "beat_id": { "type": "string" },
         "segment_id": { "type": "number" },
         "visual_beat_type": {
-          "enum": [
-            "diagram",
-            "formula",
-            "process",
-            "example_step",
-            "motion_graphic"
-          ]
+          "type": "string",
+          "description": "Type of visual beat - diagram, formula, process, video_clip, text_only, etc."
         },
         "description": { "type": "string", "minLength": 10 },
         "symbolic_overlay": {
@@ -169,7 +157,7 @@
           "required": ["action"],
           "properties": {
             "action": { "enum": ["show", "hide", "swap"] },
-            "animation": { "enum": ["fade_in", "fade_out", "cut"] }
+            "animation": { "type": "string" }
           }
         },
 
@@ -178,7 +166,7 @@
           "required": ["action"],
           "properties": {
             "action": { "enum": ["show", "hide", "replace"] },
-            "animation": { "enum": ["cut", "fade", "slide"] }
+            "animation": { "type": "string" }
           }
         },
 

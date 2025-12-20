@@ -1,0 +1,1894 @@
+{
+  "spec_version": "v1.3",
+  "presentation_id": "photosynthesis-8th-grade-sci-01",
+  "subject": "Science",
+  "grade": "8",
+  "chapter_title": "Photosynthesis: How Plants Make Food",
+  "avatar_global": {
+    "style": "teacher",
+    "default_position": "right",
+    "default_width_percent": 35,
+    "gesture_enabled": true
+  },
+  "sections": [
+    {
+      "section_id": 1,
+      "section_type": "intro",
+      "title": "The Amazing Food Factory",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "center",
+        "position": "center",
+        "width_percent": 50
+      },
+      "narration": {
+        "full_text": "Have you ever wondered how a tiny seed can grow into a giant tree? Where does it get all that material? Unlike us, plants don't eat food. They make their own! In this lesson, we're going to explore one of the most important processes on Earth: photosynthesis. It's like a magical recipe that turns sunlight into life itself. We'll uncover the secret ingredients plants use and discover how they create the very air we breathe and the food that fuels our world.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Have you ever wondered how a tiny seed can grow into a giant tree? Where does it get all that material?",
+            "duration_seconds": 7,
+            "gesture_hint": "questioning"
+          },
+          {
+            "segment_id": 2,
+            "text": "Unlike us, plants don't eat food. They make their own! In this lesson, we're going to explore one of the most important processes on Earth: photosynthesis.",
+            "duration_seconds": 10,
+            "gesture_hint": "excited"
+          },
+          {
+            "segment_id": 3,
+            "text": "It's like a magical recipe that turns sunlight into life itself. We'll uncover the secret ingredients plants use and discover how they create the very air we breathe and the food that fuels our world.",
+            "duration_seconds": 12,
+            "gesture_hint": "sweeping_gesture"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "1A",
+          "segment_id": 1,
+          "visual_beat_type": "motion_graphic",
+          "description": "Avatar is visible and centered. Title card 'The Amazing Food Factory' appears with a subtle animation.",
+          "symbolic_overlay": {
+            "enabled": false
+          }
+        },
+        {
+          "beat_id": "1B",
+          "segment_id": 2,
+          "visual_beat_type": "motion_graphic",
+          "description": "A fast-motion animation of a seed sprouting and growing into a small tree.",
+          "symbolic_overlay": {
+            "enabled": false
+          }
+        },
+        {
+          "beat_id": "1C",
+          "segment_id": 3,
+          "visual_beat_type": "motion_graphic",
+          "description": "Animated icons for sunlight, a water drop, and a CO2 cloud fly into a leaf icon. An oxygen bubble and a sugar cube icon fly out.",
+          "symbolic_overlay": {
+            "enabled": false
+          }
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show",
+            "animation": "fade_in"
+          },
+          "visual_layer": {
+            "action": "hide",
+            "animation": "cut"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "swap",
+            "animation": "fade_out_in"
+          },
+          "visual_layer": {
+            "action": "hide",
+            "animation": "cut"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide",
+            "animation": "fade_out"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "fade_in"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 870,
+        "elements": [
+          {
+            "id": "title",
+            "type": "text",
+            "content": "The Amazing Food Factory",
+            "position": {
+              "x": 540,
+              "y": 100
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#2D3748",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 210
+            }
+          },
+          {
+            "id": "seed_tree_icon",
+            "type": "icon",
+            "content": "seed_to_tree",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 120,
+              "color": "#48BB78"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 210,
+              "exit_frame": 510
+            }
+          },
+          {
+            "id": "sun_icon",
+            "type": "icon",
+            "content": "sun",
+            "position": {
+              "x": 440,
+              "y": 250
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#F6E05E"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 510,
+              "exit_frame": 870
+            }
+          },
+          {
+            "id": "water_icon",
+            "type": "icon",
+            "content": "water_drop",
+            "position": {
+              "x": 540,
+              "y": 250
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#4299E1"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 540,
+              "exit_frame": 870
+            }
+          },
+          {
+            "id": "co2_icon",
+            "type": "icon",
+            "content": "cloud",
+            "position": {
+              "x": 640,
+              "y": 250
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#718096"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 570,
+              "exit_frame": 870
+            }
+          },
+          {
+            "id": "leaf_icon",
+            "type": "icon",
+            "content": "leaf",
+            "position": {
+              "x": 540,
+              "y": 350
+            },
+            "style": {
+              "fontSize": 80,
+              "color": "#48BB78"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 600,
+              "exit_frame": 870
+            }
+          }
+        ],
+        "background": {
+          "color": "#FFFFFF"
+        }
+      }
+    },
+    {
+      "section_id": 2,
+      "section_type": "summary",
+      "title": "What We'll Learn",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "In our journey today, we'll cover the essential aspects of photosynthesis. First, we'll define the process and understand its overall purpose. Next, we'll identify the key 'ingredients,' or reactants, that plants need to get started. Then, we'll look at the 'results,' or products, that are created. Finally, we'll put it all together by examining the official chemical equation that summarizes this entire amazing reaction.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "In our journey today, we'll cover the essential aspects of photosynthesis. First, we'll define the process and understand its overall purpose.",
+            "duration_seconds": 8
+          },
+          {
+            "segment_id": 2,
+            "text": "Next, we'll identify the key 'ingredients,' or reactants, that plants need to get started.",
+            "duration_seconds": 6
+          },
+          {
+            "segment_id": 3,
+            "text": "Then, we'll look at the 'results,' or products, that are created.",
+            "duration_seconds": 5
+          },
+          {
+            "segment_id": 4,
+            "text": "Finally, we'll put it all together by examining the official chemical equation that summarizes this entire amazing reaction.",
+            "duration_seconds": 8
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "2A",
+          "segment_id": 1,
+          "visual_beat_type": "animated_list",
+          "description": "An animated bullet point appears with the text 'What is Photosynthesis?'",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "1. What is Photosynthesis?"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "2B",
+          "segment_id": 2,
+          "visual_beat_type": "animated_list",
+          "description": "A second bullet point appears: 'The Ingredients (Reactants)'",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "2. The Ingredients (Reactants)"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "2C",
+          "segment_id": 3,
+          "visual_beat_type": "animated_list",
+          "description": "A third bullet point appears: 'The Results (Products)'",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "3. The Results (Products)"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "2D",
+          "segment_id": 4,
+          "visual_beat_type": "animated_list",
+          "description": "A fourth bullet point appears: 'The Chemical Equation'",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "4. The Chemical Equation"
+            ],
+            "max_words": 4
+          }
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 810,
+        "elements": [
+          {
+            "id": "title",
+            "type": "text",
+            "content": "What We'll Learn",
+            "position": {
+              "x": 50,
+              "y": 50
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#2D3748",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 810
+            }
+          },
+          {
+            "id": "bullet_1",
+            "type": "text",
+            "content": "1. What is Photosynthesis?",
+            "position": {
+              "x": 80,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#4A5568",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 30,
+              "exit_frame": 810
+            }
+          },
+          {
+            "id": "bullet_2",
+            "type": "text",
+            "content": "2. The Ingredients (Reactants)",
+            "position": {
+              "x": 80,
+              "y": 220
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#4A5568",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 270,
+              "exit_frame": 810
+            }
+          },
+          {
+            "id": "bullet_3",
+            "type": "text",
+            "content": "3. The Results (Products)",
+            "position": {
+              "x": 80,
+              "y": 290
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#4A5568",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 450,
+              "exit_frame": 810
+            }
+          },
+          {
+            "id": "bullet_4",
+            "type": "text",
+            "content": "4. The Chemical Equation",
+            "position": {
+              "x": 80,
+              "y": 360
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#4A5568",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 600,
+              "exit_frame": 810
+            }
+          }
+        ],
+        "background": {
+          "color": "#FFFFFF"
+        }
+      }
+    },
+    {
+      "section_id": 3,
+      "section_type": "content",
+      "title": "The Recipe for Life",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "So, what exactly is photosynthesis? The word itself gives us a clue: 'photo' means light, and 'synthesis' means to make something. So, photosynthesis is literally 'making with light.' It's the process plants, algae, and some bacteria use to turn light energy into chemical energy. Think of a plant as a tiny, solar-powered factory. This factory takes in simple, raw ingredients from the environment\u2014specifically, carbon dioxide from the air and water from the soil. Using the energy it captures from sunlight, the plant's cells perform a complex chemical reaction. The main goal of this reaction is to create a sugar called glucose. This glucose is the plant's food, providing the energy it needs to grow and function. As a very important bonus for us, this process also releases oxygen into the atmosphere. So, in short, photosynthesis uses light to convert carbon dioxide and water into food for the plant and oxygen for the planet.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "So, what exactly is photosynthesis? The word itself gives us a clue: 'photo' means light, and 'synthesis' means to make something. So, photosynthesis is literally 'making with light.'",
+            "duration_seconds": 12,
+            "gesture_hint": "explaining"
+          },
+          {
+            "segment_id": 2,
+            "text": "It's the process plants, algae, and some bacteria use to turn light energy into chemical energy. Think of a plant as a tiny, solar-powered factory.",
+            "duration_seconds": 10
+          },
+          {
+            "segment_id": 3,
+            "text": "This factory takes in simple, raw ingredients from the environment\u2014specifically, carbon dioxide from the air and water from the soil. Using the energy it captures from sunlight, the plant's cells perform a complex chemical reaction.",
+            "duration_seconds": 14,
+            "gesture_hint": "point_down"
+          },
+          {
+            "segment_id": 4,
+            "text": "The main goal of this reaction is to create a sugar called glucose. This glucose is the plant's food, providing the energy it needs to grow and function.",
+            "duration_seconds": 11
+          },
+          {
+            "segment_id": 5,
+            "text": "As a very important bonus for us, this process also releases oxygen into the atmosphere. So, in short, photosynthesis uses light to convert carbon dioxide and water into food for the plant and oxygen for the planet.",
+            "duration_seconds": 14,
+            "gesture_hint": "sweeping_gesture"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "3A",
+          "segment_id": 3,
+          "visual_beat_type": "animation",
+          "description": "An animation shows sunlight hitting a leaf, while arrows indicate water coming up from the roots and CO2 entering the leaf from the air."
+        },
+        {
+          "beat_id": "3B",
+          "segment_id": 4,
+          "visual_beat_type": "animation",
+          "description": "Zoom into the leaf. The inputs combine, and a glucose molecule (a simple hexagon shape) is formed and shown moving to other parts of the plant."
+        },
+        {
+          "beat_id": "3C",
+          "segment_id": 5,
+          "visual_beat_type": "animation",
+          "description": "From the leaf, oxygen molecules (O2) are shown being released into the air. An animal is shown breathing in the oxygen."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "swap"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide",
+            "animation": "fade_out"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "fade_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "fade_out_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "fade_out_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "3A",
+          "prompt": "A stylized green plant is centered on screen against a light blue background. The plant has roots in a layer of brown soil at the bottom. A yellow sun icon is in the top-left corner. From 0 to 2 seconds, yellow lines animate from the sun to a large leaf in the center of the plant. From 2 to 7 seconds, a blue arrow labeled 'H\u2082O' moves up from the roots, through the stem, and points to the central leaf. From 7 to 12 seconds, a gray arrow labeled 'CO\u2082' moves from the right edge of the screen to the left, stopping on the surface of the central leaf. The final 2 seconds hold this static image: sun rays on the leaf, the H\u2082O arrow pointing in from the stem, and the CO\u2082 arrow pointing in from the air.",
+          "duration_seconds": 14,
+          "style": "animated"
+        },
+        {
+          "beat_id": "3B",
+          "prompt": "The view zooms into the central green leaf from the previous scene over 2 seconds, revealing a pattern of stylized green cells. Inside a central cell, from 2 to 5 seconds, small blue particles labeled 'H\u2082O', gray particles labeled 'CO\u2082', and yellow light particles swirl together. From 5 to 7 seconds, these particles merge and transform into a single white hexagonal shape labeled 'Glucose'. From 7 to 11 seconds, the 'Glucose' hexagon animates downwards, moving out of the cell and along a pathway representing the plant's stem, exiting at the bottom of the screen.",
+          "duration_seconds": 11,
+          "style": "animated"
+        },
+        {
+          "beat_id": "3C",
+          "prompt": "The view zooms out from the leaf's interior over 3 seconds, returning to the full view of the plant against the light blue background. From 3 to 7 seconds, multiple light blue particles labeled 'O\u2082' emerge from the surface of the central leaf and float upwards and to the right. From 7 to 9 seconds, the frame pans right, revealing a stylized brown rabbit on a patch of green grass. From 9 to 12 seconds, the 'O\u2082' particles drift towards the rabbit's nose, and small white arrows show them being inhaled. The final 2 seconds hold on the rabbit breathing, with the plant visible on the left.",
+          "duration_seconds": 14,
+          "style": "animated"
+        }
+      ]
+    },
+    {
+      "section_id": 4,
+      "section_type": "content",
+      "title": "The Ingredients: Reactants",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Every recipe needs ingredients, and photosynthesis is no different. These ingredients are called reactants. There are three of them. The first is Carbon Dioxide, or CO\u2082. This gas is all around us in the air; it's what we exhale when we breathe. Plants take in carbon dioxide through tiny pores on their leaves called stomata. The second reactant is Water, or H\u2082O. Plants absorb water from the soil using their roots. This water then travels up through the stem to the leaves in a system of tubes called the xylem. The final, and perhaps most crucial, ingredient isn't a substance at all\u2014it's energy from the Sun. Sunlight provides the power to drive the whole reaction. This light energy is captured by a special green pigment inside the plant's cells called chlorophyll. It's chlorophyll that gives plants their green color and acts like a solar panel, collecting the sun's energy.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Every recipe needs ingredients, and photosynthesis is no different. These ingredients are called reactants. There are three of them.",
+            "duration_seconds": 8
+          },
+          {
+            "segment_id": 2,
+            "text": "The first is Carbon Dioxide, or CO\u2082. This gas is all around us in the air; it's what we exhale when we breathe. Plants take in carbon dioxide through tiny pores on their leaves called stomata.",
+            "duration_seconds": 13,
+            "gesture_hint": "explaining"
+          },
+          {
+            "segment_id": 3,
+            "text": "The second reactant is Water, or H\u2082O. Plants absorb water from the soil using their roots. This water then travels up through the stem to the leaves in a system of tubes called the xylem.",
+            "duration_seconds": 13,
+            "gesture_hint": "point_down"
+          },
+          {
+            "segment_id": 4,
+            "text": "The final, and perhaps most crucial, ingredient isn't a substance at all\u2014it's energy from the Sun. Sunlight provides the power to drive the whole reaction. This light energy is captured by a special green pigment inside the plant's cells called chlorophyll.",
+            "duration_seconds": 16,
+            "gesture_hint": "point_up"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "4A",
+          "segment_id": 2,
+          "visual_beat_type": "animation",
+          "description": "Zoom into a leaf surface, showing an animated stomata (pore) opening and CO2 molecules from the air entering the leaf."
+        },
+        {
+          "beat_id": "4B",
+          "segment_id": 3,
+          "visual_beat_type": "animation",
+          "description": "Animation shows a cross-section of a plant. Water is absorbed by the roots and highlighted as it travels up the xylem tubes into the leaves."
+        },
+        {
+          "beat_id": "4C",
+          "segment_id": 4,
+          "visual_beat_type": "animation",
+          "description": "Animation of sunlight rays hitting a chloroplast within a plant cell. Inside, chlorophyll molecules are shown 'lighting up' as they absorb the light energy."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide",
+            "animation": "fade_out"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "fade_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "fade_out_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "fade_out_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "4A",
+          "prompt": "The screen shows a close-up of a green leaf surface against a light blue background. The camera zooms in on the leaf's surface, revealing a microscopic view with green, irregularly shaped epidermal cells. In the center is a stoma, which consists of two bean-shaped, light-green guard cells forming a closed pore. Small, grey, stylized molecules, each labeled 'CO\u2082', float in the blue background area. The two guard cells slowly pull apart, opening the pore between them. Three CO\u2082 molecules drift from the blue background and move one by one through the open pore into the leaf's interior, fading away after they pass through. The stoma remains open.",
+          "duration_seconds": 13,
+          "style": "animated"
+        },
+        {
+          "beat_id": "4B",
+          "prompt": "The screen shows a stylized, 2D cross-section of a plant. The top half of the screen is light blue (air), and the bottom half is brown (soil). The plant has green leaves at the top, a central green stem, and white roots extending into the brown soil. A thin, transparent tube labeled 'Xylem' runs from the roots, up the stem, and into the leaves. Small, blue, stylized molecules labeled 'H\u2082O' appear in the soil. The H\u2082O molecules move into the roots. A bright blue color, representing water, fills the xylem tube starting from the roots. This blue color flows steadily upwards through the stem. The blue color reaches the leaves and spreads into the branching veins within the leaf cross-section.",
+          "duration_seconds": 13,
+          "style": "animated"
+        },
+        {
+          "beat_id": "4C",
+          "prompt": "The screen shows a zoom into a cross-section of a plant cell. The view focuses on a single green, oval-shaped chloroplast labeled 'Chloroplast'. Inside the chloroplast are stacks of small, dark-green discs. Yellow rays of light, labeled 'Sunlight', enter from the top-left of the screen and shine onto the chloroplast. The rays pass through the outer membrane of the chloroplast and hit the stacks of discs. Within the discs, small, dark-green dots appear, labeled 'Chlorophyll'. As a light ray touches a chlorophyll dot, the dot flashes with a bright yellow-white glow. This happens sequentially to several chlorophyll dots as the light continues to shine on them. The scene ends with the light rays illuminating the chloroplast and multiple chlorophyll dots glowing.",
+          "duration_seconds": 16,
+          "style": "animated"
+        }
+      ]
+    },
+    {
+      "section_id": 5,
+      "section_type": "content",
+      "title": "The Results: Products",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "After the chemical reaction is complete, we are left with the results, which we call the products. There are two main products of photosynthesis. The first, and the primary goal for the plant, is Glucose, with the chemical formula C\u2086H\u2081\u2082O\u2086. This is a type of sugar, and it's the plant's food. It's a molecule rich in chemical energy, which the plant can use immediately for its life processes, like repairing cells or growing taller. The plant can also store this energy for later by converting glucose into starches, or use it as a building material to construct its cell walls out of cellulose. The second product is Oxygen, or O\u2082. For the plant, oxygen is just a waste product. It doesn't need it, so it releases the oxygen gas back into the air through the same stomata where it took in carbon dioxide. But for us and most other animals, this 'waste' product is absolutely essential. It's the oxygen we breathe to survive, making photosynthesis the source of nearly all the oxygen in our atmosphere.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "After the chemical reaction is complete, we are left with the results, which we call the products. There are two main products of photosynthesis.",
+            "duration_seconds": 9
+          },
+          {
+            "segment_id": 2,
+            "text": "The first, and the primary goal for the plant, is Glucose, with the chemical formula C\u2086H\u2081\u2082O\u2086. This is a type of sugar, and it's the plant's food.",
+            "duration_seconds": 11,
+            "gesture_hint": "explaining"
+          },
+          {
+            "segment_id": 3,
+            "text": "It's a molecule rich in chemical energy, which the plant can use immediately for its life processes, or store for later, or use as a building material.",
+            "duration_seconds": 12
+          },
+          {
+            "segment_id": 4,
+            "text": "The second product is Oxygen, or O\u2082. For the plant, oxygen is just a waste product. It doesn't need it, so it releases the oxygen gas back into the air through the stomata.",
+            "duration_seconds": 13
+          },
+          {
+            "segment_id": 5,
+            "text": "But for us and most other animals, this 'waste' product is absolutely essential. It's the oxygen we breathe to survive, making photosynthesis the source of nearly all the oxygen in our atmosphere.",
+            "duration_seconds": 14,
+            "gesture_hint": "sweeping_gesture"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "5A",
+          "segment_id": 2,
+          "visual_beat_type": "animation",
+          "description": "Inside a chloroplast, an animation shows the formation of a glucose molecule (C6H12O6). The molecule is labeled."
+        },
+        {
+          "beat_id": "5B",
+          "segment_id": 3,
+          "visual_beat_type": "animation",
+          "description": "The glucose molecule is shown being used in three ways: 1) powering a 'working' cell, 2) being stored as starch (a chain of glucose), 3) becoming part of a growing cell wall."
+        },
+        {
+          "beat_id": "5C",
+          "segment_id": 4,
+          "visual_beat_type": "animation",
+          "description": "Animation shows oxygen molecules (O2) being formed in the chloroplast and then exiting the leaf through a stomata."
+        },
+        {
+          "beat_id": "5D",
+          "segment_id": 5,
+          "visual_beat_type": "animation",
+          "description": "A wider view shows the plant releasing oxygen, which then flows towards an animated human figure who breathes it in."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide",
+            "animation": "fade_out"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "fade_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "fade_out_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "fade_out_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "fade_out_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "5A",
+          "prompt": "Scene opens on a stylized view inside a green chloroplast. Six small grey spheres (carbon), twelve small white spheres (hydrogen), and six small red spheres (oxygen) fly in from off-screen. They move towards the center and assemble into a single glucose molecule with a hexagonal structure. Once the molecule is complete, the text label 'Glucose' fades in above it, and the chemical formula 'C\u2086H\u2081\u2082O\u2086' fades in below it. The final molecule and its labels remain static on screen.",
+          "duration_seconds": 11,
+          "style": "animated"
+        },
+        {
+          "beat_id": "5B",
+          "prompt": "The screen splits into three vertical panels. On the left, a glucose molecule flies towards a stylized plant cell containing a spinning gear. As the molecule makes contact, it vanishes, and the gear spins faster, emitting a yellow glow. The label 'Immediate Energy' appears above. In the center panel, a glucose molecule links with two other glucose molecules, forming a chain. The label 'Storage (Starch)' appears above. On the right, a glucose molecule flies towards a grid-like structure representing a cell wall and slots into an empty space, extending the wall. The label 'Building Material (Cellulose)' appears above. All three animations occur simultaneously.",
+          "duration_seconds": 12,
+          "style": "animated"
+        },
+        {
+          "beat_id": "5C",
+          "prompt": "Scene opens inside the chloroplast. Pairs of red oxygen atoms join to form several O\u2082 molecules. The camera zooms out to show the whole plant cell, then zooms out further to a cross-section of a leaf. The O\u2082 molecules are shown moving out of the cell and through air spaces inside the leaf. They travel towards an opening on the leaf's underside, a stoma. The molecules then exit the leaf through the stoma into the outside air. A label 'Oxygen (O\u2082)' points to one of the exiting molecules.",
+          "duration_seconds": 13,
+          "style": "animated"
+        },
+        {
+          "beat_id": "5D",
+          "prompt": "Scene shows a full animated plant on the left side of the screen. A stream of blue O\u2082 molecules flows out from its leaves. The camera pans right to reveal a stylized human figure. The stream of O\u2082 molecules flows towards the human's face. An arrow indicates the molecules being inhaled, and they disappear at the human's nose and mouth. The camera then zooms out, showing the plant and human on a curved surface of the Earth. The zoom continues until the entire Earth is visible, with blue streams of oxygen swirling in its atmosphere. The text 'O\u2082' appears in several places in the atmosphere.",
+          "duration_seconds": 14,
+          "style": "animated"
+        }
+      ]
+    },
+    {
+      "section_id": 6,
+      "section_type": "example",
+      "title": "The Chemical Equation",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "gesture_only",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "We can summarize the entire process of photosynthesis with a single, balanced chemical equation. This equation shows us the reactants and products in their exact proportions. Let's build it step-by-step. On the left side, we have our reactants. We start with six molecules of carbon dioxide, written as 6CO\u2082. To this, we add six molecules of water, written as 6H\u2082O. These are all the ingredients we need. Next, we draw an arrow to show that a chemical reaction is taking place. Above the arrow, we often draw a sun or write 'Light Energy' to show that sunlight powers this transformation. On the right side of the arrow, we write our products. The reaction produces one molecule of the sugar glucose, which has the complex formula C\u2086H\u2081\u2082O\u2086. Finally, it also produces six molecules of oxygen, written as 6O\u2082. So, the complete, balanced equation is 6CO\u2082 plus 6H\u2082O yields C\u2086H\u2081\u2082O\u2086 plus 6O\u2082. This elegant formula is the scientific shorthand for the most important recipe in the world.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "We can summarize the entire process of photosynthesis with a single, balanced chemical equation. This equation shows us the reactants and products in their exact proportions. Let's build it step-by-step.",
+            "duration_seconds": 12
+          },
+          {
+            "segment_id": 2,
+            "text": "On the left side, we have our reactants. We start with six molecules of carbon dioxide, written as 6CO\u2082.",
+            "duration_seconds": 8
+          },
+          {
+            "segment_id": 3,
+            "text": "To this, we add six molecules of water, written as 6H\u2082O. These are all the ingredients we need.",
+            "duration_seconds": 8
+          },
+          {
+            "segment_id": 4,
+            "text": "Next, we draw an arrow to show that a chemical reaction is taking place. Above the arrow, we often draw a sun or write 'Light Energy' to show that sunlight powers this transformation.",
+            "duration_seconds": 12
+          },
+          {
+            "segment_id": 5,
+            "text": "On the right side of the arrow, we write our products. The reaction produces one molecule of the sugar glucose, which has the complex formula C\u2086H\u2081\u2082O\u2086.",
+            "duration_seconds": 11
+          },
+          {
+            "segment_id": 6,
+            "text": "Finally, it also produces six molecules of oxygen, written as 6O\u2082. So, the complete, balanced equation is 6CO\u2082 plus 6H\u2082O yields C\u2086H\u2081\u2082O\u2086 plus 6O\u2082.",
+            "duration_seconds": 13
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "6A",
+          "segment_id": 2,
+          "visual_beat_type": "formula",
+          "description": "The formula '6CO\u2082' appears on the left side of the screen.",
+          "manim_scene_spec": {
+            "action": "write_text",
+            "text": "6CO\u2082",
+            "position": "left_of_center"
+          }
+        },
+        {
+          "beat_id": "6B",
+          "segment_id": 3,
+          "visual_beat_type": "formula",
+          "description": "The text '+ 6H\u2082O' is added next to '6CO\u2082'.",
+          "manim_scene_spec": {
+            "action": "write_text",
+            "text": "+ 6H\u2082O",
+            "position": "right_of_previous"
+          }
+        },
+        {
+          "beat_id": "6C",
+          "segment_id": 4,
+          "visual_beat_type": "formula",
+          "description": "An arrow pointing to the right is drawn. A sun symbol appears above the arrow.",
+          "manim_scene_spec": {
+            "action": "draw_arrow_with_symbol",
+            "direction": "right",
+            "symbol": "sun",
+            "position": "right_of_previous"
+          }
+        },
+        {
+          "beat_id": "6D",
+          "segment_id": 5,
+          "visual_beat_type": "formula",
+          "description": "The formula 'C\u2086H\u2081\u2082O\u2086' appears on the right side of the arrow.",
+          "manim_scene_spec": {
+            "action": "write_text",
+            "text": "C\u2086H\u2081\u2082O\u2086",
+            "position": "right_of_arrow"
+          }
+        },
+        {
+          "beat_id": "6E",
+          "segment_id": 6,
+          "visual_beat_type": "formula",
+          "description": "The text '+ 6O\u2082' is added next to the glucose formula. Then, a box is drawn around the reactants and labeled 'Reactants', and another box is drawn around the products and labeled 'Products'.",
+          "manim_scene_spec": {
+            "action": "write_and_label_equation",
+            "text_to_add": "+ 6O\u2082",
+            "reactants": "6CO\u2082 + 6H\u2082O",
+            "products": "C\u2086H\u2081\u2082O\u2086 + 6O\u2082"
+          }
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide",
+            "animation": "fade_out"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "cut"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "cut"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "cut"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "cut"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 6,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "cut"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Photosynthesis Chemical Equation}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "co2",
+            "type": "equation",
+            "position": [
+              -3.5,
+              0
+            ],
+            "properties": {
+              "latex": "6CO_2",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "plus1",
+            "type": "equation",
+            "position": [
+              -2.0,
+              0
+            ],
+            "properties": {
+              "latex": "+",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "h2o",
+            "type": "equation",
+            "position": [
+              -0.5,
+              0
+            ],
+            "properties": {
+              "latex": "6H_2O",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "arrow",
+            "type": "vector",
+            "position": [
+              1.0,
+              0
+            ],
+            "properties": {
+              "scale": 1.5,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "sun",
+            "type": "label",
+            "position": [
+              1.0,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\text{Light Energy}",
+              "scale": 0.8,
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "glucose",
+            "type": "equation",
+            "position": [
+              2.5,
+              0
+            ],
+            "properties": {
+              "latex": "C_6H_{12}O_6",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "plus2",
+            "type": "equation",
+            "position": [
+              4.0,
+              0
+            ],
+            "properties": {
+              "latex": "+",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "o2",
+            "type": "equation",
+            "position": [
+              5.5,
+              0
+            ],
+            "properties": {
+              "latex": "6O_2",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "reactants_box",
+            "type": "shape",
+            "position": [
+              -2.0,
+              -1.0
+            ],
+            "properties": {
+              "type": "rectangle",
+              "width": 5,
+              "height": 2,
+              "color": "BLUE",
+              "opacity": 0.3
+            }
+          },
+          {
+            "id": "products_box",
+            "type": "shape",
+            "position": [
+              4.0,
+              -1.0
+            ],
+            "properties": {
+              "type": "rectangle",
+              "width": 5,
+              "height": 2,
+              "color": "GREEN",
+              "opacity": 0.3
+            }
+          },
+          {
+            "id": "reactants_label",
+            "type": "label",
+            "position": [
+              -2.0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "\\text{Reactants}",
+              "scale": 0.8,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "products_label",
+            "type": "label",
+            "position": [
+              4.0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "\\text{Products}",
+              "scale": 0.8,
+              "color": "GREEN"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "title",
+            "duration": 2
+          },
+          {
+            "action": "show_equation",
+            "target": "co2",
+            "duration": 4
+          },
+          {
+            "action": "show_equation",
+            "target": "plus1",
+            "duration": 2
+          },
+          {
+            "action": "show_equation",
+            "target": "h2o",
+            "duration": 4
+          },
+          {
+            "action": "draw",
+            "target": "arrow",
+            "duration": 3
+          },
+          {
+            "action": "appear",
+            "target": "sun",
+            "duration": 3
+          },
+          {
+            "action": "show_equation",
+            "target": "glucose",
+            "duration": 5
+          },
+          {
+            "action": "show_equation",
+            "target": "plus2",
+            "duration": 2
+          },
+          {
+            "action": "show_equation",
+            "target": "o2",
+            "duration": 4
+          },
+          {
+            "action": "appear",
+            "target": "reactants_box",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "products_box",
+            "duration": 2
+          },
+          {
+            "action": "show_equation",
+            "target": "reactants_label",
+            "duration": 2
+          },
+          {
+            "action": "show_equation",
+            "target": "products_label",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "arrow",
+            "duration": 3,
+            "color": "YELLOW"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 7,
+      "section_type": "memory",
+      "title": "Key Concepts",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "hidden"
+      },
+      "narration": {
+        "full_text": "Let's test your memory. What are the three main ingredients for photosynthesis? They are Sunlight, Water, and Carbon Dioxide. What are the two main products of photosynthesis? They are Glucose and Oxygen. What is the name of the green pigment that captures sunlight? It's Chlorophyll. Where in the plant cell does photosynthesis occur? It happens in the Chloroplasts. And finally, what is the sugar produced by plants for energy called? That's Glucose.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's test your memory. What are the three main ingredients for photosynthesis?",
+            "duration_seconds": 6
+          },
+          {
+            "segment_id": 2,
+            "text": "What are the two main products of photosynthesis?",
+            "duration_seconds": 4
+          },
+          {
+            "segment_id": 3,
+            "text": "What is the name of the green pigment that captures sunlight?",
+            "duration_seconds": 5
+          },
+          {
+            "segment_id": 4,
+            "text": "Where in the plant cell does photosynthesis occur?",
+            "duration_seconds": 4
+          },
+          {
+            "segment_id": 5,
+            "text": "And finally, what is the sugar produced by plants for energy called?",
+            "duration_seconds": 5
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "7A",
+          "segment_id": 1,
+          "visual_beat_type": "flashcard",
+          "description": "A flashcard appears. Front: 'What are the three main ingredients for photosynthesis?'. After a pause, it flips. Back: 'Sunlight, Water (H\u2082O), Carbon Dioxide (CO\u2082)'."
+        },
+        {
+          "beat_id": "7B",
+          "segment_id": 2,
+          "visual_beat_type": "flashcard",
+          "description": "A new flashcard appears. Front: 'What are the two main products of photosynthesis?'. It flips. Back: 'Glucose (C\u2086H\u2081\u2082O\u2086) and Oxygen (O\u2082)'."
+        },
+        {
+          "beat_id": "7C",
+          "segment_id": 3,
+          "visual_beat_type": "flashcard",
+          "description": "A new flashcard appears. Front: 'What is the name of the pigment that captures sunlight?'. It flips. Back: 'Chlorophyll'."
+        },
+        {
+          "beat_id": "7D",
+          "segment_id": 4,
+          "visual_beat_type": "flashcard",
+          "description": "A new flashcard appears. Front: 'Where in the plant cell does photosynthesis occur?'. It flips. Back: 'In the chloroplasts'."
+        },
+        {
+          "beat_id": "7E",
+          "segment_id": 5,
+          "visual_beat_type": "flashcard",
+          "description": "A new flashcard appears. Front: 'What is the sugar produced by plants for energy called?'. It flips. Back: 'Glucose'."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 720,
+        "elements": [
+          {
+            "id": "card_1_front",
+            "type": "text",
+            "content": "What are the three main ingredients for photosynthesis?",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 90
+            }
+          },
+          {
+            "id": "card_1_back",
+            "type": "text",
+            "content": "Sunlight, Water (H\u2082O), Carbon Dioxide (CO\u2082)",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#006400",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 90,
+              "exit_frame": 180
+            }
+          },
+          {
+            "id": "card_2_front",
+            "type": "text",
+            "content": "What are the two main products of photosynthesis?",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 180,
+              "exit_frame": 240
+            }
+          },
+          {
+            "id": "card_2_back",
+            "type": "text",
+            "content": "Glucose (C\u2086H\u2081\u2082O\u2086) and Oxygen (O\u2082)",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#006400",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 240,
+              "exit_frame": 300
+            }
+          },
+          {
+            "id": "card_3_front",
+            "type": "text",
+            "content": "What is the name of the pigment that captures sunlight?",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 300,
+              "exit_frame": 375
+            }
+          },
+          {
+            "id": "card_3_back",
+            "type": "text",
+            "content": "Chlorophyll",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#006400",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 375,
+              "exit_frame": 450
+            }
+          },
+          {
+            "id": "card_4_front",
+            "type": "text",
+            "content": "Where in the plant cell does photosynthesis occur?",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 450,
+              "exit_frame": 510
+            }
+          },
+          {
+            "id": "card_4_back",
+            "type": "text",
+            "content": "In the chloroplasts",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#006400",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 510,
+              "exit_frame": 570
+            }
+          },
+          {
+            "id": "card_5_front",
+            "type": "text",
+            "content": "What is the sugar produced by plants for energy called?",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 570,
+              "exit_frame": 645
+            }
+          },
+          {
+            "id": "card_5_back",
+            "type": "text",
+            "content": "Glucose",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#006400",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 645,
+              "exit_frame": 720
+            }
+          }
+        ],
+        "background": {
+          "color": "#FFFFFF"
+        }
+      }
+    },
+    {
+      "section_id": 8,
+      "section_type": "recap",
+      "title": "From Sunlight to Life",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "hidden"
+      },
+      "narration": {
+        "full_text": "Let's recap the incredible journey of photosynthesis. It all begins with the sun. Light energy travels 93 million miles to Earth, arriving as a free, powerful gift. This energy is the ultimate fuel for almost all life, and plants are the first to harness it. They are the bridge between the sun's power and the living world, turning pure energy into the substance of life itself. Without this first critical step, our planet would be a barren and lifeless rock. Every ray of sunshine is a potential meal. Plants act as nature's expert collectors, gathering the simple, raw materials needed for their factory. With their roots deep in the earth, they draw up water, molecule by molecule. At the same time, their leaves, covered in microscopic pores, breathe in carbon dioxide from the atmosphere. This efficient intake system ensures a constant supply of ingredients, preparing the plant for the magical transformation that happens deep within its cells. This is the gathering phase, setting the stage for the main event. Inside every leaf are millions of tiny green engines called chloroplasts. This is where the magic happens. The green pigment, chlorophyll, captures the sun's energy and uses it to perform an incredible feat of chemistry. It splits water molecules and combines them with carbon dioxide in a complex series of reactions. This is the heart of photosynthesis\u2014a silent, microscopic, yet immensely powerful process that converts non-living matter into the building blocks of life, all powered by a sunbeam. The result of this reaction is twofold. First, the plant creates glucose, an energy-rich sugar. This is its food, which it uses to grow, repair itself, and store for later. It is the foundation of the food web. But there's also a byproduct: oxygen. The plant releases this gas into the air, and in doing so, it provides the very breath of life for animals, humans, and countless other organisms. One process creates both food and air. From a single leaf to the entire globe, the impact of photosynthesis is monumental. These countless tiny factories, working in unison, produce all the food that sustains complex ecosystems and release the oxygen that shapes our atmosphere. They are the planet's lungs and its pantry. This process connects the energy of a distant star to the food on your plate and the air you breathe. Understanding photosynthesis is understanding the fundamental engine that drives life on Earth. It is a perfect, self-sustaining cycle of energy and life.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "scene_id": 1,
+            "text": "It all begins with the sun. Light energy travels 93 million miles to Earth, arriving as a free, powerful gift. This energy is the ultimate fuel for almost all life, and plants are the first to harness it. They are the bridge between the sun's power and the living world, turning pure energy into the substance of life itself. Without this first critical step, our planet would be a barren and lifeless rock. Every ray of sunshine is a potential meal.",
+            "duration_seconds": 25,
+            "word_count": 88
+          },
+          {
+            "segment_id": 2,
+            "scene_id": 2,
+            "text": "Plants act as nature's expert collectors, gathering the simple, raw materials needed for their factory. With their roots deep in the earth, they draw up water, molecule by molecule. At the same time, their leaves, covered in microscopic pores, breathe in carbon dioxide from the atmosphere. This efficient intake system ensures a constant supply of ingredients, preparing the plant for the magical transformation that happens deep within its cells. This is the gathering phase, setting the stage for the main event.",
+            "duration_seconds": 28,
+            "word_count": 95
+          },
+          {
+            "segment_id": 3,
+            "scene_id": 3,
+            "text": "Inside every leaf are millions of tiny green engines called chloroplasts. This is where the magic happens. The green pigment, chlorophyll, captures the sun's energy and uses it to perform an incredible feat of chemistry. It splits water molecules and combines them with carbon dioxide in a complex series of reactions. This is the heart of photosynthesis\u2014a silent, microscopic, yet immensely powerful process that converts non-living matter into the building blocks of life, all powered by a sunbeam.",
+            "duration_seconds": 29,
+            "word_count": 94
+          },
+          {
+            "segment_id": 4,
+            "scene_id": 4,
+            "text": "The result of this reaction is twofold. First, the plant creates glucose, an energy-rich sugar. This is its food, which it uses to grow, repair itself, and store for later. It is the foundation of the food web. But there's also a byproduct: oxygen. The plant releases this gas into the air, and in doing so, it provides the very breath of life for animals, humans, and countless other organisms. One process creates both food and air.",
+            "duration_seconds": 29,
+            "word_count": 93
+          },
+          {
+            "segment_id": 5,
+            "scene_id": 5,
+            "text": "From a single leaf to the entire globe, the impact of photosynthesis is monumental. These countless tiny factories, working in unison, produce all the food that sustains complex ecosystems and release the oxygen that shapes our atmosphere. They are the planet's lungs and its pantry. This process connects the energy of a distant star to the food on your plate and the air you breathe. Understanding photosynthesis is understanding the fundamental engine that drives life on Earth.",
+            "duration_seconds": 30,
+            "word_count": 95
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "8A",
+          "segment_id": 1,
+          "visual_beat_type": "cinematic_animation",
+          "description": "Cinematic shot of the sun in space, with rays of light traveling towards a vibrant Earth. The light hits a single leaf, making it glow."
+        },
+        {
+          "beat_id": "8B",
+          "segment_id": 2,
+          "visual_beat_type": "cinematic_animation",
+          "description": "Split screen. On one side, a beautiful animation of roots absorbing glowing water. On the other, a macro shot of a stoma opening to receive CO2 molecules."
+        },
+        {
+          "beat_id": "8C",
+          "segment_id": 3,
+          "visual_beat_type": "cinematic_animation",
+          "description": "An epic zoom sequence: from the leaf, into a cell, into a chloroplast. Inside, light energy strikes chlorophyll, triggering a beautiful, abstract representation of the chemical reaction."
+        },
+        {
+          "beat_id": "8D",
+          "segment_id": 4,
+          "visual_beat_type": "cinematic_animation",
+          "description": "Glucose molecules flow from the chloroplast to build a growing plant. Simultaneously, oxygen bubbles float out of the leaf and into the atmosphere, where animals are shown breathing."
+        },
+        {
+          "beat_id": "8E",
+          "segment_id": 5,
+          "visual_beat_type": "cinematic_animation",
+          "description": "Pull back from the plant to show a forest, then a continent, then the entire Earth, glowing green. Show a food web diagram materializing over the globe, with the sun and plants at its base."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "8A",
+          "prompt": "Scene opens on the bright yellow-white sun in the upper left corner against a black field of space. Yellow rays of light travel from the sun, moving from left to right across the screen. The camera pulls back to reveal the blue, green, and white planet Earth on the right side. The rays of light continue and make contact with Earth. The camera zooms rapidly toward a green landmass, then into a forest, stopping on a single, detailed green leaf. A single ray of light travels down from the top of the screen and strikes the center of the leaf. The leaf begins to glow with a golden-yellow light, which spreads outwards from the point of impact along its veins.",
+          "duration_seconds": 25,
+          "style": "animated"
+        },
+        {
+          "beat_id": "8B",
+          "prompt": "The screen is split by a vertical line. On the left, a cross-section of dark brown soil with light-brown plant roots. Small, glowing blue spheres are in the soil. The roots' tendrils move toward the spheres, which are then absorbed and travel up into the larger root structure as a glowing blue stream. On the right, a magnified view of a green leaf surface shows a closed, oval-shaped pore (stoma). Small, grey, three-sphere molecules float around it. The pore's two guard cells pull apart, creating an opening. The grey molecules drift into the opening one by one. Both animations occur simultaneously.",
+          "duration_seconds": 28,
+          "style": "animated"
+        },
+        {
+          "beat_id": "8C",
+          "prompt": "Full-screen view of a single green leaf. The camera zooms into the leaf's surface, revealing a grid of rectangular, translucent plant cells. Inside each cell are small, green, oval-shaped chloroplasts. The camera continues to zoom, entering one of the cells, and then pushes directly into one of the green chloroplasts. The view is now inside the chloroplast, showing stacks of green discs. A beam of yellow light enters from the top and hits a disc. A glowing blue sphere and a grey molecule are pulled to the point of impact. The sphere and molecule break apart into smaller colored spheres, which then swirl together in a vortex of light.",
+          "duration_seconds": 29,
+          "style": "animated"
+        },
+        {
+          "beat_id": "8D",
+          "prompt": "The scene starts inside the chloroplast. A golden, hexagonal molecule emerges from the vortex of light. The camera follows this molecule as it exits the chloroplast and travels through channels in the plant. The camera pulls back to show many golden molecules flowing through the plant's stem. On the right side of the screen, a small plant sprout grows taller and adds new leaves. Simultaneously, on the left, the view shows a microscopic leaf pore. Small, blue-white bubbles exit the pore and float up. The camera follows the bubbles as the background changes to a blue sky and a forest scene. A deer stands in the forest, and shimmering particles move from the air to its nose as it inhales.",
+          "duration_seconds": 29,
+          "style": "animated"
+        },
+        {
+          "beat_id": "8E",
+          "prompt": "The camera starts on a single plant, then pulls back to reveal a whole forest. The entire forest has a faint green glow. The camera continues to pull back, showing the forest is part of a continent on Earth. The green landmasses of the planet are glowing. The camera pulls back further into space to show the entire Earth rotating slowly, with its continents glowing green. A diagram appears over the globe. A yellow sun icon appears at the bottom. A glowing arrow connects it to a plant icon above it. More arrows branch from the plant icon to a rabbit icon, a fox icon, and a mushroom icon. The complete diagram remains over the glowing Earth.",
+          "duration_seconds": 30,
+          "style": "animated"
+        }
+      ]
+    }
+  ],
+  "pipeline_version": "1.2",
+  "job_id": "d27d7aee",
+  "use_remotion": true,
+  "source_file": "Sample_subjects.md"
+}

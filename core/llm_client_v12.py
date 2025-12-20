@@ -76,7 +76,7 @@ def load_prompt(name: str, version: str = "v1.3") -> str:
 
 
 def fix_json(text: str) -> str:
-    """Clean up LLM JSON output."""
+    """Clean up LLM JSON output with robust error handling."""
     text = text.strip()
     if text.startswith("```json"):
         text = text[7:]
@@ -88,6 +88,26 @@ def fix_json(text: str) -> str:
     
     text = re.sub(r',\s*}', '}', text)
     text = re.sub(r',\s*]', ']', text)
+    
+    text = re.sub(r"(?<!\\)'([^']*)'(?=\s*:)", r'"\1"', text)
+    
+    text = re.sub(r':\s*\'([^\']*)\'\s*([,}\]])', r': "\1"\2', text)
+    
+    lines = text.split('\n')
+    cleaned_lines = []
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith('//') or stripped.startswith('#'):
+            continue
+        cleaned_lines.append(line)
+    text = '\n'.join(cleaned_lines)
+    
+    if not text.strip().endswith('}') and not text.strip().endswith(']'):
+        brace_count = text.count('{') - text.count('}')
+        bracket_count = text.count('[') - text.count(']')
+        text = text.rstrip().rstrip(',')
+        text += ']' * bracket_count + '}' * brace_count
+        log(f"[JSON Fix] Auto-closed {brace_count} braces, {bracket_count} brackets")
     
     return text
 
@@ -109,7 +129,9 @@ def call_llm(
     system_prompt: str,
     user_prompt: str,
     phase: str,
-    tracker: Optional[AnalyticsTracker] = None
+    tracker: Optional[AnalyticsTracker] = None,
+    max_tokens: int = 16000,
+    temperature: float = 0.3
 ) -> Tuple[str, Dict]:
     """Make an LLM call with retry and analytics tracking."""
     
@@ -123,8 +145,8 @@ def call_llm(
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            temperature=0.3,
-            max_tokens=16000
+            temperature=temperature,
+            max_tokens=max_tokens
         )
         
         content = response.choices[0].message.content or ""
@@ -202,7 +224,9 @@ def pass1_director(
         system_prompt=system_prompt,
         user_prompt=user_prompt,
         phase="director",
-        tracker=tracker
+        tracker=tracker,
+        max_tokens=32000,
+        temperature=0.2
     )
     
     presentation = parse_json_response(response_text, "director")

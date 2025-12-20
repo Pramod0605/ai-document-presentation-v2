@@ -1,0 +1,50 @@
+{
+  "job_id": "078c202a",
+  "started_at": "2025-12-20T18:29:46.351364",
+  "completed_at": "2025-12-20T18:33:38.961532",
+  "duration_seconds": 232.61,
+  "status": "failed",
+  "generation_events": [
+    {
+      "timestamp": "2025-12-20T18:29:46.351386",
+      "elapsed_seconds": 0.0,
+      "event_type": "pipeline_start",
+      "details": {
+        "pipeline_version": "1.2",
+        "pipeline_type": "markdown",
+        "source_file": "Sample_subjects.md",
+        "subject": "Science",
+        "grade": "8",
+        "dry_run": true,
+        "skip_wan": false
+      }
+    }
+  ],
+  "render_prompts": [],
+  "renderer_decisions": [],
+  "validation_results": [
+    {
+      "timestamp": "2025-12-20T18:33:38.956440",
+      "validation_type": "schema_validation",
+      "section_id": null,
+      "passed": false,
+      "error_count": 10,
+      "warning_count": 0,
+      "errors": [
+        "sections -> 0 -> display_directives -> 1 -> text_layer -> animation: 'fade' is not one of ['fade_in', 'fade_out', 'cut']",
+        "sections -> 0 -> display_directives -> 2 -> visual_layer -> animation: 'fade_in' is not one of ['cut', 'fade', 'slide']",
+        "sections -> 1 -> display_directives -> 0 -> visual_layer -> animation: 'fade_in' is not one of ['cut', 'fade', 'slide']",
+        "sections -> 2 -> visual_beats -> 0 -> visual_beat_type: 'text_only' is not one of ['diagram', 'formula', 'process', 'example_step', 'motion_graphic']",
+        "sections -> 2 -> visual_beats -> 1 -> visual_beat_type: 'video_clip' is not one of ['diagram', 'formula', 'process', 'example_step', 'motion_graphic']",
+        "sections -> 2 -> visual_beats -> 2 -> visual_beat_type: 'video_clip' is not one of ['diagram', 'formula', 'process', 'example_step', 'motion_graphic']",
+        "sections -> 2 -> visual_beats -> 3 -> visual_beat_type: 'video_clip' is not one of ['diagram', 'formula', 'process', 'example_step', 'motion_graphic']",
+        "sections -> 2 -> visual_beats -> 4 -> visual_beat_type: 'video_clip' is not one of ['diagram', 'formula', 'process', 'example_step', 'motion_graphic']",
+        "sections -> 2 -> display_directives -> 1 -> visual_layer -> animation: 'fade_in' is not one of ['cut', 'fade', 'slide']",
+        "sections -> 3 -> visual_beats -> 0 -> visual_beat_type: 'text_only' is not one of ['diagram', 'formula', 'process', 'example_step', 'motion_graphic']"
+      ],
+      "warnings": []
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

@@ -124,10 +124,16 @@ def validate_hard_fail_conditions(section: dict) -> List[HardFailError]:
     section_id = section.get("section_id") or section.get("id", 0)
     section_type = section.get("section_type", "unknown")
     renderer = section.get("renderer", "")
-    narration = section.get("narration", "")
+    narration_raw = section.get("narration", "")
+    if isinstance(narration_raw, dict):
+        narration = narration_raw.get("full_text", "")
+    else:
+        narration = narration_raw or ""
     word_count = count_words(narration)
     visual_beats = section.get("visual_beats", [])
     narration_segments = section.get("narration_segments", [])
+    if not narration_segments and isinstance(narration_raw, dict):
+        narration_segments = narration_raw.get("segments", [])
     
     embedded_visual_beats = [
         seg.get("visual_beat") for seg in narration_segments 
