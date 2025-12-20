@@ -501,51 +501,59 @@
     {
       "id": "ISS-041",
       "title": "Manim animation starts with 8-second blank screen",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-20",
+      "resolved": "2025-12-20",
       "priority": "high",
       "description": "LLM generates 'wait' action of 8 seconds at the start of animation_sequence. This causes blank screen before content appears. Equations should appear earlier to match narration start.",
       "source": "User feedback on job 4f3411e9 topic_content_01.mp4",
-      "fix_required": "Update Manim renderer prompt to prohibit long initial wait actions and start animation immediately with first visual element."
+      "fix_required": "Update Manim renderer prompt to prohibit long initial wait actions and start animation immediately with first visual element.",
+      "solution": "Updated manim_renderer_system_v1.2.txt and manim_renderer_user_v1.2.txt with TIMING RULES section requiring first action be visual element. Re-rendered job 4f3411e9 - all 3 sections now start with show_equation (duration 1-2s)."
     },
     {
       "id": "ISS-042",
       "title": "Manim animation has idle period at end with no visual activity",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-20",
+      "resolved": "2025-12-20",
       "priority": "medium",
       "description": "Animation ends with static visuals while narration continues. The 4-6 seconds at the end have no visual motion to accompany the closing recap narration.",
       "source": "Architect review of job 4f3411e9",
-      "fix_required": "Update Manim renderer prompt to include closing animation (e.g., fade out, summary highlight, or recap motion) during final seconds."
+      "fix_required": "Update Manim renderer prompt to include closing animation (e.g., fade out, summary highlight, or recap motion) during final seconds.",
+      "solution": "Added CLOSING ANIMATION REQUIRED rule to prompts. Re-rendered sections now end with highlight actions on key elements (main_equation, quadratic_formula, final_box)."
     },
     {
       "id": "ISS-043",
       "title": "Manim layout overcrowding - equations and labels overlap",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-20",
+      "resolved": "2025-12-20",
       "priority": "high",
       "description": "In topic_example_01.mp4 (screenshot 3), multiple equations and steps are rendered too close together, making the screen cluttered and hard to read. Text overlaps and spacing is insufficient.",
       "source": "User feedback with screenshot attached_assets/image_1766235808549.png",
       "good_example": "topic_content_01.mp4 (screenshot 2) shows clean layout with clear spacing between equation, labels, and arrows",
-      "fix_required": "Update Manim renderer prompt with layout/spacing guidelines: minimum 1.0 unit vertical spacing between elements, use VGroup for organizing related elements, avoid placing more than 3-4 equation lines on screen simultaneously."
+      "fix_required": "Update Manim renderer prompt with layout/spacing guidelines: minimum 1.0 unit vertical spacing between elements, use VGroup for organizing related elements, avoid placing more than 3-4 equation lines on screen simultaneously.",
+      "solution": "Added LAYOUT RULES section with vertical spacing requirements (1.5 units), screen regions, and max 4 elements visible. example_01 now uses y-positions: 2.5, 1.5, 0, -1.5, -2.5 with proper 1.0-1.5 unit gaps."
     },
     {
       "id": "ISS-044",
       "title": "Manim content_02 Discriminant label overlaps formula",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-20",
+      "resolved": "2025-12-20",
       "priority": "medium",
       "description": "In topic_content_02.mp4 (screenshot 1), the 'Discriminant' label is positioned inside the square root sign area, overlapping with the formula. Label should be positioned above or beside the formula with an arrow.",
       "source": "User feedback with screenshot attached_assets/image_1766235678827.png",
-      "fix_required": "Update Manim renderer prompt to specify label positioning rules: labels should not overlap with formulas, use arrows to point from labels to formula parts."
+      "fix_required": "Update Manim renderer prompt to specify label positioning rules: labels should not overlap with formulas, use arrows to point from labels to formula parts.",
+      "solution": "Added LABEL POSITIONING rules requiring 0.8+ unit separation. Re-rendered content_02 has discriminant_label at y=1 (above formula elements at y=0.5 and below)."
     }
   ],
   "metadata": {
     "last_updated": "2025-12-20",
-    "version": "10.8",
+    "version": "10.9",
     "spec_version": "v1.2",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 40,
-    "open_count": 4
+    "resolved_count": 44,
+    "open_count": 0
   }
 }
