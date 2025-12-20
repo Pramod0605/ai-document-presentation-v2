@@ -438,14 +438,43 @@
       "resolved": "2025-12-20",
       "description": "LLM generates graph objects that reference 'axes' variable but doesn't include an axes object in the spec. This causes NameError: name 'axes' is not defined.",
       "fix": "Added auto-axes creation in translate_spec_to_manim_code(): Pre-scans objects for graph/area_under_graph types, checks if referenced axes are declared, and auto-creates missing axes with default x_range=[-5,5,1], y_range=[-3,3,1]. Logs warning when fallback axes are generated."
+    },
+    {
+      "id": "ISS-035",
+      "title": "Legacy endpoints use shared ASSETS_DIR instead of job folders",
+      "status": "resolved",
+      "created": "2025-12-20",
+      "resolved": "2025-12-20",
+      "description": "/process_pdf and /process_markdown endpoints bypass job isolation by writing directly to player/assets/ instead of creating job-specific folders. This causes assets to overwrite each other between jobs.",
+      "affected_endpoints": ["/process_pdf", "/process_markdown"],
+      "fix": "Updated both endpoints to create job folders using job_manager.create_job() and setup_job_folder(), matching the /submit endpoint pattern."
+    },
+    {
+      "id": "ISS-036",
+      "title": "Player.js AVATAR_URL hardcoded to shared assets path",
+      "status": "resolved",
+      "created": "2025-12-20",
+      "resolved": "2025-12-20",
+      "description": "AVATAR_URL constant in player.js is hardcoded to /player/assets/avatar_placeholder.mp4 instead of using job-relative path.",
+      "fix": "Changed AVATAR_URL to use BASE_PATH + 'avatar_placeholder.mp4' for job-relative resolution."
+    },
+    {
+      "id": "ISS-037",
+      "title": "File-based job storage not scalable for production",
+      "status": "open",
+      "created": "2025-12-20",
+      "priority": "medium",
+      "description": "Current architecture uses single in-process JobManager with file-based storage. Cannot handle 50,000+ concurrent jobs due to: serialized execution, no cleanup mechanism, inode exhaustion risk, slow I/O under load.",
+      "phase": "Phase 2 - Scalability",
+      "recommended_solution": "Externalize job metadata to PostgreSQL, use Redis/SQS job queue with worker processes, move media to S3 + CDN, make API stateless."
     }
   ],
   "metadata": {
     "last_updated": "2025-12-20",
-    "version": "10.6",
+    "version": "10.7",
     "spec_version": "v1.2",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 37,
-    "open_count": 0
+    "resolved_count": 39,
+    "open_count": 1
   }
 }

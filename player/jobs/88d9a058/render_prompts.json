@@ -1,0 +1,49 @@
+[
+  {
+    "timestamp": "2025-12-20T10:29:35.964816",
+    "section_id": 1,
+    "section_title": "Untitled",
+    "renderer": "manim_v12",
+    "prompt": "f_letter = MathTex(r\"F\").move_to(np.array([-2, 0, 0]))\nm_letter = MathTex(r\"m\").move_to(np.array([0, 0, 0]))\na_letter = MathTex(r\"a\").move_to(np.array([2, 0, 0]))\nfull_equation = MathTex(r\"F = ma\").move_to(np.array([0, 2, 0]))\nbox = Dot(point=np.array([-2, -1, 0]), color=BLUE)\nforce_arrow = Arrow(start=np.array([-3, -1, 0]), end=np.array([-1, -1, 0]), color=RED, buff=0)\nforce_label = Text(\"F\", font_size=28).move_to(np.array([-3, -0.5, 0]))\nnewton_unit = Text(\"Unit: Newtons (N)\", font_size=28).move_to(np.array([-3, -2, 0]))\nbowling_ball = Dot(point=np.array([-2, -1, 0]), color=GRAY)\ntennis_ball = Dot(point=np.array([2, -1, 0]), color=YELLOW)\nacceleration_dot = Dot(point=np.array([-3, 0, 0]), color=WHITE)\nvelocity_vector = Arrow(start=np.array([-3, 0.5, 0]), end=np.array([-1, 0.5, 0]), color=GREEN, buff=0)\n\n# Animation sequence\nself.play(FadeIn(f_letter), run_time=1)\nself.play(FadeIn(m_letter), run_time=1)\nself.play(FadeIn(a_letter), run_time=1)\nself.play(Indicate(full_equation), run_time=2)\nself.play(Indicate(f_letter), run_time=2)\nself.play(FadeIn(box), run_time=1)\nself.play(FadeIn(force_arrow), run_time=1)\nself.play(FadeIn(force_label), run_time=1)\nself.play(box.animate.move_to(np.array([0, 0, 0])), run_time=3)\nself.play(FadeIn(newton_unit), run_time=4)\nself.play(Indicate(m_letter), run_time=2)\nself.play(FadeIn(bowling_ball), run_time=2)\nself.play(FadeIn(tennis_ball), run_time=2)\nself.play(tennis_ball.animate.move_to(np.array([0, 0, 0])), run_time=2)\nself.play(bowling_ball.animate.move_to(np.array([0, 0, 0])), run_time=4)\nself.play(Indicate(a_letter), run_time=2)\nself.play(FadeIn(acceleration_dot), run_time=1)\nself.play(FadeIn(velocity_vector), run_time=1)\nself.play(Indicate(full_equation), run_time=3)\nself.wait(7)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/88d9a058/videos/topic_1.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v12_spec_generated",
+      "object_count": 12,
+      "animation_count": 22,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-20T10:29:46.838278",
+    "section_id": 1,
+    "section_title": "Untitled",
+    "renderer": "manim_v12",
+    "prompt": "floor = Dot(point=np.array([0, -2, 0]), color=GRAY)\nbox = Dot(point=np.array([-1, -1.5, 0]), color=BLUE)\nforce_arrow = Arrow(start=np.array([-1.5, -1.5, 0]), end=np.array([0.5, -1.5, 0]), color=RED, buff=0)\nmass_label = MathTex(r\"m = 2\\text{ kg}\").scale(1.0).move_to(np.array([-1, -1.5, 0]))\nforce_label = MathTex(r\"F = 10\\text{ N}\").scale(1.0).move_to(np.array([-1.5, -1, 0]))\nknowns_title = MathTex(r\"\\text{Knowns:}\").scale(1.0).move_to(np.array([-3, 2, 0]))\nknowns_list = MathTex(r\"F = 10\\text{ N}\\\\m = 2\\text{ kg}\").scale(1.0).move_to(np.array([-3, 1, 0]))\nunknown_title = MathTex(r\"\\text{Unknown:}\").scale(1.0).move_to(np.array([3, 2, 0]))\nunknown_list = MathTex(r\"a = ?\").scale(1.0).move_to(np.array([3, 1, 0]))\ninitial_equation = MathTex(r\"F = ma\").move_to(np.array([0, 0, 0]))\nrearranged_equation = MathTex(r\"a = \\frac{F}{m}\").move_to(np.array([0, 0, 0]))\nsubstituted_equation = MathTex(r\"a = \\frac{10}{2}\").move_to(np.array([0, 0, 0]))\nfinal_equation = MathTex(r\"a = 5\\text{ m/s}^2\").move_to(np.array([0, 0, 0]))\n\n# Animation sequence\nself.play(Create(floor), run_time=0.5)\nself.play(FadeIn(box), run_time=0.5)\nself.play(FadeIn(force_arrow), run_time=0.5)\nself.play(FadeIn(mass_label), run_time=0.5)\nself.play(FadeIn(force_label), run_time=0.5)\nself.wait(5.5)\nself.play(FadeOut(floor), run_time=0.5)\nself.play(FadeOut(box), run_time=0.5)\nself.play(FadeOut(force_arrow), run_time=0.5)\nself.play(FadeOut(mass_label), run_time=0.5)\nself.play(FadeOut(force_label), run_time=0.5)\nself.play(FadeIn(knowns_title), run_time=0.5)\nself.play(FadeIn(knowns_list), run_time=0.5)\nself.wait(8)\nself.play(FadeIn(unknown_title), run_time=0.5)\nself.play(FadeIn(unknown_list), run_time=0.5)\nself.wait(3)\nself.play(Write(initial_equation), run_time=1)\nself.wait(7)\nself.wait(2)\nself.wait(4)\nself.wait(5)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/88d9a058/videos/topic_1.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v12_spec_generated",
+      "object_count": 13,
+      "animation_count": 25,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-20T10:30:01.774710",
+    "section_id": 1,
+    "section_title": "Untitled",
+    "renderer": "wan",
+    "prompt": "[Beat 1]: On a solid, medium-blue background, the text 'Lesson Recap' appears in the center of the screen in a bold, white, sans-serif font. Directly below it, a white checkmark icon inside a white circle appears. Both elements scale up into place and then remain static.\n\n[Beat 2]: The 'Lesson Recap' title and checkmark icon slide off the top of the screen. From the left edge, a light-gray, rounded-corner card slides in, stopping in the left third of the screen. On this card, a dark gray icon of a hand pushing a box appears at the top. Below the icon, text appears line-by-line: first, 'Force (F)' in bold, dark gray; then, 'A push or pull.' in regular, dark gray; and finally, 'Unit: Newtons (N)' in regular, dark gray.\n\n[Beat 3]: The 'Force' card remains on the left side of the screen. A second, identical light-gray card slides up from the bottom of the screen, stopping in the center, next to the 'Force' card. On this new card, a dark gray icon of a balance scale appears at the top. Below the icon, text appears line-by-line: 'Mass (m)' in bold, dark gray; then, 'Amount of matter.' in regular, dark gray; and finally, 'Unit: Kilograms (kg)' in regular, dark gray.\n\n[Beat 4]: The 'Force' and 'Mass' cards remain on the left and center of the screen. A third, identical light-gray card slides in from the right edge, stopping in the right third of the screen. On this new card, a dark gray icon of a speedometer appears at the top. Below the icon, text appears line-by-line: 'Acceleration (a)' in bold, dark gray; then, 'Change in velocity.' in regular, dark gray; and finally, 'Unit: m/s\u00b2' in regular, dark gray. The three cards are now aligned horizontally across the screen.\n\n[Beat 5]: The three cards simultaneously shrink and move to the top of the screen, aligning horizontally in the top quarter. From the small 'Force' card, a large, white, bold letter 'F' flies down and to the center-left. An equals sign '=' appears next to it. From the small 'Mass' card, a large, white, bold letter 'm' flies down to the right of the equals sign. From the small 'Acceleration' card, a large, white, bold letter 'a' flies down to the right of the 'm', completing the equation 'F = ma' in the center of the screen.\n\n[Beat 6]: The screen holds a static shot. At the top, the three small summary cards for Force, Mass, and Acceleration are aligned horizontally. In the center of the screen, the equation 'F = ma' is displayed in a large, bold, white font. The equation emits a soft, pulsing white glow for the entire duration.",
+    "output_path": "/home/runner/workspace/player/jobs/88d9a058/videos/topic_1.mp4",
+    "extra": {
+      "section_type": "recap",
+      "duration": 30,
+      "dry_run": false,
+      "skip_wan": false,
+      "source": "section_level"
+    }
+  }
+]

@@ -259,6 +259,7 @@ def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade
 
 @app.route("/process_pdf", methods=["POST"])
 def process_pdf():
+    """Legacy endpoint - now creates job folders for proper isolation."""
     try:
         subject = request.form.get("subject", "General Science")
         grade = request.form.get("grade", "9")
@@ -272,13 +273,23 @@ def process_pdf():
                 pdf_file.save(tmp.name)
                 tmp_path = tmp.name
             
+            job_id = job_manager.create_job("pdf_legacy", {
+                "subject": subject,
+                "grade": grade,
+                "source_file": pdf_file.filename
+            })
+            job_output_dir = JOBS_DIR / job_id
+            setup_job_folder(job_output_dir)
+            
             try:
                 result = process_pdf_to_videos(
                     pdf_path=tmp_path,
                     subject=subject,
                     grade=grade,
-                    output_dir=str(ASSETS_DIR)
+                    output_dir=str(job_output_dir),
+                    job_id=job_id
                 )
+                result["job_id"] = job_id
             finally:
                 os.unlink(tmp_path)
         
@@ -287,12 +298,21 @@ def process_pdf():
             subject = request.json.get("subject", subject)
             grade = request.json.get("grade", grade)
             
+            job_id = job_manager.create_job("markdown_legacy", {
+                "subject": subject,
+                "grade": grade
+            })
+            job_output_dir = JOBS_DIR / job_id
+            setup_job_folder(job_output_dir)
+            
             result = process_markdown_to_videos(
                 markdown_content=markdown_content,
                 subject=subject,
                 grade=grade,
-                output_dir=str(ASSETS_DIR)
+                output_dir=str(job_output_dir),
+                job_id=job_id
             )
+            result["job_id"] = job_id
         
         else:
             return jsonify({
@@ -309,6 +329,7 @@ def process_pdf():
 
 @app.route("/process_markdown", methods=["POST"])
 def process_markdown():
+    """Legacy endpoint - now creates job folders for proper isolation."""
     try:
         if not request.is_json:
             return jsonify({"error": "Request must be JSON"}), 400
@@ -321,12 +342,21 @@ def process_markdown():
         if not markdown_content:
             return jsonify({"error": "Markdown content is required"}), 400
         
+        job_id = job_manager.create_job("markdown_legacy", {
+            "subject": subject,
+            "grade": grade
+        })
+        job_output_dir = JOBS_DIR / job_id
+        setup_job_folder(job_output_dir)
+        
         result = process_markdown_to_videos(
             markdown_content=markdown_content,
             subject=subject,
             grade=grade,
-            output_dir=str(ASSETS_DIR)
+            output_dir=str(job_output_dir),
+            job_id=job_id
         )
+        result["job_id"] = job_id
         
         return jsonify(result)
     
