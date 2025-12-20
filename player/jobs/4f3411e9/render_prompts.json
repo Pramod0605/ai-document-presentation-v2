@@ -1,107 +1,50 @@
-{
-  "job_id": "4f3411e9",
-  "generated_at": "2025-12-20T11:48:56.630971",
-  "total_prompts": 10,
-  "prompts": [
-    {
-      "timestamp": "2025-12-20T11:48:56.590426",
-      "section_id": "content_01",
-      "beat_index": 0,
-      "renderer": "manim",
-      "prompt_type": "manim_scene_spec",
-      "prompt_preview": "{\n  \"objects\": [\n    {\n      \"id\": \"main_equation\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        0\n      ],\n      \"properties\": {\n        \"latex\": \"ax^2 + bx + c = 0\",\n        \"scale\": 1.2\n      }\n    },\n    {\n      \"id\": \"a_label\",\n      \"type\": \"label\",\n      \"position\": [\n        -3,\n        -1\n      ],\n      \"properties\": {\n        \"latex\": \"\\\\text{coefficient of }x^2\",\n        \"scale\": 0.8\n      }\n    },\n    {\n      \"id\": \"b_label\",\n      \"type\": \"label\",\n      \"position",
-      "prompt_length": 3794,
-      "full_prompt": "{\n  \"objects\": [\n    {\n      \"id\": \"main_equation\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        0\n      ],\n      \"properties\": {\n        \"latex\": \"ax^2 + bx + c = 0\",\n        \"scale\": 1.2\n      }\n    },\n    {\n      \"id\": \"a_label\",\n      \"type\": \"label\",\n      \"position\": [\n        -3,\n        -1\n      ],\n      \"properties\": {\n        \"latex\": \"\\\\text{coefficient of }x^2\",\n        \"scale\": 0.8\n      }\n    },\n    {\n      \"id\": \"b_label\",\n      \"type\": \"label\",\n      \"position\": [\n        0,\n        -1\n      ],\n      \"properties\": {\n        \"latex\": \"\\\\text{coefficient of }x\",\n        \"scale\": 0.8\n      }\n    },\n    {\n      \"id\": \"c_label\",\n      \"type\": \"label\",\n      \"position\": [\n        3,\n        -1\n      ],\n      \"properties\": {\n        \"latex\": \"\\\\text{constant term}\",\n        \"scale\": 0.8\n      }\n    },\n    {\n      \"id\": \"a_arrow\",\n      \"type\": \"vector\",\n      \"position\": [\n        -3,\n        -0.5\n      ],\n      \"properties\": {\n        \"start\": [\n          -3,\n          -0.8\n        ],\n        \"end\": [\n          -2.5,\n          -0.2\n        ]\n      }\n    },\n    {\n      \"id\": \"b_arrow\",\n      \"type\": \"vector\",\n      \"position\": [\n        0,\n        -0.5\n      ],\n      \"properties\": {\n        \"start\": [\n          0,\n          -0.8\n        ],\n        \"end\": [\n          0,\n          -0.2\n        ]\n      }\n    },\n    {\n      \"id\": \"c_arrow\",\n      \"type\": \"vector\",\n      \"position\": [\n        3,\n        -0.5\n      ],\n      \"properties\": {\n        \"start\": [\n          3,\n          -0.8\n        ],\n        \"end\": [\n          2.5,\n          -0.2\n        ]\n      }\n    },\n    {\n      \"id\": \"a_not_zero\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        1.5\n      ],\n      \"properties\": {\n        \"latex\": \"a \\\\neq 0\",\n        \"scale\": 1\n      }\n    }\n  ],\n  \"animation_sequence\": [\n    {\n      \"action\": \"wait\",\n      \"duration\": 8\n    },\n    {\n      \"action\": \"show_equation\",\n      \"target\": \"main_equation\",\n      \"duration\": 2\n    },\n    {\n      \"action\": \"wait\",\n      \"duration\": 7\n    },\n    {\n      \"action\": \"highlight\",\n      \"target\": \"main_equation\",\n      \"target_latex_part\": \"= 0\",\n      \"duration\": 2,\n      \"color\": \"YELLOW\"\n    },\n    {\n      \"action\": \"wait\",\n      \"duration\": 4\n    },\n    {\n      \"action\": \"highlight\",\n      \"target\": \"main_equation\",\n      \"target_latex_part\": \"a\",\n      \"duration\": 1,\n      \"color\": \"RED\"\n    },\n    {\n      \"action\": \"appear\",\n      \"target\": \"a_arrow\",\n      \"duration\": 1\n    },\n    {\n      \"action\": \"appear\",\n      \"target\": \"a_label\",\n      \"duration\": 1\n    },\n    {\n      \"action\": \"highlight\",\n      \"target\": \"main_equation\",\n      \"target_latex_part\": \"b\",\n      \"duration\": 1,\n      \"color\": \"BLUE\"\n    },\n    {\n      \"action\": \"appear\",\n      \"target\": \"b_arrow\",\n      \"duration\": 1\n    },\n    {\n      \"action\": \"appear\",\n      \"target\": \"b_label\",\n      \"duration\": 1\n    },\n    {\n      \"action\": \"highlight\",\n      \"target\": \"main_equation\",\n      \"target_latex_part\": \"c\",\n      \"duration\": 1,\n      \"color\": \"GREEN\"\n    },\n    {\n      \"action\": \"appear\",\n      \"target\": \"c_arrow\",\n      \"duration\": 1\n    },\n    {\n      \"action\": \"appear\",\n      \"target\": \"c_label\",\n      \"duration\": 1\n    },\n    {\n      \"action\": \"wait\",\n      \"duration\": 3\n    },\n    {\n      \"action\": \"appear\",\n      \"target\": \"a_not_zero\",\n      \"duration\": 1\n    },\n    {\n      \"action\": \"highlight\",\n      \"target\": \"main_equation\",\n      \"target_latex_part\": \"ax^2\",\n      \"duration\": 2,\n      \"color\": \"YELLOW\"\n    },\n    {\n      \"action\": \"wait\",\n      \"duration\": 4\n    },\n    {\n      \"action\": \"move\",\n      \"target\": \"main_equation\",\n      \"duration\": 2,\n      \"position\": [\n        0,\n        0.5\n      ]\n    },\n    {\n      \"action\": \"wait\",\n      \"duration\": 3\n    }\n  ]\n}"
-    },
-    {
-      "timestamp": "2025-12-20T11:48:56.594053",
-      "section_id": "content_02",
-      "beat_index": 0,
-      "renderer": "manim",
-      "prompt_type": "manim_scene_spec",
-      "prompt_preview": "{\n  \"objects\": [\n    {\n      \"id\": \"x_equals\",\n      \"type\": \"equation\",\n      \"position\": [\n        -3,\n        0\n      ],\n      \"properties\": {\n        \"latex\": \"x =\"\n      }\n    },\n    {\n      \"id\": \"fraction_bar\",\n      \"type\": \"shape\",\n      \"position\": [\n        0,\n        0\n      ],\n      \"properties\": {\n        \"type\": \"line\",\n        \"width\": 4\n      }\n    },\n    {\n      \"id\": \"numerator\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        0.5\n      ],\n      \"properties\": ",
-      "prompt_length": 2316,
-      "full_prompt": "{\n  \"objects\": [\n    {\n      \"id\": \"x_equals\",\n      \"type\": \"equation\",\n      \"position\": [\n        -3,\n        0\n      ],\n      \"properties\": {\n        \"latex\": \"x =\"\n      }\n    },\n    {\n      \"id\": \"fraction_bar\",\n      \"type\": \"shape\",\n      \"position\": [\n        0,\n        0\n      ],\n      \"properties\": {\n        \"type\": \"line\",\n        \"width\": 4\n      }\n    },\n    {\n      \"id\": \"numerator\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        0.5\n      ],\n      \"properties\": {\n        \"latex\": \"-b \\\\pm \\\\sqrt{b^2 - 4ac}\"\n      }\n    },\n    {\n      \"id\": \"denominator\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        -0.5\n      ],\n      \"properties\": {\n        \"latex\": \"2a\"\n      }\n    },\n    {\n      \"id\": \"discriminant_box\",\n      \"type\": \"shape\",\n      \"position\": [\n        0.5,\n        0.5\n      ],\n      \"properties\": {\n        \"type\": \"rectangle\",\n        \"width\": 2,\n        \"height\": 1,\n        \"color\": \"BLUE\"\n      }\n    },\n    {\n      \"id\": \"discriminant_label\",\n      \"type\": \"label\",\n      \"position\": [\n        2,\n        1\n      ],\n      \"properties\": {\n        \"text\": \"Discriminant\",\n        \"color\": \"BLUE\"\n      }\n    }\n  ],\n  \"animation_sequence\": [\n    {\n      \"action\": \"wait\",\n      \"duration\": 7\n    },\n    {\n      \"action\": \"show_equation\",\n      \"target\": \"x_equals\",\n      \"duration\": 1\n    },\n    {\n      \"action\": \"draw\",\n      \"target\": \"fraction_bar\",\n      \"duration\": 2\n    },\n    {\n      \"action\": \"show_equation\",\n      \"target\": \"numerator\",\n      \"duration\": 3\n    },\n    {\n      \"action\": \"show_equation\",\n      \"target\": \"denominator\",\n      \"duration\": 3\n    },\n    {\n      \"action\": \"highlight\",\n      \"target\": \"numerator\",\n      \"target_latex_part\": \"-b\",\n      \"duration\": 6,\n      \"color\": \"YELLOW\"\n    },\n    {\n      \"action\": \"highlight\",\n      \"target\": \"numerator\",\n      \"target_latex_part\": \"\\\\pm\",\n      \"duration\": 7,\n      \"color\": \"YELLOW\"\n    },\n    {\n      \"action\": \"draw\",\n      \"target\": \"discriminant_box\",\n      \"duration\": 3\n    },\n    {\n      \"action\": \"appear\",\n      \"target\": \"discriminant_label\",\n      \"duration\": 4\n    },\n    {\n      \"action\": \"highlight\",\n      \"target\": \"denominator\",\n      \"duration\": 6,\n      \"color\": \"YELLOW\"\n    },\n    {\n      \"action\": \"wait\",\n      \"duration\": 6\n    }\n  ]\n}"
-    },
-    {
-      "timestamp": "2025-12-20T11:48:56.600012",
-      "section_id": "example_01",
-      "beat_index": 0,
-      "renderer": "manim",
-      "prompt_type": "manim_scene_spec",
-      "prompt_preview": "{\n  \"objects\": [\n    {\n      \"id\": \"original_equation\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        2\n      ],\n      \"properties\": {\n        \"latex\": \"x^2 + 5x + 6 = 0\"\n      }\n    },\n    {\n      \"id\": \"coef_a\",\n      \"type\": \"equation\",\n      \"position\": [\n        -3,\n        1\n      ],\n      \"properties\": {\n        \"latex\": \"a = 1\"\n      }\n    },\n    {\n      \"id\": \"coef_b\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        1\n      ],\n      \"properties\": {\n  ",
-      "prompt_length": 3329,
-      "full_prompt": "{\n  \"objects\": [\n    {\n      \"id\": \"original_equation\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        2\n      ],\n      \"properties\": {\n        \"latex\": \"x^2 + 5x + 6 = 0\"\n      }\n    },\n    {\n      \"id\": \"coef_a\",\n      \"type\": \"equation\",\n      \"position\": [\n        -3,\n        1\n      ],\n      \"properties\": {\n        \"latex\": \"a = 1\"\n      }\n    },\n    {\n      \"id\": \"coef_b\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        1\n      ],\n      \"properties\": {\n        \"latex\": \"b = 5\"\n      }\n    },\n    {\n      \"id\": \"coef_c\",\n      \"type\": \"equation\",\n      \"position\": [\n        3,\n        1\n      ],\n      \"properties\": {\n        \"latex\": \"c = 6\"\n      }\n    },\n    {\n      \"id\": \"quadratic_formula\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        0\n      ],\n      \"properties\": {\n        \"latex\": \"x = \\\\frac{-5 \\\\pm \\\\sqrt{5^2 - 4(1)(6)}}{2(1)}\"\n      }\n    },\n    {\n      \"id\": \"simplified_sqrt\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        0\n      ],\n      \"properties\": {\n        \"latex\": \"x = \\\\frac{-5 \\\\pm \\\\sqrt{25 - 24}}{2}\"\n      }\n    },\n    {\n      \"id\": \"final_form\",\n      \"type\": \"equation\",\n      \"position\": [\n        0,\n        0\n      ],\n      \"properties\": {\n        \"latex\": \"x = \\\\frac{-5 \\\\pm 1}{2}\"\n      }\n    },\n    {\n      \"id\": \"plus_path\",\n      \"type\": \"equation\",\n      \"position\": [\n        -3,\n        -1\n      ],\n      \"properties\": {\n        \"latex\": \"x = \\\\frac{-5 + 1}{2} = \\\\frac{-4}{2} = -2\"\n      }\n    },\n    {\n      \"id\": \"minus_path\",\n      \"type\": \"equation\",\n      \"position\": [\n        3,\n        -1\n      ],\n      \"properties\": {\n        \"latex\": \"x = \\\\frac{-5 - 1}{2} = \\\\frac{-6}{2} = -3\"\n      }\n    },\n    {\n      \"id\": \"final_answer_box_1\",\n      \"type\": \"shape\",\n      \"position\": [\n        -3,\n        -2\n      ],\n      \"properties\": {\n        \"shape\": \"rectangle\",\n        \"content\": \"x = -2\"\n      }\n    },\n    {\n      \"id\": \"final_answer_box_2\",\n      \"type\": \"shape\",\n      \"position\": [\n        3,\n        -2\n      ],\n      \"properties\": {\n        \"shape\": \"rectangle\",\n        \"content\": \"x = -3\"\n      }\n    }\n  ],\n  \"animation_sequence\": [\n    {\n      \"action\": \"show_equation\",\n      \"target\": \"original_equation\",\n      \"duration\": 1\n    },\n    {\n      \"action\": \"show_equation\",\n      \"target\": \"coef_a\",\n      \"duration\": 2\n    },\n    {\n      \"action\": \"show_equation\",\n      \"target\": \"coef_b\",\n      \"duration\": 2\n    },\n    {\n      \"action\": \"show_equation\",\n      \"target\": \"coef_c\",\n      \"duration\": 2\n    },\n    {\n      \"action\": \"show_equation\",\n      \"target\": \"quadratic_formula\",\n      \"duration\": 3\n    },\n    {\n      \"action\": \"transform\",\n      \"target\": \"quadratic_formula\",\n      \"duration\": 2,\n      \"transform_to\": \"simplified_sqrt\"\n    },\n    {\n      \"action\": \"transform\",\n      \"target\": \"simplified_sqrt\",\n      \"duration\": 2,\n      \"transform_to\": \"final_form\"\n    },\n    {\n      \"action\": \"show_equation\",\n      \"target\": \"plus_path\",\n      \"duration\": 3\n    },\n    {\n      \"action\": \"show_equation\",\n      \"target\": \"minus_path\",\n      \"duration\": 3\n    },\n    {\n      \"action\": \"appear\",\n      \"target\": \"final_answer_box_1\",\n      \"duration\": 1\n    },\n    {\n      \"action\": \"appear\",\n      \"target\": \"final_answer_box_2\",\n      \"duration\": 1\n    }\n  ]\n}"
-    },
-    {
-      "timestamp": "2025-12-20T11:48:56.605220",
-      "section_id": "recap_01",
-      "beat_index": 0,
-      "renderer": "video",
-      "prompt_type": "wan_video_prompt",
-      "prompt_preview": "On a light gray background, the word 'Recap' in a large, bold, dark gray font appears in the center of the screen. To its left, a simple icon of an open notebook with horizontal lines appears. Both elements fade in together and hold static.",
-      "prompt_length": 240,
-      "full_prompt": "On a light gray background, the word 'Recap' in a large, bold, dark gray font appears in the center of the screen. To its left, a simple icon of an open notebook with horizontal lines appears. Both elements fade in together and hold static."
-    },
-    {
-      "timestamp": "2025-12-20T11:48:56.606537",
-      "section_id": "recap_01",
-      "beat_index": 1,
-      "renderer": "video",
-      "prompt_type": "wan_video_prompt",
-      "prompt_preview": "The 'Recap' title and notebook icon fade out. The equation 'ax\u00b2 + bx + c = 0' types onto the upper half of the screen in a dark gray font. After the equation is complete, the text 'Step 1: Identify a, b, c' appears below it, preceded by an empty checkbox icon. The equation and the text then hold static.",
-      "prompt_length": 304,
-      "full_prompt": "The 'Recap' title and notebook icon fade out. The equation 'ax\u00b2 + bx + c = 0' types onto the upper half of the screen in a dark gray font. After the equation is complete, the text 'Step 1: Identify a, b, c' appears below it, preceded by an empty checkbox icon. The equation and the text then hold static."
-    },
-    {
-      "timestamp": "2025-12-20T11:48:56.608265",
-      "section_id": "recap_01",
-      "beat_index": 2,
-      "renderer": "video",
-      "prompt_type": "wan_video_prompt",
-      "prompt_preview": "The equation and the 'Step 1' text fade out. The quadratic formula, 'x equals negative b, plus or minus the square root of b squared minus 4ac, all over 2a', animates into the center of the screen as a single, fully formed block. The formula scales up from 80% to 100% size as it fades in. It then holds static in the center.",
-      "prompt_length": 325,
-      "full_prompt": "The equation and the 'Step 1' text fade out. The quadratic formula, 'x equals negative b, plus or minus the square root of b squared minus 4ac, all over 2a', animates into the center of the screen as a single, fully formed block. The formula scales up from 80% to 100% size as it fades in. It then holds static in the center."
-    },
-    {
-      "timestamp": "2025-12-20T11:48:56.609649",
-      "section_id": "recap_01",
-      "beat_index": 3,
-      "renderer": "video",
-      "prompt_type": "wan_video_prompt",
-      "prompt_preview": "The quadratic formula slides from the center to the right side of the screen. Simultaneously, a list appears on the left. The list shows 'Step 1: Identify a, b, c' with its checkbox now filled with a green checkmark. Below it, the text 'Step 2: Substitute into formula' appears, preceded by an empty checkbox icon. The scene holds static.",
-      "prompt_length": 338,
-      "full_prompt": "The quadratic formula slides from the center to the right side of the screen. Simultaneously, a list appears on the left. The list shows 'Step 1: Identify a, b, c' with its checkbox now filled with a green checkmark. Below it, the text 'Step 2: Substitute into formula' appears, preceded by an empty checkbox icon. The scene holds static."
-    },
-    {
-      "timestamp": "2025-12-20T11:48:56.615360",
-      "section_id": "recap_01",
-      "beat_index": 4,
-      "renderer": "video",
-      "prompt_type": "wan_video_prompt",
-      "prompt_preview": "The '\u00b1' symbol within the quadratic formula on the right side of the screen begins to glow with a bright yellow light. Two curved arrows draw themselves outwards from the glowing symbol: one pointing up and to the right, the other down and to the right. At the end of the top arrow, the text 'Solution 1' appears. At the end of the bottom arrow, the text 'Solution 2' appears. The scene holds static.",
-      "prompt_length": 400,
-      "full_prompt": "The '\u00b1' symbol within the quadratic formula on the right side of the screen begins to glow with a bright yellow light. Two curved arrows draw themselves outwards from the glowing symbol: one pointing up and to the right, the other down and to the right. At the end of the top arrow, the text 'Solution 1' appears. At the end of the bottom arrow, the text 'Solution 2' appears. The scene holds static."
-    },
-    {
-      "timestamp": "2025-12-20T11:48:56.619546",
-      "section_id": "recap_01",
-      "beat_index": 5,
-      "renderer": "video",
-      "prompt_type": "wan_video_prompt",
-      "prompt_preview": "The glowing '\u00b1' symbol, the two arrows, and the 'Solution 1' and 'Solution 2' text all fade out, leaving just the quadratic formula on the right. On the checklist on the left, the text 'Step 3: Simplify and Solve' appears below Step 2, preceded by an empty checkbox icon. The scene holds static.",
-      "prompt_length": 295,
-      "full_prompt": "The glowing '\u00b1' symbol, the two arrows, and the 'Solution 1' and 'Solution 2' text all fade out, leaving just the quadratic formula on the right. On the checklist on the left, the text 'Step 3: Simplify and Solve' appears below Step 2, preceded by an empty checkbox icon. The scene holds static."
-    },
-    {
-      "timestamp": "2025-12-20T11:48:56.623124",
-      "section_id": "recap_01",
-      "beat_index": 6,
-      "renderer": "video",
-      "prompt_type": "wan_video_prompt",
-      "prompt_preview": "On the checklist, the empty checkboxes next to 'Step 2' and 'Step 3' are filled sequentially with green checkmarks. A large, semi-transparent green checkmark icon then animates over the entire scene, growing from the center outwards before fading away. The final screen, showing the completed three-step checklist on the left and the quadratic formula on the right, holds static.",
-      "prompt_length": 379,
-      "full_prompt": "On the checklist, the empty checkboxes next to 'Step 2' and 'Step 3' are filled sequentially with green checkmarks. A large, semi-transparent green checkmark icon then animates over the entire scene, growing from the center outwards before fading away. The final screen, showing the completed three-step checklist on the left and the quadratic formula on the right, holds static."
+[
+  {
+    "timestamp": "2025-12-20T12:50:49.894671",
+    "section_id": "content_01",
+    "section_title": "Section content_01",
+    "renderer": "manim_v12",
+    "prompt": "main_equation = MathTex(r\"ax^2 + bx + c = 0\").move_to(np.array([0, 0, 0]))\na_label = MathTex(r\"\\text{coefficient of }x^2\").scale(0.8).move_to(np.array([-3, -1, 0]))\nb_label = MathTex(r\"\\text{coefficient of }x\").scale(0.8).move_to(np.array([0, -1, 0]))\nc_label = MathTex(r\"\\text{constant term}\").scale(0.8).move_to(np.array([3, -1, 0]))\na_arrow = Arrow(start=np.array([-3, -0.5, 0]), end=np.array([-2.5, -0.2, 0]), color=BLUE, buff=0)\nb_arrow = Arrow(start=np.array([0, -0.5, 0]), end=np.array([0, -0.2, 0]), color=BLUE, buff=0)\nc_arrow = Arrow(start=np.array([3, -0.5, 0]), end=np.array([2.5, -0.2, 0]), color=BLUE, buff=0)\na_not_zero = MathTex(r\"a \\neq 0\").move_to(np.array([0, 1.5, 0]))\n\n# Animation sequence\nself.wait(8)\nself.play(Write(main_equation), run_time=2)\nself.wait(7)\nself.play(Indicate(main_equation), run_time=2)\nself.wait(4)\nself.play(Indicate(main_equation), run_time=1)\nself.play(FadeIn(a_arrow), run_time=1)\nself.play(FadeIn(a_label), run_time=1)\nself.play(Indicate(main_equation), run_time=1)\nself.play(FadeIn(b_arrow), run_time=1)\nself.play(FadeIn(b_label), run_time=1)\nself.play(Indicate(main_equation), run_time=1)\nself.play(FadeIn(c_arrow), run_time=1)\nself.play(FadeIn(c_label), run_time=1)\nself.wait(3)\nself.play(FadeIn(a_not_zero), run_time=1)\nself.play(Indicate(main_equation), run_time=2)\nself.wait(4)\nself.play(main_equation.animate.move_to(np.array([0, 0, 0])), run_time=2)\nself.wait(3)\nself.wait(1)",
+    "output_path": "player/jobs/4f3411e9/videos/topic_content_01.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v12_spec_generated",
+      "object_count": 8,
+      "animation_count": 20,
+      "duration": 47,
+      "dry_run": false
     }
-  ]
-}
+  },
+  {
+    "timestamp": "2025-12-20T12:51:20.842113",
+    "section_id": "content_02",
+    "section_title": "Section content_02",
+    "renderer": "manim_v12",
+    "prompt": "x_equals = MathTex(r\"x =\").move_to(np.array([-3, 0, 0]))\nfraction_bar = Dot(point=np.array([0, 0, 0]), color=BLUE)\nnumerator = MathTex(r\"-b \\pm \\sqrt{b^2 - 4ac}\").move_to(np.array([0, 0.5, 0]))\ndenominator = MathTex(r\"2a\").move_to(np.array([0, -0.5, 0]))\ndiscriminant_box = Dot(point=np.array([0.5, 0.5, 0]), color=BLUE)\ndiscriminant_label = Text(\"Discriminant\", font_size=28).move_to(np.array([2, 1, 0]))\n\n# Animation sequence\nself.wait(7)\nself.play(Write(x_equals), run_time=1)\nself.play(Create(fraction_bar), run_time=2)\nself.play(Write(numerator), run_time=3)\nself.play(Write(denominator), run_time=3)\nself.play(Indicate(numerator), run_time=6)\nself.play(Indicate(numerator), run_time=7)\nself.play(Create(discriminant_box), run_time=3)\nself.play(FadeIn(discriminant_label), run_time=4)\nself.play(Indicate(denominator), run_time=6)\nself.wait(6)\nself.wait(1)",
+    "output_path": "player/jobs/4f3411e9/videos/topic_content_02.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v12_spec_generated",
+      "object_count": 6,
+      "animation_count": 11,
+      "duration": 48,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-20T12:51:38.937832",
+    "section_id": "example_01",
+    "section_title": "Section example_01",
+    "renderer": "manim_v12",
+    "prompt": "original_equation = MathTex(r\"x^2 + 5x + 6 = 0\").move_to(np.array([0, 2, 0]))\ncoef_a = MathTex(r\"a = 1\").move_to(np.array([-3, 1, 0]))\ncoef_b = MathTex(r\"b = 5\").move_to(np.array([0, 1, 0]))\ncoef_c = MathTex(r\"c = 6\").move_to(np.array([3, 1, 0]))\nquadratic_formula = MathTex(r\"x = \\frac{-5 \\pm \\sqrt{5^2 - 4(1)(6)}}{2(1)}\").move_to(np.array([0, 0, 0]))\nsimplified_sqrt = MathTex(r\"x = \\frac{-5 \\pm \\sqrt{25 - 24}}{2}\").move_to(np.array([0, 0, 0]))\nfinal_form = MathTex(r\"x = \\frac{-5 \\pm 1}{2}\").move_to(np.array([0, 0, 0]))\nplus_path = MathTex(r\"x = \\frac{-5 + 1}{2} = \\frac{-4}{2} = -2\").move_to(np.array([-3, -1, 0]))\nminus_path = MathTex(r\"x = \\frac{-5 - 1}{2} = \\frac{-6}{2} = -3\").move_to(np.array([3, -1, 0]))\nfinal_answer_box_1 = Dot(point=np.array([-3, -2, 0]), color=BLUE)\nfinal_answer_box_2 = Dot(point=np.array([3, -2, 0]), color=BLUE)\n\n# Animation sequence\nself.play(Write(original_equation), run_time=1)\nself.play(Write(coef_a), run_time=2)\nself.play(Write(coef_b), run_time=2)\nself.play(Write(coef_c), run_time=2)\nself.play(Write(quadratic_formula), run_time=3)\nself.play(Write(plus_path), run_time=3)\nself.play(Write(minus_path), run_time=3)\nself.play(FadeIn(final_answer_box_1), run_time=1)\nself.play(FadeIn(final_answer_box_2), run_time=1)\nself.wait(1)",
+    "output_path": "player/jobs/4f3411e9/videos/topic_example_01.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v12_spec_generated",
+      "object_count": 11,
+      "animation_count": 11,
+      "duration": 22,
+      "dry_run": false
+    }
+  }
+]
