@@ -197,7 +197,13 @@ def pass1_director(
     presentation = parse_json_response(response_text, "director")
     
     if "sections" not in presentation:
-        raise PipelineError("Director output missing 'sections' array", "director")
+        if "lesson_plan" in presentation:
+            log("[Direct] Converting 'lesson_plan' to 'sections' (LLM naming variation)")
+            presentation["sections"] = presentation.pop("lesson_plan")
+        else:
+            log(f"[Direct] ERROR: Director returned keys: {list(presentation.keys())}")
+            log(f"[Direct] ERROR: Response preview: {str(presentation)[:500]}")
+            raise PipelineError("Director output missing 'sections' array", "director")
     
     section_count = len(presentation.get("sections", []))
     log(f"[Direct] Director complete: {section_count} sections created")

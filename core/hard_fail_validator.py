@@ -157,6 +157,8 @@ def validate_hard_fail_conditions(section: dict) -> List[HardFailError]:
         
         if not has_formula_visual:
             for beat in effective_visual_beats:
+                if not isinstance(beat, dict):
+                    continue
                 labels = beat.get("labels_and_text", "") or beat.get("description", "")
                 manim_spec = beat.get("manim_scene_spec", {})
                 equations = manim_spec.get("equations", []) if manim_spec else []
@@ -174,6 +176,8 @@ def validate_hard_fail_conditions(section: dict) -> List[HardFailError]:
     
     if section_type in ["content", "example"]:
         for i, beat in enumerate(effective_visual_beats):
+            if not isinstance(beat, dict):
+                continue
             fields_to_check = ["scene_setup", "objects_and_properties", "motion_sequence", "labels_and_text", "description"]
             for field in fields_to_check:
                 value = beat.get(field, "")
@@ -209,7 +213,7 @@ def validate_hard_fail_conditions(section: dict) -> List[HardFailError]:
                     "Section manim_scene_spec has no animation_sequence"
                 ))
         else:
-            has_beat_level_spec = any(beat.get("manim_scene_spec") for beat in visual_beats)
+            has_beat_level_spec = any(beat.get("manim_scene_spec") for beat in visual_beats if isinstance(beat, dict))
             if not has_beat_level_spec:
                 errors.append(HardFailError(
                     "manim_section_without_scene_spec",
