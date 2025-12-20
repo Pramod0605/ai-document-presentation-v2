@@ -10,7 +10,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 
-from core.pipeline import process_pdf_to_videos, process_markdown_to_videos
+from core.pipeline import process_pdf_to_videos
+from core.pipeline_v12 import process_markdown_to_videos_v12 as process_markdown_to_videos
 from core.job_manager import job_manager, run_job_async, is_job_running, get_current_job_id
 
 app = Flask(__name__)

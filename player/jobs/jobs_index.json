@@ -5440,5 +5440,236 @@
     "completed_at": "2025-12-19T10:10:20.887627",
     "error": "HARD FAIL: 37 validation failures - generation aborted. HARD FAIL [formula_mentioned_but_not_visualized] Section 3: Narration mentions formulas/equations but no visual beat shows them; HARD FAIL [manim_section_without_scene_spec] Section 3: Visual beat 0 uses manim renderer but has no manim_scene_spec; HARD FAIL [manim_section_without_scene_spec] Section 3: Visual beat 1 uses manim renderer but has no manim_scene_spec",
     "result": null
+  },
+  "6f420bcb": {
+    "id": "6f420bcb",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Mathematics",
+      "grade": "10",
+      "file_path": "/tmp/ai_education_jobs/dfad93edce8fee2e.md",
+      "source_file": "math_test.md"
+    },
+    "status": "failed",
+    "current_step": 0,
+    "current_step_name": "LLM generating presentation plan...",
+    "steps_completed": 0,
+    "total_steps": 3,
+    "progress": 0,
+    "created_at": "2025-12-20T08:32:29.065305",
+    "started_at": "2025-12-20T08:32:29.075864",
+    "completed_at": "2025-12-20T08:37:35.356967",
+    "error": "HARD FAIL: 11 validation failures - generation aborted. HARD FAIL [formula_mentioned_but_not_visualized] Section 3: Narration mentions formulas/equations but no visual beat shows them; HARD FAIL [manim_section_without_scene_spec] Section 3: Manim section has no manim_scene_spec (neither section-level nor beat-level); HARD FAIL [formula_mentioned_but_not_visualized] Section 4: Narration mentions formulas/equations but no visual beat shows them",
+    "result": null
+  },
+  "5cd1ea14": {
+    "id": "5cd1ea14",
+    "type": "markdown_file",
+    "params": {
+      "subject": "Mathematics",
+      "grade": "10",
+      "file_path": "/tmp/ai_education_jobs/3ac159571ca8117b.md",
+      "source_file": "math_test.md"
+    },
+    "status": "completed",
+    "current_step": 2,
+    "current_step_name": "Generating audio narration...",
+    "steps_completed": 3,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-20T08:38:31.010885",
+    "started_at": "2025-12-20T08:38:31.022841",
+    "completed_at": "2025-12-20T08:42:50.750369",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "pipeline_version": "1.2",
+      "started_at": "2025-12-20T08:38:31.040784",
+      "source_file": "math_test.md",
+      "steps": [
+        {
+          "step": "extract_images",
+          "status": "completed",
+          "count": 0
+        },
+        {
+          "step": "generate_presentation_v12",
+          "status": "completed",
+          "analytics": {
+            "job_id": "40036cf2",
+            "status": "completed",
+            "total_duration_seconds": 205.08,
+            "total_cost_usd": 0.2475,
+            "total_tokens": 32376,
+            "phases_completed": 7,
+            "phases_failed": 0,
+            "cost_breakdown": {
+              "chunker": {
+                "cost_usd": 0.004,
+                "duration_seconds": 6.1,
+                "tokens": 2551
+              },
+              "director": {
+                "cost_usd": 0.1155,
+                "duration_seconds": 91.85,
+                "tokens": 13527
+              },
+              "manim_renderer_scontent_01": {
+                "cost_usd": 0.0251,
+                "duration_seconds": 21.62,
+                "tokens": 3096
+              },
+              "manim_renderer_sexample_01": {
+                "cost_usd": 0.0244,
+                "duration_seconds": 19.39,
+                "tokens": 3192
+              },
+              "manim_renderer_scontent_02": {
+                "cost_usd": 0.0256,
+                "duration_seconds": 23.39,
+                "tokens": 3036
+              },
+              "manim_renderer_scontent_03": {
+                "cost_usd": 0.0287,
+                "duration_seconds": 23.36,
+                "tokens": 3495
+              },
+              "video_renderer_srecap_01": {
+                "cost_usd": 0.0241,
+                "duration_seconds": 19.38,
+                "tokens": 3479
+              }
+            }
+          }
+        },
+        {
+          "step": "hard_fail_validation",
+          "status": "passed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": "intro_01",
+              "section_type": "intro",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'intro' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": "content_01",
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 1 beat 0: Compilation failed - Visual beat has no content. All fields are empty or missing.",
+              "visual_beats_used": 6,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 397, in _render_all_beats\n    plan = compile_manim_plan(beat, topic_id, beat_index)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 612, in compile_manim_plan\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 91, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 1, Beat 0: Visual beat has no content. All fields are empty or missing.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 153, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 116, in render_manim_video\n    return _render_all_beats(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 399, in _render_all_beats\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 1 beat 0: Compilation failed - Visual beat has no content. All fields are empty or missing.\n"
+            },
+            {
+              "topic_id": "example_01",
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 1 beat 0: Compilation failed - Visual beat has no content. All fields are empty or missing.",
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 397, in _render_all_beats\n    plan = compile_manim_plan(beat, topic_id, beat_index)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 612, in compile_manim_plan\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 91, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 1, Beat 0: Visual beat has no content. All fields are empty or missing.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 153, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 116, in render_manim_video\n    return _render_all_beats(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 399, in _render_all_beats\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 1 beat 0: Compilation failed - Visual beat has no content. All fields are empty or missing.\n"
+            },
+            {
+              "topic_id": "content_02",
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 1 beat 0: Compilation failed - Visual beat has no content. All fields are empty or missing.",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 397, in _render_all_beats\n    plan = compile_manim_plan(beat, topic_id, beat_index)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 612, in compile_manim_plan\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 91, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 1, Beat 0: Visual beat has no content. All fields are empty or missing.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 153, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 116, in render_manim_video\n    return _render_all_beats(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 399, in _render_all_beats\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 1 beat 0: Compilation failed - Visual beat has no content. All fields are empty or missing.\n"
+            },
+            {
+              "topic_id": "content_03",
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 1 beat 0: Compilation failed - Visual beat has no content. All fields are empty or missing.",
+              "visual_beats_used": 7,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 397, in _render_all_beats\n    plan = compile_manim_plan(beat, topic_id, beat_index)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 612, in compile_manim_plan\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 91, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 1, Beat 0: Visual beat has no content. All fields are empty or missing.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 153, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 116, in render_manim_video\n    return _render_all_beats(\n           ^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 399, in _render_all_beats\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section 1 beat 0: Compilation failed - Visual beat has no content. All fields are empty or missing.\n"
+            },
+            {
+              "topic_id": "recap_01",
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/5cd1ea14/videos/topic_1.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            }
+          ],
+          "success_count": 2,
+          "fail_count": 4,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": null,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/5cd1ea14/audio/section_intro_01.mp3"
+            },
+            {
+              "section_id": null,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/5cd1ea14/audio/section_content_01.mp3"
+            },
+            {
+              "section_id": null,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/5cd1ea14/audio/section_example_01.mp3"
+            },
+            {
+              "section_id": null,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/5cd1ea14/audio/section_content_02.mp3"
+            },
+            {
+              "section_id": null,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/5cd1ea14/audio/section_content_03.mp3"
+            },
+            {
+              "section_id": null,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/5cd1ea14/audio/section_recap_01.mp3"
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-20T08:42:50.742509",
+      "presentation_path": "/home/runner/workspace/player/jobs/5cd1ea14/presentation.json",
+      "analytics_path": "/home/runner/workspace/player/jobs/5cd1ea14/analytics.json",
+      "sections_count": 6,
+      "total_cost_usd": 0.24745899999999998,
+      "dry_run": false
+    }
   }
 }
