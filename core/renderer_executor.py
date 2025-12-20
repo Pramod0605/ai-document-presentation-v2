@@ -95,7 +95,7 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             topic["explanation_plan"] = {}
         
         if manim_scene_spec and renderer == "manim":
-            topic["explanation_plan"]["compiled_manim_plan"] = manim_scene_spec
+            topic["explanation_plan"]["v12_manim_scene_spec"] = manim_scene_spec
             print(f"  [OK] Using v1.2 manim_scene_spec: {len(manim_scene_spec.get('objects', []))} objects, {len(manim_scene_spec.get('animation_sequence', []))} animations")
             log_render_prompt(topic_id, 0, "manim", json.dumps(manim_scene_spec, indent=2))
         elif video_prompts:

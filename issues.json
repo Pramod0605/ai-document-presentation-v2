@@ -389,25 +389,29 @@
     {
       "id": "ISS-031",
       "title": "Manim renderer expects v1.1 visual_beats but v1.2 provides section-level manim_scene_spec",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-20",
+      "resolved": "2025-12-20",
       "spec_reference": "docs/llm_output_requirements.json v1.2 - manim_scene_spec",
       "description": "v1.2 Director generates manim_scene_spec at section level (not per visual_beat). The Manim runner tries to iterate through visual_beats calling compile_manim_plan() on each, which fails because v1.2 visual_beats only have {time, description} fields, not the structured manim_scene_spec required by Visual Compiler.",
       "root_cause": "Architecture mismatch: v1.2 uses 3-pass architecture where Manim Renderer LLM generates the full manim_scene_spec for the whole section, but manim_runner.py's multi-beat path calls compile_manim_plan() on each beat expecting v1.1 structure.",
       "fix": [
         "1. renderer_executor.py: Store v1.2 manim_scene_spec under 'v12_manim_scene_spec' key",
-        "2. manim_runner.py: Detect v12_manim_scene_spec BEFORE multi-beat iteration, use translate_spec_to_manim_code() directly",
-        "3. Render single video for entire section, not per-beat"
+        "2. manim_runner.py: Added _render_v12_manim_spec() function to detect v12 spec BEFORE multi-beat iteration",
+        "3. Uses translate_spec_to_manim_code() directly to render single video for entire section"
       ],
-      "impact": "All Manim sections fail to render with 'Visual beat has no content' error"
+      "files_changed": [
+        "core/renderer_executor.py: Changed key from compiled_manim_plan to v12_manim_scene_spec",
+        "render/manim/manim_runner.py: Added _render_v12_manim_spec() function, updated render_manim_video() to check for v12 spec first"
+      ]
     }
   ],
   "metadata": {
     "last_updated": "2025-12-20",
-    "version": "10.3",
+    "version": "10.4",
     "spec_version": "v1.2",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 33,
-    "open_count": 1
+    "resolved_count": 34,
+    "open_count": 0
   }
 }
