@@ -404,14 +404,48 @@
         "core/renderer_executor.py: Changed key from compiled_manim_plan to v12_manim_scene_spec",
         "render/manim/manim_runner.py: Added _render_v12_manim_spec() function, updated render_manim_video() to check for v12 spec first"
       ]
+    },
+    {
+      "id": "ISS-032",
+      "title": "Manim CLI crashes on labels with latex property",
+      "status": "resolved",
+      "created": "2025-12-20",
+      "resolved": "2025-12-20",
+      "description": "Manim render fails for content_01 and content_02 sections while example_01 succeeds. Root cause: LLM generates labels with 'latex' property (e.g., '\\text{coefficient of }x^2') but translate_spec_to_manim_code() label handler only checks for 'text' property, falling back to object ID and using Text() instead of MathTex().",
+      "symptoms": [
+        "Manim CLI crashes with truncated stacktrace",
+        "Return code: 1 from manim render command",
+        "example_01 succeeds but content_01 and content_02 fail"
+      ],
+      "root_cause": "Label handler in visual_compiler.py only checked props.get('text'), not props.get('latex'). When LLM uses latex for mathematical labels, the code generated invalid Text() calls instead of MathTex().",
+      "fix": "Updated label handler in translate_spec_to_manim_code() to: 1) Check for latex property first, 2) Use MathTex() with scale when latex is provided, 3) Fall back to Text() only for plain text labels."
+    },
+    {
+      "id": "ISS-033",
+      "title": "Manim crashes due to \\text{} in MathTex being converted to Tex",
+      "status": "resolved",
+      "created": "2025-12-20",
+      "resolved": "2025-12-20",
+      "description": "_sanitize_manim_code() was converting MathTex to Tex when \\text{} was present, but this caused 'Missing $ inserted' LaTeX errors because Tex uses non-math mode where \\text{} and superscripts don't work together.",
+      "error": "LaTeX compilation error: Missing $ inserted. Context: \\begin{center} a: \\text{coefficient of }x^2 \\end{center}",
+      "fix": "Changed _sanitize_manim_code() to replace \\text{} with \\textrm{} instead of converting MathTex to Tex. \\textrm{} works properly in math mode."
+    },
+    {
+      "id": "ISS-034",
+      "title": "Graph objects fail when axes not defined in spec",
+      "status": "resolved",
+      "created": "2025-12-20",
+      "resolved": "2025-12-20",
+      "description": "LLM generates graph objects that reference 'axes' variable but doesn't include an axes object in the spec. This causes NameError: name 'axes' is not defined.",
+      "fix": "Added auto-axes creation in translate_spec_to_manim_code(): Pre-scans objects for graph/area_under_graph types, checks if referenced axes are declared, and auto-creates missing axes with default x_range=[-5,5,1], y_range=[-3,3,1]. Logs warning when fallback axes are generated."
     }
   ],
   "metadata": {
     "last_updated": "2025-12-20",
-    "version": "10.4",
+    "version": "10.6",
     "spec_version": "v1.2",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 34,
+    "resolved_count": 37,
     "open_count": 0
   }
 }

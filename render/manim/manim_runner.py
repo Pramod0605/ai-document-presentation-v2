@@ -775,8 +775,8 @@ def _sanitize_manim_code(manim_code: str) -> str:
     Sanitize Manim code to fix common LaTeX issues.
     
     Fixes:
-    1. Replace MathTex with Tex when \text{} is used (prevents LaTeX errors)
-    2. Escape problematic characters in \text{} content
+    1. Replace \text{} with \textrm{} in MathTex (works better in math mode)
+    2. Escape problematic characters in text content
     """
     import re
     
@@ -784,16 +784,8 @@ def _sanitize_manim_code(manim_code: str) -> str:
     fixed_lines = []
     
     for line in lines:
-        # Check if line contains MathTex with \text{} - these need to be Tex instead
-        if 'MathTex' in line and r'\text{' in line:
-            # Replace MathTex with Tex for lines containing \text{}
-            line = line.replace('MathTex', 'Tex')
-        
-        # Also handle cases where \text{} contains problematic chars
-        # Replace common issues in \text{} blocks
         if r'\text{' in line:
-            # Fix unescaped commas/periods that can cause issues
-            line = re.sub(r'\\text\{([^}]*)\}', lambda m: r'\text{' + m.group(1).replace(',', r'{,}') + '}', line)
+            line = line.replace(r'\text{', r'\textrm{')
         
         fixed_lines.append(line)
     

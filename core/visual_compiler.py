@@ -237,6 +237,21 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
     object_vars = {}
     
     objects = spec.get("objects", [])
+    
+    declared_axes = {obj.get("id") for obj in objects if obj.get("type") == "axes"}
+    required_axes = set()
+    for obj in objects:
+        if obj.get("type") in ("graph", "area_under_graph"):
+            axes_ref = obj.get("properties", {}).get("axes", "axes")
+            if axes_ref not in declared_axes:
+                required_axes.add(axes_ref)
+    
+    for axes_name in required_axes:
+        log(f"[WARN] Auto-creating missing '{axes_name}' axes for graph objects")
+        code_lines.append(f'{axes_name} = Axes(x_range=[-5, 5, 1], y_range=[-3, 3, 1], x_length=10, y_length=6, axis_config={{"include_tip": True}})')
+        code_lines.append(f'self.play(Create({axes_name}), run_time=1)')
+        object_vars[axes_name] = axes_name
+    
     for obj in objects:
         obj_id = obj["id"]
         obj_type = obj["type"]
@@ -284,14 +299,19 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
             code_lines.append(f'{var_name} = MathTex(r"{latex}").move_to({pos_name})')
         
         elif obj_type == "label":
+            latex = obj.get("latex") or props.get("latex", "")
             text = obj.get("text") or props.get("text", label_text or obj_id)
             font_size = props.get("font_size", 28)
+            scale = props.get("scale", 1.0)
             obj_position = obj.get("position") or position
             if isinstance(obj_position, list):
-                code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to(np.array([{obj_position[0]}, {obj_position[1]}, 0]))')
+                pos_str = f"np.array([{obj_position[0]}, {obj_position[1]}, 0])"
             else:
-                pos_name = POSITION_MAP.get(obj_position, "ORIGIN")
-                code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to({pos_name})')
+                pos_str = POSITION_MAP.get(obj_position, "ORIGIN")
+            if latex:
+                code_lines.append(f'{var_name} = MathTex(r"{latex}").scale({scale}).move_to({pos_str})')
+            else:
+                code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to({pos_str})')
         
         elif obj_type == "axes":
             x_range = props.get("x_range", [-3, 3, 1])
