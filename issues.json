@@ -195,12 +195,14 @@
     {
       "id": "ISS-024",
       "title": "Manim video sometimes cuts off at bottom",
-      "status": "reopened",
+      "status": "resolved",
       "created": "2025-12-19",
       "reopened": "2025-12-19",
+      "resolved": "2025-12-20",
       "description": "Manim-rendered videos sometimes have content that extends below the visible area. Need dynamic vertical centering or adjustment based on video content.",
       "prior_attempt": "Added object-fit: contain but video-box container height was still constrained by max-height: 60vh.",
-      "screenshot": "attached_assets/image_1766162907961.png"
+      "screenshot": "attached_assets/image_1766162907961.png",
+      "solution": "Changed video-box to height: fit-content and overflow: visible, video element to height: auto with max-height: 80vh. This allows videos to display at natural aspect ratio while preventing viewport overflow."
     },
     {
       "id": "ISS-026",
@@ -376,9 +378,10 @@
         {
           "id": "ISS-030d",
           "title": "WAN prompt quality validation not implemented",
-          "status": "open",
+          "status": "resolved",
+          "resolved": "2025-12-20",
           "description": "No automated check that Video (WAN) prompts are specific enough to generate quality videos",
-          "fix": "Add heuristic checks for banned vague phrases in video prompts"
+          "fix": "Created core/wan_prompt_validator.py with banned vague phrases detection, minimum length check, and quality scoring. Integrated into renderer_executor.py to log quality warnings during v1.2 video prompt processing."
         }
       ],
       "lesson_learned": "Always verify player access URL and job routing before concluding schema incompatibility. The v1.2 schema IS compatible with existing player."
@@ -386,10 +389,10 @@
   ],
   "metadata": {
     "last_updated": "2025-12-20",
-    "version": "10.0",
+    "version": "10.2",
     "spec_version": "v1.2",
     "spec_file": "docs/llm_output_requirements.json",
-    "resolved_count": 29,
-    "open_count": 1
+    "resolved_count": 33,
+    "open_count": 0
   }
 }

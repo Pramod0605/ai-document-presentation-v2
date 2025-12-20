@@ -6,6 +6,7 @@ from render.wan.wan_runner import render_wan_video
 from render.manim.manim_runner import render_manim_video
 from core.visual_compiler import compile_section_visuals, VisualCompilationError
 from core.traceability import log_render_prompt
+from core.wan_prompt_validator import validate_video_prompts, log_prompt_quality_summary
 
 
 TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory"]
@@ -108,6 +109,12 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
                 print(f"  [OK] Using v1.2 video_prompts: {len(video_prompts)} beat prompts")
                 for i, p in enumerate(video_prompts):
                     log_render_prompt(topic_id, i, "video", p.get("prompt", ""))
+                
+                quality_summary = log_prompt_quality_summary(video_prompts, topic_id)
+                if quality_summary["issues"]:
+                    print(f"  [QUALITY] Avg score: {quality_summary['avg_quality']}, Issues: {len(quality_summary['issues'])}")
+                    for issue in quality_summary["issues"][:3]:
+                        print(f"    - {issue}")
             elif isinstance(video_prompts, dict):
                 prompt_text = video_prompts.get("prompt", "")
                 topic["explanation_plan"]["compiled_wan_prompt"] = prompt_text
