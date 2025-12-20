@@ -322,14 +322,72 @@
         "phases_failed": 0,
         "hard_fail_validations": 0
       }
+    },
+    {
+      "id": "ISS-030",
+      "title": "v1.2 Pipeline Test Playback Issues - Misdiagnosis",
+      "status": "open",
+      "created": "2025-12-20",
+      "description": "Full pipeline test with use_remotion=False produced output in player/jobs/full_test_no_remotion/ but playback appeared broken. Initial diagnosis suggested major schema incompatibility, but investigation revealed:",
+      "root_cause_analysis": {
+        "initial_symptoms": [
+          "No text displaying in player",
+          "Videos displaying as vague placeholders",
+          "Audio switching to female voice after slide 3",
+          "Player showing 15 slides instead of 7 sections"
+        ],
+        "actual_findings": {
+          "player_supports_v1.2": true,
+          "evidence": "player.js lines 1059-1097 already convert sections[] to slides[], use section_id for audio paths",
+          "audio_path_formula": "audio/section_${sectionId}.mp3 matches slug-based files",
+          "test_access_issue": "Player was accessed loading OLD /player/assets/ folder instead of job-specific /player/jobs/full_test_no_remotion/",
+          "server_logs_confirm": "Requests to /player/assets/section_1.mp3 (old location) instead of job folder"
+        },
+        "remaining_issues": {
+          "visual_compiler_errors": "8 sections failed visual compilation - needs v1.2 beat format handling",
+          "render_prompts_missing": "No render_prompts.json output for WAN prompt traceability",
+          "video_prompts_quality": "Need to verify WAN prompts are specific enough (not vague)"
+        }
+      },
+      "sub_issues": [
+        {
+          "id": "ISS-030a",
+          "title": "Test run bypassed normal job routing",
+          "status": "needs_verification",
+          "description": "The test was run manually creating full_test_no_remotion folder, but player was loaded from wrong URL accessing old assets",
+          "fix": "Access via proper job URL: /player/index.html?job=full_test_no_remotion or /jobs/full_test_no_remotion/"
+        },
+        {
+          "id": "ISS-030b",
+          "title": "Visual Compiler fails on v1.2 beat format",
+          "status": "open",
+          "description": "Visual compiler expects v1.1 beat format but v1.2 uses {time, description} objects",
+          "fix": "Update visual_compiler.py to handle v1.2 beat objects"
+        },
+        {
+          "id": "ISS-030c",
+          "title": "render_prompts.json not generated in v1.2 pipeline",
+          "status": "open",
+          "description": "Traceability module not writing render_prompts.json for WAN prompt auditing",
+          "fix": "Re-enable render prompt logging in pipeline_v12.py"
+        },
+        {
+          "id": "ISS-030d",
+          "title": "WAN prompt quality validation not implemented",
+          "status": "open",
+          "description": "No automated check that Video (WAN) prompts are specific enough to generate quality videos",
+          "fix": "Add heuristic checks for banned vague phrases in video prompts"
+        }
+      ],
+      "lesson_learned": "Always verify player access URL and job routing before concluding schema incompatibility. The v1.2 schema IS compatible with existing player."
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-19",
-    "version": "9.0",
+    "last_updated": "2025-12-20",
+    "version": "10.0",
     "spec_version": "v1.2",
     "spec_file": "docs/llm_output_requirements.json",
     "resolved_count": 29,
-    "open_count": 0
+    "open_count": 1
   }
 }
