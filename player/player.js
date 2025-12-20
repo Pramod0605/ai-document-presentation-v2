@@ -1,5 +1,147 @@
 let lessonData = null;
 
+/**
+ * LayerController - v1.3 display_directives handler
+ * Controls text_layer, visual_layer, avatar_layer visibility
+ * Enforces: text must hide BEFORE visuals appear (mutual exclusion)
+ */
+class LayerController {
+  constructor() {
+    this.currentTextState = 'hide';
+    this.currentVisualState = 'hide';
+    this.currentAvatarState = 'show';
+    this.lastSegmentIndex = -1;
+  }
+
+  /**
+   * Apply display_directives for a narration segment
+   * @param {Object} segment - narration_segment with display_directives
+   * @param {string} sectionType - section type (intro, content, example, etc.)
+   * @param {number} segmentIndex - current segment index
+   */
+  applyDirectives(segment, sectionType, segmentIndex) {
+    if (!segment || !segment.display_directives) {
+      return;
+    }
+    
+    if (segmentIndex === this.lastSegmentIndex) {
+      return;
+    }
+    this.lastSegmentIndex = segmentIndex;
+
+    const directives = segment.display_directives;
+    const stage = document.getElementById('stage');
+    const contentBox = document.getElementById('content-box');
+    const videoBox = document.getElementById('video-box');
+    const avatarCanvas = document.getElementById('avatar-canvas');
+
+    const textLayer = directives.text_layer || 'hide';
+    const visualLayer = directives.visual_layer || 'hide';
+    const avatarLayer = directives.avatar_layer || 'show';
+
+    if (textLayer === 'show' && visualLayer === 'show') {
+      console.error(`[v1.3 VIOLATION] Segment ${segmentIndex}: text_layer=show + visual_layer=show violates mutual exclusion`);
+    }
+
+    this.currentTextState = textLayer;
+    this.currentVisualState = visualLayer;
+    this.currentAvatarState = avatarLayer;
+
+    if (textLayer === 'show') {
+      stage.classList.add('text-visible');
+      if (contentBox) contentBox.style.opacity = '1';
+    } else if (textLayer === 'hide') {
+      stage.classList.remove('text-visible');
+      if (stage.classList.contains('mode-content-video')) {
+        stage.classList.add('video-focus');
+      }
+    } else if (textLayer === 'swap') {
+      stage.classList.add('video-swap');
+    }
+
+    if (visualLayer === 'show' || visualLayer === 'replace') {
+      if (videoBox) videoBox.classList.add('video-ready');
+      stage.classList.remove('video-focus');
+    } else if (visualLayer === 'hide') {
+      if (videoBox) videoBox.classList.remove('video-ready');
+    }
+
+    if (avatarLayer === 'hide') {
+      if (avatarCanvas) avatarCanvas.style.opacity = '0';
+    } else if (avatarLayer === 'show') {
+      if (avatarCanvas) avatarCanvas.style.opacity = '1';
+    } else if (avatarLayer === 'gesture_only') {
+      if (avatarCanvas) {
+        avatarCanvas.style.opacity = '0.7';
+        avatarCanvas.style.transform = 'scale(0.6)';
+      }
+    }
+
+    if (sectionType === 'intro') {
+      if (avatarCanvas) {
+        avatarCanvas.style.opacity = '1';
+      }
+    } else if (sectionType === 'recap') {
+      if (avatarCanvas) {
+        avatarCanvas.style.opacity = '0';
+      }
+    }
+
+    console.log(`[LayerController] Segment ${segmentIndex}: text=${textLayer}, visual=${visualLayer}, avatar=${avatarLayer}`);
+  }
+
+  /**
+   * Reset layer states for new slide
+   */
+  reset() {
+    this.currentTextState = 'hide';
+    this.currentVisualState = 'hide';
+    this.currentAvatarState = 'show';
+    this.lastSegmentIndex = -1;
+    
+    const avatarCanvas = document.getElementById('avatar-canvas');
+    if (avatarCanvas) {
+      avatarCanvas.style.opacity = '1';
+      avatarCanvas.style.transform = '';
+    }
+  }
+
+  /**
+   * Apply section-level avatar rules (v1.3)
+   */
+  applySectionAvatarRules(sectionType, layout) {
+    const avatarCanvas = document.getElementById('avatar-canvas');
+    if (!avatarCanvas) return;
+
+    const avatarZone = layout?.avatar_zone || {};
+
+    switch (sectionType) {
+      case 'intro':
+        avatarCanvas.style.opacity = '1';
+        break;
+      case 'recap':
+        avatarCanvas.style.opacity = '0';
+        break;
+      case 'content':
+      case 'example':
+        avatarCanvas.style.opacity = '1';
+        break;
+      case 'quiz':
+      case 'memory':
+        if (avatarZone.visibility === 'hidden') {
+          avatarCanvas.style.opacity = '0';
+        } else {
+          avatarCanvas.style.opacity = '0.8';
+        }
+        break;
+      default:
+        avatarCanvas.style.opacity = '1';
+    }
+  }
+}
+
+const layerController = new LayerController();
+
 function getBasePath() {
   const path = window.location.pathname;
   // New structure: /jobs/<job_id>/
@@ -303,9 +445,14 @@ function loadSlide(index) {
   video.pause();
   audio.pause();
 
+  layerController.reset();
+
   currentSlideIndex = index;
   currentBeatIndex = 0;
   const slide = lessonData.slides[index];
+  
+  const sectionType = slide.section_type || slide.slide_type || 'content';
+  layerController.applySectionAvatarRules(sectionType, slide.layout);
 
   document.querySelectorAll('.slide-thumb').forEach((el, i) => {
     el.classList.toggle('active', i === index);
@@ -821,6 +968,7 @@ function handleTimeUpdate(e) {
   }
 
   let hasActiveSegment = false;
+  let activeSegmentIndex = -1;
   if (slide.timed_segments) {
     slide.timed_segments.forEach((seg, i) => {
       const el = document.getElementById(`seg-${i}`);
@@ -830,6 +978,7 @@ function handleTimeUpdate(e) {
         el.classList.add('active');
         el.classList.remove('read');
         hasActiveSegment = true;
+        activeSegmentIndex = i;
       } else if (t >= seg.end_time) {
         el.classList.remove('active');
         el.classList.add('read');
@@ -838,6 +987,11 @@ function handleTimeUpdate(e) {
         el.classList.remove('read');
       }
     });
+  }
+  
+  if (activeSegmentIndex >= 0 && slide.narration_segments && slide.narration_segments[activeSegmentIndex]) {
+    const sType = slide.section_type || slide.slide_type || 'content';
+    layerController.applyDirectives(slide.narration_segments[activeSegmentIndex], sType, activeSegmentIndex);
   }
   
   const sType = slide.section_type || slide.slide_type || 'content';
