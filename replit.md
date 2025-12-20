@@ -101,10 +101,26 @@ The `core/hard_fail_validator.py` now enforces:
 | **Video (WAN)** | Biology processes, chemistry reactions, physical phenomena, recap storytelling |
 | **Remotion** | Motion graphics, intro animations, summary animations (when enabled) |
 
+### Normalization Layer (v1.3)
+The `normalize_director_output()` function in `core/pipeline_v12.py` converts various LLM output field names to canonical v1.3 schema before hard fail validation. This allows the validator to work correctly regardless of minor LLM output variations.
+
+**Normalizations performed:**
+- `narration_beats` → `narration_segments` + section-level `narration` string
+- `narration_and_visuals` → `narration_segments` + section-level `narration` string
+- `narration` (when list) → `narration_segments` + section-level `narration` string
+- `narration_script` → `text` (inside segments)
+- `scenes` (in recap) → `recap_scenes`
+- Creates `recap_scenes` from narration_segments for recap sections
+- Extracts `visual_beats` from embedded `visual_beat` objects in segments
+- Normalizes `display_directives` from nested objects to flat action strings
+
+**Design rationale:** Post-processing normalization (vs. loosening validator or prompt changes) is most maintainable - preserves strict v1.3 contract for downstream components while handling LLM drift.
+
 ### Technical Implementation
 - **Backend**: Python Flask API.
 - **Frontend**: Vanilla HTML5/JavaScript video player with dynamic layouts, subtitle synchronization, and chroma key avatar overlay.
 - **LLM Pipeline**: 3-pass architecture via OpenRouter. Chunker → Director → Renderers.
+- **Normalization**: Post-Director normalization layer converts LLM output variations to canonical schema.
 - **Video Rendering**: Dual renderer system: Manim for mathematical animations, WAN/kie.ai for conceptual science videos.
 - **Audio**: Narakeet TTS (Indian male voice "ravi") using streaming for short text and polling for long text.
 - **Job Processing**: Asynchronous system for PDF/Markdown file submission, progress polling, and asset generation.

@@ -1,0 +1,135 @@
+{
+  "job_id": "40835ce7",
+  "started_at": "2025-12-20T16:22:21.192611",
+  "completed_at": "2025-12-20T16:25:03.256623",
+  "duration_seconds": 162.06,
+  "status": "failed",
+  "generation_events": [
+    {
+      "timestamp": "2025-12-20T16:22:21.192637",
+      "elapsed_seconds": 0.0,
+      "event_type": "pipeline_start",
+      "details": {
+        "pipeline_version": "1.2",
+        "pipeline_type": "markdown",
+        "source_file": null,
+        "subject": "Physics",
+        "grade": "10",
+        "dry_run": true,
+        "skip_wan": false
+      }
+    }
+  ],
+  "render_prompts": [],
+  "renderer_decisions": [],
+  "validation_results": [
+    {
+      "timestamp": "2025-12-20T16:25:03.250559",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [recap_narration_below_minimum] Section 0: Recap total narration is 0 words, minimum is 300"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T16:25:03.251034",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [content_or_example_narration_below_minimum] Section 0: Content section has 0 words, minimum is 150"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T16:25:03.251817",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [content_or_example_narration_below_minimum] Section 0: Content section has 0 words, minimum is 150"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T16:25:03.253628",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [content_or_example_narration_below_minimum] Section 0: Example section has 0 words, minimum is 100"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T16:25:03.255127",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [example_without_step_visualization] Section 0: Example section has 4 visual beats, need 5 for 5-step structure"
+      ],
+      "warnings": []
+    }
+  ],
+  "errors": [
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T16:25:03.250305",
+        "condition": "recap_narration_below_minimum",
+        "section_id": 0,
+        "details": "Recap total narration is 0 words, minimum is 300"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T16:25:03.250808",
+        "condition": "content_or_example_narration_below_minimum",
+        "section_id": 0,
+        "details": "Content section has 0 words, minimum is 150"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T16:25:03.251462",
+        "condition": "content_or_example_narration_below_minimum",
+        "section_id": 0,
+        "details": "Content section has 0 words, minimum is 150"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T16:25:03.252915",
+        "condition": "content_or_example_narration_below_minimum",
+        "section_id": 0,
+        "details": "Example section has 0 words, minimum is 100"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T16:25:03.254454",
+        "condition": "example_without_step_visualization",
+        "section_id": 0,
+        "details": "Example section has 4 visual beats, need 5 for 5-step structure"
+      }
+    }
+  ],
+  "warnings": []
+}

@@ -1,0 +1,156 @@
+{
+  "job_id": "04f9ec55",
+  "started_at": "2025-12-20T16:15:33.235226",
+  "completed_at": "2025-12-20T16:18:04.219708",
+  "duration_seconds": 150.98,
+  "status": "failed",
+  "generation_events": [
+    {
+      "timestamp": "2025-12-20T16:15:33.235244",
+      "elapsed_seconds": 0.0,
+      "event_type": "pipeline_start",
+      "details": {
+        "pipeline_version": "1.2",
+        "pipeline_type": "markdown",
+        "source_file": null,
+        "subject": "Physics",
+        "grade": "10",
+        "dry_run": true,
+        "skip_wan": false
+      }
+    }
+  ],
+  "render_prompts": [],
+  "renderer_decisions": [],
+  "validation_results": [
+    {
+      "timestamp": "2025-12-20T16:18:04.204347",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [recap_scene_count_wrong] Section 0: Recap section has 0 scenes, must be exactly 5"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T16:18:04.204770",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [recap_narration_below_minimum] Section 0: Recap total narration is 0 words, minimum is 300"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T16:18:04.206713",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_visual_beats] Section 0: Content section has 3 narration segments but no visual beats"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T16:18:04.212249",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [formula_mentioned_but_not_visualized] Section 0: Narration mentions formulas/equations but no visual beat shows them"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T16:18:04.214601",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [example_without_step_visualization] Section 0: Example section has 4 visual beats, need 5 for 5-step structure"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T16:18:04.217128",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [example_without_step_visualization] Section 0: Example section has 4 visual beats, need 5 for 5-step structure"
+      ],
+      "warnings": []
+    }
+  ],
+  "errors": [
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T16:18:04.203441",
+        "condition": "recap_scene_count_wrong",
+        "section_id": 0,
+        "details": "Recap section has 0 scenes, must be exactly 5"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T16:18:04.204563",
+        "condition": "recap_narration_below_minimum",
+        "section_id": 0,
+        "details": "Recap total narration is 0 words, minimum is 300"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T16:18:04.204989",
+        "condition": "missing_visual_beats",
+        "section_id": 0,
+        "details": "Content section has 3 narration segments but no visual beats"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T16:18:04.211284",
+        "condition": "formula_mentioned_but_not_visualized",
+        "section_id": 0,
+        "details": "Narration mentions formulas/equations but no visual beat shows them"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T16:18:04.213038",
+        "condition": "example_without_step_visualization",
+        "section_id": 0,
+        "details": "Example section has 4 visual beats, need 5 for 5-step structure"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T16:18:04.215339",
+        "condition": "example_without_step_visualization",
+        "section_id": 0,
+        "details": "Example section has 4 visual beats, need 5 for 5-step structure"
+      }
+    }
+  ],
+  "warnings": []
+}

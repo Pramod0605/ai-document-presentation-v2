@@ -1,0 +1,1769 @@
+{
+  "spec_version": "v1.3",
+  "film_id": "phys10_newtons_second_law",
+  "title": "Newton's Second Law of Motion",
+  "subject": "Physics",
+  "grade": "10",
+  "sections": [
+    {
+      "section_type": "intro",
+      "section_title": "Introduction: The Law of Motion",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "narration": "Have you ever wondered why it's easy to get a toy car moving, but it takes a huge effort to push a real car? Or why a gentle tap sends a balloon flying, but the same tap barely moves a bowling ball? The answer to these questions lies in one of the most important principles in all of physics.",
+          "duration_seconds": 15,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "center",
+              "size": 0.6
+            }
+          }
+        },
+        {
+          "segment_id": 2,
+          "narration": "This principle is called Newton's Second Law of Motion. It's a simple but powerful equation that connects three key ideas: the force you apply to an object, the object's mass, and how much it accelerates as a result. In this film, we're going to break down this law, piece by piece, so you can understand the physics behind everything that moves.",
+          "duration_seconds": 18,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "Newton's Second Law of Motion",
+              "animation": "fade_in"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          }
+        }
+      ],
+      "narration_segments": [
+        {
+          "id": 1,
+          "text": "Have you ever wondered why it's easy to get a toy car moving, but it takes a huge effort to push a real car? Or why a gentle tap sends a balloon flying, but the same tap barely moves a bowling ball? The answer to these questions lies in one of the most important principles in all of physics.",
+          "duration_seconds": 15,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "hide",
+            "avatar_layer": "show"
+          },
+          "word_count": 59
+        },
+        {
+          "id": 2,
+          "text": "This principle is called Newton's Second Law of Motion. It's a simple but powerful equation that connects three key ideas: the force you apply to an object, the object's mass, and how much it accelerates as a result. In this film, we're going to break down this law, piece by piece, so you can understand the physics behind everything that moves.",
+          "duration_seconds": 18,
+          "display_directives": {
+            "text_layer": "show",
+            "visual_layer": "hide",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 61
+        }
+      ],
+      "narration": "Have you ever wondered why it's easy to get a toy car moving, but it takes a huge effort to push a real car? Or why a gentle tap sends a balloon flying, but the same tap barely moves a bowling ball? The answer to these questions lies in one of the most important principles in all of physics. This principle is called Newton's Second Law of Motion. It's a simple but powerful equation that connects three key ideas: the force you apply to an object, the object's mass, and how much it accelerates as a result. In this film, we're going to break down this law, piece by piece, so you can understand the physics behind everything that moves."
+    },
+    {
+      "section_type": "summary",
+      "section_title": "What You'll Learn",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "narration": "Today, we will explore Newton's Second Law. First, we'll define the three core components: Force, Mass, and Acceleration. Then, we'll see how they are mathematically related through the famous formula, F equals m times a. Finally, we'll apply this formula to solve real-world problems, calculating the force needed to move a car and the acceleration of a soccer ball when it's kicked.",
+          "duration_seconds": 20,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "1. Define Force, Mass, and Acceleration\n2. Understand the formula F = ma\n3. Solve real-world problems",
+              "animation": "fade_in"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side",
+              "size": 0.35
+            }
+          }
+        }
+      ],
+      "narration_segments": [
+        {
+          "id": 1,
+          "text": "Today, we will explore Newton's Second Law. First, we'll define the three core components: Force, Mass, and Acceleration. Then, we'll see how they are mathematically related through the famous formula, F equals m times a. Finally, we'll apply this formula to solve real-world problems, calculating the force needed to move a car and the acceleration of a soccer ball when it's kicked.",
+          "duration_seconds": 20,
+          "display_directives": {
+            "text_layer": "show",
+            "visual_layer": "hide",
+            "avatar_layer": "show"
+          },
+          "word_count": 62
+        }
+      ],
+      "narration": "Today, we will explore Newton's Second Law. First, we'll define the three core components: Force, Mass, and Acceleration. Then, we'll see how they are mathematically related through the famous formula, F equals m times a. Finally, we'll apply this formula to solve real-world problems, calculating the force needed to move a car and the acceleration of a soccer ball when it's kicked."
+    },
+    {
+      "section_type": "content",
+      "section_title": "The Components: Force, Mass, and Acceleration",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "narration": "Before we can understand the full equation, let's get to know the players. First up is Force. In physics, a force is simply a push or a pull on an object. It's what causes an object to change its motion\u2014to speed up, slow down, or change direction. We measure force in a unit called the Newton, named after Sir Isaac Newton himself. Think of the force you use to open a door, the force of gravity pulling you to the Earth, or the force a bat applies to a baseball.",
+          "duration_seconds": 25,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "Force (F): A push or a pull on an object.\nUnit: Newton (N)",
+              "animation": "fade_in"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side",
+              "size": 0.35
+            }
+          }
+        },
+        {
+          "segment_id": 2,
+          "narration": "Next, we have Mass. Mass is often confused with weight, but they're different. Mass is the measure of how much 'stuff' or matter is in an object. More importantly, it's a measure of an object's inertia\u2014its resistance to being moved or having its motion changed. A bowling ball has more mass than a tennis ball, which is why it's much harder to get the bowling ball moving. We measure mass in kilograms.",
+          "duration_seconds": 24,
+          "display_directives": {
+            "text_layer": {
+              "action": "swap",
+              "content": "Mass (m): The amount of matter in an object; a measure of inertia.\nUnit: Kilogram (kg)",
+              "animation": "fade_in"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          }
+        },
+        {
+          "segment_id": 3,
+          "narration": "Finally, there's Acceleration. Acceleration isn't just about speeding up. It's any change in an object's velocity. Velocity includes both speed and direction, so you are accelerating if you speed up, slow down, or turn a corner. It's the rate at which your velocity changes. We measure acceleration in meters per second squared, which means how many meters per second your speed changes, every second. A sports car accelerating from zero to sixty is a classic example.",
+          "duration_seconds": 28,
+          "display_directives": {
+            "text_layer": {
+              "action": "swap",
+              "content": "Acceleration (a): The rate of change of velocity.\nUnit: Meters per second squared (m/s\u00b2)",
+              "animation": "fade_in"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          }
+        }
+      ],
+      "narration_segments": [
+        {
+          "id": 1,
+          "text": "Before we can understand the full equation, let's get to know the players. First up is Force. In physics, a force is simply a push or a pull on an object. It's what causes an object to change its motion\u2014to speed up, slow down, or change direction. We measure force in a unit called the Newton, named after Sir Isaac Newton himself. Think of the force you use to open a door, the force of gravity pulling you to the Earth, or the force a bat applies to a baseball.",
+          "duration_seconds": 25,
+          "display_directives": {
+            "text_layer": "show",
+            "visual_layer": "hide",
+            "avatar_layer": "show"
+          },
+          "word_count": 90
+        },
+        {
+          "id": 2,
+          "text": "Next, we have Mass. Mass is often confused with weight, but they're different. Mass is the measure of how much 'stuff' or matter is in an object. More importantly, it's a measure of an object's inertia\u2014its resistance to being moved or having its motion changed. A bowling ball has more mass than a tennis ball, which is why it's much harder to get the bowling ball moving. We measure mass in kilograms.",
+          "duration_seconds": 24,
+          "display_directives": {
+            "text_layer": "swap",
+            "visual_layer": "hide",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 72
+        },
+        {
+          "id": 3,
+          "text": "Finally, there's Acceleration. Acceleration isn't just about speeding up. It's any change in an object's velocity. Velocity includes both speed and direction, so you are accelerating if you speed up, slow down, or turn a corner. It's the rate at which your velocity changes. We measure acceleration in meters per second squared, which means how many meters per second your speed changes, every second. A sports car accelerating from zero to sixty is a classic example.",
+          "duration_seconds": 28,
+          "display_directives": {
+            "text_layer": "swap",
+            "visual_layer": "hide",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 76
+        }
+      ],
+      "narration": "Before we can understand the full equation, let's get to know the players. First up is Force. In physics, a force is simply a push or a pull on an object. It's what causes an object to change its motion\u2014to speed up, slow down, or change direction. We measure force in a unit called the Newton, named after Sir Isaac Newton himself. Think of the force you use to open a door, the force of gravity pulling you to the Earth, or the force a bat applies to a baseball. Next, we have Mass. Mass is often confused with weight, but they're different. Mass is the measure of how much 'stuff' or matter is in an object. More importantly, it's a measure of an object's inertia\u2014its resistance to being moved or having its motion changed. A bowling ball has more mass than a tennis ball, which is why it's much harder to get the bowling ball moving. We measure mass in kilograms. Finally, there's Acceleration. Acceleration isn't just about speeding up. It's any change in an object's velocity. Velocity includes both speed and direction, so you are accelerating if you speed up, slow down, or turn a corner. It's the rate at which your velocity changes. We measure acceleration in meters per second squared, which means how many meters per second your speed changes, every second. A sports car accelerating from zero to sixty is a classic example."
+    },
+    {
+      "section_type": "content",
+      "section_title": "The Relationship: F = ma",
+      "renderer": "manim",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "narration": "Newton's great insight was figuring out exactly how these three concepts\u2014force, mass, and acceleration\u2014are connected. He expressed it in a beautifully simple equation: Force equals mass times acceleration, or F = ma. This formula tells us two very important things about the world. Let's break it down.",
+          "duration_seconds": 18,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "How are Force, Mass, and Acceleration related?",
+              "animation": "fade_in"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side",
+              "size": 0.35
+            }
+          }
+        },
+        {
+          "segment_id": 2,
+          "narration": "First, it tells us that acceleration is directly proportional to force. This means if you keep the mass of an object the same and you double the force you apply to it, you will double its acceleration. If you triple the force, you triple the acceleration. More force means more acceleration. It's an intuitive idea: the harder you push something, the faster it speeds up.",
+          "duration_seconds": 22,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "visual_layer": {
+              "action": "show",
+              "animation": "fade_in"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "constructs": [
+                {
+                  "type": "Write",
+                  "element": "formula_F_equals_ma = MathTex('F', '=', 'm', 'a').scale(2)"
+                },
+                {
+                  "type": "Indicate",
+                  "element": "formula_F_equals_ma[0]"
+                },
+                {
+                  "type": "Indicate",
+                  "element": "formula_F_equals_ma[3]"
+                }
+              ]
+            },
+            "segment_index": 1
+          }
+        },
+        {
+          "segment_id": 3,
+          "narration": "Second, the formula shows that acceleration is inversely proportional to mass. This means if you apply the same amount of force to two different objects, the one with more mass will accelerate less. If you double the mass, you get only half the acceleration. This is why it's much harder to push a heavy, full shopping cart than an empty one with the same amount of effort. The greater mass resists the change in motion.",
+          "duration_seconds": 25,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "constructs": [
+                {
+                  "type": "Indicate",
+                  "element": "formula_F_equals_ma[2]"
+                },
+                {
+                  "type": "Indicate",
+                  "element": "formula_F_equals_ma[3]"
+                }
+              ]
+            },
+            "segment_index": 2
+          }
+        },
+        {
+          "segment_id": 4,
+          "narration": "So, the equation F = ma isn't just a set of letters. It's a complete story. It tells us that the acceleration of an object is a tug-of-war between the force trying to move it and the mass resisting being moved. This single, elegant law governs the motion of everything from planets orbiting the sun to the phone falling from your hand.",
+          "duration_seconds": 20,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "fade_in"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "constructs": [
+                {
+                  "type": "FadeOut",
+                  "element": "formula_F_equals_ma"
+                },
+                {
+                  "type": "Write",
+                  "element": "text_summary = Text('Acceleration = Force / Mass').scale(1.5)"
+                }
+              ]
+            },
+            "segment_index": 3
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title_question",
+            "type": "label",
+            "position": [
+              0,
+              2.0
+            ],
+            "properties": {
+              "text": "How are Force, Mass, and Acceleration related?",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "main_equation",
+            "type": "equation",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "latex": "F = ma",
+              "scale": 1.5
+            }
+          },
+          {
+            "id": "force_label",
+            "type": "label",
+            "position": [
+              -2.5,
+              0.5
+            ],
+            "properties": {
+              "text": "Force (F)",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "mass_label",
+            "type": "label",
+            "position": [
+              1.5,
+              0.5
+            ],
+            "properties": {
+              "text": "Mass (m)",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "accel_label",
+            "type": "label",
+            "position": [
+              2.5,
+              -0.5
+            ],
+            "properties": {
+              "text": "Acceleration (a)",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "summary_text",
+            "type": "equation",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "\\text{Acceleration} = \\frac{\\text{Force}}{\\text{Mass}}",
+              "scale": 1.2
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title_question",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "main_equation",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "force_label",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "main_equation",
+            "target_latex_part": "F",
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "highlight",
+            "target": "main_equation",
+            "target_latex_part": "a",
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "wait",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "mass_label",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "accel_label",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "main_equation",
+            "target_latex_part": "m",
+            "duration": 2,
+            "color": "BLUE"
+          },
+          {
+            "action": "highlight",
+            "target": "main_equation",
+            "target_latex_part": "a",
+            "duration": 2,
+            "color": "BLUE"
+          },
+          {
+            "action": "wait",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "title_question",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "force_label",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "mass_label",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "accel_label",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "summary_text",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "summary_text",
+            "duration": 2,
+            "color": "GREEN"
+          }
+        ]
+      },
+      "narration_segments": [
+        {
+          "id": 1,
+          "text": "Newton's great insight was figuring out exactly how these three concepts\u2014force, mass, and acceleration\u2014are connected. He expressed it in a beautifully simple equation: Force equals mass times acceleration, or F = ma. This formula tells us two very important things about the world. Let's break it down.",
+          "duration_seconds": 18,
+          "display_directives": {
+            "text_layer": "show",
+            "visual_layer": "hide",
+            "avatar_layer": "show"
+          },
+          "word_count": 47
+        },
+        {
+          "id": 2,
+          "text": "First, it tells us that acceleration is directly proportional to force. This means if you keep the mass of an object the same and you double the force you apply to it, you will double its acceleration. If you triple the force, you triple the acceleration. More force means more acceleration. It's an intuitive idea: the harder you push something, the faster it speeds up.",
+          "duration_seconds": 22,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "show",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 65
+        },
+        {
+          "id": 3,
+          "text": "Second, the formula shows that acceleration is inversely proportional to mass. This means if you apply the same amount of force to two different objects, the one with more mass will accelerate less. If you double the mass, you get only half the acceleration. This is why it's much harder to push a heavy, full shopping cart than an empty one with the same amount of effort. The greater mass resists the change in motion.",
+          "duration_seconds": 25,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "replace",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 75
+        },
+        {
+          "id": 4,
+          "text": "So, the equation F = ma isn't just a set of letters. It's a complete story. It tells us that the acceleration of an object is a tug-of-war between the force trying to move it and the mass resisting being moved. This single, elegant law governs the motion of everything from planets orbiting the sun to the phone falling from your hand.",
+          "duration_seconds": 20,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "replace",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 62
+        }
+      ],
+      "narration": "Newton's great insight was figuring out exactly how these three concepts\u2014force, mass, and acceleration\u2014are connected. He expressed it in a beautifully simple equation: Force equals mass times acceleration, or F = ma. This formula tells us two very important things about the world. Let's break it down. First, it tells us that acceleration is directly proportional to force. This means if you keep the mass of an object the same and you double the force you apply to it, you will double its acceleration. If you triple the force, you triple the acceleration. More force means more acceleration. It's an intuitive idea: the harder you push something, the faster it speeds up. Second, the formula shows that acceleration is inversely proportional to mass. This means if you apply the same amount of force to two different objects, the one with more mass will accelerate less. If you double the mass, you get only half the acceleration. This is why it's much harder to push a heavy, full shopping cart than an empty one with the same amount of effort. The greater mass resists the change in motion. So, the equation F = ma isn't just a set of letters. It's a complete story. It tells us that the acceleration of an object is a tug-of-war between the force trying to move it and the mass resisting being moved. This single, elegant law governs the motion of everything from planets orbiting the sun to the phone falling from your hand.",
+      "visual_beats": [
+        {
+          "manim_scene_spec": {
+            "constructs": [
+              {
+                "type": "Write",
+                "element": "formula_F_equals_ma = MathTex('F', '=', 'm', 'a').scale(2)"
+              },
+              {
+                "type": "Indicate",
+                "element": "formula_F_equals_ma[0]"
+              },
+              {
+                "type": "Indicate",
+                "element": "formula_F_equals_ma[3]"
+              }
+            ]
+          },
+          "segment_index": 1
+        },
+        {
+          "manim_scene_spec": {
+            "constructs": [
+              {
+                "type": "Indicate",
+                "element": "formula_F_equals_ma[2]"
+              },
+              {
+                "type": "Indicate",
+                "element": "formula_F_equals_ma[3]"
+              }
+            ]
+          },
+          "segment_index": 2
+        },
+        {
+          "manim_scene_spec": {
+            "constructs": [
+              {
+                "type": "FadeOut",
+                "element": "formula_F_equals_ma"
+              },
+              {
+                "type": "Write",
+                "element": "text_summary = Text('Acceleration = Force / Mass').scale(1.5)"
+              }
+            ]
+          },
+          "segment_index": 3
+        }
+      ]
+    },
+    {
+      "section_type": "example",
+      "section_title": "Example 1: Calculating Force",
+      "renderer": "manim",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "narration": "Let's put the law into practice. Imagine a car with a mass of 1000 kilograms. The driver hits the gas pedal, causing the car to accelerate at a rate of 3 meters per second squared. Our question is: what is the net force required to produce this acceleration? First, let's identify what we know.",
+          "duration_seconds": 20,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "Problem: A 1000 kg car accelerates at 3 m/s\u00b2. What is the net force?",
+              "animation": "fade_in"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side_small",
+              "size": 0.25
+            }
+          }
+        },
+        {
+          "segment_id": 2,
+          "narration": "We are given the mass, 'm', which is 1000 kilograms, and the acceleration, 'a', which is 3 meters per second squared. The unknown we need to find is the Force, 'F'.",
+          "duration_seconds": 12,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "visual_layer": {
+              "action": "show",
+              "animation": "fade_in"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "constructs": [
+                {
+                  "type": "Write",
+                  "element": "knowns = VGroup(MathTex('m = 1000 \\text{ kg}'), MathTex('a = 3 \\text{ m/s}^2'), MathTex('F = ?')).arrange(DOWN, buff=0.5).to_edge(UP)"
+                }
+              ]
+            },
+            "segment_index": 1
+          }
+        },
+        {
+          "segment_id": 3,
+          "narration": "Next, we write down our tool for solving the problem: Newton's Second Law, F = ma. This is our guide for the calculation.",
+          "duration_seconds": 9,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "constructs": [
+                {
+                  "type": "Write",
+                  "element": "formula = MathTex('F = m \\times a').scale(1.5).next_to(knowns, DOWN, buff=1)"
+                }
+              ]
+            },
+            "segment_index": 2
+          }
+        },
+        {
+          "segment_id": 4,
+          "narration": "Now, we substitute our known values into the formula. We replace 'm' with 1000 and 'a' with 3.",
+          "duration_seconds": 9,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "constructs": [
+                {
+                  "type": "Transform",
+                  "element": "formula",
+                  "target_element": "MathTex('F = (1000 \\text{ kg}) \\times (3 \\text{ m/s}^2)').scale(1.5).move_to(formula)"
+                }
+              ]
+            },
+            "segment_index": 3
+          }
+        },
+        {
+          "segment_id": 5,
+          "narration": "Finally, we perform the multiplication. 1000 times 3 equals 3000. The unit for force is the Newton. So, the net force required to accelerate the car is 3000 Newtons. It's that straightforward!",
+          "duration_seconds": 14,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "constructs": [
+                {
+                  "type": "Transform",
+                  "element": "formula",
+                  "target_element": "MathTex('F = 3000 \\text{ N}').scale(1.5).move_to(formula)"
+                },
+                {
+                  "type": "Circumscribe",
+                  "element": "formula"
+                }
+              ]
+            },
+            "segment_index": 4
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "problem_statement",
+            "type": "equation",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Problem: A 1000 kg car accelerates at 3 m/s}^2\\text{. What is the net force?}",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "mass_known",
+            "type": "equation",
+            "position": [
+              0,
+              1.5
+            ],
+            "properties": {
+              "latex": "m = 1000 \\text{ kg}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "accel_known",
+            "type": "equation",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "latex": "a = 3 \\text{ m/s}^2",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "force_unknown",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "F = ?",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "newton_law",
+            "type": "equation",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "F = m \\times a",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "substitution",
+            "type": "equation",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "F = (1000 \\text{ kg}) \\times (3 \\text{ m/s}^2)",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "final_result",
+            "type": "equation",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "F = 3000 \\text{ N}",
+              "scale": 1.2
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "problem_statement",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "mass_known",
+            "duration": 1.5
+          },
+          {
+            "action": "show_equation",
+            "target": "accel_known",
+            "duration": 1.5
+          },
+          {
+            "action": "show_equation",
+            "target": "force_unknown",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "duration": 1.5
+          },
+          {
+            "action": "show_equation",
+            "target": "newton_law",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "duration": 2.0
+          },
+          {
+            "action": "transform",
+            "target": "newton_law",
+            "new_target": "substitution",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "duration": 2.0
+          },
+          {
+            "action": "transform",
+            "target": "substitution",
+            "new_target": "final_result",
+            "duration": 2.0
+          },
+          {
+            "action": "highlight",
+            "target": "final_result",
+            "duration": 2.0,
+            "color": "YELLOW"
+          },
+          {
+            "action": "fade_out",
+            "target": [
+              "problem_statement",
+              "mass_known",
+              "accel_known",
+              "force_unknown"
+            ],
+            "duration": 2.0
+          }
+        ]
+      },
+      "narration_segments": [
+        {
+          "id": 1,
+          "text": "Let's put the law into practice. Imagine a car with a mass of 1000 kilograms. The driver hits the gas pedal, causing the car to accelerate at a rate of 3 meters per second squared. Our question is: what is the net force required to produce this acceleration? First, let's identify what we know.",
+          "duration_seconds": 20,
+          "display_directives": {
+            "text_layer": "show",
+            "visual_layer": "hide",
+            "avatar_layer": "show"
+          },
+          "word_count": 54
+        },
+        {
+          "id": 2,
+          "text": "We are given the mass, 'm', which is 1000 kilograms, and the acceleration, 'a', which is 3 meters per second squared. The unknown we need to find is the Force, 'F'.",
+          "duration_seconds": 12,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "show",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 31
+        },
+        {
+          "id": 3,
+          "text": "Next, we write down our tool for solving the problem: Newton's Second Law, F = ma. This is our guide for the calculation.",
+          "duration_seconds": 9,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "replace",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 23
+        },
+        {
+          "id": 4,
+          "text": "Now, we substitute our known values into the formula. We replace 'm' with 1000 and 'a' with 3.",
+          "duration_seconds": 9,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "replace",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 18
+        },
+        {
+          "id": 5,
+          "text": "Finally, we perform the multiplication. 1000 times 3 equals 3000. The unit for force is the Newton. So, the net force required to accelerate the car is 3000 Newtons. It's that straightforward!",
+          "duration_seconds": 14,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "replace",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 32
+        }
+      ],
+      "narration": "Let's put the law into practice. Imagine a car with a mass of 1000 kilograms. The driver hits the gas pedal, causing the car to accelerate at a rate of 3 meters per second squared. Our question is: what is the net force required to produce this acceleration? First, let's identify what we know. We are given the mass, 'm', which is 1000 kilograms, and the acceleration, 'a', which is 3 meters per second squared. The unknown we need to find is the Force, 'F'. Next, we write down our tool for solving the problem: Newton's Second Law, F = ma. This is our guide for the calculation. Now, we substitute our known values into the formula. We replace 'm' with 1000 and 'a' with 3. Finally, we perform the multiplication. 1000 times 3 equals 3000. The unit for force is the Newton. So, the net force required to accelerate the car is 3000 Newtons. It's that straightforward!",
+      "visual_beats": [
+        {
+          "manim_scene_spec": {
+            "constructs": [
+              {
+                "type": "Write",
+                "element": "knowns = VGroup(MathTex('m = 1000 \\text{ kg}'), MathTex('a = 3 \\text{ m/s}^2'), MathTex('F = ?')).arrange(DOWN, buff=0.5).to_edge(UP)"
+              }
+            ]
+          },
+          "segment_index": 1
+        },
+        {
+          "manim_scene_spec": {
+            "constructs": [
+              {
+                "type": "Write",
+                "element": "formula = MathTex('F = m \\times a').scale(1.5).next_to(knowns, DOWN, buff=1)"
+              }
+            ]
+          },
+          "segment_index": 2
+        },
+        {
+          "manim_scene_spec": {
+            "constructs": [
+              {
+                "type": "Transform",
+                "element": "formula",
+                "target_element": "MathTex('F = (1000 \\text{ kg}) \\times (3 \\text{ m/s}^2)').scale(1.5).move_to(formula)"
+              }
+            ]
+          },
+          "segment_index": 3
+        },
+        {
+          "manim_scene_spec": {
+            "constructs": [
+              {
+                "type": "Transform",
+                "element": "formula",
+                "target_element": "MathTex('F = 3000 \\text{ N}').scale(1.5).move_to(formula)"
+              },
+              {
+                "type": "Circumscribe",
+                "element": "formula"
+              }
+            ]
+          },
+          "segment_index": 4
+        }
+      ]
+    },
+    {
+      "section_type": "example",
+      "section_title": "Example 2: Calculating Acceleration",
+      "renderer": "manim",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "narration": "Let's try another problem, but this time we'll solve for acceleration. A soccer player kicks a ball, applying a force of 90 Newtons. The ball has a mass of 0.45 kilograms. What is the acceleration of the ball the instant it's kicked? As before, we start by listing our knowns and the unknown.",
+          "duration_seconds": 22,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "Problem: A 90 N force is applied to a 0.45 kg soccer ball. What is its acceleration?",
+              "animation": "fade_in"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side_small",
+              "size": 0.25
+            }
+          }
+        },
+        {
+          "segment_id": 2,
+          "narration": "We know the force, 'F', is 90 Newtons, and the mass, 'm', is 0.45 kilograms. We are looking for the acceleration, 'a'.",
+          "duration_seconds": 11,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "visual_layer": {
+              "action": "show",
+              "animation": "fade_in"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "constructs": [
+                {
+                  "type": "Write",
+                  "element": "knowns = VGroup(MathTex('F = 90 \\text{ N}'), MathTex('m = 0.45 \\text{ kg}'), MathTex('a = ?')).arrange(DOWN, buff=0.5).to_edge(UP)"
+                }
+              ]
+            },
+            "segment_index": 1
+          }
+        },
+        {
+          "segment_id": 3,
+          "narration": "We start with F = ma, but this time our unknown, 'a', isn't by itself. We need to rearrange the formula. To isolate 'a', we can divide both sides of the equation by 'm'. This gives us a new formula: a = F / m.",
+          "duration_seconds": 18,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "constructs": [
+                {
+                  "type": "Write",
+                  "element": "formula_start = MathTex('F = m \\times a').scale(1.5).next_to(knowns, DOWN, buff=1)"
+                },
+                {
+                  "type": "Transform",
+                  "element": "formula_start",
+                  "target_element": "MathTex('a = \\\\frac{F}{m}').scale(1.5).move_to(formula_start)"
+                }
+              ]
+            },
+            "segment_index": 2
+          }
+        },
+        {
+          "segment_id": 4,
+          "narration": "Now we can plug in our values. We substitute 90 for 'F' and 0.45 for 'm'.",
+          "duration_seconds": 8,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "constructs": [
+                {
+                  "type": "Transform",
+                  "element": "formula_start",
+                  "target_element": "MathTex('a = \\\\frac{90 \\text{ N}}{0.45 \\text{ kg}}').scale(1.5).move_to(formula_start)"
+                }
+              ]
+            },
+            "segment_index": 3
+          }
+        },
+        {
+          "segment_id": 5,
+          "narration": "Finally, we do the division. 90 divided by 0.45 is 200. The unit for acceleration is meters per second squared. So, the ball accelerates at an incredible 200 m/s\u00b2. This shows how a significant force on a small mass can produce a very large acceleration.",
+          "duration_seconds": 19,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "constructs": [
+                {
+                  "type": "Transform",
+                  "element": "formula_start",
+                  "target_element": "MathTex('a = 200 \\text{ m/s}^2').scale(1.5).move_to(formula_start)"
+                },
+                {
+                  "type": "Circumscribe",
+                  "element": "formula_start"
+                }
+              ]
+            },
+            "segment_index": 4
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "problem_statement",
+            "type": "equation",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Problem: A 90 N force is applied to a 0.45 kg soccer ball. What is its acceleration?}",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "known_force",
+            "type": "equation",
+            "position": [
+              0,
+              1.5
+            ],
+            "properties": {
+              "latex": "F = 90 \\text{ N}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "known_mass",
+            "type": "equation",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "latex": "m = 0.45 \\text{ kg}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "unknown_a",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "a = ?",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "formula_1",
+            "type": "equation",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "F = m \\times a",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "formula_2",
+            "type": "equation",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "a = \\frac{F}{m}",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "formula_3",
+            "type": "equation",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "a = \\frac{90 \\text{ N}}{0.45 \\text{ kg}}",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "final_result",
+            "type": "equation",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "a = 200 \\text{ m/s}^2",
+              "scale": 1.2
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "problem_statement",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "known_force",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "known_mass",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "unknown_a",
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "duration": 7
+          },
+          {
+            "action": "show_equation",
+            "target": "formula_1",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 2
+          },
+          {
+            "action": "transform",
+            "target": "formula_1",
+            "target_id": "formula_2",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 12
+          },
+          {
+            "action": "transform",
+            "target": "formula_2",
+            "target_id": "formula_3",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 6
+          },
+          {
+            "action": "transform",
+            "target": "formula_3",
+            "target_id": "final_result",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "final_result",
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "wait",
+            "duration": 12
+          },
+          {
+            "action": "fade_out",
+            "target": "problem_statement",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "known_force",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "known_mass",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "unknown_a",
+            "duration": 1
+          }
+        ]
+      },
+      "narration_segments": [
+        {
+          "id": 1,
+          "text": "Let's try another problem, but this time we'll solve for acceleration. A soccer player kicks a ball, applying a force of 90 Newtons. The ball has a mass of 0.45 kilograms. What is the acceleration of the ball the instant it's kicked? As before, we start by listing our knowns and the unknown.",
+          "duration_seconds": 22,
+          "display_directives": {
+            "text_layer": "show",
+            "visual_layer": "hide",
+            "avatar_layer": "show"
+          },
+          "word_count": 53
+        },
+        {
+          "id": 2,
+          "text": "We know the force, 'F', is 90 Newtons, and the mass, 'm', is 0.45 kilograms. We are looking for the acceleration, 'a'.",
+          "duration_seconds": 11,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "show",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 22
+        },
+        {
+          "id": 3,
+          "text": "We start with F = ma, but this time our unknown, 'a', isn't by itself. We need to rearrange the formula. To isolate 'a', we can divide both sides of the equation by 'm'. This gives us a new formula: a = F / m.",
+          "duration_seconds": 18,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "replace",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 45
+        },
+        {
+          "id": 4,
+          "text": "Now we can plug in our values. We substitute 90 for 'F' and 0.45 for 'm'.",
+          "duration_seconds": 8,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "replace",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 16
+        },
+        {
+          "id": 5,
+          "text": "Finally, we do the division. 90 divided by 0.45 is 200. The unit for acceleration is meters per second squared. So, the ball accelerates at an incredible 200 m/s\u00b2. This shows how a significant force on a small mass can produce a very large acceleration.",
+          "duration_seconds": 19,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "replace",
+            "avatar_layer": "gesture_only"
+          },
+          "word_count": 45
+        }
+      ],
+      "narration": "Let's try another problem, but this time we'll solve for acceleration. A soccer player kicks a ball, applying a force of 90 Newtons. The ball has a mass of 0.45 kilograms. What is the acceleration of the ball the instant it's kicked? As before, we start by listing our knowns and the unknown. We know the force, 'F', is 90 Newtons, and the mass, 'm', is 0.45 kilograms. We are looking for the acceleration, 'a'. We start with F = ma, but this time our unknown, 'a', isn't by itself. We need to rearrange the formula. To isolate 'a', we can divide both sides of the equation by 'm'. This gives us a new formula: a = F / m. Now we can plug in our values. We substitute 90 for 'F' and 0.45 for 'm'. Finally, we do the division. 90 divided by 0.45 is 200. The unit for acceleration is meters per second squared. So, the ball accelerates at an incredible 200 m/s\u00b2. This shows how a significant force on a small mass can produce a very large acceleration.",
+      "visual_beats": [
+        {
+          "manim_scene_spec": {
+            "constructs": [
+              {
+                "type": "Write",
+                "element": "knowns = VGroup(MathTex('F = 90 \\text{ N}'), MathTex('m = 0.45 \\text{ kg}'), MathTex('a = ?')).arrange(DOWN, buff=0.5).to_edge(UP)"
+              }
+            ]
+          },
+          "segment_index": 1
+        },
+        {
+          "manim_scene_spec": {
+            "constructs": [
+              {
+                "type": "Write",
+                "element": "formula_start = MathTex('F = m \\times a').scale(1.5).next_to(knowns, DOWN, buff=1)"
+              },
+              {
+                "type": "Transform",
+                "element": "formula_start",
+                "target_element": "MathTex('a = \\\\frac{F}{m}').scale(1.5).move_to(formula_start)"
+              }
+            ]
+          },
+          "segment_index": 2
+        },
+        {
+          "manim_scene_spec": {
+            "constructs": [
+              {
+                "type": "Transform",
+                "element": "formula_start",
+                "target_element": "MathTex('a = \\\\frac{90 \\text{ N}}{0.45 \\text{ kg}}').scale(1.5).move_to(formula_start)"
+              }
+            ]
+          },
+          "segment_index": 3
+        },
+        {
+          "manim_scene_spec": {
+            "constructs": [
+              {
+                "type": "Transform",
+                "element": "formula_start",
+                "target_element": "MathTex('a = 200 \\text{ m/s}^2').scale(1.5).move_to(formula_start)"
+              },
+              {
+                "type": "Circumscribe",
+                "element": "formula_start"
+              }
+            ]
+          },
+          "segment_index": 4
+        }
+      ]
+    },
+    {
+      "section_type": "memory",
+      "section_title": "Key Concepts Check",
+      "flashcards": [
+        {
+          "card_id": 1,
+          "front": "What is the formula for Newton's Second Law of Motion?",
+          "back": "F = ma (Force = mass \u00d7 acceleration)"
+        },
+        {
+          "card_id": 2,
+          "front": "What is the standard unit of Force in physics?",
+          "back": "The Newton (N)"
+        },
+        {
+          "card_id": 3,
+          "front": "If you keep mass constant and double the force on an object, what happens to its acceleration?",
+          "back": "It also doubles."
+        },
+        {
+          "card_id": 4,
+          "front": "If you apply the same force to an object with double the mass, what happens to its acceleration?",
+          "back": "It is halved (1/2 the original acceleration)."
+        },
+        {
+          "card_id": 5,
+          "front": "What physical property does 'mass' represent in the context of motion?",
+          "back": "Inertia: an object's resistance to a change in its state of motion."
+        }
+      ]
+    },
+    {
+      "section_type": "recap",
+      "section_title": "Newton's Law in the Real World",
+      "renderer": "video",
+      "narration_beats": [
+        {
+          "scene_id": 1,
+          "word_count": 85,
+          "narration": "Think about a massive rocket preparing for launch. Its engines must generate an incredible amount of force. Why? Because the rocket has an enormous mass. According to F=ma, to achieve the necessary acceleration to overcome Earth's gravity, the 'F' in the equation must be gigantic to move the massive 'm'. The fiery blast from the engines is a visual representation of the immense force required by Newton's Second Law to lift a heavy object and send it hurtling towards the stars.",
+          "duration_seconds": 25,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "show",
+              "animation": "fade_in"
+            },
+            "avatar_layer": {
+              "action": "hide"
+            }
+          },
+          "visual_beat": {
+            "video_spec": {
+              "asset_id": "rocket_launch_slow_motion"
+            },
+            "segment_index": 0
+          }
+        },
+        {
+          "scene_id": 2,
+          "word_count": 88,
+          "narration": "Now picture yourself pushing a shopping cart. When it's empty, its mass is low. A small push\u2014a small force\u2014is enough to get it accelerating quickly down the aisle. But now, imagine the cart is full of heavy groceries. Its mass has increased significantly. To get the same acceleration as before, you must apply a much greater force. You can feel Newton's law in your muscles; you are directly experiencing the inverse relationship between mass and acceleration for a given force you can exert.",
+          "duration_seconds": 26,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "hide"
+            }
+          },
+          "visual_beat": {
+            "video_spec": {
+              "asset_id": "shopping_cart_empty_then_full"
+            },
+            "segment_index": 1
+          }
+        },
+        {
+          "scene_id": 3,
+          "word_count": 81,
+          "narration": "Consider a baseball player swinging a bat. The bat applies a large force for a very short time to the low-mass baseball. The result, as predicted by a = F/m, is a massive acceleration, sending the ball flying out of the park. Now, imagine the player tried to hit a bowling ball with the same swing. The force 'F' is the same, but the mass 'm' is much larger. The resulting acceleration would be tiny; the ball would barely move. This contrast perfectly illustrates how mass dictates the outcome of a force.",
+          "duration_seconds": 24,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "hide"
+            }
+          },
+          "visual_beat": {
+            "video_spec": {
+              "asset_id": "baseball_hit_vs_bowling_ball"
+            },
+            "segment_index": 2
+          }
+        },
+        {
+          "scene_id": 4,
+          "word_count": 86,
+          "narration": "Newton's Second Law isn't just about speeding up; it's also about slowing down. When a car brakes, its brake pads apply a force in the opposite direction of motion. This creates a negative acceleration, or deceleration. The amount of force needed depends on the car's mass and how quickly the driver needs to stop. A heavy truck has much more mass than a small car, so its brakes must be able to apply a far greater force to achieve the same rate of deceleration.",
+          "duration_seconds": 26,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "hide"
+            }
+          },
+          "visual_beat": {
+            "video_spec": {
+              "asset_id": "car_braking_and_truck_braking_comparison"
+            },
+            "segment_index": 3
+          }
+        },
+        {
+          "scene_id": 5,
+          "word_count": 92,
+          "narration": "From the gentle push that moves a toy to the colossal power of a rocket launch, Newton's Second Law is always at play. It is the fundamental rulebook for motion. It reveals that acceleration is the result of a battle: the force pushing for change versus the mass resisting it. Understanding F=ma doesn't just help you solve physics problems; it gives you a new lens through which to see the world, explaining the 'why' behind the motion you see everywhere, every single day.",
+          "duration_seconds": 28,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "fade_in"
+            },
+            "avatar_layer": {
+              "action": "hide"
+            }
+          },
+          "visual_beat": {
+            "video_spec": {
+              "asset_id": "montage_of_all_previous_examples"
+            },
+            "segment_index": 4
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": 1,
+          "prompt": "A large white rocket with black markings stands vertically on a launchpad, centered in the frame against a clear blue sky. The camera is at a low angle, looking up. After 3 seconds of stillness, a massive plume of bright orange fire and white smoke erupts from the rocket's base. The smoke billows out, filling the bottom third of the screen. The rocket begins to ascend vertically in slow motion. The camera remains stationary as the rocket moves upwards. For the remainder of the shot, the rocket continues to climb, leaving a thick, expanding trail of fire and smoke that fills the lower half of the frame.",
+          "duration_seconds": 25
+        },
+        {
+          "beat_id": 2,
+          "prompt": "The scene begins with a side view of a person's hands pushing a grey, empty metal shopping cart from left to right down a brightly lit grocery store aisle. The floor is white tile. The cart accelerates quickly and glides smoothly. At 13 seconds, the scene cuts. The view is identical, but the shopping cart is now full of colorful groceries. The person's hands push the cart again from left to right. The cart accelerates very slowly, and the person's arms appear tense as they continue to push the heavy cart for the remainder of the shot.",
+          "duration_seconds": 26
+        },
+        {
+          "beat_id": 3,
+          "prompt": "A close-up, slow-motion shot of a wooden baseball bat swinging from right to left. A white baseball with red stitching enters from the left and makes contact with the bat. The ball visibly compresses on impact and then rapidly shoots off to the right, exiting the frame. The background is a blurred green field. At 12 seconds, the scene cuts to an identical shot. The same bat swings from right to left, but this time it strikes a black bowling ball. Upon impact, the bat's motion stops abruptly, and the bowling ball moves only slightly to the right before dropping downwards out of frame.",
+          "duration_seconds": 24
+        },
+        {
+          "beat_id": 4,
+          "prompt": "A split screen with a top-down view of two parallel roads. On the left, a small red car drives forward. On the right, a large blue semi-truck drives forward at the same speed. A white line is painted across both roads. As each vehicle's front bumper crosses the white line, its red brake lights turn on. The red car on the left slows down quickly, leaving short, black tire marks and stopping a short distance past the line. The blue truck on the right slows down much more gradually, traveling a significantly longer distance past the line before coming to a stop.",
+          "duration_seconds": 26
+        },
+        {
+          "beat_id": 5,
+          "prompt": "A rapid montage of clips. 0-5 seconds: The rocket launching with fire and smoke. 5-10 seconds: The empty shopping cart gliding easily down the aisle. 10-15 seconds: The baseball bat hitting the baseball in slow motion. 15-20 seconds: The final positions of the stopped car and truck, showing the difference in braking distance. 20-24 seconds: A faster sequence of four 1-second clips: the rocket ascending, the person struggling with the full cart, the bat hitting the bowling ball, and the car braking. 24-28 seconds: The screen is black with the equation 'F=ma' in the center in bold, white text.",
+          "duration_seconds": 28
+        }
+      ],
+      "narration_segments": [
+        {
+          "id": 0,
+          "text": "Think about a massive rocket preparing for launch. Its engines must generate an incredible amount of force. Why? Because the rocket has an enormous mass. According to F=ma, to achieve the necessary acceleration to overcome Earth's gravity, the 'F' in the equation must be gigantic to move the massive 'm'. The fiery blast from the engines is a visual representation of the immense force required by Newton's Second Law to lift a heavy object and send it hurtling towards the stars.",
+          "duration_seconds": 25,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "show",
+            "avatar_layer": "hide"
+          },
+          "word_count": 85
+        },
+        {
+          "id": 1,
+          "text": "Now picture yourself pushing a shopping cart. When it's empty, its mass is low. A small push\u2014a small force\u2014is enough to get it accelerating quickly down the aisle. But now, imagine the cart is full of heavy groceries. Its mass has increased significantly. To get the same acceleration as before, you must apply a much greater force. You can feel Newton's law in your muscles; you are directly experiencing the inverse relationship between mass and acceleration for a given force you can exert.",
+          "duration_seconds": 26,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "replace",
+            "avatar_layer": "hide"
+          },
+          "word_count": 88
+        },
+        {
+          "id": 2,
+          "text": "Consider a baseball player swinging a bat. The bat applies a large force for a very short time to the low-mass baseball. The result, as predicted by a = F/m, is a massive acceleration, sending the ball flying out of the park. Now, imagine the player tried to hit a bowling ball with the same swing. The force 'F' is the same, but the mass 'm' is much larger. The resulting acceleration would be tiny; the ball would barely move. This contrast perfectly illustrates how mass dictates the outcome of a force.",
+          "duration_seconds": 24,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "replace",
+            "avatar_layer": "hide"
+          },
+          "word_count": 81
+        },
+        {
+          "id": 3,
+          "text": "Newton's Second Law isn't just about speeding up; it's also about slowing down. When a car brakes, its brake pads apply a force in the opposite direction of motion. This creates a negative acceleration, or deceleration. The amount of force needed depends on the car's mass and how quickly the driver needs to stop. A heavy truck has much more mass than a small car, so its brakes must be able to apply a far greater force to achieve the same rate of deceleration.",
+          "duration_seconds": 26,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "replace",
+            "avatar_layer": "hide"
+          },
+          "word_count": 86
+        },
+        {
+          "id": 4,
+          "text": "From the gentle push that moves a toy to the colossal power of a rocket launch, Newton's Second Law is always at play. It is the fundamental rulebook for motion. It reveals that acceleration is the result of a battle: the force pushing for change versus the mass resisting it. Understanding F=ma doesn't just help you solve physics problems; it gives you a new lens through which to see the world, explaining the 'why' behind the motion you see everywhere, every single day.",
+          "duration_seconds": 28,
+          "display_directives": {
+            "text_layer": "hide",
+            "visual_layer": "replace",
+            "avatar_layer": "hide"
+          },
+          "word_count": 92
+        }
+      ],
+      "narration": "Think about a massive rocket preparing for launch. Its engines must generate an incredible amount of force. Why? Because the rocket has an enormous mass. According to F=ma, to achieve the necessary acceleration to overcome Earth's gravity, the 'F' in the equation must be gigantic to move the massive 'm'. The fiery blast from the engines is a visual representation of the immense force required by Newton's Second Law to lift a heavy object and send it hurtling towards the stars. Now picture yourself pushing a shopping cart. When it's empty, its mass is low. A small push\u2014a small force\u2014is enough to get it accelerating quickly down the aisle. But now, imagine the cart is full of heavy groceries. Its mass has increased significantly. To get the same acceleration as before, you must apply a much greater force. You can feel Newton's law in your muscles; you are directly experiencing the inverse relationship between mass and acceleration for a given force you can exert. Consider a baseball player swinging a bat. The bat applies a large force for a very short time to the low-mass baseball. The result, as predicted by a = F/m, is a massive acceleration, sending the ball flying out of the park. Now, imagine the player tried to hit a bowling ball with the same swing. The force 'F' is the same, but the mass 'm' is much larger. The resulting acceleration would be tiny; the ball would barely move. This contrast perfectly illustrates how mass dictates the outcome of a force. Newton's Second Law isn't just about speeding up; it's also about slowing down. When a car brakes, its brake pads apply a force in the opposite direction of motion. This creates a negative acceleration, or deceleration. The amount of force needed depends on the car's mass and how quickly the driver needs to stop. A heavy truck has much more mass than a small car, so its brakes must be able to apply a far greater force to achieve the same rate of deceleration. From the gentle push that moves a toy to the colossal power of a rocket launch, Newton's Second Law is always at play. It is the fundamental rulebook for motion. It reveals that acceleration is the result of a battle: the force pushing for change versus the mass resisting it. Understanding F=ma doesn't just help you solve physics problems; it gives you a new lens through which to see the world, explaining the 'why' behind the motion you see everywhere, every single day.",
+      "visual_beats": [
+        {
+          "video_spec": {
+            "asset_id": "rocket_launch_slow_motion"
+          },
+          "segment_index": 0
+        },
+        {
+          "video_spec": {
+            "asset_id": "shopping_cart_empty_then_full"
+          },
+          "segment_index": 1
+        },
+        {
+          "video_spec": {
+            "asset_id": "baseball_hit_vs_bowling_ball"
+          },
+          "segment_index": 2
+        },
+        {
+          "video_spec": {
+            "asset_id": "car_braking_and_truck_braking_comparison"
+          },
+          "segment_index": 3
+        },
+        {
+          "video_spec": {
+            "asset_id": "montage_of_all_previous_examples"
+          },
+          "segment_index": 4
+        }
+      ]
+    }
+  ],
+  "pipeline_version": "1.2",
+  "job_id": "140f0951",
+  "use_remotion": false,
+  "source_file": null
+}

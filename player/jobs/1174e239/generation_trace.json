@@ -1,0 +1,156 @@
+{
+  "job_id": "1174e239",
+  "started_at": "2025-12-20T15:58:22.337870",
+  "completed_at": "2025-12-20T15:59:57.084500",
+  "duration_seconds": 94.75,
+  "status": "failed",
+  "generation_events": [
+    {
+      "timestamp": "2025-12-20T15:58:22.337889",
+      "elapsed_seconds": 0.0,
+      "event_type": "pipeline_start",
+      "details": {
+        "pipeline_version": "1.2",
+        "pipeline_type": "markdown",
+        "source_file": null,
+        "subject": "General Science",
+        "grade": "10",
+        "dry_run": false,
+        "skip_wan": false
+      }
+    }
+  ],
+  "render_prompts": [],
+  "renderer_decisions": [],
+  "validation_results": [
+    {
+      "timestamp": "2025-12-20T15:59:57.074688",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [recap_scene_count_wrong] Section 0: Recap section has 0 scenes, must be exactly 5"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T15:59:57.074975",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [recap_narration_below_minimum] Section 0: Recap total narration is 0 words, minimum is 300"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T15:59:57.075390",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [content_or_example_narration_below_minimum] Section 0: Content section has 0 words, minimum is 150"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T15:59:57.081037",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [content_or_example_narration_below_minimum] Section 0: Content section has 0 words, minimum is 150"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T15:59:57.082106",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [content_or_example_narration_below_minimum] Section 0: Example section has 0 words, minimum is 100"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-20T15:59:57.083259",
+      "validation_type": "hard_fail_check",
+      "section_id": 0,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [example_without_step_visualization] Section 0: Example section has no visual beats - examples must be visualized step-by-step"
+      ],
+      "warnings": []
+    }
+  ],
+  "errors": [
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T15:59:57.074480",
+        "condition": "recap_scene_count_wrong",
+        "section_id": 0,
+        "details": "Recap section has 0 scenes, must be exactly 5"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T15:59:57.074838",
+        "condition": "recap_narration_below_minimum",
+        "section_id": 0,
+        "details": "Recap total narration is 0 words, minimum is 300"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T15:59:57.075120",
+        "condition": "content_or_example_narration_below_minimum",
+        "section_id": 0,
+        "details": "Content section has 0 words, minimum is 150"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T15:59:57.080369",
+        "condition": "content_or_example_narration_below_minimum",
+        "section_id": 0,
+        "details": "Content section has 0 words, minimum is 150"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T15:59:57.081563",
+        "condition": "content_or_example_narration_below_minimum",
+        "section_id": 0,
+        "details": "Example section has 0 words, minimum is 100"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-20T15:59:57.082711",
+        "condition": "example_without_step_visualization",
+        "section_id": 0,
+        "details": "Example section has no visual beats - examples must be visualized step-by-step"
+      }
+    }
+  ],
+  "warnings": []
+}

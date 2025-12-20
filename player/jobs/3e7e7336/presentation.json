@@ -1,0 +1,1167 @@
+{
+  "spec_version": "v1.3",
+  "film_title": "The Doppler Effect: Understanding Sound and Light on the Move",
+  "subject": "General Science",
+  "grade": "10",
+  "sections": [
+    {
+      "section_type": "intro",
+      "section_title": "Introduction to the Doppler Effect",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "narration": "Have you ever stood by the side of the road and heard an ambulance siren as it approaches and then passes you? Notice how the pitch of the siren seems to get higher as it comes toward you, and then suddenly drops as it moves away? That's not your imagination, and the ambulance driver isn't changing the siren.",
+          "duration_seconds": 15,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "Have you ever heard an ambulance siren change pitch as it passes you?"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "center",
+              "size": 0.6
+            }
+          }
+        },
+        {
+          "segment_id": 2,
+          "narration": "This fascinating phenomenon is a fundamental principle of physics that applies to all kinds of waves, including sound and light. It's called the Doppler Effect. In this film, we're going to explore what the Doppler Effect is, how it works, and how it's used in everything from police radar guns to understanding the vastness of our universe.",
+          "duration_seconds": 18,
+          "display_directives": {
+            "text_layer": {
+              "action": "swap",
+              "content": "This phenomenon is called the Doppler Effect.",
+              "animation": "fade_in"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section_type": "summary",
+      "section_title": "What We'll Cover",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "narration": "Today, we will unravel the science behind the Doppler Effect. First, we'll build an intuition for why this change in frequency happens. Then, we'll look at the mathematical formula that describes it precisely. After that, we'll explore some amazing real-world applications, and finally, we'll walk through a practice problem together.",
+          "duration_seconds": 18,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "Today's Agenda:\n\n1. What is the Doppler Effect?\n2. The Formula Explained\n3. Real-World Applications\n4. Worked Example"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side_left",
+              "size": 0.35
+            }
+          }
+        }
+      ]
+    },
+    {
+      "section_type": "content",
+      "section_title": "What is the Doppler Effect?",
+      "renderer": "manim",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "narration": "Imagine dropping a pebble into a still pond. The waves ripple outwards in perfect, evenly spaced circles. If you were a tiny boat sitting still in the water, these waves would pass you at a steady rate, or frequency. This is like a stationary sound source, like a car horn that isn't moving. The sound waves travel out evenly in all directions, and everyone, no matter where they are standing, hears the exact same pitch.",
+          "duration_seconds": 22,
+          "word_count": 80,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "A stationary source emits waves evenly in all directions. The frequency (pitch) is the same for all observers."
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side_left",
+              "size": 0.35
+            }
+          }
+        },
+        {
+          "segment_id": 2,
+          "narration": "Now, let's see what happens when the source is stationary.",
+          "duration_seconds": 3,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "visual_layer": {
+              "action": "show",
+              "animation": "fade_in"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "scene": "StationarySource",
+              "description": "A central dot labeled 'Source' emits concentric circles that expand outwards at a constant rate. An icon labeled 'Observer' is placed to the right."
+            }
+          }
+        },
+        {
+          "segment_id": 3,
+          "narration": "But what if the source of the waves starts moving? Let's say our car starts driving to the right. As it moves, it continues to emit sound waves. But because the car itself is moving, it starts to 'catch up' to the waves it sends out in front. This causes the waves in front of the car to bunch together, increasing their frequency. For an observer standing in front of the car, more waves hit their ear per second, which they perceive as a higher pitch. Behind the car, the opposite happens. As the car moves away, the waves it emits are stretched out, decreasing their frequency. An observer behind the car hears a lower pitch. This apparent shift in frequency due to relative motion is the Doppler Effect.",
+          "duration_seconds": 35,
+          "word_count": 139,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "When the source moves, waves in front get compressed (higher frequency) and waves behind get stretched (lower frequency)."
+            },
+            "visual_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side_left",
+              "size": 0.35
+            }
+          }
+        },
+        {
+          "segment_id": 4,
+          "narration": "Watch as the source moves. The waves in front are compressed, creating a higher frequency. The waves behind are spread out, creating a lower frequency.",
+          "duration_seconds": 10,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "fade_in"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "scene": "MovingSource",
+              "description": "The 'Source' dot moves to the right. The wave circles it emits are now bunched up (compressed) on the right side and spread out (rarefied) on the left side. An 'Observer' icon on the right is hit by waves more frequently. An 'Observer' icon on the left is hit less frequently. Text 'Higher Frequency / Higher Pitch' appears on the right. Text 'Lower Frequency / Lower Pitch' appears on the left."
+            }
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "source_stationary",
+            "type": "point",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "color": "RED",
+              "radius": 0.1
+            }
+          },
+          {
+            "id": "source_label",
+            "type": "label",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "text": "Source",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "observer_right",
+            "type": "shape",
+            "position": [
+              3,
+              0
+            ],
+            "properties": {
+              "shape": "person_icon",
+              "scale": 0.7,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "observer_label",
+            "type": "label",
+            "position": [
+              3,
+              0.5
+            ],
+            "properties": {
+              "text": "Observer",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "wave_circles",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "shape": "concentric_circles",
+              "num_circles": 6,
+              "spacing": 0.5,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "moving_source",
+            "type": "point",
+            "position": [
+              -3,
+              0
+            ],
+            "properties": {
+              "color": "RED",
+              "radius": 0.1
+            }
+          },
+          {
+            "id": "compressed_waves",
+            "type": "label",
+            "position": [
+              2,
+              1.5
+            ],
+            "properties": {
+              "text": "Higher Frequency\\nHigher Pitch",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "rarefied_waves",
+            "type": "label",
+            "position": [
+              -2,
+              1.5
+            ],
+            "properties": {
+              "text": "Lower Frequency\\nLower Pitch",
+              "scale": 0.7
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "source_stationary",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "source_label",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "wave_circles",
+            "duration": 3
+          },
+          {
+            "action": "appear",
+            "target": "observer_right",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "observer_label",
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "duration": 15
+          },
+          {
+            "action": "transform",
+            "target": "wave_circles",
+            "duration": 2,
+            "properties": {
+              "to_shape": "doppler_waves"
+            }
+          },
+          {
+            "action": "move",
+            "target": "moving_source",
+            "duration": 4,
+            "properties": {
+              "path": "straight_line",
+              "end_position": [
+                3,
+                0
+              ]
+            }
+          },
+          {
+            "action": "appear",
+            "target": "compressed_waves",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "rarefied_waves",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": [
+              "compressed_waves",
+              "rarefied_waves"
+            ],
+            "duration": 3,
+            "color": "YELLOW"
+          }
+        ]
+      }
+    },
+    {
+      "section_type": "content",
+      "section_title": "The Formula Explained",
+      "renderer": "manim",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "narration": "To calculate the exact pitch an observer hears, physicists use the Doppler Effect formula. It might look a little intimidating at first, but we can break it down variable by variable. The formula allows us to find the observed frequency, which we'll call f-prime, based on the original frequency of the source and the speeds of the source and the observer. Let's look at the main equation that governs these relationships. It connects what you hear to the actual sound, and the motion of everything involved.",
+          "duration_seconds": 25,
+          "word_count": 92,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "The Doppler Effect can be described with a mathematical formula."
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side_left",
+              "size": 0.35
+            }
+          }
+        },
+        {
+          "segment_id": 2,
+          "narration": "Here is the formula. f-prime equals f, times the quantity (v plus v-o) divided by (v minus v-s).",
+          "duration_seconds": 10,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "visual_layer": {
+              "action": "show",
+              "animation": "draw_border_then_fill"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "scene": "FormulaDisplay",
+              "description": "Display the formula `f' = f * (v + v_o) / (v - v_s)` in the center of the screen, rendered beautifully with LaTeX."
+            }
+          }
+        },
+        {
+          "segment_id": 3,
+          "narration": "Now let's define each part. 'f-prime' is the observed frequency\u2014the pitch the observer actually hears. 'f' is the source frequency, the true pitch of the siren or whistle. 'v' is the speed of the wave itself; for sound in air, this is about 343 meters per second. 'v-o' is the velocity of the observer. By convention, it's positive if the observer is moving towards the source. Finally, 'v-s' is the velocity of the source. It's positive if the source is moving towards the observer. Understanding these signs is crucial. When things move towards each other, the frequency should go up. Our formula makes this happen: a positive 'v-o' increases the numerator, and a positive 'v-s' decreases the denominator, both of which make f-prime larger.",
+          "duration_seconds": 40,
+          "word_count": 158,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "f' = Observed Frequency\nf = Source Frequency\nv = Speed of Wave\nv_o = Velocity of Observer\nv_s = Velocity of Source"
+            },
+            "visual_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side_left",
+              "size": 0.35
+            }
+          }
+        },
+        {
+          "segment_id": 4,
+          "narration": "Let's visualize each component on the formula itself.",
+          "duration_seconds": 4,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "visual_layer": {
+              "action": "show",
+              "animation": "fade_in"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "scene": "FormulaBreakdown",
+              "description": "Start with the full formula. Animate a box around `f'` and label it 'Observed Frequency (what you hear)'. Then, fade that and box `f`, labeling it 'Source Frequency (actual pitch)'. Repeat for `v` ('Speed of Wave'), `v_o` ('Velocity of Observer'), and `v_s` ('Velocity of Source'). For `v_o` and `v_s`, add small diagrams showing arrows to indicate the positive direction (towards the other object)."
+            }
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "main_formula",
+            "type": "equation",
+            "position": [
+              0,
+              1.5
+            ],
+            "properties": {
+              "latex": "f' = f \\frac{v + v_o}{v - v_s}",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "f_prime_label",
+            "type": "label",
+            "position": [
+              -3,
+              2
+            ],
+            "properties": {
+              "latex": "\\text{Observed Frequency}",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "f_label",
+            "type": "label",
+            "position": [
+              -3,
+              1
+            ],
+            "properties": {
+              "latex": "\\text{Source Frequency}",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "v_label",
+            "type": "label",
+            "position": [
+              3,
+              2
+            ],
+            "properties": {
+              "latex": "\\text{Wave Speed (343 m/s)}",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "vo_label",
+            "type": "label",
+            "position": [
+              3,
+              1
+            ],
+            "properties": {
+              "latex": "\\text{Observer Velocity}",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "vs_label",
+            "type": "label",
+            "position": [
+              3,
+              0
+            ],
+            "properties": {
+              "latex": "\\text{Source Velocity}",
+              "scale": 0.8
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "main_formula",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "main_formula",
+            "target_latex_part": "f'",
+            "duration": 2,
+            "color": "BLUE"
+          },
+          {
+            "action": "appear",
+            "target": "f_prime_label",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "main_formula",
+            "target_latex_part": "f",
+            "duration": 2,
+            "color": "GREEN"
+          },
+          {
+            "action": "appear",
+            "target": "f_label",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "main_formula",
+            "target_latex_part": "v",
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "appear",
+            "target": "v_label",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "main_formula",
+            "target_latex_part": "v_o",
+            "duration": 2,
+            "color": "RED"
+          },
+          {
+            "action": "appear",
+            "target": "vo_label",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "main_formula",
+            "target_latex_part": "v_s",
+            "duration": 2,
+            "color": "PURPLE"
+          },
+          {
+            "action": "appear",
+            "target": "vs_label",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "main_formula",
+            "duration": 3,
+            "color": "WHITE"
+          }
+        ]
+      }
+    },
+    {
+      "section_type": "content",
+      "section_title": "Real-World Applications",
+      "renderer": "video",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "narration": "The Doppler Effect isn't just a textbook concept; it's a powerful tool used in many fields. The most common example is the siren we've discussed. But let's go bigger. In astronomy, the Doppler Effect is essential for measuring the universe. When we look at distant galaxies, we see that their light is 'redshifted'. Light is a wave, so as a galaxy moves away from us, the light waves it emits are stretched out, shifting them towards the lower-frequency, red end of the spectrum. This redshift is the primary evidence that our universe is expanding. Conversely, if an object is moving towards us, its light is 'blueshifted' to a higher frequency. This allows astronomers to map the motion of stars and galaxies with incredible precision.",
+          "duration_seconds": 38,
+          "word_count": 133,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "In astronomy, the Doppler Effect on light helps us understand the universe.\n\nRedshift: Object is moving away.\nBlueshift: Object is moving towards us."
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side_left",
+              "size": 0.35
+            }
+          }
+        },
+        {
+          "segment_id": 2,
+          "narration": "Here we see a distant galaxy moving away. Its light waves stretch, shifting its color towards red.",
+          "duration_seconds": 7,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "visual_layer": {
+              "action": "show",
+              "animation": "fade_in"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "description": "An animation shows a galaxy on the left and Earth on the right. As the galaxy moves away, the light waves traveling from it to Earth are visually stretched, and a spectrum indicator shifts from white/yellow towards red. The label 'REDSHIFT' appears."
+          }
+        },
+        {
+          "segment_id": 3,
+          "narration": "Back on Earth, the Doppler Effect is used in technologies we rely on daily. Police radar guns are a perfect example. The gun sends out a radio wave of a specific frequency. This wave bounces off a moving car and returns to the gun. Because the car is moving, the frequency of the returning wave is shifted. The gun's computer measures this frequency shift and instantly calculates the car's speed. The same principle applies to weather radar, which can detect the movement of raindrops and wind to track storms, and even in medicine, where Doppler ultrasound can visualize blood flow through arteries and veins, helping doctors diagnose circulation problems.",
+          "duration_seconds": 35,
+          "word_count": 126,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "On Earth, the Doppler Effect is used in:\n\n- Police Radar Guns\n- Weather Forecasting\n- Medical Ultrasound"
+            },
+            "visual_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side_left",
+              "size": 0.35
+            }
+          }
+        },
+        {
+          "segment_id": 4,
+          "narration": "The radar gun sends out a wave, which reflects off the car. The change in the wave's frequency tells the gun how fast the car is going.",
+          "duration_seconds": 9,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "fade_in"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "description": "An animation shows a police radar gun emitting waves towards a moving car. The waves bounce back with a higher frequency (visibly more compressed). A digital readout on the gun calculates and displays the car's speed."
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": 2,
+          "prompt": "A stylized spiral galaxy appears on the left side of a dark screen with small white stars. On the right side is a stylized planet Earth. The galaxy begins to move to the left, away from Earth. As it moves, white, evenly spaced wave crests emanate from the galaxy and travel rightward towards Earth. As the waves cross the screen, the distance between them increases, showing them stretching. A horizontal color spectrum bar appears at the bottom, ranging from blue on the left to red on the right. An arrow on this bar starts in the center (yellow) and slides to the right, into the red section. The white, all-caps text 'REDSHIFT' appears above the red section of the bar. The final frame holds on this scene.",
+          "duration_seconds": 7,
+          "style": "animated"
+        },
+        {
+          "beat_id": 4,
+          "prompt": "A gray police radar gun is on the left side of the screen, pointing right. A red car is on the right side, moving left towards the gun. The background is a simple road. The gun emits a series of blue, evenly spaced wave crests that travel right. The waves hit the front of the car and reflect back towards the gun. The reflected waves are orange and are visibly more compressed, with less space between them. As the orange waves reach the gun, a digital display on the gun flashes numbers and then settles on a speed reading, for example, '65 MPH'. The final frame holds on the gun displaying the speed, with the compressed orange waves between the gun and the car.",
+          "duration_seconds": 9,
+          "style": "animated"
+        }
+      ]
+    },
+    {
+      "section_type": "example",
+      "section_title": "Worked Example: The Train Whistle",
+      "renderer": "manim",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "narration": "Let's apply what we've learned. Here's a problem: A train traveling at 30 meters per second blows its 400 Hertz whistle. What frequency is heard by a stationary person as the train approaches? We'll assume the speed of sound in air is 343 meters per second.",
+          "duration_seconds": 18,
+          "display_directives": {
+            "text_layer": {
+              "action": "show",
+              "content": "Problem: A train at 30 m/s blows a 400 Hz whistle. What frequency is heard by a stationary observer as it approaches? (Speed of sound = 343 m/s)"
+            },
+            "visual_layer": {
+              "action": "hide"
+            },
+            "avatar_layer": {
+              "action": "show",
+              "position": "side_left_small",
+              "size": 0.25
+            }
+          }
+        },
+        {
+          "segment_id": 2,
+          "narration": "First, let's identify our variables. The source frequency, f, is 400 Hertz. The speed of the wave, v, is 343 meters per second. The observer is stationary, so their velocity, v-o, is 0. The source, our train, is moving towards the observer at 30 meters per second, so v-s is positive 30.",
+          "duration_seconds": 20,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide",
+              "animation": "fade_out"
+            },
+            "visual_layer": {
+              "action": "show",
+              "animation": "fade_in"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "scene": "IdentifyVariables",
+              "description": "On the left, show the problem text. On the right, list the variables as they are identified:\n`f = 400 Hz`\n`v = 343 m/s`\n`v_o = 0 m/s`\n`v_s = +30 m/s`"
+            }
+          }
+        },
+        {
+          "segment_id": 3,
+          "narration": "Next, we plug these values into our formula: f-prime equals 400, times the quantity (343 plus 0) divided by (343 minus 30).",
+          "duration_seconds": 12,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "scene": "SubstituteValues",
+              "description": "Show the formula `f' = f * (v + v_o) / (v - v_s)`. Animate the values from the previous step flying into their respective places in the formula, resulting in `f' = 400 * (343 + 0) / (343 - 30)`."
+            }
+          }
+        },
+        {
+          "segment_id": 4,
+          "narration": "Now, we just need to do the math. The numerator is simple: 343. The denominator is 343 minus 30, which is 313. So, f-prime is 400 times (343 divided by 313).",
+          "duration_seconds": 14,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "scene": "CalculateExpression",
+              "description": "The expression `f' = 400 * (343) / (313)` is shown. The numbers in the fraction glow, and then are replaced by their quotient, `1.0958...`. The expression becomes `f' = 400 * 1.0958...`."
+            }
+          }
+        },
+        {
+          "segment_id": 5,
+          "narration": "Finally, multiplying 400 by this result gives us approximately 438.3 Hertz. As we expected, because the train is approaching, the observed frequency is higher than the source frequency. The person hears a higher-pitched whistle.",
+          "duration_seconds": 15,
+          "display_directives": {
+            "text_layer": {
+              "action": "hide"
+            },
+            "visual_layer": {
+              "action": "replace",
+              "animation": "cut"
+            },
+            "avatar_layer": {
+              "action": "gesture_only"
+            }
+          },
+          "visual_beat": {
+            "manim_scene_spec": {
+              "scene": "FinalAnswer",
+              "description": "The multiplication is performed, and the final answer `f' \u2248 438.3 Hz` appears. A box is drawn around the final answer. A checkmark appears next to it."
+            }
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "problem_statement",
+            "type": "equation",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Train at 30 m/s blows 400 Hz whistle. Find observed frequency?}",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "given_f",
+            "type": "equation",
+            "position": [
+              0,
+              1.5
+            ],
+            "properties": {
+              "latex": "f = 400 \\text{ Hz}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "given_v",
+            "type": "equation",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "latex": "v = 343 \\text{ m/s}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "given_vo",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "v_o = 0 \\text{ m/s}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "given_vs",
+            "type": "equation",
+            "position": [
+              0,
+              -1.5
+            ],
+            "properties": {
+              "latex": "v_s = +30 \\text{ m/s}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "doppler_formula",
+            "type": "equation",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "latex": "f' = f \\cdot \\frac{v + v_o}{v - v_s}",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "substituted_formula",
+            "type": "equation",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "latex": "f' = 400 \\cdot \\frac{343 + 0}{343 - 30}",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "simplified_formula",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "f' = 400 \\cdot \\frac{343}{313}",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "final_result",
+            "type": "equation",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "latex": "f' \\approx 438.3 \\text{ Hz}",
+              "scale": 1.4
+            }
+          },
+          {
+            "id": "result_box",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "color": "BLUE",
+              "width": 5,
+              "height": 1.5
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "problem_statement",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "given_f",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "given_v",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "given_vo",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "given_vs",
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "duration": 13
+          },
+          {
+            "action": "fade_out",
+            "target": "given_f",
+            "duration": 0.5
+          },
+          {
+            "action": "fade_out",
+            "target": "given_v",
+            "duration": 0.5
+          },
+          {
+            "action": "fade_out",
+            "target": "given_vo",
+            "duration": 0.5
+          },
+          {
+            "action": "fade_out",
+            "target": "given_vs",
+            "duration": 0.5
+          },
+          {
+            "action": "show_equation",
+            "target": "doppler_formula",
+            "duration": 2
+          },
+          {
+            "action": "transform",
+            "target": "doppler_formula",
+            "target_transform": "substituted_formula",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 7
+          },
+          {
+            "action": "transform",
+            "target": "substituted_formula",
+            "target_transform": "simplified_formula",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 12
+          },
+          {
+            "action": "transform",
+            "target": "simplified_formula",
+            "target_transform": "final_result",
+            "duration": 2
+          },
+          {
+            "action": "draw",
+            "target": "result_box",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "final_result",
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "wait",
+            "duration": 10
+          }
+        ]
+      }
+    },
+    {
+      "section_type": "memory",
+      "section_title": "Memory Flashcards",
+      "flashcards": [
+        {
+          "front": "What is the Doppler Effect?",
+          "back": "The change in frequency of a wave for an observer moving relative to the wave source."
+        },
+        {
+          "front": "If a sound source moves TOWARDS you, does the pitch get higher or lower?",
+          "back": "Higher. The sound waves are compressed, leading to a higher frequency."
+        },
+        {
+          "front": "What does 'redshift' in astronomy signify?",
+          "back": "That a celestial object (like a galaxy) is moving AWAY from us. Its light is shifted to lower frequencies."
+        },
+        {
+          "front": "In the Doppler formula, what does `v_s` represent?",
+          "back": "The velocity of the source."
+        },
+        {
+          "front": "Name one technology that uses the Doppler Effect.",
+          "back": "Police radar guns, weather radar, or medical ultrasound imaging."
+        }
+      ]
+    },
+    {
+      "section_type": "recap",
+      "section_title": "Film Recap",
+      "renderer": "video",
+      "narration_beats": [
+        {
+          "segment_id": 1,
+          "scene_number": 1,
+          "narration": "Let's recap what we've learned. The Doppler Effect is the perceived change in a wave's frequency due to motion. We started with the intuitive example of a passing siren. As the source of a sound approaches an observer, the sound waves bunch up, hitting the ear more frequently. This compression results in a higher perceived pitch. As the source moves away, the waves stretch out, causing a lower frequency and a lower pitch. This fundamental concept is not just an auditory illusion; it's a real, measurable physical phenomenon.",
+          "duration_seconds": 25,
+          "word_count": 97,
+          "visual_beat": {
+            "description": "A dynamic 3D animation of an ambulance racing past the camera. As it approaches, sound waves are visually compressed and colored blue. As it passes and moves away, the waves stretch out and are colored red. The pitch of the siren in the sound design matches the visual effect perfectly."
+          }
+        },
+        {
+          "segment_id": 2,
+          "scene_number": 2,
+          "narration": "We then translated this concept into the language of mathematics. The Doppler Effect formula, f-prime equals f times the ratio of wave speeds, gives us the power to predict the exact frequency an observer will perceive. We broke down each variable: the source frequency, the observed frequency, the speed of the wave, and the velocities of both the source and the observer. By understanding how these components interact, especially the sign conventions for movement, we can calculate the outcome of any Doppler scenario, turning a qualitative idea into a quantitative tool.",
+          "duration_seconds": 28,
+          "word_count": 99,
+          "visual_beat": {
+            "description": "The Doppler formula `f' = f * (v + v_o) / (v - v_s)` assembles itself in the center of the screen. As each variable is mentioned, it glows, and a small animated icon appears next to it: a speaker for `f`, an ear for `f'`, a wave for `v`, a running person for `v_o`, and a moving car for `v_s`."
+          }
+        },
+        {
+          "segment_id": 3,
+          "scene_number": 3,
+          "narration": "Expanding our view to the cosmos, we saw how the Doppler Effect is crucial for astronomy. When we observe light from distant galaxies, we find it is almost always redshifted. This stretching of light waves to lower frequencies is the key evidence that these galaxies are moving away from us, and that the universe itself is expanding. This single principle, observable with sound on any street corner, allows us to probe the grandest motions of the universe and confirm our theories about its origin and fate.",
+          "duration_seconds": 27,
+          "word_count": 95,
+          "visual_beat": {
+            "description": "An epic shot starting on an observatory on Earth, then zooming out into deep space. We fly past a star that is moving toward us (subtly blueshifted) and then toward a distant galaxy that is clearly redshifted. A graph of the light spectrum appears, showing the absorption lines shifting toward the red end."
+          }
+        },
+        {
+          "segment_id": 4,
+          "scene_number": 4,
+          "narration": "Bringing it back to Earth, we explored the practical technologies that rely on this effect. From the police officer using a radar gun to measure a car's speed, to the meteorologist tracking a storm's path with weather radar, the Doppler Effect is at work. In medicine, it allows doctors to see the flow of blood within the human body without making a single incision. These applications demonstrate how a fundamental physical principle can be engineered into tools that enhance safety, improve diagnostics, and help us predict the world around us.",
+          "duration_seconds": 28,
+          "word_count": 98,
+          "visual_beat": {
+            "description": "A quick montage of high-tech animations: a sleek sports car being clocked by a radar gun with waves bouncing off it; a satellite view of a hurricane with color-coded wind speeds based on Doppler data; and a medical animation showing a Doppler ultrasound probe visualizing red and blue blood flow in an artery."
+          }
+        },
+        {
+          "segment_id": 5,
+          "scene_number": 5,
+          "narration": "In summary, the Doppler Effect is a universal wave principle. Whether it's the sound from a train, the light from a star, or the radio waves from a radar, if there is relative motion between a source and an observer, the frequency will shift. By understanding the simple idea of waves compressing and stretching, and by applying the formula we learned, you now have a powerful new lens through which to view and understand the motion that fills our world and our universe.",
+          "duration_seconds": 26,
+          "word_count": 89,
+          "visual_beat": {
+            "description": "A final, stylized summary shot. A central sphere emits waves. On one side, a car drives toward it, compressing the waves. On the other, a galaxy moves away, stretching them. The Doppler formula is overlaid, glowing softly. The entire scene resolves into the film's title card."
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": 1,
+          "prompt": "A 3D animated white and red ambulance drives on a gray asphalt road, starting from a distant point in the center of the screen and moving directly toward the camera. As it approaches, it emits concentric blue circles from its roof siren. The circles are tightly packed together in front of the ambulance. The ambulance grows larger, passing just to the left of the stationary camera. As it moves away from the camera, it shrinks in size. The concentric circles it now emits from its back are red and are stretched out with wide gaps between them. The ambulance continues until it is a small point in the distance, with the red waves trailing behind.",
+          "duration_seconds": 25,
+          "style": "animated"
+        },
+        {
+          "beat_id": 2,
+          "prompt": "On a dark blue background, white text characters appear sequentially in the center of the screen to form the equation: f' = f * (v + v_o) / (v - v_s). The 'f' character glows yellow, and a small white icon of a speaker appears next to it. The glow fades. The 'f'' character glows yellow, and a small white icon of an ear appears next to it. The glow fades. Both 'v' characters glow yellow, and a white icon of a sine wave appears above the fraction bar. The glow fades. The 'v_o' character glows yellow, and a white icon of a running person appears next to it. The glow fades. The 'v_s' character glows yellow, and a white icon of a car appears next to it. The glow fades, leaving the full equation and all five icons stationary on screen.",
+          "duration_seconds": 28,
+          "style": "animated"
+        },
+        {
+          "beat_id": 3,
+          "prompt": "The camera starts on a white observatory dome on a dark mountain at night, then zooms straight up, away from the Earth, which shrinks into a blue and white sphere against a black, star-filled background. The camera moves forward, flying past a large, bright star on the left that has a subtle blue halo. The camera continues forward, approaching a distant spiral galaxy that glows with a prominent reddish color. A graph overlays the bottom-right corner, showing a rainbow color spectrum on a horizontal axis labeled 'Wavelength' with several vertical black lines. An arrow appears and points to the right as the black lines slide horizontally toward the red end of the spectrum.",
+          "duration_seconds": 27,
+          "style": "animated"
+        },
+        {
+          "beat_id": 4,
+          "prompt": "A quick three-part montage. First, a red sports car drives from right to left. A radar gun on the right emits blue waves that hit the car and bounce back as red waves. Second, a top-down satellite view of a swirling white hurricane. Sections of the storm are colored blue, green, yellow, and red to indicate wind speed and direction. Third, a medical animation of a gray ultrasound probe at the top of the screen pointed at a cross-section of an artery. Red particles flow left-to-right inside the artery, while blue particles flow right-to-left in an adjacent vein.",
+          "duration_seconds": 28,
+          "style": "animated"
+        },
+        {
+          "beat_id": 5,
+          "prompt": "On a black background, a white sphere appears in the center and emits uniform concentric white waves. A 2D car icon appears on the left and drives toward the sphere, causing the waves between them to compress. A 2D galaxy icon appears on the right and moves away from the sphere, causing the waves between them to stretch. The car and galaxy fade out. The waves become uniform again. The formula f' = f * (v + v_o) / (v - v_s) fades in, glowing softly over the sphere. The entire scene fades out and is replaced by a title card with the words 'The Doppler Effect' in white text.",
+          "duration_seconds": 26,
+          "style": "animated"
+        }
+      ]
+    }
+  ],
+  "pipeline_version": "1.2",
+  "job_id": "aaec76e5",
+  "use_remotion": false,
+  "source_file": null
+}

@@ -29,6 +29,134 @@ from core.traceability import init_traceability, log_event, log_validation, log_
 from tts.generate_audio import generate_all_audio
 from render.render_trace import clear_render_trace
 
+
+def normalize_director_output(presentation: dict) -> dict:
+    """
+    Normalize Director LLM output to canonical v1.3 schema.
+    
+    Converts various LLM output field names to canonical schema:
+    - narration_beats → narration_segments + section.narration
+    - narration_and_visuals → narration_segments + section.narration
+    - narration (when list) → narration_segments + section.narration (string)
+    - recap.scenes → recap.recap_scenes
+    - Ensures visual_beats array is populated from embedded visual_beat objects
+    
+    This allows the hard_fail_validator to work correctly regardless of 
+    minor LLM output variations.
+    """
+    sections = presentation.get("sections", [])
+    
+    for section in sections:
+        section_type = section.get("section_type", "")
+        
+        if "scenes" in section and section_type == "recap":
+            scenes = section.pop("scenes", [])
+            recap_scenes = []
+            for i, scene in enumerate(scenes):
+                scene_narration = scene.get("narration", scene.get("narration_script", ""))
+                recap_scene = {
+                    "scene": i + 1,
+                    "concept_title": scene.get("scene_title", scene.get("concept_title", f"Scene {i+1}")),
+                    "narration": scene_narration,
+                    "word_count": scene.get("word_count", len(scene_narration.split()) if scene_narration else 0),
+                    "duration_seconds": scene.get("duration_seconds", 20)
+                }
+                if "visual_beat" in scene:
+                    vb = scene["visual_beat"]
+                    recap_scene["video_prompt"] = vb.get("video_spec", {}).get("scene_description", "")
+                    recap_scene["renderer"] = vb.get("renderer", "video")
+                recap_scenes.append(recap_scene)
+            section["recap_scenes"] = recap_scenes
+            print(f"[Normalize] Converted {len(recap_scenes)} scenes → recap_scenes for recap section")
+        
+        existing_narration = section.get("narration")
+        if isinstance(existing_narration, list):
+            source_array = existing_narration
+            source_field = "narration (list)"
+        else:
+            source_array = section.get("narration_and_visuals") or section.get("narration_beats") or []
+            source_field = "narration_and_visuals" if "narration_and_visuals" in section else "narration_beats" if "narration_beats" in section else None
+        
+        if source_array and "narration_segments" not in section:
+            narration_segments = []
+            visual_beats = []
+            full_narration_parts = []
+            
+            for i, nav in enumerate(source_array):
+                narration_text = nav.get("narration") or nav.get("narration_script") or nav.get("text") or ""
+                segment = {
+                    "id": nav.get("segment_id", i),
+                    "text": narration_text,
+                    "duration_seconds": nav.get("duration_seconds", 5)
+                }
+                
+                if "display_directives" in nav:
+                    dd = nav["display_directives"]
+                    normalized_dd = {}
+                    for layer in ["text_layer", "visual_layer", "avatar_layer"]:
+                        if layer in dd:
+                            layer_val = dd[layer]
+                            if isinstance(layer_val, dict):
+                                normalized_dd[layer] = layer_val.get("action", "hide")
+                            else:
+                                normalized_dd[layer] = layer_val
+                    segment["display_directives"] = normalized_dd
+                
+                if "word_count" in nav:
+                    segment["word_count"] = nav["word_count"]
+                else:
+                    segment["word_count"] = len(narration_text.split()) if narration_text else 0
+                
+                narration_segments.append(segment)
+                if narration_text:
+                    full_narration_parts.append(narration_text)
+                
+                if "visual_beat" in nav:
+                    vb = nav["visual_beat"]
+                    vb["segment_index"] = i
+                    visual_beats.append(vb)
+            
+            section["narration_segments"] = narration_segments
+            section["narration"] = " ".join(full_narration_parts)
+            
+            if visual_beats and not section.get("visual_beats"):
+                section["visual_beats"] = visual_beats
+            
+            if section_type == "recap" and not section.get("recap_scenes"):
+                recap_scenes = []
+                for i, seg in enumerate(narration_segments):
+                    scene = {
+                        "scene": i + 1,
+                        "concept_title": f"Recap Scene {i + 1}",
+                        "narration": seg.get("text", ""),
+                        "word_count": seg.get("word_count", 0),
+                        "duration_seconds": seg.get("duration_seconds", 20)
+                    }
+                    if i < len(visual_beats):
+                        vb = visual_beats[i]
+                        video_spec = vb.get("video_spec", vb.get("manim_scene_spec", {}))
+                        scene["video_prompt"] = video_spec.get("scene_description", video_spec.get("description", ""))
+                        scene["renderer"] = vb.get("renderer", "video")
+                    recap_scenes.append(scene)
+                section["recap_scenes"] = recap_scenes
+                print(f"[Normalize] Created {len(recap_scenes)} recap_scenes from narration_segments for recap section")
+            
+            print(f"[Normalize] Converted {len(source_array)} {source_field} → narration_segments for {section_type}")
+        
+        if section_type == "memory":
+            source = section.get("narration_and_visuals") or section.get("narration_beats") or []
+            if isinstance(section.get("narration"), list):
+                source = section.get("narration")
+            if source and len(source) > 0:
+                first_nav = source[0]
+                if "content" in first_nav:
+                    content = first_nav["content"]
+                    if "flashcards" in content and "flashcards" not in section:
+                        section["flashcards"] = content["flashcards"]
+                        print(f"[Normalize] Extracted {len(section['flashcards'])} flashcards for memory section")
+    
+    return presentation
+
 PLAYER_ASSETS_DIR = Path(__file__).parent.parent / "player" / "assets"
 
 
@@ -149,6 +277,10 @@ def process_pdf_to_videos_v12(
         presentation["use_remotion"] = use_remotion
         job_status["steps"][-1]["status"] = "completed"
         job_status["steps"][-1]["analytics"] = analytics_tracker.get_summary()
+        
+        if presentation:
+            print("[Pipeline v1.2 PDF] Normalizing Director output to v1.3 schema...")
+            presentation = normalize_director_output(presentation)
         
         presentation_path = Path(output_dir) / "presentation.json"
         if presentation:
@@ -331,6 +463,10 @@ def process_markdown_to_videos_v12(
         presentation["use_remotion"] = use_remotion
         job_status["steps"][-1]["status"] = "completed"
         job_status["steps"][-1]["analytics"] = analytics_tracker.get_summary()
+        
+        if presentation:
+            print("[Pipeline v1.2 MD] Normalizing Director output to v1.3 schema...")
+            presentation = normalize_director_output(presentation)
         
         presentation_path = Path(output_dir) / "presentation.json"
         if presentation:
