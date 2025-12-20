@@ -200,6 +200,12 @@ def pass1_director(
         if "lesson_plan" in presentation:
             log("[Direct] Converting 'lesson_plan' to 'sections' (LLM naming variation)")
             presentation["sections"] = presentation.pop("lesson_plan")
+        elif "plan" in presentation:
+            log("[Direct] Converting 'plan' to 'sections' (LLM naming variation)")
+            presentation["sections"] = presentation.pop("plan")
+        elif "topics" in presentation:
+            log("[Direct] Converting 'topics' to 'sections' (LLM naming variation)")
+            presentation["sections"] = presentation.pop("topics")
         else:
             log(f"[Direct] ERROR: Director returned keys: {list(presentation.keys())}")
             log(f"[Direct] ERROR: Response preview: {str(presentation)[:500]}")
