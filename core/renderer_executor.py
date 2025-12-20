@@ -49,7 +49,7 @@ def enforce_renderer_policy(presentation: dict) -> dict:
     return presentation
 
 
-def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, trace_output_dir: str = None, strict_mode: bool = True) -> dict:
+def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, trace_output_dir: str = "", strict_mode: bool = True) -> dict:
     os.makedirs(output_dir, exist_ok=True)
     
     topic_id = topic.get("section_id", topic.get("id", 1))
@@ -165,7 +165,7 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     return result
 
 
-def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, output_dir_base: str = None, strict_mode: bool = True) -> list:
+def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, output_dir_base: str = "", strict_mode: bool = True) -> list:
     os.makedirs(output_dir, exist_ok=True)
     
     trace_output_dir = output_dir_base or str(Path(output_dir).parent)

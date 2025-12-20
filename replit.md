@@ -62,6 +62,14 @@ The `core/analytics.py` module tracks per-phase metrics:
 
 Model pricing stored for: Gemini 2.5 Flash, Gemini 2.5 Pro, Claude 3.5 Sonnet, GPT-4o.
 
+### WAN Prompt Quality Validation (NEW in v1.2)
+The `core/wan_prompt_validator.py` module validates video generation prompts:
+- **Banned phrases**: Detects vague language like "something like", "kind of", "abstract representation"
+- **Length check**: Minimum 50 chars for quality video generation
+- **Quality scoring**: Checks for cinematographic direction (zoom, pan, fade, etc.)
+
+Integrated into `renderer_executor.py` for automatic quality logging during v1.2 pipeline runs.
+
 ### Technical Implementation
 - **Backend**: Python Flask API.
 - **Frontend**: Vanilla HTML5/JavaScript video player with dynamic layouts, subtitle synchronization, and chroma key avatar overlay.
