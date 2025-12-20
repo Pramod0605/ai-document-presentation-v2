@@ -173,8 +173,8 @@
             "id": "a_label",
             "type": "label",
             "position": [
-              -3,
-              -1
+              -2.5,
+              1
             ],
             "properties": {
               "latex": "\\text{coefficient of }x^2",
@@ -186,7 +186,7 @@
             "type": "label",
             "position": [
               0,
-              -1
+              1
             ],
             "properties": {
               "latex": "\\text{coefficient of }x",
@@ -197,8 +197,8 @@
             "id": "c_label",
             "type": "label",
             "position": [
-              3,
-              -1
+              2.5,
+              1
             ],
             "properties": {
               "latex": "\\text{constant term}",
@@ -206,77 +206,19 @@
             }
           },
           {
-            "id": "a_arrow",
-            "type": "vector",
-            "position": [
-              -3,
-              -0.5
-            ],
-            "properties": {
-              "start": [
-                -3,
-                -0.8
-              ],
-              "end": [
-                -2.5,
-                -0.2
-              ]
-            }
-          },
-          {
-            "id": "b_arrow",
-            "type": "vector",
-            "position": [
-              0,
-              -0.5
-            ],
-            "properties": {
-              "start": [
-                0,
-                -0.8
-              ],
-              "end": [
-                0,
-                -0.2
-              ]
-            }
-          },
-          {
-            "id": "c_arrow",
-            "type": "vector",
-            "position": [
-              3,
-              -0.5
-            ],
-            "properties": {
-              "start": [
-                3,
-                -0.8
-              ],
-              "end": [
-                2.5,
-                -0.2
-              ]
-            }
-          },
-          {
             "id": "a_not_zero",
             "type": "equation",
             "position": [
               0,
-              1.5
+              -1.5
             ],
             "properties": {
               "latex": "a \\neq 0",
-              "scale": 1
+              "scale": 1.0
             }
           }
         ],
         "animation_sequence": [
-          {
-            "action": "wait",
-            "duration": 8
-          },
           {
             "action": "show_equation",
             "target": "main_equation",
@@ -284,7 +226,7 @@
           },
           {
             "action": "wait",
-            "duration": 7
+            "duration": 6
           },
           {
             "action": "highlight",
@@ -301,13 +243,8 @@
             "action": "highlight",
             "target": "main_equation",
             "target_latex_part": "a",
-            "duration": 1,
+            "duration": 2,
             "color": "RED"
-          },
-          {
-            "action": "appear",
-            "target": "a_arrow",
-            "duration": 1
           },
           {
             "action": "appear",
@@ -318,13 +255,8 @@
             "action": "highlight",
             "target": "main_equation",
             "target_latex_part": "b",
-            "duration": 1,
+            "duration": 2,
             "color": "BLUE"
-          },
-          {
-            "action": "appear",
-            "target": "b_arrow",
-            "duration": 1
           },
           {
             "action": "appear",
@@ -335,13 +267,8 @@
             "action": "highlight",
             "target": "main_equation",
             "target_latex_part": "c",
-            "duration": 1,
+            "duration": 2,
             "color": "GREEN"
-          },
-          {
-            "action": "appear",
-            "target": "c_arrow",
-            "duration": 1
           },
           {
             "action": "appear",
@@ -353,7 +280,7 @@
             "duration": 3
           },
           {
-            "action": "appear",
+            "action": "show_equation",
             "target": "a_not_zero",
             "duration": 1
           },
@@ -366,20 +293,13 @@
           },
           {
             "action": "wait",
-            "duration": 4
+            "duration": 5
           },
           {
-            "action": "move",
+            "action": "highlight",
             "target": "main_equation",
             "duration": 2,
-            "position": [
-              0,
-              0.5
-            ]
-          },
-          {
-            "action": "wait",
-            "duration": 3
+            "color": "WHITE"
           }
         ]
       },
@@ -647,7 +567,7 @@
           ]
         }
       },
-      "content_video_path": "videos/topic_content_01.dry_run.txt",
+      "content_video_path": "topic_content_01.mp4",
       "has_content_video": true
     },
     {
@@ -743,10 +663,21 @@
       "manim_scene_spec": {
         "objects": [
           {
+            "id": "quadratic_formula",
+            "type": "equation",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "latex": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}"
+            }
+          },
+          {
             "id": "x_equals",
             "type": "equation",
             "position": [
-              -3,
+              -2,
               0
             ],
             "properties": {
@@ -757,19 +688,20 @@
             "id": "fraction_bar",
             "type": "shape",
             "position": [
-              0,
+              0.5,
               0
             ],
             "properties": {
               "type": "line",
-              "width": 4
+              "width": 3,
+              "color": "WHITE"
             }
           },
           {
             "id": "numerator",
             "type": "equation",
             "position": [
-              0,
+              0.5,
               0.5
             ],
             "properties": {
@@ -780,7 +712,7 @@
             "id": "denominator",
             "type": "equation",
             "position": [
-              0,
+              0.5,
               -0.5
             ],
             "properties": {
@@ -791,34 +723,32 @@
             "id": "discriminant_box",
             "type": "shape",
             "position": [
-              0.5,
+              1,
               0.5
             ],
             "properties": {
               "type": "rectangle",
               "width": 2,
-              "height": 1,
-              "color": "BLUE"
+              "height": 0.8,
+              "color": "BLUE",
+              "fill_opacity": 0.2
             }
           },
           {
             "id": "discriminant_label",
             "type": "label",
             "position": [
-              2,
+              2.5,
               1
             ],
             "properties": {
               "text": "Discriminant",
-              "color": "BLUE"
+              "color": "BLUE",
+              "scale": 0.8
             }
           }
         ],
         "animation_sequence": [
-          {
-            "action": "wait",
-            "duration": 7
-          },
           {
             "action": "show_equation",
             "target": "x_equals",
@@ -827,23 +757,27 @@
           {
             "action": "draw",
             "target": "fraction_bar",
-            "duration": 2
+            "duration": 1
           },
           {
             "action": "show_equation",
             "target": "numerator",
-            "duration": 3
+            "duration": 2
           },
           {
             "action": "show_equation",
             "target": "denominator",
-            "duration": 3
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 1
           },
           {
             "action": "highlight",
             "target": "numerator",
             "target_latex_part": "-b",
-            "duration": 6,
+            "duration": 3,
             "color": "YELLOW"
           },
           {
@@ -856,22 +790,32 @@
           {
             "action": "draw",
             "target": "discriminant_box",
-            "duration": 3
+            "duration": 2
           },
           {
             "action": "appear",
             "target": "discriminant_label",
+            "duration": 1
+          },
+          {
+            "action": "wait",
             "duration": 4
           },
           {
             "action": "highlight",
             "target": "denominator",
-            "duration": 6,
+            "duration": 3,
             "color": "YELLOW"
           },
           {
             "action": "wait",
             "duration": 6
+          },
+          {
+            "action": "highlight",
+            "target": "quadratic_formula",
+            "duration": 3,
+            "color": "BLUE"
           }
         ]
       },
@@ -1050,7 +994,7 @@
           ]
         }
       },
-      "content_video_path": "videos/topic_content_02.dry_run.txt",
+      "content_video_path": "topic_content_02.mp4",
       "has_content_video": true
     },
     {
@@ -1154,14 +1098,15 @@
       "manim_scene_spec": {
         "objects": [
           {
-            "id": "original_equation",
+            "id": "original_eq",
             "type": "equation",
             "position": [
               0,
-              2
+              2.5
             ],
             "properties": {
-              "latex": "x^2 + 5x + 6 = 0"
+              "latex": "x^2 + 5x + 6 = 0",
+              "scale": 1.2
             }
           },
           {
@@ -1169,10 +1114,11 @@
             "type": "equation",
             "position": [
               -3,
-              1
+              1.5
             ],
             "properties": {
-              "latex": "a = 1"
+              "latex": "a = 1",
+              "scale": 1.0
             }
           },
           {
@@ -1180,10 +1126,11 @@
             "type": "equation",
             "position": [
               0,
-              1
+              1.5
             ],
             "properties": {
-              "latex": "b = 5"
+              "latex": "b = 5",
+              "scale": 1.0
             }
           },
           {
@@ -1191,149 +1138,166 @@
             "type": "equation",
             "position": [
               3,
-              1
+              1.5
             ],
             "properties": {
-              "latex": "c = 6"
+              "latex": "c = 6",
+              "scale": 1.0
             }
           },
           {
-            "id": "quadratic_formula",
+            "id": "quad_formula",
             "type": "equation",
             "position": [
               0,
               0
             ],
             "properties": {
-              "latex": "x = \\frac{-5 \\pm \\sqrt{5^2 - 4(1)(6)}}{2(1)}"
+              "latex": "x = \\frac{-5 \\pm \\sqrt{5^2 - 4(1)(6)}}{2(1)}",
+              "scale": 1.2
             }
           },
           {
-            "id": "simplified_sqrt",
+            "id": "step1",
             "type": "equation",
             "position": [
               0,
               0
             ],
             "properties": {
-              "latex": "x = \\frac{-5 \\pm \\sqrt{25 - 24}}{2}"
+              "latex": "x = \\frac{-5 \\pm \\sqrt{25 - 24}}{2}",
+              "scale": 1.2
             }
           },
           {
-            "id": "final_form",
+            "id": "step2",
             "type": "equation",
             "position": [
               0,
               0
             ],
             "properties": {
-              "latex": "x = \\frac{-5 \\pm 1}{2}"
+              "latex": "x = \\frac{-5 \\pm 1}{2}",
+              "scale": 1.2
             }
           },
           {
-            "id": "plus_path",
+            "id": "solution1",
             "type": "equation",
             "position": [
-              -3,
-              -1
+              -2.5,
+              -1.5
             ],
             "properties": {
-              "latex": "x = \\frac{-5 + 1}{2} = \\frac{-4}{2} = -2"
+              "latex": "x = \\frac{-5 + 1}{2} = -2",
+              "scale": 1.0
             }
           },
           {
-            "id": "minus_path",
+            "id": "solution2",
             "type": "equation",
             "position": [
-              3,
-              -1
+              2.5,
+              -1.5
             ],
             "properties": {
-              "latex": "x = \\frac{-5 - 1}{2} = \\frac{-6}{2} = -3"
+              "latex": "x = \\frac{-5 - 1}{2} = -3",
+              "scale": 1.0
             }
           },
           {
-            "id": "final_answer_box_1",
+            "id": "final_box1",
             "type": "shape",
             "position": [
-              -3,
-              -2
+              -2.5,
+              -2.5
             ],
             "properties": {
               "shape": "rectangle",
-              "content": "x = -2"
+              "content": "x = -2",
+              "color": "BLUE"
             }
           },
           {
-            "id": "final_answer_box_2",
+            "id": "final_box2",
             "type": "shape",
             "position": [
-              3,
-              -2
+              2.5,
+              -2.5
             ],
             "properties": {
               "shape": "rectangle",
-              "content": "x = -3"
+              "content": "x = -3",
+              "color": "BLUE"
             }
           }
         ],
         "animation_sequence": [
           {
             "action": "show_equation",
-            "target": "original_equation",
-            "duration": 1
+            "target": "original_eq",
+            "duration": 1.5
           },
           {
             "action": "show_equation",
             "target": "coef_a",
-            "duration": 2
+            "duration": 1.5
           },
           {
             "action": "show_equation",
             "target": "coef_b",
-            "duration": 2
+            "duration": 1.5
           },
           {
             "action": "show_equation",
             "target": "coef_c",
-            "duration": 2
+            "duration": 1.5
           },
           {
             "action": "show_equation",
-            "target": "quadratic_formula",
+            "target": "quad_formula",
             "duration": 3
           },
           {
             "action": "transform",
-            "target": "quadratic_formula",
+            "target": "quad_formula",
             "duration": 2,
-            "transform_to": "simplified_sqrt"
+            "transform_to": "step1"
           },
           {
             "action": "transform",
-            "target": "simplified_sqrt",
+            "target": "step1",
             "duration": 2,
-            "transform_to": "final_form"
+            "transform_to": "step2"
           },
           {
             "action": "show_equation",
-            "target": "plus_path",
+            "target": "solution1",
             "duration": 3
           },
           {
             "action": "show_equation",
-            "target": "minus_path",
+            "target": "solution2",
             "duration": 3
           },
           {
             "action": "appear",
-            "target": "final_answer_box_1",
+            "target": "final_box1",
             "duration": 1
           },
           {
             "action": "appear",
-            "target": "final_answer_box_2",
+            "target": "final_box2",
             "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": [
+              "final_box1",
+              "final_box2"
+            ],
+            "duration": 2,
+            "color": "YELLOW"
           }
         ]
       },
@@ -1571,7 +1535,7 @@
           ]
         }
       },
-      "content_video_path": "videos/topic_example_01.dry_run.txt",
+      "content_video_path": "topic_example_01.mp4",
       "has_content_video": true
     },
     {

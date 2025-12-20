@@ -46,5 +46,53 @@
       "duration": 22,
       "dry_run": false
     }
+  },
+  {
+    "timestamp": "2025-12-20T13:14:21.242087",
+    "section_id": "content_01",
+    "section_title": "The Standard Form of a Quadratic Equation",
+    "renderer": "manim_v12",
+    "prompt": "main_equation = MathTex(r\"ax^2 + bx + c = 0\").move_to(np.array([0, 0, 0]))\na_label = MathTex(r\"\\text{coefficient of }x^2\").scale(0.8).move_to(np.array([-2.5, 1, 0]))\nb_label = MathTex(r\"\\text{coefficient of }x\").scale(0.8).move_to(np.array([0, 1, 0]))\nc_label = MathTex(r\"\\text{constant term}\").scale(0.8).move_to(np.array([2.5, 1, 0]))\na_not_zero = MathTex(r\"a \\neq 0\").move_to(np.array([0, -1.5, 0]))\n\n# Animation sequence\nself.play(Write(main_equation), run_time=2)\nself.wait(6)\nself.play(Indicate(main_equation), run_time=2)\nself.wait(4)\nself.play(Indicate(main_equation), run_time=2)\nself.play(FadeIn(a_label), run_time=1)\nself.play(Indicate(main_equation), run_time=2)\nself.play(FadeIn(b_label), run_time=1)\nself.play(Indicate(main_equation), run_time=2)\nself.play(FadeIn(c_label), run_time=1)\nself.wait(3)\nself.play(Write(a_not_zero), run_time=1)\nself.play(Indicate(main_equation), run_time=2)\nself.wait(5)\nself.play(Indicate(main_equation), run_time=2)\nself.wait(1)",
+    "output_path": "player/jobs/4f3411e9/videos/topic_content_01.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v12_spec_generated",
+      "object_count": 5,
+      "animation_count": 15,
+      "duration": 36,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-20T13:14:54.646078",
+    "section_id": "content_02",
+    "section_title": "The Quadratic Formula Revealed",
+    "renderer": "manim_v12",
+    "prompt": "quadratic_formula = MathTex(r\"x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}\").move_to(np.array([0, 0, 0]))\nx_equals = MathTex(r\"x =\").move_to(np.array([-2, 0, 0]))\nfraction_bar = Dot(point=np.array([0.5, 0, 0]), color=WHITE)\nnumerator = MathTex(r\"-b \\pm \\sqrt{b^2 - 4ac}\").move_to(np.array([0.5, 0.5, 0]))\ndenominator = MathTex(r\"2a\").move_to(np.array([0.5, -0.5, 0]))\ndiscriminant_box = Dot(point=np.array([1, 0.5, 0]), color=BLUE)\ndiscriminant_label = Text(\"Discriminant\", font_size=28).move_to(np.array([2.5, 1, 0]))\n\n# Animation sequence\nself.play(Write(x_equals), run_time=1)\nself.play(Create(fraction_bar), run_time=1)\nself.play(Write(numerator), run_time=2)\nself.play(Write(denominator), run_time=2)\nself.wait(1)\nself.play(Indicate(numerator), run_time=3)\nself.play(Indicate(numerator), run_time=7)\nself.play(Create(discriminant_box), run_time=2)\nself.play(FadeIn(discriminant_label), run_time=1)\nself.wait(4)\nself.play(Indicate(denominator), run_time=3)\nself.wait(6)\nself.play(Indicate(quadratic_formula), run_time=3)\nself.wait(1)",
+    "output_path": "player/jobs/4f3411e9/videos/topic_content_02.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v12_spec_generated",
+      "object_count": 7,
+      "animation_count": 13,
+      "duration": 36,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-20T13:15:35.654305",
+    "section_id": "example_01",
+    "section_title": "Example: Solving an Equation",
+    "renderer": "manim_v12",
+    "prompt": "original_eq = MathTex(r\"x^2 + 5x + 6 = 0\").move_to(np.array([0, 2.5, 0]))\ncoef_a = MathTex(r\"a = 1\").move_to(np.array([-3, 1.5, 0]))\ncoef_b = MathTex(r\"b = 5\").move_to(np.array([0, 1.5, 0]))\ncoef_c = MathTex(r\"c = 6\").move_to(np.array([3, 1.5, 0]))\nquad_formula = MathTex(r\"x = \\frac{-5 \\pm \\sqrt{5^2 - 4(1)(6)}}{2(1)}\").move_to(np.array([0, 0, 0]))\nstep1 = MathTex(r\"x = \\frac{-5 \\pm \\sqrt{25 - 24}}{2}\").move_to(np.array([0, 0, 0]))\nstep2 = MathTex(r\"x = \\frac{-5 \\pm 1}{2}\").move_to(np.array([0, 0, 0]))\nsolution1 = MathTex(r\"x = \\frac{-5 + 1}{2} = -2\").move_to(np.array([-2.5, -1.5, 0]))\nsolution2 = MathTex(r\"x = \\frac{-5 - 1}{2} = -3\").move_to(np.array([2.5, -1.5, 0]))\nfinal_box1 = Dot(point=np.array([-2.5, -2.5, 0]), color=BLUE)\nfinal_box2 = Dot(point=np.array([2.5, -2.5, 0]), color=BLUE)\n\n# Animation sequence\nself.play(Write(original_eq), run_time=1.5)\nself.play(Write(coef_a), run_time=1.5)\nself.play(Write(coef_b), run_time=1.5)\nself.play(Write(coef_c), run_time=1.5)\nself.play(Write(quad_formula), run_time=3)\nself.play(Write(solution1), run_time=3)\nself.play(Write(solution2), run_time=3)\nself.play(FadeIn(final_box1), run_time=1)\nself.play(FadeIn(final_box2), run_time=1)\nself.play(Indicate(final_box1), run_time=2)\nself.wait(1)",
+    "output_path": "player/jobs/4f3411e9/videos/topic_example_01.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v12_spec_generated",
+      "object_count": 11,
+      "animation_count": 12,
+      "duration": 23.0,
+      "dry_run": false
+    }
   }
 ]
