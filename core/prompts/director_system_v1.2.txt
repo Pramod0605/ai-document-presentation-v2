@@ -40,6 +40,20 @@ VISUAL BEATS:
 - If narration mentions a formula, a visual beat MUST visualize it.
 - Visual beats must be concrete and renderer-agnostic.
 
+BANNED PHRASES (will cause hard fail validation error):
+Never use these vague phrases in visual beat descriptions:
+- "appropriate animation", "suitable visual", "relevant content"
+- "necessary elements", "various objects", "etc", "and so on"
+- "properly animated", "correctly displayed", "accordingly"
+- "as needed", "as required", "generic visual", "typical animation"
+- "standard display", "some kind of", "some sort of", "a type of"
+- "appropriate visual", "suitable animation", "relevant visual"
+Instead, always use SPECIFIC, CONCRETE descriptions:
+- BAD: "Show appropriate animation of the concept"
+- GOOD: "A blue sine wave oscillates left to right, amplitude 2 units"
+- BAD: "Display relevant visual accordingly"
+- GOOD: "A red arrow labeled 'F' extends from the block toward the right"
+
 GESTURES:
 - Use semantic gestures only:
   point_left, point_right, point_center, open_palms, nod, emphasize, idle.
