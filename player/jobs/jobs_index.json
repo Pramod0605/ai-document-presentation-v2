@@ -5730,5 +5730,183 @@
     "completed_at": null,
     "error": null,
     "result": null
+  },
+  "25a7aaba": {
+    "id": "25a7aaba",
+    "type": "markdown",
+    "params": {
+      "subject": "Physics",
+      "grade": "11",
+      "dry_run": false
+    },
+    "status": "processing",
+    "current_step": null,
+    "current_step_name": "Initializing...",
+    "steps_completed": 0,
+    "total_steps": 3,
+    "progress": 0,
+    "created_at": "2025-12-20T11:03:30.628851",
+    "started_at": "2025-12-20T11:03:30.646900",
+    "completed_at": null,
+    "error": null,
+    "result": null
+  },
+  "bf057d37": {
+    "id": "bf057d37",
+    "type": "markdown",
+    "params": {
+      "subject": "Physics",
+      "grade": "11",
+      "dry_run": true
+    },
+    "status": "completed",
+    "current_step": 1,
+    "current_step_name": "Rendering videos with AI...",
+    "steps_completed": 2,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-20T11:04:10.210479",
+    "started_at": "2025-12-20T11:04:10.241233",
+    "completed_at": "2025-12-20T11:06:51.951850",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "pipeline_version": "1.2",
+      "started_at": "2025-12-20T11:04:10.275414",
+      "source_file": null,
+      "steps": [
+        {
+          "step": "extract_images",
+          "status": "completed",
+          "count": 0
+        },
+        {
+          "step": "generate_presentation_v12",
+          "status": "completed",
+          "analytics": {
+            "job_id": "2d8e7e3e",
+            "status": "completed",
+            "total_duration_seconds": 161.65,
+            "total_cost_usd": 0.2016,
+            "total_tokens": 25298,
+            "phases_completed": 6,
+            "phases_failed": 0,
+            "cost_breakdown": {
+              "chunker": {
+                "cost_usd": 0.0008,
+                "duration_seconds": 1.95,
+                "tokens": 718
+              },
+              "director": {
+                "cost_usd": 0.0776,
+                "duration_seconds": 58.82,
+                "tokens": 8865
+              },
+              "manim_renderer_scontent_01": {
+                "cost_usd": 0.0272,
+                "duration_seconds": 22.42,
+                "tokens": 3158
+              },
+              "video_renderer_scontent_02": {
+                "cost_usd": 0.0495,
+                "duration_seconds": 37.22,
+                "tokens": 6127
+              },
+              "manim_renderer_sexample_01": {
+                "cost_usd": 0.0215,
+                "duration_seconds": 19.65,
+                "tokens": 2816
+              },
+              "video_renderer_srecap_01": {
+                "cost_usd": 0.0251,
+                "duration_seconds": 21.58,
+                "tokens": 3614
+              }
+            }
+          }
+        },
+        {
+          "step": "hard_fail_validation",
+          "status": "passed"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": "intro_01",
+              "section_type": "intro",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'intro' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": "content_01",
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/bf057d37/videos/topic_content_01.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 4,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            },
+            {
+              "topic_id": "content_02",
+              "section_type": "content",
+              "renderer": "video",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section content_02, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.",
+              "visual_beats_used": 5,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 150, in _render_visual_beats\n    wan_prompt = compile_wan_prompt(beat, topic_id, beat_idx)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 139, in compile_wan_prompt\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 91, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section content_02, Beat 0: Visual beat has no content. All fields are empty or missing.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 155, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 42, in render_wan_video\n    return _render_visual_beats(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 152, in _render_visual_beats\n    raise WanRenderError(\nrender.wan.wan_runner.WanRenderError: Section content_02, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.\n"
+            },
+            {
+              "topic_id": "example_01",
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/bf057d37/videos/topic_example_01.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 6,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            },
+            {
+              "topic_id": "recap_01",
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/bf057d37/videos/topic_recap_01.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 6,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            }
+          ],
+          "success_count": 4,
+          "fail_count": 1,
+          "dry_run": true
+        },
+        {
+          "step": "generate_audio",
+          "status": "skipped",
+          "reason": "dry_run"
+        }
+      ],
+      "completed_at": "2025-12-20T11:06:51.949341",
+      "presentation_path": "/home/runner/workspace/player/jobs/bf057d37/presentation.json",
+      "analytics_path": "/home/runner/workspace/player/jobs/bf057d37/analytics.json",
+      "sections_count": 5,
+      "total_cost_usd": 0.201628,
+      "dry_run": true
+    }
   }
 }

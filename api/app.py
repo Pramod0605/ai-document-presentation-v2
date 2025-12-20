@@ -135,6 +135,9 @@ def submit_job():
             markdown_content = data.get("markdown", "")
             subject = data.get("subject", subject)
             grade = data.get("grade", grade)
+            dry_run = data.get("dry_run", False)
+            skip_wan = data.get("skip_wan", False)
+            skip_avatar = data.get("skip_avatar", False)
             
             if not markdown_content:
                 return jsonify({"error": "Markdown content is required"}), 400

@@ -1,0 +1,28 @@
+DRY RUN - Manim section example_01
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/bf057d37/videos/topic_example_01.mp4
+
+--- SCENE CODE ---
+stone = Dot(point=np.array([0, 0, 0]), color=GRAY)
+mass_label = MathTex(r"m = 5\text{ kg}").scale(1.0).move_to(np.array([0, -1, 0]))
+force_arrow = Arrow(start=np.array([-2, 0, 0]), end=np.array([0, 0, 0]), color=RED, buff=0)
+force_label = MathTex(r"F = 20\text{ N}").scale(1.0).move_to(np.array([-2, 0.5, 0]))
+accel_question = MathTex(r"a = ?").scale(1.0).move_to(np.array([0, 1, 0]))
+initial_equation = MathTex(r"F = ma").move_to(np.array([0, 2, 0]))
+rearranged_equation = MathTex(r"a = \frac{F}{m}").move_to(np.array([0, 2, 0]))
+substituted_equation = MathTex(r"a = \frac{20}{5}").move_to(np.array([0, 2, 0]))
+final_equation = MathTex(r"a = 4\text{ m/s}^2").move_to(np.array([0, 2, 0]))
+
+# Animation sequence
+self.play(FadeIn(stone), run_time=1)
+self.play(FadeIn(mass_label), run_time=1)
+self.play(Create(force_arrow), run_time=1)
+self.play(FadeIn(force_label), run_time=1)
+self.play(FadeIn(accel_question), run_time=1)
+self.wait(13)
+self.play(Write(initial_equation), run_time=2)
+self.play(Indicate(initial_equation), run_time=1)
+self.wait(5)
+self.wait(6)
+self.play(Indicate(final_equation), run_time=5)
+self.wait(1)

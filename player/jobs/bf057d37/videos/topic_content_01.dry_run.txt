@@ -1,0 +1,32 @@
+DRY RUN - Manim section content_01
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/bf057d37/videos/topic_content_01.mp4
+
+--- SCENE CODE ---
+floor_line = Dot(point=np.array([0, -2, 0]), color=GRAY)
+block_initial = Dot(point=np.array([0, -1.5, 0]), color=BLUE)
+mass_label = MathTex(r"m").scale(1.0).move_to(np.array([0, -1.5, 0]))
+force_arrow = Arrow(start=np.array([-1.5, -1.5, 0]), end=np.array([0.5, -1.5, 0]), color=RED, buff=0)
+force_label = MathTex(r"F").scale(1.0).move_to(np.array([-1.5, -1, 0]))
+accel_arrow = Arrow(start=np.array([0.5, -1.5, 0]), end=np.array([2.5, -1.5, 0]), color=GREEN, buff=0)
+accel_label = MathTex(r"a").scale(1.0).move_to(np.array([1, -1, 0]))
+force_prop_text = MathTex(r"F \uparrow, a \uparrow").move_to(np.array([3, 2, 0]))
+block_large = Dot(point=np.array([0, -1.5, 0]), color=BLUE)
+mass_large_label = MathTex(r"3m").scale(1.0).move_to(np.array([0, -1.5, 0]))
+mass_prop_text = MathTex(r"m \uparrow, a \downarrow").move_to(np.array([3, 2, 0]))
+
+# Animation sequence
+self.play(Create(floor_line), run_time=1)
+self.play(FadeIn(block_initial), run_time=1)
+self.play(FadeIn(mass_label), run_time=1)
+self.play(Create(force_arrow), run_time=1)
+self.play(FadeIn(force_label), run_time=1)
+self.play(Create(accel_arrow), run_time=1)
+self.play(FadeIn(accel_label), run_time=1)
+self.wait(3)
+self.play(FadeIn(force_prop_text), run_time=1)
+self.wait(10)
+self.play(FadeOut(force_prop_text), run_time=1)
+self.play(FadeIn(mass_prop_text), run_time=1)
+self.wait(8)
+self.wait(1)
