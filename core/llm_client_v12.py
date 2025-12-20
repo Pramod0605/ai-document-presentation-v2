@@ -372,14 +372,17 @@ def pass2_video_renderer(
 def pass2_dispatch_renderers(
     presentation: Dict,
     tracker: Optional[AnalyticsTracker] = None,
-    use_remotion: bool = False
+    use_remotion: bool = True
 ) -> Dict:
     """Dispatch Render phase to appropriate renderers based on section renderer choice.
     
+    v1.3 CHANGE: Director decides renderer. Pipeline obeys. No collapse logic.
+    All sections (including intro/summary/memory) now have renderers assigned.
+    
     Args:
-        use_remotion: If False (default), Remotion sections route to Video (WAN) instead.
+        use_remotion: v1.3 defaults to True - Remotion is now a required renderer.
     """
-    log("[Render] Dispatching to renderers...")
+    log("[Render v1.3] Dispatching to renderers (Director decides, pipeline obeys)...")
     
     sections = presentation.get("sections", [])
     
@@ -391,27 +394,18 @@ def pass2_dispatch_renderers(
         renderer = str(renderer).lower()
         section_type = section.get("section_type", "")
         
-        if section_type in ["intro", "summary", "memory"]:
-            log(f"[Render] Section {section_id} ({section_type}): TEXT-ONLY, no renderer needed")
-            continue
-        
-        effective_renderer = renderer
-        if renderer == "remotion" and not use_remotion:
-            log(f"[Render] Section {section_id}: Remotion disabled, routing to Video (WAN)")
-            effective_renderer = "video"
-            section["renderer"] = "video"
-            section["renderer_override"] = "remotion_to_video"
+        log(f"[Render v1.3] Section {section_id} ({section_type}): renderer='{renderer}'")
         
         try:
-            if effective_renderer == "manim":
+            if renderer == "manim":
                 result = pass2_manim_renderer(section, tracker)
                 section["manim_scene_spec"] = result.get("manim_scene_spec")
                 
-            elif effective_renderer == "remotion":
+            elif renderer == "remotion":
                 result = pass2_remotion_renderer(section, tracker)
                 section["remotion_scene_spec"] = result.get("remotion_scene_spec")
                 
-            elif effective_renderer in ["video", "wan", "wan_video"]:
+            elif renderer in ["video", "wan", "wan_video"]:
                 result = pass2_video_renderer(section, tracker)
                 if "video_prompts" in result:
                     section["video_prompts"] = result.get("video_prompts")
@@ -421,42 +415,38 @@ def pass2_dispatch_renderers(
                     section["video_prompts"] = result
                     
             else:
-                log(f"[Render] Section {section_id}: Unknown renderer '{renderer}', skipping")
+                log(f"[Render v1.3] WARN: Section {section_id} has unknown renderer '{renderer}'")
                 
         except PipelineError as e:
-            log(f"[Render] ERROR in section {section_id}: {e}")
+            log(f"[Render v1.3] ERROR in section {section_id}: {e}")
             section["renderer_error"] = str(e)
     
     render_success = 0
     render_errors = 0
     for section in sections:
         section_id = section.get("section_id") or section.get("id", "?")
-        section_type = section.get("section_type", "")
         renderer = str(section.get("renderer", "")).lower()
-        
-        if section_type in ["intro", "summary", "memory"]:
-            continue
         
         if "renderer_error" in section:
             render_errors += 1
             continue
             
         if renderer == "manim" and not section.get("manim_scene_spec"):
-            log(f"[Render] FAIL: Section {section_id} missing manim_scene_spec after render")
+            log(f"[Render v1.3] FAIL: Section {section_id} missing manim_scene_spec after render")
             section["renderer_error"] = "manim_scene_spec not generated"
             render_errors += 1
         elif renderer == "remotion" and not section.get("remotion_scene_spec"):
-            log(f"[Render] FAIL: Section {section_id} missing remotion_scene_spec after render")
+            log(f"[Render v1.3] FAIL: Section {section_id} missing remotion_scene_spec after render")
             section["renderer_error"] = "remotion_scene_spec not generated"
             render_errors += 1
         elif renderer in ["video", "wan", "wan_video"] and not section.get("video_prompts"):
-            log(f"[Render] FAIL: Section {section_id} missing video_prompts after render")
+            log(f"[Render v1.3] FAIL: Section {section_id} missing video_prompts after render")
             section["renderer_error"] = "video_prompts not generated"
             render_errors += 1
         else:
             render_success += 1
     
-    log(f"[Render] Dispatch complete: {render_success} success, {render_errors} errors")
+    log(f"[Render v1.3] Dispatch complete: {render_success} success, {render_errors} errors")
     return presentation
 
 
@@ -465,13 +455,12 @@ def generate_presentation_v12(
     subject: str = "General Science",
     grade: str = "9",
     chapter: str = "",
-    use_remotion: bool = False
+    use_remotion: bool = True
 ) -> Tuple[Dict, AnalyticsTracker]:
     """
-    Main entry point for v1.2 3-phase pipeline (Parse → Direct → Render).
+    Main entry point for v1.3 3-phase pipeline (Parse → Direct → Render).
     
-    Args:
-        use_remotion: If False (default), Remotion content routes to Video (WAN).
+    v1.3 CHANGE: use_remotion defaults to True. Director decides renderer.
     
     Returns:
         Tuple of (presentation dict, analytics tracker)

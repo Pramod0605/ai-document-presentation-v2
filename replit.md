@@ -62,13 +62,32 @@ The user wants an iterative development process. The agent should prioritize cle
 
 ### Prompt Files (v1.3)
 Located in `core/prompts/`:
-- `director_system_v1.3.txt` / `director_user_v1.3.txt` (NEW v1.3)
-- `chunker_system_v1.2.txt` / `chunker_user_v1.2.txt` (unchanged)
+- `director_system_v1.3.txt` / `director_user_v1.3.txt` (v1.3 with canonical JSON example)
+- `director_retry_system.txt` / `director_retry_user.txt` (NEW - structure-repair-only retry)
+- `chunker_system_v1.3.txt` / `chunker_user_v1.3.txt` (NEW v1.3)
 - `manim_renderer_system_v1.2.txt` / `manim_renderer_user_v1.2.txt` (unchanged)
 - `remotion_renderer_system_v1.2.txt` / `remotion_renderer_user_v1.2.txt` (unchanged)
 - `video_renderer_system_v1.2.txt` / `video_renderer_user_v1.2.txt` (unchanged)
 
 Backups stored in `core/prompts/v1.1_backup/` and `core/prompts/v1.2_backup/`.
+
+### Schema Validation (v1.3 NEW)
+JSON Schema validation runs FIRST, before Python semantic validation:
+1. `schemas/presentation_v1.3.schema.json` - Strict JSON Schema
+2. `core/schema_validator.py` - Validates against schema
+3. If schema fails → retry with structure-repair prompt (max 2 retries)
+4. If still fails → HARD FAIL (no fallbacks, no normalization repair)
+
+### Director Retry Logic (v1.3 NEW)
+- Max 2 retries with structure-repair-only prompts
+- Retry prompt preserves narration/pedagogy, only fixes missing structure
+- Hard fail after 2 retries (no fallbacks)
+
+### Director Gemini Parameters (v1.3 NEW)
+Optimized for deterministic output:
+- `temperature: 0.2` (low creativity, high determinism)
+- `top_p: 0.9`
+- `max_tokens: 8192`
 
 ### Hard Fail Validation (v1.3)
 The `core/hard_fail_validator.py` now enforces:
@@ -94,27 +113,23 @@ The `core/hard_fail_validator.py` now enforces:
 **Renderer Checks:**
 - manim section without manim_scene_spec → FAIL
 
-### Renderer Decision Rules
+### Renderer Decision Rules (v1.3 - Director Decides)
 | Renderer | Use Cases |
 |----------|-----------|
 | **Manim** | Formulas, equations, graphs, vectors, geometry, numeric physics |
 | **Video (WAN)** | Biology processes, chemistry reactions, physical phenomena, recap storytelling |
-| **Remotion** | Motion graphics, intro animations, summary animations (when enabled) |
+| **Remotion** | intro/summary/memory/quiz sections (motion graphics, flashcard animations) |
 
-### Normalization Layer (v1.3)
-The `normalize_director_output()` function in `core/pipeline_v12.py` converts various LLM output field names to canonical v1.3 schema before hard fail validation. This allows the validator to work correctly regardless of minor LLM output variations.
+**v1.3 Change:** Director decides renderer. Pipeline obeys. No Remotion→WAN collapse logic.
+All sections (including intro/summary/memory) now have visual_beats assigned.
 
-**Normalizations performed:**
-- `narration_beats` → `narration_segments` + section-level `narration` string
-- `narration_and_visuals` → `narration_segments` + section-level `narration` string
-- `narration` (when list) → `narration_segments` + section-level `narration` string
-- `narration_script` → `text` (inside segments)
-- `scenes` (in recap) → `recap_scenes`
-- Creates `recap_scenes` from narration_segments for recap sections
-- Extracts `visual_beats` from embedded `visual_beat` objects in segments
-- Normalizes `display_directives` from nested objects to flat action strings
+### Normalization Layer (v1.3 - PASS-THROUGH MODE)
+The `normalize_director_output()` function in `core/pipeline_v12.py` is now PASS-THROUGH ONLY:
+- Normalizes field NAMES only (narration_beats → narration.segments)
+- Does NOT invent missing required fields
+- Missing structure → schema validation failure → retry or hard fail
 
-**Design rationale:** Post-processing normalization (vs. loosening validator or prompt changes) is most maintainable - preserves strict v1.3 contract for downstream components while handling LLM drift.
+**v1.3 Change:** Normalization no longer back-fills or creates missing structures. If the Director LLM omits required fields, schema validation will fail and trigger retry logic.
 
 ### Technical Implementation
 - **Backend**: Python Flask API.
@@ -165,12 +180,14 @@ The `Presentation` JSON schema includes:
 ```
 core/
 ├── prompts/
-│   ├── v1.1_backup/              # v1.1 prompt backups
-│   ├── v1.2_backup/              # v1.2 prompt backups
-│   ├── director_system_v1.3.txt  # NEW v1.3
-│   ├── director_user_v1.3.txt    # NEW v1.3
-│   ├── chunker_system_v1.2.txt
-│   ├── chunker_user_v1.2.txt
+│   ├── v1.1_backup/                  # v1.1 prompt backups
+│   ├── v1.2_backup/                  # v1.2 prompt backups
+│   ├── director_system_v1.3.txt      # v1.3 with canonical JSON example
+│   ├── director_user_v1.3.txt        # v1.3
+│   ├── director_retry_system.txt     # NEW - structure-repair-only retry
+│   ├── director_retry_user.txt       # NEW - retry user template
+│   ├── chunker_system_v1.3.txt       # NEW v1.3
+│   ├── chunker_user_v1.3.txt         # NEW v1.3
 │   ├── manim_renderer_system_v1.2.txt
 │   ├── manim_renderer_user_v1.2.txt
 │   ├── remotion_renderer_system_v1.2.txt
@@ -180,9 +197,14 @@ core/
 ├── analytics.py             # Cost/time tracking per phase
 ├── pipeline_v12.py          # v1.3 pipeline (uses v1.3 prompts)
 ├── llm_client_v12.py        # v1.3 LLM calls
+├── director_client.py       # NEW - Director client with retry logic
+├── schema_validator.py      # NEW - JSON Schema validation
 ├── hard_fail_validator.py   # v1.3 validation rules
 ├── traceability.py          # Generation trace logging
 └── latex_to_speech.py       # LaTeX→speakable text for TTS
+
+schemas/
+└── presentation_v1.3.schema.json  # NEW - Strict JSON Schema
 
 docs/
 ├── llm_output_requirements_v1.3.json  # v1.3 specification (CURRENT)
