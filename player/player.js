@@ -47,23 +47,32 @@ class LayerController {
     this.currentVisualState = visualLayer;
     this.currentAvatarState = avatarLayer;
 
+    stage.classList.remove('video-swap', 'video-focus');
+    if (contentBox) contentBox.style.opacity = '';
+
     if (textLayer === 'show') {
       stage.classList.add('text-visible');
       if (contentBox) contentBox.style.opacity = '1';
     } else if (textLayer === 'hide') {
       stage.classList.remove('text-visible');
+      if (contentBox) contentBox.style.opacity = '0';
       if (stage.classList.contains('mode-content-video')) {
         stage.classList.add('video-focus');
       }
     } else if (textLayer === 'swap') {
       stage.classList.add('video-swap');
+      if (contentBox) contentBox.style.opacity = '0.3';
     }
 
     if (visualLayer === 'show' || visualLayer === 'replace') {
       if (videoBox) videoBox.classList.add('video-ready');
-      stage.classList.remove('video-focus');
     } else if (visualLayer === 'hide') {
       if (videoBox) videoBox.classList.remove('video-ready');
+    }
+
+    if (avatarCanvas) {
+      avatarCanvas.style.opacity = '';
+      avatarCanvas.style.transform = '';
     }
 
     if (avatarLayer === 'hide') {
@@ -467,8 +476,6 @@ function loadSlide(index) {
   const imgContainer = document.getElementById('slide-image-container');
   const bgImg = document.getElementById('bg-image-layer');
   const sceneLabel = document.getElementById('scene-label');
-
-  const sectionType = slide.section_type || slide.slide_type || 'content';
 
   if (sectionType === 'example') {
     document.getElementById('content-box').classList.add('example-section');
