@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "presentation_id",
+    "subject",
+    "grade",
+    "chapter_title",
+    "avatar_global",
+    "sections"
+  ],
+  "properties": {
+    "spec_version": {
+      "const": "v1.3"
+    },
+    "presentation_id": { "type": "string" },
+    "subject": { "type": "string" },
+    "grade": { "type": "string" },
+    "chapter_title": { "type": "string" },
+
+    "avatar_global": {
+      "type": "object",
+      "required": [
+        "style",
+        "default_position",
+        "default_width_percent",
+        "gesture_enabled"
+      ],
+      "properties": {
+        "style": { "enum": ["teacher", "guide"] },
+        "default_position": { "enum": ["left", "right"] },
+        "default_width_percent": { "type": "number", "minimum": 20, "maximum": 60 },
+        "gesture_enabled": { "type": "boolean" }
+      }
+    },
+
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/section" }
+    }
+  },
+
+  "$defs": {
+    "section": {
+      "type": "object",
+      "required": [
+        "section_id",
+        "section_type",
+        "title",
+        "renderer",
+        "avatar_layout",
+        "narration",
+        "visual_beats",
+        "display_directives"
+      ],
+      "properties": {
+        "section_id": { "type": "number" },
+        "section_type": {
+          "enum": ["intro", "content", "example", "quiz", "memory", "recap", "summary"]
+        },
+        "title": { "type": "string" },
+        "renderer": { "enum": ["manim", "remotion", "video"] },
+
+        "avatar_layout": {
+          "type": "object",
+          "required": ["visibility", "mode"],
+          "properties": {
+            "visibility": { "enum": ["required", "optional", "hidden"] },
+            "mode": { "enum": ["side", "overlay", "hidden"] },
+            "position": { "enum": ["left", "right", "center"] },
+            "width_percent": { "type": "number", "minimum": 10, "maximum": 70 }
+          }
+        },
+
+        "narration": {
+          "type": "object",
+          "required": ["full_text", "segments"],
+          "properties": {
+            "full_text": { "type": "string", "minLength": 50 },
+            "segments": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/narration_segment" }
+            }
+          }
+        },
+
+        "visual_beats": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/visual_beat" }
+        },
+
+        "display_directives": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/display_directive" }
+        }
+      }
+    },
+
+    "narration_segment": {
+      "type": "object",
+      "required": ["segment_id", "text", "duration_seconds"],
+      "properties": {
+        "segment_id": { "type": "number" },
+        "text": { "type": "string", "minLength": 10 },
+        "duration_seconds": { "type": "number", "minimum": 1 },
+        "gesture_hint": {
+          "enum": [
+            "point_left",
+            "point_right",
+            "point_center",
+            "open_palms",
+            "nod",
+            "emphasize",
+            "idle"
+          ]
+        }
+      }
+    },
+
+    "visual_beat": {
+      "type": "object",
+      "required": [
+        "beat_id",
+        "segment_id",
+        "visual_beat_type",
+        "description"
+      ],
+      "properties": {
+        "beat_id": { "type": "string" },
+        "segment_id": { "type": "number" },
+        "visual_beat_type": {
+          "enum": [
+            "diagram",
+            "formula",
+            "process",
+            "example_step",
+            "motion_graphic"
+          ]
+        },
+        "description": { "type": "string", "minLength": 10 },
+        "symbolic_overlay": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "content": {
+              "type": "array",
+              "items": { "type": "string" },
+              "maxItems": 4
+            },
+            "max_words": { "type": "number", "maximum": 4 }
+          }
+        }
+      }
+    },
+
+    "display_directive": {
+      "type": "object",
+      "required": ["segment_id", "text_layer", "visual_layer", "avatar_layer"],
+      "properties": {
+        "segment_id": { "type": "number" },
+
+        "text_layer": {
+          "type": "object",
+          "required": ["action"],
+          "properties": {
+            "action": { "enum": ["show", "hide", "swap"] },
+            "animation": { "enum": ["fade_in", "fade_out", "cut"] }
+          }
+        },
+
+        "visual_layer": {
+          "type": "object",
+          "required": ["action"],
+          "properties": {
+            "action": { "enum": ["show", "hide", "replace"] },
+            "animation": { "enum": ["cut", "fade", "slide"] }
+          }
+        },
+
+        "avatar_layer": {
+          "type": "object",
+          "required": ["action"],
+          "properties": {
+            "action": { "enum": ["show", "hide", "gesture_only"] }
+          }
+        }
+      }
+    }
+  }
+}

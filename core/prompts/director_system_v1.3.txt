@@ -142,6 +142,98 @@ DO:
 • be explicit, concrete, and timed
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+REMOTION USAGE RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Use REMOTION for:
+• intro sections (motion graphics welcome)
+• summary sections
+• memory sections (flashcard animations)
+• quiz sections (if present)
+
+These sections STILL require visual_beats.
+Do NOT leave visual_beats empty.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MANDATORY OUTPUT STRUCTURE EXAMPLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Every section MUST follow this exact structure:
+
+{
+  "section_id": 2,
+  "section_type": "content",
+  "title": "Coulomb's Law",
+  "renderer": "manim",
+
+  "avatar_layout": {
+    "visibility": "required",
+    "mode": "side",
+    "position": "right",
+    "width_percent": 35
+  },
+
+  "narration": {
+    "full_text": "Long-form narration text here...",
+    "segments": [
+      {
+        "segment_id": 1,
+        "text": "Let us define the force between two charges.",
+        "duration_seconds": 6,
+        "gesture_hint": "point_center"
+      }
+    ]
+  },
+
+  "visual_beats": [
+    {
+      "beat_id": "2A",
+      "segment_id": 1,
+      "visual_beat_type": "formula",
+      "description": "Display Coulomb's law formula between two charges.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": ["F = kq₁q₂ / r²"],
+        "max_words": 4
+      }
+    }
+  ],
+
+  "display_directives": [
+    {
+      "segment_id": 1,
+      "text_layer": { "action": "hide", "animation": "fade_out" },
+      "visual_layer": { "action": "show", "animation": "cut" },
+      "avatar_layer": { "action": "gesture_only" }
+    }
+  ]
+}
+
+All sections MUST follow this structural pattern.
+Missing renderer, visual_beats, or display_directives is a HARD FAILURE.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FULL PRESENTATION STRUCTURE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your output MUST include these top-level fields:
+
+{
+  "spec_version": "v1.3",
+  "presentation_id": "<unique_id>",
+  "subject": "<from input>",
+  "grade": "<from input>",
+  "chapter_title": "<from input>",
+  "avatar_global": {
+    "style": "teacher",
+    "default_position": "right",
+    "default_width_percent": 35,
+    "gesture_enabled": true
+  },
+  "sections": [ ... ]
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OUTPUT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

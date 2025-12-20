@@ -26,6 +26,7 @@ from core.renderer_executor import render_all_topics, enforce_renderer_policy
 from core.image_processor import extract_images_from_markdown, strip_base64_from_markdown, create_image_list_for_llm
 from core.hard_fail_validator import validate_presentation_hard_fails, format_hard_fail_report
 from core.traceability import init_traceability, log_event, log_validation, log_hard_fail, complete_trace, save_render_prompts_json
+from core.schema_validator import validate_presentation as validate_schema, format_errors_for_retry
 from tts.generate_audio import generate_all_audio
 from render.render_trace import clear_render_trace
 
@@ -292,6 +293,27 @@ def process_pdf_to_videos_v12(
         analytics_tracker.save_to_file(str(analytics_path))
         
         if presentation:
+            print("[Pipeline v1.3] Running JSON Schema validation FIRST...")
+            schema_valid, schema_errors = validate_schema(presentation)
+            if not schema_valid:
+                log_validation("schema_validation", None, False, schema_errors[:10], [])
+                job_status["steps"].append({
+                    "step": "schema_validation",
+                    "status": "failed",
+                    "errors": schema_errors[:20]
+                })
+                complete_trace("schema_fail")
+                raise PipelineError(
+                    f"SCHEMA FAIL: {len(schema_errors)} schema violations. No fallbacks allowed.",
+                    "schema_validation",
+                    {"schema_errors": schema_errors}
+                )
+            else:
+                log_validation("schema_validation", None, True, [], [])
+                job_status["steps"].append({"step": "schema_validation", "status": "passed"})
+                print("[Pipeline v1.3] Schema validation PASSED")
+            
+            print("[Pipeline v1.3] Running Python semantic validation...")
             is_valid, hard_fails = validate_presentation_hard_fails(presentation)
             if not is_valid:
                 for hf in hard_fails:
@@ -313,6 +335,7 @@ def process_pdf_to_videos_v12(
             else:
                 log_validation("hard_fail_check", None, True, [], [])
                 job_status["steps"].append({"step": "hard_fail_validation", "status": "passed"})
+                print("[Pipeline v1.3] Semantic validation PASSED")
         
         if job_id:
             job_manager.complete_step(job_id, 1)
@@ -478,6 +501,27 @@ def process_markdown_to_videos_v12(
         analytics_tracker.save_to_file(str(analytics_path))
         
         if presentation:
+            print("[Pipeline v1.3] Running JSON Schema validation FIRST...")
+            schema_valid, schema_errors = validate_schema(presentation)
+            if not schema_valid:
+                log_validation("schema_validation", None, False, schema_errors[:10], [])
+                job_status["steps"].append({
+                    "step": "schema_validation",
+                    "status": "failed",
+                    "errors": schema_errors[:20]
+                })
+                complete_trace("schema_fail")
+                raise PipelineError(
+                    f"SCHEMA FAIL: {len(schema_errors)} schema violations. No fallbacks allowed.",
+                    "schema_validation",
+                    {"schema_errors": schema_errors}
+                )
+            else:
+                log_validation("schema_validation", None, True, [], [])
+                job_status["steps"].append({"step": "schema_validation", "status": "passed"})
+                print("[Pipeline v1.3] Schema validation PASSED")
+            
+            print("[Pipeline v1.3] Running Python semantic validation...")
             is_valid, hard_fails = validate_presentation_hard_fails(presentation)
             if not is_valid:
                 for hf in hard_fails:
@@ -499,6 +543,7 @@ def process_markdown_to_videos_v12(
             else:
                 log_validation("hard_fail_check", None, True, [], [])
                 job_status["steps"].append({"step": "hard_fail_validation", "status": "passed"})
+                print("[Pipeline v1.3] Semantic validation PASSED")
         
         if job_id:
             job_manager.complete_step(job_id, 0)
