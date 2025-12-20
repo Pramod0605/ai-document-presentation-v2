@@ -14,11 +14,18 @@ REQUIREMENTS:
 SECTION DATA:
 {section_json}
 
-Output JSON only. Structure:
+RESPONSE FORMAT (use EXACTLY this structure):
 {
-  "section_id": number,
+  "section_id": "content_01",
   "manim_scene_spec": {
-    "objects": [...],
-    "animation_sequence": [...]
+    "objects": [
+      {"id": "obj_1", "type": "equation|label|shape|graph|vector", "position": [0, 0], "properties": {...}}
+    ],
+    "animation_sequence": [
+      {"action": "show_equation|highlight|appear|draw|fade_out", "target": "obj_1", "duration": 2}
+    ]
   }
 }
+
+CRITICAL: Use exactly "manim_scene_spec" as the key. Not "scene_spec", "manim_spec", or "spec".
+Output JSON only. No extra text.
