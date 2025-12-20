@@ -385,14 +385,29 @@
         }
       ],
       "lesson_learned": "Always verify player access URL and job routing before concluding schema incompatibility. The v1.2 schema IS compatible with existing player."
+    },
+    {
+      "id": "ISS-031",
+      "title": "Manim renderer expects v1.1 visual_beats but v1.2 provides section-level manim_scene_spec",
+      "status": "open",
+      "created": "2025-12-20",
+      "spec_reference": "docs/llm_output_requirements.json v1.2 - manim_scene_spec",
+      "description": "v1.2 Director generates manim_scene_spec at section level (not per visual_beat). The Manim runner tries to iterate through visual_beats calling compile_manim_plan() on each, which fails because v1.2 visual_beats only have {time, description} fields, not the structured manim_scene_spec required by Visual Compiler.",
+      "root_cause": "Architecture mismatch: v1.2 uses 3-pass architecture where Manim Renderer LLM generates the full manim_scene_spec for the whole section, but manim_runner.py's multi-beat path calls compile_manim_plan() on each beat expecting v1.1 structure.",
+      "fix": [
+        "1. renderer_executor.py: Store v1.2 manim_scene_spec under 'v12_manim_scene_spec' key",
+        "2. manim_runner.py: Detect v12_manim_scene_spec BEFORE multi-beat iteration, use translate_spec_to_manim_code() directly",
+        "3. Render single video for entire section, not per-beat"
+      ],
+      "impact": "All Manim sections fail to render with 'Visual beat has no content' error"
     }
   ],
   "metadata": {
     "last_updated": "2025-12-20",
-    "version": "10.2",
+    "version": "10.3",
     "spec_version": "v1.2",
     "spec_file": "docs/llm_output_requirements.json",
     "resolved_count": 33,
-    "open_count": 0
+    "open_count": 1
   }
 }
