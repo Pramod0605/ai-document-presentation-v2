@@ -984,14 +984,54 @@
       "solution": "Added MANDATORY RENDERER SELECTION RULES (STRICT) to director_system_v1.3.txt with subject-aware rules: Biology=video (Manim forbidden), Math/Physics formulas=Manim, Recap=video. Added validate_renderer_subject_match() Tier-1 validator in hard_fail_validator.py.",
       "created": "2025-12-21T15:28:09.471524",
       "resolved": "2025-12-21T16:25:00.000000"
+    },
+    {
+      "id": "ISS-067",
+      "title": "WAN runner ignores video_prompts and forces visual_compiler validation",
+      "severity": "high",
+      "status": "open",
+      "component": "render/wan/wan_runner.py",
+      "description": "WAN runner always calls compile_wan_prompt() when visual_beats exist, even when explanation_plan.video_prompts are already provided. This forces visual_compiler validation which fails because v1.3 Director outputs lightweight visual_beats (beat_id, description) without schema fields (scene_setup, objects_and_properties, motion_sequence).",
+      "impact": "All video sections fail to render with 'Visual beat has no content' error despite having valid pre-compiled video_prompts. Dry run job 022d2c98 sections 3,4 failed.",
+      "root_cause": "render/wan/wan_runner.py _render_visual_beats() does not check for pre-existing video_prompts before calling visual_compiler",
+      "upstream_impact": "None - Director output unchanged",
+      "downstream_impact": "WAN renderer must accept pre-authored prompts instead of compiling from visual_beats",
+      "proposed_fix": "In _render_visual_beats(), check if explanation_plan.video_prompts exists. If so, use those prompts directly instead of calling compile_wan_prompt() for each beat.",
+      "created": "2025-12-21T17:00:00.000000"
+    },
+    {
+      "id": "ISS-068",
+      "title": "Vague phrase 'etc' missing from wan_prompt_validator BANNED_VAGUE_PHRASES",
+      "severity": "medium",
+      "status": "open",
+      "component": "core/wan_prompt_validator.py",
+      "description": "'etc' is a vague phrase that degrades video prompt quality but is not in the BANNED_VAGUE_PHRASES list in wan_prompt_validator.py (though it exists in other validator modules).",
+      "impact": "Video prompts containing 'etc' pass validation and produce lower quality WAN videos",
+      "root_cause": "Inconsistent vague phrase lists across validator modules",
+      "proposed_fix": "Add 'etc' to BANNED_VAGUE_PHRASES in core/wan_prompt_validator.py and core/llm_client_v12.py",
+      "created": "2025-12-21T17:00:00.000000"
+    },
+    {
+      "id": "ISS-069",
+      "title": "Player overwrites section-level recap_video_paths when visual_beats lack video_path",
+      "severity": "high",
+      "status": "open",
+      "component": "player/player.js",
+      "description": "Player code (line 1341-1348) defaults recap sections to topic_<id>.mp4 and only uses multi-scene paths if visual_beats[0].video_path exists. But presentation.json has correct recap_video_paths at section level that gets ignored.",
+      "impact": "Recap sections show placeholder video instead of actual 5-scene recap videos. Job 38328ac4 section 7 has recap_7_scene_1-5.mp4 files but player requests topic_7.mp4",
+      "root_cause": "Player checks visual_beats.video_path instead of section-level recap_video_paths first",
+      "upstream_impact": "None - presentation.json is correct",
+      "downstream_impact": "Player must prefer section-level recap_video_paths over default naming",
+      "proposed_fix": "In player.js, check section.recap_video_paths FIRST before defaulting to topic_<id>.mp4",
+      "created": "2025-12-21T17:00:00.000000"
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-21T16:25:00.000000",
-    "version": "13.3",
+    "last_updated": "2025-12-21T17:00:00.000000",
+    "version": "13.4",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
     "resolved_count": 59,
-    "open_count": 0
+    "open_count": 3
   }
 }
