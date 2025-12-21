@@ -266,7 +266,11 @@
         "input": "attached_assets/Sample_subjects.md",
         "chunks_created": 14,
         "sections_generated": 7,
-        "renderer_distribution": {"manim": 3, "remotion": 3, "video": 1},
+        "renderer_distribution": {
+          "manim": 3,
+          "remotion": 3,
+          "video": 1
+        },
         "total_duration_seconds": 176.6,
         "total_cost_usd": 0.14,
         "total_tokens": 25160,
@@ -316,7 +320,11 @@
         "input": "attached_assets/Sample_subjects.md",
         "chunks_created": 16,
         "sections_generated": 7,
-        "renderer_distribution": {"manim": 3, "remotion": 3, "video": 1},
+        "renderer_distribution": {
+          "manim": 3,
+          "remotion": 3,
+          "video": 1
+        },
         "total_duration_seconds": 225.4,
         "total_cost_usd": 0.26,
         "total_tokens": 33886,
@@ -446,7 +454,10 @@
       "created": "2025-12-20",
       "resolved": "2025-12-20",
       "description": "/process_pdf and /process_markdown endpoints bypass job isolation by writing directly to player/assets/ instead of creating job-specific folders. This causes assets to overwrite each other between jobs.",
-      "affected_endpoints": ["/process_pdf", "/process_markdown"],
+      "affected_endpoints": [
+        "/process_pdf",
+        "/process_markdown"
+      ],
       "fix": "Updated both endpoints to create job folders using job_manager.create_job() and setup_job_folder(), matching the /submit endpoint pattern."
     },
     {
@@ -475,7 +486,11 @@
       "created": "2025-12-20",
       "priority": "critical",
       "description": "renderer_executor.py uses topic.get('id', 1) but director outputs section_id (e.g. content_01). All sections fall back to id=1, causing all videos to overwrite topic_1.mp4. Player shows black screen.",
-      "symptoms": ["Only 1 video file in videos folder", "Player shows black screen", "All Manim sections logged as topic_1"],
+      "symptoms": [
+        "Only 1 video file in videos folder",
+        "Player shows black screen",
+        "All Manim sections logged as topic_1"
+      ],
       "fix_required": "Use section_id for video filenames: topic_content_01.mp4, topic_example_01.mp4, etc."
     },
     {
@@ -626,7 +641,11 @@
         "schema_validation": "PASSED",
         "semantic_validation": "PASSED",
         "sections_created": 8,
-        "renderer_distribution": {"remotion": 3, "manim": 4, "video": 1},
+        "renderer_distribution": {
+          "remotion": 3,
+          "manim": 4,
+          "video": 1
+        },
         "total_cost_usd": 0.38,
         "total_duration_seconds": 271.73
       }
@@ -671,7 +690,11 @@
         "initial_validation": "STRUCTURAL_FAIL (2 text+visual simultaneous violations)",
         "retry_1_validation": "PASSED",
         "sections_created": 8,
-        "renderer_distribution": {"remotion": 3, "manim": 4, "video": 1}
+        "renderer_distribution": {
+          "remotion": 3,
+          "manim": 4,
+          "video": 1
+        }
       }
     },
     {
@@ -792,7 +815,12 @@
         "player/index.html"
       ],
       "backward_compatibility": {
-        "legacy_whitelist": ["", "v1.0", "v1.1", "v1.2"],
+        "legacy_whitelist": [
+          "",
+          "v1.0",
+          "v1.1",
+          "v1.2"
+        ],
         "legacy_behavior": "Uses narration text as display content (pre-v1.3 fallback)",
         "v13_behavior": "Enforces visual_content, shows error placeholder if missing"
       },
@@ -828,7 +856,7 @@
         ],
         "validation_rules": {
           "remotion": "Must parse as valid JSON with remotion_scene_spec key",
-          "wan": "Each prompt ≥300 words, no vague phrases from forbidden list"
+          "wan": "Each prompt \u2265300 words, no vague phrases from forbidden list"
         }
       },
       "files_modified": [
@@ -848,11 +876,23 @@
         "illustrate the concept",
         "visual representation"
       ]
+    },
+    {
+      "id": "ISS-058",
+      "title": "TTS TypeError: expected string got dict for v1.3 narration",
+      "status": "resolved",
+      "severity": "critical",
+      "component": "tts/generate_audio.py",
+      "description": "generate_section_audio() passed narration dict (v1.3 format) directly to latex_to_speech() which expects a string",
+      "root_cause": "TTS code not updated for v1.3 narration format change (narration is now a dict with full_text and segments)",
+      "fix": "Added isinstance check to extract full_text from dict, fallback to combining segment texts",
+      "created": "2025-12-21T12:36:14.021602",
+      "resolved": "2025-12-21T12:36:14.021612"
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-21",
-    "version": "12.7",
+    "last_updated": "2025-12-21T12:36:14.021617",
+    "version": "12.8",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
     "resolved_count": 57,
