@@ -1,0 +1,2741 @@
+{
+  "spec_version": "v1.3",
+  "presentation_id": "sci12-human-eye-01",
+  "subject": "General Science",
+  "grade": "12",
+  "chapter_title": "The Human Eye and the Colourful World",
+  "avatar_global": {
+    "style": "teacher",
+    "default_position": "right",
+    "default_width_percent": 35,
+    "gesture_enabled": true
+  },
+  "sections": [
+    {
+      "section_id": 1,
+      "section_type": "intro",
+      "title": "Introduction: Your Window to the World",
+      "renderer": "none",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "overlay",
+        "position": "center",
+        "width_percent": 60
+      },
+      "narration": {
+        "full_text": "Welcome! Have you ever wondered how we see the vibrant world around us? From the brightest sunrise to the tiniest details of a flower, our eyes perform an incredible feat of biological engineering. They are our personal cameras, capturing light and turning it into the rich tapestry of images we experience every moment. In this lesson, we're going to embark on a journey inside the human eye, exploring its intricate structure and discovering the amazing process that allows us to perceive light, shape, and color. Let's begin our exploration of this remarkable sensory organ.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Welcome! Have you ever wondered how we see the vibrant world around us? From the brightest sunrise to the tiniest details of a flower, our eyes perform an incredible feat of biological engineering.",
+            "duration_seconds": 12,
+            "gesture_hint": "welcoming_open_hands",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "The Human Eye: Our Window to the World"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "They are our personal cameras, capturing light and turning it into the rich tapestry of images we experience every moment.",
+            "duration_seconds": 8,
+            "gesture_hint": "framing_with_hands",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "In this lesson, we're going to embark on a journey inside the human eye, exploring its intricate structure and discovering the amazing process that allows us to perceive light, shape, and color. Let's begin our exploration of this remarkable sensory organ.",
+            "duration_seconds": 14,
+            "gesture_hint": "point_forward",
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "1A",
+          "segment_id": 2,
+          "visual_beat_type": "motion_graphic",
+          "description": "Fast-paced montage of vibrant images: a sunrise, a flower, a city skyline at night. An abstract camera lens iris effect transitions between them."
+        },
+        {
+          "beat_id": "1B",
+          "segment_id": 3,
+          "visual_beat_type": "motion_graphic",
+          "description": "The title 'The Human Eye' animates on screen, with a stylized, glowing outline of an eye forming around it."
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1020,
+        "elements": [
+          {
+            "id": "main_title",
+            "type": "text",
+            "content": "The Human Eye: Our Window to the World",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 360
+            }
+          },
+          {
+            "id": "sunrise_image",
+            "type": "image",
+            "content": "sunrise.jpg",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 360,
+              "exit_frame": 440
+            }
+          },
+          {
+            "id": "flower_image",
+            "type": "image",
+            "content": "flower.jpg",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 440,
+              "exit_frame": 520
+            }
+          },
+          {
+            "id": "skyline_image",
+            "type": "image",
+            "content": "skyline.jpg",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 520,
+              "exit_frame": 600
+            }
+          },
+          {
+            "id": "eye_outline",
+            "type": "shape",
+            "content": "eye",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "color": "#00A3FF"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 600,
+              "exit_frame": 1020
+            }
+          },
+          {
+            "id": "final_title",
+            "type": "text",
+            "content": "The Human Eye",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 660,
+              "exit_frame": 1020
+            }
+          }
+        ],
+        "background": {
+          "color": "#1A1A1A"
+        }
+      },
+      "renderer_override_reason": "Section type 'intro' is text-only (no video rendering)"
+    },
+    {
+      "section_id": 2,
+      "section_type": "summary",
+      "title": "What We'll Cover",
+      "renderer": "none",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "In this chapter, we will dissect the anatomy of the human eye. First, we'll look at the outer structures, like the cornea, which acts as the primary lens, and the iris, which controls the amount of light entering. Next, we will focus on the eye's internal lens and the ciliary muscles that cleverly change its shape, a process called accommodation. Finally, we'll travel to the back of the eye to the retina, the light-sensitive screen where images are formed, and learn how the optic nerve carries these signals to the brain for interpretation. By the end, you'll have a clear picture of how this system works together.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "In this chapter, we will dissect the anatomy of the human eye. First, we'll look at the outer structures, like the cornea, which acts as the primary lens, and the iris, which controls the amount of light entering.",
+            "duration_seconds": 12,
+            "gesture_hint": "list_item_1",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Outer Structures: Cornea & Iris"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Next, we will focus on the eye's internal lens and the ciliary muscles that cleverly change its shape, a process called accommodation.",
+            "duration_seconds": 9,
+            "gesture_hint": "list_item_2",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Outer Structures: Cornea & Iris"
+                },
+                {
+                  "level": 1,
+                  "text": "Internal Lens & Accommodation"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Finally, we'll travel to the back of the eye to the retina, the light-sensitive screen where images are formed, and learn how the optic nerve carries these signals to the brain for interpretation.",
+            "duration_seconds": 12,
+            "gesture_hint": "list_item_3",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Outer Structures: Cornea & Iris"
+                },
+                {
+                  "level": 1,
+                  "text": "Internal Lens & Accommodation"
+                },
+                {
+                  "level": 1,
+                  "text": "The Retina & Optic Nerve"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "By the end, you'll have a clear picture of how this system works together.",
+            "duration_seconds": 5,
+            "gesture_hint": "nod_positive",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "2A",
+          "segment_id": 4,
+          "visual_beat_type": "motion_graphic",
+          "description": "The three bullet points animate into place, connected by lines to form a simple flowchart, illustrating the path of light through the eye's main components."
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1140,
+        "elements": [
+          {
+            "id": "bullet1",
+            "type": "text",
+            "content": "Outer Structures: Cornea & Iris",
+            "position": {
+              "x": 100,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 30,
+              "exit_frame": 1110
+            }
+          },
+          {
+            "id": "bullet2",
+            "type": "text",
+            "content": "Internal Lens & Accommodation",
+            "position": {
+              "x": 100,
+              "y": 250
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 390,
+              "exit_frame": 1110
+            }
+          },
+          {
+            "id": "bullet3",
+            "type": "text",
+            "content": "The Retina & Optic Nerve",
+            "position": {
+              "x": 100,
+              "y": 350
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 660,
+              "exit_frame": 1110
+            }
+          },
+          {
+            "id": "line1",
+            "type": "shape",
+            "content": "line",
+            "position": {
+              "x": 80,
+              "y": 200
+            },
+            "style": {
+              "strokeWidth": 2,
+              "color": "#666666"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 1020,
+              "exit_frame": 1110
+            }
+          },
+          {
+            "id": "line2",
+            "type": "shape",
+            "content": "line",
+            "position": {
+              "x": 80,
+              "y": 300
+            },
+            "style": {
+              "strokeWidth": 2,
+              "color": "#666666"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 1020,
+              "exit_frame": 1110
+            }
+          }
+        ],
+        "background": {
+          "color": "#FFFFFF"
+        }
+      },
+      "renderer_override_reason": "Section type 'summary' is text-only (no video rendering)"
+    },
+    {
+      "section_id": 3,
+      "section_type": "content",
+      "title": "The Eye's Entrance: Cornea, Iris, and Pupil",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Let's begin with the structures that first interact with light. The human eye is roughly spherical, with a diameter of about 2.3 centimeters. Light enters through a thin, transparent membrane on the front surface called the cornea. Think of it as the eye's front window. Most of the refraction, or bending of light, happens right here at the outer surface of the cornea. Behind the cornea is a dark, muscular diaphragm called the iris. This is the colored part of the eye that we see in others. The iris has a crucial job: it controls the size of a small opening in its center, the pupil. The pupil regulates how much light is allowed to enter the eye. In bright light, the iris contracts the pupil to limit the light, and in dim light, it expands the pupil to let more light in, allowing us to see in a wide range of lighting conditions.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's begin with the structures that first interact with light. The human eye is roughly spherical, with a diameter of about 2.3 centimeters.",
+            "duration_seconds": 9,
+            "gesture_hint": "point_center",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "The human eye is one of the most valuable and sensitive sense organs."
+                },
+                {
+                  "level": 2,
+                  "text": "It is like a camera."
+                },
+                {
+                  "level": 1,
+                  "text": "The eyeball is approximately spherical in shape with a diameter of about 2.3 cm."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Light enters through a thin, transparent membrane on the front surface called the cornea. Think of it as the eye's front window. Most of the refraction, or bending of light, happens right here at the outer surface of the cornea.",
+            "duration_seconds": 14,
+            "gesture_hint": "sweeping_motion_front",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Light enters the eye through a thin membrane called the cornea."
+                },
+                {
+                  "level": 2,
+                  "text": "Most of the refraction for the light rays entering the eye occurs at the outer surface of the cornea."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Behind the cornea is a dark, muscular diaphragm called the iris. This is the colored part of the eye that we see in others. The iris has a crucial job: it controls the size of a small opening in its center, the pupil.",
+            "duration_seconds": 14,
+            "gesture_hint": "circular_motion_with_finger",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Behind the cornea, we find a structure called iris."
+                },
+                {
+                  "level": 2,
+                  "text": "Iris is a dark muscular diaphragm that controls the size of the pupil."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "The pupil regulates how much light is allowed to enter the eye. In bright light, the iris contracts the pupil to limit the light, and in dim light, it expands the pupil to let more light in, allowing us to see in a wide range of lighting conditions.",
+            "duration_seconds": 15,
+            "gesture_hint": "open_and_close_hand",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "The pupil regulates and controls the amount of light entering the eye."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "Now, let's visualize this process.",
+            "duration_seconds": 3,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "3A",
+          "segment_id": 5,
+          "visual_beat_type": "diagram",
+          "description": "Draw a 2D cross-section of the human eye. Label the eyeball and show a dimension line indicating the 2.3 cm diameter.",
+          "manim_scene_spec": {
+            "animations": [
+              {
+                "type": "Create",
+                "target": "eye_cross_section"
+              },
+              {
+                "type": "Create",
+                "target": "diameter_label",
+                "text": "2.3 cm"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "3B",
+          "segment_id": 5,
+          "visual_beat_type": "diagram",
+          "description": "Highlight the cornea. Animate parallel light rays approaching the eye and bending as they pass through the cornea. Label 'Cornea' and 'Refraction'.",
+          "manim_scene_spec": {
+            "animations": [
+              {
+                "type": "Indicate",
+                "target": "cornea_area",
+                "color": "yellow"
+              },
+              {
+                "type": "Create",
+                "target": "cornea_label",
+                "text": "Cornea"
+              },
+              {
+                "type": "ShowPassingFlash",
+                "target": "light_rays",
+                "path": "through_cornea"
+              },
+              {
+                "type": "Create",
+                "target": "refraction_label",
+                "text": "Refraction"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "3C",
+          "segment_id": 5,
+          "visual_beat_type": "diagram",
+          "description": "Zoom in on the front of the eye. Highlight the Iris and Pupil. Show two states: first, a bright sun icon appears, and the iris animates to shrink the pupil. Second, a moon icon appears, and the iris animates to expand the pupil. Label 'Iris' and 'Pupil'.",
+          "manim_scene_spec": {
+            "animations": [
+              {
+                "type": "FadeIn",
+                "target": "sun_icon"
+              },
+              {
+                "type": "Transform",
+                "target": "iris_shape",
+                "final_shape": "constricted_pupil"
+              },
+              {
+                "type": "FadeOut",
+                "target": "sun_icon"
+              },
+              {
+                "type": "FadeIn",
+                "target": "moon_icon"
+              },
+              {
+                "type": "Transform",
+                "target": "iris_shape",
+                "final_shape": "dilated_pupil"
+              },
+              {
+                "type": "Create",
+                "target": "iris_label",
+                "text": "Iris"
+              },
+              {
+                "type": "Create",
+                "target": "pupil_label",
+                "text": "Pupil"
+              }
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "eye_outline",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "shape_type": "circle",
+              "color": "WHITE",
+              "radius": 1.5
+            }
+          },
+          {
+            "id": "diameter_line",
+            "type": "vector",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "direction": [
+                2.3,
+                0
+              ],
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "diameter_label",
+            "type": "label",
+            "position": [
+              0,
+              -1
+            ],
+            "properties": {
+              "text": "2.3 cm",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "cornea",
+            "type": "shape",
+            "position": [
+              1.3,
+              0
+            ],
+            "properties": {
+              "shape_type": "arc",
+              "color": "WHITE",
+              "opacity": 0.8
+            }
+          },
+          {
+            "id": "cornea_label",
+            "type": "label",
+            "position": [
+              1.8,
+              1
+            ],
+            "properties": {
+              "text": "Cornea",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "light_rays",
+            "type": "vector",
+            "position": [
+              2,
+              0
+            ],
+            "properties": {
+              "direction": [
+                -1,
+                0
+              ],
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "iris",
+            "type": "shape",
+            "position": [
+              1,
+              0
+            ],
+            "properties": {
+              "shape_type": "annulus",
+              "color": "BLUE",
+              "inner_radius": 0.2,
+              "outer_radius": 0.4
+            }
+          },
+          {
+            "id": "iris_label",
+            "type": "label",
+            "position": [
+              0.5,
+              1
+            ],
+            "properties": {
+              "text": "Iris",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "pupil_label",
+            "type": "label",
+            "position": [
+              1,
+              1
+            ],
+            "properties": {
+              "text": "Pupil",
+              "scale": 0.8
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "draw",
+            "target": "eye_outline",
+            "duration": 2
+          },
+          {
+            "action": "draw",
+            "target": "diameter_line",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "diameter_label",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "cornea",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "cornea_label",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "light_rays",
+            "duration": 2
+          },
+          {
+            "action": "draw",
+            "target": "iris",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "iris_label",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "pupil_label",
+            "duration": 1
+          },
+          {
+            "action": "transform",
+            "target": "iris",
+            "duration": 2,
+            "properties": {
+              "inner_radius": 0.1
+            }
+          },
+          {
+            "action": "transform",
+            "target": "iris",
+            "duration": 2,
+            "properties": {
+              "inner_radius": 0.3
+            }
+          },
+          {
+            "action": "highlight",
+            "target": "iris",
+            "duration": 2,
+            "color": "BLUE"
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "3A",
+            "segment_id": 5,
+            "visual_beat_type": "diagram",
+            "description": "Draw a 2D cross-section of the human eye. Label the eyeball and show a dimension line indicating the 2.3 cm diameter.",
+            "manim_scene_spec": {
+              "animations": [
+                {
+                  "type": "Create",
+                  "target": "eye_cross_section"
+                },
+                {
+                  "type": "Create",
+                  "target": "diameter_label",
+                  "text": "2.3 cm"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "3B",
+            "segment_id": 5,
+            "visual_beat_type": "diagram",
+            "description": "Highlight the cornea. Animate parallel light rays approaching the eye and bending as they pass through the cornea. Label 'Cornea' and 'Refraction'.",
+            "manim_scene_spec": {
+              "animations": [
+                {
+                  "type": "Indicate",
+                  "target": "cornea_area",
+                  "color": "yellow"
+                },
+                {
+                  "type": "Create",
+                  "target": "cornea_label",
+                  "text": "Cornea"
+                },
+                {
+                  "type": "ShowPassingFlash",
+                  "target": "light_rays",
+                  "path": "through_cornea"
+                },
+                {
+                  "type": "Create",
+                  "target": "refraction_label",
+                  "text": "Refraction"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "3C",
+            "segment_id": 5,
+            "visual_beat_type": "diagram",
+            "description": "Zoom in on the front of the eye. Highlight the Iris and Pupil. Show two states: first, a bright sun icon appears, and the iris animates to shrink the pupil. Second, a moon icon appears, and the iris animates to expand the pupil. Label 'Iris' and 'Pupil'.",
+            "manim_scene_spec": {
+              "animations": [
+                {
+                  "type": "FadeIn",
+                  "target": "sun_icon"
+                },
+                {
+                  "type": "Transform",
+                  "target": "iris_shape",
+                  "final_shape": "constricted_pupil"
+                },
+                {
+                  "type": "FadeOut",
+                  "target": "sun_icon"
+                },
+                {
+                  "type": "FadeIn",
+                  "target": "moon_icon"
+                },
+                {
+                  "type": "Transform",
+                  "target": "iris_shape",
+                  "final_shape": "dilated_pupil"
+                },
+                {
+                  "type": "Create",
+                  "target": "iris_label",
+                  "text": "Iris"
+                },
+                {
+                  "type": "Create",
+                  "target": "pupil_label",
+                  "text": "Pupil"
+                }
+              ]
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "eye_outline",
+              "type": "shape",
+              "position": [
+                0,
+                0
+              ],
+              "properties": {
+                "shape_type": "circle",
+                "color": "WHITE",
+                "radius": 1.5
+              }
+            },
+            {
+              "id": "diameter_line",
+              "type": "vector",
+              "position": [
+                0,
+                0
+              ],
+              "properties": {
+                "direction": [
+                  2.3,
+                  0
+                ],
+                "color": "BLUE"
+              }
+            },
+            {
+              "id": "diameter_label",
+              "type": "label",
+              "position": [
+                0,
+                -1
+              ],
+              "properties": {
+                "text": "2.3 cm",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "cornea",
+              "type": "shape",
+              "position": [
+                1.3,
+                0
+              ],
+              "properties": {
+                "shape_type": "arc",
+                "color": "WHITE",
+                "opacity": 0.8
+              }
+            },
+            {
+              "id": "cornea_label",
+              "type": "label",
+              "position": [
+                1.8,
+                1
+              ],
+              "properties": {
+                "text": "Cornea",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "light_rays",
+              "type": "vector",
+              "position": [
+                2,
+                0
+              ],
+              "properties": {
+                "direction": [
+                  -1,
+                  0
+                ],
+                "color": "YELLOW"
+              }
+            },
+            {
+              "id": "iris",
+              "type": "shape",
+              "position": [
+                1,
+                0
+              ],
+              "properties": {
+                "shape_type": "annulus",
+                "color": "BLUE",
+                "inner_radius": 0.2,
+                "outer_radius": 0.4
+              }
+            },
+            {
+              "id": "iris_label",
+              "type": "label",
+              "position": [
+                0.5,
+                1
+              ],
+              "properties": {
+                "text": "Iris",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "pupil_label",
+              "type": "label",
+              "position": [
+                1,
+                1
+              ],
+              "properties": {
+                "text": "Pupil",
+                "scale": 0.8
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "draw",
+              "target": "eye_outline",
+              "duration": 2
+            },
+            {
+              "action": "draw",
+              "target": "diameter_line",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "diameter_label",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "cornea",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "cornea_label",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "light_rays",
+              "duration": 2
+            },
+            {
+              "action": "draw",
+              "target": "iris",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "iris_label",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "pupil_label",
+              "duration": 1
+            },
+            {
+              "action": "transform",
+              "target": "iris",
+              "duration": 2,
+              "properties": {
+                "inner_radius": 0.1
+              }
+            },
+            {
+              "action": "transform",
+              "target": "iris",
+              "duration": 2,
+              "properties": {
+                "inner_radius": 0.3
+              }
+            },
+            {
+              "action": "highlight",
+              "target": "iris",
+              "duration": 2,
+              "color": "BLUE"
+            }
+          ]
+        }
+      },
+      "content_video_path": "videos/topic_3.mp4",
+      "has_content_video": true
+    },
+    {
+      "section_id": 4,
+      "section_type": "content",
+      "title": "Focusing System: Lens and Ciliary Muscles",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Once light passes through the pupil, it reaches the eye lens. This isn't a rigid piece of glass like in a camera; it's a flexible, transparent structure made of fibrous, jelly-like material. Its job is to provide the fine-tuned focusing of light onto the back of the eye. The lens forms a real, inverted image of the object on the retina. But how does it focus on objects at different distances? This is where the ciliary muscles come in. These muscles hold the lens in place and can change its shape, and therefore its focal length. When the muscles are relaxed, the lens becomes thinner, increasing its focal length to focus on distant objects. When you look at something nearby, the ciliary muscles contract. This makes the lens thicker and more curved, decreasing its focal length to bring the nearby object into sharp focus. This remarkable ability of the eye lens to adjust its focal length is called accommodation.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Once light passes through the pupil, it reaches the eye lens. This isn't a rigid piece of glass like in a camera; it's a flexible, transparent structure made of fibrous, jelly-like material.",
+            "duration_seconds": 12,
+            "gesture_hint": "point_center",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "The eye lens is composed of a fibrous, jelly-like material."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Its job is to provide the fine-tuned focusing of light onto the back of the eye. The lens forms a real, inverted image of the object on the retina.",
+            "duration_seconds": 10,
+            "gesture_hint": "focusing_motion",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "The eye lens forms an inverted real image of the object on the retina."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "But how does it focus on objects at different distances? This is where the ciliary muscles come in. These muscles hold the lens in place and can change its shape, and therefore its focal length.",
+            "duration_seconds": 13,
+            "gesture_hint": "questioning_gesture",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "The curvature of the eye lens can be modified by the ciliary muscles."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "When the muscles are relaxed, the lens becomes thinner, increasing its focal length to focus on distant objects. When you look at something nearby, the ciliary muscles contract. This makes the lens thicker and more curved, decreasing its focal length to bring the nearby object into sharp focus.",
+            "duration_seconds": 18,
+            "gesture_hint": "squeezing_motion",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 2,
+                  "text": "When the muscles are relaxed, the lens becomes thin. Its focal length increases."
+                },
+                {
+                  "level": 2,
+                  "text": "When you look at objects closer to the eye, the ciliary muscles contract."
+                },
+                {
+                  "level": 2,
+                  "text": "This increases the curvature of the eye lens. The eye lens then becomes thicker."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "This remarkable ability of the eye lens to adjust its focal length is called accommodation. Let's see it in action.",
+            "duration_seconds": 8,
+            "gesture_hint": "thumbs_up",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "The ability of the eye lens to adjust its focal length is called accommodation."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 6,
+            "text": "",
+            "duration_seconds": 1,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "4A",
+          "segment_id": 6,
+          "visual_beat_type": "diagram",
+          "description": "On the eye cross-section, highlight the Eye Lens and Ciliary Muscles. Label them.",
+          "manim_scene_spec": {
+            "animations": [
+              {
+                "type": "Indicate",
+                "target": "lens_area",
+                "color": "cyan"
+              },
+              {
+                "type": "Create",
+                "target": "lens_label",
+                "text": "Eye Lens"
+              },
+              {
+                "type": "Indicate",
+                "target": "ciliary_muscles_area",
+                "color": "magenta"
+              },
+              {
+                "type": "Create",
+                "target": "ciliary_muscles_label",
+                "text": "Ciliary Muscles"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "4B",
+          "segment_id": 6,
+          "visual_beat_type": "animation",
+          "description": "Show a distant object (mountain). Animate parallel light rays entering the eye. The ciliary muscles are shown relaxed, the lens is thin, and the rays focus perfectly on the retina. Label 'Distant Object' and 'Muscles Relaxed'.",
+          "manim_scene_spec": {
+            "animations": [
+              {
+                "type": "FadeIn",
+                "target": "mountain_icon"
+              },
+              {
+                "type": "Transform",
+                "target": "lens_shape",
+                "final_shape": "thin_lens"
+              },
+              {
+                "type": "ShowPassingFlash",
+                "target": "light_rays",
+                "path": "focus_on_retina"
+              },
+              {
+                "type": "Create",
+                "target": "distant_label",
+                "text": "Distant Object"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "4C",
+          "segment_id": 6,
+          "visual_beat_type": "animation",
+          "description": "Replace the mountain with a nearby object (a book). Animate diverging light rays from the book. The ciliary muscles contract, making the lens visibly thicker. The rays now focus perfectly on the retina again. Label 'Nearby Object' and 'Muscles Contracted'.",
+          "manim_scene_spec": {
+            "animations": [
+              {
+                "type": "ReplacementTransform",
+                "target": "mountain_icon",
+                "new_target": "book_icon"
+              },
+              {
+                "type": "Transform",
+                "target": "lens_shape",
+                "final_shape": "thick_lens"
+              },
+              {
+                "type": "ShowPassingFlash",
+                "target": "diverging_light_rays",
+                "path": "focus_on_retina"
+              },
+              {
+                "type": "Create",
+                "target": "nearby_label",
+                "text": "Nearby Object"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "4D",
+          "segment_id": 6,
+          "visual_beat_type": "text_animation",
+          "description": "The word 'ACCOMMODATION' appears prominently over the animation.",
+          "manim_scene_spec": {
+            "animations": [
+              {
+                "type": "Write",
+                "target": "accommodation_text",
+                "text": "ACCOMMODATION"
+              }
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "eye_diagram",
+            "type": "shape",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "shape_type": "eye_cross_section",
+              "scale": 1.2,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "lens_area",
+            "type": "shape",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "shape_type": "ellipse",
+              "width": 0.8,
+              "height": 0.4,
+              "color": "BLUE_A"
+            }
+          },
+          {
+            "id": "lens_label",
+            "type": "label",
+            "position": [
+              -2,
+              1
+            ],
+            "properties": {
+              "text": "Eye Lens",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "ciliary_muscles",
+            "type": "shape",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "shape_type": "curved_lines",
+              "color": "RED_A"
+            }
+          },
+          {
+            "id": "ciliary_label",
+            "type": "label",
+            "position": [
+              2,
+              1
+            ],
+            "properties": {
+              "text": "Ciliary Muscles",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "distant_object",
+            "type": "shape",
+            "position": [
+              -3,
+              0.5
+            ],
+            "properties": {
+              "shape_type": "mountain",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "nearby_object",
+            "type": "shape",
+            "position": [
+              -3,
+              0.5
+            ],
+            "properties": {
+              "shape_type": "book",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "parallel_rays",
+            "type": "vector",
+            "position": [
+              -2.5,
+              0.5
+            ],
+            "properties": {
+              "style": "light_rays",
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "diverging_rays",
+            "type": "vector",
+            "position": [
+              -2.5,
+              0.5
+            ],
+            "properties": {
+              "style": "diverging_rays",
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "accommodation_text",
+            "type": "label",
+            "position": [
+              0,
+              -2
+            ],
+            "properties": {
+              "text": "ACCOMMODATION",
+              "scale": 1.2,
+              "color": "BLUE"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "eye_diagram",
+            "duration": 1.5
+          },
+          {
+            "action": "highlight",
+            "target": "lens_area",
+            "duration": 2,
+            "color": "BLUE"
+          },
+          {
+            "action": "draw",
+            "target": "lens_label",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "ciliary_muscles",
+            "duration": 2,
+            "color": "RED"
+          },
+          {
+            "action": "draw",
+            "target": "ciliary_label",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "distant_object",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "parallel_rays",
+            "duration": 2
+          },
+          {
+            "action": "transform",
+            "target": "distant_object",
+            "duration": 1.5,
+            "transform_to": "nearby_object"
+          },
+          {
+            "action": "transform",
+            "target": "parallel_rays",
+            "duration": 2,
+            "transform_to": "diverging_rays"
+          },
+          {
+            "action": "show_equation",
+            "target": "accommodation_text",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "accommodation_text",
+            "duration": 1.5,
+            "color": "BLUE"
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "4A",
+            "segment_id": 6,
+            "visual_beat_type": "diagram",
+            "description": "On the eye cross-section, highlight the Eye Lens and Ciliary Muscles. Label them.",
+            "manim_scene_spec": {
+              "animations": [
+                {
+                  "type": "Indicate",
+                  "target": "lens_area",
+                  "color": "cyan"
+                },
+                {
+                  "type": "Create",
+                  "target": "lens_label",
+                  "text": "Eye Lens"
+                },
+                {
+                  "type": "Indicate",
+                  "target": "ciliary_muscles_area",
+                  "color": "magenta"
+                },
+                {
+                  "type": "Create",
+                  "target": "ciliary_muscles_label",
+                  "text": "Ciliary Muscles"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "4B",
+            "segment_id": 6,
+            "visual_beat_type": "animation",
+            "description": "Show a distant object (mountain). Animate parallel light rays entering the eye. The ciliary muscles are shown relaxed, the lens is thin, and the rays focus perfectly on the retina. Label 'Distant Object' and 'Muscles Relaxed'.",
+            "manim_scene_spec": {
+              "animations": [
+                {
+                  "type": "FadeIn",
+                  "target": "mountain_icon"
+                },
+                {
+                  "type": "Transform",
+                  "target": "lens_shape",
+                  "final_shape": "thin_lens"
+                },
+                {
+                  "type": "ShowPassingFlash",
+                  "target": "light_rays",
+                  "path": "focus_on_retina"
+                },
+                {
+                  "type": "Create",
+                  "target": "distant_label",
+                  "text": "Distant Object"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "4C",
+            "segment_id": 6,
+            "visual_beat_type": "animation",
+            "description": "Replace the mountain with a nearby object (a book). Animate diverging light rays from the book. The ciliary muscles contract, making the lens visibly thicker. The rays now focus perfectly on the retina again. Label 'Nearby Object' and 'Muscles Contracted'.",
+            "manim_scene_spec": {
+              "animations": [
+                {
+                  "type": "ReplacementTransform",
+                  "target": "mountain_icon",
+                  "new_target": "book_icon"
+                },
+                {
+                  "type": "Transform",
+                  "target": "lens_shape",
+                  "final_shape": "thick_lens"
+                },
+                {
+                  "type": "ShowPassingFlash",
+                  "target": "diverging_light_rays",
+                  "path": "focus_on_retina"
+                },
+                {
+                  "type": "Create",
+                  "target": "nearby_label",
+                  "text": "Nearby Object"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "4D",
+            "segment_id": 6,
+            "visual_beat_type": "text_animation",
+            "description": "The word 'ACCOMMODATION' appears prominently over the animation.",
+            "manim_scene_spec": {
+              "animations": [
+                {
+                  "type": "Write",
+                  "target": "accommodation_text",
+                  "text": "ACCOMMODATION"
+                }
+              ]
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "eye_diagram",
+              "type": "shape",
+              "position": [
+                0,
+                0.5
+              ],
+              "properties": {
+                "shape_type": "eye_cross_section",
+                "scale": 1.2,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "lens_area",
+              "type": "shape",
+              "position": [
+                0,
+                0.5
+              ],
+              "properties": {
+                "shape_type": "ellipse",
+                "width": 0.8,
+                "height": 0.4,
+                "color": "BLUE_A"
+              }
+            },
+            {
+              "id": "lens_label",
+              "type": "label",
+              "position": [
+                -2,
+                1
+              ],
+              "properties": {
+                "text": "Eye Lens",
+                "scale": 0.7
+              }
+            },
+            {
+              "id": "ciliary_muscles",
+              "type": "shape",
+              "position": [
+                0,
+                0.5
+              ],
+              "properties": {
+                "shape_type": "curved_lines",
+                "color": "RED_A"
+              }
+            },
+            {
+              "id": "ciliary_label",
+              "type": "label",
+              "position": [
+                2,
+                1
+              ],
+              "properties": {
+                "text": "Ciliary Muscles",
+                "scale": 0.7
+              }
+            },
+            {
+              "id": "distant_object",
+              "type": "shape",
+              "position": [
+                -3,
+                0.5
+              ],
+              "properties": {
+                "shape_type": "mountain",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "nearby_object",
+              "type": "shape",
+              "position": [
+                -3,
+                0.5
+              ],
+              "properties": {
+                "shape_type": "book",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "parallel_rays",
+              "type": "vector",
+              "position": [
+                -2.5,
+                0.5
+              ],
+              "properties": {
+                "style": "light_rays",
+                "color": "YELLOW"
+              }
+            },
+            {
+              "id": "diverging_rays",
+              "type": "vector",
+              "position": [
+                -2.5,
+                0.5
+              ],
+              "properties": {
+                "style": "diverging_rays",
+                "color": "YELLOW"
+              }
+            },
+            {
+              "id": "accommodation_text",
+              "type": "label",
+              "position": [
+                0,
+                -2
+              ],
+              "properties": {
+                "text": "ACCOMMODATION",
+                "scale": 1.2,
+                "color": "BLUE"
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "appear",
+              "target": "eye_diagram",
+              "duration": 1.5
+            },
+            {
+              "action": "highlight",
+              "target": "lens_area",
+              "duration": 2,
+              "color": "BLUE"
+            },
+            {
+              "action": "draw",
+              "target": "lens_label",
+              "duration": 1
+            },
+            {
+              "action": "highlight",
+              "target": "ciliary_muscles",
+              "duration": 2,
+              "color": "RED"
+            },
+            {
+              "action": "draw",
+              "target": "ciliary_label",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "distant_object",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "parallel_rays",
+              "duration": 2
+            },
+            {
+              "action": "transform",
+              "target": "distant_object",
+              "duration": 1.5,
+              "transform_to": "nearby_object"
+            },
+            {
+              "action": "transform",
+              "target": "parallel_rays",
+              "duration": 2,
+              "transform_to": "diverging_rays"
+            },
+            {
+              "action": "show_equation",
+              "target": "accommodation_text",
+              "duration": 2
+            },
+            {
+              "action": "highlight",
+              "target": "accommodation_text",
+              "duration": 1.5,
+              "color": "BLUE"
+            }
+          ]
+        }
+      },
+      "content_video_path": "videos/topic_4.mp4",
+      "has_content_video": true
+    },
+    {
+      "section_id": 5,
+      "section_type": "content",
+      "title": "The Screen and the Signal: Retina and Optic Nerve",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "The final destination for light inside the eye is the retina. You can think of the retina as the screen in a movie theater, located at the very back of the eyeball. It's a delicate membrane packed with an enormous number of light-sensitive cells. These cells, known as rods and cones, are the photoreceptors. When the focused, inverted image forms on the retina, these cells get activated. They generate electrical signals in response to the light's intensity and color. Rods are sensitive to dim light, while cones are responsible for color vision. Once these electrical signals are created, they need to be sent to the brain for processing. This is the job of the optic nerve. It's like a biological data cable that bundles all the signals from the retina and transmits them to the brain. The brain then interprets these signals, flipping the inverted image upright and turning the raw data into the coherent, colorful, three-dimensional world we perceive. It's a seamless and instantaneous process that happens every waking moment.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "The final destination for light inside the eye is the retina. You can think of the retina as the screen in a movie theater, located at the very back of the eyeball.",
+            "duration_seconds": 11,
+            "gesture_hint": "sweeping_motion_back",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "The retina is a delicate membrane having enormous number of light-sensitive cells."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "It's a delicate membrane packed with an enormous number of light-sensitive cells. These cells, known as rods and cones, are the photoreceptors.",
+            "duration_seconds": 10,
+            "gesture_hint": "point_center",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "The light-sensitive cells get activated upon illumination and generate electrical signals."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "When the focused, inverted image forms on the retina, these cells get activated. They generate electrical signals in response to the light's intensity and color. Rods are sensitive to dim light, while cones are responsible for color vision.",
+            "duration_seconds": 15,
+            "gesture_hint": "explain_side_to_side",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Once these electrical signals are created, they need to be sent to the brain for processing. This is the job of the optic nerve. It's like a biological data cable that bundles all the signals from the retina and transmits them to the brain.",
+            "duration_seconds": 15,
+            "gesture_hint": "pathway_motion_with_hand",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "These signals are sent to the brain via the optic nerve."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "The brain then interprets these signals, flipping the inverted image upright and turning the raw data into the coherent, colorful, three-dimensional world we perceive. It's a seamless and instantaneous process that happens every waking moment.",
+            "duration_seconds": 15,
+            "gesture_hint": "mind_blown_gesture",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "The brain interprets these signals, and finally, processes the information so that we perceive objects as they are."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 6,
+            "text": "Let's watch this final step.",
+            "duration_seconds": 3,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "5A",
+          "segment_id": 3,
+          "visual_beat_type": "diagram",
+          "description": "On the eye cross-section, an object (a tree) is shown. Light rays from it form a small, inverted tree on the retina. The retina is highlighted. Label 'Retina' and 'Inverted Image'.",
+          "manim_scene_spec": {
+            "animations": [
+              {
+                "type": "Indicate",
+                "target": "retina_surface",
+                "color": "orange"
+              },
+              {
+                "type": "Create",
+                "target": "retina_label",
+                "text": "Retina"
+              },
+              {
+                "type": "Create",
+                "target": "inverted_tree_image",
+                "on_target": "retina_surface"
+              },
+              {
+                "type": "Create",
+                "target": "image_label",
+                "text": "Inverted Image"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "5B",
+          "segment_id": 3,
+          "visual_beat_type": "zoom_animation",
+          "description": "Zoom into the retina surface to show stylized rod and cone cells. A flash of light hits them, and they light up, emitting small electrical sparks. Label 'Rods' and 'Cones'.",
+          "manim_scene_spec": {
+            "animations": [
+              {
+                "type": "ZoomIn",
+                "target": "retina_surface"
+              },
+              {
+                "type": "Create",
+                "target": "rod_cells"
+              },
+              {
+                "type": "Create",
+                "target": "cone_cells"
+              },
+              {
+                "type": "Flash",
+                "target": "rod_and_cone_cells"
+              },
+              {
+                "type": "Create",
+                "target": "electrical_sparks"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "5C",
+          "segment_id": 6,
+          "visual_beat_type": "animation",
+          "description": "Zoom back out. The electrical sparks travel from the retina along the Optic Nerve, which is now highlighted and labeled. The nerve extends off-screen.",
+          "manim_scene_spec": {
+            "animations": [
+              {
+                "type": "ZoomOut"
+              },
+              {
+                "type": "Indicate",
+                "target": "optic_nerve",
+                "color": "purple"
+              },
+              {
+                "type": "Create",
+                "target": "optic_nerve_label",
+                "text": "Optic Nerve"
+              },
+              {
+                "type": "MoveAlongPath",
+                "target": "electrical_sparks",
+                "path": "optic_nerve_path"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "5D",
+          "segment_id": 6,
+          "visual_beat_type": "diagram",
+          "description": "A simple brain icon appears. The signals arrive at the brain. The small, inverted tree image appears next to the brain, then flips upright and enlarges into a full-color, correctly oriented tree. Label 'Brain processes signal'.",
+          "manim_scene_spec": {
+            "animations": [
+              {
+                "type": "FadeIn",
+                "target": "brain_icon"
+              },
+              {
+                "type": "FadeIn",
+                "target": "inverted_tree_image_at_brain"
+              },
+              {
+                "type": "Rotate",
+                "target": "inverted_tree_image_at_brain",
+                "angle": 180
+              },
+              {
+                "type": "Transform",
+                "target": "inverted_tree_image_at_brain",
+                "new_target": "final_upright_tree"
+              },
+              {
+                "type": "Create",
+                "target": "brain_process_label",
+                "text": "Brain processes signal"
+              }
+            ]
+          }
+        }
+      ],
+      "renderer_error": "Failed to parse JSON from manim_renderer_s5",
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "5A",
+            "segment_id": 3,
+            "visual_beat_type": "diagram",
+            "description": "On the eye cross-section, an object (a tree) is shown. Light rays from it form a small, inverted tree on the retina. The retina is highlighted. Label 'Retina' and 'Inverted Image'.",
+            "manim_scene_spec": {
+              "animations": [
+                {
+                  "type": "Indicate",
+                  "target": "retina_surface",
+                  "color": "orange"
+                },
+                {
+                  "type": "Create",
+                  "target": "retina_label",
+                  "text": "Retina"
+                },
+                {
+                  "type": "Create",
+                  "target": "inverted_tree_image",
+                  "on_target": "retina_surface"
+                },
+                {
+                  "type": "Create",
+                  "target": "image_label",
+                  "text": "Inverted Image"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "5B",
+            "segment_id": 3,
+            "visual_beat_type": "zoom_animation",
+            "description": "Zoom into the retina surface to show stylized rod and cone cells. A flash of light hits them, and they light up, emitting small electrical sparks. Label 'Rods' and 'Cones'.",
+            "manim_scene_spec": {
+              "animations": [
+                {
+                  "type": "ZoomIn",
+                  "target": "retina_surface"
+                },
+                {
+                  "type": "Create",
+                  "target": "rod_cells"
+                },
+                {
+                  "type": "Create",
+                  "target": "cone_cells"
+                },
+                {
+                  "type": "Flash",
+                  "target": "rod_and_cone_cells"
+                },
+                {
+                  "type": "Create",
+                  "target": "electrical_sparks"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "5C",
+            "segment_id": 6,
+            "visual_beat_type": "animation",
+            "description": "Zoom back out. The electrical sparks travel from the retina along the Optic Nerve, which is now highlighted and labeled. The nerve extends off-screen.",
+            "manim_scene_spec": {
+              "animations": [
+                {
+                  "type": "ZoomOut"
+                },
+                {
+                  "type": "Indicate",
+                  "target": "optic_nerve",
+                  "color": "purple"
+                },
+                {
+                  "type": "Create",
+                  "target": "optic_nerve_label",
+                  "text": "Optic Nerve"
+                },
+                {
+                  "type": "MoveAlongPath",
+                  "target": "electrical_sparks",
+                  "path": "optic_nerve_path"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "5D",
+            "segment_id": 6,
+            "visual_beat_type": "diagram",
+            "description": "A simple brain icon appears. The signals arrive at the brain. The small, inverted tree image appears next to the brain, then flips upright and enlarges into a full-color, correctly oriented tree. Label 'Brain processes signal'.",
+            "manim_scene_spec": {
+              "animations": [
+                {
+                  "type": "FadeIn",
+                  "target": "brain_icon"
+                },
+                {
+                  "type": "FadeIn",
+                  "target": "inverted_tree_image_at_brain"
+                },
+                {
+                  "type": "Rotate",
+                  "target": "inverted_tree_image_at_brain",
+                  "angle": 180
+                },
+                {
+                  "type": "Transform",
+                  "target": "inverted_tree_image_at_brain",
+                  "new_target": "final_upright_tree"
+                },
+                {
+                  "type": "Create",
+                  "target": "brain_process_label",
+                  "text": "Brain processes signal"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 6,
+      "section_type": "memory",
+      "title": "Quick Memory Flashcards",
+      "renderer": "none",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "hidden"
+      },
+      "narration": {
+        "full_text": "Let's test your memory with five key components. First: The Cornea. What is its main function? It's the transparent outer layer that performs most of the light refraction. Second: The Iris. What does it do? It's the colored muscle that controls the size of the pupil. Third: The Pupil. What is its role? It's the opening that regulates the amount of light entering the eye. Fourth: The Eye Lens. What is its purpose? It's the flexible lens that fine-tunes focus for different distances. Fifth: The Retina. What happens here? It's the light-sensitive screen at the back of the eye that converts light into electrical signals.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's test your memory with five key components.",
+            "duration_seconds": 4,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "First: The Cornea. What is its main function? It's the transparent outer layer that performs most of the light refraction.",
+            "duration_seconds": 8,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Second: The Iris. What does it do? It's the colored muscle that controls the size of the pupil.",
+            "duration_seconds": 7,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Third: The Pupil. What is its role? It's the opening that regulates the amount of light entering the eye.",
+            "duration_seconds": 7,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "Fourth: The Eye Lens. What is its purpose? It's the flexible lens that fine-tunes focus for different distances.",
+            "duration_seconds": 8,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 6,
+            "text": "Fifth: The Retina. What happens here? It's the light-sensitive screen at the back of the eye that converts light into electrical signals.",
+            "duration_seconds": 9,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "6A",
+          "segment_id": 2,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard front shows 'Cornea'. Flips to reveal 'Main Function: Refracts Light'."
+        },
+        {
+          "beat_id": "6B",
+          "segment_id": 3,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard front shows 'Iris'. Flips to reveal 'Main Function: Controls pupil size'."
+        },
+        {
+          "beat_id": "6C",
+          "segment_id": 4,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard front shows 'Pupil'. Flips to reveal 'Main Function: Regulates light entry'."
+        },
+        {
+          "beat_id": "6D",
+          "segment_id": 5,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard front shows 'Eye Lens'. Flips to reveal 'Main Function: Fine-tunes focus (Accommodation)'."
+        },
+        {
+          "beat_id": "6E",
+          "segment_id": 6,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard front shows 'Retina'. Flips to reveal 'Main Function: Converts light to electrical signals'."
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1290,
+        "elements": [
+          {
+            "id": "title",
+            "type": "text",
+            "content": "Memory Test: Eye Components",
+            "position": {
+              "x": 480,
+              "y": 100
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 120
+            }
+          },
+          {
+            "id": "cornea_front",
+            "type": "text",
+            "content": "Cornea",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#2C3E50",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 120,
+              "exit_frame": 240
+            }
+          },
+          {
+            "id": "cornea_back",
+            "type": "text",
+            "content": "Main Function:\nRefracts Light",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#2980B9",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 240,
+              "exit_frame": 360
+            }
+          },
+          {
+            "id": "iris_front",
+            "type": "text",
+            "content": "Iris",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#2C3E50",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 360,
+              "exit_frame": 480
+            }
+          },
+          {
+            "id": "iris_back",
+            "type": "text",
+            "content": "Main Function:\nControls pupil size",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#2980B9",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 480,
+              "exit_frame": 570
+            }
+          },
+          {
+            "id": "pupil_front",
+            "type": "text",
+            "content": "Pupil",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#2C3E50",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 570,
+              "exit_frame": 690
+            }
+          },
+          {
+            "id": "pupil_back",
+            "type": "text",
+            "content": "Main Function:\nRegulates light entry",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#2980B9",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 690,
+              "exit_frame": 780
+            }
+          },
+          {
+            "id": "lens_front",
+            "type": "text",
+            "content": "Eye Lens",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#2C3E50",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 780,
+              "exit_frame": 900
+            }
+          },
+          {
+            "id": "lens_back",
+            "type": "text",
+            "content": "Main Function:\nFine-tunes focus\n(Accommodation)",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#2980B9",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 900,
+              "exit_frame": 1020
+            }
+          },
+          {
+            "id": "retina_front",
+            "type": "text",
+            "content": "Retina",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#2C3E50",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 1020,
+              "exit_frame": 1140
+            }
+          },
+          {
+            "id": "retina_back",
+            "type": "text",
+            "content": "Main Function:\nConverts light to\nelectrical signals",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#2980B9",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 1140,
+              "exit_frame": 1290
+            }
+          }
+        ],
+        "background": {
+          "color": "#F5F5F5"
+        }
+      },
+      "renderer_override_reason": "Section type 'memory' is text-only (no video rendering)"
+    },
+    {
+      "section_id": 7,
+      "section_type": "recap",
+      "title": "The Journey of Light: A Recap",
+      "renderer": "wan_video",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "hidden"
+      },
+      "narration": {
+        "full_text": "Scene 1: Imagine you are looking at a distant, sunlit mountain. Rays of light travel from the mountain and first meet your eye at the cornea, the clear outer window. Here, the light is bent significantly, beginning its journey inward. The world outside is bright, so the colorful iris, a beautiful and functional muscle, constricts the pupil to a tiny pinhole. This action protects the sensitive structures within and ensures the image will be sharp and not overexposed, perfectly regulating the first step of vision. Scene 2: Now, the focused beam of light passes through the small pupil and reaches the crystalline lens. Since the mountain is far away, your ciliary muscles are completely relaxed. This allows the lens to be pulled into a thin, flat shape, giving it just the right focal length to direct the light rays toward the back of your eye. This effortless, passive focusing mechanism is the eye\u2019s default state for seeing things far away, a marvel of natural optics at work. Scene 3: The light continues its journey through the jelly-like fluid filling the eyeball and finally arrives at its destination: the retina. A perfect, but tiny and upside-down, image of the sunlit mountain is projected onto this light-sensitive screen. The retina is not a simple screen; it is a complex network of millions of photoreceptor cells. As the light hits these cells, a breathtakingly fast chemical reaction begins, instantly converting the light energy into a new form: electrical signals. Scene 4: These new electrical signals, representing every point of light and color from the inverted mountain image, are now ready for their final journey. They are collected and funneled into the optic nerve, a massive data cable connected to the back of the eye. The signals pulse down this nerve, leaving the eye and racing towards the brain\u2019s visual processing center. This is the critical handover from the biological camera to the supercomputer that will make sense of it all. Scene 5: The electrical impulses arrive at the brain. Here, in the visual cortex, the raw data is instantly processed. The brain flips the inverted image right-side up, combines the signals from both eyes to create depth perception, and interprets the patterns of light and color. In a fraction of a second, the electrical code becomes your conscious experience: the magnificent, vivid, and correctly oriented view of the distant, sunlit mountain. This entire, seamless process is the miracle of sight.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Imagine you are looking at a distant, sunlit mountain. Rays of light travel from the mountain and first meet your eye at the cornea, the clear outer window. Here, the light is bent significantly, beginning its journey inward. The world outside is bright, so the colorful iris, a beautiful and functional muscle, constricts the pupil to a tiny pinhole. This action protects the sensitive structures within and ensures the image will be sharp and not overexposed, perfectly regulating the first step of vision.",
+            "duration_seconds": 22,
+            "word_count": 96,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Now, the focused beam of light passes through the small pupil and reaches the crystalline lens. Since the mountain is far away, your ciliary muscles are completely relaxed. This allows the lens to be pulled into a thin, flat shape, giving it just the right focal length to direct the light rays toward the back of your eye. This effortless, passive focusing mechanism is the eye\u2019s default state for seeing things far away, a marvel of natural optics at work.",
+            "duration_seconds": 23,
+            "word_count": 98,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "The light continues its journey through the jelly-like fluid filling the eyeball and finally arrives at its destination: the retina. A perfect, but tiny and upside-down, image of the sunlit mountain is projected onto this light-sensitive screen. The retina is not a simple screen; it is a complex network of millions of photoreceptor cells. As the light hits these cells, a breathtakingly fast chemical reaction begins, instantly converting the light energy into a new form: electrical signals.",
+            "duration_seconds": 24,
+            "word_count": 99,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "These new electrical signals, representing every point of light and color from the inverted mountain image, are now ready for their final journey. They are collected and funneled into the optic nerve, a massive data cable connected to the back of the eye. The signals pulse down this nerve, leaving the eye and racing towards the brain\u2019s visual processing center. This is the critical handover from the biological camera to the supercomputer that will make sense of it all.",
+            "duration_seconds": 23,
+            "word_count": 97,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "The electrical impulses arrive at the brain. Here, in the visual cortex, the raw data is instantly processed. The brain flips the inverted image right-side up, combines the signals from both eyes to create depth perception, and interprets the patterns of light and color. In a fraction of a second, the electrical code becomes your conscious experience: the magnificent, vivid, and correctly oriented view of the distant, sunlit mountain. This entire, seamless process is the miracle of sight.",
+            "duration_seconds": 25,
+            "word_count": 99,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "7A",
+          "segment_id": 1,
+          "visual_beat_type": "video_scene",
+          "description": "Cinematic shot of a sunlit mountain. An animated overlay shows light rays traveling towards the camera. Transition to a hyper-realistic 3D model of the eye, zooming in as the iris constricts the pupil."
+        },
+        {
+          "beat_id": "7B",
+          "segment_id": 2,
+          "visual_beat_type": "video_scene",
+          "description": "Inside the 3D eye model, light passes through the pupil. The camera focuses on the ciliary muscles, shown in a relaxed state, and the thin, stretched crystalline lens. Light rays are shown bending slightly to converge."
+        },
+        {
+          "beat_id": "7C",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "The light rays travel and converge on the retina, forming a clear, inverted image of the mountain. The camera zooms into the retina's surface, showing photoreceptor cells (rods and cones) flashing as they are hit by light, transforming into glowing electrical pulses."
+        },
+        {
+          "beat_id": "7D",
+          "segment_id": 4,
+          "visual_beat_type": "video_scene",
+          "description": "The glowing electrical pulses travel from the retina and gather into the optic nerve at the back of the eye. The camera follows these pulses as they shoot down the vibrant, cable-like optic nerve, moving towards a stylized representation of the brain."
+        },
+        {
+          "beat_id": "7E",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "The pulses arrive at a glowing, active brain model. The small, inverted mountain image appears, flips upright, and expands to fill the screen, transitioning back to the original, beautiful cinematic shot of the mountain. The final shot is clear and vibrant."
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "7A",
+          "prompt": "The scene opens with a majestic, sweeping wide shot of a vast mountain range under a brilliant, cloudless blue sky. The time is early morning, and the low sun casts a warm, golden light from the right side of the frame, creating long, dramatic shadows in the valleys. The central mountain is a colossal peak with jagged, dark grey rock faces partially covered in pristine white snow near its summit. Below the snowline, dense forests of deep green pine trees cover its lower slopes. For the first five seconds, the camera pans slowly from left to right, revealing the immense scale of the landscape. At the 5-second mark, hundreds of thin, parallel rays of shimmering golden-white light begin to emanate from the sunlit face of the mountain, traveling directly towards the camera at an incredible speed. They look like tangible threads of energy, streaking across the frame. From 8 to 10 seconds, the camera perspective accelerates forward, tracking with the frontmost rays, causing the mountain background to blur into a mix of green, grey, and white. The shot then executes a seamless zoom transition over two seconds. At the 12-second mark, the view is an extreme close-up of a hyper-realistic 3D model of a human eye. The cornea, a perfectly transparent and glistening dome, fills the screen, and a distorted, fish-eye reflection of the mountain landscape is visible on its curved surface. The camera continues to push forward, passing through the cornea between 12 and 15 seconds. Inside the anterior chamber, which is filled with a clear, watery fluid, we see the incoming golden light rays bend sharply and converge. The camera's focus shifts to the iris, a complex and beautiful structure with intricate, fibrous patterns of deep blue, sea green, and flecks of amber. From 15 to 22 seconds, we witness the iris muscle contracting smoothly and deliberately. The central opening, the pupil, which was initially wide, shrinks steadily over these seven seconds, closing down to a tiny, sharp black pinhole. As it constricts, the amount of golden light passing through is visibly reduced, culminating in a single, highly focused beam of light.",
+          "duration_seconds": 22,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "7B",
+          "prompt": "The scene begins from the perspective inside the eye, positioned directly behind the iris. The frame is mostly dark, dominated by the silhouette of the iris. A single, concentrated cylinder of bright white light pierces the darkness, passing through the tiny, constricted pupil in the center of the frame. From 0 to 4 seconds, the camera moves forward, following this focused beam of light as it travels through the posterior chamber. At the 4-second mark, the beam of light makes contact with the front surface of the crystalline lens, a large, transparent, biconvex object that fills the frame. The light illuminates the lens, revealing a subtle, layered internal structure, almost like polished quartz. The rays of light within the beam are shown to bend slightly as they enter the denser material of the lens. From 8 to 15 seconds, the camera executes a slow, graceful orbital maneuver, moving from a head-on view to a side profile of the lens. This new angle reveals that the lens is being pulled into a relatively thin and flat shape. The camera focus shifts to the very edge of the lens, highlighting a web of incredibly fine, taut, transparent filaments\u2014the zonular fibers. These fibers are stretched tight, connecting the equator of the lens to a surrounding structure. The camera pans along these tense fibers to the ciliary muscle, a ring of pinkish, smooth muscle tissue. The muscle is shown in a relaxed state, not bulging or contracted, demonstrating its passive state. From 15 to 20 seconds, the camera orbits back to a position directly behind the lens. We now observe the beam of light passing through the full thickness of the lens. As the light exits the rear surface, the individual rays within the beam are shown bending much more significantly, now clearly converging towards a focal point somewhere deep within the eye. The final three seconds, from 20 to 23, hold on this shot of the converging rays as they travel away from the lens, moving into the large, dark expanse of the eye's main cavity, their path clearly defined against the blackness.",
+          "duration_seconds": 23,
+          "style": "animated"
+        },
+        {
+          "beat_id": "7C",
+          "prompt": "The camera tracks a bundle of converging white light rays as they journey through a vast, dark space representing the vitreous humor. For the first 5 seconds, the shot is a slow forward dolly, showing the rays getting progressively closer to each other. A few tiny, translucent collagen fibrils float slowly through the space, giving a sense of the gel-like medium. At the 5-second mark, the rays come to a perfect point of focus on a curved, pinkish-orange surface that fills the background: the retina. As the light hits the retina, a small, perfectly sharp, full-color image of the sunlit mountain instantly appears, projected onto the surface. The image is bright and vivid, but it is clearly upside-down. Tiny, delicate red blood vessels can be seen crisscrossing the retinal surface around the projected image. From 9 to 14 seconds, the camera performs a very fast, powerful zoom into a small section of the inverted mountain image. As we zoom, the coherent image dissolves into individual points of colored light, and the underlying biological structure of the retina becomes the focus. The view resolves into a microscopic landscape, a dense forest of photoreceptor cells. We can distinguish the two types: taller, thinner cells (rods) and shorter, thicker, cone-shaped cells (cones), packed together tightly. From 14 to 20 seconds, the camera is in an extreme macro view, focusing on a small cluster of these rods and cones. Individual photons, visualized as tiny, fast-moving particles of white light, rain down and strike the outer segments of these cells. From 20 to 24 seconds, a rapid chain reaction occurs. Each time a photon impacts a cell, the cell's interior momentarily flashes with a soft, internal chemical glow. Immediately following this flash, a pulse of crackling, blue-white electrical energy erupts from the base of the cell. This happens in a breathtakingly fast cascade across thousands of visible cells, converting the pattern of light into a pattern of electrical signals.",
+          "duration_seconds": 24,
+          "style": "animated"
+        },
+        {
+          "beat_id": "7D",
+          "prompt": "The scene starts with an extreme close-up on the base of the photoreceptor cells. The blue-white electrical pulses generated in the previous scene are now visible, traveling downwards away from the photoreceptors. From 0 to 5 seconds, the camera pulls back, revealing a complex, multi-layered network of translucent, branching neurons underneath the photoreceptor layer. We see the pulses being passed from the photoreceptors to this new network, where they are collected and channeled into organized streams of energy. From 5 to 10 seconds, the camera pulls back further to a wide view of the retina's inner surface. Thousands of these streams of blue-white electrical energy are seen flowing like rivers of light, all converging from across the curved surface towards a single, bright, circular area at the back of the eye: the optic disc. The effect is like water flowing into a drain or a glowing whirlpool of data. At the 10-second mark, the camera follows the converging streams as they funnel into the opening of the optic nerve. The perspective shifts dramatically as the camera plunges into the nerve itself, entering a tunnel of light. From 15 to 23 seconds, the shot becomes a high-speed, first-person journey through the interior of the optic nerve. The walls of this biological tunnel are composed of millions of individual nerve fibers, each rendered as a parallel, glowing strand. Each fiber carries its own pulsing stream of blue-white light, all racing in the same direction. The sheer volume of signals creates an intensely bright and dynamic environment. The camera moves at a blistering pace, with the light from the signals creating long streaks, giving a profound sense of rapid data transmission. The tunnel makes a slight curve as it follows the path of the nerve exiting the eye socket, heading towards its destination deep within the brain. The scene is entirely self-illuminated by the crackling energy of the signals against the dark backdrop of the nerve sheath.",
+          "duration_seconds": 23,
+          "style": "animated"
+        },
+        {
+          "beat_id": "7E",
+          "prompt": "The camera bursts out from the end of the optic nerve tunnel, arriving in a stylized, three-dimensional representation of the human brain. The brain is rendered as a translucent, crystalline structure, filled with an intricate web of glowing neural pathways. From 0 to 4 seconds, the streams of blue-white electrical pulses that we followed now flow out from the optic chiasm and spread into the visual cortex, located in the occipital lobe at the rear of the brain model. This entire region begins to glow and pulse with a bright, cool white light, indicating intense activity. From 4 to 8 seconds, the camera pulls back slightly to frame the active visual cortex. In the very center of this glowing region, the small, inverted, full-color image of the mountain materializes, shimmering as if made of pure data. From 8 to 12 seconds, a rapid processing sequence is visualized. The small, upside-down mountain image crisply rotates 180 degrees on its central axis, flipping to its correct, upright orientation. As it rotates, faint grid lines and scanning light effects wash over it, and a second, slightly offset ghost image merges with it, creating a subtle 3D effect to represent the fusion of information for depth perception. At the 12-second mark, the now-upright and processed image begins to expand rapidly from the center of the brain model. The camera starts a powerful zoom into this expanding image. From 12 to 18 seconds, the image grows to fill the entire screen, and the glowing, stylized framework of the brain recedes and fades away at the edges of the frame. The transition is seamless. By the 18-second mark, the stylized image has completely transformed back into the original, photorealistic, cinematic wide shot of the sunlit mountain from the very beginning. For the final 7 seconds, the camera holds on this magnificent, perfectly clear, and stable view. The colors are rich and vibrant, the details are sharp, and a very slow, almost imperceptible push-in enhances the feeling of a final, conscious, and complete visual experience.",
+          "duration_seconds": 25,
+          "style": "animated"
+        }
+      ],
+      "renderer_override_reason": "Recap sections use WAN for storyboard visualization",
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "7A",
+            "segment_id": 1,
+            "visual_beat_type": "video_scene",
+            "description": "Cinematic shot of a sunlit mountain. An animated overlay shows light rays traveling towards the camera. Transition to a hyper-realistic 3D model of the eye, zooming in as the iris constricts the pupil."
+          },
+          {
+            "beat_id": "7B",
+            "segment_id": 2,
+            "visual_beat_type": "video_scene",
+            "description": "Inside the 3D eye model, light passes through the pupil. The camera focuses on the ciliary muscles, shown in a relaxed state, and the thin, stretched crystalline lens. Light rays are shown bending slightly to converge."
+          },
+          {
+            "beat_id": "7C",
+            "segment_id": 3,
+            "visual_beat_type": "video_scene",
+            "description": "The light rays travel and converge on the retina, forming a clear, inverted image of the mountain. The camera zooms into the retina's surface, showing photoreceptor cells (rods and cones) flashing as they are hit by light, transforming into glowing electrical pulses."
+          },
+          {
+            "beat_id": "7D",
+            "segment_id": 4,
+            "visual_beat_type": "video_scene",
+            "description": "The glowing electrical pulses travel from the retina and gather into the optic nerve at the back of the eye. The camera follows these pulses as they shoot down the vibrant, cable-like optic nerve, moving towards a stylized representation of the brain."
+          },
+          {
+            "beat_id": "7E",
+            "segment_id": 5,
+            "visual_beat_type": "video_scene",
+            "description": "The pulses arrive at a glowing, active brain model. The small, inverted mountain image appears, flips upright, and expands to fill the screen, transitioning back to the original, beautiful cinematic shot of the mountain. The final shot is clear and vibrant."
+          }
+        ],
+        "compiled_wan_prompt": "[Beat 7A]: The scene opens with a majestic, sweeping wide shot of a vast mountain range under a brilliant, cloudless blue sky. The time is early morning, and the low sun casts a warm, golden light from the right side of the frame, creating long, dramatic shadows in the valleys. The central mountain is a colossal peak with jagged, dark grey rock faces partially covered in pristine white snow near its summit. Below the snowline, dense forests of deep green pine trees cover its lower slopes. For the first five seconds, the camera pans slowly from left to right, revealing the immense scale of the landscape. At the 5-second mark, hundreds of thin, parallel rays of shimmering golden-white light begin to emanate from the sunlit face of the mountain, traveling directly towards the camera at an incredible speed. They look like tangible threads of energy, streaking across the frame. From 8 to 10 seconds, the camera perspective accelerates forward, tracking with the frontmost rays, causing the mountain background to blur into a mix of green, grey, and white. The shot then executes a seamless zoom transition over two seconds. At the 12-second mark, the view is an extreme close-up of a hyper-realistic 3D model of a human eye. The cornea, a perfectly transparent and glistening dome, fills the screen, and a distorted, fish-eye reflection of the mountain landscape is visible on its curved surface. The camera continues to push forward, passing through the cornea between 12 and 15 seconds. Inside the anterior chamber, which is filled with a clear, watery fluid, we see the incoming golden light rays bend sharply and converge. The camera's focus shifts to the iris, a complex and beautiful structure with intricate, fibrous patterns of deep blue, sea green, and flecks of amber. From 15 to 22 seconds, we witness the iris muscle contracting smoothly and deliberately. The central opening, the pupil, which was initially wide, shrinks steadily over these seven seconds, closing down to a tiny, sharp black pinhole. As it constricts, the amount of golden light passing through is visibly reduced, culminating in a single, highly focused beam of light.\n\n[Beat 7B]: The scene begins from the perspective inside the eye, positioned directly behind the iris. The frame is mostly dark, dominated by the silhouette of the iris. A single, concentrated cylinder of bright white light pierces the darkness, passing through the tiny, constricted pupil in the center of the frame. From 0 to 4 seconds, the camera moves forward, following this focused beam of light as it travels through the posterior chamber. At the 4-second mark, the beam of light makes contact with the front surface of the crystalline lens, a large, transparent, biconvex object that fills the frame. The light illuminates the lens, revealing a subtle, layered internal structure, almost like polished quartz. The rays of light within the beam are shown to bend slightly as they enter the denser material of the lens. From 8 to 15 seconds, the camera executes a slow, graceful orbital maneuver, moving from a head-on view to a side profile of the lens. This new angle reveals that the lens is being pulled into a relatively thin and flat shape. The camera focus shifts to the very edge of the lens, highlighting a web of incredibly fine, taut, transparent filaments\u2014the zonular fibers. These fibers are stretched tight, connecting the equator of the lens to a surrounding structure. The camera pans along these tense fibers to the ciliary muscle, a ring of pinkish, smooth muscle tissue. The muscle is shown in a relaxed state, not bulging or contracted, demonstrating its passive state. From 15 to 20 seconds, the camera orbits back to a position directly behind the lens. We now observe the beam of light passing through the full thickness of the lens. As the light exits the rear surface, the individual rays within the beam are shown bending much more significantly, now clearly converging towards a focal point somewhere deep within the eye. The final three seconds, from 20 to 23, hold on this shot of the converging rays as they travel away from the lens, moving into the large, dark expanse of the eye's main cavity, their path clearly defined against the blackness.\n\n[Beat 7C]: The camera tracks a bundle of converging white light rays as they journey through a vast, dark space representing the vitreous humor. For the first 5 seconds, the shot is a slow forward dolly, showing the rays getting progressively closer to each other. A few tiny, translucent collagen fibrils float slowly through the space, giving a sense of the gel-like medium. At the 5-second mark, the rays come to a perfect point of focus on a curved, pinkish-orange surface that fills the background: the retina. As the light hits the retina, a small, perfectly sharp, full-color image of the sunlit mountain instantly appears, projected onto the surface. The image is bright and vivid, but it is clearly upside-down. Tiny, delicate red blood vessels can be seen crisscrossing the retinal surface around the projected image. From 9 to 14 seconds, the camera performs a very fast, powerful zoom into a small section of the inverted mountain image. As we zoom, the coherent image dissolves into individual points of colored light, and the underlying biological structure of the retina becomes the focus. The view resolves into a microscopic landscape, a dense forest of photoreceptor cells. We can distinguish the two types: taller, thinner cells (rods) and shorter, thicker, cone-shaped cells (cones), packed together tightly. From 14 to 20 seconds, the camera is in an extreme macro view, focusing on a small cluster of these rods and cones. Individual photons, visualized as tiny, fast-moving particles of white light, rain down and strike the outer segments of these cells. From 20 to 24 seconds, a rapid chain reaction occurs. Each time a photon impacts a cell, the cell's interior momentarily flashes with a soft, internal chemical glow. Immediately following this flash, a pulse of crackling, blue-white electrical energy erupts from the base of the cell. This happens in a breathtakingly fast cascade across thousands of visible cells, converting the pattern of light into a pattern of electrical signals.\n\n[Beat 7D]: The scene starts with an extreme close-up on the base of the photoreceptor cells. The blue-white electrical pulses generated in the previous scene are now visible, traveling downwards away from the photoreceptors. From 0 to 5 seconds, the camera pulls back, revealing a complex, multi-layered network of translucent, branching neurons underneath the photoreceptor layer. We see the pulses being passed from the photoreceptors to this new network, where they are collected and channeled into organized streams of energy. From 5 to 10 seconds, the camera pulls back further to a wide view of the retina's inner surface. Thousands of these streams of blue-white electrical energy are seen flowing like rivers of light, all converging from across the curved surface towards a single, bright, circular area at the back of the eye: the optic disc. The effect is like water flowing into a drain or a glowing whirlpool of data. At the 10-second mark, the camera follows the converging streams as they funnel into the opening of the optic nerve. The perspective shifts dramatically as the camera plunges into the nerve itself, entering a tunnel of light. From 15 to 23 seconds, the shot becomes a high-speed, first-person journey through the interior of the optic nerve. The walls of this biological tunnel are composed of millions of individual nerve fibers, each rendered as a parallel, glowing strand. Each fiber carries its own pulsing stream of blue-white light, all racing in the same direction. The sheer volume of signals creates an intensely bright and dynamic environment. The camera moves at a blistering pace, with the light from the signals creating long streaks, giving a profound sense of rapid data transmission. The tunnel makes a slight curve as it follows the path of the nerve exiting the eye socket, heading towards its destination deep within the brain. The scene is entirely self-illuminated by the crackling energy of the signals against the dark backdrop of the nerve sheath.\n\n[Beat 7E]: The camera bursts out from the end of the optic nerve tunnel, arriving in a stylized, three-dimensional representation of the human brain. The brain is rendered as a translucent, crystalline structure, filled with an intricate web of glowing neural pathways. From 0 to 4 seconds, the streams of blue-white electrical pulses that we followed now flow out from the optic chiasm and spread into the visual cortex, located in the occipital lobe at the rear of the brain model. This entire region begins to glow and pulse with a bright, cool white light, indicating intense activity. From 4 to 8 seconds, the camera pulls back slightly to frame the active visual cortex. In the very center of this glowing region, the small, inverted, full-color image of the mountain materializes, shimmering as if made of pure data. From 8 to 12 seconds, a rapid processing sequence is visualized. The small, upside-down mountain image crisply rotates 180 degrees on its central axis, flipping to its correct, upright orientation. As it rotates, faint grid lines and scanning light effects wash over it, and a second, slightly offset ghost image merges with it, creating a subtle 3D effect to represent the fusion of information for depth perception. At the 12-second mark, the now-upright and processed image begins to expand rapidly from the center of the brain model. The camera starts a powerful zoom into this expanding image. From 12 to 18 seconds, the image grows to fill the entire screen, and the glowing, stylized framework of the brain recedes and fades away at the edges of the frame. The transition is seamless. By the 18-second mark, the stylized image has completely transformed back into the original, photorealistic, cinematic wide shot of the sunlit mountain from the very beginning. For the final 7 seconds, the camera holds on this magnificent, perfectly clear, and stable view. The colors are rich and vibrant, the details are sharp, and a very slow, almost imperceptible push-in enhances the feeling of a final, conscious, and complete visual experience.",
+        "video_prompts_list": [
+          {
+            "beat_id": "7A",
+            "prompt": "The scene opens with a majestic, sweeping wide shot of a vast mountain range under a brilliant, cloudless blue sky. The time is early morning, and the low sun casts a warm, golden light from the right side of the frame, creating long, dramatic shadows in the valleys. The central mountain is a colossal peak with jagged, dark grey rock faces partially covered in pristine white snow near its summit. Below the snowline, dense forests of deep green pine trees cover its lower slopes. For the first five seconds, the camera pans slowly from left to right, revealing the immense scale of the landscape. At the 5-second mark, hundreds of thin, parallel rays of shimmering golden-white light begin to emanate from the sunlit face of the mountain, traveling directly towards the camera at an incredible speed. They look like tangible threads of energy, streaking across the frame. From 8 to 10 seconds, the camera perspective accelerates forward, tracking with the frontmost rays, causing the mountain background to blur into a mix of green, grey, and white. The shot then executes a seamless zoom transition over two seconds. At the 12-second mark, the view is an extreme close-up of a hyper-realistic 3D model of a human eye. The cornea, a perfectly transparent and glistening dome, fills the screen, and a distorted, fish-eye reflection of the mountain landscape is visible on its curved surface. The camera continues to push forward, passing through the cornea between 12 and 15 seconds. Inside the anterior chamber, which is filled with a clear, watery fluid, we see the incoming golden light rays bend sharply and converge. The camera's focus shifts to the iris, a complex and beautiful structure with intricate, fibrous patterns of deep blue, sea green, and flecks of amber. From 15 to 22 seconds, we witness the iris muscle contracting smoothly and deliberately. The central opening, the pupil, which was initially wide, shrinks steadily over these seven seconds, closing down to a tiny, sharp black pinhole. As it constricts, the amount of golden light passing through is visibly reduced, culminating in a single, highly focused beam of light.",
+            "duration_seconds": 22,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "7B",
+            "prompt": "The scene begins from the perspective inside the eye, positioned directly behind the iris. The frame is mostly dark, dominated by the silhouette of the iris. A single, concentrated cylinder of bright white light pierces the darkness, passing through the tiny, constricted pupil in the center of the frame. From 0 to 4 seconds, the camera moves forward, following this focused beam of light as it travels through the posterior chamber. At the 4-second mark, the beam of light makes contact with the front surface of the crystalline lens, a large, transparent, biconvex object that fills the frame. The light illuminates the lens, revealing a subtle, layered internal structure, almost like polished quartz. The rays of light within the beam are shown to bend slightly as they enter the denser material of the lens. From 8 to 15 seconds, the camera executes a slow, graceful orbital maneuver, moving from a head-on view to a side profile of the lens. This new angle reveals that the lens is being pulled into a relatively thin and flat shape. The camera focus shifts to the very edge of the lens, highlighting a web of incredibly fine, taut, transparent filaments\u2014the zonular fibers. These fibers are stretched tight, connecting the equator of the lens to a surrounding structure. The camera pans along these tense fibers to the ciliary muscle, a ring of pinkish, smooth muscle tissue. The muscle is shown in a relaxed state, not bulging or contracted, demonstrating its passive state. From 15 to 20 seconds, the camera orbits back to a position directly behind the lens. We now observe the beam of light passing through the full thickness of the lens. As the light exits the rear surface, the individual rays within the beam are shown bending much more significantly, now clearly converging towards a focal point somewhere deep within the eye. The final three seconds, from 20 to 23, hold on this shot of the converging rays as they travel away from the lens, moving into the large, dark expanse of the eye's main cavity, their path clearly defined against the blackness.",
+            "duration_seconds": 23,
+            "style": "animated"
+          },
+          {
+            "beat_id": "7C",
+            "prompt": "The camera tracks a bundle of converging white light rays as they journey through a vast, dark space representing the vitreous humor. For the first 5 seconds, the shot is a slow forward dolly, showing the rays getting progressively closer to each other. A few tiny, translucent collagen fibrils float slowly through the space, giving a sense of the gel-like medium. At the 5-second mark, the rays come to a perfect point of focus on a curved, pinkish-orange surface that fills the background: the retina. As the light hits the retina, a small, perfectly sharp, full-color image of the sunlit mountain instantly appears, projected onto the surface. The image is bright and vivid, but it is clearly upside-down. Tiny, delicate red blood vessels can be seen crisscrossing the retinal surface around the projected image. From 9 to 14 seconds, the camera performs a very fast, powerful zoom into a small section of the inverted mountain image. As we zoom, the coherent image dissolves into individual points of colored light, and the underlying biological structure of the retina becomes the focus. The view resolves into a microscopic landscape, a dense forest of photoreceptor cells. We can distinguish the two types: taller, thinner cells (rods) and shorter, thicker, cone-shaped cells (cones), packed together tightly. From 14 to 20 seconds, the camera is in an extreme macro view, focusing on a small cluster of these rods and cones. Individual photons, visualized as tiny, fast-moving particles of white light, rain down and strike the outer segments of these cells. From 20 to 24 seconds, a rapid chain reaction occurs. Each time a photon impacts a cell, the cell's interior momentarily flashes with a soft, internal chemical glow. Immediately following this flash, a pulse of crackling, blue-white electrical energy erupts from the base of the cell. This happens in a breathtakingly fast cascade across thousands of visible cells, converting the pattern of light into a pattern of electrical signals.",
+            "duration_seconds": 24,
+            "style": "animated"
+          },
+          {
+            "beat_id": "7D",
+            "prompt": "The scene starts with an extreme close-up on the base of the photoreceptor cells. The blue-white electrical pulses generated in the previous scene are now visible, traveling downwards away from the photoreceptors. From 0 to 5 seconds, the camera pulls back, revealing a complex, multi-layered network of translucent, branching neurons underneath the photoreceptor layer. We see the pulses being passed from the photoreceptors to this new network, where they are collected and channeled into organized streams of energy. From 5 to 10 seconds, the camera pulls back further to a wide view of the retina's inner surface. Thousands of these streams of blue-white electrical energy are seen flowing like rivers of light, all converging from across the curved surface towards a single, bright, circular area at the back of the eye: the optic disc. The effect is like water flowing into a drain or a glowing whirlpool of data. At the 10-second mark, the camera follows the converging streams as they funnel into the opening of the optic nerve. The perspective shifts dramatically as the camera plunges into the nerve itself, entering a tunnel of light. From 15 to 23 seconds, the shot becomes a high-speed, first-person journey through the interior of the optic nerve. The walls of this biological tunnel are composed of millions of individual nerve fibers, each rendered as a parallel, glowing strand. Each fiber carries its own pulsing stream of blue-white light, all racing in the same direction. The sheer volume of signals creates an intensely bright and dynamic environment. The camera moves at a blistering pace, with the light from the signals creating long streaks, giving a profound sense of rapid data transmission. The tunnel makes a slight curve as it follows the path of the nerve exiting the eye socket, heading towards its destination deep within the brain. The scene is entirely self-illuminated by the crackling energy of the signals against the dark backdrop of the nerve sheath.",
+            "duration_seconds": 23,
+            "style": "animated"
+          },
+          {
+            "beat_id": "7E",
+            "prompt": "The camera bursts out from the end of the optic nerve tunnel, arriving in a stylized, three-dimensional representation of the human brain. The brain is rendered as a translucent, crystalline structure, filled with an intricate web of glowing neural pathways. From 0 to 4 seconds, the streams of blue-white electrical pulses that we followed now flow out from the optic chiasm and spread into the visual cortex, located in the occipital lobe at the rear of the brain model. This entire region begins to glow and pulse with a bright, cool white light, indicating intense activity. From 4 to 8 seconds, the camera pulls back slightly to frame the active visual cortex. In the very center of this glowing region, the small, inverted, full-color image of the mountain materializes, shimmering as if made of pure data. From 8 to 12 seconds, a rapid processing sequence is visualized. The small, upside-down mountain image crisply rotates 180 degrees on its central axis, flipping to its correct, upright orientation. As it rotates, faint grid lines and scanning light effects wash over it, and a second, slightly offset ghost image merges with it, creating a subtle 3D effect to represent the fusion of information for depth perception. At the 12-second mark, the now-upright and processed image begins to expand rapidly from the center of the brain model. The camera starts a powerful zoom into this expanding image. From 12 to 18 seconds, the image grows to fill the entire screen, and the glowing, stylized framework of the brain recedes and fades away at the edges of the frame. The transition is seamless. By the 18-second mark, the stylized image has completely transformed back into the original, photorealistic, cinematic wide shot of the sunlit mountain from the very beginning. For the final 7 seconds, the camera holds on this magnificent, perfectly clear, and stable view. The colors are rich and vibrant, the details are sharp, and a very slow, almost imperceptible push-in enhances the feeling of a final, conscious, and complete visual experience.",
+            "duration_seconds": 25,
+            "style": "animated"
+          }
+        ]
+      },
+      "content_video_path": "videos/topic_7.mp4",
+      "has_content_video": true
+    }
+  ],
+  "pipeline_version": "1.2",
+  "job_id": "897c775c",
+  "use_remotion": true,
+  "source_file": "Sample_subjects.md",
+  "skip_avatar": false
+}
