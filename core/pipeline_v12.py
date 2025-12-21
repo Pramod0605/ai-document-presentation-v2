@@ -659,7 +659,10 @@ def resume_job_from_phase(
         job_manager.update_job(job_id, {
             "status": "completed",
             "completed_at": datetime.now().isoformat(),
-            "error": None
+            "error": None,
+            "progress": 100,
+            "steps_completed": 3,
+            "current_step_name": "Completed"
         }, persist=True)
         
         print(f"[Resume] Job {job_id} completed successfully!")
