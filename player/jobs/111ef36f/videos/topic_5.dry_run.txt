@@ -1,0 +1,31 @@
+DRY RUN - Manim section 5
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/111ef36f/videos/topic_5.mp4
+
+--- SCENE CODE ---
+problem_text = Text("A 10 kg box accelerates at 2 m/s². What is the force?", font_size=28).move_to(np.array([0, 2.5, 0]))
+box = Dot(point=np.array([0, 1.5, 0]), color=BLUE)
+mass_known = MathTex(r"m = 10 \text{ kg}").move_to(np.array([-2, 0.5, 0]))
+accel_known = MathTex(r"a = 2 \text{ m/s}^2").move_to(np.array([2, 0.5, 0]))
+formula = MathTex(r"F = m \times a").move_to(np.array([0, -0.5, 0]))
+substitution = MathTex(r"F = (10 \text{ kg}) \times (2 \text{ m/s}^2)").move_to(np.array([0, -1.5, 0]))
+result = MathTex(r"F = 20 \text{ N}").move_to(np.array([0, -2.5, 0]))
+result_box = Dot(point=np.array([0, -2.5, 0]), color=YELLOW)
+
+# Animation sequence
+self.play(FadeIn(problem_text), run_time=2)
+self.play(Create(box), run_time=2)
+self.wait(8)
+self.play(Write(mass_known), run_time=2)
+self.play(Write(accel_known), run_time=2)
+self.wait(7)
+self.play(Write(formula), run_time=3)
+self.wait(3)
+self.play(Write(substitution), run_time=4)
+self.wait(5)
+self.play(Write(result), run_time=3)
+self.play(Create(result_box), run_time=1)
+self.play(FadeOut(problem_text), run_time=2)
+self.play(Indicate(result), run_time=2)
+self.wait(2)
+self.wait(1)
