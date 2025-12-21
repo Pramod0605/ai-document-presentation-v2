@@ -153,26 +153,26 @@ class LayerController {
 const layerController = new LayerController();
 
 /**
- * VideoBufferManager - Double-buffering for smooth video transitions (ISS-070)
- * Preloads next video while current plays, then swaps instantly
+ * VideoBufferManager - Preload-based smooth video transitions (ISS-070)
+ * Preloads next video in hidden element, copies to primary when ready
+ * Does NOT swap DOM elements - keeps inlineVideo reference stable
  */
 class VideoBufferManager {
   constructor() {
-    this.primary = null;
     this.preload = null;
     this.nextVideoPath = null;
     this.preloadReady = false;
-    this.swapPending = false;
+    this.pendingSwitch = null;
   }
 
   init() {
-    this.primary = document.getElementById('inline-video');
     this.preload = document.getElementById('inline-video-preload');
     if (this.preload) {
       this.preload.addEventListener('canplaythrough', () => {
         this.preloadReady = true;
-        if (this.swapPending) {
-          this.executeSwap();
+        console.log(`[VideoBuffer] Preloaded ready: ${this.nextVideoPath}`);
+        if (this.pendingSwitch && this.pendingSwitch.path === this.nextVideoPath) {
+          this.executePendingSwitch();
         }
       });
     }
@@ -180,70 +180,50 @@ class VideoBufferManager {
 
   preloadVideo(videoPath) {
     if (!this.preload || !videoPath) return;
-    if (this.nextVideoPath === videoPath && this.preloadReady) return;
+    if (this.nextVideoPath === videoPath) return;
     
+    console.log(`[VideoBuffer] Preloading: ${videoPath}`);
     this.nextVideoPath = videoPath;
     this.preloadReady = false;
     this.preload.src = videoPath;
     this.preload.load();
   }
 
-  switchTo(videoPath, playbackRate = 1.0) {
-    if (!this.primary) return;
+  switchTo(inlineVideo, videoPath, playbackRate = 1.0) {
+    if (!inlineVideo || !videoPath) return;
     
     if (this.preload && this.nextVideoPath === videoPath && this.preloadReady) {
-      this.executeSwap();
-      this.primary.playbackRate = playbackRate;
-      this.primary.play().catch(e => console.log("Video play fail", e));
+      console.log(`[VideoBuffer] Instant switch to preloaded: ${videoPath}`);
+      inlineVideo.src = videoPath;
+      inlineVideo.playbackRate = playbackRate;
+      inlineVideo.play().catch(e => console.log("Video play fail", e));
+      this.preloadReady = false;
+      this.nextVideoPath = null;
     } else {
-      if (this.preload && videoPath) {
-        this.swapPending = true;
-        this.preloadVideo(videoPath);
-        this.primary.style.transition = 'opacity 0.15s ease';
-        this.primary.style.opacity = '0.7';
-        setTimeout(() => {
-          if (!this.preloadReady) {
-            this.primary.src = videoPath;
-            this.primary.load();
-            this.primary.style.opacity = '1';
-            this.primary.playbackRate = playbackRate;
-            this.primary.play().catch(e => console.log("Video play fail", e));
-            this.swapPending = false;
-          }
-        }, 200);
-      } else {
-        this.primary.src = videoPath;
-        this.primary.load();
-        this.primary.playbackRate = playbackRate;
-        this.primary.play().catch(e => console.log("Video play fail", e));
-      }
+      this.pendingSwitch = { video: inlineVideo, path: videoPath, rate: playbackRate };
+      this.preloadVideo(videoPath);
+      
+      setTimeout(() => {
+        if (this.pendingSwitch && this.pendingSwitch.path === videoPath) {
+          console.log(`[VideoBuffer] Fallback load: ${videoPath}`);
+          inlineVideo.src = videoPath;
+          inlineVideo.load();
+          inlineVideo.playbackRate = playbackRate;
+          inlineVideo.play().catch(e => console.log("Video play fail", e));
+          this.pendingSwitch = null;
+        }
+      }, 150);
     }
   }
 
-  executeSwap() {
-    if (!this.primary || !this.preload) return;
-    
-    const tempSrc = this.preload.src;
-    this.preload.style.opacity = '1';
-    this.primary.style.opacity = '0';
-    
-    const oldPrimary = this.primary;
-    const oldPreload = this.preload;
-    
-    oldPreload.style.opacity = '1';
-    oldPreload.style.pointerEvents = 'auto';
-    oldPrimary.style.opacity = '0';
-    oldPrimary.style.pointerEvents = 'none';
-    
-    this.primary = oldPreload;
-    this.preload = oldPrimary;
-    
-    this.primary.id = 'inline-video';
-    this.preload.id = 'inline-video-preload';
-    
-    this.preloadReady = false;
-    this.swapPending = false;
-    this.nextVideoPath = null;
+  executePendingSwitch() {
+    if (!this.pendingSwitch) return;
+    const { video, path, rate } = this.pendingSwitch;
+    console.log(`[VideoBuffer] Executing pending switch: ${path}`);
+    video.src = path;
+    video.playbackRate = rate;
+    video.play().catch(e => console.log("Video play fail", e));
+    this.pendingSwitch = null;
   }
 
   preloadNext(currentIndex, videoPaths) {
@@ -251,10 +231,6 @@ class VideoBufferManager {
     if (nextIndex < videoPaths.length) {
       this.preloadVideo(videoPaths[nextIndex]);
     }
-  }
-
-  getCurrentVideo() {
-    return this.primary;
   }
 }
 
@@ -1099,7 +1075,7 @@ function handleTimeUpdate(e) {
         currentBeatIndex = targetBeatIndex;
         const newBeatPath = slide.beat_videos[targetBeatIndex];
         console.log(`Switching to beat ${targetBeatIndex}: ${newBeatPath}`);
-        videoBufferManager.switchTo(newBeatPath, 0.7);
+        videoBufferManager.switchTo(inlineVideo, newBeatPath, 0.7);
         videoBufferManager.preloadNext(targetBeatIndex, slide.beat_videos);
       }
       
@@ -1140,7 +1116,7 @@ function handleTimeUpdate(e) {
         const newRecapPath = slide.recap_video_paths[targetRecapIndex];
         if (newRecapPath) {
           console.log(`Switching to recap scene ${targetRecapIndex + 1}: ${newRecapPath}`);
-          videoBufferManager.switchTo(newRecapPath, 1.0);
+          videoBufferManager.switchTo(inlineVideo, newRecapPath, 1.0);
           videoBufferManager.preloadNext(targetRecapIndex, slide.recap_video_paths);
         }
         

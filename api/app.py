@@ -149,10 +149,15 @@ def submit_job():
             if not markdown_content:
                 return jsonify({"error": "Markdown content is required"}), 400
             
+            content_preview = markdown_content[:300].replace('\n', ' ').strip()
+            if len(markdown_content) > 300:
+                content_preview += "..."
+            
             job_id = job_manager.create_job("markdown", {
                 "subject": subject,
                 "grade": grade,
-                "dry_run": dry_run
+                "dry_run": dry_run,
+                "content_preview": content_preview
             })
             
             job_output_dir = JOBS_DIR / job_id
@@ -175,7 +180,9 @@ def submit_job():
         
         mode_msg = " (DRY RUN - prompts only, no real rendering)" if dry_run else ""
         job_data = job_manager.get_job(job_id)
-        content_preview = job_data.get("content_preview") if job_data else None
+        content_preview = None
+        if job_data:
+            content_preview = job_data.get("content_preview") or job_data.get("params", {}).get("content_preview")
         
         return jsonify({
             "status": "accepted",
