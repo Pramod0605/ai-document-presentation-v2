@@ -1,0 +1,272 @@
+I’ll give you:
+
+Exact 3-tier refactor design (very concrete)
+
+What moves to which tier (authoritative list)
+
+How the retry logic changes
+
+Whether anything else is needed after this (short answer: almost nothing)
+
+No hand-waving.
+
+1️⃣ The Correct 3-Tier Validator Architecture (FINAL)
+
+You currently have one validator doing everything.
+We split it into one orchestrator + three clearly scoped tiers.
+
+New mental model
+Schema Validator  →  Tier-1 Structural Validator
+                         ↓
+                    Tier-2 Semantic Validator
+                         ↓
+                    Tier-3 Quality Linter
+
+
+Each tier has one job only.
+
+2️⃣ Tier Definitions (NON-NEGOTIABLE)
+🔴 Tier 1 — STRUCTURAL HARD FAIL (compiler errors)
+
+Purpose:
+Guarantee the output is structurally executable by the pipeline + player.
+
+If Tier 1 fails → STOP IMMEDIATELY. NO SEMANTIC RETRY.
+
+Tier-1 checks (KEEP AS HARD FAIL)
+
+These stay exactly hard:
+
+Sections & ordering
+
+missing intro
+
+missing summary
+
+missing memory
+
+missing recap
+
+Core structure
+
+missing renderer
+
+missing visual_beats
+
+missing display_directives
+
+display_directives is null
+
+visual_beats empty when required by schema
+
+Counts enforced at schema level
+
+recap scenes ≠ exactly 5
+
+memory flashcards ≠ exactly 5
+
+Layer logic
+
+missing display directive for any segment_id
+
+text + complex visual visible simultaneously
+
+example section without stepwise visualization
+
+Renderer contracts
+
+renderer="manim" but no manim_scene_spec
+
+renderer="remotion" but no motion spec
+
+renderer="video" but no video beats
+
+✅ Tier-1 is deterministic. LLM must obey or retry structurally.
+
+🟠 Tier 2 — SEMANTIC RETRY (repairable content gaps)
+
+Purpose:
+Fix content completeness once structure is correct.
+
+If Tier 2 fails → trigger SEMANTIC RETRY (max 1).
+
+Move THESE from hard-fail → semantic retry
+
+content narration < 150 words
+
+example narration < minimum
+
+recap narration < 300 words
+
+recap narration > 500 words
+
+formula mentioned but no visual beat yet
+
+insufficient explanation depth (measured heuristically, not stylistically)
+
+These are LLM-expandable problems, not structural errors.
+
+❗ Tier-2 failures must:
+
+preserve structure
+
+preserve ordering
+
+only expand or add missing content
+
+🟡 Tier 3 — QUALITY WARNINGS (non-blocking)
+
+Purpose:
+Detect style issues without blocking production.
+
+Tier-3 NEVER fails a job.
+
+Move THESE to warnings only
+
+vague visual language:
+
+“clear diagram”
+
+“appropriate animation”
+
+“educational visualization”
+
+repetitive phrasing
+
+overly generic scene descriptions
+
+mild redundancy
+
+These are editorial polish issues, not correctness issues.
+
+You may:
+
+log them
+
+show them in QA dashboards
+
+optionally run a future “polish pass”
+
+But they must not affect control flow.
+
+3️⃣ Exact Refactor Structure (Code-Level Plan)
+Replace hard_fail_validator.py with:
+validators/
+ ├── tier1_structural.py
+ ├── tier2_semantic.py
+ ├── tier3_quality.py
+ └── validator_orchestrator.py
+
+🔹 validator_orchestrator.py (brain)
+def validate(presentation):
+    tier1_errors = validate_structural(presentation)
+    if tier1_errors:
+        return ValidationResult(
+            status="STRUCTURAL_FAIL",
+            errors=tier1_errors
+        )
+
+    tier2_errors = validate_semantic(presentation)
+    if tier2_errors:
+        return ValidationResult(
+            status="SEMANTIC_FAIL",
+            errors=tier2_errors
+        )
+
+    tier3_warnings = validate_quality(presentation)
+
+    return ValidationResult(
+        status="PASS",
+        warnings=tier3_warnings
+    )
+
+🔹 Retry logic (FINAL)
+Director Output
+   ↓
+Schema Validation
+   ↓
+Tier-1 Structural Validation
+   ↓
+❌ → STRUCTURAL RETRY (max 2)
+   ↓
+Tier-2 Semantic Validation
+   ↓
+❌ → SEMANTIC RETRY (max 1)
+   ↓
+Tier-3 Quality Lint
+   ↓
+PASS (with warnings)
+
+
+This guarantees convergence.
+
+4️⃣ Mapping from your current validator (IMPORTANT)
+
+From your current hard_fail_validator.py:
+
+MUST MOVE OUT of hard-fail:
+
+vague_visual_language_detected
+
+generic_visual_detected
+
+weak_explanation_detected
+
+MUST STAY hard-fail:
+
+missing display_directives
+
+incorrect layer overlap
+
+missing renderer
+
+missing recap/memory
+
+invalid scene/flashcard counts
+
+MUST BECOME semantic retry:
+
+narration word counts
+
+recap word counts
+
+formula visual mismatch
+
+This mapping is what stops the “fix one thing → break another” cycle.
+
+5️⃣ Is this FINAL, or is anything else needed?
+Short answer: This is FINAL for v1.3.
+
+After this refactor, you do NOT need to:
+
+❌ weaken prompts
+❌ lower thresholds
+❌ add more retries
+❌ change models
+❌ add more rules
+
+The only optional future additions (not required now)
+
+A post-production polish pass (Tier-4, optional)
+
+A teacher QA dashboard using Tier-3 warnings
+
+Auto-suggested prompt improvements (offline)
+
+But none of these are needed for correctness or stability.
+
+6️⃣ Final verdict (lock this)
+
+Yes, the validator was “too much” — not because it was strict, but because it was undifferentiated.
+
+This 3-tier refactor:
+
+preserves strictness
+
+restores convergence
+
+makes failures intelligible
+
+aligns with real compiler design
+
+Once you implement this, the system will settle instead of thrash.
