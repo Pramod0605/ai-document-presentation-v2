@@ -1,0 +1,26 @@
+DRY RUN - Manim section 6
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/3389106c/videos/topic_6.mp4
+
+--- SCENE CODE ---
+problem = MathTex(r"\text{Problem: A 10 kg box accelerates at 2 m/s}^2\text{. What is the net force?}").scale(0.8).move_to(np.array([0, 2.5, 0]))
+known_m = MathTex(r"m = 10 \text{ kg}").move_to(np.array([0, 1.0, 0]))
+known_a = MathTex(r"a = 2 \text{ m/s}^2").move_to(np.array([0, 0.2, 0]))
+formula = MathTex(r"F = m \times a").move_to(np.array([0, -1.0, 0]))
+substitution = MathTex(r"F = (10 \text{ kg}) \times (2 \text{ m/s}^2)").move_to(np.array([0, -2.0, 0]))
+result = MathTex(r"F = 20 \text{ N}").move_to(np.array([0, -2.0, 0]))
+box = Dot(point=np.array([0, -2.0, 0]), color=BLUE)
+
+# Animation sequence
+self.play(Write(problem), run_time=4)
+self.wait(12)
+self.play(Write(known_m), run_time=2)
+self.play(Write(known_a), run_time=2)
+self.wait(6)
+self.play(Write(formula), run_time=3)
+self.wait(5)
+self.wait(7)
+self.play(Create(box), run_time=1)
+self.play(Indicate(result), run_time=2)
+self.wait(7)
+self.wait(1)

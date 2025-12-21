@@ -1,0 +1,36 @@
+DRY RUN - Manim section 5
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/3389106c/videos/topic_5.mp4
+
+--- SCENE CODE ---
+title = MathTex(r"\text{Newton's Third Law}").move_to(np.array([0, 2.5, 0]))
+law_text = MathTex(r"\text{For every action, there is an equal and opposite reaction}").move_to(np.array([0, 1.5, 0]))
+dot_A = Dot(point=np.array([-2, 0, 0]), color=BLUE)
+dot_B = Dot(point=np.array([2, 0, 0]), color=RED)
+action_arrow = Arrow(start=np.array([-2, 0, 0]), end=np.array([0, 0, 0]), color=BLUE, buff=0)
+reaction_arrow = Arrow(start=np.array([2, 0, 0]), end=np.array([4, 0, 0]), color=RED, buff=0)
+action_label = MathTex(r"\text{Action}").scale(0.8).move_to(np.array([0, 0.8, 0]))
+reaction_label = MathTex(r"\text{Reaction}").scale(0.8).move_to(np.array([0, -0.8, 0]))
+rocket = Dot(point=np.array([0, 0, 0]), color=WHITE)
+thrust_arrows = Arrow(start=np.array([0, -1, 0]), end=np.array([2, -1, 0]), color=ORANGE, buff=0)
+lift_arrow = Arrow(start=np.array([0, 1, 0]), end=np.array([2, 1, 0]), color=GREEN, buff=0)
+
+# Animation sequence
+self.play(Write(title), run_time=2)
+self.play(Write(law_text), run_time=3)
+self.wait(1)
+self.play(FadeIn(dot_A), run_time=1)
+self.play(FadeIn(dot_B), run_time=1)
+self.play(Create(action_arrow), run_time=2)
+self.play(Create(reaction_arrow), run_time=2)
+self.play(FadeIn(action_label), run_time=1)
+self.play(FadeIn(reaction_label), run_time=1)
+self.wait(2)
+self.play(FadeOut(dot_A), run_time=1)
+self.play(FadeIn(rocket), run_time=1)
+self.play(Create(thrust_arrows), run_time=2)
+self.play(Create(lift_arrow), run_time=2)
+self.play(rocket.animate.move_to(np.array([0, 0, 0])), run_time=3)
+self.wait(2)
+self.play(FadeOut(rocket), run_time=2)
+self.wait(1)

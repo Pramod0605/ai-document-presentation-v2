@@ -47,7 +47,7 @@ client = OpenAI(
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 
-DIRECTOR_MODEL = "anthropic/claude-3.5-sonnet"
+DIRECTOR_MODEL = "google/gemini-2.5-pro"
 
 DIRECTOR_PARAMS = {
     "temperature": 0.2,

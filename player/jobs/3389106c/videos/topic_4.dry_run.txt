@@ -1,0 +1,30 @@
+DRY RUN - Manim section 4
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/3389106c/videos/topic_4.mp4
+
+--- SCENE CODE ---
+main_equation = MathTex(r"F = ma").move_to(np.array([0, 1.0, 0]))
+force_label = MathTex(r"\text{Force}").scale(0.8).move_to(np.array([-2.5, 1.0, 0]))
+mass_label = MathTex(r"\text{Mass}").scale(0.8).move_to(np.array([0, 2.0, 0]))
+accel_label = MathTex(r"\text{Acceleration}").scale(0.8).move_to(np.array([2.5, 1.0, 0]))
+small_block = Dot(point=np.array([-2, 0.5, 0]), color=BLUE)
+large_block = Dot(point=np.array([-2, -1.5, 0]), color=BLUE)
+force_arrow_1 = Arrow(start=np.array([-2.8, 0.5, 0]), end=np.array([-0.7999999999999998, 0.5, 0]), color=RED, buff=0)
+force_arrow_2 = Arrow(start=np.array([-2.8, -1.5, 0]), end=np.array([-0.7999999999999998, -1.5, 0]), color=RED, buff=0)
+
+# Animation sequence
+self.play(Write(main_equation), run_time=2)
+self.play(Indicate(main_equation), run_time=1.5)
+self.play(FadeIn(force_label), run_time=1)
+self.play(Indicate(main_equation), run_time=1.5)
+self.play(FadeIn(mass_label), run_time=1)
+self.play(Indicate(main_equation), run_time=1.5)
+self.play(FadeIn(accel_label), run_time=1)
+self.play(FadeOut(force_label), run_time=1)
+self.play(FadeIn(small_block), run_time=1.5)
+self.play(FadeIn(force_arrow_1), run_time=1)
+self.play(small_block.animate.move_to(np.array([0, 0, 0])), run_time=2)
+self.play(large_block.animate.move_to(np.array([0, 0, 0])), run_time=3)
+self.play(FadeOut(small_block), run_time=1.5)
+self.play(Indicate(main_equation), run_time=2)
+self.wait(1)
