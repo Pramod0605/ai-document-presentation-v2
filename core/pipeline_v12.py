@@ -448,77 +448,8 @@ def process_markdown_to_videos_v12(
         analytics_path = Path(output_dir) / "analytics.json"
         analytics_tracker.save_to_file(str(analytics_path))
         
-        if presentation:
-            print("[Pipeline v1.3] Running JSON Schema validation FIRST...")
-            schema_valid, schema_errors = validate_schema(presentation)
-            if not schema_valid:
-                log_validation("schema_validation", None, False, schema_errors[:10], [])
-                job_status["steps"].append({
-                    "step": "schema_validation",
-                    "status": "failed",
-                    "errors": schema_errors[:20]
-                })
-                complete_trace("schema_fail")
-                raise PipelineError(
-                    f"SCHEMA FAIL: {len(schema_errors)} schema violations. No fallbacks allowed.",
-                    "schema_validation",
-                    {"schema_errors": schema_errors}
-                )
-            else:
-                log_validation("schema_validation", None, True, [], [])
-                job_status["steps"].append({"step": "schema_validation", "status": "passed"})
-                print("[Pipeline v1.3] Schema validation PASSED")
-            
-            print("[Pipeline v1.3] Running 3-tier validation...")
-            validation_result = validate_3tier(presentation)
-            
-            if validation_result.structural_errors:
-                for err in validation_result.structural_errors:
-                    log_hard_fail(err.code, err.section_id, err.details)
-                    log_validation("tier1_structural", err.section_id, False, [str(err)], [])
-                job_status["steps"].append({
-                    "step": "tier1_structural_validation",
-                    "status": "failed",
-                    "errors": [str(e) for e in validation_result.structural_errors]
-                })
-                complete_trace("structural_fail")
-                raise PipelineError(
-                    f"STRUCTURAL FAIL: {len(validation_result.structural_errors)} tier-1 errors",
-                    "tier1_validation",
-                    {"structural_errors": [str(e) for e in validation_result.structural_errors]}
-                )
-            else:
-                job_status["steps"].append({"step": "tier1_structural_validation", "status": "passed"})
-                print("[Pipeline v1.3] Tier-1 Structural validation PASSED")
-            
-            if validation_result.semantic_errors:
-                for err in validation_result.semantic_errors:
-                    log_validation("tier2_semantic", err.section_id, False, [str(err)], [])
-                job_status["steps"].append({
-                    "step": "tier2_semantic_validation",
-                    "status": "failed",
-                    "errors": [str(e) for e in validation_result.semantic_errors]
-                })
-                complete_trace("semantic_fail")
-                raise PipelineError(
-                    f"SEMANTIC FAIL: {len(validation_result.semantic_errors)} tier-2 errors",
-                    "tier2_validation",
-                    {"semantic_errors": [str(e) for e in validation_result.semantic_errors]}
-                )
-            else:
-                job_status["steps"].append({"step": "tier2_semantic_validation", "status": "passed"})
-                print("[Pipeline v1.3] Tier-2 Semantic validation PASSED")
-            
-            if validation_result.quality_warnings:
-                job_status["steps"].append({
-                    "step": "tier3_quality_lint",
-                    "status": "passed",
-                    "warnings": [str(w) for w in validation_result.quality_warnings[:10]]
-                })
-                print(f"[Pipeline v1.3] Tier-3 Quality: {len(validation_result.quality_warnings)} warnings (non-blocking)")
-            else:
-                job_status["steps"].append({"step": "tier3_quality_lint", "status": "passed", "warnings": []})
-                print("[Pipeline v1.3] Tier-3 Quality: No warnings")
+        print("[Pipeline v1.3] Validation already done in Director pass (3-tier with retries)")
+        job_status["steps"].append({"step": "validation", "status": "passed", "note": "Handled in Director with retries"})
         
         if job_id:
             job_manager.complete_step(job_id, 0)
