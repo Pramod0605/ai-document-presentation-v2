@@ -1,0 +1,126 @@
+with the fix we just agreed on, bullet points from the input WILL be displayed correctly and WILL stay perfectly aligned with the narration.
+Let me explain this precisely so there is zero ambiguity.
+
+✅ What is now guaranteed (after the fix)
+1️⃣ Bullet points from the input document are preserved
+
+Every bullet and sub-bullet in the .md / PDF:
+
+keeps its text
+
+keeps its hierarchy (bullet vs sub-bullet)
+
+keeps its order
+
+They are not rewritten, not summarized, not replaced.
+
+They move from:
+
+Input Markdown
+
+
+→ into →
+
+visual_content.bullet_points[]
+
+
+This is now a first-class field in the schema, not an afterthought.
+
+2️⃣ Narration and bullets are now two separate channels (this is the key)
+Channel	Purpose	Source
+Narration (audio)	Explain, give intuition, examples	LLM
+Visual content (bullets)	Anchor concepts visually	Input document
+
+They are synchronized, but never confused.
+
+So:
+
+Bullets do not come from narration text
+
+Narration text is never dumped on screen
+
+3️⃣ How alignment is guaranteed (this is important)
+
+Alignment happens at the narration segment level.
+
+Each segment contains:
+
+{
+  "segment_id": 2,
+  "narration": "Like charges repel each other...",
+  "visual_content": {
+    "bullet_points": [
+      { "level": 2, "text": "Like charges repel" }
+    ]
+  },
+  "display_directives": {
+    "text_layer": "show",
+    "visual_layer": "hide",
+    "avatar_layer": "show"
+  }
+}
+
+
+This guarantees:
+
+The exact bullet(s) relevant to that spoken explanation are shown
+
+No unrelated bullets appear early
+
+No bullet appears without narration context
+
+This is deterministic, not heuristic.
+
+4️⃣ Progressive reveal works automatically
+
+Because bullets are attached per segment:
+
+Segment 1 → show main bullet
+
+Segment 2 → reveal sub-bullet
+
+Segment 3 → hide bullets, show animation
+
+Example flow:
+
+Segment	Spoken narration	On screen
+1	Introduce concept	Main bullet
+2	Explain detail	Sub-bullet
+3	Demonstrate	Animation only
+
+This is exactly how Khan Academy teaches.
+
+5️⃣ Player behavior is now trivial (and correct)
+
+The player does not think.
+
+For each segment:
+
+Play narration audio
+→ Apply display_directives
+→ Render visual_content if text_layer = show
+
+
+Because bullets are already structured, the player:
+
+never guesses
+
+never extracts text
+
+never interprets meaning
+
+That’s why this works reliably.
+
+❌ What will NOT happen anymore (by design)
+
+❌ Narration text showing up as paragraphs on screen
+
+❌ Bullets appearing out of order
+
+❌ Bullets overlapping animations
+
+❌ Missing bullets because narration didn’t mention them
+
+❌ Player inventing formatting
+
+All of these were symptoms of missing schema separation, now fixed.
