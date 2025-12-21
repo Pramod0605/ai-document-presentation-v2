@@ -1,0 +1,114 @@
+exactly TWO non-negotiable additions to the Director system prompt
+and TWO Tier-1 validator rules.
+
+Nothing else.
+
+🔒 FIX 1 — MANDATORY VISUAL ACTIVATION RULE (ISS-065)
+ADD THIS VERBATIM to director_system_v1.3.txt
+MANDATORY VISUAL ACTIVATION RULE:
+
+For any section that has visual_beats:
+
+1. At least ONE narration segment MUST set:
+   visual_layer = "show" OR visual_layer = "replace"
+
+2. visual_layer = "hide" is allowed ONLY when:
+   - text is being introduced, OR
+   - before the first visual appears, OR
+   - after the final visual ends
+
+3. It is FORBIDDEN for all narration segments in a section to have:
+   visual_layer = "hide"
+
+4. Correct teaching sequence:
+   - Explain → text_layer="show", visual_layer="hide"
+   - Transition → text_layer="hide"
+   - Demonstrate → visual_layer="show", avatar_layer="gesture_only"
+
+If visual_beats exist and no segment shows visuals, the output is INVALID.
+
+ADD THIS Tier-1 validator rule
+def validate_visuals_are_shown(section):
+    if section.get("visual_beats"):
+        segments = section["narration"]["segments"]
+        if not any(
+            seg["display_directives"]["visual_layer"] in ("show", "replace")
+            for seg in segments
+        ):
+            return error("visuals_never_displayed")
+
+
+➡ This guarantees videos cannot be silently hidden ever again.
+
+🔒 FIX 2 — SUBJECT-AWARE RENDERER RULES (ISS-066)
+ADD THIS VERBATIM to director_system_v1.3.txt
+MANDATORY RENDERER SELECTION RULES:
+
+Renderer choice is STRICT and NON-NEGOTIABLE.
+
+MATH:
+- Algebra, geometry, equations, graphs → renderer = "manim"
+
+PHYSICS:
+- Formulas, vectors, forces, graphs → renderer = "manim"
+- Phenomena (motion, waves, optics, fields) → renderer = "video"
+
+BIOLOGY:
+- ALL biology, anatomy, organs, cells, systems → renderer = "video"
+- Manim is FORBIDDEN for biology
+
+CHEMISTRY:
+- Reactions, processes, molecular interactions → renderer = "video"
+- Equation balancing ONLY → renderer = "manim"
+
+INTRO / SUMMARY / MEMORY / QUIZ:
+- renderer = "remotion"
+
+RECAP (ALL SUBJECTS):
+- renderer = "video" (MANDATORY)
+
+Any violation of these rules makes the output INVALID.
+
+ADD THIS Tier-1 validator rule
+def validate_renderer_subject_match(section):
+    subject = section["subject"]
+    renderer = section["renderer"]
+
+    if subject == "biology" and renderer != "video":
+        return error("biology_must_use_video")
+
+    if section["section_type"] == "recap" and renderer != "video":
+        return error("recap_must_use_video")
+
+
+➡ This eliminates renderer drift permanently.
+
+🧪 EXPECTED RESULT AFTER FIX
+
+After one Director rerun:
+
+Content sections:
+
+Text appears briefly
+
+Text hides
+
+Video must appear
+
+Biology:
+
+ZERO Manim usage
+
+WAN video only
+
+Recap:
+
+Always cinematic video
+
+No text, no avatar
+
+Player behavior:
+
+Unchanged
+
+Correct by design
