@@ -1,0 +1,2482 @@
+{
+  "spec_version": "v1.3",
+  "presentation_id": "sci8-states-of-matter-v1",
+  "subject": "Science",
+  "grade": "8",
+  "chapter_title": "The States of Matter",
+  "avatar_global": {
+    "style": "teacher",
+    "default_position": "right",
+    "default_width_percent": 35,
+    "gesture_enabled": true
+  },
+  "sections": [
+    {
+      "section_id": 1,
+      "section_type": "intro",
+      "title": "Welcome to the World of Matter",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "center",
+        "position": "center",
+        "width_percent": 50
+      },
+      "narration": {
+        "full_text": "Hello, and welcome! Have you ever wondered what the chair you're sitting on, the water you drink, and the air you breathe all have in common? They are all made of matter. But why are they so different? One is hard, one is wet, and one is invisible. Today, we're going on a journey to explore the fundamental states of matter. We'll uncover the secrets of solids, liquids, and gases, and even discover a fourth, electrifying state you see every day but might not know about. Let's get started!",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Hello, and welcome! Have you ever wondered what the chair you're sitting on, the water you drink, and the air you breathe all have in common?",
+            "duration_seconds": 8,
+            "gesture_hint": "wave_hello"
+          },
+          {
+            "segment_id": 2,
+            "text": "They are all made of matter. But why are they so different? One is hard, one is wet, and one is invisible.",
+            "duration_seconds": 7,
+            "gesture_hint": "questioning"
+          },
+          {
+            "segment_id": 3,
+            "text": "Today, we're going on a journey to explore the fundamental states of matter.",
+            "duration_seconds": 5,
+            "gesture_hint": "open_hands"
+          },
+          {
+            "segment_id": 4,
+            "text": "We'll uncover the secrets of solids, liquids, and gases, and even discover a fourth, electrifying state you see every day but might not know about. Let's get started!",
+            "duration_seconds": 9,
+            "gesture_hint": "excited"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "1A",
+          "segment_id": 1,
+          "visual_beat_type": "motion_graphic",
+          "description": "Avatar appears full screen and gestures."
+        },
+        {
+          "beat_id": "1B",
+          "segment_id": 2,
+          "visual_beat_type": "motion_graphic",
+          "description": "Title card appears: 'The States of Matter'. Quick cuts of an ice cube, a glass of water, and steam rising from a kettle."
+        },
+        {
+          "beat_id": "1C",
+          "segment_id": 4,
+          "visual_beat_type": "motion_graphic",
+          "description": "The words 'Solid', 'Liquid', 'Gas', and 'Plasma' animate onto the screen around the title."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 870,
+        "elements": [
+          {
+            "id": "avatar_main",
+            "type": "image",
+            "content": "avatar_default",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "width": 500,
+              "height": 500
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 240
+            }
+          },
+          {
+            "id": "title_main",
+            "type": "text",
+            "content": "The States of Matter",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 240,
+              "exit_frame": 450
+            }
+          },
+          {
+            "id": "state_solid",
+            "type": "text",
+            "content": "SOLID",
+            "position": {
+              "x": 250,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 570,
+              "exit_frame": 870
+            }
+          },
+          {
+            "id": "state_liquid",
+            "type": "text",
+            "content": "LIQUID",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 600,
+              "exit_frame": 870
+            }
+          },
+          {
+            "id": "state_gas",
+            "type": "text",
+            "content": "GAS",
+            "position": {
+              "x": 550,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 630,
+              "exit_frame": 870
+            }
+          },
+          {
+            "id": "state_plasma",
+            "type": "text",
+            "content": "PLASMA",
+            "position": {
+              "x": 400,
+              "y": 400
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 660,
+              "exit_frame": 870
+            }
+          }
+        ],
+        "background": {
+          "color": "#1E1E1E"
+        }
+      }
+    },
+    {
+      "section_id": 2,
+      "section_type": "summary",
+      "title": "Our Learning Journey",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "In this lesson, we will build our understanding from the ground up. First, we'll examine the rigid world of solids, looking at how their particles are locked in place. Next, we'll dive into liquids, seeing why they flow and take the shape of their container. Then, we'll float into the world of gases, understanding why they expand to fill any space. After that, we'll explore the dynamic process of phase transitions\u2014how matter changes from one state to another. Finally, we'll journey to the stars to learn about plasma, the most common state of matter in the universe.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "In this lesson, we will build our understanding from the ground up. First, we'll examine the rigid world of solids, looking at how their particles are locked in place.",
+            "duration_seconds": 9
+          },
+          {
+            "segment_id": 2,
+            "text": "Next, we'll dive into liquids, seeing why they flow and take the shape of their container.",
+            "duration_seconds": 6
+          },
+          {
+            "segment_id": 3,
+            "text": "Then, we'll float into the world of gases, understanding why they expand to fill any space.",
+            "duration_seconds": 6
+          },
+          {
+            "segment_id": 4,
+            "text": "After that, we'll explore the dynamic process of phase transitions\u2014how matter changes from one state to another.",
+            "duration_seconds": 7
+          },
+          {
+            "segment_id": 5,
+            "text": "Finally, we'll journey to the stars to learn about plasma, the most common state of matter in the universe.",
+            "duration_seconds": 7
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "2A",
+          "segment_id": 1,
+          "visual_beat_type": "animated_list",
+          "description": "An icon representing a solid (a cube) appears next to the text '1. The Solid State'."
+        },
+        {
+          "beat_id": "2B",
+          "segment_id": 2,
+          "visual_beat_type": "animated_list",
+          "description": "An icon for liquid (a droplet) appears next to '2. The Liquid State'."
+        },
+        {
+          "beat_id": "2C",
+          "segment_id": 3,
+          "visual_beat_type": "animated_list",
+          "description": "An icon for gas (a cloud) appears next to '3. The Gas State'."
+        },
+        {
+          "beat_id": "2D",
+          "segment_id": 4,
+          "visual_beat_type": "animated_list",
+          "description": "An icon of cycling arrows appears next to '4. Phase Transitions'."
+        },
+        {
+          "beat_id": "2E",
+          "segment_id": 5,
+          "visual_beat_type": "animated_list",
+          "description": "An icon of a lightning bolt appears next to '5. The Plasma State'."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1050,
+        "elements": [
+          {
+            "id": "title",
+            "type": "text",
+            "content": "Our Learning Journey",
+            "position": {
+              "x": 100,
+              "y": 50
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 1050
+            }
+          },
+          {
+            "id": "solid_icon",
+            "type": "icon",
+            "content": "cube",
+            "position": {
+              "x": 100,
+              "y": 120
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#555555"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 30,
+              "exit_frame": 1050
+            }
+          },
+          {
+            "id": "solid_text",
+            "type": "text",
+            "content": "1. The Solid State",
+            "position": {
+              "x": 140,
+              "y": 125
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#333333"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 30,
+              "exit_frame": 1050
+            }
+          },
+          {
+            "id": "liquid_icon",
+            "type": "icon",
+            "content": "droplet",
+            "position": {
+              "x": 100,
+              "y": 180
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#555555"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 300,
+              "exit_frame": 1050
+            }
+          },
+          {
+            "id": "liquid_text",
+            "type": "text",
+            "content": "2. The Liquid State",
+            "position": {
+              "x": 140,
+              "y": 185
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#333333"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 300,
+              "exit_frame": 1050
+            }
+          },
+          {
+            "id": "gas_icon",
+            "type": "icon",
+            "content": "cloud",
+            "position": {
+              "x": 100,
+              "y": 240
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#555555"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 480,
+              "exit_frame": 1050
+            }
+          },
+          {
+            "id": "gas_text",
+            "type": "text",
+            "content": "3. The Gas State",
+            "position": {
+              "x": 140,
+              "y": 245
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#333333"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 480,
+              "exit_frame": 1050
+            }
+          },
+          {
+            "id": "transition_icon",
+            "type": "icon",
+            "content": "arrows-rotate",
+            "position": {
+              "x": 100,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#555555"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 660,
+              "exit_frame": 1050
+            }
+          },
+          {
+            "id": "transition_text",
+            "type": "text",
+            "content": "4. Phase Transitions",
+            "position": {
+              "x": 140,
+              "y": 305
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#333333"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 660,
+              "exit_frame": 1050
+            }
+          },
+          {
+            "id": "plasma_icon",
+            "type": "icon",
+            "content": "bolt",
+            "position": {
+              "x": 100,
+              "y": 360
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#555555"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 840,
+              "exit_frame": 1050
+            }
+          },
+          {
+            "id": "plasma_text",
+            "type": "text",
+            "content": "5. The Plasma State",
+            "position": {
+              "x": 140,
+              "y": 365
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#333333"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 840,
+              "exit_frame": 1050
+            }
+          }
+        ],
+        "background": {
+          "color": "#FFFFFF"
+        }
+      }
+    },
+    {
+      "section_id": 3,
+      "section_type": "content",
+      "title": "The Solid State",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Let's begin with solids. Think of a block of ice or a metal spoon. They have a definite shape and a definite volume. You can't just squish them into a smaller space or change their shape without breaking them. Why is this? It's all about the particles inside. In a solid, the atoms or molecules are packed together in a tight, organized pattern, often a crystal lattice. Imagine a perfectly organized army of soldiers standing in formation. They have very little kinetic energy, which is the energy of motion. So, instead of moving around freely, they are locked into place, only able to vibrate. This strong attraction between particles and their fixed positions is what gives solids their rigidity and stable structure. Even though they seem perfectly still, at a microscopic level, the particles are constantly buzzing with tiny vibrations.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's begin with solids. Think of a block of ice or a metal spoon. They have a definite shape and a definite volume.",
+            "duration_seconds": 8,
+            "gesture_hint": "point_center"
+          },
+          {
+            "segment_id": 2,
+            "text": "You can't just squish them into a smaller space or change their shape without breaking them. Why is this? It's all about the particles inside.",
+            "duration_seconds": 9,
+            "gesture_hint": "questioning"
+          },
+          {
+            "segment_id": 3,
+            "text": "In a solid, the atoms or molecules are packed together in a tight, organized pattern, often a crystal lattice. Imagine a perfectly organized army of soldiers standing in formation.",
+            "duration_seconds": 11,
+            "gesture_hint": "explain"
+          },
+          {
+            "segment_id": 4,
+            "text": "They have very little kinetic energy, which is the energy of motion. So, instead of moving around freely, they are locked into place, only able to vibrate.",
+            "duration_seconds": 10
+          },
+          {
+            "segment_id": 5,
+            "text": "This strong attraction between particles and their fixed positions is what gives solids their rigidity and stable structure. Even though they seem perfectly still, at a microscopic level, the particles are constantly buzzing with tiny vibrations.",
+            "duration_seconds": 13
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "3A",
+          "segment_id": 2,
+          "visual_beat_type": "video_scene",
+          "description": "Show a 3D model of an ice cube and a metal spoon. A hand tries to compress the cube, but it doesn't change shape."
+        },
+        {
+          "beat_id": "3B",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "Zoom into the ice cube. The view transitions to a microscopic level, showing water molecules arranged in a neat, crystalline lattice structure."
+        },
+        {
+          "beat_id": "3C",
+          "segment_id": 4,
+          "visual_beat_type": "video_scene",
+          "description": "The particles in the lattice begin to vibrate in place. A label 'Low Kinetic Energy' appears. Arrows show the vibrational motion only."
+        },
+        {
+          "beat_id": "3D",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "The view zooms out slightly. Lines of force appear between the particles, indicating strong attraction. The entire lattice structure vibrates as a single unit."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "swap"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "3A",
+          "prompt": "On a neutral grey background, a light-blue, translucent 3D ice cube appears on the left and a grey, metallic 3D spoon appears on the right. They are stationary for 2 seconds. At 2 seconds, a 3D human hand model enters from the top of the screen. The hand moves down and its fingers close around the ice cube. From 4 seconds to 7 seconds, the hand squeezes, with knuckles turning white to show force, but the ice cube's shape does not change. At 7 seconds, the hand releases the cube and moves up and off the screen. The ice cube and spoon remain stationary for the final 2 seconds.",
+          "duration_seconds": 9,
+          "style": "animated"
+        },
+        {
+          "beat_id": "3B",
+          "prompt": "The scene opens on the light-blue, translucent 3D ice cube, now centered on the screen. Over 4 seconds, the camera zooms directly into the center of the cube. The view dissolves through a white flash. The scene is now a microscopic view showing 3D spheres representing water molecules. Each molecule is one large red sphere connected to two smaller white spheres. The molecules are arranged in a fixed, repeating, hexagonal 3D grid pattern, a crystal lattice. For the remaining 7 seconds, the camera slowly pans from left to right across the stationary lattice, showing its organized structure.",
+          "duration_seconds": 11,
+          "style": "animated"
+        },
+        {
+          "beat_id": "3C",
+          "prompt": "The scene opens on the static 3D crystal lattice of water molecules. Instantly, all molecules begin to vibrate rapidly in place, shaking back and forth over a very short distance without changing their position in the lattice. At 2 seconds, a white text label 'Low Kinetic Energy' fades in at the top right corner. At 4 seconds, small, yellow, double-headed arrows appear next to several molecules, pulsing to indicate the back-and-forth vibrational motion. The molecules continue to vibrate, and the label and arrows remain on screen for the rest of the duration.",
+          "duration_seconds": 10,
+          "style": "animated"
+        },
+        {
+          "beat_id": "3D",
+          "prompt": "The scene opens on the vibrating crystal lattice with the 'Low Kinetic Energy' label and yellow arrows. From 0 to 3 seconds, the camera zooms out slightly, revealing more of the lattice, while the text label and arrows fade out completely. At 3 seconds, semi-transparent blue lines appear, connecting each molecule to its nearest neighbors. The molecules continue their in-place vibration, and the blue lines stretch and compress in sync with the movement. The entire interconnected structure vibrates as a single, rigid unit until the end of the clip.",
+          "duration_seconds": 13,
+          "style": "animated"
+        }
+      ]
+    },
+    {
+      "section_id": 4,
+      "section_type": "content",
+      "title": "The Liquid State",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Now, what happens when we add energy, like heat, to a solid? It can turn into a liquid. Unlike solids, liquids do not have a definite shape. Think about pouring water from a tall glass into a wide bowl. The water takes the shape of its new container. However, it does have a definite volume. If you pour one liter of water, you still have one liter of water. So what's happening with the particles? In a liquid, the particles have more kinetic energy than in a solid. This extra energy allows them to overcome the rigid structure that held them in place. They are still close together, touching their neighbors, but now they can slide and tumble past one another. This is why liquids can flow. Imagine the army of soldiers is now a crowded dance floor\u2014people are still packed closely, but they can move around and change positions.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Now, what happens when we add energy, like heat, to a solid? It can turn into a liquid. Unlike solids, liquids do not have a definite shape.",
+            "duration_seconds": 9
+          },
+          {
+            "segment_id": 2,
+            "text": "Think about pouring water from a tall glass into a wide bowl. The water takes the shape of its new container. However, it does have a definite volume.",
+            "duration_seconds": 9
+          },
+          {
+            "segment_id": 3,
+            "text": "So what's happening with the particles? In a liquid, the particles have more kinetic energy than in a solid. This extra energy allows them to overcome the rigid structure that held them in place.",
+            "duration_seconds": 12
+          },
+          {
+            "segment_id": 4,
+            "text": "They are still close together, touching their neighbors, but now they can slide and tumble past one another. This is why liquids can flow.",
+            "duration_seconds": 9
+          },
+          {
+            "segment_id": 5,
+            "text": "Imagine the army of soldiers is now a crowded dance floor\u2014people are still packed closely, but they can move around and change positions.",
+            "duration_seconds": 9
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "4A",
+          "segment_id": 2,
+          "visual_beat_type": "video_scene",
+          "description": "Animation shows water being poured from a tall, thin beaker into a short, wide one. The water's shape changes, but a volume indicator '1L' remains constant."
+        },
+        {
+          "beat_id": "4B",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "Zoom into the water. The view shows particles that are closely packed but are now moving, sliding past each other. A label 'Medium Kinetic Energy' appears."
+        },
+        {
+          "beat_id": "4C",
+          "segment_id": 4,
+          "visual_beat_type": "video_scene",
+          "description": "Arrows show the particles' paths, which are short and meandering as they bump into and slide around their neighbors. The collection of particles flows to fill the bottom of the container."
+        },
+        {
+          "beat_id": "4D",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "A simple cartoon analogy: a grid of stationary soldiers transforms into a crowd of people dancing closely together on a dance floor."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "4A",
+          "prompt": "On a plain background, a tall, thin, transparent glass beaker is on the left, filled with blue liquid. A white label reading '1L' is next to the liquid's surface. To the right is a short, wide, empty transparent bowl. The beaker tilts to the right, and a stream of blue liquid pours from it into the bowl. The liquid level in the beaker decreases as the liquid fills the bowl, taking its wide shape. The pouring stops when the beaker is empty and the bowl is full. The beaker returns to an upright position. The '1L' label now appears next to the liquid in the bowl.",
+          "duration_seconds": 9,
+          "style": "animated"
+        },
+        {
+          "beat_id": "4B",
+          "prompt": "The view zooms into the blue liquid in the bowl. The scene transitions to a microscopic view filled with small, blue spheres representing particles. The spheres are packed closely together, touching each other. They are not in a fixed pattern and are in constant motion. Individual spheres slide, roll, and tumble past their neighbors, continuously changing position while remaining in contact with the surrounding spheres. A white text box with the words 'Medium Kinetic Energy' appears in the upper right corner of the screen.",
+          "duration_seconds": 12,
+          "style": "animated"
+        },
+        {
+          "beat_id": "4C",
+          "prompt": "The microscopic view of the moving blue particles continues. Short, curved, yellow arrows appear, tracing the meandering paths of several individual particles as they bump into and slide around their neighbors. The entire collection of particles then flows as a group from the left side of the screen to the right, spreading out to fill the bottom area of the frame. The particles at the front of the flow tumble over one another.",
+          "duration_seconds": 9,
+          "style": "animated"
+        },
+        {
+          "beat_id": "4D",
+          "prompt": "The screen shows an array of simple cartoon soldiers in red uniforms, arranged in a perfect grid. They are standing completely still. The scene cross-fades: the soldiers' uniforms change into different colored casual clothes, and the background changes to a dark dance floor with colored lights. The figures break their grid formation and begin to move around, dancing. They remain closely packed together, sliding past one another within the crowded space.",
+          "duration_seconds": 9,
+          "style": "animated"
+        }
+      ]
+    },
+    {
+      "section_id": 5,
+      "section_type": "content",
+      "title": "The Gas State",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "If we keep adding energy to a liquid, it becomes a gas. The air we breathe is a mix of gases. Unlike solids and liquids, gases have neither a definite shape nor a definite volume. A gas will expand to fill any container it's in, no matter how large. If you open a bottle of perfume in a room, you'll soon smell it everywhere. This is because the particles in a gas have very high kinetic energy. They have so much energy that they completely break free from any attraction to each other. Imagine that crowded dance floor is now a room full of super-bouncy balls, flying around at high speed. The gas particles move rapidly and randomly in straight lines until they collide with each other or the walls of the container. Because the particles are so far apart, gases are mostly empty space. This is why you can easily compress a gas, like when you pump air into a bicycle tire.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "If we keep adding energy to a liquid, it becomes a gas. The air we breathe is a mix of gases. Unlike solids and liquids, gases have neither a definite shape nor a definite volume.",
+            "duration_seconds": 11
+          },
+          {
+            "segment_id": 2,
+            "text": "A gas will expand to fill any container it's in, no matter how large. If you open a bottle of perfume in a room, you'll soon smell it everywhere.",
+            "duration_seconds": 9
+          },
+          {
+            "segment_id": 3,
+            "text": "This is because the particles in a gas have very high kinetic energy. They have so much energy that they completely break free from any attraction to each other.",
+            "duration_seconds": 10
+          },
+          {
+            "segment_id": 4,
+            "text": "Imagine that crowded dance floor is now a room full of super-bouncy balls, flying around at high speed. The gas particles move rapidly and randomly in straight lines until they collide with each other or the walls of the container.",
+            "duration_seconds": 14
+          },
+          {
+            "segment_id": 5,
+            "text": "Because the particles are so far apart, gases are mostly empty space. This is why you can easily compress a gas, like when you pump air into a bicycle tire.",
+            "duration_seconds": 10
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "5A",
+          "segment_id": 2,
+          "visual_beat_type": "video_scene",
+          "description": "Animation of a perfume bottle being opened. Scent particles (dots) emerge and quickly spread out to fill the entire outline of a room."
+        },
+        {
+          "beat_id": "5B",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "Zoom into a microscopic view of the air. Particles are shown very far apart, moving at high speeds. A label 'High Kinetic Energy' appears."
+        },
+        {
+          "beat_id": "5C",
+          "segment_id": 4,
+          "visual_beat_type": "video_scene",
+          "description": "The particles are shown moving in straight lines, bouncing off each other and the walls of a container. Their paths are long and random."
+        },
+        {
+          "beat_id": "5D",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "A piston compresses a container of gas. The particles are forced closer together, demonstrating compressibility. The scene then transitions to an animation of a bike pump pushing air into a tire."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "5A",
+          "prompt": "A white outline of a rectangular room appears on a light gray background. On the left side of the room outline, a stylized purple perfume bottle with a gold cap is shown. The gold cap lifts off the bottle. A dense cloud of small, purple dots emerges from the top of the open bottle. The dots immediately begin to travel outwards in straight lines, spreading across the screen. They bounce off the white room outline. Over the duration, the dots spread out until they are sparsely and evenly distributed throughout the entire area of the room outline, continuing to move randomly.",
+          "duration_seconds": 9,
+          "style": "animated"
+        },
+        {
+          "beat_id": "5B",
+          "prompt": "The screen shows a dark blue background filled with small, light-blue spheres. The spheres are very far apart from one another. They all move at a high speed in various random directions, traveling in straight lines. After three seconds, the white text label 'High Kinetic Energy' appears in the upper right corner. A white arrow extends from the label and points to one of the moving spheres. The spheres continue to move rapidly and randomly for the remainder of the scene.",
+          "duration_seconds": 10,
+          "style": "animated"
+        },
+        {
+          "beat_id": "5C",
+          "prompt": "A transparent, rectangular container is centered on screen against a light gray background. Inside the container, approximately twenty small, red spheres are widely spaced. The spheres move at high speeds in straight lines. When a sphere hits an inner wall of the container, it bounces off and changes direction. When two spheres collide, they both bounce off each other and change direction. The spheres continue to move rapidly and randomly, colliding with the walls and each other throughout the scene.",
+          "duration_seconds": 14,
+          "style": "animated"
+        },
+        {
+          "beat_id": "5D",
+          "prompt": "On the left, a transparent vertical cylinder contains widely spaced green spheres moving rapidly. A gray piston at the top of the cylinder moves downwards, decreasing the volume. The green spheres are forced closer together and collide more frequently. At the 5-second mark, the scene cross-fades. A bicycle pump appears on the left and a cross-section of a bicycle tire appears on the right. The pump handle is pushed down. Blue dots representing air move from the pump, through a hose, and into the tire, increasing the number of dots inside the tire.",
+          "duration_seconds": 10,
+          "style": "animated"
+        }
+      ]
+    },
+    {
+      "section_id": 6,
+      "section_type": "content",
+      "title": "Phase Transitions",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "The change from one state to another is called a phase transition, and it's all about energy. When you add energy, you get melting, which is solid to liquid, and vaporization, which is liquid to gas. Vaporization can happen through boiling, which occurs throughout the liquid at a specific temperature, or evaporation, which happens only at the surface. When you remove energy, the reverse happens. Condensation is the change from gas to liquid, like when water droplets form on a cold glass. Freezing is the change from liquid to solid. But there are also two special transitions. Sublimation is when a solid turns directly into a gas, skipping the liquid phase entirely. You can see this with dry ice, which is solid carbon dioxide. The opposite is deposition, where a gas turns directly into a solid. This is how frost forms on a cold windowpane on a winter morning. All these changes are physical changes, not chemical ones. The water molecule, H\u2082O, is still H\u2082O whether it's ice, water, or steam.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "The change from one state to another is called a phase transition, and it's all about energy. When you add energy, you get melting, which is solid to liquid, and vaporization, which is liquid to gas.",
+            "duration_seconds": 12
+          },
+          {
+            "segment_id": 2,
+            "text": "Vaporization can happen through boiling, which occurs throughout the liquid at a specific temperature, or evaporation, which happens only at the surface.",
+            "duration_seconds": 9
+          },
+          {
+            "segment_id": 3,
+            "text": "When you remove energy, the reverse happens. Condensation is the change from gas to liquid, like when water droplets form on a cold glass. Freezing is the change from liquid to solid.",
+            "duration_seconds": 12
+          },
+          {
+            "segment_id": 4,
+            "text": "But there are also two special transitions. Sublimation is when a solid turns directly into a gas, skipping the liquid phase entirely. You can see this with dry ice, which is solid carbon dioxide.",
+            "duration_seconds": 13
+          },
+          {
+            "segment_id": 5,
+            "text": "The opposite is deposition, where a gas turns directly into a solid. This is how frost forms on a cold windowpane on a winter morning.",
+            "duration_seconds": 9
+          },
+          {
+            "segment_id": 6,
+            "text": "All these changes are physical changes, not chemical ones. The water molecule, H\u2082O, is still H\u2082O whether it's ice, water, or steam.",
+            "duration_seconds": 9
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "6A",
+          "segment_id": 1,
+          "visual_beat_type": "video_scene",
+          "description": "A diagram appears. 'Solid', 'Liquid', and 'Gas' are in a triangle. An arrow labeled 'Melting' with a '+' energy symbol points from Solid to Liquid. Another arrow 'Vaporization' points from Liquid to Gas."
+        },
+        {
+          "beat_id": "6B",
+          "segment_id": 2,
+          "visual_beat_type": "video_scene",
+          "description": "Split screen. Left: A pot of water boiling with bubbles forming everywhere. Right: A puddle of water slowly shrinking under the sun, with vapor rising only from the surface."
+        },
+        {
+          "beat_id": "6C",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "The diagram returns. An arrow labeled 'Condensation' with a '-' energy symbol points from Gas to Liquid. Another arrow 'Freezing' points from Liquid to Solid."
+        },
+        {
+          "beat_id": "6D",
+          "segment_id": 4,
+          "visual_beat_type": "video_scene",
+          "description": "The diagram returns. A long arrow labeled 'Sublimation' points directly from Solid to Gas. A video clip shows smoky vapor rising from a block of dry ice."
+        },
+        {
+          "beat_id": "6E",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "The diagram returns. A long arrow labeled 'Deposition' points directly from Gas to Solid. A time-lapse video shows intricate frost patterns forming on a window."
+        },
+        {
+          "beat_id": "6F",
+          "segment_id": 6,
+          "visual_beat_type": "video_scene",
+          "description": "Three images side-by-side: an ice crystal, a water droplet, and a puff of steam. A single H\u2082O molecule diagram is shown below all three, highlighting that the molecule itself doesn't change."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 6,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "6A",
+          "prompt": "On a light blue background, a white box with the black text 'SOLID' appears at the bottom left. A second white box with the text 'LIQUID' appears at the top center. A third white box with the text 'GAS' appears at the bottom right. An arrow animates, drawing from the 'SOLID' box to the 'LIQUID' box. The text 'Melting' and a yellow '+' symbol appear above the arrow. A second arrow animates, drawing from the 'LIQUID' box to the 'GAS' box. The text 'Vaporization' and a yellow '+' symbol appear above this second arrow. All elements remain on screen.",
+          "duration_seconds": 12,
+          "style": "animated"
+        },
+        {
+          "beat_id": "6B",
+          "prompt": "The screen splits with a vertical line. On the left, a video shows a silver pot of water. Bubbles form throughout the liquid and rise to the surface, creating turbulence. Steam rises from the top. The text 'Boiling' is in the top left corner. On the right, a video shows a puddle of water on dark asphalt. Wispy vapor rises only from the surface of the puddle. The edges of the puddle slowly shrink. The text 'Evaporation' is in the top right corner.",
+          "duration_seconds": 9,
+          "style": "video"
+        },
+        {
+          "beat_id": "6C",
+          "prompt": "The diagram from the first scene appears, showing 'SOLID', 'LIQUID', 'GAS' boxes and the 'Melting' and 'Vaporization' arrows. A new arrow animates, drawing from the 'GAS' box to the 'LIQUID' box. The text 'Condensation' and a blue '-' symbol appear below this arrow. Another new arrow animates, drawing from the 'LIQUID' box to the 'SOLID' box. The text 'Freezing' and a blue '-' symbol appear below this arrow. All elements remain on screen.",
+          "duration_seconds": 12,
+          "style": "animated"
+        },
+        {
+          "beat_id": "6D",
+          "prompt": "The diagram from the previous scene is on screen. A long, curved arrow animates, drawing directly from the 'SOLID' box to the 'GAS' box. The text 'Sublimation' and a yellow '+' symbol appear next to this arrow. The diagram fades out. A video clip appears showing a white block of dry ice on a dark surface. Thick, white vapor flows off the block and downward.",
+          "duration_seconds": 13,
+          "style": "animated_to_video"
+        },
+        {
+          "beat_id": "6E",
+          "prompt": "The full diagram from the previous scene appears, including the 'Sublimation' arrow. A new, long, curved arrow animates, drawing directly from the 'GAS' box to the 'SOLID' box. The text 'Deposition' and a blue '-' symbol appear next to this arrow. The diagram fades out. A time-lapse video shows a close-up of a dark window pane as white, crystalline frost patterns form and spread across the glass.",
+          "duration_seconds": 9,
+          "style": "animated_to_video"
+        },
+        {
+          "beat_id": "6F",
+          "prompt": "On a light blue background, three images appear in a row. Left: a hexagonal ice crystal with the label 'Ice (Solid)' below it. Center: a spherical water droplet with the label 'Water (Liquid)' below it. Right: a puff of white steam with the label 'Steam (Gas)' below it. Below all three, a diagram of an H\u2082O molecule appears: one red sphere bonded to two white spheres. The text 'H\u2082O' is below the molecule. Lines connect the molecule diagram to each of the three images above.",
+          "duration_seconds": 9,
+          "style": "animated"
+        }
+      ]
+    },
+    {
+      "section_id": 7,
+      "section_type": "content",
+      "title": "Plasma: The Fourth State",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "We've covered solids, liquids, and gases. But what happens if you keep adding energy to a gas? You get plasma! Plasma is often called the fourth state of matter, and it's actually the most abundant state in the entire universe. Our sun and all the stars are giant balls of glowing plasma. On Earth, we see plasma in lightning bolts and in the beautiful auroras. So what is it? When a gas is heated to extremely high temperatures, the particles move so fast and collide so violently that electrons are stripped away from their atoms. This creates a superheated soup of positively charged ions and negatively charged electrons. Unlike a normal gas, which is electrically neutral, plasma is electrically charged. This means it can conduct electricity and is affected by magnetic fields. While it behaves somewhat like a gas in that it has no definite shape or volume, its electrical properties make it unique and incredibly powerful.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "We've covered solids, liquids, and gases. But what happens if you keep adding energy to a gas? You get plasma!",
+            "duration_seconds": 8
+          },
+          {
+            "segment_id": 2,
+            "text": "Plasma is often called the fourth state of matter, and it's actually the most abundant state in the entire universe. Our sun and all the stars are giant balls of glowing plasma.",
+            "duration_seconds": 11
+          },
+          {
+            "segment_id": 3,
+            "text": "On Earth, we see plasma in lightning bolts and in the beautiful auroras. So what is it?",
+            "duration_seconds": 7
+          },
+          {
+            "segment_id": 4,
+            "text": "When a gas is heated to extremely high temperatures, the particles move so fast and collide so violently that electrons are stripped away from their atoms.",
+            "duration_seconds": 11
+          },
+          {
+            "segment_id": 5,
+            "text": "This creates a superheated soup of positively charged ions and negatively charged electrons. Unlike a normal gas, which is electrically neutral, plasma is electrically charged.",
+            "duration_seconds": 11
+          },
+          {
+            "segment_id": 6,
+            "text": "This means it can conduct electricity and is affected by magnetic fields. While it behaves somewhat like a gas, its electrical properties make it unique and incredibly powerful.",
+            "duration_seconds": 11
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "7A",
+          "segment_id": 2,
+          "visual_beat_type": "video_scene",
+          "description": "A shot of the Earth, which then zooms out to show the solar system, highlighting the Sun. The Sun is labeled 'Plasma'."
+        },
+        {
+          "beat_id": "7B",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "Split screen showing a dramatic lightning strike during a storm and the colorful, waving lights of the aurora borealis."
+        },
+        {
+          "beat_id": "7C",
+          "segment_id": 4,
+          "visual_beat_type": "video_scene",
+          "description": "Animation: Start with gas particles. A 'High Energy' input is shown. The particles collide violently. During a collision, an electron (small negative sphere) breaks away from its atom (larger positive sphere)."
+        },
+        {
+          "beat_id": "7D",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "The screen fills with a mix of free-floating positive ions and negative electrons, all moving rapidly. Labels appear for 'Ion (+)' and 'Electron (-)'."
+        },
+        {
+          "beat_id": "7E",
+          "segment_id": 6,
+          "visual_beat_type": "video_scene",
+          "description": "An electric current is shown flowing through the plasma. Then, a giant magnet is brought near, and the plasma's path bends, demonstrating its interaction with magnetic fields."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 6,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "7A",
+          "prompt": "Scene starts with a view of planet Earth, centered on a black, star-filled background. The camera slowly pulls back over 4 seconds, revealing the Moon's orbit, then Mars, then other planets, until the full solar system is visible. The Sun is a large, glowing yellow-orange sphere on the left. A white line animates out from the Sun, and the text label 'Plasma' appears in white font at the end of the line. The view holds for the remainder of the duration.",
+          "duration_seconds": 11,
+          "style": "animated"
+        },
+        {
+          "beat_id": "7B",
+          "prompt": "The screen is split vertically by a thin black line. On the left, a dark night scene with storm clouds. A bright, jagged, white-purple lightning bolt flashes from the clouds to the ground. On the right, a dark sky over a snowy mountain range. Waving curtains of green and pink light, the aurora borealis, move slowly across the sky. Both scenes play simultaneously.",
+          "duration_seconds": 7,
+          "style": "animated"
+        },
+        {
+          "beat_id": "7C",
+          "prompt": "On a dark background, several blue spheres, representing atoms, move slowly and randomly. A large, glowing red arrow labeled 'High Energy' in white text slides in from the left. The blue spheres immediately begin to move much faster and collide with each other. In the center of the screen, two blue spheres collide. Upon impact, a small gray sphere with a minus sign (-) is ejected from one of the blue spheres. The blue sphere it left now has a plus sign (+) on it. The particles drift apart.",
+          "duration_seconds": 11,
+          "style": "animated"
+        },
+        {
+          "beat_id": "7D",
+          "prompt": "The screen is filled with a mix of rapidly moving particles on a dark background. The particles are large blue spheres with a white plus sign (+) and small gray spheres with a white minus sign (-). A white line points to a blue sphere, and the text 'Ion (+)' appears. Simultaneously, another white line points to a gray sphere, and the text 'Electron (-)' appears. The labels remain as the particles continue to move randomly.",
+          "duration_seconds": 11,
+          "style": "animated"
+        },
+        {
+          "beat_id": "7E",
+          "prompt": "A stream of plasma particles, composed of blue (+) ions and gray (-) electrons, flows from the left side of the screen to the right in a straight line. After 3 seconds, a large, red, U-shaped magnet, with poles labeled 'N' and 'S' in white, slides down from the top of the screen. As the magnet gets close to the stream, the path of the entire stream of particles bends downwards. The plasma continues to flow along this new curved path.",
+          "duration_seconds": 11,
+          "style": "animated"
+        }
+      ]
+    },
+    {
+      "section_id": 8,
+      "section_type": "example",
+      "title": "Example: Water's Journey",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side_small",
+        "position": "right",
+        "width_percent": 30
+      },
+      "narration": {
+        "full_text": "Let's watch this in action with a familiar substance: water. We'll track its temperature as we add heat. We start with solid ice at minus 20 degrees Celsius. Notice the ordered, vibrating particles. As we add heat, the temperature of the ice rises until it reaches zero degrees. At this point, something interesting happens. Even though we are still adding heat, the temperature stops rising. This is the melting point. The added energy is now being used to break the bonds of the solid structure, turning the ice into liquid water. Once all the ice has melted, the temperature of the liquid water begins to rise again. It climbs and climbs until it reaches one hundred degrees Celsius, the boiling point. Again, the temperature plateaus. The energy is now being used for vaporization, turning the liquid water into gaseous steam. The particles break free and fly apart. Only after all the water has turned to steam would the temperature start to rise again.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's watch this in action with a familiar substance: water. We'll track its temperature as we add heat. We start with solid ice at minus 20 degrees Celsius. Notice the ordered, vibrating particles.",
+            "duration_seconds": 12
+          },
+          {
+            "segment_id": 2,
+            "text": "As we add heat, the temperature of the ice rises until it reaches zero degrees.",
+            "duration_seconds": 6
+          },
+          {
+            "segment_id": 3,
+            "text": "At this point, something interesting happens. Even though we are still adding heat, the temperature stops rising. This is the melting point.",
+            "duration_seconds": 9
+          },
+          {
+            "segment_id": 4,
+            "text": "The added energy is now being used to break the bonds of the solid structure, turning the ice into liquid water.",
+            "duration_seconds": 8
+          },
+          {
+            "segment_id": 5,
+            "text": "Once all the ice has melted, the temperature of the liquid water begins to rise again. It climbs and climbs until it reaches one hundred degrees Celsius, the boiling point.",
+            "duration_seconds": 12
+          },
+          {
+            "segment_id": 6,
+            "text": "Again, the temperature plateaus. The energy is now being used for vaporization, turning the liquid water into gaseous steam. The particles break free and fly apart.",
+            "duration_seconds": 12
+          },
+          {
+            "segment_id": 7,
+            "text": "Only after all the water has turned to steam would the temperature start to rise again.",
+            "duration_seconds": 6
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "8A",
+          "segment_id": 1,
+          "visual_beat_type": "graph",
+          "description": "Show a graph with Temperature (\u00b0C) on the y-axis and 'Heat Added' on the x-axis. A beaker with particles in a solid lattice appears. A point appears on the graph at (-20, 0).",
+          "manim_scene_spec": {
+            "scene_name": "HeatingCurveStart",
+            "commands": [
+              "CreateAxes(x_label='Heat Added', y_label='Temperature (\u00b0C)', y_range=[-30, 120, 20])",
+              "CreateBeaker(contents='solid', particle_state='lattice')",
+              "PlotPoint(coords=(-20, 0), label='-20\u00b0C')"
+            ]
+          }
+        },
+        {
+          "beat_id": "8B",
+          "segment_id": 2,
+          "visual_beat_type": "graph",
+          "description": "A heat source icon appears under the beaker. A line is drawn on the graph from (-20, 0) up to (0, x1). The particles in the beaker vibrate more intensely.",
+          "manim_scene_spec": {
+            "scene_name": "HeatingIce",
+            "commands": [
+              "ShowHeatSource()",
+              "AnimateParticles(state='solid', intensity=0.5)",
+              "DrawLineOnGraph(start=(-20, 0), end=(0, 'x1'))",
+              "UpdatePointLabel(label='0\u00b0C')"
+            ]
+          }
+        },
+        {
+          "beat_id": "8C",
+          "segment_id": 3,
+          "visual_beat_type": "graph",
+          "description": "A horizontal line is drawn on the graph from (0, x1) to (0, x2). The label 'Melting Point' appears next to this plateau.",
+          "manim_scene_spec": {
+            "scene_name": "MeltingPlateau",
+            "commands": [
+              "DrawLineOnGraph(start=(0, 'x1'), end=(0, 'x2'), style='horizontal')",
+              "AddTextLabel(text='Melting Point', position='graph_plateau_1')"
+            ]
+          }
+        },
+        {
+          "beat_id": "8D",
+          "segment_id": 4,
+          "visual_beat_type": "animation",
+          "description": "In the beaker, the solid lattice structure starts to break down. Some particles become mobile, sliding past others, creating a solid/liquid mix.",
+          "manim_scene_spec": {
+            "scene_name": "MeltingProcess",
+            "commands": [
+              "AnimateBeakerContents(from='solid', to='liquid', progress=0.5)"
+            ]
+          }
+        },
+        {
+          "beat_id": "8E",
+          "segment_id": 5,
+          "visual_beat_type": "graph",
+          "description": "The beaker now contains only liquid particles. A new line is drawn on the graph from (0, x2) up to (100, x3).",
+          "manim_scene_spec": {
+            "scene_name": "HeatingWater",
+            "commands": [
+              "AnimateBeakerContents(to='liquid', progress=1.0)",
+              "AnimateParticles(state='liquid', intensity=0.5)",
+              "DrawLineOnGraph(start=(0, 'x2'), end=(100, 'x3'))",
+              "UpdatePointLabel(label='100\u00b0C')"
+            ]
+          }
+        },
+        {
+          "beat_id": "8F",
+          "segment_id": 6,
+          "visual_beat_type": "graph",
+          "description": "A second horizontal line is drawn at 100\u00b0C. The label 'Boiling Point' appears. In the beaker, particles start escaping as gas.",
+          "manim_scene_spec": {
+            "scene_name": "BoilingPlateau",
+            "commands": [
+              "DrawLineOnGraph(start=(100, 'x3'), end=(100, 'x4'), style='horizontal')",
+              "AddTextLabel(text='Boiling Point', position='graph_plateau_2')",
+              "AnimateBeakerContents(from='liquid', to='gas', progress=0.5)"
+            ]
+          }
+        },
+        {
+          "beat_id": "8G",
+          "segment_id": 7,
+          "visual_beat_type": "graph",
+          "description": "The beaker now contains only gas particles. A final line is drawn on the graph sloping upwards from (100, x4).",
+          "manim_scene_spec": {
+            "scene_name": "HeatingSteam",
+            "commands": [
+              "AnimateBeakerContents(to='gas', progress=1.0)",
+              "DrawLineOnGraph(start=(100, 'x4'), end=(120, 'x5'))"
+            ]
+          }
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 6,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 7,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "axes",
+            "type": "graph",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "x_range": [
+                -30,
+                150,
+                30
+              ],
+              "y_range": [
+                -30,
+                120,
+                20
+              ],
+              "x_label": "Heat Added",
+              "y_label": "Temperature (\u00b0C)",
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "beaker",
+            "type": "shape",
+            "position": [
+              3,
+              -2
+            ],
+            "properties": {
+              "shape_type": "beaker",
+              "scale": 0.8,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "particles",
+            "type": "shape",
+            "position": [
+              3,
+              -2
+            ],
+            "properties": {
+              "shape_type": "particle_system",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "heat_source",
+            "type": "shape",
+            "position": [
+              3,
+              -3
+            ],
+            "properties": {
+              "shape_type": "flame",
+              "scale": 0.5,
+              "color": "RED"
+            }
+          },
+          {
+            "id": "melting_label",
+            "type": "label",
+            "position": [
+              -2,
+              0
+            ],
+            "properties": {
+              "text": "Melting Point (0\u00b0C)",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "boiling_label",
+            "type": "label",
+            "position": [
+              -2,
+              3
+            ],
+            "properties": {
+              "text": "Boiling Point (100\u00b0C)",
+              "scale": 0.7
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "axes",
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "beaker",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "particles",
+            "duration": 1.5
+          },
+          {
+            "action": "draw",
+            "target": "graph_line_1",
+            "duration": 4,
+            "properties": {
+              "start": [
+                -20,
+                -20
+              ],
+              "end": [
+                0,
+                0
+              ],
+              "color": "BLUE"
+            }
+          },
+          {
+            "action": "appear",
+            "target": "heat_source",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "melting_label",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "graph_line_2",
+            "duration": 6,
+            "properties": {
+              "start": [
+                0,
+                0
+              ],
+              "end": [
+                30,
+                0
+              ],
+              "color": "BLUE"
+            }
+          },
+          {
+            "action": "transform",
+            "target": "particles",
+            "duration": 8,
+            "properties": {
+              "state": "melting"
+            }
+          },
+          {
+            "action": "draw",
+            "target": "graph_line_3",
+            "duration": 6,
+            "properties": {
+              "start": [
+                30,
+                0
+              ],
+              "end": [
+                60,
+                100
+              ],
+              "color": "BLUE"
+            }
+          },
+          {
+            "action": "appear",
+            "target": "boiling_label",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "graph_line_4",
+            "duration": 6,
+            "properties": {
+              "start": [
+                60,
+                100
+              ],
+              "end": [
+                90,
+                100
+              ],
+              "color": "BLUE"
+            }
+          },
+          {
+            "action": "transform",
+            "target": "particles",
+            "duration": 8,
+            "properties": {
+              "state": "boiling"
+            }
+          },
+          {
+            "action": "draw",
+            "target": "graph_line_5",
+            "duration": 4,
+            "properties": {
+              "start": [
+                90,
+                100
+              ],
+              "end": [
+                120,
+                120
+              ],
+              "color": "BLUE"
+            }
+          },
+          {
+            "action": "highlight",
+            "target": [
+              "graph_line_1",
+              "graph_line_2",
+              "graph_line_3",
+              "graph_line_4",
+              "graph_line_5"
+            ],
+            "duration": 2,
+            "color": "YELLOW"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 9,
+      "section_type": "memory",
+      "title": "Quick Memory Flashcards",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "hidden"
+      },
+      "narration": {
+        "full_text": "Let's lock in these key terms with five quick flashcards. First: Melting is the transition from solid to liquid. Second: Vaporization is the transition from liquid to gas. Third: Condensation is the transition from gas to liquid. Fourth: Sublimation is the direct transition from solid to gas. Fifth: Plasma is an ionized gas, the fourth state of matter.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's lock in these key terms with five quick flashcards.",
+            "duration_seconds": 4
+          },
+          {
+            "segment_id": 2,
+            "text": "First: Melting is the transition from solid to liquid.",
+            "duration_seconds": 4
+          },
+          {
+            "segment_id": 3,
+            "text": "Second: Vaporization is the transition from liquid to gas.",
+            "duration_seconds": 4
+          },
+          {
+            "segment_id": 4,
+            "text": "Third: Condensation is the transition from gas to liquid.",
+            "duration_seconds": 4
+          },
+          {
+            "segment_id": 5,
+            "text": "Fourth: Sublimation is the direct transition from solid to gas.",
+            "duration_seconds": 5
+          },
+          {
+            "segment_id": 6,
+            "text": "Fifth: Plasma is an ionized gas, the fourth state of matter.",
+            "duration_seconds": 5
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "9A",
+          "segment_id": 2,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'Melting'. Back: 'Solid \u2192 Liquid'"
+        },
+        {
+          "beat_id": "9B",
+          "segment_id": 3,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'Vaporization'. Back: 'Liquid \u2192 Gas'"
+        },
+        {
+          "beat_id": "9C",
+          "segment_id": 4,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'Condensation'. Back: 'Gas \u2192 Liquid'"
+        },
+        {
+          "beat_id": "9D",
+          "segment_id": 5,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'Sublimation'. Back: 'Solid \u2192 Gas (Directly)'"
+        },
+        {
+          "beat_id": "9E",
+          "segment_id": 6,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'Plasma'. Back: 'Ionized Gas (Fourth State)'"
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 6,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 780,
+        "elements": [
+          {
+            "id": "intro_text",
+            "type": "text",
+            "content": "Let's lock in these key terms with five quick flashcards.",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 120
+            }
+          },
+          {
+            "id": "flashcard1_front",
+            "type": "text",
+            "content": "MELTING",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 120,
+              "exit_frame": 180
+            }
+          },
+          {
+            "id": "flashcard1_back",
+            "type": "text",
+            "content": "Solid \u2192 Liquid",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 180,
+              "exit_frame": 240
+            }
+          },
+          {
+            "id": "flashcard2_front",
+            "type": "text",
+            "content": "VAPORIZATION",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 240,
+              "exit_frame": 300
+            }
+          },
+          {
+            "id": "flashcard2_back",
+            "type": "text",
+            "content": "Liquid \u2192 Gas",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 300,
+              "exit_frame": 360
+            }
+          },
+          {
+            "id": "flashcard3_front",
+            "type": "text",
+            "content": "CONDENSATION",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 360,
+              "exit_frame": 420
+            }
+          },
+          {
+            "id": "flashcard3_back",
+            "type": "text",
+            "content": "Gas \u2192 Liquid",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 420,
+              "exit_frame": 480
+            }
+          },
+          {
+            "id": "flashcard4_front",
+            "type": "text",
+            "content": "SUBLIMATION",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 480,
+              "exit_frame": 555
+            }
+          },
+          {
+            "id": "flashcard4_back",
+            "type": "text",
+            "content": "Solid \u2192 Gas (Directly)",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 555,
+              "exit_frame": 630
+            }
+          },
+          {
+            "id": "flashcard5_front",
+            "type": "text",
+            "content": "PLASMA",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 630,
+              "exit_frame": 705
+            }
+          },
+          {
+            "id": "flashcard5_back",
+            "type": "text",
+            "content": "Ionized Gas (Fourth State)",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 705,
+              "exit_frame": 780
+            }
+          }
+        ],
+        "background": {
+          "color": "#1a1a1a"
+        }
+      }
+    },
+    {
+      "section_id": 10,
+      "section_type": "recap",
+      "title": "Chapter Recap",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "hidden"
+      },
+      "narration": {
+        "full_text": "Scene 1: Our journey began in the rigid, ordered world of solids. Picture a vast, frozen glacier. At the microscopic level, its water molecules are locked in a crystal lattice, vibrating but unable to break free. This fixed arrangement gives solids their definite shape and volume, a foundation of stability. This is matter at its lowest energy state, a world of structure and form, where every particle has its designated place, holding the line against chaos. Scene 2: As energy flows in, the solid world melts into the fluid dance of liquids. Imagine that glacier melting into a powerful river. The particles are now free to slide past one another, allowing the river to flow and take the shape of its channel. They are still closely packed, maintaining a constant volume, but they possess enough kinetic energy to break from their fixed positions. This is matter in motion, adaptable and dynamic, bridging the gap between rigidity and freedom. Scene 3: With even more energy, the liquid transforms into the boundless realm of gases. Picture the river water evaporating into the vast atmosphere. The particles, now with immense kinetic energy, fly far apart, breaking all bonds and expanding to fill any space. They are in constant, random motion, colliding and rebounding, defining a state with no fixed shape or volume. This is matter unbound, a state of ultimate freedom and expansion, invisible yet all-encompassing. Scene 4: We saw how these states interchange through phase transitions, a cycle driven by energy. Sunlight causes melting and evaporation, adding energy to the system. As water vapor rises and cools in the atmosphere, it condenses into clouds, releasing energy. This can lead to rain or, in cold enough conditions, deposition into snow, completing the cycle. This constant transformation of water on Earth is a perfect illustration of how matter responds to changes in its energetic environment. Scene 5: Finally, we looked beyond, to the stars, and discovered plasma. Imagine the sun, a colossal sphere of superheated gas where atoms are torn apart into ions and electrons. This electrified state, glowing with unimaginable energy, is the engine of the cosmos. From the heart of stars to the flash of lightning, plasma demonstrates what happens when matter is pushed to its absolute energetic limit. It reminds us that the states of matter are a spectrum, from the quiet vibration of a solid to the stellar fire of plasma.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Our journey began in the rigid, ordered world of solids. Picture a vast, frozen glacier. At the microscopic level, its water molecules are locked in a crystal lattice, vibrating but unable to break free. This fixed arrangement gives solids their definite shape and volume, a foundation of stability. This is matter at its lowest energy state, a world of structure and form, where every particle has its designated place, holding the line against chaos.",
+            "duration_seconds": 20,
+            "word_count": 88
+          },
+          {
+            "segment_id": 2,
+            "text": "As energy flows in, the solid world melts into the fluid dance of liquids. Imagine that glacier melting into a powerful river. The particles are now free to slide past one another, allowing the river to flow and take the shape of its channel. They are still closely packed, maintaining a constant volume, but they possess enough kinetic energy to break from their fixed positions. This is matter in motion, adaptable and dynamic, bridging the gap between rigidity and freedom.",
+            "duration_seconds": 22,
+            "word_count": 96
+          },
+          {
+            "segment_id": 3,
+            "text": "With even more energy, the liquid transforms into the boundless realm of gases. Picture the river water evaporating into the vast atmosphere. The particles, now with immense kinetic energy, fly far apart, breaking all bonds and expanding to fill any space. They are in constant, random motion, colliding and rebounding, defining a state with no fixed shape or volume. This is matter unbound, a state of ultimate freedom and expansion, invisible yet all-encompassing.",
+            "duration_seconds": 24,
+            "word_count": 97
+          },
+          {
+            "segment_id": 4,
+            "text": "We saw how these states interchange through phase transitions, a cycle driven by energy. Sunlight causes melting and evaporation, adding energy to the system. As water vapor rises and cools in the atmosphere, it condenses into clouds, releasing energy. This can lead to rain or, in cold enough conditions, deposition into snow, completing the cycle. This constant transformation of water on Earth is a perfect illustration of how matter responds to changes in its energetic environment.",
+            "duration_seconds": 24,
+            "word_count": 98
+          },
+          {
+            "segment_id": 5,
+            "text": "Finally, we looked beyond, to the stars, and discovered plasma. Imagine the sun, a colossal sphere of superheated gas where atoms are torn apart into ions and electrons. This electrified state, glowing with unimaginable energy, is the engine of the cosmos. From the heart of stars to the flash of lightning, plasma demonstrates what happens when matter is pushed to its absolute energetic limit. It reminds us that the states of matter are a spectrum, from the quiet vibration of a solid to the stellar fire of plasma.",
+            "duration_seconds": 26,
+            "word_count": 100
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "10A",
+          "segment_id": 1,
+          "visual_beat_type": "video_scene",
+          "description": "Cinematic shot of a massive, detailed glacier. The camera pushes in, transitioning to a microscopic view of vibrating water molecules in a perfect crystal lattice."
+        },
+        {
+          "beat_id": "10B",
+          "segment_id": 2,
+          "visual_beat_type": "video_scene",
+          "description": "Time-lapse of the glacier melting, forming a rushing river. The microscopic view shows particles sliding and flowing past one another within the liquid."
+        },
+        {
+          "beat_id": "10C",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "Sunlight hits the river, and steam rises. The camera follows the steam up. The microscopic view shows particles flying far apart in random, high-speed motion."
+        },
+        {
+          "beat_id": "10D",
+          "segment_id": 4,
+          "visual_beat_type": "video_scene",
+          "description": "High in the atmosphere, the gaseous particles cool and gather to form clouds (condensation). Snowflakes form directly from vapor (deposition) and fall."
+        },
+        {
+          "beat_id": "10E",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "The camera pans from the snowy landscape up into space, focusing on the fiery, turbulent surface of the sun. A bolt of lightning flashes on Earth, connecting the cosmic and terrestrial examples of plasma."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "10A",
+          "prompt": "A wide shot shows a massive glacier with white and light-blue ice, filling the screen under a clear blue sky. For 8 seconds, the camera moves slowly forward, directly towards the glacier's textured surface. A dissolve transition occurs over 2 seconds, shifting the view from the ice surface to a microscopic view against a dark blue background. For the final 10 seconds, the screen is filled with a grid of light-blue spheres connected by static, glowing white lines in a hexagonal lattice structure. The spheres vibrate in place but do not change position.",
+          "duration_seconds": 20,
+          "style": "animated"
+        },
+        {
+          "beat_id": "10B",
+          "prompt": "A time-lapse sequence begins, showing the glacier from the previous shot over 7 seconds. Water appears on its surface, and the ice visibly shrinks as streams of water form. The scene cuts to a 4-second shot of a fast-moving river flowing from left to right, with small ice chunks in the water. A dissolve transition occurs over 2 seconds, shifting from the river to a microscopic view against a dark blue background. For the final 9 seconds, the screen is filled with closely packed, light-blue spheres. They are not in a fixed grid and are sliding past one another while flowing as a group from the left to the right of the screen.",
+          "duration_seconds": 22,
+          "style": "animated"
+        },
+        {
+          "beat_id": "10C",
+          "prompt": "The scene opens on the river under a bright yellow sun. For 6 seconds, wispy white vapor rises from the water's surface. For the next 6 seconds, the camera tilts straight up, following the vapor into the blue sky until the river is no longer visible. A dissolve transition occurs over 2 seconds, shifting from the vapor to a microscopic view against a dark blue background. For the final 10 seconds, light-blue spheres are shown far apart from one another. They move at high speed in straight, random lines, bouncing off each other and the edges of the screen.",
+          "duration_seconds": 24,
+          "style": "animated"
+        },
+        {
+          "beat_id": "10D",
+          "prompt": "The scene starts with the microscopic view of separated, fast-moving particles. Over 8 seconds, the particles slow down and begin to group together into clumps. The view zooms out over 4 seconds, revealing the particle clumps have merged to become large, white clouds in a blue sky. The camera then focuses on a part of the sky for 6 seconds, where individual, white, hexagonal snowflakes materialize and start to fall downwards. For the final 6 seconds, the camera tilts down, following the snowflakes as they land on a flat, white, snow-covered ground.",
+          "duration_seconds": 24,
+          "style": "animated"
+        },
+        {
+          "beat_id": "10E",
+          "prompt": "The scene opens on a snow-covered landscape. Over 6 seconds, the camera tilts up, moving from the ground, past a blue sky, into a black, star-filled space. The camera moves forward for 8 seconds, focusing on the Sun, a large, turbulent sphere of yellow and orange gas with flares erupting from its surface. A circular window appears on the right, showing a microscopic view of glowing red and blue spheres moving rapidly. The scene cuts to a dark, stormy sky over a landscape on Earth for 4 seconds. A bright, jagged bolt of white lightning flashes from the clouds to the ground. The shot holds for the final 4 seconds on the stormy sky as the lightning fades, with the microscopic plasma view still visible on the right.",
+          "duration_seconds": 26,
+          "style": "animated"
+        }
+      ]
+    }
+  ],
+  "pipeline_version": "1.2",
+  "job_id": "1bf88555",
+  "use_remotion": true,
+  "source_file": "Sample_subjects.md"
+}

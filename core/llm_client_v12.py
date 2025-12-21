@@ -199,6 +199,10 @@ def pass0_chunker(
     return chunks
 
 
+MAX_STRUCTURAL_RETRIES = 2
+MAX_SEMANTIC_RETRIES = 1
+
+
 def pass1_director(
     chunks: Dict,
     subject: str,
@@ -206,11 +210,21 @@ def pass1_director(
     chapter: str = "",
     tracker: Optional[AnalyticsTracker] = None
 ) -> Dict:
-    """Pass 1: Create pedagogy, structure, timing, renderer choices."""
-    log("[Direct] Starting Director...")
+    """Pass 1: Create pedagogy, structure, timing, renderer choices.
+    
+    Includes 3-tier validation with tiered retries:
+    - Tier 1 Structural: max 2 retries
+    - Tier 2 Semantic: max 1 retry
+    - Tier 3 Quality: warnings only (non-blocking)
+    """
+    from core.validators import validate as validate_3tier, format_structural_errors, format_semantic_errors
+    
+    log("[Direct] Starting Director (with 3-tier validation)...")
     
     system_prompt = load_prompt("director_system")
     user_template = load_prompt("director_user")
+    retry_system = load_prompt("director_retry_system")
+    retry_user_template = load_prompt("director_retry_user")
     
     chunks_json = json.dumps(chunks, indent=2)
     
@@ -219,32 +233,115 @@ def pass1_director(
     user_prompt = user_prompt.replace("{chapter}", chapter or "Educational Content")
     user_prompt = user_prompt.replace("{chunks_json}", chunks_json)
     
-    response_text, usage = call_llm(
-        model=MODELS["director"],
-        system_prompt=system_prompt,
-        user_prompt=user_prompt,
-        phase="director",
-        tracker=tracker,
-        max_tokens=32000,
-        temperature=0.2
-    )
+    structural_retries_used = 0
+    semantic_retries_used = 0
+    total_attempts = 0
+    retry_prompt = ""
+    presentation = None
     
-    presentation = parse_json_response(response_text, "director")
-    
-    if "sections" not in presentation:
-        if "lesson_plan" in presentation:
-            log("[Direct] Converting 'lesson_plan' to 'sections' (LLM naming variation)")
-            presentation["sections"] = presentation.pop("lesson_plan")
-        elif "plan" in presentation:
-            log("[Direct] Converting 'plan' to 'sections' (LLM naming variation)")
-            presentation["sections"] = presentation.pop("plan")
-        elif "topics" in presentation:
-            log("[Direct] Converting 'topics' to 'sections' (LLM naming variation)")
-            presentation["sections"] = presentation.pop("topics")
+    while True:
+        total_attempts += 1
+        phase_name = f"director" if total_attempts == 1 else f"director_retry_{total_attempts - 1}"
+        
+        if total_attempts == 1:
+            log("[Direct] Initial attempt...")
+            response_text, usage = call_llm(
+                model=MODELS["director"],
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                phase=phase_name,
+                tracker=tracker,
+                max_tokens=32000,
+                temperature=0.2
+            )
         else:
-            log(f"[Direct] ERROR: Director returned keys: {list(presentation.keys())}")
-            log(f"[Direct] ERROR: Response preview: {str(presentation)[:500]}")
-            raise PipelineError("Director output missing 'sections' array", "director")
+            log(f"[Direct] Retry attempt {total_attempts - 1}...")
+            response_text, usage = call_llm(
+                model=MODELS["director"],
+                system_prompt=retry_system,
+                user_prompt=retry_prompt,
+                phase=phase_name,
+                tracker=tracker,
+                max_tokens=32000,
+                temperature=0.2
+            )
+        
+        try:
+            presentation = parse_json_response(response_text, "director")
+        except Exception as e:
+            log(f"[Direct] Attempt {total_attempts} returned invalid JSON: {e}")
+            if structural_retries_used < MAX_STRUCTURAL_RETRIES:
+                structural_retries_used += 1
+                retry_prompt = retry_user_template.replace("{schema_errors}", f"JSON parse error: {e}")
+                retry_prompt = retry_prompt.replace("{failed_json}", response_text[:5000])
+                continue
+            else:
+                raise PipelineError(f"Director returned invalid JSON after {total_attempts} attempts", "director")
+        
+        if "sections" not in presentation:
+            if "lesson_plan" in presentation:
+                presentation["sections"] = presentation.pop("lesson_plan")
+            elif "plan" in presentation:
+                presentation["sections"] = presentation.pop("plan")
+            elif "topics" in presentation:
+                presentation["sections"] = presentation.pop("topics")
+            else:
+                log(f"[Direct] ERROR: Director returned keys: {list(presentation.keys())}")
+                if structural_retries_used < MAX_STRUCTURAL_RETRIES:
+                    structural_retries_used += 1
+                    retry_prompt = retry_user_template.replace("{schema_errors}", "Missing 'sections' array in output")
+                    retry_prompt = retry_prompt.replace("{failed_json}", json.dumps(presentation, indent=2)[:5000])
+                    continue
+                else:
+                    raise PipelineError("Director output missing 'sections' array", "director")
+        
+        log(f"[Direct] Running 3-tier validation...")
+        validation_result = validate_3tier(presentation)
+        
+        if validation_result.is_valid:
+            log("[Direct] All validation tiers PASSED")
+            if validation_result.quality_warnings:
+                log(f"[Direct] Quality warnings: {len(validation_result.quality_warnings)}")
+            break
+        
+        if validation_result.needs_structural_retry:
+            log(f"[Direct] Tier-1 STRUCTURAL_FAIL: {len(validation_result.structural_errors)} errors")
+            if structural_retries_used < MAX_STRUCTURAL_RETRIES:
+                structural_retries_used += 1
+                log(f"[Direct] Structural retry {structural_retries_used}/{MAX_STRUCTURAL_RETRIES}")
+                error_text = format_structural_errors(validation_result.structural_errors)
+                failed_json = json.dumps(presentation, indent=2)
+                retry_prompt = retry_user_template.replace("{schema_errors}", error_text)
+                retry_prompt = retry_prompt.replace("{failed_json}", failed_json)
+                continue
+            else:
+                log("[Direct] HARD FAIL - Structural retries exhausted")
+                raise PipelineError(
+                    f"Structural validation failed after {MAX_STRUCTURAL_RETRIES} retries",
+                    "director",
+                    {"errors": [str(e) for e in validation_result.structural_errors]}
+                )
+        
+        if validation_result.needs_semantic_retry:
+            log(f"[Direct] Tier-2 SEMANTIC_FAIL: {len(validation_result.semantic_errors)} errors")
+            if semantic_retries_used < MAX_SEMANTIC_RETRIES:
+                semantic_retries_used += 1
+                log(f"[Direct] Semantic retry {semantic_retries_used}/{MAX_SEMANTIC_RETRIES}")
+                error_text = format_semantic_errors(validation_result.semantic_errors)
+                failed_json = json.dumps(presentation, indent=2)
+                retry_prompt = retry_user_template.replace("{schema_errors}", error_text)
+                retry_prompt = retry_prompt.replace("{failed_json}", failed_json)
+                continue
+            else:
+                log("[Direct] HARD FAIL - Semantic retries exhausted")
+                raise PipelineError(
+                    f"Semantic validation failed after {MAX_SEMANTIC_RETRIES} retries",
+                    "director",
+                    {"errors": [str(e) for e in validation_result.semantic_errors]}
+                )
+        
+        log("[Direct] Unexpected validation state - passing through")
+        break
     
     section_count = len(presentation.get("sections", []))
     log(f"[Direct] Director complete: {section_count} sections created")
