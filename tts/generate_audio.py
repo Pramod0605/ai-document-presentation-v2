@@ -133,6 +133,15 @@ def generate_section_audio(section: dict, output_dir: str) -> str:
     section_type = section.get("section_type", "content")
     narration = section.get("narration", "")
     
+    # v1.3 FIX: Handle narration as dict (v1.3 format) or string (legacy)
+    if isinstance(narration, dict):
+        # v1.3 format: narration is {"full_text": "...", "segments": [...]}
+        narration = narration.get("full_text", "")
+        if not narration:
+            # Fallback: combine segment texts
+            segments = section.get("narration", {}).get("segments", [])
+            narration = " ".join(seg.get("text", "") for seg in segments if seg.get("text"))
+    
     # ISS-003 FIX: For recap sections, combine narration from all recap_scenes
     if section_type == "recap":
         recap_scenes = section.get("recap_scenes", [])
