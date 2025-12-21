@@ -899,11 +899,66 @@
       "fix": "Added detect_job_phase() and resume_job_from_phase() functions, plus API endpoints /jobs/<id>/resume and /jobs/<id>/phases",
       "created": "2025-12-21T12:44:29.814869",
       "resolved": "2025-12-21T12:44:29.814878"
+    },
+    {
+      "id": "ISS-060",
+      "title": "Avatar not displaying in player",
+      "status": "open",
+      "severity": "high",
+      "component": "player/player.js",
+      "description": "Avatar video not showing on any slides. Player looks for avatar_placeholder.mp4 in job folder (e.g., /jobs/38328ac4/) but file only exists in shared /player/assets/ folder.",
+      "root_cause": "BASE_PATH resolves to job folder, player never falls back to shared assets when avatar file is missing in job folder. presentation.avatar_url metadata is ignored.",
+      "proposed_fix": "Use shared /player/assets/avatar_placeholder.mp4 path or read presentation.avatar_url metadata. Implement proper fallback chain.",
+      "created": "2025-12-21T13:00:17.594620"
+    },
+    {
+      "id": "ISS-061",
+      "title": "Videos not displaying or showing same video repeatedly",
+      "status": "open",
+      "severity": "high",
+      "component": "player/player.js",
+      "description": "Content sections show no video or same video repeating. Job 38328ac4 has topic_3.mp4, topic_4.mp4, topic_7.mp4 but other sections get 404s.",
+      "root_cause": "Player guesses video filenames as topic_<section_id>.mp4 instead of reading actual section.video_path metadata from presentation.json. Pipeline reconciles video paths but player ignores them.",
+      "proposed_fix": "Read video_path from presentation.sections[].video_path and beat.video_path instead of filename guessing. Use metadata-first approach.",
+      "created": "2025-12-21T13:00:17.594632"
+    },
+    {
+      "id": "ISS-062",
+      "title": "Content visual swap happens too fast before video ready",
+      "status": "open",
+      "severity": "medium",
+      "component": "player/player.js",
+      "description": "Text layer hides immediately on segment change, but video is not ready yet. Creates jarring \"too fast\" visual swap.",
+      "root_cause": "applyDirectives() changes layer visibility synchronously on segment change without waiting for video canplay event. display_directives say hide text before visual, but no video-ready gating.",
+      "proposed_fix": "Wait for video canplay event before applying display_directives that hide text and show visuals. Add async video state management.",
+      "created": "2025-12-21T13:00:17.594645"
+    },
+    {
+      "id": "ISS-063",
+      "title": "Memory flashcards not displayed - missing renderer",
+      "status": "open",
+      "severity": "high",
+      "component": "player/player.js",
+      "description": "Memory section shows blank/empty instead of flashcards with question/answer flip. Schema provides visual_beats[] with flashcard data but player ignores it.",
+      "root_cause": "Player has no renderer for flashcard beat type. Memory section routes through text/image logic instead of flashcard-specific renderer. No component checks beat.visual_beat_type === \"flashcard\".",
+      "proposed_fix": "Implement dedicated flashcard renderer that iterates visual_beats[], displays question side, flips to answer side with animation. Use flashcard data structure from schema.",
+      "created": "2025-12-21T13:00:17.594648"
+    },
+    {
+      "id": "ISS-064",
+      "title": "Recap videos not loading - wrong filename pattern",
+      "status": "open",
+      "severity": "high",
+      "component": "player/player.js",
+      "description": "Recap section shows no videos despite having video_path data in presentation.json. Recap scenes should play sequentially.",
+      "root_cause": "detectVideosForSlide() only searches topic_<id> naming pattern. Recap videos use recap_<id>_scene_<n>.mp4 pattern which is ignored. section.video_path metadata exists but not read.",
+      "proposed_fix": "Use section.video_path / beat.video_path metadata for recap videos. Implement scene playlist for recap sections.",
+      "created": "2025-12-21T13:00:17.594650"
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-21T12:44:29.814883",
-    "version": "12.9",
+    "last_updated": "2025-12-21T13:00:17.594656",
+    "version": "13.0",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
     "resolved_count": 57,
