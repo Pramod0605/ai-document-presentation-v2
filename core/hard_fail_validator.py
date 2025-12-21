@@ -114,6 +114,66 @@ def check_formula_in_narration(narration: str) -> bool:
     return False
 
 
+def validate_visuals_are_shown(section: dict) -> Tuple[bool, str]:
+    """
+    ISS-065 FIX: Validate that visual_layer is shown at least once when visual_beats exist.
+    
+    If a section has visual_beats, at least ONE narration segment must have:
+    visual_layer = "show" OR visual_layer = "replace"
+    
+    Returns: (is_valid, error_message_or_none)
+    """
+    visual_beats = section.get("visual_beats", [])
+    if not visual_beats:
+        return True, None
+    
+    narration_raw = section.get("narration", {})
+    if isinstance(narration_raw, dict):
+        segments = narration_raw.get("segments", [])
+    else:
+        segments = section.get("narration_segments", [])
+    
+    if not segments:
+        return True, None
+    
+    has_visual_shown = any(
+        seg.get("display_directives", {}).get("visual_layer") in ("show", "replace")
+        for seg in segments
+    )
+    
+    if not has_visual_shown:
+        section_id = section.get("section_id") or section.get("id", 0)
+        return False, f"Section {section_id}: Has {len(visual_beats)} visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+    
+    return True, None
+
+
+def validate_renderer_subject_match(section: dict, subject: str = None) -> Tuple[bool, str]:
+    """
+    ISS-066 FIX: Validate renderer matches subject matter.
+    
+    - Biology content MUST use 'video' renderer (Manim forbidden)
+    - Recap sections MUST use 'video' renderer
+    
+    Returns: (is_valid, error_message_or_none)
+    """
+    section_id = section.get("section_id") or section.get("id", 0)
+    section_type = section.get("section_type", "")
+    renderer = section.get("renderer", "")
+    
+    inferred_subject = subject or section.get("subject", "")
+    if inferred_subject:
+        inferred_subject = inferred_subject.lower()
+    
+    if inferred_subject == "biology" and renderer == "manim":
+        return False, f"Section {section_id}: Biology content MUST use 'video' renderer, not 'manim'. Manim is forbidden for biology."
+    
+    if section_type == "recap" and renderer not in ("video", "wan_video"):
+        return False, f"Section {section_id}: Recap sections MUST use 'video' renderer, got '{renderer}'."
+    
+    return True, None
+
+
 def validate_hard_fail_conditions(section: dict) -> List[HardFailError]:
     """
     Validate all 6 hard fail conditions for a section.
@@ -283,6 +343,7 @@ def validate_presentation_hard_fails(presentation: dict) -> Tuple[bool, List[Har
     """
     all_errors = []
     sections = presentation.get("sections", [])
+    subject = presentation.get("subject", "")
     
     structure_errors = validate_v13_structure(sections)
     all_errors.extend(structure_errors)
@@ -293,6 +354,22 @@ def validate_presentation_hard_fails(presentation: dict) -> Tuple[bool, List[Har
         
         v13_errors = validate_v13_section_rules(section)
         all_errors.extend(v13_errors)
+        
+        is_valid, error_msg = validate_visuals_are_shown(section)
+        if not is_valid:
+            all_errors.append(HardFailError(
+                "visuals_never_displayed",
+                section.get("section_id") or section.get("id", 0),
+                error_msg
+            ))
+        
+        is_valid, error_msg = validate_renderer_subject_match(section, subject)
+        if not is_valid:
+            all_errors.append(HardFailError(
+                "renderer_subject_mismatch",
+                section.get("section_id") or section.get("id", 0),
+                error_msg
+            ))
     
     return len(all_errors) == 0, all_errors
 

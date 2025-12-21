@@ -963,33 +963,35 @@
       "id": "ISS-065",
       "title": "Director generates visual_layer=hide for all content segments",
       "severity": "high",
-      "status": "open",
+      "status": "resolved",
       "component": "director",
       "description": "Director LLM sets visual_layer=hide in display_directives for all narration segments, causing videos to never display even when has_content_video=true",
       "impact": "Video content is not visible to users despite being loaded correctly",
-      "root_cause": "Director prompt may not properly instruct when to set visual_layer=show/replace",
-      "fix_plan": "Option 1: Re-run Director with updated v1.3 prompts that properly generate display_directives",
-      "created": "2025-12-21T15:28:09.471511"
+      "root_cause": "Director prompt did not explicitly instruct when visual_layer must be shown",
+      "solution": "Added MANDATORY VISUAL ACTIVATION RULE to director_system_v1.3.txt requiring at least one segment with visual_layer=show/replace when visual_beats exist. Added validate_visuals_are_shown() Tier-1 validator in hard_fail_validator.py to enforce this rule.",
+      "created": "2025-12-21T15:28:09.471511",
+      "resolved": "2025-12-21T16:25:00.000000"
     },
     {
       "id": "ISS-066",
       "title": "Director assigns Manim to biology content instead of WAN",
       "severity": "high",
-      "status": "open",
+      "status": "resolved",
       "component": "director",
       "description": "Director assigns renderer=manim to biology/anatomy content (Human Eye chapter sections 3,4,5) which should use wan_video for photorealistic organic content",
       "impact": "Biology content gets wrong renderer - Manim is for math/physics, WAN is for organic/cinematic",
-      "root_cause": "Director renderer decision rules don't consider subject matter (biology vs math/physics)",
-      "fix_plan": "Update Director prompt to: use WAN for biology/anatomy/organic content, use Manim for math/equations/physics",
-      "created": "2025-12-21T15:28:09.471524"
+      "root_cause": "Director renderer decision rules didn't consider subject matter (biology vs math/physics)",
+      "solution": "Added MANDATORY RENDERER SELECTION RULES (STRICT) to director_system_v1.3.txt with subject-aware rules: Biology=video (Manim forbidden), Math/Physics formulas=Manim, Recap=video. Added validate_renderer_subject_match() Tier-1 validator in hard_fail_validator.py.",
+      "created": "2025-12-21T15:28:09.471524",
+      "resolved": "2025-12-21T16:25:00.000000"
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-21T15:28:09.471527",
-    "version": "13.2",
+    "last_updated": "2025-12-21T16:25:00.000000",
+    "version": "13.3",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
-    "resolved_count": 57,
+    "resolved_count": 59,
     "open_count": 0
   }
 }

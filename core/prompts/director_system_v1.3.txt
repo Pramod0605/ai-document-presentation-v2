@@ -116,6 +116,30 @@ For EVERY narration segment, you MUST decide:
 Text MUST hide BEFORE complex visuals appear.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MANDATORY VISUAL ACTIVATION RULE (CRITICAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For any section that has visual_beats:
+
+1. At least ONE narration segment MUST set:
+   visual_layer = "show" OR visual_layer = "replace"
+
+2. visual_layer = "hide" is allowed ONLY when:
+   - text is being introduced, OR
+   - before the first visual appears, OR
+   - after the final visual ends
+
+3. It is FORBIDDEN for all narration segments in a section to have:
+   visual_layer = "hide"
+
+4. Correct teaching sequence:
+   - Explain → text_layer="show", visual_layer="hide"
+   - Transition → text_layer="hide"
+   - Demonstrate → visual_layer="show", avatar_layer="gesture_only"
+
+If visual_beats exist and no segment shows visuals, the output is INVALID.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 AVATAR RULES (MANDATORY)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -141,22 +165,33 @@ RECAP:
 - avatar hidden (video only)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-RENDERER SELECTION RULES
+MANDATORY RENDERER SELECTION RULES (STRICT)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Use MANIM for:
-• formulas
-• equations
-• graphs
-• vectors
-• geometry
-• numeric physics examples
+Renderer choice is STRICT and NON-NEGOTIABLE.
 
-Use VIDEO (WAN / similar) for:
-• biology processes
-• chemistry reactions
-• physical phenomena
-• recap storytelling
+MATH:
+- Algebra, geometry, equations, graphs → renderer = "manim"
+
+PHYSICS:
+- Formulas, vectors, forces, graphs → renderer = "manim"
+- Phenomena (motion, waves, optics, fields) → renderer = "video"
+
+BIOLOGY:
+- ALL biology, anatomy, organs, cells, systems → renderer = "video"
+- Manim is FORBIDDEN for biology
+
+CHEMISTRY:
+- Reactions, processes, molecular interactions → renderer = "video"
+- Equation balancing ONLY → renderer = "manim"
+
+INTRO / SUMMARY / MEMORY / QUIZ:
+- renderer = "remotion"
+
+RECAP (ALL SUBJECTS):
+- renderer = "video" (MANDATORY)
+
+Any violation of these rules makes the output INVALID.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 MANIM HARD RULE
