@@ -27,9 +27,9 @@ from core.datalab_client import pdf_to_markdown
 from core.llm_client_v12 import generate_presentation_v12, PipelineError
 from core.renderer_executor import render_all_topics, enforce_renderer_policy
 from core.image_processor import extract_images_from_markdown, strip_base64_from_markdown, create_image_list_for_llm
-from core.hard_fail_validator import validate_presentation_hard_fails, format_hard_fail_report
 from core.traceability import init_traceability, log_event, log_validation, log_hard_fail, complete_trace, save_render_prompts_json
-from core.schema_validator import validate_presentation as validate_schema, format_errors_for_retry
+from core.schema_validator import validate_presentation as validate_schema
+from core.validators import validate as validate_3tier, ValidationResult
 from tts.generate_audio import generate_all_audio
 from render.render_trace import clear_render_trace
 
@@ -235,29 +235,56 @@ def process_pdf_to_videos_v12(
                 job_status["steps"].append({"step": "schema_validation", "status": "passed"})
                 print("[Pipeline v1.3] Schema validation PASSED")
             
-            print("[Pipeline v1.3] Running Python semantic validation...")
-            is_valid, hard_fails = validate_presentation_hard_fails(presentation)
-            if not is_valid:
-                for hf in hard_fails:
-                    log_hard_fail(hf.condition, hf.section_id, hf.details)
-                    log_validation("hard_fail_check", hf.section_id, False, [str(hf)], [])
-                report = format_hard_fail_report(hard_fails)
-                print(report)
+            print("[Pipeline v1.3] Running 3-tier validation...")
+            validation_result = validate_3tier(presentation)
+            
+            if validation_result.structural_errors:
+                for err in validation_result.structural_errors:
+                    log_hard_fail(err.code, err.section_id, err.details)
+                    log_validation("tier1_structural", err.section_id, False, [str(err)], [])
                 job_status["steps"].append({
-                    "step": "hard_fail_validation",
+                    "step": "tier1_structural_validation",
                     "status": "failed",
-                    "errors": [str(hf) for hf in hard_fails]
+                    "errors": [str(e) for e in validation_result.structural_errors]
                 })
-                complete_trace("hard_fail")
+                complete_trace("structural_fail")
                 raise PipelineError(
-                    f"HARD FAIL: {len(hard_fails)} validation failures",
-                    "validation",
-                    {"hard_fails": [str(hf) for hf in hard_fails]}
+                    f"STRUCTURAL FAIL: {len(validation_result.structural_errors)} tier-1 errors",
+                    "tier1_validation",
+                    {"structural_errors": [str(e) for e in validation_result.structural_errors]}
                 )
             else:
-                log_validation("hard_fail_check", None, True, [], [])
-                job_status["steps"].append({"step": "hard_fail_validation", "status": "passed"})
-                print("[Pipeline v1.3] Semantic validation PASSED")
+                job_status["steps"].append({"step": "tier1_structural_validation", "status": "passed"})
+                print("[Pipeline v1.3] Tier-1 Structural validation PASSED")
+            
+            if validation_result.semantic_errors:
+                for err in validation_result.semantic_errors:
+                    log_validation("tier2_semantic", err.section_id, False, [str(err)], [])
+                job_status["steps"].append({
+                    "step": "tier2_semantic_validation",
+                    "status": "failed",
+                    "errors": [str(e) for e in validation_result.semantic_errors]
+                })
+                complete_trace("semantic_fail")
+                raise PipelineError(
+                    f"SEMANTIC FAIL: {len(validation_result.semantic_errors)} tier-2 errors",
+                    "tier2_validation",
+                    {"semantic_errors": [str(e) for e in validation_result.semantic_errors]}
+                )
+            else:
+                job_status["steps"].append({"step": "tier2_semantic_validation", "status": "passed"})
+                print("[Pipeline v1.3] Tier-2 Semantic validation PASSED")
+            
+            if validation_result.quality_warnings:
+                job_status["steps"].append({
+                    "step": "tier3_quality_lint",
+                    "status": "passed",
+                    "warnings": [str(w) for w in validation_result.quality_warnings[:10]]
+                })
+                print(f"[Pipeline v1.3] Tier-3 Quality: {len(validation_result.quality_warnings)} warnings (non-blocking)")
+            else:
+                job_status["steps"].append({"step": "tier3_quality_lint", "status": "passed", "warnings": []})
+                print("[Pipeline v1.3] Tier-3 Quality: No warnings")
         
         if job_id:
             job_manager.complete_step(job_id, 1)
@@ -442,29 +469,56 @@ def process_markdown_to_videos_v12(
                 job_status["steps"].append({"step": "schema_validation", "status": "passed"})
                 print("[Pipeline v1.3] Schema validation PASSED")
             
-            print("[Pipeline v1.3] Running Python semantic validation...")
-            is_valid, hard_fails = validate_presentation_hard_fails(presentation)
-            if not is_valid:
-                for hf in hard_fails:
-                    log_hard_fail(hf.condition, hf.section_id, hf.details)
-                    log_validation("hard_fail_check", hf.section_id, False, [str(hf)], [])
-                report = format_hard_fail_report(hard_fails)
-                print(report)
+            print("[Pipeline v1.3] Running 3-tier validation...")
+            validation_result = validate_3tier(presentation)
+            
+            if validation_result.structural_errors:
+                for err in validation_result.structural_errors:
+                    log_hard_fail(err.code, err.section_id, err.details)
+                    log_validation("tier1_structural", err.section_id, False, [str(err)], [])
                 job_status["steps"].append({
-                    "step": "hard_fail_validation",
+                    "step": "tier1_structural_validation",
                     "status": "failed",
-                    "errors": [str(hf) for hf in hard_fails]
+                    "errors": [str(e) for e in validation_result.structural_errors]
                 })
-                complete_trace("hard_fail")
+                complete_trace("structural_fail")
                 raise PipelineError(
-                    f"HARD FAIL: {len(hard_fails)} validation failures",
-                    "validation",
-                    {"hard_fails": [str(hf) for hf in hard_fails]}
+                    f"STRUCTURAL FAIL: {len(validation_result.structural_errors)} tier-1 errors",
+                    "tier1_validation",
+                    {"structural_errors": [str(e) for e in validation_result.structural_errors]}
                 )
             else:
-                log_validation("hard_fail_check", None, True, [], [])
-                job_status["steps"].append({"step": "hard_fail_validation", "status": "passed"})
-                print("[Pipeline v1.3] Semantic validation PASSED")
+                job_status["steps"].append({"step": "tier1_structural_validation", "status": "passed"})
+                print("[Pipeline v1.3] Tier-1 Structural validation PASSED")
+            
+            if validation_result.semantic_errors:
+                for err in validation_result.semantic_errors:
+                    log_validation("tier2_semantic", err.section_id, False, [str(err)], [])
+                job_status["steps"].append({
+                    "step": "tier2_semantic_validation",
+                    "status": "failed",
+                    "errors": [str(e) for e in validation_result.semantic_errors]
+                })
+                complete_trace("semantic_fail")
+                raise PipelineError(
+                    f"SEMANTIC FAIL: {len(validation_result.semantic_errors)} tier-2 errors",
+                    "tier2_validation",
+                    {"semantic_errors": [str(e) for e in validation_result.semantic_errors]}
+                )
+            else:
+                job_status["steps"].append({"step": "tier2_semantic_validation", "status": "passed"})
+                print("[Pipeline v1.3] Tier-2 Semantic validation PASSED")
+            
+            if validation_result.quality_warnings:
+                job_status["steps"].append({
+                    "step": "tier3_quality_lint",
+                    "status": "passed",
+                    "warnings": [str(w) for w in validation_result.quality_warnings[:10]]
+                })
+                print(f"[Pipeline v1.3] Tier-3 Quality: {len(validation_result.quality_warnings)} warnings (non-blocking)")
+            else:
+                job_status["steps"].append({"step": "tier3_quality_lint", "status": "passed", "warnings": []})
+                print("[Pipeline v1.3] Tier-3 Quality: No warnings")
         
         if job_id:
             job_manager.complete_step(job_id, 0)

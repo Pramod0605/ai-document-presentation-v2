@@ -3,9 +3,11 @@ Director Client v1.3 - Deterministic Educational Film Engine
 
 This module handles the Director LLM pass with:
 - Strict Gemini 2.5 Pro parameter tuning (low temperature, high determinism)
-- Schema validation after each attempt
-- Retry logic with structure-repair-only prompts
-- Hard fail after 2 retries (no fallbacks, no normalization repair)
+- 3-tier validation after each attempt:
+  - Tier 1: Structural (hard fail) - max 2 retries
+  - Tier 2: Semantic (content retry) - max 1 retry
+  - Tier 3: Quality (warnings only) - never blocks
+- Hard fail after retries exhausted (no fallbacks)
 
 Pipeline role:
 - Pass 1: Director (this module)
@@ -25,10 +27,13 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 from core.analytics import AnalyticsTracker, create_tracker
 from core.traceability import save_raw_llm_response
-from core.schema_validator import (
-    validate_presentation,
-    quick_structure_check,
-    format_errors_for_retry
+from core.schema_validator import validate_presentation as validate_json_schema
+from core.validators import (
+    validate,
+    validate_for_retry,
+    ValidationResult,
+    format_structural_errors,
+    format_semantic_errors
 )
 
 
@@ -55,7 +60,8 @@ DIRECTOR_PARAMS = {
     "max_tokens": 8192,
 }
 
-MAX_RETRIES = 2
+MAX_STRUCTURAL_RETRIES = 2
+MAX_SEMANTIC_RETRIES = 1
 
 
 class DirectorError(Exception):
@@ -156,11 +162,17 @@ def run_director(
     chapter: str = "",
     tracker: Optional[AnalyticsTracker] = None,
     job_id: Optional[str] = None
-) -> Dict:
+) -> Tuple[Dict, ValidationResult]:
     """
-    Run the Director pass with schema validation and retry logic.
+    Run the Director pass with 3-tier validation and tiered retry logic.
     
     This is the main entry point for Pass 1.
+    
+    Validation flow:
+    1. JSON Schema validation (basic structure)
+    2. Tier-1 Structural validation → max 2 retries
+    3. Tier-2 Semantic validation → max 1 retry
+    4. Tier-3 Quality lint → warnings only, never blocks
     
     Args:
         chunks: Output from Pass 0 (Chunker)
@@ -171,17 +183,19 @@ def run_director(
         job_id: Job ID for traceability (optional)
     
     Returns:
-        Validated presentation dict conforming to v1.3 schema
+        Tuple of (validated presentation dict, ValidationResult with warnings)
         
     Raises:
-        DirectorError: If validation fails after MAX_RETRIES attempts
+        DirectorError: If validation fails after all retries exhausted
     """
-    log("[Director] Starting Director pass (v1.3)...")
+    log("[Director] Starting Director pass (v1.3 with 3-tier validation)...")
     log(f"[Director] Model: {DIRECTOR_MODEL}")
-    log(f"[Director] Params: temp={DIRECTOR_PARAMS['temperature']}, top_p={DIRECTOR_PARAMS['top_p']}")
+    log(f"[Director] Retry limits: structural={MAX_STRUCTURAL_RETRIES}, semantic={MAX_SEMANTIC_RETRIES}")
     
     system_prompt = load_prompt("director_system_v1.3")
     user_template = load_prompt("director_user_v1.3")
+    retry_system = load_prompt("director_retry_system")
+    retry_user_template = load_prompt("director_retry_user")
     
     chunks_json = json.dumps(chunks, indent=2)
     
@@ -191,67 +205,37 @@ def run_director(
     user_prompt = user_prompt.replace("{chunks_json}", chunks_json)
     user_prompt = user_prompt.replace("{markdown_content}", chunks_json)
     
-    response_text, usage = call_director_llm(
-        system_prompt=system_prompt,
-        user_prompt=user_prompt,
-        tracker=tracker,
-        phase_name="director_attempt_1"
-    )
+    structural_retries_used = 0
+    semantic_retries_used = 0
+    total_attempts = 0
+    current_presentation = None
+    retry_prompt = ""
     
-    if job_id:
-        save_raw_llm_response(
-            renderer_type="director",
-            section_id="attempt_1",
-            raw_response=response_text,
-            model=DIRECTOR_MODEL,
-            usage=usage
-        )
-    
-    try:
-        presentation = parse_json_response(response_text)
-    except json.JSONDecodeError as e:
-        raise DirectorError(
-            f"Director returned invalid JSON: {e}",
-            errors=[str(e)],
-            attempts=1
-        )
-    
-    is_valid, errors = validate_presentation(presentation)
-    
-    if is_valid:
-        log("[Director] First attempt passed validation")
-        presentation["spec_version"] = "v1.3"
-        return presentation
-    
-    log(f"[Director] First attempt failed validation with {len(errors)} errors")
-    log("[Director] Entering retry mode...")
-    
-    retry_system = load_prompt("director_retry_system")
-    retry_user_template = load_prompt("director_retry_user")
-    
-    current_presentation = presentation
-    current_errors = errors
-    
-    for attempt in range(2, MAX_RETRIES + 2):
-        log(f"[Director] Retry attempt {attempt - 1} of {MAX_RETRIES}...")
+    while True:
+        total_attempts += 1
+        phase_name = f"director_attempt_{total_attempts}"
         
-        error_text = format_errors_for_retry(current_errors)
-        failed_json = json.dumps(current_presentation, indent=2)
-        
-        retry_user = retry_user_template.replace("{schema_errors}", error_text)
-        retry_user = retry_user.replace("{failed_json}", failed_json)
-        
-        response_text, usage = call_director_llm(
-            system_prompt=retry_system,
-            user_prompt=retry_user,
-            tracker=tracker,
-            phase_name=f"director_retry_{attempt - 1}"
-        )
+        if total_attempts == 1:
+            log("[Director] Initial attempt...")
+            response_text, usage = call_director_llm(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                tracker=tracker,
+                phase_name=phase_name
+            )
+        else:
+            log(f"[Director] Retry attempt {total_attempts - 1}...")
+            response_text, usage = call_director_llm(
+                system_prompt=retry_system,
+                user_prompt=retry_prompt,
+                tracker=tracker,
+                phase_name=phase_name
+            )
         
         if job_id:
             save_raw_llm_response(
                 renderer_type="director",
-                section_id=f"retry_{attempt - 1}",
+                section_id=f"attempt_{total_attempts}",
                 raw_response=response_text,
                 model=DIRECTOR_MODEL,
                 usage=usage
@@ -260,33 +244,96 @@ def run_director(
         try:
             current_presentation = parse_json_response(response_text)
         except json.JSONDecodeError as e:
-            log(f"[Director] Retry {attempt - 1} returned invalid JSON")
-            current_errors = [f"JSON parse error: {e}"]
-            continue
+            log(f"[Director] Attempt {total_attempts} returned invalid JSON")
+            if structural_retries_used < MAX_STRUCTURAL_RETRIES:
+                structural_retries_used += 1
+                retry_prompt = retry_user_template.replace("{schema_errors}", f"JSON parse error: {e}")
+                retry_prompt = retry_prompt.replace("{failed_json}", response_text[:5000])
+                continue
+            else:
+                raise DirectorError(
+                    f"Director returned invalid JSON after {total_attempts} attempts",
+                    errors=[str(e)],
+                    attempts=total_attempts
+                )
         
-        is_valid, current_errors = validate_presentation(current_presentation)
+        log("[Director] Running JSON Schema validation...")
+        schema_valid, schema_errors = validate_json_schema(current_presentation)
+        if not schema_valid:
+            log(f"[Director] JSON Schema failed: {len(schema_errors)} errors")
+            if structural_retries_used < MAX_STRUCTURAL_RETRIES:
+                structural_retries_used += 1
+                log(f"[Director] Structural retry {structural_retries_used}/{MAX_STRUCTURAL_RETRIES}")
+                error_text = "\n".join(schema_errors[:10])
+                failed_json = json.dumps(current_presentation, indent=2)
+                retry_prompt = retry_user_template.replace("{schema_errors}", error_text)
+                retry_prompt = retry_prompt.replace("{failed_json}", failed_json)
+                continue
+            else:
+                raise DirectorError(
+                    f"Schema validation failed after {MAX_STRUCTURAL_RETRIES} structural retries",
+                    errors=schema_errors,
+                    attempts=total_attempts
+                )
         
-        if is_valid:
-            log(f"[Director] Retry {attempt - 1} passed validation")
+        log("[Director] JSON Schema PASSED. Running 3-tier validation...")
+        validation_result = validate(current_presentation)
+        
+        if validation_result.is_valid:
+            log("[Director] All validation tiers PASSED")
+            if validation_result.quality_warnings:
+                log(f"[Director] Quality warnings: {len(validation_result.quality_warnings)}")
             current_presentation["spec_version"] = "v1.3"
-            return current_presentation
+            return current_presentation, validation_result
         
-        log(f"[Director] Retry {attempt - 1} still has {len(current_errors)} errors")
-    
-    log("[Director] HARD FAIL - All retry attempts exhausted")
-    log("[Director] This is a content issue, not a logic issue")
-    
-    raise DirectorError(
-        f"Director failed schema validation after {MAX_RETRIES + 1} attempts. No fallbacks allowed.",
-        errors=current_errors,
-        attempts=MAX_RETRIES + 1
-    )
+        if validation_result.needs_structural_retry:
+            log(f"[Director] Tier-1 STRUCTURAL_FAIL: {len(validation_result.structural_errors)} errors")
+            if structural_retries_used < MAX_STRUCTURAL_RETRIES:
+                structural_retries_used += 1
+                log(f"[Director] Structural retry {structural_retries_used}/{MAX_STRUCTURAL_RETRIES}")
+                error_text = format_structural_errors(validation_result.structural_errors)
+                failed_json = json.dumps(current_presentation, indent=2)
+                retry_prompt = retry_user_template.replace("{schema_errors}", error_text)
+                retry_prompt = retry_prompt.replace("{failed_json}", failed_json)
+                continue
+            else:
+                log("[Director] HARD FAIL - Structural retries exhausted")
+                raise DirectorError(
+                    f"Structural validation failed after {MAX_STRUCTURAL_RETRIES} retries",
+                    errors=[str(e) for e in validation_result.structural_errors],
+                    attempts=total_attempts
+                )
+        
+        if validation_result.needs_semantic_retry:
+            log(f"[Director] Tier-2 SEMANTIC_FAIL: {len(validation_result.semantic_errors)} errors")
+            if semantic_retries_used < MAX_SEMANTIC_RETRIES:
+                semantic_retries_used += 1
+                log(f"[Director] Semantic retry {semantic_retries_used}/{MAX_SEMANTIC_RETRIES}")
+                error_text = format_semantic_errors(validation_result.semantic_errors)
+                failed_json = json.dumps(current_presentation, indent=2)
+                retry_prompt = retry_user_template.replace("{schema_errors}", error_text)
+                retry_prompt = retry_prompt.replace("{failed_json}", failed_json)
+                continue
+            else:
+                log("[Director] HARD FAIL - Semantic retries exhausted")
+                raise DirectorError(
+                    f"Semantic validation failed after {MAX_SEMANTIC_RETRIES} retries",
+                    errors=[str(e) for e in validation_result.semantic_errors],
+                    attempts=total_attempts
+                )
+        
+        log("[Director] Unexpected validation state - hard fail")
+        raise DirectorError(
+            "Unexpected validation state",
+            errors=["Unknown validation failure"],
+            attempts=total_attempts
+        )
 
 
 def test_director(chunks_path: str, subject: str = "Physics", grade: str = "9"):
     """Test the Director with a chunks JSON file."""
     log(f"\n{'='*60}")
-    log("Testing Director Client v1.3")
+    log("Testing Director Client v1.3 (3-Tier Validation)")
     log(f"{'='*60}")
     
     with open(chunks_path, "r") as f:
@@ -295,7 +342,7 @@ def test_director(chunks_path: str, subject: str = "Physics", grade: str = "9"):
     tracker = create_tracker("test")
     
     try:
-        presentation = run_director(
+        presentation, validation_result = run_director(
             chunks=chunks,
             subject=subject,
             grade=grade,
@@ -308,6 +355,11 @@ def test_director(chunks_path: str, subject: str = "Physics", grade: str = "9"):
         with open(output_path, "w") as f:
             json.dump(presentation, f, indent=2)
         log(f"\nPresentation saved to: {output_path}")
+        
+        if validation_result.quality_warnings:
+            log(f"\nQuality warnings ({len(validation_result.quality_warnings)}):")
+            for warn in validation_result.quality_warnings[:5]:
+                log(f"  - {warn}")
         
         return presentation
         
