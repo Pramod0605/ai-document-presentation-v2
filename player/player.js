@@ -1338,14 +1338,20 @@ async function checkExistingPresentation() {
               contentVideoPath = section.video_path.startsWith('/') ? section.video_path : BASE_PATH + section.video_path;
               hasContentVideo = true;
             } 
-            // Priority 2: For recap, prefer topic_<id>.mp4 (single video) over multi-scene
+            // Priority 2: For recap sections - ISS-069 FIX: prefer section-level recap_video_paths first
             else if (section.section_type === 'recap') {
               hasContentVideo = true;
-              // Default to single video: topic_<id>.mp4
-              contentVideoPath = BASE_PATH + `videos/topic_${sectionId}.mp4`;
-              recapVideoPaths = [contentVideoPath];
-              // Only use multi-scene if visual_beats have explicit video_path
-              if (recapScenes.length > 0 && recapScenes[0] && recapScenes[0].video_path) {
+              
+              // ISS-069: Check section-level recap_video_paths FIRST (from pipeline)
+              if (section.recap_video_paths && section.recap_video_paths.length > 0) {
+                recapVideoPaths = section.recap_video_paths.map(p => {
+                  return p.startsWith('/') ? p : BASE_PATH + p;
+                });
+                contentVideoPath = recapVideoPaths[0];
+                console.log(`[ISS-069] Using section-level recap_video_paths: ${recapVideoPaths.length} scenes`);
+              }
+              // Fallback: Check visual_beats video_path
+              else if (recapScenes.length > 0 && recapScenes[0] && recapScenes[0].video_path) {
                 recapVideoPaths = recapScenes.map((s, i) => {
                   if (s.video_path) {
                     return s.video_path.startsWith('/') ? s.video_path : BASE_PATH + s.video_path;
@@ -1353,6 +1359,11 @@ async function checkExistingPresentation() {
                   return BASE_PATH + `videos/recap_${sectionId}_scene_${s.scene_id || s.scene || i+1}.mp4`;
                 });
                 contentVideoPath = recapVideoPaths[0];
+              }
+              // Last fallback: Default to single video
+              else {
+                contentVideoPath = BASE_PATH + `videos/topic_${sectionId}.mp4`;
+                recapVideoPaths = [contentVideoPath];
               }
             }
             // Priority 3: For content with video renderer, use topic_<id>.mp4

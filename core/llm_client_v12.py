@@ -503,6 +503,9 @@ VAGUE_PHRASES = [
     "display showing",
     "demonstrate the",
     "animation explaining",
+    "etc",
+    "and so on",
+    "and more",
 ]
 
 MIN_WAN_PROMPT_WORDS = 100

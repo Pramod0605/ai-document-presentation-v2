@@ -37,8 +37,11 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     # Check for compiled WAN prompt from visual_compiler
     compiled_wan_prompt = explanation_plan.get("compiled_wan_prompt")
     
-    # For content/example sections, use visual beats
-    if section_type in ["content", "example"] and visual_beats:
+    # ISS-067: Check for pre-compiled video_prompts from Director/Video Renderer LLM
+    video_prompts = explanation_plan.get("video_prompts", [])
+    
+    # For content/example sections, use visual beats (or pre-compiled video_prompts)
+    if section_type in ["content", "example"] and (visual_beats or video_prompts):
         return _render_visual_beats(
             topic_id=topic_id,
             topic_title=topic_title,
@@ -48,7 +51,8 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             dry_run=dry_run,
             skip_wan=skip_wan,
             trace_output_dir=trace_output_dir,
-            duration=duration
+            duration=duration,
+            video_prompts=video_prompts
         )
     
     # For recap sections, render each recap_scene as a separate video
@@ -122,37 +126,55 @@ def _render_visual_beats(
     dry_run: bool,
     skip_wan: bool,
     trace_output_dir: str,
-    duration: int
+    duration: int,
+    video_prompts: list = None
 ) -> str:
     """
     Render each visual beat as a separate video segment.
     
     Returns path to first video segment.
     Creates: topic_{id}_beat_{0..n}.mp4
+    
+    ISS-067 FIX: If video_prompts are provided (pre-compiled by LLM),
+    use them directly instead of calling visual_compiler.
     """
     from core.visual_compiler import compile_wan_prompt, VisualCompilationError
     
-    if not visual_beats:
+    if not visual_beats and not video_prompts:
         raise WanRenderError(
-            f"Section {topic_id}: {section_type} section has no visual_beats. "
+            f"Section {topic_id}: {section_type} section has no visual_beats or video_prompts. "
             f"LLM must generate visual beats for content/example sections."
         )
     
-    print(f"[WAN] Rendering {len(visual_beats)} visual beats for section {topic_id}")
+    # ISS-067: Check if we have pre-compiled video_prompts
+    use_precompiled = video_prompts and len(video_prompts) > 0
+    num_beats = len(video_prompts) if use_precompiled else len(visual_beats)
     
-    beat_duration = max(5, duration // len(visual_beats))
+    if use_precompiled:
+        print(f"[WAN] Using {len(video_prompts)} pre-compiled video_prompts for section {topic_id} (bypassing visual_compiler)")
+    else:
+        print(f"[WAN] Rendering {len(visual_beats)} visual beats for section {topic_id}")
+    
+    beat_duration = max(5, duration // num_beats)
     video_paths = []
     client = WANClient() if not skip_wan and not dry_run else None
     
-    for beat_idx, beat in enumerate(visual_beats):
-        # Compile the visual beat into a WAN prompt
-        try:
-            wan_prompt = compile_wan_prompt(beat, topic_id, beat_idx)
-        except VisualCompilationError as e:
-            raise WanRenderError(
-                f"Section {topic_id}, Beat {beat_idx}: Visual beat compilation failed. "
-                f"Reason: {e.reason}"
-            )
+    for beat_idx in range(num_beats):
+        # ISS-067: Use pre-compiled prompts if available, otherwise compile from visual_beats
+        if use_precompiled:
+            prompt_obj = video_prompts[beat_idx]
+            wan_prompt = prompt_obj.get("prompt") or prompt_obj.get("wan_prompt") or str(prompt_obj)
+            beat = visual_beats[beat_idx] if beat_idx < len(visual_beats) else {}
+        else:
+            beat = visual_beats[beat_idx]
+            # Compile the visual beat into a WAN prompt
+            try:
+                wan_prompt = compile_wan_prompt(beat, topic_id, beat_idx)
+            except VisualCompilationError as e:
+                raise WanRenderError(
+                    f"Section {topic_id}, Beat {beat_idx}: Visual beat compilation failed. "
+                    f"Reason: {e.reason}"
+                )
         
         # Generate output path for this beat
         beat_output_path = str(Path(output_dir) / f"topic_{topic_id}_beat_{beat_idx}.mp4")
