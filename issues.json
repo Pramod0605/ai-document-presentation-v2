@@ -630,14 +630,48 @@
         "total_cost_usd": 0.38,
         "total_duration_seconds": 271.73
       }
+    },
+    {
+      "id": "ISS-049",
+      "title": "display_directives at section-level array instead of per-segment - Player cannot read them",
+      "status": "open",
+      "created": "2025-12-21",
+      "priority": "critical",
+      "description": "Director LLM outputs display_directives as a section-level array with segment_id references, but player.js LayerController.applyDirectives() expects display_directives embedded INSIDE each narration segment object. Result: Player never sees display_directives, text/visual toggling fails.",
+      "evidence": {
+        "job_id": "111ef36f",
+        "llm_output_structure": "section.display_directives = [{segment_id: 1, text_layer: {...}, ...}]",
+        "player_expected_structure": "segment.display_directives = {text_layer: '...', visual_layer: '...', avatar_layer: '...'}"
+      },
+      "spec_reference": "docs/llm_output_requirements_v1.3.json requires display_directives on each narration.segments entry",
+      "upstream_impact": [
+        "core/prompts/director_system_v1.3.txt - Canonical JSON example shows wrong structure",
+        "core/prompts/director_retry_system_v1.3.txt - Retry prompt may perpetuate wrong structure"
+      ],
+      "downstream_impact": [
+        "player/player.js LayerController - Cannot find display_directives, defaults to hide all",
+        "Text/visual mutual exclusion enforcement not triggered",
+        "Avatar visibility rules not applied"
+      ],
+      "proposed_solution": {
+        "option": "Fix at source (Director prompts + schema)",
+        "details": [
+          "1. Update director_system_v1.3.txt canonical JSON to show display_directives inside each segment",
+          "2. Update schemas/presentation_v1.3.schema.json to require display_directives on narration.segments[*]",
+          "3. Update tier1_structural.py to validate per-segment display_directives",
+          "4. Retry mechanism will automatically fix non-compliant output"
+        ],
+        "rationale": "Normalization is pass-through only. Player should not be modified to accommodate wrong output. Fix at source."
+      },
+      "awaiting_approval": true
     }
   ],
   "metadata": {
     "last_updated": "2025-12-21",
-    "version": "12.0",
+    "version": "12.1",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
     "resolved_count": 48,
-    "open_count": 0
+    "open_count": 1
   }
 }

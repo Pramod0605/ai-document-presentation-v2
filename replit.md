@@ -19,6 +19,9 @@ The user wants an iterative development process. The agent should prioritize cle
 5. The LLM is the "brain" - timing, durations, and creative decisions come from LLM output, not from post-processing calculations.
 6. **ALL LLM OUTPUTS MUST CONFORM TO `docs/llm_output_requirements_v1.3.json` OR FAIL** - this is non-negotiable. There are NO FALLBACKS. Missing required fields = generation failure.
 7. **Player is a DUMB display layer** - it consumes LLM output without modification. No duration calculations, no content fallbacks, no graceful degradation.
+8. **Issue Tracking First** - Any issue noticed MUST be logged to `issues.json` with full details BEFORE proposing any solution.
+9. **Upstream/Downstream Impact Analysis** - Before code changes, verify upstream and downstream components are not affected. If they are, include those fixes in the proposal and ask for user approval.
+10. **No Deviation Without Approval** - No deviations from the initial goal. Any code changes must be approved by the user first.
 
 ## System Architecture (v1.3)
 
