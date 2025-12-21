@@ -7806,5 +7806,225 @@
       "total_cost_usd": 0.5504129999999999,
       "dry_run": true
     }
+  },
+  "c7396443": {
+    "id": "c7396443",
+    "type": "markdown",
+    "params": {
+      "subject": "Biology",
+      "grade": "Class 10",
+      "dry_run": true
+    },
+    "status": "completed",
+    "current_step": 1,
+    "current_step_name": "Rendering videos with AI...",
+    "steps_completed": 2,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-21T10:23:34.934317",
+    "started_at": "2025-12-21T10:23:34.988757",
+    "completed_at": "2025-12-21T10:31:12.873547",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "pipeline_version": "1.2",
+      "started_at": "2025-12-21T10:23:35.012733",
+      "source_file": null,
+      "steps": [
+        {
+          "step": "extract_images",
+          "status": "completed",
+          "count": 0
+        },
+        {
+          "step": "generate_presentation_v12",
+          "status": "completed",
+          "analytics": {
+            "job_id": "5a652f86",
+            "status": "completed",
+            "total_duration_seconds": 457.78,
+            "total_cost_usd": 0.6274,
+            "total_tokens": 97925,
+            "phases_completed": 12,
+            "phases_failed": 0,
+            "cost_breakdown": {
+              "chunker": {
+                "cost_usd": 0.0009,
+                "duration_seconds": 2.02,
+                "tokens": 913
+              },
+              "director": {
+                "cost_usd": 0.1294,
+                "duration_seconds": 102.92,
+                "tokens": 16965
+              },
+              "director_retry_1": {
+                "cost_usd": 0.1763,
+                "duration_seconds": 116.41,
+                "tokens": 27598
+              },
+              "director_retry_2": {
+                "cost_usd": 0.1722,
+                "duration_seconds": 113.07,
+                "tokens": 28099
+              },
+              "remotion_renderer_s1": {
+                "cost_usd": 0.0037,
+                "duration_seconds": 3.12,
+                "tokens": 1238
+              },
+              "remotion_renderer_s2": {
+                "cost_usd": 0.0251,
+                "duration_seconds": 18.03,
+                "tokens": 2896
+              },
+              "video_renderer_s3": {
+                "cost_usd": 0.0186,
+                "duration_seconds": 14.74,
+                "tokens": 3402
+              },
+              "video_renderer_s4": {
+                "cost_usd": 0.0175,
+                "duration_seconds": 14.13,
+                "tokens": 3086
+              },
+              "video_renderer_s5": {
+                "cost_usd": 0.0199,
+                "duration_seconds": 16.44,
+                "tokens": 3257
+              },
+              "video_renderer_s6": {
+                "cost_usd": 0.0158,
+                "duration_seconds": 14.71,
+                "tokens": 3039
+              },
+              "remotion_renderer_s7": {
+                "cost_usd": 0.0187,
+                "duration_seconds": 17.51,
+                "tokens": 2507
+              },
+              "video_renderer_s8": {
+                "cost_usd": 0.0294,
+                "duration_seconds": 24.65,
+                "tokens": 4925
+              }
+            }
+          }
+        },
+        {
+          "step": "validation",
+          "status": "passed",
+          "note": "Handled in Director with retries"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'intro' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'summary' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "video",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 3, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.",
+              "visual_beats_used": 3,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 150, in _render_visual_beats\n    wan_prompt = compile_wan_prompt(beat, topic_id, beat_idx)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 139, in compile_wan_prompt\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 91, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 3, Beat 0: Visual beat has no content. All fields are empty or missing.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 155, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 42, in render_wan_video\n    return _render_visual_beats(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 152, in _render_visual_beats\n    raise WanRenderError(\nrender.wan.wan_runner.WanRenderError: Section 3, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.\n"
+            },
+            {
+              "topic_id": 4,
+              "section_type": "content",
+              "renderer": "video",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 4, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.",
+              "visual_beats_used": 2,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 150, in _render_visual_beats\n    wan_prompt = compile_wan_prompt(beat, topic_id, beat_idx)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 139, in compile_wan_prompt\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 91, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 4, Beat 0: Visual beat has no content. All fields are empty or missing.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 155, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 42, in render_wan_video\n    return _render_visual_beats(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 152, in _render_visual_beats\n    raise WanRenderError(\nrender.wan.wan_runner.WanRenderError: Section 4, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.\n"
+            },
+            {
+              "topic_id": 5,
+              "section_type": "content",
+              "renderer": "video",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 5, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.",
+              "visual_beats_used": 2,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 150, in _render_visual_beats\n    wan_prompt = compile_wan_prompt(beat, topic_id, beat_idx)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 139, in compile_wan_prompt\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 91, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 5, Beat 0: Visual beat has no content. All fields are empty or missing.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 155, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 42, in render_wan_video\n    return _render_visual_beats(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 152, in _render_visual_beats\n    raise WanRenderError(\nrender.wan.wan_runner.WanRenderError: Section 5, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.\n"
+            },
+            {
+              "topic_id": 6,
+              "section_type": "content",
+              "renderer": "video",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section 6, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.",
+              "visual_beats_used": 2,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 150, in _render_visual_beats\n    wan_prompt = compile_wan_prompt(beat, topic_id, beat_idx)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 139, in compile_wan_prompt\n    warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/visual_compiler.py\", line 91, in validate_visual_beat_structure\n    raise VisualCompilationError(\ncore.visual_compiler.VisualCompilationError: Section 6, Beat 0: Visual beat has no content. All fields are empty or missing.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 155, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 42, in render_wan_video\n    return _render_visual_beats(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 152, in _render_visual_beats\n    raise WanRenderError(\nrender.wan.wan_runner.WanRenderError: Section 6, Beat 0: Visual beat compilation failed. Reason: Visual beat has no content. All fields are empty or missing.\n"
+            },
+            {
+              "topic_id": 7,
+              "section_type": "memory",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'memory' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 8,
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/c7396443/videos/topic_8.dry_run.txt",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": true,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            }
+          ],
+          "success_count": 4,
+          "fail_count": 4,
+          "dry_run": true
+        },
+        {
+          "step": "generate_audio",
+          "status": "skipped",
+          "reason": "dry_run"
+        }
+      ],
+      "completed_at": "2025-12-21T10:31:12.870209",
+      "presentation_path": "/home/runner/workspace/player/jobs/c7396443/presentation.json",
+      "analytics_path": "/home/runner/workspace/player/jobs/c7396443/analytics.json",
+      "sections_count": 8,
+      "total_cost_usd": 0.627414,
+      "dry_run": true
+    }
   }
 }
