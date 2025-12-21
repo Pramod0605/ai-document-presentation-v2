@@ -1,14 +1,20 @@
-Expand the following section's visual beats into fully concrete video prompts.
+Generate video generation prompts for the following video section.
 
 SECTION DATA:
 {section_json}
 
+INSTRUCTIONS:
+1. Expand each visual beat description into a rich, 100-150 word cinematic prompt.
+2. Focus on organic textures (wet tissue, fibrous muscle, glass-like lens).
+3. Ensure seamless transitions between the beats.
+4. Use fluid narrative transitions, NOT rigid timestamps.
+5. Define camera movement, lighting, and materials for every beat.
+
 REQUIREMENTS FOR EACH BEAT:
-- At least 300 words per prompt (MANDATORY).
-- Describe each object explicitly with color, size, position.
-- Specify all motion: direction, speed, duration.
-- Include camera framing: angle, movement, zoom level.
-- Include timing breakdown: what happens second-by-second.
+- At least 100 words per prompt (MANDATORY).
+- Describe each object explicitly with color, size, texture, material.
+- Specify camera framing: angle, movement, zoom level.
+- Include lighting conditions and atmosphere.
 - No narration text - describe visuals only.
 - No abstract phrases - be literal and specific.
 
@@ -17,16 +23,17 @@ RESPONSE FORMAT (use EXACTLY this structure):
   "section_id": number,
   "video_prompts": [
     {
-      "beat_id": 1,
-      "prompt": "Dense cinematographic description of at least 300 words describing: camera starts with a wide establishing shot showing [specific objects with colors and sizes]. The camera slowly pushes in over 3 seconds as [describe motion]. At 4 seconds, [next action with precise timing]...",
+      "beat_id": "3A",
+      "prompt": "The scene opens with a sweeping exterior shot of the human eye in extreme close-up, warm golden light reflecting off the curved corneal surface. The camera slowly pushes in, revealing the intricate texture of the iris fibers...",
       "duration_seconds": 8,
-      "style": "realistic | animated | educational"
+      "style": "realistic"
     }
   ]
 }
 
 CRITICAL RULES:
 - Use exactly "video_prompts" as the key.
-- Each prompt MUST be at least 300 words.
-- Prompts under 300 words will be REJECTED and retried.
+- Each prompt MUST be at least 100 words.
+- Use fluid transitions ("The scene opens...", "As the camera pulls back...", "Simultaneously...").
+- NO rigid timestamps like "At 0 seconds..." or "At 5 seconds...".
 - Output JSON only. No markdown. No backticks.

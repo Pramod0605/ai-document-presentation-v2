@@ -433,6 +433,68 @@ def get_job_phases(job_id):
     return jsonify(phases)
 
 
+@app.route("/jobs/<job_id>/rerender", methods=["POST"])
+def rerender_job_sections(job_id):
+    """Re-render specific sections with WAN video renderer.
+    
+    POST body:
+    - section_ids: List of section IDs to re-render (required)
+    - renderer: "wan_video" (default, only option currently)
+    """
+    from core.llm_client_v12 import rerender_sections_wan
+    from core.analytics import create_tracker
+    
+    data = request.get_json() or {}
+    section_ids = data.get("section_ids", [])
+    
+    if not section_ids:
+        return jsonify({"error": "section_ids required"}), 400
+    
+    job_dir = JOBS_DIR / job_id
+    if not job_dir.exists():
+        return jsonify({"error": "Job not found", "job_id": job_id}), 404
+    
+    pres_path = job_dir / "presentation.json"
+    if not pres_path.exists():
+        return jsonify({"error": "presentation.json not found"}), 400
+    
+    try:
+        with open(pres_path, "r") as f:
+            presentation = json.load(f)
+        
+        tracker = create_tracker(job_id)
+        
+        print(f"[API] Re-rendering sections {section_ids} for job {job_id}")
+        updated = rerender_sections_wan(presentation, section_ids, tracker)
+        
+        with open(pres_path, "w") as f:
+            json.dump(updated, f, indent=2)
+        
+        sections_updated = []
+        for s in updated.get("sections", []):
+            sid = s.get("section_id") or s.get("id")
+            if sid in section_ids:
+                sections_updated.append({
+                    "section_id": sid,
+                    "renderer": s.get("renderer"),
+                    "video_prompts_count": len(s.get("video_prompts", [])),
+                    "error": s.get("renderer_error")
+                })
+        
+        return jsonify({
+            "status": "success",
+            "job_id": job_id,
+            "sections_updated": sections_updated
+        })
+        
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "job_id": job_id
+        }), 500
+
+
 @app.route("/dashboard")
 @app.route("/dashboard/")
 def serve_dashboard():

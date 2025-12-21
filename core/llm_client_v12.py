@@ -505,7 +505,7 @@ VAGUE_PHRASES = [
     "animation explaining",
 ]
 
-MIN_WAN_PROMPT_WORDS = 300
+MIN_WAN_PROMPT_WORDS = 100
 
 
 def validate_video_prompts(result: Dict, section_id: int) -> tuple:
@@ -761,6 +761,55 @@ def test_pipeline(markdown_path: str, subject: str = "General Science", grade: s
     log(f"Analytics saved to: {analytics_path}")
     
     return presentation, tracker
+
+
+def rerender_sections_wan(
+    presentation: Dict,
+    section_ids: List[int],
+    tracker: Optional[AnalyticsTracker] = None
+) -> Dict:
+    """Re-render specific sections using WAN video renderer.
+    
+    Overrides the renderer to 'wan_video' for specified sections and regenerates video_prompts.
+    
+    Args:
+        presentation: The presentation dict with sections
+        section_ids: List of section IDs to re-render
+        tracker: Optional analytics tracker
+        
+    Returns:
+        Updated presentation dict with new video_prompts
+    """
+    log(f"[ReRender] Re-rendering sections {section_ids} with WAN...")
+    
+    sections = presentation.get("sections", [])
+    
+    for section in sections:
+        section_id = section.get("section_id") or section.get("id", 0)
+        
+        if section_id not in section_ids:
+            continue
+            
+        log(f"[ReRender] Section {section_id}: Overriding renderer to 'wan_video'")
+        old_renderer = section.get("renderer", "none")
+        section["renderer"] = "wan_video"
+        section["renderer_override"] = f"Changed from {old_renderer} to wan_video for re-render"
+        
+        try:
+            result = pass2_video_renderer(section, tracker)
+            
+            if "video_prompts" in result:
+                section["video_prompts"] = result.get("video_prompts")
+                section["has_content_video"] = True
+                log(f"[ReRender] Section {section_id}: Generated {len(section['video_prompts'])} video prompts")
+            else:
+                log(f"[ReRender] Section {section_id}: No video_prompts in result")
+                
+        except PipelineError as e:
+            log(f"[ReRender] Section {section_id} ERROR: {e}")
+            section["renderer_error"] = str(e)
+    
+    return presentation
 
 
 if __name__ == "__main__":
