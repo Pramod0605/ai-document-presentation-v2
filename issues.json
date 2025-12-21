@@ -1027,6 +1027,35 @@
       "solution": "Updated player.js to check section.recap_video_paths FIRST. If present, use those paths directly. Falls back to visual_beats.video_path then topic_<id>.mp4 as last resort.",
       "created": "2025-12-21T17:00:00.000000",
       "resolved": "2025-12-21T17:10:00.000000"
+    },
+    {
+      "id": "ISS-070",
+      "title": "Blank video panel between beat/recap video transitions",
+      "status": "open",
+      "created": "2025-12-21",
+      "description": "When switching between beat videos or recap scene videos, there's a visible blank panel while the new video loads. This creates a jarring experience instead of smooth continuous playback.",
+      "root_cause": "Direct video.src swap causes loading gap - no preloading of next video",
+      "solution": "Implement video double-buffering: preload next video in hidden element, swap when ready"
+    },
+    {
+      "id": "ISS-071",
+      "title": "Job folders have stale player.js copies that don't receive bug fixes",
+      "status": "resolved",
+      "created": "2025-12-21",
+      "description": "Each job folder gets a copy of player.js at creation time. Bug fixes to player.js don't propagate to existing jobs.",
+      "root_cause": "setup_job_folder() copies player.js to job folder; index.html references local copy",
+      "solution": "Change index.html template to reference /player/player.js instead of local copy",
+      "resolved": "2025-12-21",
+      "resolution_note": "Already fixed - job folder index.html references /player/player.js (main location), stale copies in job folders are not used"
+    },
+    {
+      "id": "ISS-072",
+      "title": "Uploaded file content not verified - job ran with wrong content",
+      "status": "open",
+      "created": "2025-12-21",
+      "description": "User uploaded Sample_subjects.md with new content (Calculus/Biology) but job generated Human Eye content. No verification of uploaded content before processing.",
+      "root_cause": "Possible browser file caching or sync issue; no content preview shown to user",
+      "solution": "Add content preview in submit response showing first 200 chars of uploaded file"
     }
   ],
   "metadata": {

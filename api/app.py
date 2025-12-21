@@ -118,6 +118,12 @@ def submit_job():
                     markdown_content = f.read()
                 os.unlink(temp_file)
                 
+                content_preview = markdown_content[:300].replace('\n', ' ').strip()
+                if len(markdown_content) > 300:
+                    content_preview += "..."
+                
+                job_manager.update_job(job_id, {"content_preview": content_preview}, persist=True)
+                
                 run_job_async(
                     job_id,
                     process_markdown_job,
@@ -168,12 +174,16 @@ def submit_job():
             return jsonify({"error": "Please provide a file or markdown content"}), 400
         
         mode_msg = " (DRY RUN - prompts only, no real rendering)" if dry_run else ""
+        job_data = job_manager.get_job(job_id)
+        content_preview = job_data.get("content_preview") if job_data else None
+        
         return jsonify({
             "status": "accepted",
             "job_id": job_id,
             "dry_run": dry_run,
             "skip_wan": skip_wan,
             "skip_avatar": skip_avatar,
+            "content_preview": content_preview,
             "message": f"Job submitted successfully{mode_msg}. Poll /job/<job_id>/status for progress."
         })
     

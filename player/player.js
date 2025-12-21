@@ -152,6 +152,114 @@ class LayerController {
 
 const layerController = new LayerController();
 
+/**
+ * VideoBufferManager - Double-buffering for smooth video transitions (ISS-070)
+ * Preloads next video while current plays, then swaps instantly
+ */
+class VideoBufferManager {
+  constructor() {
+    this.primary = null;
+    this.preload = null;
+    this.nextVideoPath = null;
+    this.preloadReady = false;
+    this.swapPending = false;
+  }
+
+  init() {
+    this.primary = document.getElementById('inline-video');
+    this.preload = document.getElementById('inline-video-preload');
+    if (this.preload) {
+      this.preload.addEventListener('canplaythrough', () => {
+        this.preloadReady = true;
+        if (this.swapPending) {
+          this.executeSwap();
+        }
+      });
+    }
+  }
+
+  preloadVideo(videoPath) {
+    if (!this.preload || !videoPath) return;
+    if (this.nextVideoPath === videoPath && this.preloadReady) return;
+    
+    this.nextVideoPath = videoPath;
+    this.preloadReady = false;
+    this.preload.src = videoPath;
+    this.preload.load();
+  }
+
+  switchTo(videoPath, playbackRate = 1.0) {
+    if (!this.primary) return;
+    
+    if (this.preload && this.nextVideoPath === videoPath && this.preloadReady) {
+      this.executeSwap();
+      this.primary.playbackRate = playbackRate;
+      this.primary.play().catch(e => console.log("Video play fail", e));
+    } else {
+      if (this.preload && videoPath) {
+        this.swapPending = true;
+        this.preloadVideo(videoPath);
+        this.primary.style.transition = 'opacity 0.15s ease';
+        this.primary.style.opacity = '0.7';
+        setTimeout(() => {
+          if (!this.preloadReady) {
+            this.primary.src = videoPath;
+            this.primary.load();
+            this.primary.style.opacity = '1';
+            this.primary.playbackRate = playbackRate;
+            this.primary.play().catch(e => console.log("Video play fail", e));
+            this.swapPending = false;
+          }
+        }, 200);
+      } else {
+        this.primary.src = videoPath;
+        this.primary.load();
+        this.primary.playbackRate = playbackRate;
+        this.primary.play().catch(e => console.log("Video play fail", e));
+      }
+    }
+  }
+
+  executeSwap() {
+    if (!this.primary || !this.preload) return;
+    
+    const tempSrc = this.preload.src;
+    this.preload.style.opacity = '1';
+    this.primary.style.opacity = '0';
+    
+    const oldPrimary = this.primary;
+    const oldPreload = this.preload;
+    
+    oldPreload.style.opacity = '1';
+    oldPreload.style.pointerEvents = 'auto';
+    oldPrimary.style.opacity = '0';
+    oldPrimary.style.pointerEvents = 'none';
+    
+    this.primary = oldPreload;
+    this.preload = oldPrimary;
+    
+    this.primary.id = 'inline-video';
+    this.preload.id = 'inline-video-preload';
+    
+    this.preloadReady = false;
+    this.swapPending = false;
+    this.nextVideoPath = null;
+  }
+
+  preloadNext(currentIndex, videoPaths) {
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < videoPaths.length) {
+      this.preloadVideo(videoPaths[nextIndex]);
+    }
+  }
+
+  getCurrentVideo() {
+    return this.primary;
+  }
+}
+
+const videoBufferManager = new VideoBufferManager();
+
 function getBasePath() {
   const path = window.location.pathname;
   // New structure: /jobs/<job_id>/
@@ -991,10 +1099,8 @@ function handleTimeUpdate(e) {
         currentBeatIndex = targetBeatIndex;
         const newBeatPath = slide.beat_videos[targetBeatIndex];
         console.log(`Switching to beat ${targetBeatIndex}: ${newBeatPath}`);
-        inlineVideo.src = newBeatPath;
-        inlineVideo.load();
-        inlineVideo.playbackRate = 0.7;
-        inlineVideo.play().catch(e => console.log("Beat video play fail", e));
+        videoBufferManager.switchTo(newBeatPath, 0.7);
+        videoBufferManager.preloadNext(targetBeatIndex, slide.beat_videos);
       }
       
       const activeBeat = slide.visual_beats && slide.visual_beats[targetBeatIndex];
@@ -1034,9 +1140,8 @@ function handleTimeUpdate(e) {
         const newRecapPath = slide.recap_video_paths[targetRecapIndex];
         if (newRecapPath) {
           console.log(`Switching to recap scene ${targetRecapIndex + 1}: ${newRecapPath}`);
-          inlineVideo.src = newRecapPath;
-          inlineVideo.load();
-          inlineVideo.play().catch(e => console.log("Recap video play fail", e));
+          videoBufferManager.switchTo(newRecapPath, 1.0);
+          videoBufferManager.preloadNext(targetRecapIndex, slide.recap_video_paths);
         }
         
         // Update the displayed scene info if we have scene data
@@ -1634,6 +1739,7 @@ function showNewContentOverlay() {
 document.getElementById('btn-new').onclick = showNewContentOverlay;
 
 document.addEventListener('DOMContentLoaded', () => {
+  videoBufferManager.init();
   checkExistingPresentation();
   updateVisuals();
   setupContentOverflowHandler();
