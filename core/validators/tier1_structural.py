@@ -140,96 +140,110 @@ def _check_section_structure(section: Dict) -> List[StructuralError]:
 
 
 def _check_display_directives(section: Dict) -> List[StructuralError]:
-    """Check display_directives structure exists and has required layers."""
+    """Check display_directives exist INSIDE each narration segment (v1.3 per-segment format)."""
     errors = []
     section_id = section.get("section_id") or section.get("id", 0)
-    section_type = section.get("section_type", "")
     
-    display_directives = section.get("display_directives", [])
     narration = section.get("narration", {})
     narration_segments = []
     if isinstance(narration, dict):
         narration_segments = narration.get("segments", [])
     
-    if narration_segments and not display_directives:
-        errors.append(StructuralError(
-            "missing_display_directives",
-            section_id,
-            f"Section has {len(narration_segments)} narration segments but no display_directives array"
-        ))
+    if not narration_segments:
         return errors
     
-    if display_directives is None:
-        errors.append(StructuralError(
-            "display_directives_null",
-            section_id,
-            "display_directives is null (must be array)"
-        ))
-        return errors
-    
-    if narration_segments and len(display_directives) != len(narration_segments):
-        errors.append(StructuralError(
-            "display_directives_count_mismatch",
-            section_id,
-            f"display_directives count ({len(display_directives)}) != narration segments ({len(narration_segments)})"
-        ))
-    
-    for i, dd in enumerate(display_directives):
+    for i, seg in enumerate(narration_segments):
+        if not isinstance(seg, dict):
+            continue
+        
+        seg_id = seg.get("segment_id", i + 1)
+        dd = seg.get("display_directives")
+        
+        if dd is None:
+            errors.append(StructuralError(
+                "missing_segment_display_directives",
+                section_id,
+                f"Segment {seg_id} missing display_directives (must be inside each segment)"
+            ))
+            continue
+        
         if not isinstance(dd, dict):
             errors.append(StructuralError(
-                "invalid_display_directive",
+                "invalid_segment_display_directives",
                 section_id,
-                f"display_directive {i} must be an object"
+                f"Segment {seg_id} display_directives must be an object"
             ))
             continue
         
         required_layers = ["text_layer", "visual_layer", "avatar_layer"]
+        valid_text_values = ["show", "hide", "swap"]
+        valid_visual_values = ["show", "hide", "replace"]
+        valid_avatar_values = ["show", "hide", "gesture_only"]
+        
         for layer in required_layers:
-            layer_obj = dd.get(layer)
-            if layer_obj is None:
+            layer_val = dd.get(layer)
+            if layer_val is None:
                 errors.append(StructuralError(
-                    "missing_layer_in_directive",
+                    "missing_layer_in_segment",
                     section_id,
-                    f"display_directive {i} missing '{layer}'"
+                    f"Segment {seg_id} display_directives missing '{layer}'"
                 ))
-            elif not isinstance(layer_obj, dict):
+            elif isinstance(layer_val, dict):
                 errors.append(StructuralError(
-                    "invalid_layer_in_directive",
+                    "layer_must_be_string",
                     section_id,
-                    f"display_directive {i} '{layer}' must be an object with 'action'"
+                    f"Segment {seg_id} '{layer}' must be a string enum, not object"
                 ))
-            elif "action" not in layer_obj:
-                errors.append(StructuralError(
-                    "missing_action_in_layer",
-                    section_id,
-                    f"display_directive {i} '{layer}' missing 'action' field"
-                ))
+            elif isinstance(layer_val, str):
+                if layer == "text_layer" and layer_val not in valid_text_values:
+                    errors.append(StructuralError(
+                        "invalid_text_layer_value",
+                        section_id,
+                        f"Segment {seg_id} text_layer='{layer_val}' invalid, must be: {valid_text_values}"
+                    ))
+                elif layer == "visual_layer" and layer_val not in valid_visual_values:
+                    errors.append(StructuralError(
+                        "invalid_visual_layer_value",
+                        section_id,
+                        f"Segment {seg_id} visual_layer='{layer_val}' invalid, must be: {valid_visual_values}"
+                    ))
+                elif layer == "avatar_layer" and layer_val not in valid_avatar_values:
+                    errors.append(StructuralError(
+                        "invalid_avatar_layer_value",
+                        section_id,
+                        f"Segment {seg_id} avatar_layer='{layer_val}' invalid, must be: {valid_avatar_values}"
+                    ))
     
     return errors
 
 
 def _check_layer_logic(section: Dict) -> List[StructuralError]:
-    """Check text + complex visual not shown simultaneously."""
+    """Check text + complex visual not shown simultaneously (per-segment check)."""
     errors = []
     section_id = section.get("section_id") or section.get("id", 0)
     
-    display_directives = section.get("display_directives", [])
+    narration = section.get("narration", {})
+    narration_segments = []
+    if isinstance(narration, dict):
+        narration_segments = narration.get("segments", [])
     
-    for i, dd in enumerate(display_directives):
+    for i, seg in enumerate(narration_segments):
+        if not isinstance(seg, dict):
+            continue
+        
+        dd = seg.get("display_directives", {})
         if not isinstance(dd, dict):
             continue
         
-        text_layer = dd.get("text_layer", {})
-        visual_layer = dd.get("visual_layer", {})
+        seg_id = seg.get("segment_id", i + 1)
+        text_layer = dd.get("text_layer", "hide")
+        visual_layer = dd.get("visual_layer", "hide")
         
-        text_action = text_layer.get("action") if isinstance(text_layer, dict) else text_layer
-        visual_action = visual_layer.get("action") if isinstance(visual_layer, dict) else visual_layer
-        
-        if text_action == "show" and visual_action in ["show", "replace"]:
+        if text_layer == "show" and visual_layer in ["show", "replace"]:
             errors.append(StructuralError(
                 "text_and_visuals_simultaneous",
                 section_id,
-                f"Directive {i}: text_layer=show + visual_layer={visual_action} violates mutual exclusion"
+                f"Segment {seg_id}: text_layer=show + visual_layer={visual_layer} violates mutual exclusion"
             ))
     
     return errors
@@ -305,7 +319,11 @@ def _check_avatar_rules(section: Dict) -> List[StructuralError]:
     section_type = section.get("section_type", "")
     layout = section.get("layout", {})
     avatar_zone = layout.get("avatar_zone", {})
-    display_directives = section.get("display_directives", [])
+    
+    narration = section.get("narration", {})
+    narration_segments = []
+    if isinstance(narration, dict):
+        narration_segments = narration.get("segments", [])
     
     if section_type == "intro":
         avatar_mode = avatar_zone.get("mode", "")
@@ -325,15 +343,15 @@ def _check_avatar_rules(section: Dict) -> List[StructuralError]:
                 f"Intro avatar width is {avatar_width}%, must be ≥50%"
             ))
         
-        for i, dd in enumerate(display_directives):
-            if isinstance(dd, dict):
-                avatar_layer = dd.get("avatar_layer", {})
-                avatar_action = avatar_layer.get("action") if isinstance(avatar_layer, dict) else avatar_layer
-                if avatar_action == "hide":
+        for i, seg in enumerate(narration_segments):
+            if isinstance(seg, dict):
+                dd = seg.get("display_directives", {})
+                avatar_layer = dd.get("avatar_layer") if isinstance(dd, dict) else None
+                if avatar_layer == "hide":
                     errors.append(StructuralError(
                         "intro_avatar_hidden_in_segment",
                         section_id,
-                        f"Intro directive {i}: avatar cannot be 'hide'"
+                        f"Intro segment {i+1}: avatar cannot be 'hide'"
                     ))
     
     if section_type == "recap":
@@ -348,15 +366,15 @@ def _check_avatar_rules(section: Dict) -> List[StructuralError]:
                     "Recap avatar_zone must be hidden (video only)"
                 ))
         
-        for i, dd in enumerate(display_directives):
-            if isinstance(dd, dict):
-                avatar_layer = dd.get("avatar_layer", {})
-                avatar_action = avatar_layer.get("action") if isinstance(avatar_layer, dict) else avatar_layer
-                if avatar_action in ["show", "gesture_only"]:
+        for i, seg in enumerate(narration_segments):
+            if isinstance(seg, dict):
+                dd = seg.get("display_directives", {})
+                avatar_layer = dd.get("avatar_layer") if isinstance(dd, dict) else None
+                if avatar_layer in ["show", "gesture_only"]:
                     errors.append(StructuralError(
                         "recap_avatar_visible_in_segment",
                         section_id,
-                        f"Recap directive {i}: avatar must be 'hide', not '{avatar_action}'"
+                        f"Recap segment {i+1}: avatar must be 'hide', not '{avatar_layer}'"
                     ))
     
     return errors

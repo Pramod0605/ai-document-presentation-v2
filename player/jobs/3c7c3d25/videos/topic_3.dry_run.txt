@@ -1,0 +1,35 @@
+DRY RUN - Manim section 3
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/3c7c3d25/videos/topic_3.mp4
+
+--- SCENE CODE ---
+title = MathTex(r"\text{Newton's First Law: The Law of Inertia}").move_to(np.array([0, 2.5, 0]))
+law_text = MathTex(r"\text{An object will maintain its state of motion}\\\text{unless acted upon by an unbalanced force}").move_to(np.array([0, 1.0, 0]))
+bowling_ball = Dot(point=np.array([-3, -0.5, 0]), color=BLUE)
+bowling_label = Text("High Inertia", font_size=28).move_to(np.array([-3, -1.5, 0]))
+tennis_ball = Dot(point=np.array([3, -0.5, 0]), color=YELLOW)
+tennis_label = Text("Low Inertia", font_size=28).move_to(np.array([3, -1.5, 0]))
+book = Dot(point=np.array([-4, -0.5, 0]), color=WHITE)
+velocity_vector = Arrow(start=np.array([-4, -0.5, 0]), end=np.array([-2, -0.5, 0]), color=GREEN, buff=0)
+friction_vector = Arrow(start=np.array([-4, -0.5, 0]), end=np.array([-2, -0.5, 0]), color=RED, buff=0)
+friction_label = Text("Friction", font_size=28).move_to(np.array([-4, 0.3, 0]))
+
+# Animation sequence
+self.play(Write(title), run_time=2)
+self.play(Write(law_text), run_time=3)
+self.wait(1)
+self.play(FadeOut(law_text), run_time=1)
+self.play(FadeIn(bowling_ball), run_time=1)
+self.play(FadeIn(bowling_label), run_time=1)
+self.play(FadeIn(tennis_ball), run_time=1)
+self.play(FadeIn(tennis_label), run_time=1)
+self.wait(2)
+self.play(FadeOut(bowling_ball), run_time=1)
+self.play(FadeIn(book), run_time=1)
+self.play(FadeIn(velocity_vector), run_time=1)
+self.play(book.animate.move_to(np.array([0, 0, 0])), run_time=3)
+self.play(FadeIn(friction_vector), run_time=1)
+self.wait(2)
+self.play(FadeOut(book), run_time=1)
+self.play(FadeOut(title), run_time=1)
+self.wait(1)

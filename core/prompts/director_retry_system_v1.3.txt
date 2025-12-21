@@ -28,11 +28,32 @@ YOU MUST
 WHAT TO FIX
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-- Missing required fields (renderer, visual_beats, display_directives, avatar_layout).
+- Missing required fields (renderer, visual_beats, avatar_layout).
 - Incorrect nesting of fields.
 - Missing linkage via segment_id.
 - Invalid enum values.
 - Missing top-level fields (spec_version, presentation_id, avatar_global).
+
+CRITICAL - display_directives MUST be INSIDE each narration segment:
+
+WRONG (section-level array):
+  "display_directives": [{"segment_id": 1, "text_layer": {"action": "hide"}}]
+
+CORRECT (inside each segment, flat string values):
+  "segments": [
+    {
+      "segment_id": 1,
+      "text": "...",
+      "duration_seconds": 6,
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "show"
+      }
+    }
+  ]
+
+Each segment MUST have display_directives with text_layer, visual_layer, avatar_layer as string enums.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 WHAT NOT TO FIX

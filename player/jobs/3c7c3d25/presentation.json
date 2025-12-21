@@ -1,0 +1,3414 @@
+{
+  "spec_version": "v1.3",
+  "presentation_id": "sci8-newton-laws-98172",
+  "subject": "Science",
+  "grade": "8",
+  "chapter_title": "Newton's Laws of Motion",
+  "avatar_global": {
+    "style": "teacher",
+    "default_position": "right",
+    "default_width_percent": 35,
+    "gesture_enabled": true
+  },
+  "sections": [
+    {
+      "section_id": 1,
+      "section_type": "intro",
+      "title": "Introduction to Motion",
+      "renderer": "none",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "center",
+        "position": "center",
+        "width_percent": 50
+      },
+      "narration": {
+        "full_text": "Have you ever wondered why a soccer ball stays put until you kick it? Or why you feel pushed back into your seat when a car suddenly speeds up? These are not just random feelings; they are governed by fundamental rules of the universe. These rules, discovered by Sir Isaac Newton over 300 years ago, explain how and why things move. In this chapter, we're going to explore Newton's three laws of motion, which form the bedrock of classical physics and describe everything from a falling apple to the orbit of the moon.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Have you ever wondered why a soccer ball stays put until you kick it? Or why you feel pushed back into your seat when a car suddenly speeds up?",
+            "duration_seconds": 9,
+            "gesture_hint": "questioning",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "These are not just random feelings; they are governed by fundamental rules of the universe.",
+            "duration_seconds": 6,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "These rules, discovered by Sir Isaac Newton over 300 years ago, explain how and why things move.",
+            "duration_seconds": 7,
+            "gesture_hint": "point_up",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "In this chapter, we're going to explore Newton's three laws of motion, which form the bedrock of classical physics and describe everything from a falling apple to the orbit of the moon.",
+            "duration_seconds": 11,
+            "gesture_hint": "open_hands",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "1A",
+          "segment_id": 1,
+          "visual_beat_type": "motion_graphic",
+          "description": "A soccer ball sits on grass, then a foot kicks it. A person is shown being pushed back into a car seat as it accelerates."
+        },
+        {
+          "beat_id": "1B",
+          "segment_id": 2,
+          "visual_beat_type": "motion_graphic",
+          "description": "Stylized animation of gears and abstract physics symbols turning in the background."
+        },
+        {
+          "beat_id": "1C",
+          "segment_id": 3,
+          "visual_beat_type": "motion_graphic",
+          "description": "An animated portrait of Sir Isaac Newton appears with his name and dates. An apple falls from a tree next to him."
+        },
+        {
+          "beat_id": "1D",
+          "segment_id": 4,
+          "visual_beat_type": "motion_graphic",
+          "description": "The screen shows the title: 'Newton's Three Laws of Motion' with animated lines connecting an apple, a car, and the moon."
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 990,
+        "elements": [
+          {
+            "id": "soccer_ball",
+            "type": "icon",
+            "content": "\u26bd",
+            "position": {
+              "x": 200,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 60
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "slide_out",
+              "enter_frame": 0,
+              "exit_frame": 135
+            }
+          },
+          {
+            "id": "car_seat",
+            "type": "icon",
+            "content": "\ud83d\ude97",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 60
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 150,
+              "exit_frame": 270
+            }
+          },
+          {
+            "id": "universe_rules",
+            "type": "icon",
+            "content": "\u2699\ufe0f",
+            "position": {
+              "x": 300,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 80
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 270,
+              "exit_frame": 450
+            }
+          },
+          {
+            "id": "newton_portrait",
+            "type": "image",
+            "content": "newton_portrait",
+            "position": {
+              "x": 300,
+              "y": 200
+            },
+            "style": {
+              "width": 200
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 450,
+              "exit_frame": 660
+            }
+          },
+          {
+            "id": "newton_name",
+            "type": "text",
+            "content": "Sir Isaac Newton",
+            "position": {
+              "x": 300,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 480,
+              "exit_frame": 660
+            }
+          },
+          {
+            "id": "title",
+            "type": "text",
+            "content": "Newton's Three Laws of Motion",
+            "position": {
+              "x": 300,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 660,
+              "exit_frame": 990
+            }
+          }
+        ],
+        "background": {
+          "color": "#1A1A1A"
+        }
+      },
+      "renderer_override_reason": "Section type 'intro' is text-only (no video rendering)"
+    },
+    {
+      "section_id": 2,
+      "section_type": "summary",
+      "title": "The Three Laws of Motion",
+      "renderer": "none",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Before we dive deep, let's get a quick overview. Newton's work is summarized in three simple, yet powerful, laws. The First Law is the Law of Inertia. It tells us that objects like to keep doing what they're already doing. The Second Law connects force, mass, and acceleration with a famous equation. It explains how an object's motion changes when a force acts on it. Finally, the Third Law is about action and reaction. It reveals that forces always come in pairs. Together, these three laws provide a complete framework for understanding motion.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Before we dive deep, let's get a quick overview. Newton's work is summarized in three simple, yet powerful, laws.",
+            "duration_seconds": 8,
+            "gesture_hint": "introductory",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "The First Law is the Law of Inertia. It tells us that objects like to keep doing what they're already doing.",
+            "duration_seconds": 7,
+            "gesture_hint": "number_one",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "The Second Law connects force, mass, and acceleration with a famous equation. It explains how an object's motion changes when a force acts on it.",
+            "duration_seconds": 10,
+            "gesture_hint": "number_two",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Finally, the Third Law is about action and reaction. It reveals that forces always come in pairs. Together, these three laws provide a complete framework for understanding motion.",
+            "duration_seconds": 11,
+            "gesture_hint": "number_three",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "2A",
+          "segment_id": 2,
+          "visual_beat_type": "animated_text",
+          "description": "Text '1. Law of Inertia' appears with an icon of a sleeping object and an object moving in a straight line."
+        },
+        {
+          "beat_id": "2B",
+          "segment_id": 3,
+          "visual_beat_type": "animated_text",
+          "description": "Text '2. F = ma' appears with an icon showing a force arrow pushing a block, causing an acceleration arrow."
+        },
+        {
+          "beat_id": "2C",
+          "segment_id": 4,
+          "visual_beat_type": "animated_text",
+          "description": "Text '3. Action-Reaction' appears with an icon of two arrows pushing against each other with equal length."
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1080,
+        "elements": [
+          {
+            "id": "intro_text",
+            "type": "text",
+            "content": "Newton's Three Laws of Motion",
+            "position": {
+              "x": 100,
+              "y": 80
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#1a1a1a",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 240
+            }
+          },
+          {
+            "id": "law1_title",
+            "type": "text",
+            "content": "1. Law of Inertia",
+            "position": {
+              "x": 100,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#2c3e50",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 240,
+              "exit_frame": 450
+            }
+          },
+          {
+            "id": "law1_icon",
+            "type": "icon",
+            "content": "straight_arrow",
+            "position": {
+              "x": 100,
+              "y": 220
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#3498db"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 270,
+              "exit_frame": 450
+            }
+          },
+          {
+            "id": "law2_title",
+            "type": "text",
+            "content": "2. F = ma",
+            "position": {
+              "x": 100,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#2c3e50",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 450,
+              "exit_frame": 750
+            }
+          },
+          {
+            "id": "law2_icon",
+            "type": "icon",
+            "content": "force_arrow",
+            "position": {
+              "x": 100,
+              "y": 220
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#e74c3c"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 480,
+              "exit_frame": 750
+            }
+          },
+          {
+            "id": "law3_title",
+            "type": "text",
+            "content": "3. Action-Reaction",
+            "position": {
+              "x": 100,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#2c3e50",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 750,
+              "exit_frame": 1080
+            }
+          },
+          {
+            "id": "law3_icon",
+            "type": "icon",
+            "content": "opposite_arrows",
+            "position": {
+              "x": 100,
+              "y": 220
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#27ae60"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 780,
+              "exit_frame": 1080
+            }
+          }
+        ],
+        "background": {
+          "color": "#ffffff"
+        }
+      },
+      "renderer_override_reason": "Section type 'summary' is text-only (no video rendering)"
+    },
+    {
+      "section_id": 3,
+      "section_type": "content",
+      "title": "Newton's First Law: The Law of Inertia",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Let's start with Newton's First Law, often called the Law of Inertia. The law states: an object at rest will stay at rest, and an object in motion will stay in motion with the same speed and in the same direction, unless acted upon by an unbalanced force. 'Inertia' is simply an object's resistance to changing its state of motion. Think about a heavy bowling ball versus a light tennis ball. The bowling ball has more mass, and therefore more inertia. It's much harder to get it moving, and much harder to stop it once it is moving. This isn't just a suggestion; it's a fundamental property of matter. If you slide a book across a table, it eventually stops. Why? Because of an unbalanced force: friction. In a perfect, friction-free environment, like deep space, if you pushed an object, it would continue moving in a straight line at a constant speed forever.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's start with Newton's First Law, often called the Law of Inertia. The law states: an object at rest will stay at rest, and an object in motion will stay in motion with the same speed and in the same direction, unless acted upon by an unbalanced force.",
+            "duration_seconds": 18,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "'Inertia' is simply an object's resistance to changing its state of motion. Think about a heavy bowling ball versus a light tennis ball. The bowling ball has more mass, and therefore more inertia.",
+            "duration_seconds": 13,
+            "gesture_hint": "compare",
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "It's much harder to get it moving, and much harder to stop it once it is moving. This isn't just a suggestion; it's a fundamental property of matter.",
+            "duration_seconds": 9,
+            "gesture_hint": "emphasize",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "If you slide a book across a table, it eventually stops. Why? Because of an unbalanced force: friction.",
+            "duration_seconds": 8,
+            "gesture_hint": "point_down",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "In a perfect, friction-free environment, like deep space, if you pushed an object, it would continue moving in a straight line at a constant speed forever.",
+            "duration_seconds": 11,
+            "gesture_hint": "sweeping_motion",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "3A",
+          "segment_id": 3,
+          "visual_beat_type": "diagram",
+          "description": "Show a large bowling ball and a small tennis ball side-by-side. Label them 'High Inertia' and 'Low Inertia' respectively.",
+          "manim_scene_spec": {
+            "scene_name": "InertiaComparison",
+            "commands": [
+              "Create(Sphere(radius=0.8, color=BLUE).to_edge(LEFT)).add(Text('Bowling Ball').next_to(sphere, DOWN)), Create(Text('High Inertia').next_to(sphere, UP))",
+              "Create(Sphere(radius=0.2, color=YELLOW).to_edge(RIGHT)).add(Text('Tennis Ball').next_to(sphere, DOWN)), Create(Text('Low Inertia').next_to(sphere, UP))"
+            ]
+          }
+        },
+        {
+          "beat_id": "3B",
+          "segment_id": 4,
+          "visual_beat_type": "animation",
+          "description": "A book slides from left to right across a surface, with a velocity vector that shrinks. A 'Friction' force vector points left, opposing the motion. The book comes to a stop.",
+          "manim_scene_spec": {
+            "scene_name": "FrictionStopsBook",
+            "commands": [
+              "book = Rectangle(width=1.5, height=1).shift(LEFT*4)",
+              "velocity_vec = Arrow(book.get_center(), book.get_center()+RIGHT*2, color=GREEN)",
+              "friction_vec = Arrow(book.get_center(), book.get_center()+LEFT*1, color=RED).add(Text('Friction').next_to(friction_vec, UP))",
+              "Play(book.animate.shift(RIGHT*6), velocity_vec.animate.put_start_and_end_on(book.get_center(), book.get_center()), rate_func=linear, run_time=3)",
+              "FadeOut(velocity_vec)"
+            ]
+          }
+        },
+        {
+          "beat_id": "3C",
+          "segment_id": 5,
+          "visual_beat_type": "animation",
+          "description": "An object in a black, starry space is pushed. It then glides across the screen at a constant velocity, with a constant-length velocity vector attached.",
+          "manim_scene_spec": {
+            "scene_name": "SpaceMotion",
+            "commands": [
+              "stars = VGroup(*[Dot(point=np.random.rand(3)*10-5) for _ in range(100)])",
+              "obj = Square().shift(LEFT*5)",
+              "velocity_vec = Arrow(obj.get_center(), obj.get_center()+RIGHT*2, color=GREEN)",
+              "Play(obj.animate.shift(RIGHT*10), velocity_vec.animate.shift(RIGHT*10), run_time=4)"
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "equation",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Newton's First Law: The Law of Inertia}",
+              "scale": 1.2,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "law_text",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\text{An object will maintain its state of motion}\\\\\\text{unless acted upon by an unbalanced force}",
+              "scale": 1.0,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "bowling_ball",
+            "type": "shape",
+            "position": [
+              -3,
+              -0.5
+            ],
+            "properties": {
+              "shape": "circle",
+              "radius": 0.8,
+              "color": "BLUE",
+              "fill_opacity": 0.8
+            }
+          },
+          {
+            "id": "bowling_label",
+            "type": "label",
+            "position": [
+              -3,
+              -1.5
+            ],
+            "properties": {
+              "text": "High Inertia",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "tennis_ball",
+            "type": "shape",
+            "position": [
+              3,
+              -0.5
+            ],
+            "properties": {
+              "shape": "circle",
+              "radius": 0.3,
+              "color": "YELLOW",
+              "fill_opacity": 0.8
+            }
+          },
+          {
+            "id": "tennis_label",
+            "type": "label",
+            "position": [
+              3,
+              -1.5
+            ],
+            "properties": {
+              "text": "Low Inertia",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "book",
+            "type": "shape",
+            "position": [
+              -4,
+              -0.5
+            ],
+            "properties": {
+              "shape": "rectangle",
+              "width": 1.5,
+              "height": 1.0,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "velocity_vector",
+            "type": "vector",
+            "position": [
+              -4,
+              -0.5
+            ],
+            "properties": {
+              "direction": [
+                1,
+                0
+              ],
+              "color": "GREEN",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "friction_vector",
+            "type": "vector",
+            "position": [
+              -4,
+              -0.5
+            ],
+            "properties": {
+              "direction": [
+                -1,
+                0
+              ],
+              "color": "RED",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "friction_label",
+            "type": "label",
+            "position": [
+              -4,
+              0.3
+            ],
+            "properties": {
+              "text": "Friction",
+              "scale": 0.7,
+              "color": "RED"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "title",
+            "duration": 2
+          },
+          {
+            "action": "show_equation",
+            "target": "law_text",
+            "duration": 3
+          },
+          {
+            "action": "wait",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "law_text",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "bowling_ball",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "bowling_label",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "tennis_ball",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "tennis_label",
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "duration": 2
+          },
+          {
+            "action": "fade_out",
+            "target": [
+              "bowling_ball",
+              "bowling_label",
+              "tennis_ball",
+              "tennis_label"
+            ],
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "book",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "velocity_vector",
+            "duration": 1
+          },
+          {
+            "action": "move",
+            "target": "book",
+            "duration": 3,
+            "properties": {
+              "target_position": [
+                4,
+                -0.5
+              ]
+            }
+          },
+          {
+            "action": "appear",
+            "target": [
+              "friction_vector",
+              "friction_label"
+            ],
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "duration": 2
+          },
+          {
+            "action": "fade_out",
+            "target": [
+              "book",
+              "velocity_vector",
+              "friction_vector",
+              "friction_label"
+            ],
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "title",
+            "duration": 1
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "3A",
+            "segment_id": 3,
+            "visual_beat_type": "diagram",
+            "description": "Show a large bowling ball and a small tennis ball side-by-side. Label them 'High Inertia' and 'Low Inertia' respectively.",
+            "manim_scene_spec": {
+              "scene_name": "InertiaComparison",
+              "commands": [
+                "Create(Sphere(radius=0.8, color=BLUE).to_edge(LEFT)).add(Text('Bowling Ball').next_to(sphere, DOWN)), Create(Text('High Inertia').next_to(sphere, UP))",
+                "Create(Sphere(radius=0.2, color=YELLOW).to_edge(RIGHT)).add(Text('Tennis Ball').next_to(sphere, DOWN)), Create(Text('Low Inertia').next_to(sphere, UP))"
+              ]
+            }
+          },
+          {
+            "beat_id": "3B",
+            "segment_id": 4,
+            "visual_beat_type": "animation",
+            "description": "A book slides from left to right across a surface, with a velocity vector that shrinks. A 'Friction' force vector points left, opposing the motion. The book comes to a stop.",
+            "manim_scene_spec": {
+              "scene_name": "FrictionStopsBook",
+              "commands": [
+                "book = Rectangle(width=1.5, height=1).shift(LEFT*4)",
+                "velocity_vec = Arrow(book.get_center(), book.get_center()+RIGHT*2, color=GREEN)",
+                "friction_vec = Arrow(book.get_center(), book.get_center()+LEFT*1, color=RED).add(Text('Friction').next_to(friction_vec, UP))",
+                "Play(book.animate.shift(RIGHT*6), velocity_vec.animate.put_start_and_end_on(book.get_center(), book.get_center()), rate_func=linear, run_time=3)",
+                "FadeOut(velocity_vec)"
+              ]
+            }
+          },
+          {
+            "beat_id": "3C",
+            "segment_id": 5,
+            "visual_beat_type": "animation",
+            "description": "An object in a black, starry space is pushed. It then glides across the screen at a constant velocity, with a constant-length velocity vector attached.",
+            "manim_scene_spec": {
+              "scene_name": "SpaceMotion",
+              "commands": [
+                "stars = VGroup(*[Dot(point=np.random.rand(3)*10-5) for _ in range(100)])",
+                "obj = Square().shift(LEFT*5)",
+                "velocity_vec = Arrow(obj.get_center(), obj.get_center()+RIGHT*2, color=GREEN)",
+                "Play(obj.animate.shift(RIGHT*10), velocity_vec.animate.shift(RIGHT*10), run_time=4)"
+              ]
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "title",
+              "type": "equation",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "latex": "\\text{Newton's First Law: The Law of Inertia}",
+                "scale": 1.2,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "law_text",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "\\text{An object will maintain its state of motion}\\\\\\text{unless acted upon by an unbalanced force}",
+                "scale": 1.0,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "bowling_ball",
+              "type": "shape",
+              "position": [
+                -3,
+                -0.5
+              ],
+              "properties": {
+                "shape": "circle",
+                "radius": 0.8,
+                "color": "BLUE",
+                "fill_opacity": 0.8
+              }
+            },
+            {
+              "id": "bowling_label",
+              "type": "label",
+              "position": [
+                -3,
+                -1.5
+              ],
+              "properties": {
+                "text": "High Inertia",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "tennis_ball",
+              "type": "shape",
+              "position": [
+                3,
+                -0.5
+              ],
+              "properties": {
+                "shape": "circle",
+                "radius": 0.3,
+                "color": "YELLOW",
+                "fill_opacity": 0.8
+              }
+            },
+            {
+              "id": "tennis_label",
+              "type": "label",
+              "position": [
+                3,
+                -1.5
+              ],
+              "properties": {
+                "text": "Low Inertia",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "book",
+              "type": "shape",
+              "position": [
+                -4,
+                -0.5
+              ],
+              "properties": {
+                "shape": "rectangle",
+                "width": 1.5,
+                "height": 1.0,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "velocity_vector",
+              "type": "vector",
+              "position": [
+                -4,
+                -0.5
+              ],
+              "properties": {
+                "direction": [
+                  1,
+                  0
+                ],
+                "color": "GREEN",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "friction_vector",
+              "type": "vector",
+              "position": [
+                -4,
+                -0.5
+              ],
+              "properties": {
+                "direction": [
+                  -1,
+                  0
+                ],
+                "color": "RED",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "friction_label",
+              "type": "label",
+              "position": [
+                -4,
+                0.3
+              ],
+              "properties": {
+                "text": "Friction",
+                "scale": 0.7,
+                "color": "RED"
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "show_equation",
+              "target": "title",
+              "duration": 2
+            },
+            {
+              "action": "show_equation",
+              "target": "law_text",
+              "duration": 3
+            },
+            {
+              "action": "wait",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "law_text",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "bowling_ball",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "bowling_label",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "tennis_ball",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "tennis_label",
+              "duration": 1
+            },
+            {
+              "action": "wait",
+              "duration": 2
+            },
+            {
+              "action": "fade_out",
+              "target": [
+                "bowling_ball",
+                "bowling_label",
+                "tennis_ball",
+                "tennis_label"
+              ],
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "book",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "velocity_vector",
+              "duration": 1
+            },
+            {
+              "action": "move",
+              "target": "book",
+              "duration": 3,
+              "properties": {
+                "target_position": [
+                  4,
+                  -0.5
+                ]
+              }
+            },
+            {
+              "action": "appear",
+              "target": [
+                "friction_vector",
+                "friction_label"
+              ],
+              "duration": 1
+            },
+            {
+              "action": "wait",
+              "duration": 2
+            },
+            {
+              "action": "fade_out",
+              "target": [
+                "book",
+                "velocity_vector",
+                "friction_vector",
+                "friction_label"
+              ],
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "title",
+              "duration": 1
+            }
+          ]
+        }
+      },
+      "content_video_path": "videos/topic_3.dry_run.txt",
+      "has_content_video": true
+    },
+    {
+      "section_id": 4,
+      "section_type": "content",
+      "title": "Newton's Second Law: Force, Mass, and Acceleration",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Newton's Second Law gives us a way to measure forces. It's expressed by the famous equation: Force equals mass times acceleration, or F = ma. Let's break this down. 'Acceleration' is any change in velocity\u2014speeding up, slowing down, or changing direction. 'Mass' is the amount of 'stuff' in an object, which we already know is a measure of its inertia. And 'Force' is the push or pull that causes the acceleration. The law tells us that the acceleration of an object is directly proportional to the net force applied and inversely proportional to its mass. What does this mean in the real world? If you push a small, light grocery cart and a large, heavy one with the exact same force, the light cart will accelerate much more quickly. To get the heavy cart to accelerate at the same rate, you need to apply a much greater force. This law is incredibly powerful because it turns a descriptive idea into a predictive, mathematical tool.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Newton's Second Law gives us a way to measure forces. It's expressed by the famous equation: Force equals mass times acceleration, or F = ma.",
+            "duration_seconds": 11,
+            "gesture_hint": "present_formula",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Let's break this down. 'Acceleration' is any change in velocity\u2014speeding up, slowing down, or changing direction. 'Mass' is the amount of 'stuff' in an object, which we already know is a measure of its inertia. And 'Force' is the push or pull that causes the acceleration.",
+            "duration_seconds": 19,
+            "gesture_hint": "break_down",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "The law tells us that the acceleration of an object is directly proportional to the net force applied and inversely proportional to its mass.",
+            "duration_seconds": 10,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "What does this mean in the real world? If you push a small, light grocery cart and a large, heavy one with the exact same force, the light cart will accelerate much more quickly.",
+            "duration_seconds": 12,
+            "gesture_hint": "compare",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "To get the heavy cart to accelerate at the same rate, you need to apply a much greater force. This law is incredibly powerful because it turns a descriptive idea into a predictive, mathematical tool.",
+            "duration_seconds": 12,
+            "gesture_hint": "emphasize",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "4A",
+          "segment_id": 2,
+          "visual_beat_type": "formula",
+          "description": "The formula F=ma is shown. The letters F, m, and a glow sequentially as they are defined by the narration.",
+          "manim_scene_spec": {
+            "scene_name": "DefineFMA",
+            "commands": [
+              "formula = MathTex('F', '=', 'm', 'a').scale(2)",
+              "Play(Write(formula))",
+              "Wait(2)",
+              "Play(Indicate(formula[0]))",
+              "Wait(5)",
+              "Play(Indicate(formula[2]))",
+              "Wait(5)",
+              "Play(Indicate(formula[3]))"
+            ]
+          }
+        },
+        {
+          "beat_id": "4B",
+          "segment_id": 4,
+          "visual_beat_type": "animation",
+          "description": "Two blocks, one small (m) and one large (M), are shown. An identical force vector 'F' pushes both. The small block shows a large acceleration vector 'a', while the large block shows a small acceleration vector 'a'.",
+          "manim_scene_spec": {
+            "scene_name": "MassAndAcceleration",
+            "commands": [
+              "small_block = Square(side_length=1, color=BLUE).shift(UP*2 + LEFT*3).add(MathTex('m').move_to(small_block))",
+              "large_block = Square(side_length=2, color=BLUE).shift(DOWN*2 + LEFT*3).add(MathTex('M').move_to(large_block))",
+              "force_vec1 = Arrow(LEFT*5, LEFT*3, color=RED).shift(UP*2).add(MathTex('F').next_to(force_vec1, LEFT))",
+              "force_vec2 = Arrow(LEFT*5, LEFT*3, color=RED).shift(DOWN*2).add(MathTex('F').next_to(force_vec2, LEFT))",
+              "accel_vec1 = Arrow(RIGHT*3, RIGHT*6, color=GREEN).shift(UP*2).add(MathTex('a').next_to(accel_vec1, RIGHT))",
+              "accel_vec2 = Arrow(RIGHT*3, RIGHT*4, color=GREEN).shift(DOWN*2).add(MathTex('a').next_to(accel_vec2, RIGHT))",
+              "Play(FadeIn(small_block, large_block, force_vec1, force_vec2))",
+              "Play(FadeIn(accel_vec1, accel_vec2))"
+            ]
+          }
+        },
+        {
+          "beat_id": "4C",
+          "segment_id": 5,
+          "visual_beat_type": "animation",
+          "description": "The large block (M) is shown again. A much larger force vector '2F' pushes it, resulting in the same large acceleration vector 'a' as the small block had previously.",
+          "manim_scene_spec": {
+            "scene_name": "ForceAndAcceleration",
+            "commands": [
+              "large_block = Square(side_length=2, color=BLUE).shift(LEFT*3).add(MathTex('M').move_to(large_block))",
+              "force_vec = Arrow(LEFT*6, LEFT*3, color=RED).add(MathTex('2F').next_to(force_vec, LEFT))",
+              "accel_vec = Arrow(RIGHT*3, RIGHT*6, color=GREEN).add(MathTex('a').next_to(accel_vec, RIGHT))",
+              "Play(FadeIn(large_block, force_vec, accel_vec))"
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "main_equation",
+            "type": "equation",
+            "position": [
+              0,
+              2.0
+            ],
+            "properties": {
+              "latex": "F = ma",
+              "scale": 1.5,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "force_def",
+            "type": "label",
+            "position": [
+              -3,
+              0.5
+            ],
+            "properties": {
+              "latex": "\\text{Force: push or pull}",
+              "scale": 0.8,
+              "color": "#FF7777"
+            }
+          },
+          {
+            "id": "mass_def",
+            "type": "label",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "latex": "\\text{Mass: amount of matter}",
+              "scale": 0.8,
+              "color": "#77FF77"
+            }
+          },
+          {
+            "id": "accel_def",
+            "type": "label",
+            "position": [
+              3,
+              0.5
+            ],
+            "properties": {
+              "latex": "\\text{Acceleration: change in velocity}",
+              "scale": 0.8,
+              "color": "#7777FF"
+            }
+          },
+          {
+            "id": "small_block",
+            "type": "shape",
+            "position": [
+              -3,
+              -1
+            ],
+            "properties": {
+              "shape": "square",
+              "side_length": 1,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "large_block",
+            "type": "shape",
+            "position": [
+              3,
+              -1
+            ],
+            "properties": {
+              "shape": "square",
+              "side_length": 2,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "small_force",
+            "type": "vector",
+            "position": [
+              -4,
+              -1
+            ],
+            "properties": {
+              "tip_length": 0.2,
+              "color": "RED",
+              "label": "F"
+            }
+          },
+          {
+            "id": "large_force",
+            "type": "vector",
+            "position": [
+              2,
+              -1
+            ],
+            "properties": {
+              "tip_length": 0.2,
+              "color": "RED",
+              "label": "2F"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "main_equation",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "main_equation",
+            "target_latex_part": "F",
+            "color": "#FF7777",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "force_def",
+            "duration": 1.5
+          },
+          {
+            "action": "highlight",
+            "target": "main_equation",
+            "target_latex_part": "m",
+            "color": "#77FF77",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "mass_def",
+            "duration": 1.5
+          },
+          {
+            "action": "highlight",
+            "target": "main_equation",
+            "target_latex_part": "a",
+            "color": "#7777FF",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "accel_def",
+            "duration": 1.5
+          },
+          {
+            "action": "fade_out",
+            "target": "force_def",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "mass_def",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "accel_def",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "small_block",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "large_block",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "small_force",
+            "duration": 1.5
+          },
+          {
+            "action": "draw",
+            "target": "large_force",
+            "duration": 1.5
+          },
+          {
+            "action": "highlight",
+            "target": "main_equation",
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "fade_out",
+            "target": "small_block",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "large_block",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "small_force",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "large_force",
+            "duration": 1
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "4A",
+            "segment_id": 2,
+            "visual_beat_type": "formula",
+            "description": "The formula F=ma is shown. The letters F, m, and a glow sequentially as they are defined by the narration.",
+            "manim_scene_spec": {
+              "scene_name": "DefineFMA",
+              "commands": [
+                "formula = MathTex('F', '=', 'm', 'a').scale(2)",
+                "Play(Write(formula))",
+                "Wait(2)",
+                "Play(Indicate(formula[0]))",
+                "Wait(5)",
+                "Play(Indicate(formula[2]))",
+                "Wait(5)",
+                "Play(Indicate(formula[3]))"
+              ]
+            }
+          },
+          {
+            "beat_id": "4B",
+            "segment_id": 4,
+            "visual_beat_type": "animation",
+            "description": "Two blocks, one small (m) and one large (M), are shown. An identical force vector 'F' pushes both. The small block shows a large acceleration vector 'a', while the large block shows a small acceleration vector 'a'.",
+            "manim_scene_spec": {
+              "scene_name": "MassAndAcceleration",
+              "commands": [
+                "small_block = Square(side_length=1, color=BLUE).shift(UP*2 + LEFT*3).add(MathTex('m').move_to(small_block))",
+                "large_block = Square(side_length=2, color=BLUE).shift(DOWN*2 + LEFT*3).add(MathTex('M').move_to(large_block))",
+                "force_vec1 = Arrow(LEFT*5, LEFT*3, color=RED).shift(UP*2).add(MathTex('F').next_to(force_vec1, LEFT))",
+                "force_vec2 = Arrow(LEFT*5, LEFT*3, color=RED).shift(DOWN*2).add(MathTex('F').next_to(force_vec2, LEFT))",
+                "accel_vec1 = Arrow(RIGHT*3, RIGHT*6, color=GREEN).shift(UP*2).add(MathTex('a').next_to(accel_vec1, RIGHT))",
+                "accel_vec2 = Arrow(RIGHT*3, RIGHT*4, color=GREEN).shift(DOWN*2).add(MathTex('a').next_to(accel_vec2, RIGHT))",
+                "Play(FadeIn(small_block, large_block, force_vec1, force_vec2))",
+                "Play(FadeIn(accel_vec1, accel_vec2))"
+              ]
+            }
+          },
+          {
+            "beat_id": "4C",
+            "segment_id": 5,
+            "visual_beat_type": "animation",
+            "description": "The large block (M) is shown again. A much larger force vector '2F' pushes it, resulting in the same large acceleration vector 'a' as the small block had previously.",
+            "manim_scene_spec": {
+              "scene_name": "ForceAndAcceleration",
+              "commands": [
+                "large_block = Square(side_length=2, color=BLUE).shift(LEFT*3).add(MathTex('M').move_to(large_block))",
+                "force_vec = Arrow(LEFT*6, LEFT*3, color=RED).add(MathTex('2F').next_to(force_vec, LEFT))",
+                "accel_vec = Arrow(RIGHT*3, RIGHT*6, color=GREEN).add(MathTex('a').next_to(accel_vec, RIGHT))",
+                "Play(FadeIn(large_block, force_vec, accel_vec))"
+              ]
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "main_equation",
+              "type": "equation",
+              "position": [
+                0,
+                2.0
+              ],
+              "properties": {
+                "latex": "F = ma",
+                "scale": 1.5,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "force_def",
+              "type": "label",
+              "position": [
+                -3,
+                0.5
+              ],
+              "properties": {
+                "latex": "\\text{Force: push or pull}",
+                "scale": 0.8,
+                "color": "#FF7777"
+              }
+            },
+            {
+              "id": "mass_def",
+              "type": "label",
+              "position": [
+                0,
+                0.5
+              ],
+              "properties": {
+                "latex": "\\text{Mass: amount of matter}",
+                "scale": 0.8,
+                "color": "#77FF77"
+              }
+            },
+            {
+              "id": "accel_def",
+              "type": "label",
+              "position": [
+                3,
+                0.5
+              ],
+              "properties": {
+                "latex": "\\text{Acceleration: change in velocity}",
+                "scale": 0.8,
+                "color": "#7777FF"
+              }
+            },
+            {
+              "id": "small_block",
+              "type": "shape",
+              "position": [
+                -3,
+                -1
+              ],
+              "properties": {
+                "shape": "square",
+                "side_length": 1,
+                "color": "BLUE"
+              }
+            },
+            {
+              "id": "large_block",
+              "type": "shape",
+              "position": [
+                3,
+                -1
+              ],
+              "properties": {
+                "shape": "square",
+                "side_length": 2,
+                "color": "BLUE"
+              }
+            },
+            {
+              "id": "small_force",
+              "type": "vector",
+              "position": [
+                -4,
+                -1
+              ],
+              "properties": {
+                "tip_length": 0.2,
+                "color": "RED",
+                "label": "F"
+              }
+            },
+            {
+              "id": "large_force",
+              "type": "vector",
+              "position": [
+                2,
+                -1
+              ],
+              "properties": {
+                "tip_length": 0.2,
+                "color": "RED",
+                "label": "2F"
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "show_equation",
+              "target": "main_equation",
+              "duration": 2
+            },
+            {
+              "action": "highlight",
+              "target": "main_equation",
+              "target_latex_part": "F",
+              "color": "#FF7777",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "force_def",
+              "duration": 1.5
+            },
+            {
+              "action": "highlight",
+              "target": "main_equation",
+              "target_latex_part": "m",
+              "color": "#77FF77",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "mass_def",
+              "duration": 1.5
+            },
+            {
+              "action": "highlight",
+              "target": "main_equation",
+              "target_latex_part": "a",
+              "color": "#7777FF",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "accel_def",
+              "duration": 1.5
+            },
+            {
+              "action": "fade_out",
+              "target": "force_def",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "mass_def",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "accel_def",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "small_block",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "large_block",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "small_force",
+              "duration": 1.5
+            },
+            {
+              "action": "draw",
+              "target": "large_force",
+              "duration": 1.5
+            },
+            {
+              "action": "highlight",
+              "target": "main_equation",
+              "duration": 2,
+              "color": "YELLOW"
+            },
+            {
+              "action": "fade_out",
+              "target": "small_block",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "large_block",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "small_force",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "large_force",
+              "duration": 1
+            }
+          ]
+        }
+      },
+      "content_video_path": "videos/topic_4.dry_run.txt",
+      "has_content_video": true
+    },
+    {
+      "section_id": 5,
+      "section_type": "example",
+      "title": "Example: Calculating Force",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side_small",
+        "position": "right",
+        "width_percent": 30
+      },
+      "narration": {
+        "full_text": "Let's apply the Second Law to a real problem. Imagine a bowling ball with a mass of 7 kilograms. You push it, causing it to accelerate down the lane at a rate of 2 meters per second squared. What is the net force you applied to the ball? First, we write down what we know: the mass is 7 kg and the acceleration is 2 m/s\u00b2. Next, we use our formula: F = ma. Now, we substitute our known values into the equation. Force equals 7 kilograms multiplied by 2 meters per second squared. Finally, we do the math. 7 times 2 is 14. The unit for force is the Newton, abbreviated as 'N'. So, the net force applied to the bowling ball is 14 Newtons.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's apply the Second Law to a real problem. Imagine a bowling ball with a mass of 7 kilograms. You push it, causing it to accelerate down the lane at a rate of 2 meters per second squared. What is the net force you applied to the ball?",
+            "duration_seconds": 16,
+            "gesture_hint": "present_problem",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "First, we write down what we know: the mass is 7 kg and the acceleration is 2 m/s\u00b2.",
+            "duration_seconds": 7,
+            "gesture_hint": "point_left",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Next, we use our formula: F = ma.",
+            "duration_seconds": 4,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Now, we substitute our known values into the equation. Force equals 7 kilograms multiplied by 2 meters per second squared.",
+            "duration_seconds": 9,
+            "gesture_hint": "demonstrate",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "Finally, we do the math. 7 times 2 is 14. The unit for force is the Newton, abbreviated as 'N'. So, the net force applied to the bowling ball is 14 Newtons.",
+            "duration_seconds": 11,
+            "gesture_hint": "reveal_answer",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "5A",
+          "segment_id": 1,
+          "visual_beat_type": "problem_statement",
+          "description": "Text on screen: 'A 7 kg ball accelerates at 2 m/s\u00b2. What is the net force?'",
+          "manim_scene_spec": {
+            "scene_name": "ProblemSetup",
+            "commands": [
+              "problem_text = Text('A 7 kg ball accelerates at 2 m/s\u00b2.\\nWhat is the net force?').scale(0.8)",
+              "Play(Write(problem_text))"
+            ]
+          }
+        },
+        {
+          "beat_id": "5B",
+          "segment_id": 2,
+          "visual_beat_type": "variable_list",
+          "description": "Known variables are listed: m = 7 kg, a = 2 m/s\u00b2",
+          "manim_scene_spec": {
+            "scene_name": "ListKnowns",
+            "commands": [
+              "knowns = MathTex('m = 7 \\\\text{ kg}', '\\\\', 'a = 2 \\\\text{ m/s}^2').to_edge(LEFT)",
+              "Play(Write(knowns))"
+            ]
+          }
+        },
+        {
+          "beat_id": "5C",
+          "segment_id": 3,
+          "visual_beat_type": "formula",
+          "description": "The formula F = ma appears in the center.",
+          "manim_scene_spec": {
+            "scene_name": "ShowFormula",
+            "commands": [
+              "formula = MathTex('F = m a').scale(1.5).to_edge(UP)",
+              "Play(Write(formula))"
+            ]
+          }
+        },
+        {
+          "beat_id": "5D",
+          "segment_id": 4,
+          "visual_beat_type": "substitution",
+          "description": "The numbers from the variable list animate and substitute into the formula: F = (7 kg)(2 m/s\u00b2).",
+          "manim_scene_spec": {
+            "scene_name": "SubstituteValues",
+            "commands": [
+              "equation = MathTex('F = (7 \\\\text{ kg}) \\\\times (2 \\\\text{ m/s}^2)').next_to(formula, DOWN)",
+              "Play(TransformFromCopy(knowns, equation))"
+            ]
+          }
+        },
+        {
+          "beat_id": "5E",
+          "segment_id": 5,
+          "visual_beat_type": "solution",
+          "description": "The final answer appears and is highlighted: F = 14 N.",
+          "manim_scene_spec": {
+            "scene_name": "FinalAnswer",
+            "commands": [
+              "solution = MathTex('F = 14 \\\\text{ N}').next_to(equation, DOWN).scale(1.5)",
+              "Play(Write(solution))",
+              "Play(Circumscribe(solution, color=YELLOW))"
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "problem_text",
+            "type": "label",
+            "position": [
+              0,
+              2.0
+            ],
+            "properties": {
+              "text": "A 7 kg ball accelerates at 2 m/s\u00b2. What is the net force?",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "known_mass",
+            "type": "equation",
+            "position": [
+              -3,
+              0.5
+            ],
+            "properties": {
+              "latex": "m = 7 \\text{ kg}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "known_accel",
+            "type": "equation",
+            "position": [
+              -3,
+              -0.5
+            ],
+            "properties": {
+              "latex": "a = 2 \\text{ m/s}^2",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "formula",
+            "type": "equation",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "latex": "F = ma",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "substitution",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "F = (7 \\text{ kg})(2 \\text{ m/s}^2)",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "solution",
+            "type": "equation",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "F = 14 \\text{ N}",
+              "scale": 1.5,
+              "color": "YELLOW"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "problem_text",
+            "duration": 3.0
+          },
+          {
+            "action": "wait",
+            "duration": 13.0
+          },
+          {
+            "action": "show_equation",
+            "target": "known_mass",
+            "duration": 2.0
+          },
+          {
+            "action": "show_equation",
+            "target": "known_accel",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "duration": 3.0
+          },
+          {
+            "action": "show_equation",
+            "target": "formula",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "duration": 2.0
+          },
+          {
+            "action": "show_equation",
+            "target": "substitution",
+            "duration": 4.0
+          },
+          {
+            "action": "wait",
+            "duration": 5.0
+          },
+          {
+            "action": "show_equation",
+            "target": "solution",
+            "duration": 3.0
+          },
+          {
+            "action": "highlight",
+            "target": "solution",
+            "duration": 2.0,
+            "color": "YELLOW"
+          },
+          {
+            "action": "wait",
+            "duration": 6.0
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "5A",
+            "segment_id": 1,
+            "visual_beat_type": "problem_statement",
+            "description": "Text on screen: 'A 7 kg ball accelerates at 2 m/s\u00b2. What is the net force?'",
+            "manim_scene_spec": {
+              "scene_name": "ProblemSetup",
+              "commands": [
+                "problem_text = Text('A 7 kg ball accelerates at 2 m/s\u00b2.\\nWhat is the net force?').scale(0.8)",
+                "Play(Write(problem_text))"
+              ]
+            }
+          },
+          {
+            "beat_id": "5B",
+            "segment_id": 2,
+            "visual_beat_type": "variable_list",
+            "description": "Known variables are listed: m = 7 kg, a = 2 m/s\u00b2",
+            "manim_scene_spec": {
+              "scene_name": "ListKnowns",
+              "commands": [
+                "knowns = MathTex('m = 7 \\\\text{ kg}', '\\\\', 'a = 2 \\\\text{ m/s}^2').to_edge(LEFT)",
+                "Play(Write(knowns))"
+              ]
+            }
+          },
+          {
+            "beat_id": "5C",
+            "segment_id": 3,
+            "visual_beat_type": "formula",
+            "description": "The formula F = ma appears in the center.",
+            "manim_scene_spec": {
+              "scene_name": "ShowFormula",
+              "commands": [
+                "formula = MathTex('F = m a').scale(1.5).to_edge(UP)",
+                "Play(Write(formula))"
+              ]
+            }
+          },
+          {
+            "beat_id": "5D",
+            "segment_id": 4,
+            "visual_beat_type": "substitution",
+            "description": "The numbers from the variable list animate and substitute into the formula: F = (7 kg)(2 m/s\u00b2).",
+            "manim_scene_spec": {
+              "scene_name": "SubstituteValues",
+              "commands": [
+                "equation = MathTex('F = (7 \\\\text{ kg}) \\\\times (2 \\\\text{ m/s}^2)').next_to(formula, DOWN)",
+                "Play(TransformFromCopy(knowns, equation))"
+              ]
+            }
+          },
+          {
+            "beat_id": "5E",
+            "segment_id": 5,
+            "visual_beat_type": "solution",
+            "description": "The final answer appears and is highlighted: F = 14 N.",
+            "manim_scene_spec": {
+              "scene_name": "FinalAnswer",
+              "commands": [
+                "solution = MathTex('F = 14 \\\\text{ N}').next_to(equation, DOWN).scale(1.5)",
+                "Play(Write(solution))",
+                "Play(Circumscribe(solution, color=YELLOW))"
+              ]
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "problem_text",
+              "type": "label",
+              "position": [
+                0,
+                2.0
+              ],
+              "properties": {
+                "text": "A 7 kg ball accelerates at 2 m/s\u00b2. What is the net force?",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "known_mass",
+              "type": "equation",
+              "position": [
+                -3,
+                0.5
+              ],
+              "properties": {
+                "latex": "m = 7 \\text{ kg}",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "known_accel",
+              "type": "equation",
+              "position": [
+                -3,
+                -0.5
+              ],
+              "properties": {
+                "latex": "a = 2 \\text{ m/s}^2",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "formula",
+              "type": "equation",
+              "position": [
+                0,
+                0.5
+              ],
+              "properties": {
+                "latex": "F = ma",
+                "scale": 1.2
+              }
+            },
+            {
+              "id": "substitution",
+              "type": "equation",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "latex": "F = (7 \\text{ kg})(2 \\text{ m/s}^2)",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "solution",
+              "type": "equation",
+              "position": [
+                0,
+                -2.0
+              ],
+              "properties": {
+                "latex": "F = 14 \\text{ N}",
+                "scale": 1.5,
+                "color": "YELLOW"
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "show_equation",
+              "target": "problem_text",
+              "duration": 3.0
+            },
+            {
+              "action": "wait",
+              "duration": 13.0
+            },
+            {
+              "action": "show_equation",
+              "target": "known_mass",
+              "duration": 2.0
+            },
+            {
+              "action": "show_equation",
+              "target": "known_accel",
+              "duration": 2.0
+            },
+            {
+              "action": "wait",
+              "duration": 3.0
+            },
+            {
+              "action": "show_equation",
+              "target": "formula",
+              "duration": 2.0
+            },
+            {
+              "action": "wait",
+              "duration": 2.0
+            },
+            {
+              "action": "show_equation",
+              "target": "substitution",
+              "duration": 4.0
+            },
+            {
+              "action": "wait",
+              "duration": 5.0
+            },
+            {
+              "action": "show_equation",
+              "target": "solution",
+              "duration": 3.0
+            },
+            {
+              "action": "highlight",
+              "target": "solution",
+              "duration": 2.0,
+              "color": "YELLOW"
+            },
+            {
+              "action": "wait",
+              "duration": 6.0
+            }
+          ]
+        }
+      },
+      "content_video_path": "videos/topic_5.dry_run.txt",
+      "has_content_video": true
+    },
+    {
+      "section_id": 6,
+      "section_type": "content",
+      "title": "Newton's Third Law: Action and Reaction",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Finally, we arrive at Newton's Third Law, which is all about symmetry. It states: for every action, there is an equal and opposite reaction. This means that forces never occur alone; they always come in pairs. When you push on a wall, the wall pushes back on you with an equal amount of force. If it didn't, your hand would go right through it! A common point of confusion is why things move at all if forces are equal and opposite. The key is that the action and reaction forces act on *different* objects. Consider a rocket launch. The rocket pushes hot gas downwards (the action). In turn, the hot gas pushes the rocket upwards (the reaction). The force on the gas and the force on the rocket are equal in size but opposite in direction. Because the rocket has a much larger mass than the gas it expels, the same force produces a much smaller acceleration for the rocket, but it's enough to lift it into space.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Finally, we arrive at Newton's Third Law, which is all about symmetry. It states: for every action, there is an equal and opposite reaction.",
+            "duration_seconds": 10,
+            "gesture_hint": "two_hands_apart",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "This means that forces never occur alone; they always come in pairs. When you push on a wall, the wall pushes back on you with an equal amount of force. If it didn't, your hand would go right through it!",
+            "duration_seconds": 13,
+            "gesture_hint": "push",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "A common point of confusion is why things move at all if forces are equal and opposite. The key is that the action and reaction forces act on *different* objects.",
+            "duration_seconds": 12,
+            "gesture_hint": "questioning",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Consider a rocket launch. The rocket pushes hot gas downwards (the action). In turn, the hot gas pushes the rocket upwards (the reaction).",
+            "duration_seconds": 11,
+            "gesture_hint": "point_up",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "The force on the gas and the force on the rocket are equal in size but opposite in direction. Because the rocket has a much larger mass than the gas it expels, the same force produces a much smaller acceleration for the rocket, but it's enough to lift it into space.",
+            "duration_seconds": 18,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "6A",
+          "segment_id": 2,
+          "visual_beat_type": "diagram",
+          "description": "A hand pushes against a wall. A force vector 'F' points from the hand into the wall. An equal and opposite force vector '-F' points from the wall to the hand.",
+          "manim_scene_spec": {
+            "scene_name": "HandOnWall",
+            "commands": [
+              "wall = Line(UP*3, DOWN*3).to_edge(RIGHT)",
+              "hand = Circle(radius=0.5).next_to(wall, LEFT)",
+              "force_on_wall = Arrow(hand.get_center(), wall.get_center(), color=YELLOW).add(MathTex('F_{action}').next_to(force_on_wall, UP))",
+              "force_on_hand = Arrow(wall.get_center(), hand.get_center(), color=RED).add(MathTex('F_{reaction}').next_to(force_on_hand, DOWN))",
+              "Play(FadeIn(wall, hand, force_on_wall, force_on_hand))"
+            ]
+          }
+        },
+        {
+          "beat_id": "6B",
+          "segment_id": 4,
+          "visual_beat_type": "animation",
+          "description": "A rocket is shown. A large 'Action' force vector points down from the rocket, labeled 'Force on Gas'. An equal and opposite 'Reaction' force vector points up from the base of the rocket, labeled 'Force on Rocket'.",
+          "manim_scene_spec": {
+            "scene_name": "RocketForces",
+            "commands": [
+              "rocket = Polygon([-1, -2, 0], [1, -2, 0], [0, 2, 0])",
+              "action = Arrow(rocket.get_bottom(), rocket.get_bottom()+DOWN*2, color=RED).add(Text('Action').next_to(action, RIGHT))",
+              "reaction = Arrow(rocket.get_bottom(), rocket.get_bottom()+UP*2, color=GREEN).add(Text('Reaction').next_to(reaction, RIGHT))",
+              "Play(FadeIn(rocket, action, reaction))"
+            ]
+          }
+        },
+        {
+          "beat_id": "6C",
+          "segment_id": 5,
+          "visual_beat_type": "animation",
+          "description": "The rocket from the previous scene begins to accelerate upwards slowly. The expelled gas (represented by particles) accelerates downwards very quickly.",
+          "manim_scene_spec": {
+            "scene_name": "RocketAcceleration",
+            "commands": [
+              "rocket = Polygon([-1, -2, 0], [1, -2, 0], [0, 2, 0])",
+              "gas_particles = VGroup(*[Dot(point=rocket.get_bottom()+np.random.rand(3)*0.5-0.25) for _ in range(20)])",
+              "Play(rocket.animate.shift(UP*2), gas_particles.animate.shift(DOWN*4), run_time=3)"
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "equation",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Newton's Third Law}",
+              "scale": 1.2,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "wall",
+            "type": "shape",
+            "position": [
+              3,
+              0
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "width": 0.5,
+              "height": 6,
+              "color": "GRAY"
+            }
+          },
+          {
+            "id": "hand",
+            "type": "shape",
+            "position": [
+              1,
+              0
+            ],
+            "properties": {
+              "shape_type": "circle",
+              "radius": 0.5,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "force_action",
+            "type": "vector",
+            "position": [
+              1,
+              0
+            ],
+            "properties": {
+              "end_point": [
+                3,
+                0
+              ],
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "force_reaction",
+            "type": "vector",
+            "position": [
+              3,
+              0
+            ],
+            "properties": {
+              "end_point": [
+                1,
+                0
+              ],
+              "color": "RED"
+            }
+          },
+          {
+            "id": "action_label",
+            "type": "label",
+            "position": [
+              2,
+              0.8
+            ],
+            "properties": {
+              "latex": "F_{\\text{action}}",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "reaction_label",
+            "type": "label",
+            "position": [
+              2,
+              -0.8
+            ],
+            "properties": {
+              "latex": "F_{\\text{reaction}}",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "rocket",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "shape_type": "polygon",
+              "points": [
+                [
+                  -1,
+                  -2
+                ],
+                [
+                  1,
+                  -2
+                ],
+                [
+                  0,
+                  2
+                ]
+              ],
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "rocket_action",
+            "type": "vector",
+            "position": [
+              0,
+              -2
+            ],
+            "properties": {
+              "end_point": [
+                0,
+                -4
+              ],
+              "color": "RED"
+            }
+          },
+          {
+            "id": "rocket_reaction",
+            "type": "vector",
+            "position": [
+              0,
+              -2
+            ],
+            "properties": {
+              "end_point": [
+                0,
+                0
+              ],
+              "color": "GREEN"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "title",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "wall",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "hand",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "force_action",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "action_label",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "force_reaction",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "reaction_label",
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": [
+              "wall",
+              "hand",
+              "force_action",
+              "force_reaction",
+              "action_label",
+              "reaction_label"
+            ],
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "rocket",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "rocket_action",
+            "duration": 2
+          },
+          {
+            "action": "draw",
+            "target": "rocket_reaction",
+            "duration": 2
+          },
+          {
+            "action": "move",
+            "target": "rocket",
+            "duration": 3,
+            "properties": {
+              "end_position": [
+                0,
+                2
+              ]
+            }
+          },
+          {
+            "action": "highlight",
+            "target": [
+              "rocket_action",
+              "rocket_reaction"
+            ],
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "fade_out",
+            "target": [
+              "rocket",
+              "rocket_action",
+              "rocket_reaction"
+            ],
+            "duration": 2
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "6A",
+            "segment_id": 2,
+            "visual_beat_type": "diagram",
+            "description": "A hand pushes against a wall. A force vector 'F' points from the hand into the wall. An equal and opposite force vector '-F' points from the wall to the hand.",
+            "manim_scene_spec": {
+              "scene_name": "HandOnWall",
+              "commands": [
+                "wall = Line(UP*3, DOWN*3).to_edge(RIGHT)",
+                "hand = Circle(radius=0.5).next_to(wall, LEFT)",
+                "force_on_wall = Arrow(hand.get_center(), wall.get_center(), color=YELLOW).add(MathTex('F_{action}').next_to(force_on_wall, UP))",
+                "force_on_hand = Arrow(wall.get_center(), hand.get_center(), color=RED).add(MathTex('F_{reaction}').next_to(force_on_hand, DOWN))",
+                "Play(FadeIn(wall, hand, force_on_wall, force_on_hand))"
+              ]
+            }
+          },
+          {
+            "beat_id": "6B",
+            "segment_id": 4,
+            "visual_beat_type": "animation",
+            "description": "A rocket is shown. A large 'Action' force vector points down from the rocket, labeled 'Force on Gas'. An equal and opposite 'Reaction' force vector points up from the base of the rocket, labeled 'Force on Rocket'.",
+            "manim_scene_spec": {
+              "scene_name": "RocketForces",
+              "commands": [
+                "rocket = Polygon([-1, -2, 0], [1, -2, 0], [0, 2, 0])",
+                "action = Arrow(rocket.get_bottom(), rocket.get_bottom()+DOWN*2, color=RED).add(Text('Action').next_to(action, RIGHT))",
+                "reaction = Arrow(rocket.get_bottom(), rocket.get_bottom()+UP*2, color=GREEN).add(Text('Reaction').next_to(reaction, RIGHT))",
+                "Play(FadeIn(rocket, action, reaction))"
+              ]
+            }
+          },
+          {
+            "beat_id": "6C",
+            "segment_id": 5,
+            "visual_beat_type": "animation",
+            "description": "The rocket from the previous scene begins to accelerate upwards slowly. The expelled gas (represented by particles) accelerates downwards very quickly.",
+            "manim_scene_spec": {
+              "scene_name": "RocketAcceleration",
+              "commands": [
+                "rocket = Polygon([-1, -2, 0], [1, -2, 0], [0, 2, 0])",
+                "gas_particles = VGroup(*[Dot(point=rocket.get_bottom()+np.random.rand(3)*0.5-0.25) for _ in range(20)])",
+                "Play(rocket.animate.shift(UP*2), gas_particles.animate.shift(DOWN*4), run_time=3)"
+              ]
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "title",
+              "type": "equation",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "latex": "\\text{Newton's Third Law}",
+                "scale": 1.2,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "wall",
+              "type": "shape",
+              "position": [
+                3,
+                0
+              ],
+              "properties": {
+                "shape_type": "rectangle",
+                "width": 0.5,
+                "height": 6,
+                "color": "GRAY"
+              }
+            },
+            {
+              "id": "hand",
+              "type": "shape",
+              "position": [
+                1,
+                0
+              ],
+              "properties": {
+                "shape_type": "circle",
+                "radius": 0.5,
+                "color": "BLUE"
+              }
+            },
+            {
+              "id": "force_action",
+              "type": "vector",
+              "position": [
+                1,
+                0
+              ],
+              "properties": {
+                "end_point": [
+                  3,
+                  0
+                ],
+                "color": "YELLOW"
+              }
+            },
+            {
+              "id": "force_reaction",
+              "type": "vector",
+              "position": [
+                3,
+                0
+              ],
+              "properties": {
+                "end_point": [
+                  1,
+                  0
+                ],
+                "color": "RED"
+              }
+            },
+            {
+              "id": "action_label",
+              "type": "label",
+              "position": [
+                2,
+                0.8
+              ],
+              "properties": {
+                "latex": "F_{\\text{action}}",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "reaction_label",
+              "type": "label",
+              "position": [
+                2,
+                -0.8
+              ],
+              "properties": {
+                "latex": "F_{\\text{reaction}}",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "rocket",
+              "type": "shape",
+              "position": [
+                0,
+                0
+              ],
+              "properties": {
+                "shape_type": "polygon",
+                "points": [
+                  [
+                    -1,
+                    -2
+                  ],
+                  [
+                    1,
+                    -2
+                  ],
+                  [
+                    0,
+                    2
+                  ]
+                ],
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "rocket_action",
+              "type": "vector",
+              "position": [
+                0,
+                -2
+              ],
+              "properties": {
+                "end_point": [
+                  0,
+                  -4
+                ],
+                "color": "RED"
+              }
+            },
+            {
+              "id": "rocket_reaction",
+              "type": "vector",
+              "position": [
+                0,
+                -2
+              ],
+              "properties": {
+                "end_point": [
+                  0,
+                  0
+                ],
+                "color": "GREEN"
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "show_equation",
+              "target": "title",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "wall",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "hand",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "force_action",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "action_label",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "force_reaction",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "reaction_label",
+              "duration": 1
+            },
+            {
+              "action": "wait",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": [
+                "wall",
+                "hand",
+                "force_action",
+                "force_reaction",
+                "action_label",
+                "reaction_label"
+              ],
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "rocket",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "rocket_action",
+              "duration": 2
+            },
+            {
+              "action": "draw",
+              "target": "rocket_reaction",
+              "duration": 2
+            },
+            {
+              "action": "move",
+              "target": "rocket",
+              "duration": 3,
+              "properties": {
+                "end_position": [
+                  0,
+                  2
+                ]
+              }
+            },
+            {
+              "action": "highlight",
+              "target": [
+                "rocket_action",
+                "rocket_reaction"
+              ],
+              "duration": 2,
+              "color": "YELLOW"
+            },
+            {
+              "action": "fade_out",
+              "target": [
+                "rocket",
+                "rocket_action",
+                "rocket_reaction"
+              ],
+              "duration": 2
+            }
+          ]
+        }
+      },
+      "content_video_path": "videos/topic_6.dry_run.txt",
+      "has_content_video": true
+    },
+    {
+      "section_id": 7,
+      "section_type": "memory",
+      "title": "Quick Memory Flashcards",
+      "renderer": "none",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "hidden"
+      },
+      "narration": {
+        "full_text": "Let's lock in these concepts with five key flashcards. First, Inertia is an object's resistance to a change in its motion. Second, Newton's Second Law is summarized by the equation F = ma. Third, Newton's Third Law states that for every action, there is an equal and opposite reaction. Fourth, Force is a push or a pull that causes acceleration. Fifth, Mass is the measure of how much matter is in an object, and it determines inertia.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's lock in these concepts with five key flashcards.",
+            "duration_seconds": 4,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "First, Inertia is an object's resistance to a change in its motion.",
+            "duration_seconds": 5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Second, Newton's Second Law is summarized by the equation F = ma.",
+            "duration_seconds": 5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Third, Newton's Third Law states that for every action, there is an equal and opposite reaction.",
+            "duration_seconds": 6,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "Fourth, Force is a push or a pull that causes acceleration.",
+            "duration_seconds": 5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 6,
+            "text": "Fifth, Mass is the measure of how much matter is in an object, and it determines inertia.",
+            "duration_seconds": 6,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "7A",
+          "segment_id": 2,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard front: 'Inertia'. Back: 'An object's resistance to change in motion.'"
+        },
+        {
+          "beat_id": "7B",
+          "segment_id": 3,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard front: 'Newton's 2nd Law'. Back: 'F = ma (Force = mass x acceleration)'"
+        },
+        {
+          "beat_id": "7C",
+          "segment_id": 4,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard front: 'Newton's 3rd Law'. Back: 'For every action, there is an equal and opposite reaction.'"
+        },
+        {
+          "beat_id": "7D",
+          "segment_id": 5,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard front: 'Force'. Back: 'A push or pull that causes an object to accelerate.'"
+        },
+        {
+          "beat_id": "7E",
+          "segment_id": 6,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard front: 'Mass'. Back: 'The amount of matter in an object; a measure of inertia.'"
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 930,
+        "elements": [
+          {
+            "id": "intro_text",
+            "type": "text",
+            "content": "5 Key Flashcards",
+            "position": {
+              "x": 540,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 120
+            }
+          },
+          {
+            "id": "card1_front",
+            "type": "text",
+            "content": "INERTIA",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 120,
+              "exit_frame": 180
+            }
+          },
+          {
+            "id": "card1_back",
+            "type": "text",
+            "content": "An object's resistance to change in motion",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 180,
+              "exit_frame": 270
+            }
+          },
+          {
+            "id": "card2_front",
+            "type": "text",
+            "content": "NEWTON'S 2ND LAW",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 270,
+              "exit_frame": 330
+            }
+          },
+          {
+            "id": "card2_back",
+            "type": "text",
+            "content": "F = ma",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 72,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 330,
+              "exit_frame": 420
+            }
+          },
+          {
+            "id": "card3_front",
+            "type": "text",
+            "content": "NEWTON'S 3RD LAW",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 420,
+              "exit_frame": 480
+            }
+          },
+          {
+            "id": "card3_back",
+            "type": "text",
+            "content": "For every action, there is an equal and opposite reaction",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 480,
+              "exit_frame": 600
+            }
+          },
+          {
+            "id": "card4_front",
+            "type": "text",
+            "content": "FORCE",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 600,
+              "exit_frame": 660
+            }
+          },
+          {
+            "id": "card4_back",
+            "type": "text",
+            "content": "A push or pull that causes acceleration",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 660,
+              "exit_frame": 750
+            }
+          },
+          {
+            "id": "card5_front",
+            "type": "text",
+            "content": "MASS",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 750,
+              "exit_frame": 810
+            }
+          },
+          {
+            "id": "card5_back",
+            "type": "text",
+            "content": "Amount of matter; determines inertia",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 810,
+              "exit_frame": 930
+            }
+          }
+        ],
+        "background": {
+          "color": "#1F2937"
+        }
+      },
+      "renderer_override_reason": "Section type 'memory' is text-only (no video rendering)"
+    },
+    {
+      "section_id": 8,
+      "section_type": "recap",
+      "title": "Recap: A Day at the Skatepark",
+      "renderer": "wan_video",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "hidden"
+      },
+      "narration": {
+        "full_text": "Scene 1: Imagine a skateboarder at the top of a ramp, perfectly still. They are an object at rest, and they will stay at rest. This is Newton's First Law in action. Their body has inertia, a resistance to changing its state of motion. Without a push or a pull\u2014a net force\u2014they remain motionless, balanced between the downward pull of gravity and the upward push of the board. This state of equilibrium is the starting point for all motion. (79 words). Scene 2: Now, the skater pushes off the edge, applying a force. Their mass begins to accelerate down the ramp. This is a perfect display of Newton's Second Law, F=ma. A gentle push results in a slow acceleration, while a powerful kick-off creates a rapid increase in speed. The force they apply is directly converted into acceleration, with their own body mass as the constant that determines 'how much' acceleration they get for their push. (78 words). Scene 3: As the skater reaches the flat ground at the bottom, they glide smoothly across the concrete. Assuming the wheels are good and the ground is even, the force of friction is very low. They are now an object in motion, and they will stay in motion at a nearly constant velocity. This is the other half of the Law of Inertia. They continue moving in a straight line, effortlessly demonstrating that motion doesn't require a continuous force. (79 words). Scene 4: To perform a trick, the skater stomps down on the tail of the board. This is the 'action'. The ground and the board's leverage create an equal and opposite 'reaction' force, pushing the board\u2014and the rider\u2014up into the air. This is Newton's Third Law. The force the skater exerts on the board is perfectly matched by the force the board exerts back on them, launching them skyward. Every jump and trick is a dance of these paired forces. (83 words). Scene 5: To stop, the skater drags their foot on the ground. This creates a strong force of friction, an external, unbalanced force that acts on the system. According to the Second Law, this force causes a negative acceleration, or deceleration. Their state of motion changes from moving to rest, bringing our skatepark journey to a close. From starting, to cruising, to jumping, to stopping, every moment was governed by Newton's three timeless laws of motion. (81 words)",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Imagine a skateboarder at the top of a ramp, perfectly still. They are an object at rest, and they will stay at rest. This is Newton's First Law in action. Their body has inertia, a resistance to changing its state of motion. Without a push or a pull\u2014a net force\u2014they remain motionless, balanced between the downward pull of gravity and the upward push of the board. This state of equilibrium is the starting point for all motion.",
+            "duration_seconds": 26,
+            "word_count": 79,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Now, the skater pushes off the edge, applying a force. Their mass begins to accelerate down the ramp. This is a perfect display of Newton's Second Law, F=ma. A gentle push results in a slow acceleration, while a powerful kick-off creates a rapid increase in speed. The force they apply is directly converted into acceleration, with their own body mass as the constant that determines 'how much' acceleration they get for their push.",
+            "duration_seconds": 26,
+            "word_count": 78,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "As the skater reaches the flat ground at the bottom, they glide smoothly across the concrete. Assuming the wheels are good and the ground is even, the force of friction is very low. They are now an object in motion, and they will stay in motion at a nearly constant velocity. This is the other half of the Law of Inertia. They continue moving in a straight line, effortlessly demonstrating that motion doesn't require a continuous force.",
+            "duration_seconds": 26,
+            "word_count": 79,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "To perform a trick, the skater stomps down on the tail of the board. This is the 'action'. The ground and the board's leverage create an equal and opposite 'reaction' force, pushing the board\u2014and the rider\u2014up into the air. This is Newton's Third Law. The force the skater exerts on the board is perfectly matched by the force the board exerts back on them, launching them skyward. Every jump and trick is a dance of these paired forces.",
+            "duration_seconds": 28,
+            "word_count": 83,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "To stop, the skater drags their foot on the ground. This creates a strong force of friction, an external, unbalanced force that acts on the system. According to the Second Law, this force causes a negative acceleration, or deceleration. Their state of motion changes from moving to rest, bringing our skatepark journey to a close. From starting, to cruising, to jumping, to stopping, every moment was governed by Newton's three timeless laws of motion.",
+            "duration_seconds": 27,
+            "word_count": 81,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "8A",
+          "segment_id": 1,
+          "visual_beat_type": "video_scene",
+          "description": "Cinematic shot of a skateboarder standing motionless at the edge of a skate ramp. The camera is still, emphasizing the lack of motion. Text overlay: 'Law 1: Inertia (at rest)'."
+        },
+        {
+          "beat_id": "8B",
+          "segment_id": 2,
+          "visual_beat_type": "video_scene",
+          "description": "The skater pushes off and accelerates down the ramp. Slow-motion shot shows the push. An animated graphic of 'F=ma' appears next to them. Text overlay: 'Law 2: Force & Acceleration'."
+        },
+        {
+          "beat_id": "8C",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "Low-angle tracking shot of the skater gliding across a flat, smooth surface at a constant speed. The motion looks effortless. Text overlay: 'Law 1: Inertia (in motion)'."
+        },
+        {
+          "beat_id": "8D",
+          "segment_id": 4,
+          "visual_beat_type": "video_scene",
+          "description": "Slow-motion close-up of the skater's foot stomping the board's tail. Animated arrows show the 'action' force down and the 'reaction' force up, launching them into an ollie. Text overlay: 'Law 3: Action-Reaction'."
+        },
+        {
+          "beat_id": "8E",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "The skater drags their foot on the ground, kicking up a little dust. An animated friction force arrow appears, pointing backward. The skater slows to a stop. Final shot shows all three laws listed on screen."
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": 1,
+          "prompt": "Static, wide shot of a concrete skatepark on a sunny day. A skateboarder stands perfectly still on a skateboard at the top edge of a half-pipe ramp. The skateboarder wears a blue helmet, a grey t-shirt, and black shorts. The skateboard has a red top surface and black wheels. The camera remains completely still for the entire shot. After 5 seconds, white text appears at the top center of the screen, reading: 'Law 1: Inertia (at rest)'. The skateboarder and all elements in the scene remain motionless for the remaining duration.",
+          "duration_seconds": 26,
+          "style": "animated"
+        },
+        {
+          "beat_id": 2,
+          "prompt": "The scene begins with the skateboarder pushing off the edge of the ramp with their back foot. The first 3 seconds are in slow motion, showing the foot making contact and pushing. The camera tilts downward, following the skateboarder. At the 3-second mark, the video returns to normal speed. The skateboarder accelerates down the curved surface of the ramp. At 4 seconds, a white, animated equation 'F=ma' appears to the right of the skater and moves down the ramp with them. At 8 seconds, white text appears at the top center of the screen, reading: 'Law 2: Force & Acceleration'. The skater continues to accelerate down the ramp for the rest of the shot.",
+          "duration_seconds": 26,
+          "style": "animated"
+        },
+        {
+          "beat_id": 3,
+          "prompt": "Low-angle shot, with the camera positioned close to the flat, grey concrete ground. The camera tracks from left to right, moving at a constant speed parallel to the skateboarder. The skateboarder glides smoothly across the screen from left to right at a constant velocity, body held in a stable, upright posture. The wheels of the skateboard are visible and spin at a steady rate. At 6 seconds, white text appears at the top center of the screen, reading: 'Law 1: Inertia (in motion)'. The camera continues to track the skater's effortless glide for the entire duration.",
+          "duration_seconds": 26,
+          "style": "animated"
+        },
+        {
+          "beat_id": 4,
+          "prompt": "Slow-motion, close-up shot focused on the skateboarder's feet on the red skateboard, moving across the concrete. At the 2-second mark, the skater's back foot stomps down on the tail of the board. The tail makes contact with the ground. At the 3-second mark, a red animated arrow labeled 'Action' points straight down from the foot to the tail. Simultaneously, a blue animated arrow labeled 'Reaction' points straight up from the ground where the tail hit. The front of the board lifts, and the entire board and skater become airborne, rising into the frame. The camera tilts up, following the jump. At 8 seconds, white text appears at the top center: 'Law 3: Action-Reaction'. The shot ends as the skater reaches the peak of their jump and is about to descend.",
+          "duration_seconds": 28,
+          "style": "animated"
+        },
+        {
+          "beat_id": 5,
+          "prompt": "Medium shot tracking the skateboarder as they glide across the concrete. At 2 seconds, the skater removes their back foot from the board and drags the sole of their shoe on the ground. A small cloud of dust appears where the shoe scrapes the concrete. At 4 seconds, a yellow animated arrow labeled 'Friction' appears next to the dragging foot, pointing backward against the direction of motion. The skater's speed visibly decreases. The camera's tracking movement slows down to match the skater's deceleration. The skater comes to a complete stop at the 15-second mark. The camera is now static. At 17 seconds, the scene cuts to a solid dark blue background. White text fades in, listing three numbered points:\n1. An object at rest stays at rest, and an object in motion stays in motion.\n2. Force equals mass times acceleration (F=ma).\n3. For every action, there is an equal and opposite reaction.\nThis text remains on screen until the end of the shot.",
+          "duration_seconds": 27,
+          "style": "animated"
+        }
+      ],
+      "renderer_override_reason": "Recap sections use WAN for storyboard visualization",
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "8A",
+            "segment_id": 1,
+            "visual_beat_type": "video_scene",
+            "description": "Cinematic shot of a skateboarder standing motionless at the edge of a skate ramp. The camera is still, emphasizing the lack of motion. Text overlay: 'Law 1: Inertia (at rest)'."
+          },
+          {
+            "beat_id": "8B",
+            "segment_id": 2,
+            "visual_beat_type": "video_scene",
+            "description": "The skater pushes off and accelerates down the ramp. Slow-motion shot shows the push. An animated graphic of 'F=ma' appears next to them. Text overlay: 'Law 2: Force & Acceleration'."
+          },
+          {
+            "beat_id": "8C",
+            "segment_id": 3,
+            "visual_beat_type": "video_scene",
+            "description": "Low-angle tracking shot of the skater gliding across a flat, smooth surface at a constant speed. The motion looks effortless. Text overlay: 'Law 1: Inertia (in motion)'."
+          },
+          {
+            "beat_id": "8D",
+            "segment_id": 4,
+            "visual_beat_type": "video_scene",
+            "description": "Slow-motion close-up of the skater's foot stomping the board's tail. Animated arrows show the 'action' force down and the 'reaction' force up, launching them into an ollie. Text overlay: 'Law 3: Action-Reaction'."
+          },
+          {
+            "beat_id": "8E",
+            "segment_id": 5,
+            "visual_beat_type": "video_scene",
+            "description": "The skater drags their foot on the ground, kicking up a little dust. An animated friction force arrow appears, pointing backward. The skater slows to a stop. Final shot shows all three laws listed on screen."
+          }
+        ],
+        "compiled_wan_prompt": "[Beat 1]: Static, wide shot of a concrete skatepark on a sunny day. A skateboarder stands perfectly still on a skateboard at the top edge of a half-pipe ramp. The skateboarder wears a blue helmet, a grey t-shirt, and black shorts. The skateboard has a red top surface and black wheels. The camera remains completely still for the entire shot. After 5 seconds, white text appears at the top center of the screen, reading: 'Law 1: Inertia (at rest)'. The skateboarder and all elements in the scene remain motionless for the remaining duration.\n\n[Beat 2]: The scene begins with the skateboarder pushing off the edge of the ramp with their back foot. The first 3 seconds are in slow motion, showing the foot making contact and pushing. The camera tilts downward, following the skateboarder. At the 3-second mark, the video returns to normal speed. The skateboarder accelerates down the curved surface of the ramp. At 4 seconds, a white, animated equation 'F=ma' appears to the right of the skater and moves down the ramp with them. At 8 seconds, white text appears at the top center of the screen, reading: 'Law 2: Force & Acceleration'. The skater continues to accelerate down the ramp for the rest of the shot.\n\n[Beat 3]: Low-angle shot, with the camera positioned close to the flat, grey concrete ground. The camera tracks from left to right, moving at a constant speed parallel to the skateboarder. The skateboarder glides smoothly across the screen from left to right at a constant velocity, body held in a stable, upright posture. The wheels of the skateboard are visible and spin at a steady rate. At 6 seconds, white text appears at the top center of the screen, reading: 'Law 1: Inertia (in motion)'. The camera continues to track the skater's effortless glide for the entire duration.\n\n[Beat 4]: Slow-motion, close-up shot focused on the skateboarder's feet on the red skateboard, moving across the concrete. At the 2-second mark, the skater's back foot stomps down on the tail of the board. The tail makes contact with the ground. At the 3-second mark, a red animated arrow labeled 'Action' points straight down from the foot to the tail. Simultaneously, a blue animated arrow labeled 'Reaction' points straight up from the ground where the tail hit. The front of the board lifts, and the entire board and skater become airborne, rising into the frame. The camera tilts up, following the jump. At 8 seconds, white text appears at the top center: 'Law 3: Action-Reaction'. The shot ends as the skater reaches the peak of their jump and is about to descend.\n\n[Beat 5]: Medium shot tracking the skateboarder as they glide across the concrete. At 2 seconds, the skater removes their back foot from the board and drags the sole of their shoe on the ground. A small cloud of dust appears where the shoe scrapes the concrete. At 4 seconds, a yellow animated arrow labeled 'Friction' appears next to the dragging foot, pointing backward against the direction of motion. The skater's speed visibly decreases. The camera's tracking movement slows down to match the skater's deceleration. The skater comes to a complete stop at the 15-second mark. The camera is now static. At 17 seconds, the scene cuts to a solid dark blue background. White text fades in, listing three numbered points:\n1. An object at rest stays at rest, and an object in motion stays in motion.\n2. Force equals mass times acceleration (F=ma).\n3. For every action, there is an equal and opposite reaction.\nThis text remains on screen until the end of the shot.",
+        "video_prompts_list": [
+          {
+            "beat_id": 1,
+            "prompt": "Static, wide shot of a concrete skatepark on a sunny day. A skateboarder stands perfectly still on a skateboard at the top edge of a half-pipe ramp. The skateboarder wears a blue helmet, a grey t-shirt, and black shorts. The skateboard has a red top surface and black wheels. The camera remains completely still for the entire shot. After 5 seconds, white text appears at the top center of the screen, reading: 'Law 1: Inertia (at rest)'. The skateboarder and all elements in the scene remain motionless for the remaining duration.",
+            "duration_seconds": 26,
+            "style": "animated"
+          },
+          {
+            "beat_id": 2,
+            "prompt": "The scene begins with the skateboarder pushing off the edge of the ramp with their back foot. The first 3 seconds are in slow motion, showing the foot making contact and pushing. The camera tilts downward, following the skateboarder. At the 3-second mark, the video returns to normal speed. The skateboarder accelerates down the curved surface of the ramp. At 4 seconds, a white, animated equation 'F=ma' appears to the right of the skater and moves down the ramp with them. At 8 seconds, white text appears at the top center of the screen, reading: 'Law 2: Force & Acceleration'. The skater continues to accelerate down the ramp for the rest of the shot.",
+            "duration_seconds": 26,
+            "style": "animated"
+          },
+          {
+            "beat_id": 3,
+            "prompt": "Low-angle shot, with the camera positioned close to the flat, grey concrete ground. The camera tracks from left to right, moving at a constant speed parallel to the skateboarder. The skateboarder glides smoothly across the screen from left to right at a constant velocity, body held in a stable, upright posture. The wheels of the skateboard are visible and spin at a steady rate. At 6 seconds, white text appears at the top center of the screen, reading: 'Law 1: Inertia (in motion)'. The camera continues to track the skater's effortless glide for the entire duration.",
+            "duration_seconds": 26,
+            "style": "animated"
+          },
+          {
+            "beat_id": 4,
+            "prompt": "Slow-motion, close-up shot focused on the skateboarder's feet on the red skateboard, moving across the concrete. At the 2-second mark, the skater's back foot stomps down on the tail of the board. The tail makes contact with the ground. At the 3-second mark, a red animated arrow labeled 'Action' points straight down from the foot to the tail. Simultaneously, a blue animated arrow labeled 'Reaction' points straight up from the ground where the tail hit. The front of the board lifts, and the entire board and skater become airborne, rising into the frame. The camera tilts up, following the jump. At 8 seconds, white text appears at the top center: 'Law 3: Action-Reaction'. The shot ends as the skater reaches the peak of their jump and is about to descend.",
+            "duration_seconds": 28,
+            "style": "animated"
+          },
+          {
+            "beat_id": 5,
+            "prompt": "Medium shot tracking the skateboarder as they glide across the concrete. At 2 seconds, the skater removes their back foot from the board and drags the sole of their shoe on the ground. A small cloud of dust appears where the shoe scrapes the concrete. At 4 seconds, a yellow animated arrow labeled 'Friction' appears next to the dragging foot, pointing backward against the direction of motion. The skater's speed visibly decreases. The camera's tracking movement slows down to match the skater's deceleration. The skater comes to a complete stop at the 15-second mark. The camera is now static. At 17 seconds, the scene cuts to a solid dark blue background. White text fades in, listing three numbered points:\n1. An object at rest stays at rest, and an object in motion stays in motion.\n2. Force equals mass times acceleration (F=ma).\n3. For every action, there is an equal and opposite reaction.\nThis text remains on screen until the end of the shot.",
+            "duration_seconds": 27,
+            "style": "animated"
+          }
+        ]
+      },
+      "content_video_path": "videos/topic_8.dry_run.txt",
+      "has_content_video": true
+    }
+  ],
+  "pipeline_version": "1.2",
+  "job_id": "7235b778",
+  "use_remotion": true,
+  "source_file": "Sample_subjects.md",
+  "skip_avatar": false
+}

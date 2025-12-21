@@ -58,8 +58,7 @@
         "renderer",
         "avatar_layout",
         "narration",
-        "visual_beats",
-        "display_directives"
+        "visual_beats"
       ],
       "properties": {
         "section_id": { "type": "number" },
@@ -86,11 +85,6 @@
               "items": { "$ref": "#/$defs/narration_segment" }
             }
           }
-        },
-        "display_directives": {
-          "type": "array",
-          "minItems": 1,
-          "items": { "$ref": "#/$defs/display_directive" }
         },
         "video_prompts": {
           "type": "array",
@@ -185,7 +179,7 @@
 
     "narration_segment": {
       "type": "object",
-      "required": ["segment_id", "text", "duration_seconds"],
+      "required": ["segment_id", "text", "duration_seconds", "display_directives"],
       "properties": {
         "segment_id": { "type": "number" },
         "text": { "type": "string", "minLength": 1 },
@@ -193,6 +187,17 @@
         "gesture_hint": {
           "type": "string",
           "description": "Avatar gesture hint - flexible string for various gestures"
+        },
+        "word_count": { "type": "number", "description": "Word count for recap segments" },
+        "display_directives": {
+          "type": "object",
+          "required": ["text_layer", "visual_layer", "avatar_layer"],
+          "properties": {
+            "text_layer": { "enum": ["show", "hide", "swap"] },
+            "visual_layer": { "enum": ["show", "hide", "replace"] },
+            "avatar_layer": { "enum": ["show", "hide", "gesture_only"] }
+          },
+          "description": "Layer visibility directives - text OR visual, never both visible"
         }
       }
     },
@@ -223,40 +228,6 @@
               "maxItems": 4
             },
             "max_words": { "type": "number", "maximum": 4 }
-          }
-        }
-      }
-    },
-
-    "display_directive": {
-      "type": "object",
-      "required": ["segment_id", "text_layer", "visual_layer", "avatar_layer"],
-      "properties": {
-        "segment_id": { "type": "number" },
-
-        "text_layer": {
-          "type": "object",
-          "required": ["action"],
-          "properties": {
-            "action": { "enum": ["show", "hide", "swap"] },
-            "animation": { "type": "string" }
-          }
-        },
-
-        "visual_layer": {
-          "type": "object",
-          "required": ["action"],
-          "properties": {
-            "action": { "enum": ["show", "hide", "replace"] },
-            "animation": { "type": "string" }
-          }
-        },
-
-        "avatar_layer": {
-          "type": "object",
-          "required": ["action"],
-          "properties": {
-            "action": { "enum": ["show", "hide", "gesture_only"] }
           }
         }
       }

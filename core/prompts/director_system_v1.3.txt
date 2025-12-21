@@ -180,7 +180,12 @@ Every section MUST follow this exact structure:
         "segment_id": 1,
         "text": "Let us define the force between two charges.",
         "duration_seconds": 6,
-        "gesture_hint": "point_center"
+        "gesture_hint": "point_center",
+        "display_directives": {
+          "text_layer": "hide",
+          "visual_layer": "show",
+          "avatar_layer": "gesture_only"
+        }
       }
     ]
   },
@@ -196,15 +201,6 @@ Every section MUST follow this exact structure:
         "content": ["F = kq₁q₂ / r²"],
         "max_words": 4
       }
-    }
-  ],
-
-  "display_directives": [
-    {
-      "segment_id": 1,
-      "text_layer": { "action": "hide", "animation": "fade_out" },
-      "visual_layer": { "action": "show", "animation": "cut" },
-      "avatar_layer": { "action": "gesture_only" }
     }
   ]
 }
@@ -231,12 +227,12 @@ Less than 5 or more than 5 = HARD FAILURE.
   "narration": {
     "full_text": "Let us review five key concepts from this chapter. First, photosynthesis converts light energy into chemical energy. Second, chlorophyll absorbs light in the leaf cells. Third, carbon dioxide enters through stomata. Fourth, water is absorbed by roots and transported upward. Fifth, glucose is the primary product used for plant growth.",
     "segments": [
-      { "segment_id": 1, "text": "Let us review five key concepts from this chapter.", "duration_seconds": 4 },
-      { "segment_id": 2, "text": "First, photosynthesis converts light energy into chemical energy.", "duration_seconds": 5 },
-      { "segment_id": 3, "text": "Second, chlorophyll absorbs light in the leaf cells.", "duration_seconds": 5 },
-      { "segment_id": 4, "text": "Third, carbon dioxide enters through stomata.", "duration_seconds": 5 },
-      { "segment_id": 5, "text": "Fourth, water is absorbed by roots and transported upward.", "duration_seconds": 5 },
-      { "segment_id": 6, "text": "Fifth, glucose is the primary product used for plant growth.", "duration_seconds": 5 }
+      { "segment_id": 1, "text": "Let us review five key concepts from this chapter.", "duration_seconds": 4, "display_directives": { "text_layer": "show", "visual_layer": "hide", "avatar_layer": "hide" } },
+      { "segment_id": 2, "text": "First, photosynthesis converts light energy into chemical energy.", "duration_seconds": 5, "display_directives": { "text_layer": "swap", "visual_layer": "show", "avatar_layer": "hide" } },
+      { "segment_id": 3, "text": "Second, chlorophyll absorbs light in the leaf cells.", "duration_seconds": 5, "display_directives": { "text_layer": "swap", "visual_layer": "replace", "avatar_layer": "hide" } },
+      { "segment_id": 4, "text": "Third, carbon dioxide enters through stomata.", "duration_seconds": 5, "display_directives": { "text_layer": "swap", "visual_layer": "replace", "avatar_layer": "hide" } },
+      { "segment_id": 5, "text": "Fourth, water is absorbed by roots and transported upward.", "duration_seconds": 5, "display_directives": { "text_layer": "swap", "visual_layer": "replace", "avatar_layer": "hide" } },
+      { "segment_id": 6, "text": "Fifth, glucose is the primary product used for plant growth.", "duration_seconds": 5, "display_directives": { "text_layer": "swap", "visual_layer": "replace", "avatar_layer": "hide" } }
     ]
   },
   "visual_beats": [
@@ -245,14 +241,6 @@ Less than 5 or more than 5 = HARD FAILURE.
     { "beat_id": "7C", "segment_id": 4, "visual_beat_type": "flashcard", "description": "Flashcard: S = Stomata allow CO2 entry" },
     { "beat_id": "7D", "segment_id": 5, "visual_beat_type": "flashcard", "description": "Flashcard: W = Water transported from roots" },
     { "beat_id": "7E", "segment_id": 6, "visual_beat_type": "flashcard", "description": "Flashcard: G = Glucose is the product" }
-  ],
-  "display_directives": [
-    { "segment_id": 1, "text_layer": { "action": "show" }, "visual_layer": { "action": "hide" }, "avatar_layer": { "action": "hide" } },
-    { "segment_id": 2, "text_layer": { "action": "swap" }, "visual_layer": { "action": "show" }, "avatar_layer": { "action": "hide" } },
-    { "segment_id": 3, "text_layer": { "action": "swap" }, "visual_layer": { "action": "replace" }, "avatar_layer": { "action": "hide" } },
-    { "segment_id": 4, "text_layer": { "action": "swap" }, "visual_layer": { "action": "replace" }, "avatar_layer": { "action": "hide" } },
-    { "segment_id": 5, "text_layer": { "action": "swap" }, "visual_layer": { "action": "replace" }, "avatar_layer": { "action": "hide" } },
-    { "segment_id": 6, "text_layer": { "action": "swap" }, "visual_layer": { "action": "replace" }, "avatar_layer": { "action": "hide" } }
   ]
 }
 
@@ -277,11 +265,11 @@ Less than 5 scenes or more than 5 = HARD FAILURE.
   "narration": {
     "full_text": "Scene 1: Imagine a green leaf bathing in warm sunlight. The leaf is nature's solar panel, capturing light energy and beginning the miraculous process of photosynthesis. Inside the leaf cells, tiny green structures called chloroplasts hold the key to life on Earth. Scene 2: Zoom into the leaf surface. Tiny pores called stomata open like mouths, breathing in carbon dioxide from the air. These microscopic gateways connect the plant to the atmosphere, allowing the essential gas to enter for the chemical reactions ahead. Scene 3: Deep underground, roots spread like fingers through dark soil, drinking water molecules. This water travels upward through the plant's vascular system, rising against gravity to reach every leaf cell where it will be split apart. Scene 4: Inside the chloroplast, light energy splits water molecules while carbon dioxide is captured. Through a series of chemical reactions, these simple ingredients are transformed into glucose, a sugar packed with stored energy for the plant. Scene 5: The glucose produced powers the plant's growth, building new cells, stems, and leaves. Meanwhile, oxygen is released as a byproduct, the very gas that all animals breathe. This elegant cycle connects all life on our planet.",
     "segments": [
-      { "segment_id": 1, "text": "Imagine a green leaf bathing in warm sunlight. The leaf is nature's solar panel, capturing light energy and beginning the miraculous process of photosynthesis. Inside the leaf cells, tiny green structures called chloroplasts hold the key to life on Earth.", "duration_seconds": 12, "word_count": 75 },
-      { "segment_id": 2, "text": "Zoom into the leaf surface. Tiny pores called stomata open like mouths, breathing in carbon dioxide from the air. These microscopic gateways connect the plant to the atmosphere, allowing the essential gas to enter for the chemical reactions ahead.", "duration_seconds": 12, "word_count": 72 },
-      { "segment_id": 3, "text": "Deep underground, roots spread like fingers through dark soil, drinking water molecules. This water travels upward through the plant's vascular system, rising against gravity to reach every leaf cell where it will be split apart.", "duration_seconds": 11, "word_count": 68 },
-      { "segment_id": 4, "text": "Inside the chloroplast, light energy splits water molecules while carbon dioxide is captured. Through a series of chemical reactions, these simple ingredients are transformed into glucose, a sugar packed with stored energy for the plant.", "duration_seconds": 12, "word_count": 70 },
-      { "segment_id": 5, "text": "The glucose produced powers the plant's growth, building new cells, stems, and leaves. Meanwhile, oxygen is released as a byproduct, the very gas that all animals breathe. This elegant cycle connects all life on our planet.", "duration_seconds": 11, "word_count": 68 }
+      { "segment_id": 1, "text": "Imagine a green leaf bathing in warm sunlight. The leaf is nature's solar panel, capturing light energy and beginning the miraculous process of photosynthesis. Inside the leaf cells, tiny green structures called chloroplasts hold the key to life on Earth.", "duration_seconds": 12, "word_count": 75, "display_directives": { "text_layer": "hide", "visual_layer": "show", "avatar_layer": "hide" } },
+      { "segment_id": 2, "text": "Zoom into the leaf surface. Tiny pores called stomata open like mouths, breathing in carbon dioxide from the air. These microscopic gateways connect the plant to the atmosphere, allowing the essential gas to enter for the chemical reactions ahead.", "duration_seconds": 12, "word_count": 72, "display_directives": { "text_layer": "hide", "visual_layer": "replace", "avatar_layer": "hide" } },
+      { "segment_id": 3, "text": "Deep underground, roots spread like fingers through dark soil, drinking water molecules. This water travels upward through the plant's vascular system, rising against gravity to reach every leaf cell where it will be split apart.", "duration_seconds": 11, "word_count": 68, "display_directives": { "text_layer": "hide", "visual_layer": "replace", "avatar_layer": "hide" } },
+      { "segment_id": 4, "text": "Inside the chloroplast, light energy splits water molecules while carbon dioxide is captured. Through a series of chemical reactions, these simple ingredients are transformed into glucose, a sugar packed with stored energy for the plant.", "duration_seconds": 12, "word_count": 70, "display_directives": { "text_layer": "hide", "visual_layer": "replace", "avatar_layer": "hide" } },
+      { "segment_id": 5, "text": "The glucose produced powers the plant's growth, building new cells, stems, and leaves. Meanwhile, oxygen is released as a byproduct, the very gas that all animals breathe. This elegant cycle connects all life on our planet.", "duration_seconds": 11, "word_count": 68, "display_directives": { "text_layer": "hide", "visual_layer": "replace", "avatar_layer": "hide" } }
     ]
   },
   "visual_beats": [
@@ -290,13 +278,6 @@ Less than 5 scenes or more than 5 = HARD FAILURE.
     { "beat_id": "8C", "segment_id": 3, "visual_beat_type": "video_scene", "description": "Underground cross-section view showing root systems absorbing water droplets from soil. Blue water trails rise upward through plant stem." },
     { "beat_id": "8D", "segment_id": 4, "visual_beat_type": "video_scene", "description": "Inside chloroplast visualization: light beams split water molecules, CO2 combines with hydrogen, glucose molecule forms with glowing structure." },
     { "beat_id": "8E", "segment_id": 5, "visual_beat_type": "video_scene", "description": "Time-lapse of plant growing, leaves unfurling, oxygen bubbles rising from leaves into atmosphere. Final wide shot of forest with breathing effect." }
-  ],
-  "display_directives": [
-    { "segment_id": 1, "text_layer": { "action": "hide" }, "visual_layer": { "action": "show" }, "avatar_layer": { "action": "hide" } },
-    { "segment_id": 2, "text_layer": { "action": "hide" }, "visual_layer": { "action": "replace" }, "avatar_layer": { "action": "hide" } },
-    { "segment_id": 3, "text_layer": { "action": "hide" }, "visual_layer": { "action": "replace" }, "avatar_layer": { "action": "hide" } },
-    { "segment_id": 4, "text_layer": { "action": "hide" }, "visual_layer": { "action": "replace" }, "avatar_layer": { "action": "hide" } },
-    { "segment_id": 5, "text_layer": { "action": "hide" }, "visual_layer": { "action": "replace" }, "avatar_layer": { "action": "hide" } }
   ]
 }
 

@@ -1,0 +1,26 @@
+DRY RUN - Manim section 5
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/3c7c3d25/videos/topic_5.mp4
+
+--- SCENE CODE ---
+problem_text = Text("A 7 kg ball accelerates at 2 m/s². What is the net force?", font_size=28).move_to(np.array([0, 2.0, 0]))
+known_mass = MathTex(r"m = 7 \text{ kg}").move_to(np.array([-3, 0.5, 0]))
+known_accel = MathTex(r"a = 2 \text{ m/s}^2").move_to(np.array([-3, -0.5, 0]))
+formula = MathTex(r"F = ma").move_to(np.array([0, 0.5, 0]))
+substitution = MathTex(r"F = (7 \text{ kg})(2 \text{ m/s}^2)").move_to(np.array([0, -0.5, 0]))
+solution = MathTex(r"F = 14 \text{ N}").move_to(np.array([0, -2.0, 0]))
+
+# Animation sequence
+self.play(Write(problem_text), run_time=3.0)
+self.wait(13.0)
+self.play(Write(known_mass), run_time=2.0)
+self.play(Write(known_accel), run_time=2.0)
+self.wait(3.0)
+self.play(Write(formula), run_time=2.0)
+self.wait(2.0)
+self.play(Write(substitution), run_time=4.0)
+self.wait(5.0)
+self.play(Write(solution), run_time=3.0)
+self.play(Indicate(solution), run_time=2.0)
+self.wait(6.0)
+self.wait(1)

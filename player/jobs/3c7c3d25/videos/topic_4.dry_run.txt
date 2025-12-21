@@ -1,0 +1,37 @@
+DRY RUN - Manim section 4
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/3c7c3d25/videos/topic_4.mp4
+
+--- SCENE CODE ---
+main_equation = MathTex(r"F = ma").move_to(np.array([0, 2.0, 0]))
+force_def = MathTex(r"\text{Force: push or pull}").scale(0.8).move_to(np.array([-3, 0.5, 0]))
+mass_def = MathTex(r"\text{Mass: amount of matter}").scale(0.8).move_to(np.array([0, 0.5, 0]))
+accel_def = MathTex(r"\text{Acceleration: change in velocity}").scale(0.8).move_to(np.array([3, 0.5, 0]))
+small_block = Dot(point=np.array([-3, -1, 0]), color=BLUE)
+large_block = Dot(point=np.array([3, -1, 0]), color=BLUE)
+small_force = Arrow(start=np.array([-4, -1, 0]), end=np.array([-2, -1, 0]), color=RED, buff=0)
+small_force_label = Text("F", font_size=20).next_to(small_force, DOWN)
+large_force = Arrow(start=np.array([2, -1, 0]), end=np.array([4, -1, 0]), color=RED, buff=0)
+large_force_label = Text("2F", font_size=20).next_to(large_force, DOWN)
+
+# Animation sequence
+self.play(Write(main_equation), run_time=2)
+self.play(Indicate(main_equation), run_time=2)
+self.play(FadeIn(force_def), run_time=1.5)
+self.play(Indicate(main_equation), run_time=2)
+self.play(FadeIn(mass_def), run_time=1.5)
+self.play(Indicate(main_equation), run_time=2)
+self.play(FadeIn(accel_def), run_time=1.5)
+self.play(FadeOut(force_def), run_time=1)
+self.play(FadeOut(mass_def), run_time=1)
+self.play(FadeOut(accel_def), run_time=1)
+self.play(FadeIn(small_block), run_time=1)
+self.play(FadeIn(large_block), run_time=1)
+self.play(Create(small_force), run_time=1.5)
+self.play(Create(large_force), run_time=1.5)
+self.play(Indicate(main_equation), run_time=2)
+self.play(FadeOut(small_block), run_time=1)
+self.play(FadeOut(large_block), run_time=1)
+self.play(FadeOut(small_force), run_time=1)
+self.play(FadeOut(large_force), run_time=1)
+self.wait(1)
