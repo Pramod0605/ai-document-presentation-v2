@@ -888,11 +888,22 @@
       "fix": "Added isinstance check to extract full_text from dict, fallback to combining segment texts",
       "created": "2025-12-21T12:36:14.021602",
       "resolved": "2025-12-21T12:36:14.021612"
+    },
+    {
+      "id": "ISS-059",
+      "title": "Feature: Job resume capability for failed jobs",
+      "status": "resolved",
+      "severity": "enhancement",
+      "component": "core/pipeline_v12.py, api/app.py",
+      "description": "Added ability to resume failed jobs from a specific phase (render or audio) without re-running expensive LLM passes",
+      "fix": "Added detect_job_phase() and resume_job_from_phase() functions, plus API endpoints /jobs/<id>/resume and /jobs/<id>/phases",
+      "created": "2025-12-21T12:44:29.814869",
+      "resolved": "2025-12-21T12:44:29.814878"
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-21T12:36:14.021617",
-    "version": "12.8",
+    "last_updated": "2025-12-21T12:44:29.814883",
+    "version": "12.9",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
     "resolved_count": 57,
