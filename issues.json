@@ -773,7 +773,12 @@
         "player_changes": [
           "Added aggregation of visual_content from all segments in slide mapping",
           "Added bullet-level-1 and bullet-level-2 CSS classes for hierarchy styling",
-          "Updated segment rendering to detect {level, text} objects and apply appropriate classes"
+          "Updated segment rendering to detect {level, text} objects and apply appropriate classes",
+          "Added whitelist-based legacy version guard: ['', 'v1.0', 'v1.1', 'v1.2'] get narration fallback, v1.3+ enforces visual_content",
+          "Added visible error placeholder for v1.3+ violations: '[Missing display content - visual_content required]'"
+        ],
+        "validator_changes": [
+          "Added tier1 validation: text_layer=show segments require visual_content for content/example/intro/summary sections"
         ]
       },
       "files_modified": [
@@ -782,9 +787,15 @@
         "core/prompts/director_system_v1.3.txt",
         "core/prompts/director_user_v1.3.txt",
         "core/prompts/director_retry_system_v1.3.txt",
+        "core/validators/tier1_structural.py",
         "player/player.js",
         "player/index.html"
       ],
+      "backward_compatibility": {
+        "legacy_whitelist": ["", "v1.0", "v1.1", "v1.2"],
+        "legacy_behavior": "Uses narration text as display content (pre-v1.3 fallback)",
+        "v13_behavior": "Enforces visual_content, shows error placeholder if missing"
+      },
       "two_channel_design": {
         "narration_channel": "text field - Audio only via TTS, NEVER displayed on screen",
         "display_channel": "visual_content field - Screen only, structured content from source document"

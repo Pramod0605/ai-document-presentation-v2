@@ -57,11 +57,22 @@ The user wants an iterative development process. The agent should prioritize cle
 
 4. **Manim Hard Rule**: If renderer=manim, EVERY visual beat MUST include manim_scene_spec. Prose-only = HARD FAILURE.
 
+5. **Two-Channel Content Separation** (ISS-056):
+   - `narration.segments[].text` = TTS audio only, NEVER displayed on screen
+   - `visual_content` = Screen display only (bullet_points, formula, labels)
+   - Director extracts displayable content from source document into visual_content
+   - Player aggregates segment visual_content for backward-compatible slide rendering
+
+6. **Legacy Version Guard**:
+   - Whitelist: `['', 'v1.0', 'v1.1', 'v1.2']` use narration text fallback
+   - v1.3+ enforces visual_content, shows error placeholder if missing
+
 ### Core Principles (v1.3)
 - **PLAYER IS DUMB**: Does NOT decide layout, timing, or pedagogy. Only executes JSON.
 - **ONE PRIMARY ATTENTION LAYER AT A TIME**: Text OR visual - never together.
 - **TEACH → THEN SHOW**: First explain with narration, THEN visualize.
 - **EVERYTHING IS TIMED**: Every segment has duration_seconds, visuals align to timing.
+- **TWO-CHANNEL SEPARATION**: narration=audio, visual_content=display (never mixed).
 
 ### Prompt Files (v1.3)
 Located in `core/prompts/`:
