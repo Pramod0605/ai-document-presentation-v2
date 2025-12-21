@@ -71,7 +71,7 @@
           "properties": {
             "visibility": { "enum": ["required", "optional", "hidden"] },
             "mode": { "type": "string", "description": "Layout mode - side, overlay, hidden, center, gesture_only, etc." },
-            "position": { "enum": ["left", "right", "center"] },
+            "position": { "type": "string", "description": "Position for avatar - left, right, center, bottom_right, bottom_left, etc." },
             "width_percent": { "type": "number", "minimum": 10, "maximum": 70 }
           }
         },
@@ -91,7 +91,35 @@
           "type": "array",
           "minItems": 1,
           "items": { "$ref": "#/$defs/display_directive" }
+        },
+        "video_prompts": {
+          "type": "array",
+          "description": "Video prompts for WAN/video renderer sections",
+          "items": { "$ref": "#/$defs/video_prompt" }
+        },
+        "manim_scene_spec": {
+          "type": "object",
+          "description": "Manim scene specification for manim renderer sections"
+        },
+        "remotion_scene_spec": {
+          "type": "object",
+          "description": "Remotion scene specification for remotion renderer sections"
+        },
+        "renderer_reasoning": {
+          "type": "string",
+          "description": "Director's reasoning for renderer choice"
         }
+      }
+    },
+
+    "video_prompt": {
+      "type": "object",
+      "required": ["beat_id", "prompt", "duration_seconds"],
+      "properties": {
+        "beat_id": { "oneOf": [{ "type": "string" }, { "type": "number" }] },
+        "prompt": { "type": "string", "minLength": 20 },
+        "duration_seconds": { "type": "number", "minimum": 1 },
+        "style": { "type": "string" }
       }
     },
 

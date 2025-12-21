@@ -40,7 +40,7 @@ from typing import List, Tuple, Dict, Any
 
 CONTENT_MIN_WORDS = 150
 EXAMPLE_MIN_WORDS = 100
-EXAMPLE_REQUIRED_STEPS = 5
+EXAMPLE_REQUIRED_STEPS = 2  # Minimum 2 visual beats for examples (flexible based on content)
 
 VAGUE_PHRASES = [
     "appropriate animation", "suitable visual", "relevant content",

@@ -1,0 +1,2299 @@
+{
+  "spec_version": "v1.3",
+  "presentation_id": "sci8-states-of-matter-9812",
+  "subject": "Science",
+  "grade": "8",
+  "chapter_title": "States of Matter and Phase Changes",
+  "avatar_global": {
+    "style": "teacher",
+    "default_position": "right",
+    "default_width_percent": 35,
+    "gesture_enabled": true
+  },
+  "sections": [
+    {
+      "section_id": 1,
+      "section_type": "intro",
+      "title": "Ice, Water, and Steam: What's the Difference?",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "center",
+        "position": "center",
+        "width_percent": 60
+      },
+      "narration": {
+        "full_text": "Have you ever wondered what makes ice, water, and steam so different? They are all made of the exact same thing\u2014water molecules! So why can you hold a solid piece of ice, but water flows through your fingers, and steam disappears into the air? The answer lies in a single, simple concept: energy. In this lesson, we're going to explore the three fundamental states of matter and discover how adding or removing energy can cause incredible transformations. Get ready to see the world on a molecular level!",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Have you ever wondered what makes ice, water, and steam so different? They are all made of the exact same thing\u2014water molecules!",
+            "duration_seconds": 8,
+            "gesture_hint": "questioning_open_hands"
+          },
+          {
+            "segment_id": 2,
+            "text": "So why can you hold a solid piece of ice, but water flows through your fingers, and steam disappears into the air?",
+            "duration_seconds": 7,
+            "gesture_hint": "thinking"
+          },
+          {
+            "segment_id": 3,
+            "text": "The answer lies in a single, simple concept: energy. In this lesson, we're going to explore the three fundamental states of matter and discover how adding or removing energy can cause incredible transformations.",
+            "duration_seconds": 12,
+            "gesture_hint": "explaining_forward"
+          },
+          {
+            "segment_id": 4,
+            "text": "Get ready to see the world on a molecular level!",
+            "duration_seconds": 4,
+            "gesture_hint": "excited"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "1A",
+          "segment_id": 1,
+          "visual_beat_type": "motion_graphic",
+          "description": "An ice cube, a glass of water, and a cloud of steam appear side-by-side with question marks above them."
+        },
+        {
+          "beat_id": "1B",
+          "segment_id": 2,
+          "visual_beat_type": "motion_graphic",
+          "description": "The ice cube is held in a hand, the water slips through fingers, the steam cloud dissipates."
+        },
+        {
+          "beat_id": "1C",
+          "segment_id": 3,
+          "visual_beat_type": "motion_graphic",
+          "description": "A glowing 'ENERGY' title appears. The words 'SOLID', 'LIQUID', 'GAS' animate on screen."
+        },
+        {
+          "beat_id": "1D",
+          "segment_id": 4,
+          "visual_beat_type": "motion_graphic",
+          "description": "Screen zooms into an abstract animation of moving particles."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "fade_in"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "fade_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "pop"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "zoom_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 930,
+        "elements": [
+          {
+            "id": "ice_icon",
+            "type": "icon",
+            "content": "cube",
+            "position": {
+              "x": 200,
+              "y": 200
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 240
+            }
+          },
+          {
+            "id": "water_icon",
+            "type": "icon",
+            "content": "droplet",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 240
+            }
+          },
+          {
+            "id": "steam_icon",
+            "type": "icon",
+            "content": "cloud",
+            "position": {
+              "x": 600,
+              "y": 200
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 240
+            }
+          },
+          {
+            "id": "hand_ice",
+            "type": "icon",
+            "content": "hand_holding",
+            "position": {
+              "x": 200,
+              "y": 200
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 240,
+              "exit_frame": 450
+            }
+          },
+          {
+            "id": "hand_water",
+            "type": "icon",
+            "content": "hand_dripping",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 240,
+              "exit_frame": 450
+            }
+          },
+          {
+            "id": "steam_dissipate",
+            "type": "icon",
+            "content": "cloud_fade",
+            "position": {
+              "x": 600,
+              "y": 200
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 240,
+              "exit_frame": 450
+            }
+          },
+          {
+            "id": "energy_title",
+            "type": "text",
+            "content": "ENERGY",
+            "position": {
+              "x": 400,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFD700",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 450,
+              "exit_frame": 810
+            }
+          },
+          {
+            "id": "states_text",
+            "type": "text",
+            "content": "SOLID \u2022 LIQUID \u2022 GAS",
+            "position": {
+              "x": 400,
+              "y": 250
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 510,
+              "exit_frame": 810
+            }
+          },
+          {
+            "id": "particles",
+            "type": "shape",
+            "content": "particle_field",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 810,
+              "exit_frame": 930
+            }
+          }
+        ],
+        "background": {
+          "color": "#1E1E1E"
+        }
+      }
+    },
+    {
+      "section_id": 2,
+      "section_type": "summary",
+      "title": "What We'll Cover",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "In this film, we will build our understanding from the ground up. First, we'll introduce the particle model, which explains that all matter is made of tiny, moving particles. Next, we'll examine the three main states of matter: solids, liquids, and gases, and see how the arrangement and energy of their particles differ. Finally, we'll investigate phase changes\u2014like melting and boiling\u2014and understand how adding or removing energy is the key to transforming one state into another. By the end, you'll be able to visualize these processes happening all around you.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "In this film, we will build our understanding from the ground up. First, we'll introduce the particle model, which explains that all matter is made of tiny, moving particles.",
+            "duration_seconds": 9
+          },
+          {
+            "segment_id": 2,
+            "text": "Next, we'll examine the three main states of matter: solids, liquids, and gases, and see how the arrangement and energy of their particles differ.",
+            "duration_seconds": 9
+          },
+          {
+            "segment_id": 3,
+            "text": "Finally, we'll investigate phase changes\u2014like melting and boiling\u2014and understand how adding or removing energy is the key to transforming one state into another.",
+            "duration_seconds": 10
+          },
+          {
+            "segment_id": 4,
+            "text": "By the end, you'll be able to visualize these processes happening all around you.",
+            "duration_seconds": 5
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "2A",
+          "segment_id": 1,
+          "visual_beat_type": "iconography",
+          "description": "An animated icon representing 'Particles' appears with a title 'The Particle Model'."
+        },
+        {
+          "beat_id": "2B",
+          "segment_id": 2,
+          "visual_beat_type": "iconography",
+          "description": "Three icons for 'Solid', 'Liquid', and 'Gas' appear next to the first icon."
+        },
+        {
+          "beat_id": "2C",
+          "segment_id": 3,
+          "visual_beat_type": "iconography",
+          "description": "Animated arrows with '+' and '-' energy symbols appear between the state icons, with the title 'Phase Changes'."
+        },
+        {
+          "beat_id": "2D",
+          "segment_id": 4,
+          "visual_beat_type": "iconography",
+          "description": "The icons fade, and a brain icon with a lightbulb appears."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "swap"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "swap"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "swap"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 990,
+        "elements": [
+          {
+            "id": "title_1",
+            "type": "text",
+            "content": "The Particle Model",
+            "position": {
+              "x": 100,
+              "y": 80
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#1a1a1a",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 270
+            }
+          },
+          {
+            "id": "particle_icon",
+            "type": "icon",
+            "content": "\u269b\ufe0f",
+            "position": {
+              "x": 100,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 64
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 30,
+              "exit_frame": 270
+            }
+          },
+          {
+            "id": "states_title",
+            "type": "text",
+            "content": "States of Matter",
+            "position": {
+              "x": 100,
+              "y": 80
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#1a1a1a",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 270,
+              "exit_frame": 540
+            }
+          },
+          {
+            "id": "solid_icon",
+            "type": "icon",
+            "content": "\u2b1b",
+            "position": {
+              "x": 100,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 64
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 270,
+              "exit_frame": 540
+            }
+          },
+          {
+            "id": "liquid_icon",
+            "type": "icon",
+            "content": "\ud83d\udca7",
+            "position": {
+              "x": 200,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 64
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 300,
+              "exit_frame": 540
+            }
+          },
+          {
+            "id": "gas_icon",
+            "type": "icon",
+            "content": "\u2601\ufe0f",
+            "position": {
+              "x": 300,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 64
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 330,
+              "exit_frame": 540
+            }
+          },
+          {
+            "id": "phase_changes_title",
+            "type": "text",
+            "content": "Phase Changes",
+            "position": {
+              "x": 100,
+              "y": 80
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#1a1a1a",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 540,
+              "exit_frame": 840
+            }
+          },
+          {
+            "id": "energy_arrows",
+            "type": "icon",
+            "content": "\u21cc",
+            "position": {
+              "x": 200,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 64
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 540,
+              "exit_frame": 840
+            }
+          },
+          {
+            "id": "understanding_icon",
+            "type": "icon",
+            "content": "\ud83d\udca1",
+            "position": {
+              "x": 200,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 64
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 840,
+              "exit_frame": 990
+            }
+          }
+        ],
+        "background": {
+          "color": "#ffffff"
+        }
+      }
+    },
+    {
+      "section_id": 3,
+      "section_type": "content",
+      "title": "State 1: Solids - The Rigid Structure",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Let's begin with solids. Think of an ice cube, a rock, or a metal spoon. What do they have in common? They all have a definite shape and a definite volume. You can't easily squash them or change their shape. This is because, at the microscopic level, the particles in a solid are packed very tightly together in a fixed, organized pattern, often called a crystal lattice. They don't have enough energy to move around freely. Instead, they are locked in place, held together by strong forces of attraction. All they can do is vibrate. Imagine a classroom of students sitting in perfectly ordered rows, each student only able to wiggle in their chair. That's like the particles in a solid. Because they are locked in this rigid structure, a solid maintains its shape and volume, no matter what container you put it in.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's begin with solids. Think of an ice cube, a rock, or a metal spoon. What do they have in common? They all have a definite shape and a definite volume.",
+            "duration_seconds": 10,
+            "gesture_hint": "present_object"
+          },
+          {
+            "segment_id": 2,
+            "text": "You can't easily squash them or change their shape. This is because, at the microscopic level, the particles in a solid are packed very tightly together in a fixed, organized pattern, often called a crystal lattice.",
+            "duration_seconds": 12,
+            "gesture_hint": "explaining"
+          },
+          {
+            "segment_id": 3,
+            "text": "They don't have enough energy to move around freely. Instead, they are locked in place, held together by strong forces of attraction. All they can do is vibrate.",
+            "duration_seconds": 11,
+            "gesture_hint": "hand_vibrate"
+          },
+          {
+            "segment_id": 4,
+            "text": "Imagine a classroom of students sitting in perfectly ordered rows, each student only able to wiggle in their chair. That's like the particles in a solid. Because they are locked in this rigid structure, a solid maintains its shape and volume, no matter what container you put it in.",
+            "duration_seconds": 15,
+            "gesture_hint": "analogy"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "3A",
+          "segment_id": 2,
+          "visual_beat_type": "diagram",
+          "description": "Animate particles (spheres) moving into a tightly packed, orderly 3D grid (crystal lattice).",
+          "manim_scene_spec": {
+            "scene_name": "ShowSolidLattice",
+            "commands": [
+              "particles = create_particles(count=27, color=BLUE)",
+              "animate(particles.arrange_in_grid(3, 3, 3))",
+              "label = Text('Crystal Lattice').next_to(particles, DOWN)",
+              "animate(Write(label))"
+            ]
+          }
+        },
+        {
+          "beat_id": "3B",
+          "segment_id": 3,
+          "visual_beat_type": "animation",
+          "description": "Show the particles in the lattice vibrating in place. A label 'Low Kinetic Energy' appears.",
+          "manim_scene_spec": {
+            "scene_name": "VibratingSolid",
+            "commands": [
+              "continue_scene_from('ShowSolidLattice')",
+              "animate(particles.vibrate(amplitude=0.1), run_time=3)",
+              "energy_label = Text('Low Kinetic Energy', color=YELLOW).to_corner(UL)",
+              "animate(FadeIn(energy_label))"
+            ]
+          }
+        },
+        {
+          "beat_id": "3C",
+          "segment_id": 4,
+          "visual_beat_type": "diagram",
+          "description": "Draw a rigid box around the lattice. Then, place this box inside a larger, differently shaped container (like a beaker) to show the shape does not change.",
+          "manim_scene_spec": {
+            "scene_name": "SolidInContainer",
+            "commands": [
+              "continue_scene_from('VibratingSolid')",
+              "box = SurroundingRectangle(particles, buff=0.2, color=WHITE)",
+              "animate(Create(box))",
+              "label1 = Text('Definite Shape').next_to(box, UP)",
+              "label2 = Text('Definite Volume').next_to(box, RIGHT)",
+              "animate(Write(label1), Write(label2))",
+              "beaker = create_beaker_shape(height=5, width=4).shift(RIGHT*2)",
+              "animate(FadeOut(label1, label2), Group(particles, box).animate.move_to(beaker.get_center()))"
+            ]
+          }
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "fade_in"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "draw"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "particle_grid",
+            "type": "shape",
+            "position": [
+              0,
+              1
+            ],
+            "properties": {
+              "shape_type": "sphere_grid",
+              "rows": 3,
+              "columns": 3,
+              "depth": 3,
+              "color": "BLUE",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "lattice_label",
+            "type": "label",
+            "position": [
+              0,
+              2
+            ],
+            "properties": {
+              "text": "Crystal Lattice",
+              "color": "WHITE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "energy_label",
+            "type": "label",
+            "position": [
+              -3,
+              2
+            ],
+            "properties": {
+              "text": "Low Kinetic Energy",
+              "color": "YELLOW",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "solid_box",
+            "type": "shape",
+            "position": [
+              0,
+              1
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "width": 3,
+              "height": 3,
+              "color": "WHITE",
+              "fill_opacity": 0
+            }
+          },
+          {
+            "id": "beaker",
+            "type": "shape",
+            "position": [
+              3,
+              1
+            ],
+            "properties": {
+              "shape_type": "beaker",
+              "width": 4,
+              "height": 5,
+              "color": "WHITE",
+              "fill_opacity": 0
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "particle_grid",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "lattice_label",
+            "duration": 1
+          },
+          {
+            "action": "transform",
+            "target": "particle_grid",
+            "duration": 3,
+            "properties": {
+              "animation_type": "vibrate",
+              "amplitude": 0.1
+            }
+          },
+          {
+            "action": "appear",
+            "target": "energy_label",
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "solid_box",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "beaker",
+            "duration": 1
+          },
+          {
+            "action": "move",
+            "target": [
+              "particle_grid",
+              "solid_box"
+            ],
+            "duration": 2,
+            "properties": {
+              "target_position": [
+                3,
+                1
+              ]
+            }
+          },
+          {
+            "action": "transform",
+            "target": "particle_grid",
+            "duration": 2,
+            "properties": {
+              "animation_type": "vibrate",
+              "amplitude": 0.1
+            }
+          },
+          {
+            "action": "highlight",
+            "target": [
+              "particle_grid",
+              "solid_box"
+            ],
+            "duration": 2,
+            "color": "YELLOW"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 4,
+      "section_type": "content",
+      "title": "State 2: Liquids - The Flowing Form",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "What happens when we add energy to a solid, for example, by heating it? The particles vibrate more and more intensely until they gain enough energy to break free from their fixed positions in the lattice. This is melting, and the result is a liquid. In a liquid, the particles are still close together, but they are no longer in an orderly arrangement. They can slide past one another, which is why liquids can flow and take the shape of their container. Think of pouring water from a bottle into a glass. The water changes its shape to match the glass. However, the amount of water\u2014its volume\u2014stays the same. This is because the particles are still attracted to each other, keeping them packed together, just not in a rigid way. They have more kinetic energy than solids, but not enough to completely escape each other's pull.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "What happens when we add energy to a solid, for example, by heating it? The particles vibrate more and more intensely until they gain enough energy to break free from their fixed positions in the lattice.",
+            "duration_seconds": 12,
+            "gesture_hint": "questioning"
+          },
+          {
+            "segment_id": 2,
+            "text": "This is melting, and the result is a liquid. In a liquid, the particles are still close together, but they are no longer in an orderly arrangement.",
+            "duration_seconds": 10,
+            "gesture_hint": "transformation"
+          },
+          {
+            "segment_id": 3,
+            "text": "They can slide past one another, which is why liquids can flow and take the shape of their container. Think of pouring water from a bottle into a glass. The water changes its shape to match the glass.",
+            "duration_seconds": 12,
+            "gesture_hint": "flow_hands"
+          },
+          {
+            "segment_id": 4,
+            "text": "However, the amount of water\u2014its volume\u2014stays the same. This is because the particles are still attracted to each other, keeping them packed together, just not in a rigid way. They have more kinetic energy than solids, but not enough to completely escape each other's pull.",
+            "duration_seconds": 15,
+            "gesture_hint": "explaining"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "4A",
+          "segment_id": 1,
+          "visual_beat_type": "animation",
+          "description": "Start with the solid lattice from the previous section. An arrow labeled '+ Energy' points at it. The particles vibrate more and more intensely.",
+          "manim_scene_spec": {
+            "scene_name": "MeltingProcess",
+            "commands": [
+              "particles = create_particles_in_grid(count=27, color=BLUE)",
+              "energy_arrow = Arrow(LEFT, RIGHT, color=RED).next_to(particles, LEFT)",
+              "energy_label = Text('+ Energy').next_to(energy_arrow, UP)",
+              "animate(FadeIn(energy_arrow, energy_label))",
+              "animate(particles.vibrate(amplitude=0.3), run_time=2)"
+            ]
+          }
+        },
+        {
+          "beat_id": "4B",
+          "segment_id": 2,
+          "visual_beat_type": "animation",
+          "description": "The lattice structure breaks. Particles start to move around randomly but remain close together at the bottom of the screen.",
+          "manim_scene_spec": {
+            "scene_name": "LiquidFormation",
+            "commands": [
+              "continue_scene_from('MeltingProcess')",
+              "animate(particles.disperse_and_settle(y_floor=-2))",
+              "label = Text('Liquid State').to_edge(UP)",
+              "animate(Write(label))"
+            ]
+          }
+        },
+        {
+          "beat_id": "4C",
+          "segment_id": 3,
+          "visual_beat_type": "animation",
+          "description": "Show the liquid particles being 'poured' from one container shape (a box) into another (a beaker), taking the new shape.",
+          "manim_scene_spec": {
+            "scene_name": "LiquidPour",
+            "commands": [
+              "continue_scene_from('LiquidFormation')",
+              "box = Rectangle(height=2, width=3).move_to(particles.get_center())",
+              "beaker = create_beaker_shape(height=3, width=2).shift(RIGHT*3)",
+              "animate(Create(box), Create(beaker))",
+              "animate(Group(particles, box).animate.shift(RIGHT*3).rotate(-PI/2), run_time=2)",
+              "animate(particles.animate.settle_in_container(beaker))"
+            ]
+          }
+        },
+        {
+          "beat_id": "4D",
+          "segment_id": 4,
+          "visual_beat_type": "diagram",
+          "description": "Show the particles in the beaker with labels 'No Definite Shape' and 'Definite Volume'. The 'Medium Kinetic Energy' label appears.",
+          "manim_scene_spec": {
+            "scene_name": "LiquidProperties",
+            "commands": [
+              "continue_scene_from('LiquidPour')",
+              "label1 = Text('No Definite Shape').next_to(beaker, UP)",
+              "label2 = Text('Definite Volume').next_to(beaker, RIGHT)",
+              "energy_label = Text('Medium Kinetic Energy', color=YELLOW).to_corner(UL)",
+              "animate(Write(label1), Write(label2), FadeIn(energy_label))"
+            ]
+          }
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "fade_in"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "transform"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "draw"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "solid_particles",
+            "type": "shape",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "shape_type": "particle_grid",
+              "rows": 3,
+              "columns": 3,
+              "color": "BLUE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "energy_arrow",
+            "type": "vector",
+            "position": [
+              -2,
+              1.0
+            ],
+            "properties": {
+              "direction": [
+                1,
+                0
+              ],
+              "color": "RED",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "energy_label",
+            "type": "label",
+            "position": [
+              -2,
+              1.5
+            ],
+            "properties": {
+              "text": "+ Energy",
+              "color": "RED",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "liquid_state_label",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "text": "Liquid State",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "box",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "width": 3,
+              "height": 2,
+              "color": "WHITE",
+              "fill_opacity": 0
+            }
+          },
+          {
+            "id": "beaker",
+            "type": "shape",
+            "position": [
+              3,
+              0
+            ],
+            "properties": {
+              "shape_type": "beaker",
+              "width": 2,
+              "height": 3,
+              "color": "WHITE",
+              "fill_opacity": 0
+            }
+          },
+          {
+            "id": "shape_label",
+            "type": "label",
+            "position": [
+              3,
+              1.5
+            ],
+            "properties": {
+              "text": "No Definite Shape",
+              "color": "WHITE",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "volume_label",
+            "type": "label",
+            "position": [
+              4.5,
+              0
+            ],
+            "properties": {
+              "text": "Definite Volume",
+              "color": "WHITE",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "energy_state_label",
+            "type": "label",
+            "position": [
+              -4,
+              2.5
+            ],
+            "properties": {
+              "text": "Medium Kinetic Energy",
+              "color": "YELLOW",
+              "scale": 0.7
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "solid_particles",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "energy_arrow",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "energy_label",
+            "duration": 1.0
+          },
+          {
+            "action": "transform",
+            "target": "solid_particles",
+            "duration": 9.0,
+            "properties": {
+              "vibration_amplitude": 0.3
+            }
+          },
+          {
+            "action": "appear",
+            "target": "liquid_state_label",
+            "duration": 1.0
+          },
+          {
+            "action": "transform",
+            "target": "solid_particles",
+            "duration": 9.0,
+            "properties": {
+              "disperse": true,
+              "y_floor": -1.0
+            }
+          },
+          {
+            "action": "appear",
+            "target": "box",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "beaker",
+            "duration": 1.0
+          },
+          {
+            "action": "transform",
+            "target": [
+              "solid_particles",
+              "box"
+            ],
+            "duration": 10.0,
+            "properties": {
+              "rotation": -90,
+              "translation": [
+                3,
+                0
+              ]
+            }
+          },
+          {
+            "action": "appear",
+            "target": "shape_label",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "volume_label",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "energy_state_label",
+            "duration": 1.0
+          },
+          {
+            "action": "transform",
+            "target": "solid_particles",
+            "duration": 12.0,
+            "properties": {
+              "random_motion": true,
+              "confined_to": "beaker"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 5,
+      "section_type": "content",
+      "title": "State 3: Gases - The Free Particles",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Now, let's add even more energy to our liquid. As we heat it, the particles move faster and faster. Eventually, at the boiling point, they gain so much energy that they can completely overcome the forces of attraction holding them together. They escape from the liquid and fly off in all directions. This is vaporization, and it creates a gas. In the gaseous state, particles are very far apart and move randomly and at high speeds. Think of them as hyperactive kids in an empty gymnasium\u2014they just run everywhere! Because the particles are so spread out and moving so fast, a gas has no definite shape and no definite volume. It will expand to fill any container it's in, no matter the size or shape. This is why you can smell a pizza from across the room; the gas particles carrying the smell spread out to fill the entire space.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Now, let's add even more energy to our liquid. As we heat it, the particles move faster and faster. Eventually, at the boiling point, they gain so much energy that they can completely overcome the forces of attraction holding them together.",
+            "duration_seconds": 14,
+            "gesture_hint": "upward_motion"
+          },
+          {
+            "segment_id": 2,
+            "text": "They escape from the liquid and fly off in all directions. This is vaporization, and it creates a gas. In the gaseous state, particles are very far apart and move randomly and at high speeds.",
+            "duration_seconds": 12,
+            "gesture_hint": "expanding_hands"
+          },
+          {
+            "segment_id": 3,
+            "text": "Think of them as hyperactive kids in an empty gymnasium\u2014they just run everywhere! Because the particles are so spread out and moving so fast, a gas has no definite shape and no definite volume.",
+            "duration_seconds": 13,
+            "gesture_hint": "analogy"
+          },
+          {
+            "segment_id": 4,
+            "text": "It will expand to fill any container it's in, no matter the size or shape. This is why you can smell a pizza from across the room; the gas particles carrying the smell spread out to fill the entire space.",
+            "duration_seconds": 12,
+            "gesture_hint": "real_world_example"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "5A",
+          "segment_id": 1,
+          "visual_beat_type": "animation",
+          "description": "Start with liquid particles in a beaker. A large red arrow '++ Energy' points at it. Particles move faster, especially at the surface.",
+          "manim_scene_spec": {
+            "scene_name": "BoilingProcess",
+            "commands": [
+              "particles = create_particles_in_container(shape='beaker', count=50, color=BLUE)",
+              "energy_arrow = Arrow(LEFT, RIGHT, color=RED, stroke_width=10).next_to(particles, LEFT)",
+              "energy_label = Text('++ Energy').next_to(energy_arrow, UP)",
+              "animate(FadeIn(energy_arrow, energy_label))",
+              "animate(particles.agitate(factor=2), run_time=3)"
+            ]
+          }
+        },
+        {
+          "beat_id": "5B",
+          "segment_id": 2,
+          "visual_beat_type": "animation",
+          "description": "Particles at the surface start to fly off, moving rapidly and far apart, filling the entire screen area.",
+          "manim_scene_spec": {
+            "scene_name": "GasFormation",
+            "commands": [
+              "continue_scene_from('BoilingProcess')",
+              "animate(particles.escape_and_expand(boundary=screen_rect))",
+              "label = Text('Gas State').to_edge(UP)",
+              "animate(Write(label))"
+            ]
+          }
+        },
+        {
+          "beat_id": "5C",
+          "segment_id": 3,
+          "visual_beat_type": "diagram",
+          "description": "Show the gas particles moving randomly inside a large box. Labels 'No Definite Shape' and 'No Definite Volume' appear.",
+          "manim_scene_spec": {
+            "scene_name": "GasProperties",
+            "commands": [
+              "continue_scene_from('GasFormation')",
+              "box = SurroundingRectangle(particles, buff=0.5, color=WHITE)",
+              "animate(Create(box))",
+              "label1 = Text('No Definite Shape').next_to(box, UP)",
+              "label2 = Text('No Definite Volume').next_to(box, RIGHT)",
+              "energy_label = Text('High Kinetic Energy', color=YELLOW).to_corner(UL)",
+              "animate(Write(label1), Write(label2), FadeIn(energy_label))"
+            ]
+          }
+        },
+        {
+          "beat_id": "5D",
+          "segment_id": 4,
+          "visual_beat_type": "animation",
+          "description": "The box expands, and the particles immediately spread out to fill the new, larger volume.",
+          "manim_scene_spec": {
+            "scene_name": "GasExpansion",
+            "commands": [
+              "continue_scene_from('GasProperties')",
+              "animate(box.animate.scale(1.5))",
+              "animate(particles.animate.spread_to_fill(box))"
+            ]
+          }
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "fade_in"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "transform"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "draw"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "beaker",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "shape_type": "beaker",
+              "color": "WHITE",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "liquid_particles",
+            "type": "point",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "count": 50,
+              "color": "BLUE",
+              "radius": 0.1,
+              "arrangement": "random_in_container",
+              "container_ref": "beaker"
+            }
+          },
+          {
+            "id": "energy_arrow",
+            "type": "vector",
+            "position": [
+              -2,
+              0
+            ],
+            "properties": {
+              "direction": [
+                1,
+                0
+              ],
+              "color": "RED",
+              "scale": 1.5
+            }
+          },
+          {
+            "id": "energy_label",
+            "type": "label",
+            "position": [
+              -2,
+              0.8
+            ],
+            "properties": {
+              "text": "++ Energy",
+              "color": "RED",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "gas_container",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "width": 6,
+              "height": 4,
+              "color": "WHITE",
+              "fill_opacity": 0
+            }
+          },
+          {
+            "id": "gas_label",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "text": "Gas State",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "property_label1",
+            "type": "label",
+            "position": [
+              -2.5,
+              1.5
+            ],
+            "properties": {
+              "text": "No Definite Shape",
+              "color": "WHITE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "property_label2",
+            "type": "label",
+            "position": [
+              -2.5,
+              0.5
+            ],
+            "properties": {
+              "text": "No Definite Volume",
+              "color": "WHITE",
+              "scale": 0.8
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "beaker",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "liquid_particles",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": [
+              "energy_arrow",
+              "energy_label"
+            ],
+            "duration": 2
+          },
+          {
+            "action": "move",
+            "target": "liquid_particles",
+            "duration": 10,
+            "properties": {
+              "agitation_factor": 2
+            }
+          },
+          {
+            "action": "transform",
+            "target": "liquid_particles",
+            "duration": 6,
+            "properties": {
+              "spread_factor": 3,
+              "speed_increase": 2
+            }
+          },
+          {
+            "action": "appear",
+            "target": "gas_container",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "gas_label",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": [
+              "property_label1",
+              "property_label2"
+            ],
+            "duration": 3
+          },
+          {
+            "action": "transform",
+            "target": "gas_container",
+            "duration": 6,
+            "properties": {
+              "scale_factor": 1.5
+            }
+          },
+          {
+            "action": "move",
+            "target": "liquid_particles",
+            "duration": 4,
+            "properties": {
+              "fill_container": "gas_container"
+            }
+          },
+          {
+            "action": "highlight",
+            "target": [
+              "gas_label",
+              "property_label1",
+              "property_label2"
+            ],
+            "duration": 2,
+            "color": "YELLOW"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 6,
+      "section_type": "example",
+      "title": "Example: From Ice to Water",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side_small",
+        "position": "bottom_right",
+        "width_percent": 25
+      },
+      "narration": {
+        "full_text": "Let's watch this in action with a familiar example: an ice cube melting. Here we have a solid ice cube. It's holding its shape. Now, let's add some heat energy from the surroundings. As the ice absorbs this energy, its water molecules, which were locked in a crystal lattice, begin to vibrate more and more rapidly. Watch closely at the molecular level. The vibrations become so strong that they break the rigid bonds holding the particles in place. The structure collapses. The particles are now free to slide past one another. Back in the real world, we see the ice cube losing its sharp edges and turning into a puddle. It has changed from a solid to a liquid. It has melted.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's watch this in action with a familiar example: an ice cube melting. Here we have a solid ice cube. It's holding its shape.",
+            "duration_seconds": 8
+          },
+          {
+            "segment_id": 2,
+            "text": "Now, let's add some heat energy from the surroundings. As the ice absorbs this energy, its water molecules, which were locked in a crystal lattice, begin to vibrate more and more rapidly.",
+            "duration_seconds": 11
+          },
+          {
+            "segment_id": 3,
+            "text": "Watch closely at the molecular level. The vibrations become so strong that they break the rigid bonds holding the particles in place. The structure collapses.",
+            "duration_seconds": 9
+          },
+          {
+            "segment_id": 4,
+            "text": "The particles are now free to slide past one another. Back in the real world, we see the ice cube losing its sharp edges and turning into a puddle. It has changed from a solid to a liquid. It has melted.",
+            "duration_seconds": 12
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "6A",
+          "segment_id": 1,
+          "visual_beat_type": "video_scene",
+          "description": "A realistic, high-definition video of a single ice cube sitting on a plate."
+        },
+        {
+          "beat_id": "6B",
+          "segment_id": 2,
+          "visual_beat_type": "video_scene",
+          "description": "An animated overlay appears, zooming into the ice cube to show particles in a lattice. Red 'heat waves' begin to enter from the sides, and the particles start to vibrate."
+        },
+        {
+          "beat_id": "6C",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "The animated overlay shows the lattice bonds snapping and the structure breaking apart. The particles start to move more freely."
+        },
+        {
+          "beat_id": "6D",
+          "segment_id": 4,
+          "visual_beat_type": "video_scene",
+          "description": "The overlay fades. A time-lapse video shows the real ice cube melting into a puddle of water."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "show"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "gesture_only"
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "6A",
+          "prompt": "A static, medium shot of a single, perfectly cubic ice cube. The ice cube is centered on a plain white ceramic plate. The background is a solid, neutral light gray. The lighting is bright and even, highlighting the sharp edges and translucent, crystalline texture of the ice. No movement occurs. The shot is held for the entire duration.",
+          "duration_seconds": 8,
+          "style": "live_action"
+        },
+        {
+          "beat_id": "6B",
+          "prompt": "The scene starts with the static shot of the ice cube. At 1 second, a circular magnification graphic appears over the center of the ice cube and zooms in, filling the screen. The view transitions to a 2D animation against a dark blue background. Light-blue spheres, representing molecules, are arranged in a fixed, 3D crystalline lattice, connected by thin gray lines. At 3 seconds, wavy, semi-transparent red lines animate in from the left and right edges, moving toward the lattice. As the red lines touch the lattice, the light-blue spheres begin to vibrate in place. The vibration starts small and gradually increases in speed and amplitude for the rest of the shot.",
+          "duration_seconds": 11,
+          "style": "animated"
+        },
+        {
+          "beat_id": "6C",
+          "prompt": "The scene continues the animation from the previous shot. The light-blue spheres are vibrating rapidly within the lattice structure. Starting immediately, the thin gray lines connecting the spheres begin to flash white and then disappear one by one over the course of 5 seconds. As the lines disappear, the spheres break free from their fixed positions. The rigid lattice structure visibly crumbles and becomes disorganized. For the final 4 seconds, the spheres are clustered together but are no longer in a fixed structure.",
+          "duration_seconds": 9,
+          "style": "animated"
+        },
+        {
+          "beat_id": "6D",
+          "prompt": "The scene starts with the animated cluster of light-blue spheres. For the first 2 seconds, the spheres slowly slide past one another. At 2 seconds, the animation cross-fades over 1 second into a live-action time-lapse. The camera is in the same position as the first shot. The time-lapse shows the ice cube on the white plate. Its sharp edges round off, and it shrinks. A puddle of clear water forms at its base and grows larger. By the 11-second mark, the ice cube has completely disappeared, leaving only a circular puddle of water on the plate. The shot holds on the puddle for the final second.",
+          "duration_seconds": 12,
+          "style": "live_action"
+        }
+      ]
+    },
+    {
+      "section_id": 7,
+      "section_type": "memory",
+      "title": "Quick Memory Flashcards",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "hidden"
+      },
+      "narration": {
+        "full_text": "Let's review five key ideas. First: Solids have a definite shape and volume because their particles are locked in a vibrating lattice. Second: Liquids have a definite volume but take the shape of their container, as particles can slide past each other. Third: Gases have no definite shape or volume; their high-energy particles expand to fill any space. Fourth: Melting is the phase change from solid to liquid, caused by adding energy. Fifth: Vaporization is the phase change from liquid to gas, caused by adding even more energy.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's review five key ideas.",
+            "duration_seconds": 3
+          },
+          {
+            "segment_id": 2,
+            "text": "First: Solids have a definite shape and volume because their particles are locked in a vibrating lattice.",
+            "duration_seconds": 7
+          },
+          {
+            "segment_id": 3,
+            "text": "Second: Liquids have a definite volume but take the shape of their container, as particles can slide past each other.",
+            "duration_seconds": 8
+          },
+          {
+            "segment_id": 4,
+            "text": "Third: Gases have no definite shape or volume; their high-energy particles expand to fill any space.",
+            "duration_seconds": 8
+          },
+          {
+            "segment_id": 5,
+            "text": "Fourth: Melting is the phase change from solid to liquid, caused by adding energy.",
+            "duration_seconds": 6
+          },
+          {
+            "segment_id": 6,
+            "text": "Fifth: Vaporization is the phase change from liquid to gas, caused by adding even more energy.",
+            "duration_seconds": 7
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "7A",
+          "segment_id": 2,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'SOLID'. Back: 'Definite Shape & Volume. Particles vibrate in a fixed lattice.'"
+        },
+        {
+          "beat_id": "7B",
+          "segment_id": 3,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'LIQUID'. Back: 'Definite Volume, No Definite Shape. Particles slide past each other.'"
+        },
+        {
+          "beat_id": "7C",
+          "segment_id": 4,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'GAS'. Back: 'No Definite Shape or Volume. Particles move freely and expand.'"
+        },
+        {
+          "beat_id": "7D",
+          "segment_id": 5,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'MELTING'. Back: 'Solid \u2192 Liquid. Requires adding energy.'"
+        },
+        {
+          "beat_id": "7E",
+          "segment_id": 6,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'VAPORIZATION'. Back: 'Liquid \u2192 Gas. Requires adding energy.'"
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "show"
+          },
+          "visual_layer": {
+            "action": "hide"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show",
+            "animation": "flip_in"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "flip_in"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "flip_in"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "flip_in"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 6,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace",
+            "animation": "flip_in"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1170,
+        "elements": [
+          {
+            "id": "intro_text",
+            "type": "text",
+            "content": "Let's review five key ideas",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 90
+            }
+          },
+          {
+            "id": "card1_front",
+            "type": "text",
+            "content": "SOLID",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "scale_down",
+              "enter_frame": 90,
+              "exit_frame": 150
+            }
+          },
+          {
+            "id": "card1_back",
+            "type": "text",
+            "content": "Definite Shape & Volume\nParticles vibrate in a fixed lattice",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 150,
+              "exit_frame": 300
+            }
+          },
+          {
+            "id": "card2_front",
+            "type": "text",
+            "content": "LIQUID",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "scale_down",
+              "enter_frame": 300,
+              "exit_frame": 360
+            }
+          },
+          {
+            "id": "card2_back",
+            "type": "text",
+            "content": "Definite Volume, No Definite Shape\nParticles slide past each other",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 360,
+              "exit_frame": 540
+            }
+          },
+          {
+            "id": "card3_front",
+            "type": "text",
+            "content": "GAS",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "scale_down",
+              "enter_frame": 540,
+              "exit_frame": 600
+            }
+          },
+          {
+            "id": "card3_back",
+            "type": "text",
+            "content": "No Definite Shape or Volume\nParticles move freely and expand",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 600,
+              "exit_frame": 780
+            }
+          },
+          {
+            "id": "card4_front",
+            "type": "text",
+            "content": "MELTING",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "scale_down",
+              "enter_frame": 780,
+              "exit_frame": 840
+            }
+          },
+          {
+            "id": "card4_back",
+            "type": "text",
+            "content": "Solid \u2192 Liquid\nRequires adding energy",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 840,
+              "exit_frame": 960
+            }
+          },
+          {
+            "id": "card5_front",
+            "type": "text",
+            "content": "VAPORIZATION",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 64,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "scale_down",
+              "enter_frame": 960,
+              "exit_frame": 1020
+            }
+          },
+          {
+            "id": "card5_back",
+            "type": "text",
+            "content": "Liquid \u2192 Gas\nRequires adding energy",
+            "position": {
+              "x": 480,
+              "y": 270
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#FFFFFF"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 1020,
+              "exit_frame": 1170
+            }
+          }
+        ],
+        "background": {
+          "color": "#000000"
+        }
+      }
+    },
+    {
+      "section_id": 8,
+      "section_type": "recap",
+      "title": "A Journey Through the States of Matter",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "hidden"
+      },
+      "narration": {
+        "full_text": "Our journey begins with a vast, silent glacier, a monument of solid water. Here, countless molecules are locked in a rigid, crystalline embrace, their energy low, their movement just a faint vibration. This immense structure holds its form against the elements, a perfect example of a solid's definite shape and volume. It is matter in its most orderly and structured state, a silent testament to the strong forces that bind particles together when energy is scarce and movement is constrained. Then, the sun's energy arrives. As golden light bathes the glacier, it transfers thermal energy to the ice. The molecules begin to vibrate with growing intensity, straining against their bonds. This is the moment of transformation. The rigid lattice can no longer hold, and the first trickles of liquid water appear. This process, melting, is nature's way of unlocking matter, turning the unyielding solid into a fluid form, ready to begin its journey downhill, powered by newfound energy. The meltwater gathers, forming a powerful river that carves its way through the landscape. As a liquid, the water has no shape of its own, conforming perfectly to the twists and turns of the riverbed. Its particles, now free to slide and tumble over one another, create the beautiful, chaotic flow we see. Though its shape is ever-changing, its volume remains constant, a dense collection of molecules still bound by mutual attraction, flowing together towards the sea. Reaching a wide, sun-drenched lake, the water's journey continues. The sun's intense energy now drives the most energetic particles at the surface to make one final leap. They break free from the liquid entirely, escaping into the atmosphere as invisible water vapor. This is vaporization, the transition to the gaseous state. The particles, now full of energy, spread out, unbound and free, mixing with the air and rising high above the earth's surface. Finally, high in the cool atmosphere, the journey comes full circle. The dispersed water vapor particles lose their energy, slowing down and drawing together once more. They condense to form clouds, which eventually release their water as rain or snow, returning it to the earth. This grand cycle, from solid ice to flowing river to invisible gas and back again, beautifully illustrates how energy drives the perpetual dance between the states of matter, connecting everything on our planet.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Our journey begins with a vast, silent glacier, a monument of solid water. Here, countless molecules are locked in a rigid, crystalline embrace, their energy low, their movement just a faint vibration. This immense structure holds its form against the elements, a perfect example of a solid's definite shape and volume. It is matter in its most orderly and structured state, a silent testament to the strong forces that bind particles together when energy is scarce and movement is constrained.",
+            "duration_seconds": 22,
+            "word_count": 91
+          },
+          {
+            "segment_id": 2,
+            "text": "Then, the sun's energy arrives. As golden light bathes the glacier, it transfers thermal energy to the ice. The molecules begin to vibrate with growing intensity, straining against their bonds. This is the moment of transformation. The rigid lattice can no longer hold, and the first trickles of liquid water appear. This process, melting, is nature's way of unlocking matter, turning the unyielding solid into a fluid form, ready to begin its journey downhill, powered by newfound energy.",
+            "duration_seconds": 23,
+            "word_count": 96
+          },
+          {
+            "segment_id": 3,
+            "text": "The meltwater gathers, forming a powerful river that carves its way through the landscape. As a liquid, the water has no shape of its own, conforming perfectly to the twists and turns of the riverbed. Its particles, now free to slide and tumble over one another, create the beautiful, chaotic flow we see. Though its shape is ever-changing, its volume remains constant, a dense collection of molecules still bound by mutual attraction, flowing together towards the sea.",
+            "duration_seconds": 23,
+            "word_count": 94
+          },
+          {
+            "segment_id": 4,
+            "text": "Reaching a wide, sun-drenched lake, the water's journey continues. The sun's intense energy now drives the most energetic particles at the surface to make one final leap. They break free from the liquid entirely, escaping into the atmosphere as invisible water vapor. This is vaporization, the transition to the gaseous state. The particles, now full of energy, spread out, unbound and free, mixing with the air and rising high above the earth's surface.",
+            "duration_seconds": 23,
+            "word_count": 93
+          },
+          {
+            "segment_id": 5,
+            "text": "Finally, high in the cool atmosphere, the journey comes full circle. The dispersed water vapor particles lose their energy, slowing down and drawing together once more. They condense to form clouds, which eventually release their water as rain or snow, returning it to the earth. This grand cycle, from solid ice to flowing river to invisible gas and back again, beautifully illustrates how energy drives the perpetual dance between the states of matter, connecting everything on our planet.",
+            "duration_seconds": 24,
+            "word_count": 96
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "8A",
+          "segment_id": 1,
+          "visual_beat_type": "video_scene",
+          "description": "Cinematic aerial shot of a massive, blue-tinged glacier. Slow zoom in on the crystalline texture of the ice surface. An animated overlay briefly shows particles vibrating in a fixed lattice."
+        },
+        {
+          "beat_id": "8B",
+          "segment_id": 2,
+          "visual_beat_type": "video_scene",
+          "description": "Close-up shot of sunlight hitting the ice, causing it to glisten. A small stream of meltwater begins to form and trickle down the glacier's surface. The camera follows the first drops of water."
+        },
+        {
+          "beat_id": "8C",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "Drone shot following the stream as it grows into a rushing river flowing through a green valley. Underwater shots show the turbulence and flow of the water around rocks."
+        },
+        {
+          "beat_id": "8D",
+          "segment_id": 4,
+          "visual_beat_type": "video_scene",
+          "description": "The river flows into a calm, wide lake under a bright sun. A shot from the water's surface shows mist (vapor) rising. An animated overlay shows particles escaping the surface and flying into the air."
+        },
+        {
+          "beat_id": "8E",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "Time-lapse of clouds forming in the sky. The camera pulls back to a wide shot of the Earth, showing the interconnected water cycle: clouds, rain over mountains, rivers, and the glacier."
+        }
+      ],
+      "display_directives": [
+        {
+          "segment_id": 1,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "show"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 2,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 3,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 4,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        },
+        {
+          "segment_id": 5,
+          "text_layer": {
+            "action": "hide"
+          },
+          "visual_layer": {
+            "action": "replace"
+          },
+          "avatar_layer": {
+            "action": "hide"
+          }
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": 1,
+          "prompt": "An aerial shot shows a massive glacier with white surfaces and deep blue crevasses. The camera slowly zooms in toward the glacier's surface. The view gets closer, revealing the detailed, crystalline texture of the ice. A 2D animated overlay appears over a section of the ice. The overlay consists of small, light-blue spheres arranged in a fixed, hexagonal grid. The spheres vibrate back and forth slightly in their fixed positions. The overlay fades away. The camera continues its slow zoom in on the ice texture until the end of the shot.",
+          "duration_seconds": 22,
+          "style": "cinematic"
+        },
+        {
+          "beat_id": 2,
+          "prompt": "A close-up shot of an ice surface. Bright, golden sunlight from the top right illuminates the scene, causing the ice to glisten. Small beads of water appear on the surface. The beads merge and begin to trickle downwards, following a groove in the ice. The trickle grows into a small, continuous stream. The camera tilts down, keeping the front of the flowing stream of water in the center of the frame as it moves down the icy surface.",
+          "duration_seconds": 23,
+          "style": "cinematic"
+        },
+        {
+          "beat_id": 3,
+          "prompt": "An aerial drone shot starts looking down at a stream of meltwater on a glacier. The camera follows the stream as it flows downhill. Other streams merge with it, and it grows wider and faster. The landscape transitions from ice to a valley with green grass on its banks. The stream is now a wide, rushing river. The scene cuts to an underwater shot from a fixed position on the riverbed. Clear water with small bubbles moves quickly from left to right, flowing turbulently around smooth, grey rocks.",
+          "duration_seconds": 23,
+          "style": "cinematic"
+        },
+        {
+          "beat_id": 4,
+          "prompt": "A wide shot shows a river flowing into a large, calm lake. The sun is high in the sky, its light reflecting brightly on the water's surface. The camera angle changes to a low-angle shot, positioned just above the surface of the lake. Wisps of white mist rise slowly from the still water. An animated overlay appears. Below a horizontal line representing the water's surface, many blue spheres move and slide past each other. A few spheres near the top line begin moving faster, then break through the line and fly upwards, moving far apart from each other. The overlay fades away.",
+          "duration_seconds": 23,
+          "style": "cinematic"
+        },
+        {
+          "beat_id": 5,
+          "prompt": "A time-lapse shot of a blue sky. Small, wispy white clouds appear and merge, growing into large, dense cloud formations that move across the screen. The camera begins to pull back. As the camera pulls back, it reveals a mountain range below the clouds. The pullback continues, showing animated rain falling from the clouds onto the mountains. The camera pulls back further to a wide, animated view of a landscape that includes a glacier on the mountain peaks, rivers flowing down to a lake, and animated arrows showing vapor rising from the lake, forming clouds, and rain falling, illustrating a full water cycle.",
+          "duration_seconds": 24,
+          "style": "animated"
+        }
+      ]
+    }
+  ],
+  "pipeline_version": "1.2",
+  "job_id": "f0660369",
+  "use_remotion": true,
+  "source_file": "Sample_subjects.md"
+}

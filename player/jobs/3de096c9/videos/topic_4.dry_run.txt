@@ -1,0 +1,30 @@
+DRY RUN - Manim section 4
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/3de096c9/videos/topic_4.mp4
+
+--- SCENE CODE ---
+main_equation = MathTex(r"F = m \times a").move_to(np.array([0, 1.5, 0]))
+force_label = MathTex(r"\text{Force}").scale(0.8).move_to(np.array([-2, 0.7, 0]))
+mass_label = MathTex(r"\text{Mass}").scale(0.8).move_to(np.array([0, 0.7, 0]))
+accel_label = MathTex(r"\text{Acceleration}").scale(0.8).move_to(np.array([2, 0.7, 0]))
+box = Dot(point=np.array([-3, -0.5, 0]), color=BLUE)
+force_vector_1 = Arrow(start=np.array([-2, -0.5, 0]), end=np.array([0, -0.5, 0]), color=RED, buff=0)
+tennis_ball = Dot(point=np.array([-2, -2, 0]), color=GREEN)
+bowling_ball = Dot(point=np.array([2, -2, 0]), color=PURPLE)
+
+# Animation sequence
+self.play(Write(main_equation), run_time=2)
+self.play(FadeIn(force_label), run_time=1)
+self.play(FadeIn(mass_label), run_time=1)
+self.play(FadeIn(accel_label), run_time=1)
+self.wait(3)
+self.play(FadeIn(box), run_time=1)
+self.play(Create(force_vector_1), run_time=2)
+self.wait(8)
+self.play(FadeIn(tennis_ball), run_time=1)
+self.play(FadeIn(bowling_ball), run_time=1)
+self.wait(16)
+self.play(Indicate(main_equation), run_time=2)
+self.play(FadeOut(tennis_ball), run_time=1)
+self.play(FadeOut(bowling_ball), run_time=1)
+self.wait(1)
