@@ -585,14 +585,38 @@
       "root_cause": "v1.2 prompts allowed LLM to output scene descriptions instead of structured display_directives.",
       "fix_required": "Update Director prompts to require display_directives for every narration segment with text_layer, visual_layer, avatar_layer.",
       "solution": "Created v1.3 with DISPLAY DIRECTION section requiring display_directives on every segment. Added validate_v13_section_rules() to check for missing directives."
+    },
+    {
+      "id": "ISS-048",
+      "title": "Recap and Memory sections fail hard-fail validation despite retry mechanism",
+      "status": "in_progress",
+      "created": "2025-12-21",
+      "priority": "critical",
+      "description": "Dry runs with both Gemini 2.5 Pro and Claude 3.5 Sonnet produce recap sections with 0 scenes (need 5) and memory sections with 0 flashcards (need 5). Schema validation passes but semantic validation fails. Director retry logic exists but isn't catching these structural issues at schema level.",
+      "validation_failures": [
+        "recap_scene_count_wrong: Recap section has 0 scenes, must be exactly 5",
+        "recap_narration_below_minimum: Recap total narration is 0 words, minimum is 300",
+        "memory_flashcard_count_wrong: Memory section has 0 flashcards, must be exactly 5"
+      ],
+      "root_cause": "Schema only validates general structure (visual_beats array), not section-type-specific content like recap scenes or memory flashcards. Retry logic only triggers on schema failures, not semantic failures.",
+      "approved_solution": {
+        "option": "Schema enforcement (Option 1)",
+        "details": [
+          "Update JSON schema to require exactly 5 recap scenes in visual_beats when section_type=recap",
+          "Update JSON schema to require exactly 5 flashcards in visual_beats when section_type=memory",
+          "Keep semantic retry logic for word-count and visualization rules",
+          "Add canonical JSON examples for memory and recap sections in Director system prompt"
+        ],
+        "rationale": "Schema-level enforcement triggers retry mechanism before reaching semantic validator. Prompt examples reduce retry frequency by showing LLM exact expected format."
+      }
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-20",
-    "version": "11.0",
+    "last_updated": "2025-12-21",
+    "version": "12.0",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
     "resolved_count": 47,
-    "open_count": 0
+    "open_count": 1
   }
 }
