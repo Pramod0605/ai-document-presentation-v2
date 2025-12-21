@@ -369,6 +369,70 @@ def process_markdown():
             "error": str(e)
         }), 500
 
+@app.route("/jobs/<job_id>/resume", methods=["POST"])
+def resume_job(job_id):
+    """Resume a failed job from a specific phase.
+    
+    POST body:
+    - from_phase: "render" or "audio" (default: "audio")
+    - dry_run: boolean (default: false)
+    - skip_wan: boolean (default: false)
+    - skip_avatar: boolean (default: false)
+    """
+    from core.pipeline_v12 import resume_job_from_phase, detect_job_phase
+    
+    data = request.get_json() or {}
+    from_phase = data.get("from_phase", "audio")
+    dry_run = data.get("dry_run", False)
+    skip_wan = data.get("skip_wan", False)
+    skip_avatar = data.get("skip_avatar", False)
+    
+    job_dir = JOBS_DIR / job_id
+    if not job_dir.exists():
+        return jsonify({"error": "Job not found", "job_id": job_id}), 404
+    
+    phases = detect_job_phase(str(job_dir))
+    
+    if not phases["presentation"]:
+        return jsonify({
+            "error": "Cannot resume - presentation.json missing. Job must have completed Director phase.",
+            "job_id": job_id,
+            "phases": phases
+        }), 400
+    
+    try:
+        print(f"[API] Resuming job {job_id} from phase: {from_phase}")
+        result = resume_job_from_phase(
+            job_id=job_id,
+            from_phase=from_phase,
+            dry_run=dry_run,
+            skip_wan=skip_wan,
+            skip_avatar=skip_avatar
+        )
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "job_id": job_id
+        }), 500
+
+
+@app.route("/jobs/<job_id>/phases", methods=["GET"])
+def get_job_phases(job_id):
+    """Get phase completion status for a job."""
+    from core.pipeline_v12 import detect_job_phase
+    
+    job_dir = JOBS_DIR / job_id
+    if not job_dir.exists():
+        return jsonify({"error": "Job not found", "job_id": job_id}), 404
+    
+    phases = detect_job_phase(str(job_dir))
+    phases["job_id"] = job_id
+    
+    return jsonify(phases)
+
+
 @app.route("/dashboard")
 @app.route("/dashboard/")
 def serve_dashboard():

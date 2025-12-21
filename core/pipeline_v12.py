@@ -514,3 +514,178 @@ def process_markdown_to_videos_v12(
         raise
     
     return job_status
+
+
+def detect_job_phase(job_dir: str) -> dict:
+    """
+    Detect which phases completed for a job based on artifacts.
+    
+    Returns dict with phase completion status:
+    - presentation: True if presentation.json exists and is valid
+    - videos: True if videos/ has content
+    - audio: True if audio/ has mp3 files
+    """
+    job_path = Path(job_dir)
+    
+    phases = {
+        "presentation": False,
+        "videos": False, 
+        "audio": False,
+        "presentation_path": None,
+        "video_count": 0,
+        "audio_count": 0
+    }
+    
+    presentation_path = job_path / "presentation.json"
+    if presentation_path.exists():
+        try:
+            with open(presentation_path) as f:
+                data = json.load(f)
+            if data.get("sections"):
+                phases["presentation"] = True
+                phases["presentation_path"] = str(presentation_path)
+        except (json.JSONDecodeError, IOError):
+            pass
+    
+    videos_dir = job_path / "videos"
+    if videos_dir.exists():
+        video_files = list(videos_dir.glob("*.mp4"))
+        phases["video_count"] = len(video_files)
+        phases["videos"] = len(video_files) > 0
+    
+    audio_dir = job_path / "audio"
+    if audio_dir.exists():
+        audio_files = list(audio_dir.glob("*.mp3"))
+        phases["audio_count"] = len(audio_files)
+        phases["audio"] = len(audio_files) > 0
+    
+    return phases
+
+
+def resume_job_from_phase(
+    job_id: str,
+    from_phase: str = "audio",
+    dry_run: bool = False,
+    skip_wan: bool = False,
+    skip_avatar: bool = False
+) -> dict:
+    """
+    Resume a failed job from a specific phase.
+    
+    Phases:
+    - "render": Re-run video rendering + audio
+    - "audio": Re-run audio generation only
+    
+    Requires presentation.json to exist.
+    """
+    from core.job_manager import JobManager
+    
+    job_manager = JobManager()
+    job_dir = Path("player/jobs") / job_id
+    
+    if not job_dir.exists():
+        raise ValueError(f"Job directory not found: {job_dir}")
+    
+    phases = detect_job_phase(str(job_dir))
+    
+    if not phases["presentation"]:
+        raise ValueError(f"Cannot resume - presentation.json missing or invalid for job {job_id}")
+    
+    presentation_path = Path(phases["presentation_path"])
+    with open(presentation_path) as f:
+        presentation = json.load(f)
+    
+    print(f"[Resume] Job {job_id}: Loaded presentation with {len(presentation.get('sections', []))} sections")
+    print(f"[Resume] Phase status: presentation={phases['presentation']}, videos={phases['videos']}, audio={phases['audio']}")
+    print(f"[Resume] Resuming from phase: {from_phase}")
+    
+    job_status = {
+        "status": "resumed",
+        "job_id": job_id,
+        "resumed_from": from_phase,
+        "resumed_at": datetime.now().isoformat(),
+        "steps": []
+    }
+    
+    videos_dir = job_dir / "videos"
+    audio_dir = job_dir / "audio"
+    videos_dir.mkdir(exist_ok=True)
+    audio_dir.mkdir(exist_ok=True)
+    
+    try:
+        if from_phase == "render":
+            print(f"[Resume] Re-running video rendering...")
+            job_status["steps"].append({"step": "render_videos", "status": "started"})
+            
+            presentation["skip_avatar"] = skip_avatar
+            presentation = enforce_renderer_policy(presentation)
+            
+            rendered_videos = render_all_topics(
+                presentation, 
+                str(videos_dir), 
+                dry_run=dry_run, 
+                skip_wan=skip_wan,
+                output_dir_base=str(job_dir)
+            )
+            
+            _reconcile_video_paths(presentation, rendered_videos)
+            
+            with open(presentation_path, "w") as f:
+                json.dump(presentation, f, indent=2)
+            
+            success_count = sum(1 for v in rendered_videos if v.get("status") in ("success", "skipped"))
+            fail_count = sum(1 for v in rendered_videos if v.get("status") not in ("success", "skipped"))
+            
+            job_status["steps"][-1]["status"] = "completed" if fail_count == 0 else "partial"
+            job_status["steps"][-1]["videos"] = rendered_videos
+            job_status["steps"][-1]["success_count"] = success_count
+            job_status["steps"][-1]["fail_count"] = fail_count
+        
+        if from_phase in ["render", "audio"]:
+            if dry_run:
+                job_status["steps"].append({"step": "generate_audio", "status": "skipped", "reason": "dry_run"})
+                audio_files = []
+            else:
+                print(f"[Resume] Generating audio narration...")
+                job_status["steps"].append({"step": "generate_audio", "status": "started"})
+                audio_files = generate_all_audio(presentation, str(audio_dir))
+                job_status["steps"][-1]["status"] = "completed"
+                job_status["steps"][-1]["audio_files"] = audio_files
+                job_status["steps"][-1]["audio_count"] = len(audio_files)
+        
+        job_status["status"] = "completed"
+        job_status["completed_at"] = datetime.now().isoformat()
+        
+        job_manager.update_job(job_id, {
+            "status": "completed",
+            "completed_at": datetime.now().isoformat(),
+            "error": None
+        }, persist=True)
+        
+        print(f"[Resume] Job {job_id} completed successfully!")
+        
+    except Exception as e:
+        job_status["status"] = "failed"
+        job_status["error"] = str(e)
+        job_status["failed_at"] = datetime.now().isoformat()
+        
+        job_manager.update_job(job_id, {
+            "status": "failed",
+            "error": str(e)
+        }, persist=True)
+        
+        raise
+    
+    return job_status
+
+
+def _reconcile_video_paths(presentation: dict, rendered_videos: list):
+    """Helper to update presentation with rendered video paths."""
+    video_map = {v.get("section_id"): v for v in rendered_videos}
+    
+    for section in presentation.get("sections", []):
+        section_id = section.get("section_id") or section.get("id")
+        if section_id in video_map:
+            video_info = video_map[section_id]
+            section["video_path"] = video_info.get("video_path")
+            section["video_status"] = video_info.get("status")
