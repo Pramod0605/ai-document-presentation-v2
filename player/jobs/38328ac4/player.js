@@ -1032,10 +1032,12 @@ function handleTimeUpdate(e) {
       if (targetRecapIndex !== currentBeatIndex && inlineVideo) {
         currentBeatIndex = targetRecapIndex;
         const newRecapPath = slide.recap_video_paths[targetRecapIndex];
-        console.log(`Switching to recap scene ${targetRecapIndex + 1}: ${newRecapPath}`);
-        inlineVideo.src = newRecapPath;
-        inlineVideo.load();
-        inlineVideo.play().catch(e => console.log("Recap video play fail", e));
+        if (newRecapPath) {
+          console.log(`Switching to recap scene ${targetRecapIndex + 1}: ${newRecapPath}`);
+          inlineVideo.src = newRecapPath;
+          inlineVideo.load();
+          inlineVideo.play().catch(e => console.log("Recap video play fail", e));
+        }
         
         // Update the displayed scene info if we have scene data
         if (recapScenes[targetRecapIndex]) {
@@ -1336,19 +1338,21 @@ async function checkExistingPresentation() {
               contentVideoPath = section.video_path.startsWith('/') ? section.video_path : BASE_PATH + section.video_path;
               hasContentVideo = true;
             } 
-            // Priority 2: For recap, build scene paths from visual_beats/recap_scenes
+            // Priority 2: For recap, prefer topic_<id>.mp4 (single video) over multi-scene
             else if (section.section_type === 'recap') {
               hasContentVideo = true;
-              if (recapScenes.length > 0) {
-                // Multi-scene recap: try recap_<id>_scene_<n>.mp4 pattern
-                recapVideoPaths = recapScenes.map((s, i) => 
-                  BASE_PATH + `videos/recap_${sectionId}_scene_${s.scene_id || s.scene || i+1}.mp4`
-                );
+              // Default to single video: topic_<id>.mp4
+              contentVideoPath = BASE_PATH + `videos/topic_${sectionId}.mp4`;
+              recapVideoPaths = [contentVideoPath];
+              // Only use multi-scene if visual_beats have explicit video_path
+              if (recapScenes.length > 0 && recapScenes[0] && recapScenes[0].video_path) {
+                recapVideoPaths = recapScenes.map((s, i) => {
+                  if (s.video_path) {
+                    return s.video_path.startsWith('/') ? s.video_path : BASE_PATH + s.video_path;
+                  }
+                  return BASE_PATH + `videos/recap_${sectionId}_scene_${s.scene_id || s.scene || i+1}.mp4`;
+                });
                 contentVideoPath = recapVideoPaths[0];
-              } else {
-                // Single video recap: fall back to topic_<id>.mp4
-                contentVideoPath = BASE_PATH + `videos/topic_${sectionId}.mp4`;
-                recapVideoPaths = [contentVideoPath];
               }
             }
             // Priority 3: For content with video renderer, use topic_<id>.mp4
