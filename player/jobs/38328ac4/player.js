@@ -169,7 +169,8 @@ function getBasePath() {
 
 const BASE_PATH = getBasePath();
 console.log(`Player BASE_PATH: ${BASE_PATH}`);
-const AVATAR_URL = BASE_PATH + "avatar_placeholder.mp4";
+// ISS-060 FIX: Avatar is in shared assets folder, not job folder
+const AVATAR_URL = "/player/assets/avatar_placeholder.mp4";
 
 let currentSlideIndex = 0;
 let isPlaying = false;
@@ -206,6 +207,17 @@ async function detectVideosForSlide(slide) {
   if (!sectionId || slide._videoDetected) return;
   
   try {
+    // ISS-061 FIX: Prefer video_path metadata from presentation if available
+    if (slide.video_path) {
+      // Use metadata path directly (already set by pipeline)
+      slide.content_video_path = slide.video_path.startsWith('/') ? slide.video_path : BASE_PATH + slide.video_path;
+      slide.has_content_video = true;
+      console.log(`Section ${sectionId}: Using metadata video_path: ${slide.content_video_path}`);
+      slide._videoDetected = true;
+      return;
+    }
+    
+    // Fallback: Check for beat videos
     const beats = await detectBeatVideos(sectionId);
     if (beats.length > 0) {
       slide.beat_videos = beats;
@@ -213,12 +225,13 @@ async function detectVideosForSlide(slide) {
       slide.has_content_video = true;
       console.log(`Section ${sectionId}: Found ${beats.length} beat videos`);
     } else {
+      // Fallback: Check for single topic video
       const singleVideoPath = `${BASE_PATH}videos/topic_${sectionId}.mp4`;
       const resp = await fetch(singleVideoPath, { method: 'HEAD' });
       if (resp.ok) {
         slide.content_video_path = singleVideoPath;
         slide.has_content_video = true;
-        console.log(`Section ${sectionId}: Found single video`);
+        console.log(`Section ${sectionId}: Found single video at ${singleVideoPath}`);
       }
     }
     slide._videoDetected = true;
@@ -558,11 +571,31 @@ function loadSlide(index) {
           <div class="fc-mnemonic">${fc.mnemonic || ''}</div>
         `;
       } else if (fc.visual_beat_type === 'flashcard') {
+        // ISS-063 FIX: Parse flashcard description to extract question and answer
+        let question = fc.concept_title || fc.title || '';
+        let answer = fc.description || '';
+        
+        // Parse description pattern: "Flashcard front shows 'X'. Flips to reveal 'Y'."
+        const descMatch = (fc.description || '').match(/front shows ['"]([^'"]+)['"]\. Flips to reveal ['"]([^'"]+)['"]/i);
+        if (descMatch) {
+          question = descMatch[1];
+          answer = descMatch[2];
+        }
+        
+        card.className = 'flashcard flip-card';
         card.innerHTML = `
-          <div class="fc-letter">${fc.beat_id || ''}</div>
-          <div class="fc-title">${fc.concept_title || fc.title || ''}</div>
-          <div class="fc-mnemonic">${fc.description || ''}</div>
+          <div class="flip-card-inner">
+            <div class="flip-card-front">
+              <div class="fc-label">Question</div>
+              <div class="fc-question">${question}</div>
+            </div>
+            <div class="flip-card-back">
+              <div class="fc-label">Answer</div>
+              <div class="fc-answer">${answer}</div>
+            </div>
+          </div>
         `;
+        card.onclick = () => card.classList.toggle('flipped');
       } else {
         card.innerHTML = `
           <div class="fc-question">${fc.question || fc.title || fc.concept_title || ''}</div>
@@ -1293,6 +1326,37 @@ async function checkExistingPresentation() {
               }
             }
             
+            // ISS-061/ISS-064 FIX: Prefer video_path metadata, fallback to pattern-based detection
+            let contentVideoPath = null;
+            let hasContentVideo = false;
+            let recapVideoPaths = [];
+            
+            // Priority 1: Use video_path metadata from pipeline if available
+            if (section.video_path) {
+              contentVideoPath = section.video_path.startsWith('/') ? section.video_path : BASE_PATH + section.video_path;
+              hasContentVideo = true;
+            } 
+            // Priority 2: For recap, build scene paths from visual_beats/recap_scenes
+            else if (section.section_type === 'recap') {
+              hasContentVideo = true;
+              if (recapScenes.length > 0) {
+                // Multi-scene recap: try recap_<id>_scene_<n>.mp4 pattern
+                recapVideoPaths = recapScenes.map((s, i) => 
+                  BASE_PATH + `videos/recap_${sectionId}_scene_${s.scene_id || s.scene || i+1}.mp4`
+                );
+                contentVideoPath = recapVideoPaths[0];
+              } else {
+                // Single video recap: fall back to topic_<id>.mp4
+                contentVideoPath = BASE_PATH + `videos/topic_${sectionId}.mp4`;
+                recapVideoPaths = [contentVideoPath];
+              }
+            }
+            // Priority 3: For content with video renderer, use topic_<id>.mp4
+            else if (section.renderer === 'wan_video' || section.renderer === 'manim' || section.renderer === 'video') {
+              contentVideoPath = BASE_PATH + `videos/topic_${sectionId}.mp4`;
+              hasContentVideo = true;
+            }
+            
             return {
               slide_number: sectionId,
               section_type: section.section_type || 'content',
@@ -1306,13 +1370,10 @@ async function checkExistingPresentation() {
               narration: section.narration,
               timed_segments: timed_segments,
               audio_path: BASE_PATH + `audio/section_${sectionId}.mp3`,
-              content_video_path: section.section_type === 'recap' 
-                ? BASE_PATH + `videos/recap_${sectionId}_scene_1.mp4`
-                : (section.renderer === 'wan_video' || section.renderer === 'manim' || section.renderer === 'video') ? BASE_PATH + `videos/topic_${sectionId}.mp4` : null,
-              has_content_video: section.section_type === 'recap' || (section.renderer === 'wan_video' || section.renderer === 'manim' || section.renderer === 'video') || section.has_content_video,
-              recap_video_paths: section.section_type === 'recap' && recapScenes.length > 0
-                ? recapScenes.map((s, i) => BASE_PATH + `videos/recap_${sectionId}_scene_${s.scene_id || s.scene || i+1}.mp4`)
-                : [],
+              video_path: section.video_path,
+              content_video_path: contentVideoPath,
+              has_content_video: hasContentVideo || section.has_content_video,
+              recap_video_paths: recapVideoPaths,
               section_id: sectionId,
               id: sectionId,
               beat_videos: [],
