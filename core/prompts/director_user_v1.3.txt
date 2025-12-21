@@ -33,17 +33,43 @@ CONTENT EXPECTATIONS
 • Do NOT merge examples into content narration
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TWO-CHANNEL SEPARATION (MANDATORY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Narration = audio only (TTS). Visual_content = screen display.
+
+For segments with text_layer=show, include visual_content with bullet_points from the source document:
+
+{
+  "segment_id": 1,
+  "text": "Narration for audio...",
+  "visual_content": {
+    "bullet_points": [
+      { "level": 1, "text": "Main point from document" },
+      { "level": 2, "text": "Sub-point from document" }
+    ]
+  },
+  "display_directives": {
+    "text_layer": "show",
+    "visual_layer": "hide",
+    "avatar_layer": "show"
+  }
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 DISPLAY DIRECTION (MANDATORY)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-For EVERY narration segment, include display_directives:
+For EVERY narration segment, include display_directives (flat strings):
 
-Example:
 {
   "segment_id": 2,
-  "text_layer": { "action": "hide", "animation": "fade_out" },
-  "visual_layer": { "action": "show", "animation": "cut" },
-  "avatar_layer": { "action": "gesture_only" }
+  "text": "...",
+  "display_directives": {
+    "text_layer": "hide",
+    "visual_layer": "show",
+    "avatar_layer": "gesture_only"
+  }
 }
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━

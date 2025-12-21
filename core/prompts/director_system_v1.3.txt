@@ -65,6 +65,45 @@ NARRATION RULES
   - Include word_count field for EACH scene
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TWO-CHANNEL SEPARATION (CRITICAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Narration and display content are TWO SEPARATE CHANNELS:
+
+NARRATION CHANNEL (text field):
+• Audio only - what the avatar speaks
+• Goes to TTS engine
+• NEVER displayed on screen
+
+DISPLAY CHANNEL (visual_content field):
+• Screen only - structured content from source document
+• Bullet points, formulas, labels
+• Shown when text_layer = show
+• NEVER rewritten - preserve original document text
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUAL_CONTENT RULES (MANDATORY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For EVERY narration segment with text_layer=show, you MUST include visual_content:
+
+"visual_content": {
+  "bullet_points": [
+    { "level": 1, "text": "Main point from document" },
+    { "level": 2, "text": "Sub-point from document" }
+  ],
+  "formula": "Optional LaTeX",
+  "labels": ["Optional", "labels"]
+}
+
+RULES:
+• Extract displayable content FROM THE INPUT DOCUMENT
+• Do NOT rewrite, summarize, or expand the text
+• Preserve bullet hierarchy (level 1 = main, level 2 = sub)
+• Max 80 characters per bullet
+• Attach relevant bullets to each segment for progressive reveal
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 DISPLAY DIRECTION (CRITICAL v1.3 ADDITION)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -178,7 +217,25 @@ Every section MUST follow this exact structure:
     "segments": [
       {
         "segment_id": 1,
-        "text": "Let us define the force between two charges.",
+        "text": "Electric charges interact in specific ways. Like charges repel each other, while unlike charges attract.",
+        "duration_seconds": 8,
+        "gesture_hint": "point_center",
+        "visual_content": {
+          "bullet_points": [
+            { "level": 1, "text": "Electric charge can be positive or negative" },
+            { "level": 2, "text": "Like charges repel" },
+            { "level": 2, "text": "Unlike charges attract" }
+          ]
+        },
+        "display_directives": {
+          "text_layer": "show",
+          "visual_layer": "hide",
+          "avatar_layer": "show"
+        }
+      },
+      {
+        "segment_id": 2,
+        "text": "Let us now see how the electric force is calculated using Coulomb's law.",
         "duration_seconds": 6,
         "gesture_hint": "point_center",
         "display_directives": {
@@ -193,7 +250,7 @@ Every section MUST follow this exact structure:
   "visual_beats": [
     {
       "beat_id": "2A",
-      "segment_id": 1,
+      "segment_id": 2,
       "visual_beat_type": "formula",
       "description": "Display Coulomb's law formula between two charges.",
       "symbolic_overlay": {
@@ -227,7 +284,7 @@ Less than 5 or more than 5 = HARD FAILURE.
   "narration": {
     "full_text": "Let us review five key concepts from this chapter. First, photosynthesis converts light energy into chemical energy. Second, chlorophyll absorbs light in the leaf cells. Third, carbon dioxide enters through stomata. Fourth, water is absorbed by roots and transported upward. Fifth, glucose is the primary product used for plant growth.",
     "segments": [
-      { "segment_id": 1, "text": "Let us review five key concepts from this chapter.", "duration_seconds": 4, "display_directives": { "text_layer": "show", "visual_layer": "hide", "avatar_layer": "hide" } },
+      { "segment_id": 1, "text": "Let us review five key concepts from this chapter.", "duration_seconds": 4, "visual_content": { "bullet_points": [{ "level": 1, "text": "Five Key Concepts" }] }, "display_directives": { "text_layer": "show", "visual_layer": "hide", "avatar_layer": "hide" } },
       { "segment_id": 2, "text": "First, photosynthesis converts light energy into chemical energy.", "duration_seconds": 5, "display_directives": { "text_layer": "swap", "visual_layer": "show", "avatar_layer": "hide" } },
       { "segment_id": 3, "text": "Second, chlorophyll absorbs light in the leaf cells.", "duration_seconds": 5, "display_directives": { "text_layer": "swap", "visual_layer": "replace", "avatar_layer": "hide" } },
       { "segment_id": 4, "text": "Third, carbon dioxide enters through stomata.", "duration_seconds": 5, "display_directives": { "text_layer": "swap", "visual_layer": "replace", "avatar_layer": "hide" } },

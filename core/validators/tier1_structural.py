@@ -218,9 +218,11 @@ def _check_display_directives(section: Dict) -> List[StructuralError]:
 
 
 def _check_layer_logic(section: Dict) -> List[StructuralError]:
-    """Check text + complex visual not shown simultaneously (per-segment check)."""
+    """Check text + complex visual not shown simultaneously (per-segment check).
+    Also check that text_layer=show segments have visual_content (two-channel separation)."""
     errors = []
     section_id = section.get("section_id") or section.get("id", 0)
+    section_type = section.get("section_type", "")
     
     narration = section.get("narration", {})
     narration_segments = []
@@ -245,6 +247,22 @@ def _check_layer_logic(section: Dict) -> List[StructuralError]:
                 section_id,
                 f"Segment {seg_id}: text_layer=show + visual_layer={visual_layer} violates mutual exclusion"
             ))
+        
+        if text_layer == "show" and section_type in ["content", "example", "intro", "summary"]:
+            visual_content = seg.get("visual_content")
+            has_content = False
+            if isinstance(visual_content, dict):
+                bullet_points = visual_content.get("bullet_points", [])
+                formula = visual_content.get("formula")
+                labels = visual_content.get("labels", [])
+                has_content = bool(bullet_points) or bool(formula) or bool(labels)
+            
+            if not has_content:
+                errors.append(StructuralError(
+                    "text_layer_show_missing_visual_content",
+                    section_id,
+                    f"Segment {seg_id}: text_layer=show but no visual_content (narration text cannot be displayed)"
+                ))
     
     return errors
 

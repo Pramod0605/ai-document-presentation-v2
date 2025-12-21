@@ -182,13 +182,40 @@
       "required": ["segment_id", "text", "duration_seconds", "display_directives"],
       "properties": {
         "segment_id": { "type": "number" },
-        "text": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1, "description": "Narration text for TTS audio - NOT for screen display" },
         "duration_seconds": { "type": "number", "minimum": 1 },
         "gesture_hint": {
           "type": "string",
           "description": "Avatar gesture hint - flexible string for various gestures"
         },
         "word_count": { "type": "number", "description": "Word count for recap segments" },
+        "visual_content": {
+          "type": "object",
+          "description": "Structured displayable content from source document - shown on screen when text_layer=show",
+          "properties": {
+            "bullet_points": {
+              "type": "array",
+              "description": "Hierarchical bullet points extracted from source document",
+              "items": {
+                "type": "object",
+                "required": ["level", "text"],
+                "properties": {
+                  "level": { "type": "integer", "enum": [1, 2], "description": "1=main bullet, 2=sub-bullet" },
+                  "text": { "type": "string", "maxLength": 80, "description": "Original text from document - not rewritten" }
+                }
+              }
+            },
+            "formula": {
+              "type": "string",
+              "description": "LaTeX formula to display"
+            },
+            "labels": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Short labels for diagram annotation"
+            }
+          }
+        },
         "display_directives": {
           "type": "object",
           "required": ["text_layer", "visual_layer", "avatar_layer"],

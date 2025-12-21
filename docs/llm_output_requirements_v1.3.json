@@ -167,14 +167,49 @@
 
   "narration_segment_structure": {
     "required_fields": [
-      "id",
+      "segment_id",
       "text",
       "duration_seconds",
       "display_directives"
     ],
     "optional_fields": [
-      "gesture_hint"
-    ]
+      "gesture_hint",
+      "word_count",
+      "visual_content"
+    ],
+    "field_definitions": {
+      "text": "Narration for TTS audio ONLY - NOT displayed on screen",
+      "visual_content": {
+        "purpose": "Structured displayable content from source document - shown on screen when text_layer=show",
+        "structure": {
+          "bullet_points": [
+            { "level": 1, "text": "Main point from document (max 80 chars)" },
+            { "level": 2, "text": "Sub-point from document (max 80 chars)" }
+          ],
+          "formula": "Optional LaTeX formula",
+          "labels": ["Optional", "label", "array"]
+        },
+        "rules": [
+          "Content comes from source document - NOT rewritten",
+          "Bullet hierarchy preserved from input",
+          "Attached per segment for progressive reveal",
+          "Player renders visual_content when text_layer=show",
+          "Player NEVER renders narration text on screen"
+        ]
+      }
+    },
+    "two_channel_separation": {
+      "narration_channel": {
+        "field": "text",
+        "purpose": "Audio narration via TTS",
+        "display": "NEVER shown on screen"
+      },
+      "display_channel": {
+        "field": "visual_content",
+        "purpose": "Structured content for screen display",
+        "source": "Extracted from input document"
+      }
+    }
   },
 
   "visual_beat_structure": {

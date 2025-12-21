@@ -749,42 +749,54 @@
     {
       "id": "ISS-056",
       "title": "v1.3 schema missing visual_content channel - narration text displayed instead of document content",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-21",
+      "resolved": "2025-12-21",
       "priority": "critical",
-      "description": "The v1.3 schema lacks a dedicated visual_content field at the narration segment level. Narration text (audio script) is being displayed on screen instead of structured display content (bullet points, formulas, labels) extracted from the source document.",
-      "root_cause": "Schema separation issue - narration.segments[].text is meant for TTS audio only, but player has nowhere else to get displayable content from. The visual_content channel was never added to the schema.",
+      "description": "The v1.3 schema lacked a dedicated visual_content field at the narration segment level. Narration text (audio script) was being displayed on screen instead of structured display content (bullet points, formulas, labels) extracted from the source document.",
+      "root_cause": "Schema separation issue - narration.segments[].text is meant for TTS audio only, but player had nowhere else to get displayable content from. The visual_content channel was never added to the schema.",
       "symptoms": [
         "Player displays narration transcript on screen",
         "Bullet points from source document not visible",
         "Text layer shows voiceover script instead of structured content",
         "Progressive reveal of bullets not possible"
       ],
-      "correct_behavior": {
-        "narration_channel": "Audio only - what the avatar speaks (TTS)",
-        "visual_content_channel": "Display only - structured content from source document (bullets, formulas, labels)"
+      "solution": {
+        "schema_changes": "Added visual_content object to narration_segment in presentation_v1.3.schema.json with bullet_points[] (level, text), formula, labels[]",
+        "docs_changes": "Updated llm_output_requirements_v1.3.json with two-channel separation documentation",
+        "prompt_changes": [
+          "Added TWO-CHANNEL SEPARATION and VISUAL_CONTENT RULES sections to director_system_v1.3.txt",
+          "Updated canonical JSON examples in director_system_v1.3.txt with visual_content field",
+          "Updated director_user_v1.3.txt with visual_content example",
+          "Updated director_retry_system_v1.3.txt with visual_content repair instructions"
+        ],
+        "player_changes": [
+          "Added aggregation of visual_content from all segments in slide mapping",
+          "Added bullet-level-1 and bullet-level-2 CSS classes for hierarchy styling",
+          "Updated segment rendering to detect {level, text} objects and apply appropriate classes"
+        ]
       },
-      "required_schema_change": {
-        "location": "narration_segment object",
-        "new_field": "visual_content",
-        "structure": {
-          "bullet_points": [{"level": 1, "text": "Main point"}, {"level": 2, "text": "Sub-point"}],
-          "formula": "Optional LaTeX formula",
-          "labels": ["Optional", "label", "array"]
-        }
-      },
-      "required_director_change": "Extract displayable content from input document, preserve bullet hierarchy, attach to visual_content field per segment",
-      "player_impact": "None - player already reads visual_content.bullet_points (line 627-628)",
-      "upstream_impact": ["Schema update required", "Director prompt update required", "llm_output_requirements update required"],
-      "downstream_impact": ["None - player code already correct"]
+      "files_modified": [
+        "schemas/presentation_v1.3.schema.json",
+        "docs/llm_output_requirements_v1.3.json",
+        "core/prompts/director_system_v1.3.txt",
+        "core/prompts/director_user_v1.3.txt",
+        "core/prompts/director_retry_system_v1.3.txt",
+        "player/player.js",
+        "player/index.html"
+      ],
+      "two_channel_design": {
+        "narration_channel": "text field - Audio only via TTS, NEVER displayed on screen",
+        "display_channel": "visual_content field - Screen only, structured content from source document"
+      }
     }
   ],
   "metadata": {
     "last_updated": "2025-12-21",
-    "version": "12.5",
+    "version": "12.6",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
-    "resolved_count": 55,
-    "open_count": 1
+    "resolved_count": 56,
+    "open_count": 0
   }
 }

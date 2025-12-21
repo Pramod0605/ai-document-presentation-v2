@@ -33,6 +33,7 @@ WHAT TO FIX
 - Missing linkage via segment_id.
 - Invalid enum values.
 - Missing top-level fields (spec_version, presentation_id, avatar_global).
+- Missing visual_content for segments with text_layer=show.
 
 CRITICAL - display_directives MUST be INSIDE each narration segment:
 
@@ -43,17 +44,24 @@ CORRECT (inside each segment, flat string values):
   "segments": [
     {
       "segment_id": 1,
-      "text": "...",
+      "text": "Narration for audio only...",
       "duration_seconds": 6,
+      "visual_content": {
+        "bullet_points": [
+          { "level": 1, "text": "Display content from document" }
+        ]
+      },
       "display_directives": {
-        "text_layer": "hide",
-        "visual_layer": "show",
+        "text_layer": "show",
+        "visual_layer": "hide",
         "avatar_layer": "show"
       }
     }
   ]
 
 Each segment MUST have display_directives with text_layer, visual_layer, avatar_layer as string enums.
+
+If text_layer=show, the segment SHOULD have visual_content with bullet_points extracted from the input document.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 WHAT NOT TO FIX

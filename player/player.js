@@ -624,10 +624,23 @@ function loadSlide(index) {
     let displayItems = [];
     const narrationSegs = slide.narration?.segments || slide.narration_segments;
     
+    const specVersion = lessonData.spec_version || '';
+    const legacyVersions = ['', 'v1.0', 'v1.1', 'v1.2'];
+    const isLegacy = legacyVersions.includes(specVersion);
+    
     if (slide.visual_content && slide.visual_content.bullet_points && slide.visual_content.bullet_points.length > 0) {
       displayItems = slide.visual_content.bullet_points;
-    } else if (narrationSegs && narrationSegs.length > 0) {
+    } else if (isLegacy && narrationSegs && narrationSegs.length > 0) {
       displayItems = narrationSegs.map(seg => seg.text || '');
+      console.warn(`[Legacy Mode] Slide ${slide.slide_number}: Using narration text as display (${specVersion || 'unversioned'} content)`);
+    } else if (!isLegacy && narrationSegs && narrationSegs.length > 0) {
+      const textLayerShowSegs = narrationSegs.filter(seg => 
+        seg.display_directives && seg.display_directives.text_layer === 'show'
+      );
+      if (textLayerShowSegs.length > 0) {
+        console.error(`[v1.3+ VIOLATION] Slide ${slide.slide_number}: text_layer=show segments exist but no visual_content provided.`);
+        displayItems = [{ level: 1, text: '[Missing display content - visual_content required]' }];
+      }
     } else if (slide.visual_beats && slide.visual_beats.length > 0) {
       displayItems = slide.visual_beats.map(vb => {
         const lt = vb.labels_and_text || '';
@@ -646,7 +659,12 @@ function loadSlide(index) {
         const div = document.createElement('div');
         div.className = 'segment-item';
         div.id = `seg-${i}`;
-        div.innerHTML = typeof item === 'string' ? item : (item.visual || item.text || '');
+        if (typeof item === 'object' && item.level) {
+          div.classList.add(`bullet-level-${item.level}`);
+          div.innerHTML = item.text || '';
+        } else {
+          div.innerHTML = typeof item === 'string' ? item : (item.visual || item.text || '');
+        }
         list.appendChild(div);
       });
 
@@ -1262,6 +1280,19 @@ async function checkExistingPresentation() {
             const recapScenes = (section.visual_beats && section.visual_beats.length > 0) ? section.visual_beats : (section.recap_scenes || []);
             const memoryCards = (section.visual_beats && section.visual_beats.length > 0) ? section.visual_beats : section.flashcards;
             
+            const aggregatedVisualContent = section.visual_content || {};
+            if (narrationSegs && narrationSegs.length > 0) {
+              const allBullets = [];
+              narrationSegs.forEach(seg => {
+                if (seg.visual_content && seg.visual_content.bullet_points) {
+                  allBullets.push(...seg.visual_content.bullet_points);
+                }
+              });
+              if (allBullets.length > 0) {
+                aggregatedVisualContent.bullet_points = allBullets;
+              }
+            }
+            
             return {
               slide_number: sectionId,
               section_type: section.section_type || 'content',
@@ -1287,7 +1318,7 @@ async function checkExistingPresentation() {
               beat_videos: [],
               audio_duration: section.duration,
               full_narration: section.narration,
-              visual_content: section.visual_content || {},
+              visual_content: aggregatedVisualContent,
               renderer_reasoning: section.renderer_reasoning || null,
               layout: section.layout || section.avatar_layout
             };
