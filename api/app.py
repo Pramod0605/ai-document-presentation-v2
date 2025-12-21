@@ -554,6 +554,16 @@ def generate_videos_from_prompts(job_id):
                     dry_run=dry_run,
                     skip_wan=skip_wan
                 )
+                
+                section_type = section.get("section_type", "content")
+                if video_paths and not dry_run:
+                    if section_type == "recap":
+                        section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in video_paths if p.endswith('.mp4')]
+                    else:
+                        section["content_video_path"] = f"videos/topic_{sid}.mp4"
+                        section["beat_video_paths"] = [f"videos/{Path(p).name}" for p in video_paths if 'beat' in Path(p).name]
+                    section["has_content_video"] = True
+                
                 results.append({
                     "section_id": sid,
                     "status": "success",
@@ -572,12 +582,17 @@ def generate_videos_from_prompts(job_id):
                     "error": str(e)
                 })
         
+        if not dry_run:
+            with open(pres_path, "w") as f:
+                json.dump(presentation, f, indent=2)
+        
         return jsonify({
             "status": "success",
             "job_id": job_id,
             "results": results,
             "dry_run": dry_run,
-            "skip_wan": skip_wan
+            "skip_wan": skip_wan,
+            "presentation_updated": not dry_run
         })
         
     except Exception as e:
