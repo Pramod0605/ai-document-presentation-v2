@@ -74,16 +74,38 @@ The user wants an iterative development process. The agent should prioritize cle
 - **EVERYTHING IS TIMED**: Every segment has duration_seconds, visuals align to timing.
 - **TWO-CHANNEL SEPARATION**: narration=audio, visual_content=display (never mixed).
 
+7. **Renderer Hardening** (ISS-057):
+   - Remotion: Strict JSON-only output, single retry on parse failure
+   - WAN: ≥300 words per beat, forbidden vague phrases, single retry on validation failure
+
 ### Prompt Files (v1.3)
 Located in `core/prompts/`:
 - `director_system_v1.3.txt` / `director_user_v1.3.txt` (v1.3 with canonical JSON example)
-- `director_retry_system.txt` / `director_retry_user.txt` (NEW - structure-repair-only retry)
-- `chunker_system_v1.3.txt` / `chunker_user_v1.3.txt` (NEW v1.3)
-- `manim_renderer_system_v1.2.txt` / `manim_renderer_user_v1.2.txt` (unchanged)
-- `remotion_renderer_system_v1.2.txt` / `remotion_renderer_user_v1.2.txt` (unchanged)
-- `video_renderer_system_v1.2.txt` / `video_renderer_user_v1.2.txt` (unchanged)
+- `director_retry_system.txt` / `director_retry_user.txt` (structure-repair-only retry)
+- `chunker_system_v1.3.txt` / `chunker_user_v1.3.txt`
+- `manim_renderer_system_v1.2.txt` / `manim_renderer_user_v1.2.txt`
+- `remotion_renderer_system_v1.3.txt` / `remotion_renderer_user_v1.3.txt` (HARDENED - JSON-only)
+- `video_renderer_system_v1.3.txt` / `video_renderer_user_v1.3.txt` (HARDENED - 300+ words)
 
 Backups stored in `core/prompts/v1.1_backup/` and `core/prompts/v1.2_backup/`.
+
+### Renderer Validation (v1.3 NEW - ISS-057)
+
+**Remotion Renderer:**
+- `validate_remotion_output()` checks valid JSON with `remotion_scene_spec` key
+- Strips markdown/backticks before parsing
+- Single retry on parse failure
+
+**WAN/Video Renderer:**
+- `validate_video_prompts()` checks:
+  - Each prompt ≥300 words (MIN_WAN_PROMPT_WORDS)
+  - No forbidden vague phrases
+- Single retry on validation failure
+
+**Forbidden Phrases (WAN):**
+- "clear diagram", "appropriate animation", "educational visualization"
+- "relevant imagery", "suitable graphics", "show a diagram of"
+- "illustrate the concept", "visual representation"
 
 ### Schema Validation (v1.3 NEW)
 JSON Schema validation runs FIRST, before Python semantic validation:

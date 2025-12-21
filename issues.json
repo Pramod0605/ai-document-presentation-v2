@@ -800,14 +800,62 @@
         "narration_channel": "text field - Audio only via TTS, NEVER displayed on screen",
         "display_channel": "visual_content field - Screen only, structured content from source document"
       }
+    },
+    {
+      "id": "ISS-057",
+      "title": "Renderer prompts not hardened - LLM returns prose instead of code/prompts",
+      "status": "resolved",
+      "created": "2025-12-21",
+      "resolved": "2025-12-21",
+      "priority": "high",
+      "description": "Remotion renderer sometimes returns prose/garbled text instead of JSON. WAN renderer returns prompts that are too short or vague. Both cause rendering failures.",
+      "root_cause": {
+        "remotion": "System prompt not strict enough - LLM returns commentary, markdown, or malformed JSON",
+        "wan": "Prompts too short (<300 words) or contain vague phrases like 'clear diagram', 'appropriate animation'"
+      },
+      "solution": {
+        "remotion_prompt_changes": [
+          "Created remotion_renderer_system_v1.3.txt with ABSOLUTE RULES: code-only, no prose, no markdown, no backticks",
+          "Created remotion_renderer_user_v1.3.txt with rejection/retry reminder",
+          "Added validate_remotion_output() function with JSON parse validation",
+          "Added single retry on parse failure"
+        ],
+        "wan_prompt_changes": [
+          "Created video_renderer_system_v1.3.txt with 300-word minimum and FORBIDDEN PHRASES list",
+          "Created video_renderer_user_v1.3.txt with per-beat expansion constraints",
+          "Added validate_video_prompts() function with word count check and vague phrase detection",
+          "Added single retry on validation failure"
+        ],
+        "validation_rules": {
+          "remotion": "Must parse as valid JSON with remotion_scene_spec key",
+          "wan": "Each prompt ≥300 words, no vague phrases from forbidden list"
+        }
+      },
+      "files_modified": [
+        "core/prompts/remotion_renderer_system_v1.3.txt",
+        "core/prompts/remotion_renderer_user_v1.3.txt",
+        "core/prompts/video_renderer_system_v1.3.txt",
+        "core/prompts/video_renderer_user_v1.3.txt",
+        "core/llm_client_v12.py"
+      ],
+      "forbidden_phrases": [
+        "clear diagram",
+        "appropriate animation",
+        "educational visualization",
+        "relevant imagery",
+        "suitable graphics",
+        "show a diagram of",
+        "illustrate the concept",
+        "visual representation"
+      ]
     }
   ],
   "metadata": {
     "last_updated": "2025-12-21",
-    "version": "12.6",
+    "version": "12.7",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
-    "resolved_count": 56,
+    "resolved_count": 57,
     "open_count": 0
   }
 }

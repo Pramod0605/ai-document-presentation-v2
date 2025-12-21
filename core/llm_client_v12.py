@@ -411,11 +411,38 @@ def pass2_manim_renderer(
     return result
 
 
+def validate_remotion_output(response_text: str, section_id: int) -> tuple:
+    """Validate Remotion renderer output is valid JSON with required structure.
+    
+    Returns: (is_valid, result_or_error_message)
+    """
+    if not response_text or not response_text.strip():
+        return False, "Empty response"
+    
+    cleaned = response_text.strip()
+    if cleaned.startswith("```"):
+        lines = cleaned.split("\n")
+        lines = [l for l in lines if not l.strip().startswith("```")]
+        cleaned = "\n".join(lines)
+    
+    try:
+        result = parse_json_response(cleaned, f"remotion_renderer_s{section_id}")
+        if "remotion_scene_spec" not in result:
+            return False, "Missing remotion_scene_spec in response"
+        return True, result
+    except Exception as e:
+        return False, str(e)
+
+
 def pass2_remotion_renderer(
     section: Dict,
-    tracker: Optional[AnalyticsTracker] = None
+    tracker: Optional[AnalyticsTracker] = None,
+    max_retries: int = 1
 ) -> Dict:
-    """Pass 2b: Generate remotion_scene_spec for a section."""
+    """Pass 2b: Generate remotion_scene_spec for a section.
+    
+    v1.3 CHANGE: Added validation with single retry on parse failure.
+    """
     section_id = section.get("section_id") or section.get("id", 0)
     log(f"[Render:Remotion] Section {section_id}...")
     
@@ -425,40 +452,108 @@ def pass2_remotion_renderer(
     section_json = json.dumps(section, indent=2)
     user_prompt = user_template.replace("{section_json}", section_json)
     
-    response_text, usage = call_llm(
-        model=MODELS["remotion_renderer"],
-        system_prompt=system_prompt,
-        user_prompt=user_prompt,
-        phase=f"remotion_renderer_s{section_id}",
-        tracker=tracker
-    )
-    
-    save_raw_llm_response(
-        renderer_type="remotion",
-        section_id=str(section_id),
-        raw_response=response_text,
-        model=MODELS["remotion_renderer"],
-        usage=usage
-    )
-    
-    result = parse_json_response(response_text, f"remotion_renderer_s{section_id}")
-    
-    if "remotion_scene_spec" not in result:
-        raise PipelineError(
-            f"Remotion renderer failed to generate scene_spec for section {section_id}",
-            "remotion_renderer",
-            {"section_id": section_id}
+    last_error = "No attempts made"
+    for attempt in range(max_retries + 1):
+        phase_name = f"remotion_renderer_s{section_id}" if attempt == 0 else f"remotion_renderer_s{section_id}_retry{attempt}"
+        
+        response_text, usage = call_llm(
+            model=MODELS["remotion_renderer"],
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            phase=phase_name,
+            tracker=tracker
         )
+        
+        save_raw_llm_response(
+            renderer_type="remotion",
+            section_id=str(section_id) if attempt == 0 else f"{section_id}_retry{attempt}",
+            raw_response=response_text,
+            model=MODELS["remotion_renderer"],
+            usage=usage
+        )
+        
+        is_valid, result_or_error = validate_remotion_output(response_text, section_id)
+        
+        if is_valid:
+            log(f"[Render:Remotion] Scene spec generated for section {section_id}")
+            return result_or_error
+        
+        last_error = result_or_error
+        if attempt < max_retries:
+            log(f"[Render:Remotion] Section {section_id} parse failed: {result_or_error}. Retrying ({attempt + 1}/{max_retries})...")
+        else:
+            log(f"[Render:Remotion] Section {section_id} FAILED after {max_retries + 1} attempts: {result_or_error}")
     
-    log(f"[Render:Remotion] Scene spec generated for section {section_id}")
-    return result
+    raise PipelineError(
+        f"Remotion renderer failed to generate valid JSON for section {section_id} after {max_retries + 1} attempts",
+        "remotion_renderer",
+        {"section_id": section_id, "last_error": last_error}
+    )
+
+
+VAGUE_PHRASES = [
+    "clear diagram",
+    "appropriate animation",
+    "educational visualization",
+    "relevant imagery",
+    "suitable graphics",
+    "show a diagram of",
+    "illustrate the concept",
+    "visual representation",
+    "display showing",
+    "demonstrate the",
+    "animation explaining",
+]
+
+MIN_WAN_PROMPT_WORDS = 300
+
+
+def validate_video_prompts(result: Dict, section_id: int) -> tuple:
+    """Validate video renderer output meets WAN requirements.
+    
+    Checks:
+    1. video_prompts key exists
+    2. Each prompt has at least MIN_WAN_PROMPT_WORDS words
+    3. No vague phrases
+    
+    Returns: (is_valid, error_message_or_none)
+    """
+    if "video_prompts" not in result:
+        return False, "Missing video_prompts key"
+    
+    prompts = result["video_prompts"]
+    if not prompts or len(prompts) == 0:
+        return False, "Empty video_prompts array"
+    
+    issues = []
+    for i, beat in enumerate(prompts):
+        prompt_text = beat.get("prompt", "")
+        word_count = len(prompt_text.split())
+        
+        if word_count < MIN_WAN_PROMPT_WORDS:
+            issues.append(f"Beat {i + 1}: {word_count} words (minimum {MIN_WAN_PROMPT_WORDS})")
+        
+        prompt_lower = prompt_text.lower()
+        for vague in VAGUE_PHRASES:
+            if vague in prompt_lower:
+                issues.append(f"Beat {i + 1}: Contains vague phrase '{vague}'")
+                break
+    
+    if issues:
+        return False, "; ".join(issues)
+    
+    return True, None
 
 
 def pass2_video_renderer(
     section: Dict,
-    tracker: Optional[AnalyticsTracker] = None
+    tracker: Optional[AnalyticsTracker] = None,
+    max_retries: int = 1
 ) -> Dict:
-    """Pass 2c: Generate video prompts for a section."""
+    """Pass 2c: Generate video prompts for a section.
+    
+    v1.3 CHANGE: Added validation for word count and vague phrases with retry.
+    """
     section_id = section.get("section_id") or section.get("id", 0)
     log(f"[Render:Video] Section {section_id}...")
     
@@ -468,26 +563,53 @@ def pass2_video_renderer(
     section_json = json.dumps(section, indent=2)
     user_prompt = user_template.replace("{section_json}", section_json)
     
-    response_text, usage = call_llm(
-        model=MODELS["video_renderer"],
-        system_prompt=system_prompt,
-        user_prompt=user_prompt,
-        phase=f"video_renderer_s{section_id}",
-        tracker=tracker
+    last_error = "No attempts made"
+    for attempt in range(max_retries + 1):
+        phase_name = f"video_renderer_s{section_id}" if attempt == 0 else f"video_renderer_s{section_id}_retry{attempt}"
+        
+        response_text, usage = call_llm(
+            model=MODELS["video_renderer"],
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            phase=phase_name,
+            tracker=tracker
+        )
+        
+        save_raw_llm_response(
+            renderer_type="video",
+            section_id=str(section_id) if attempt == 0 else f"{section_id}_retry{attempt}",
+            raw_response=response_text,
+            model=MODELS["video_renderer"],
+            usage=usage
+        )
+        
+        try:
+            result = parse_json_response(response_text, phase_name)
+        except Exception as e:
+            if attempt < max_retries:
+                log(f"[Render:Video] Section {section_id} JSON parse failed: {e}. Retrying...")
+                continue
+            else:
+                log(f"[Render:Video] Section {section_id} FAILED: Could not parse JSON")
+                return {"video_prompts": []}
+        
+        is_valid, error = validate_video_prompts(result, section_id)
+        
+        if is_valid:
+            log(f"[Render:Video] Prompts generated for section {section_id} ({len(result.get('video_prompts', []))} beats)")
+            return result
+        
+        last_error = error
+        if attempt < max_retries:
+            log(f"[Render:Video] Section {section_id} validation failed: {error}. Retrying ({attempt + 1}/{max_retries})...")
+        else:
+            log(f"[Render:Video] Section {section_id} validation FAILED after {max_retries + 1} attempts: {error}")
+    
+    raise PipelineError(
+        f"WAN renderer failed validation for section {section_id} after {max_retries + 1} attempts: {last_error}",
+        "video_renderer",
+        {"section_id": section_id, "last_error": last_error}
     )
-    
-    save_raw_llm_response(
-        renderer_type="video",
-        section_id=str(section_id),
-        raw_response=response_text,
-        model=MODELS["video_renderer"],
-        usage=usage
-    )
-    
-    result = parse_json_response(response_text, f"video_renderer_s{section_id}")
-    
-    log(f"[Render:Video] Prompts generated for section {section_id}")
-    return result
 
 
 def pass2_dispatch_renderers(
