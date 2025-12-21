@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import shutil
 import tempfile
 from pathlib import Path
@@ -485,6 +486,98 @@ def rerender_job_sections(job_id):
             "status": "success",
             "job_id": job_id,
             "sections_updated": sections_updated
+        })
+        
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "job_id": job_id
+        }), 500
+
+
+@app.route("/jobs/<job_id>/generate_videos", methods=["POST"])
+def generate_videos_from_prompts(job_id):
+    """Generate actual videos from video_prompts using WAN/KIE API.
+    
+    POST body:
+    - section_ids: List of section IDs to generate videos for (required)
+    - skip_wan: If true, create placeholder videos (default: false)
+    - dry_run: If true, only create marker files (default: false)
+    """
+    from render.wan.wan_runner import render_from_video_prompts, WanRenderError
+    
+    data = request.get_json() or {}
+    section_ids = data.get("section_ids", [])
+    skip_wan = data.get("skip_wan", False)
+    dry_run = data.get("dry_run", False)
+    
+    if not section_ids:
+        return jsonify({"error": "section_ids required"}), 400
+    
+    job_dir = JOBS_DIR / job_id
+    if not job_dir.exists():
+        return jsonify({"error": "Job not found", "job_id": job_id}), 404
+    
+    pres_path = job_dir / "presentation.json"
+    if not pres_path.exists():
+        return jsonify({"error": "presentation.json not found"}), 400
+    
+    try:
+        with open(pres_path, "r") as f:
+            presentation = json.load(f)
+        
+        videos_dir = job_dir / "videos"
+        videos_dir.mkdir(exist_ok=True)
+        
+        results = []
+        for section in presentation.get("sections", []):
+            sid = section.get("section_id") or section.get("id")
+            if sid not in section_ids:
+                continue
+            
+            video_prompts = section.get("video_prompts", [])
+            if not video_prompts:
+                results.append({
+                    "section_id": sid,
+                    "status": "skipped",
+                    "reason": "No video_prompts"
+                })
+                continue
+            
+            print(f"[API] Generating videos for section {sid} ({len(video_prompts)} prompts)")
+            
+            try:
+                video_paths = render_from_video_prompts(
+                    section=section,
+                    output_dir=str(videos_dir),
+                    dry_run=dry_run,
+                    skip_wan=skip_wan
+                )
+                results.append({
+                    "section_id": sid,
+                    "status": "success",
+                    "videos": video_paths
+                })
+            except WanRenderError as e:
+                results.append({
+                    "section_id": sid,
+                    "status": "error",
+                    "error": str(e)
+                })
+            except Exception as e:
+                results.append({
+                    "section_id": sid,
+                    "status": "error",
+                    "error": str(e)
+                })
+        
+        return jsonify({
+            "status": "success",
+            "job_id": job_id,
+            "results": results,
+            "dry_run": dry_run,
+            "skip_wan": skip_wan
         })
         
     except Exception as e:

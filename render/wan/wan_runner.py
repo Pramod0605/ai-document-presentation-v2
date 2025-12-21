@@ -423,3 +423,122 @@ def _create_placeholder_video(topic_id: int, topic_title: str, output_path: str,
     except Exception as e:
         print(f"Placeholder error: {e}")
         return _create_ffmpeg_placeholder(output_path, duration)
+
+
+def render_from_video_prompts(
+    section: dict,
+    output_dir: str,
+    dry_run: bool = False,
+    skip_wan: bool = False
+) -> list:
+    """
+    Render videos from pre-generated video_prompts (from LLM).
+    
+    This bypasses visual_beat compilation since video_prompts already contain
+    the full prompt text ready for WAN generation.
+    
+    Args:
+        section: Section dict with video_prompts array
+        output_dir: Directory to save generated videos
+        dry_run: If True, only create marker files
+        skip_wan: If True, create placeholder videos instead of calling API
+        
+    Returns:
+        List of paths to generated video files
+    """
+    section_id = section.get("section_id") or section.get("id", 1)
+    section_type = section.get("section_type", "content")
+    video_prompts = section.get("video_prompts", [])
+    
+    if not video_prompts:
+        raise WanRenderError(f"Section {section_id}: No video_prompts available")
+    
+    print(f"[WAN] Rendering {len(video_prompts)} video prompts for section {section_id}")
+    
+    from pathlib import Path
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    
+    client = WANClient() if not skip_wan and not dry_run else None
+    video_paths = []
+    
+    for i, vp in enumerate(video_prompts):
+        prompt = vp.get("prompt", "")
+        duration = vp.get("duration_seconds", 8)
+        beat_id = vp.get("beat_id", f"{section_id}_{i}")
+        
+        if not prompt:
+            print(f"  [Beat {i}] SKIP: Empty prompt")
+            continue
+        
+        if section_type == "recap":
+            video_file = output_path / f"recap_{section_id}_scene_{i+1}.mp4"
+        else:
+            video_file = output_path / f"topic_{section_id}_beat_{i}.mp4"
+        
+        print(f"  [Beat {beat_id}] {len(prompt.split())} words, {duration}s")
+        print(f"    Preview: {prompt[:80]}...")
+        
+        if dry_run:
+            marker_path = str(video_file).replace(".mp4", ".dry_run.txt")
+            with open(marker_path, "w") as f:
+                f.write(f"DRY RUN - Section {section_id}, Beat {i}\n")
+                f.write(f"Prompt: {prompt}\n")
+            video_paths.append(marker_path)
+            continue
+        
+        if skip_wan:
+            _create_beat_placeholder(i, section_id, str(video_file), duration)
+            video_paths.append(str(video_file))
+            continue
+        
+        try:
+            result_path = client.generate_video(
+                prompt=prompt,
+                duration=min(duration, 10),
+                output_path=str(video_file)
+            )
+            video_paths.append(result_path)
+        except Exception as e:
+            print(f"  [Beat {beat_id}] ERROR: {e}")
+            _create_beat_placeholder(i, section_id, str(video_file), duration)
+            video_paths.append(str(video_file))
+    
+    print(f"[WAN] Completed {len(video_paths)} videos for section {section_id}")
+    
+    if video_paths and section_type != "recap":
+        combined_path = output_path / f"topic_{section_id}.mp4"
+        if len(video_paths) == 1:
+            import shutil
+            shutil.copy(video_paths[0], str(combined_path))
+        else:
+            _stitch_beat_videos(video_paths, str(combined_path))
+        return [str(combined_path)] + video_paths
+    
+    return video_paths
+
+
+def _stitch_beat_videos(video_paths: list, output_path: str) -> str:
+    """Stitch multiple beat videos into a single video."""
+    try:
+        from moviepy import VideoFileClip, concatenate_videoclips
+        
+        clips = []
+        for vp in video_paths:
+            if vp.endswith('.mp4') and Path(vp).exists():
+                clips.append(VideoFileClip(vp))
+        
+        if clips:
+            final = concatenate_videoclips(clips)
+            final.write_videofile(output_path, fps=24, codec="libx264", audio=False, verbose=False, logger=None)
+            for c in clips:
+                c.close()
+            final.close()
+            return output_path
+    except Exception as e:
+        print(f"Stitch error: {e}, returning first video")
+    
+    if video_paths:
+        import shutil
+        shutil.copy(video_paths[0], output_path)
+    return output_path
