@@ -745,14 +745,46 @@
       "player_expects": "slide.visual_content.bullet_points[]",
       "v1.3_provides": "Not present",
       "solution": "Kept bullet_points check as first priority per user request, v1.3 narration.segments added as second priority"
+    },
+    {
+      "id": "ISS-056",
+      "title": "v1.3 schema missing visual_content channel - narration text displayed instead of document content",
+      "status": "open",
+      "created": "2025-12-21",
+      "priority": "critical",
+      "description": "The v1.3 schema lacks a dedicated visual_content field at the narration segment level. Narration text (audio script) is being displayed on screen instead of structured display content (bullet points, formulas, labels) extracted from the source document.",
+      "root_cause": "Schema separation issue - narration.segments[].text is meant for TTS audio only, but player has nowhere else to get displayable content from. The visual_content channel was never added to the schema.",
+      "symptoms": [
+        "Player displays narration transcript on screen",
+        "Bullet points from source document not visible",
+        "Text layer shows voiceover script instead of structured content",
+        "Progressive reveal of bullets not possible"
+      ],
+      "correct_behavior": {
+        "narration_channel": "Audio only - what the avatar speaks (TTS)",
+        "visual_content_channel": "Display only - structured content from source document (bullets, formulas, labels)"
+      },
+      "required_schema_change": {
+        "location": "narration_segment object",
+        "new_field": "visual_content",
+        "structure": {
+          "bullet_points": [{"level": 1, "text": "Main point"}, {"level": 2, "text": "Sub-point"}],
+          "formula": "Optional LaTeX formula",
+          "labels": ["Optional", "label", "array"]
+        }
+      },
+      "required_director_change": "Extract displayable content from input document, preserve bullet hierarchy, attach to visual_content field per segment",
+      "player_impact": "None - player already reads visual_content.bullet_points (line 627-628)",
+      "upstream_impact": ["Schema update required", "Director prompt update required", "llm_output_requirements update required"],
+      "downstream_impact": ["None - player code already correct"]
     }
   ],
   "metadata": {
     "last_updated": "2025-12-21",
-    "version": "12.4",
+    "version": "12.5",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
     "resolved_count": 55,
-    "open_count": 0
+    "open_count": 1
   }
 }
