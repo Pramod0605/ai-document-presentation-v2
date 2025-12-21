@@ -677,90 +677,82 @@
     {
       "id": "ISS-050",
       "title": "Player reads slide.narration_segments but v1.3 uses slide.narration.segments",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-21",
+      "resolved": "2025-12-21",
       "priority": "critical",
       "description": "Player.js accesses slide.narration_segments for timing and display_directives, but v1.3 schema stores segments at slide.narration.segments. Result: Timing sync fails, display_directives not applied.",
       "player_expects": "slide.narration_segments[]",
       "v1.3_provides": "slide.narration.segments[]",
-      "affected_lines": [535, 633, 999],
-      "upstream_impact": ["None - schema is correct"],
-      "downstream_impact": ["Timing calculations fail", "applyDirectives never called correctly", "Segment highlighting broken"]
+      "solution": "Added slide.narration?.segments || slide.narration_segments fallback pattern throughout player.js"
     },
     {
       "id": "ISS-051",
       "title": "Player reads slide.segments but v1.3 uses slide.narration.segments for text",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-21",
+      "resolved": "2025-12-21",
       "priority": "critical",
       "description": "loadSlide() checks slide.segments for text content, but v1.3 stores text in slide.narration.segments[].text. Result: Text never rendered in content box.",
       "player_expects": "slide.segments[].text",
       "v1.3_provides": "slide.narration.segments[].text",
-      "affected_lines": [619, 620],
-      "upstream_impact": ["None - schema is correct"],
-      "downstream_impact": ["Text layer shows nothing even when text_layer=show", "Narration text invisible to user"]
+      "solution": "Updated displayItems to prioritize narrationSegs.map(seg => seg.text)"
     },
     {
       "id": "ISS-052",
       "title": "Player reads slide.flashcards for memory but v1.3 uses slide.visual_beats",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-21",
+      "resolved": "2025-12-21",
       "priority": "critical",
       "description": "Memory section handler checks slide.flashcards, but v1.3 stores flashcard data in slide.visual_beats[]. Result: Memory section shows no flashcards.",
       "player_expects": "slide.flashcards[]",
       "v1.3_provides": "slide.visual_beats[] with flashcard data",
-      "affected_lines": [544, 547],
-      "upstream_impact": ["None - schema is correct"],
-      "downstream_impact": ["Memory flashcards not displayed", "Falls through to generic handler"]
+      "solution": "Added length-aware fallback: (slide.visual_beats && slide.visual_beats.length > 0) ? slide.visual_beats : slide.flashcards"
     },
     {
       "id": "ISS-053",
       "title": "Player reads slide.recap_scenes but v1.3 uses slide.visual_beats for recap",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-21",
+      "resolved": "2025-12-21",
       "priority": "high",
       "description": "Recap section navigation checks slide.recap_scenes, but v1.3 stores scene data in slide.visual_beats[]. Result: Recap scene navigation broken.",
       "player_expects": "slide.recap_scenes[]",
       "v1.3_provides": "slide.visual_beats[] with scene data",
-      "affected_lines": [727, 954, 969],
-      "upstream_impact": ["None - schema is correct"],
-      "downstream_impact": ["Recap video scene switching broken", "Scene info not displayed"]
+      "solution": "Added length-aware fallback: (slide.visual_beats && slide.visual_beats.length > 0) ? slide.visual_beats : slide.recap_scenes"
     },
     {
       "id": "ISS-054",
       "title": "Player reads slide.visual_content.flashcards as fallback but v1.3 doesn't use this path",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-21",
+      "resolved": "2025-12-21",
       "priority": "medium",
       "description": "Player has fallback for slide.visual_content.flashcards but v1.3 doesn't populate this. Keep code for future use but ensure slide.visual_beats is checked first.",
       "player_expects": "slide.visual_content.flashcards[]",
       "v1.3_provides": "slide.visual_beats[]",
-      "affected_lines": [575, 578],
-      "upstream_impact": ["None"],
-      "downstream_impact": ["Fallback never triggers - benign but inefficient"],
-      "note": "Keep code, add v1.3 path check first"
+      "solution": "Kept code for backward compatibility, v1.3 paths checked first with length-aware fallbacks"
     },
     {
       "id": "ISS-055",
       "title": "Player reads slide.visual_content.bullet_points - keep for future use",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-21",
+      "resolved": "2025-12-21",
       "priority": "low",
-      "description": "Player checks slide.visual_content.bullet_points but v1.3 doesn't populate this field. Code should be kept for potential future LLM output enhancements.",
+      "description": "Player checks slide.visual_content.bullet_points but v1.3 doesn't populate this field. Code kept for potential future LLM output enhancements.",
       "player_expects": "slide.visual_content.bullet_points[]",
       "v1.3_provides": "Not present",
-      "affected_lines": [608, 609],
-      "upstream_impact": ["None"],
-      "downstream_impact": ["Fallback never triggers - benign"],
-      "note": "Keep code as-is for future use per user request"
+      "solution": "Kept bullet_points check as first priority per user request, v1.3 narration.segments added as second priority"
     }
   ],
   "metadata": {
     "last_updated": "2025-12-21",
-    "version": "12.3",
+    "version": "12.4",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
-    "resolved_count": 49,
-    "open_count": 6
+    "resolved_count": 55,
+    "open_count": 0
   }
 }

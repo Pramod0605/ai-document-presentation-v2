@@ -32,6 +32,7 @@ class LayerController {
     const directives = segment.display_directives;
     const stage = document.getElementById('stage');
     const contentBox = document.getElementById('content-box');
+    const segmentsList = document.getElementById('segments-list');
     const videoBox = document.getElementById('video-box');
     const avatarCanvas = document.getElementById('avatar-canvas');
 
@@ -48,20 +49,20 @@ class LayerController {
     this.currentAvatarState = avatarLayer;
 
     stage.classList.remove('video-swap', 'video-focus');
-    if (contentBox) contentBox.style.opacity = '';
+    if (segmentsList) segmentsList.style.opacity = '';
 
     if (textLayer === 'show') {
       stage.classList.add('text-visible');
-      if (contentBox) contentBox.style.opacity = '1';
+      if (segmentsList) segmentsList.style.opacity = '1';
     } else if (textLayer === 'hide') {
       stage.classList.remove('text-visible');
-      if (contentBox) contentBox.style.opacity = '0';
+      if (segmentsList) segmentsList.style.opacity = '0';
       if (stage.classList.contains('mode-content-video')) {
         stage.classList.add('video-focus');
       }
     } else if (textLayer === 'swap') {
       stage.classList.add('video-swap');
-      if (contentBox) contentBox.style.opacity = '0.3';
+      if (segmentsList) segmentsList.style.opacity = '0.3';
     }
 
     if (visualLayer === 'show' || visualLayer === 'replace') {
@@ -532,19 +533,21 @@ function loadSlide(index) {
     list.appendChild(container);
     document.getElementById('content-box').style.width = '75%';
     
-    if (slide.narration_segments && slide.narration_segments.length > 0) {
+    const quizNarrationSegs = slide.narration?.segments || slide.narration_segments;
+    if (quizNarrationSegs && quizNarrationSegs.length > 0) {
       let cumulativeTime = 0;
-      slide.timed_segments = slide.narration_segments.map(seg => {
+      slide.timed_segments = quizNarrationSegs.map(seg => {
         const duration = seg.duration_seconds || seg.duration || 5;
         const start = cumulativeTime;
         cumulativeTime += duration;
         return { start_time: start, end_time: cumulativeTime, step_id: seg.id };
       });
     }
-  } else if (sectionType === 'memory' && slide.flashcards) {
+  } else if (sectionType === 'memory' && ((slide.visual_beats && slide.visual_beats.length > 0) || (slide.flashcards && slide.flashcards.length > 0))) {
+    const memoryCards = (slide.visual_beats && slide.visual_beats.length > 0) ? slide.visual_beats : slide.flashcards;
     const container = document.createElement('div');
     container.className = 'flashcard-container';
-    slide.flashcards.forEach((fc, i) => {
+    memoryCards.forEach((fc, i) => {
       const card = document.createElement('div');
       card.className = 'flashcard';
       card.id = `seg-${i}`;
@@ -554,9 +557,15 @@ function loadSlide(index) {
           <div class="fc-title">${fc.title || ''}</div>
           <div class="fc-mnemonic">${fc.mnemonic || ''}</div>
         `;
+      } else if (fc.visual_beat_type === 'flashcard') {
+        card.innerHTML = `
+          <div class="fc-letter">${fc.beat_id || ''}</div>
+          <div class="fc-title">${fc.concept_title || fc.title || ''}</div>
+          <div class="fc-mnemonic">${fc.description || ''}</div>
+        `;
       } else {
         card.innerHTML = `
-          <div class="fc-question">${fc.question || fc.title || ''}</div>
+          <div class="fc-question">${fc.question || fc.title || fc.concept_title || ''}</div>
           <div class="fc-answer">${fc.answer || fc.description || ''}</div>
         `;
       }
@@ -565,9 +574,18 @@ function loadSlide(index) {
     list.appendChild(container);
     document.getElementById('content-box').style.width = '70%';
 
-    if (slide.audio_duration && !slide.timed_segments) {
-      const durationPerItem = slide.audio_duration / slide.flashcards.length;
-      slide.timed_segments = slide.flashcards.map((_, i) => ({
+    const memoryNarrationSegs = slide.narration?.segments || slide.narration_segments;
+    if (memoryNarrationSegs && memoryNarrationSegs.length > 0 && !slide.timed_segments) {
+      let cumulativeTime = 0;
+      slide.timed_segments = memoryNarrationSegs.map((seg, i) => {
+        const duration = seg.duration_seconds || seg.duration || 5;
+        const start = cumulativeTime;
+        cumulativeTime += duration;
+        return { start_time: start, end_time: cumulativeTime };
+      });
+    } else if (slide.audio_duration && !slide.timed_segments) {
+      const durationPerItem = slide.audio_duration / memoryCards.length;
+      slide.timed_segments = memoryCards.map((_, i) => ({
         start_time: i * durationPerItem,
         end_time: (i + 1) * durationPerItem
       }));
@@ -604,9 +622,12 @@ function loadSlide(index) {
     document.getElementById('content-box').style.width = '55%';
 
     let displayItems = [];
+    const narrationSegs = slide.narration?.segments || slide.narration_segments;
     
     if (slide.visual_content && slide.visual_content.bullet_points && slide.visual_content.bullet_points.length > 0) {
       displayItems = slide.visual_content.bullet_points;
+    } else if (narrationSegs && narrationSegs.length > 0) {
+      displayItems = narrationSegs.map(seg => seg.text || '');
     } else if (slide.visual_beats && slide.visual_beats.length > 0) {
       displayItems = slide.visual_beats.map(vb => {
         const lt = vb.labels_and_text || '';
@@ -629,11 +650,11 @@ function loadSlide(index) {
         list.appendChild(div);
       });
 
-      if (slide.audio_duration) {
-        const timingSource = slide.narration_segments || displayItems;
+      const timingSource = narrationSegs || displayItems;
+      if (timingSource && timingSource.length > 0) {
         let cumulativeTime = 0;
         slide.timed_segments = timingSource.map((item, i) => {
-          const duration = item.duration_seconds || item.duration || (slide.audio_duration / timingSource.length);
+          const duration = item.duration_seconds || item.duration || 5;
           const start = cumulativeTime;
           cumulativeTime += duration;
           return {
@@ -724,7 +745,7 @@ function loadSlide(index) {
       stage.className = 'mode-side';
     } else {
       stage.className = 'mode-image';
-      const scenes = slide.recap_scenes || slide.storyboard_scenes;
+      const scenes = (slide.visual_beats && slide.visual_beats.length > 0) ? slide.visual_beats : (slide.recap_scenes || slide.storyboard_scenes);
       if (scenes && scenes.length > 0) {
         if (scenes[0].image_url) {
           bgImg.src = scenes[0].image_url;
@@ -951,7 +972,7 @@ function handleTimeUpdate(e) {
     // Handle recap video sequencing - switch between 5 recap scene videos
     const sectionType = slide.section_type || slide.slide_type || 'content';
     if (sectionType === 'recap' && slide.recap_video_paths && slide.recap_video_paths.length > 1) {
-      const recapScenes = slide.recap_scenes || [];
+      const recapScenes = (slide.visual_beats && slide.visual_beats.length > 0) ? slide.visual_beats : (slide.recap_scenes || []);
       const numScenes = slide.recap_video_paths.length;
       const sceneDuration = duration / numScenes;
       
@@ -996,9 +1017,10 @@ function handleTimeUpdate(e) {
     });
   }
   
-  if (activeSegmentIndex >= 0 && slide.narration_segments && slide.narration_segments[activeSegmentIndex]) {
+  const activeNarrationSegs = slide.narration?.segments || slide.narration_segments;
+  if (activeSegmentIndex >= 0 && activeNarrationSegs && activeNarrationSegs[activeSegmentIndex]) {
     const sType = slide.section_type || slide.slide_type || 'content';
-    layerController.applyDirectives(slide.narration_segments[activeSegmentIndex], sType, activeSegmentIndex);
+    layerController.applyDirectives(activeNarrationSegs[activeSegmentIndex], sType, activeSegmentIndex);
   }
   
   const sType = slide.section_type || slide.slide_type || 'content';
@@ -1070,8 +1092,8 @@ function handleTimeUpdate(e) {
 
   updateSlideImages(slide, t);
 
-  const scenes = slide.recap_scenes || slide.storyboard_scenes;
-  if (scenes && slide.timed_segments) {
+  const scenes = (slide.visual_beats && slide.visual_beats.length > 0) ? slide.visual_beats : (slide.recap_scenes || slide.storyboard_scenes);
+  if (scenes && scenes.length > 0 && slide.timed_segments) {
     const sectionType = slide.section_type || slide.slide_type;
     if (sectionType === 'recap') {
       const segmentDuration = duration / scenes.length;
@@ -1221,10 +1243,11 @@ async function checkExistingPresentation() {
           lessonData.slides = lessonData.sections.map(section => {
             const sectionId = section.section_id || section.id;
             
+            const narrationSegs = section.narration?.segments || section.narration_segments || [];
             let timed_segments = null;
-            if (section.narration_segments && section.narration_segments.length > 0) {
+            if (narrationSegs.length > 0) {
               let cumulativeTime = 0;
-              timed_segments = section.narration_segments.map(seg => {
+              timed_segments = narrationSegs.map(seg => {
                 const duration = seg.duration_seconds || seg.duration || 4;
                 const start = cumulativeTime;
                 cumulativeTime += duration;
@@ -1236,24 +1259,28 @@ async function checkExistingPresentation() {
               });
             }
             
+            const recapScenes = (section.visual_beats && section.visual_beats.length > 0) ? section.visual_beats : (section.recap_scenes || []);
+            const memoryCards = (section.visual_beats && section.visual_beats.length > 0) ? section.visual_beats : section.flashcards;
+            
             return {
               slide_number: sectionId,
               section_type: section.section_type || 'content',
               slide_type: section.section_type || 'content',
               title: section.title,
               segments: section.segments,
-              flashcards: section.flashcards,
-              recap_scenes: section.recap_scenes,
+              flashcards: memoryCards,
+              recap_scenes: recapScenes,
               visual_beats: section.visual_beats || [],
-              narration_segments: section.narration_segments || [],
+              narration_segments: narrationSegs,
+              narration: section.narration,
               timed_segments: timed_segments,
               audio_path: BASE_PATH + `audio/section_${sectionId}.mp3`,
               content_video_path: section.section_type === 'recap' 
                 ? BASE_PATH + `videos/recap_${sectionId}_scene_1.mp4`
-                : (section.renderer === 'wan_video' || section.renderer === 'manim') ? BASE_PATH + `videos/topic_${sectionId}.mp4` : null,
-              has_content_video: section.section_type === 'recap' || (section.renderer === 'wan_video' || section.renderer === 'manim'),
-              recap_video_paths: section.section_type === 'recap' && section.recap_scenes 
-                ? section.recap_scenes.map((s, i) => BASE_PATH + `videos/recap_${sectionId}_scene_${s.scene || i+1}.mp4`)
+                : (section.renderer === 'wan_video' || section.renderer === 'manim' || section.renderer === 'video') ? BASE_PATH + `videos/topic_${sectionId}.mp4` : null,
+              has_content_video: section.section_type === 'recap' || (section.renderer === 'wan_video' || section.renderer === 'manim' || section.renderer === 'video') || section.has_content_video,
+              recap_video_paths: section.section_type === 'recap' && recapScenes.length > 0
+                ? recapScenes.map((s, i) => BASE_PATH + `videos/recap_${sectionId}_scene_${s.scene_id || s.scene || i+1}.mp4`)
                 : [],
               section_id: sectionId,
               id: sectionId,
@@ -1261,7 +1288,8 @@ async function checkExistingPresentation() {
               audio_duration: section.duration,
               full_narration: section.narration,
               visual_content: section.visual_content || {},
-              renderer_reasoning: section.renderer_reasoning || null
+              renderer_reasoning: section.renderer_reasoning || null,
+              layout: section.layout || section.avatar_layout
             };
           });
         } else if (lessonData.topics) {
