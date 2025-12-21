@@ -1,0 +1,43 @@
+DRY RUN - Manim section 3
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/dcf1ecc0/videos/topic_3.mp4
+
+--- SCENE CODE ---
+title = Text("Newton's First Law: The Law of Inertia", font_size=28).move_to(np.array([0, 2.5, 0]))
+static_ball = Dot(point=np.array([-3, 0.5, 0]), color=BLUE)
+static_label = MathTex(r"v = 0").scale(0.8).move_to(np.array([-3, -0.5, 0]))
+moving_ball = Dot(point=np.array([3, 0.5, 0]), color=RED)
+velocity_vector = Arrow(start=np.array([3, 0.5, 0]), end=np.array([5, 0.5, 0]), color=YELLOW, buff=0)
+moving_label = MathTex(r"v = \text{constant}").scale(0.8).move_to(np.array([3, -0.5, 0]))
+book = Dot(point=np.array([0, 0, 0]), color=BLUE)
+table = Dot(point=np.array([0, -1, 0]), color=GRAY)
+car = Dot(point=np.array([-4, 0, 0]), color=GREEN)
+passenger = Dot(point=np.array([-3.5, 0, 0]), color=RED)
+inertia_def = Text("Inertia = Resistance to change in motion", font_size=28).move_to(np.array([0, 1, 0]))
+bowling_ball = Dot(point=np.array([-2, -1, 0]), color=BLUE)
+tennis_ball = Dot(point=np.array([2, -1, 0]), color=YELLOW)
+
+# Animation sequence
+self.play(FadeIn(title), run_time=2)
+self.wait(4)
+self.play(FadeIn(static_ball), run_time=1)
+self.play(FadeIn(static_label), run_time=1)
+self.play(FadeIn(moving_ball), run_time=1)
+self.play(Create(velocity_vector), run_time=1)
+self.play(FadeIn(moving_label), run_time=1)
+self.wait(7)
+self.play(FadeOut(static_ball), run_time=1)
+self.play(FadeIn(table), run_time=2)
+self.wait(6)
+self.play(FadeOut(table), run_time=1)
+self.play(FadeIn(car), run_time=1)
+self.play(car.animate.move_to(np.array([0, 0, 0])), run_time=3)
+self.play(passenger.animate.move_to(np.array([0, 0, 0])), run_time=2)
+self.wait(4)
+self.play(FadeOut(car), run_time=1)
+self.play(FadeIn(inertia_def), run_time=2)
+self.wait(14)
+self.play(FadeIn(bowling_ball), run_time=2)
+self.wait(2)
+self.play(Indicate(bowling_ball), run_time=1)
+self.wait(1)

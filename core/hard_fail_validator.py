@@ -315,6 +315,8 @@ def validate_v13_structure(sections: List[Dict]) -> List[HardFailError]:
     recap_sections = [s for s in sections if s.get("section_type") == "recap"]
     for recap in recap_sections:
         recap_scenes = recap.get("recap_scenes", [])
+        if not recap_scenes:
+            recap_scenes = recap.get("visual_beats", [])
         if len(recap_scenes) != RECAP_SCENE_COUNT:
             errors.append(HardFailError(
                 "recap_scene_count_wrong",
@@ -322,7 +324,12 @@ def validate_v13_structure(sections: List[Dict]) -> List[HardFailError]:
                 f"Recap section has {len(recap_scenes)} scenes, must be exactly {RECAP_SCENE_COUNT}"
             ))
         
-        total_words = sum(count_words(scene.get("narration", "")) for scene in recap_scenes)
+        narration_obj = recap.get("narration", {})
+        if isinstance(narration_obj, dict):
+            segments = narration_obj.get("segments", [])
+            total_words = sum(count_words(seg.get("text", "")) for seg in segments)
+        else:
+            total_words = sum(count_words(scene.get("narration", "")) for scene in recap_scenes)
         if total_words < RECAP_MIN_WORDS:
             errors.append(HardFailError(
                 "recap_narration_below_minimum",
@@ -339,6 +346,8 @@ def validate_v13_structure(sections: List[Dict]) -> List[HardFailError]:
     memory_sections = [s for s in sections if s.get("section_type") == "memory"]
     for memory in memory_sections:
         flashcards = memory.get("flashcards", [])
+        if not flashcards:
+            flashcards = memory.get("visual_beats", [])
         if len(flashcards) != MEMORY_FLASHCARD_COUNT:
             errors.append(HardFailError(
                 "memory_flashcard_count_wrong",

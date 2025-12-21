@@ -1,0 +1,41 @@
+DRY RUN - Manim section 6
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/dcf1ecc0/videos/topic_6.mp4
+
+--- SCENE CODE ---
+title = MathTex(r"\text{Newton's Third Law: Action-Reaction}").move_to(np.array([0, 2.5, 0]))
+sphere_a = Dot(point=np.array([-2, 0.5, 0]), color=BLUE)
+sphere_b = Dot(point=np.array([2, 0.5, 0]), color=RED)
+force_ab = Arrow(start=np.array([-2, 0.5, 0]), end=np.array([0, 0.5, 0]), color=YELLOW, buff=0)
+force_ba = Arrow(start=np.array([2, 0.5, 0]), end=np.array([4, 0.5, 0]), color=YELLOW, buff=0)
+rocket = Dot(point=np.array([0, 0, 0]), color=WHITE)
+rocket_down_force = Arrow(start=np.array([0, -1, 0]), end=np.array([2, -1, 0]), color=RED, buff=0)
+rocket_up_force = Arrow(start=np.array([0, -1, 0]), end=np.array([2, -1, 0]), color=BLUE, buff=0)
+swimmer = Dot(point=np.array([0, 0, 0]), color=WHITE)
+water_force = Arrow(start=np.array([-1, 0, 0]), end=np.array([1, 0, 0]), color=BLUE, buff=0)
+swimmer_force = Arrow(start=np.array([1, 0, 0]), end=np.array([3, 0, 0]), color=RED, buff=0)
+
+# Animation sequence
+self.play(Write(title), run_time=2)
+self.wait(8)
+self.play(FadeIn(sphere_a), run_time=1)
+self.play(FadeIn(sphere_b), run_time=1)
+self.play(Create(force_ab), run_time=2)
+self.play(Create(force_ba), run_time=2)
+self.wait(8)
+self.play(FadeOut(sphere_a), run_time=1)
+self.play(FadeIn(rocket), run_time=1)
+self.play(Create(rocket_down_force), run_time=2)
+self.play(Create(rocket_up_force), run_time=2)
+self.play(rocket.animate.move_to(np.array([0, 0, 0])), run_time=8)
+self.play(FadeOut(rocket), run_time=1)
+self.play(FadeIn(swimmer), run_time=1)
+self.play(Create(water_force), run_time=2)
+self.play(Create(swimmer_force), run_time=2)
+self.wait(4)
+self.play(FadeOut(swimmer), run_time=1)
+self.play(FadeIn(rocket), run_time=1)
+self.play(Create(rocket_up_force), run_time=2)
+self.play(Indicate(rocket_up_force), run_time=3)
+self.play(FadeOut(rocket), run_time=2)
+self.wait(1)

@@ -1,0 +1,35 @@
+DRY RUN - Manim section 4
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/dcf1ecc0/videos/topic_4.mp4
+
+--- SCENE CODE ---
+title = MathTex(r"\text{Newton's Second Law}").move_to(np.array([0, 2.5, 0]))
+main_equation = MathTex(r"F = ma").move_to(np.array([0, 1.0, 0]))
+force_label = MathTex(r"\text{Force (N)}").scale(0.8).move_to(np.array([-2.5, 1.0, 0]))
+mass_label = MathTex(r"\text{Mass (kg)}").scale(0.8).move_to(np.array([0, 2.0, 0]))
+accel_label = MathTex(r"\text{Acceleration (m/s²)}").scale(0.8).move_to(np.array([2.5, 1.0, 0]))
+big_block = Dot(point=np.array([-2, -0.5, 0]), color=BLUE)
+small_block = Dot(point=np.array([2, -0.5, 0]), color=BLUE)
+force_vector1 = Arrow(start=np.array([-2, -0.5, 0]), end=np.array([0, -0.5, 0]), color=RED, buff=0)
+force_vector2 = Arrow(start=np.array([2, -0.5, 0]), end=np.array([4, -0.5, 0]), color=RED, buff=0)
+
+# Animation sequence
+self.play(Write(title), run_time=2)
+self.wait(9)
+self.play(Write(main_equation), run_time=3)
+self.wait(5)
+self.play(Indicate(main_equation), run_time=2)
+self.play(FadeIn(force_label), run_time=1)
+self.play(Indicate(main_equation), run_time=2)
+self.play(FadeIn(mass_label), run_time=1)
+self.play(Indicate(main_equation), run_time=2)
+self.play(FadeIn(accel_label), run_time=1)
+self.wait(9)
+self.play(FadeOut(force_label), run_time=1)
+self.play(FadeIn(big_block), run_time=2)
+self.play(FadeIn(force_vector1), run_time=2)
+self.wait(14)
+self.play(FadeOut(big_block), run_time=1)
+self.play(Indicate(main_equation), run_time=3)
+self.play(FadeOut(title), run_time=2)
+self.wait(1)

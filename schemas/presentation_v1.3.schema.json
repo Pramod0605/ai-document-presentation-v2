@@ -38,12 +38,18 @@
     "sections": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/section" }
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/memory_section" },
+          { "$ref": "#/$defs/recap_section" },
+          { "$ref": "#/$defs/generic_section" }
+        ]
+      }
     }
   },
 
   "$defs": {
-    "section": {
+    "base_section": {
       "type": "object",
       "required": [
         "section_id",
@@ -57,12 +63,8 @@
       ],
       "properties": {
         "section_id": { "type": "number" },
-        "section_type": {
-          "enum": ["intro", "content", "example", "quiz", "memory", "recap", "summary"]
-        },
         "title": { "type": "string" },
         "renderer": { "enum": ["manim", "remotion", "video"] },
-
         "avatar_layout": {
           "type": "object",
           "required": ["visibility"],
@@ -73,7 +75,6 @@
             "width_percent": { "type": "number", "minimum": 10, "maximum": 70 }
           }
         },
-
         "narration": {
           "type": "object",
           "required": ["full_text", "segments"],
@@ -86,19 +87,72 @@
             }
           }
         },
-
-        "visual_beats": {
-          "type": "array",
-          "minItems": 1,
-          "items": { "$ref": "#/$defs/visual_beat" }
-        },
-
         "display_directives": {
           "type": "array",
           "minItems": 1,
           "items": { "$ref": "#/$defs/display_directive" }
         }
       }
+    },
+
+    "memory_section": {
+      "allOf": [
+        { "$ref": "#/$defs/base_section" },
+        {
+          "type": "object",
+          "properties": {
+            "section_type": { "const": "memory" },
+            "visual_beats": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 5,
+              "items": { "$ref": "#/$defs/visual_beat" },
+              "description": "Memory section MUST have exactly 5 flashcard visual beats"
+            }
+          },
+          "required": ["section_type", "visual_beats"]
+        }
+      ]
+    },
+
+    "recap_section": {
+      "allOf": [
+        { "$ref": "#/$defs/base_section" },
+        {
+          "type": "object",
+          "properties": {
+            "section_type": { "const": "recap" },
+            "visual_beats": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 5,
+              "items": { "$ref": "#/$defs/visual_beat" },
+              "description": "Recap section MUST have exactly 5 scene visual beats"
+            }
+          },
+          "required": ["section_type", "visual_beats"]
+        }
+      ]
+    },
+
+    "generic_section": {
+      "allOf": [
+        { "$ref": "#/$defs/base_section" },
+        {
+          "type": "object",
+          "properties": {
+            "section_type": {
+              "enum": ["intro", "content", "example", "quiz", "summary"]
+            },
+            "visual_beats": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/visual_beat" }
+            }
+          },
+          "required": ["section_type", "visual_beats"]
+        }
+      ]
     },
 
     "narration_segment": {

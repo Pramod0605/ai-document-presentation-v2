@@ -1,0 +1,103 @@
+{
+  "job_id": "a18788c3",
+  "started_at": "2025-12-21T03:01:31.672773",
+  "completed_at": "2025-12-21T03:06:17.543264",
+  "duration_seconds": 285.87,
+  "status": "failed",
+  "generation_events": [
+    {
+      "timestamp": "2025-12-21T03:01:31.672790",
+      "elapsed_seconds": 0.0,
+      "event_type": "pipeline_start",
+      "details": {
+        "pipeline_version": "1.2",
+        "pipeline_type": "markdown",
+        "source_file": "Sample_subjects.md",
+        "subject": "Science",
+        "grade": "8",
+        "dry_run": true,
+        "skip_wan": false
+      }
+    }
+  ],
+  "render_prompts": [],
+  "renderer_decisions": [],
+  "validation_results": [
+    {
+      "timestamp": "2025-12-21T03:06:17.531928",
+      "validation_type": "schema_validation",
+      "section_id": null,
+      "passed": true,
+      "error_count": 0,
+      "warning_count": 0,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-21T03:06:17.534121",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [recap_scene_count_wrong] Section 8: Recap section has 0 scenes, must be exactly 5"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-21T03:06:17.534524",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [recap_narration_below_minimum] Section 8: Recap total narration is 0 words, minimum is 300"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-21T03:06:17.541719",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [memory_flashcard_count_wrong] Section 7: Memory section has 0 flashcards, must be exactly 5"
+      ],
+      "warnings": []
+    }
+  ],
+  "errors": [
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-21T03:06:17.533883",
+        "condition": "recap_scene_count_wrong",
+        "section_id": 8,
+        "details": "Recap section has 0 scenes, must be exactly 5"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-21T03:06:17.534262",
+        "condition": "recap_narration_below_minimum",
+        "section_id": 8,
+        "details": "Recap total narration is 0 words, minimum is 300"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-21T03:06:17.534825",
+        "condition": "memory_flashcard_count_wrong",
+        "section_id": 7,
+        "details": "Memory section has 0 flashcards, must be exactly 5"
+      }
+    }
+  ],
+  "warnings": []
+}
