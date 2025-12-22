@@ -1665,10 +1665,13 @@ async function checkExistingPresentation() {
             // ISS-093 FIX: Use beat_videos from presentation.json if available
             let beatVideos = [];
             if (section.beat_videos && section.beat_videos.length > 0) {
-              beatVideos = section.beat_videos.map(p => 
-                p.startsWith('/') ? p : BASE_PATH + p
-              );
-              console.log(`[ISS-093] Using section-level beat_videos: ${beatVideos.length} beats`);
+              beatVideos = section.beat_videos.map(p => {
+                // Normalize path - avoid double prefixing
+                if (p.startsWith('/')) return p;
+                if (p.startsWith('videos/')) return BASE_PATH + p;
+                return BASE_PATH + 'videos/' + p;
+              });
+              console.log(`[ISS-093] Using section-level beat_videos: ${beatVideos.length} beats, first: ${beatVideos[0]}`);
               // Update content_video_path to first beat if not already set
               if (!contentVideoPath && beatVideos.length > 0) {
                 contentVideoPath = beatVideos[0];
