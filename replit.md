@@ -32,7 +32,7 @@ The user wants an iterative development process. The agent should prioritize cle
 |------|-------|-------|------|--------|
 | **0** | Smart Chunker | Gemini 2.5 Pro | Extract logical topics with metadata | topics.json |
 | **1a** | Content Director | Gemini 2.5 Pro | Generate intro/summary/content/example/quiz | content_sections.json |
-| **1b** | Recap Director | Gemini 2.5 Pro | Generate memory (5 flashcards) + recap (5 scenes) | recap_sections.json |
+| **1b** | Recap Director | Gemini 2.5 Pro | Generate memory (5 flashcards) + 5 recap_scene sections | recap_sections.json |
 | **Merge** | Merge Step | Python | Deterministic merge of 1a + 1b | presentation.json |
 | **1.5** | TTS Duration | Narakeet + Mutagen | Generate audio, measure actual duration | Updated presentation.json |
 | **2** | Renderers | Various | Deterministic rendering | MP4 videos |
@@ -51,7 +51,7 @@ The user wants an iterative development process. The agent should prioritize cle
 - **Targeted Retry Strategy**: Implements specific retry counts for `Smart Chunker`, `Content Director`, and `Recap Director` for structural and semantic errors.
 - **JSON Repair Pre-Validation**: Includes steps to strip markdown fences, fix trailing commas, and close unclosed brackets before validation.
 - **Display Directives**: Each narration segment includes explicit `display_directives` for `text_layer`, `visual_layer`, and `avatar_layer` control. A critical rule is that text MUST hide before complex visuals appear.
-- **Mandatory Sections**: `intro`, `summary`, `memory` (5 flashcards), and `recap` (5 scenes) are strictly required.
+- **Mandatory Sections**: `intro`, `summary`, `memory` (5 flashcards), and 5 `recap_scene_N` sections (each with 100+ word video_prompt) are strictly required.
 - **Avatar Rules**: Specific avatar visibility and size rules apply to different section types (e.g., `INTRO`: visible, center, ≥50% width; `RECAP`: hidden).
 - **Manim Hard Rule**: Manim renderer requires `manim_scene_spec` for every visual beat.
 - **Two-Channel Content Separation**: `narration.segments[].text` is for TTS only, while `visual_content` is for on-screen display.
@@ -97,6 +97,9 @@ The user wants an iterative development process. The agent should prioritize cle
   - `--report <path>` - Save test report to file
 
 ## Recent Changes (2025-12-22)
+- **Split Recap Architecture**: Converted single "recap" section into 5 separate "recap_scene_1" through "recap_scene_5" sections
+  - Each scene: 100+ word video_prompt (was 300), 40-120 word narration
+  - Resolves ISS-080 by reducing per-section cognitive load on LLM
 - Created `docs/llm_output_requirements_v1.4.json` documenting Split Director architecture
 - Added V1.4 API endpoints to `api/app.py`
 - Created dry run test script for pipeline validation
