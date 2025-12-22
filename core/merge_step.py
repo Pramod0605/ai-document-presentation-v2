@@ -194,6 +194,7 @@ def _merge_recap_scenes_to_single_section(recap_scene_sections: Dict[str, Dict])
         recap_scenes.append({
             "scene_id": scene_index,
             "scene": scene_index,
+            "wan_prompt": video_prompt,
             "video_prompt": video_prompt,
             "narration_text": scene_text,
             "duration": scene_duration
