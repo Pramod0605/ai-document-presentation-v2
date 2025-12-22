@@ -267,7 +267,11 @@ def _validate_semantics(data: Dict) -> List[str]:
         section_type = section.get("section_type")
         
         narration = section.get("narration", {})
+        if not isinstance(narration, dict):
+            narration = {}
         full_text = narration.get("full_text", "")
+        if not isinstance(full_text, str):
+            full_text = str(full_text) if full_text else ""
         word_count = len(full_text.split())
         
         if section_type == "content" and word_count < 100:

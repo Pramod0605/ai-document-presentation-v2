@@ -262,11 +262,11 @@
                 <input type="hidden" id="grade" name="grade" value="12">
 
                 <div class="form-group">
-                    <label for="tts_provider">TTS Provider</label>
+                    <label for="tts_provider">TTS Provider <span style="color: #888; font-size: 0.8rem;">(keep pyttsx3 for testing)</span></label>
                     <select id="tts_provider" name="tts_provider" style="width: 100%; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; background: rgba(0, 0, 0, 0.3); color: #fff; font-size: 1rem;">
-                        <option value="narakeet">Narakeet (Production Quality)</option>
-                        <option value="pyttsx3" selected>pyttsx3 (Local/Test)</option>
-                        <option value="estimate">Estimate Only (No Audio)</option>
+                        <option value="pyttsx3" selected>pyttsx3 (Local - Always Use for Testing)</option>
+                        <option value="narakeet">Narakeet (Production - Costs Money)</option>
+                        <option value="estimate">Estimate Only (Fastest - No Audio)</option>
                     </select>
                 </div>
 
