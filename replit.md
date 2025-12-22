@@ -114,6 +114,10 @@ The Merge Step converts 5 separate `recap_scene_N` sections (easier for LLM to g
 - **ISS-099 FIX**: LaTeX formulas from source not preserved in presentation
   - Added LATEX FORMULA PRESERVATION section to Content Director prompt
   - Formulas must be extracted exactly as written from source markdown
+- **ISS-100 FIX**: V1.4 Content Director missing visual_beats and manim_scene_spec
+  - Added VISUAL BEATS section for manim/video sections
+  - Added MANIM SCENE SPEC section with full object/animation requirements
+  - Manim sections now require proper scene specifications
 - **ISS-094 FIX**: Video Renderer prompt/WAN validation mismatch
   - Updated Video Renderer prompt to require 300+ words (was 100-150)
   - Aligned with WAN validation threshold

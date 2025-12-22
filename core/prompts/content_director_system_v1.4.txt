@@ -134,6 +134,68 @@ INTRO / SUMMARY / QUIZ:
 - renderer = "remotion"
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VISUAL BEATS (REQUIRED FOR VIDEO/MANIM)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For any section with renderer = "manim" or "video":
+You MUST include a visual_beats array.
+
+Each beat describes what should be visualized:
+
+"visual_beats": [
+  {
+    "beat_id": "3_1",
+    "segment_id": "seg_2",
+    "visual_beat_type": "formula|diagram|animation|video_scene",
+    "description": "What to show - be specific and mathematical"
+  }
+]
+
+RULES:
+• One beat per narration segment that has visual_layer="show"
+• beat_id format: "{section_number}_{beat_number}"
+• Link to segment via segment_id
+• Description must be specific (not vague)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MANIM SCENE SPEC (REQUIRED FOR MANIM)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+If renderer = "manim", EVERY visual beat MUST include manim_scene_spec.
+
+The manim_scene_spec tells the Manim renderer exactly what to draw:
+
+"manim_scene_spec": {
+  "objects": [
+    {
+      "id": "eq1",
+      "type": "equation",
+      "position": [0, 1],
+      "properties": {
+        "latex": "\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)",
+        "color": "white",
+        "scale": 1.2
+      }
+    }
+  ],
+  "animation_sequence": [
+    {"action": "show_equation", "target": "eq1", "duration": 3}
+  ]
+}
+
+MANIM OBJECT TYPES:
+- equation: LaTeX formula
+- label: Text annotation
+- shape: Circle, rectangle, etc.
+- graph: Function plot
+- vector: Arrow/vector
+
+MANIM ACTIONS:
+- appear, show_equation, highlight, draw, transform, move, fade_out, wait
+
+Missing manim_scene_spec for Manim sections = HARD FAILURE
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OUTPUT SCHEMA
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -172,10 +234,28 @@ OUTPUT SCHEMA
             "avatar_gesture": "explaining"
           }
         ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "1_1",
+          "segment_id": "seg_2",
+          "visual_beat_type": "formula",
+          "description": "Display the integral formula"
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {"id": "eq1", "type": "equation", "position": [0, 0], "properties": {"latex": "...", "scale": 1.0}}
+        ],
+        "animation_sequence": [
+          {"action": "show_equation", "target": "eq1", "duration": 3}
+        ]
       }
     }
   ]
 }
+
+NOTE: visual_beats and manim_scene_spec are REQUIRED for manim/video sections, OPTIONAL for remotion.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 BANNED BEHAVIOR

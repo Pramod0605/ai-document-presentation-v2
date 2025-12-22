@@ -1560,6 +1560,19 @@
       "fix": "Added LATEX FORMULA PRESERVATION section to content_director_system_v1.4.txt with explicit rules to preserve formulas exactly as written in source",
       "files_modified": ["core/prompts/content_director_system_v1.4.txt"],
       "lesson": "Content extraction rules must explicitly cover formula/LaTeX passthrough"
+    },
+    {
+      "id": "ISS-100",
+      "title": "V1.4 Content Director missing visual_beats and manim_scene_spec instructions",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "V1.3 Director had detailed visual_beats array and manim_scene_spec requirements for sections with renderer=manim/video. V1.4 Content Director was missing these entirely, causing Manim sections to lack proper scene specifications.",
+      "error": "Manim sections may lack proper scene specs, causing render failures or generic fallbacks",
+      "root_cause": "When V1.3 Director was split into V1.4 Content + Recap Directors, the visual_beats and manim_scene_spec sections were not carried over to Content Director",
+      "fix": "Added VISUAL BEATS and MANIM SCENE SPEC sections to content_director_system_v1.4.txt with full examples and requirements",
+      "files_modified": ["core/prompts/content_director_system_v1.4.txt"],
+      "lesson": "When splitting a monolithic prompt, ALL rendering-related instructions must be preserved in the appropriate child prompt"
     }
   ],
   "metadata": {
@@ -1567,7 +1580,7 @@
     "version": "14.11",
     "spec_version": "v1.4",
     "spec_file": "docs/llm_output_requirements_v1.4.json",
-    "resolved_count": 85,
+    "resolved_count": 86,
     "open_count": 1,
     "testing_lesson": "Prompt FORBIDDEN lists must exactly match validator detection patterns",
     "v14_video_retries": "Video renderer now has 3 total attempts (max_retries=2) for 300+ word compliance"
