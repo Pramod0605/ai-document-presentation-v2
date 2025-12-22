@@ -688,11 +688,12 @@ def validate_video_prompts(result: Dict, section_id: int) -> tuple:
 def pass2_video_renderer(
     section: Dict,
     tracker: Optional[AnalyticsTracker] = None,
-    max_retries: int = 1
+    max_retries: int = 2
 ) -> Dict:
     """Pass 2c: Generate video prompts for a section.
     
     v1.3 CHANGE: Added validation for word count and vague phrases with retry.
+    v1.4 CHANGE: Increased max_retries to 2 (3 total attempts) for better 300+ word compliance.
     """
     section_id = section.get("section_id") or section.get("id", 0)
     log(f"[Render:Video] Section {section_id}...")
