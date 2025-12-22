@@ -9935,5 +9935,258 @@
       "dry_run": false
     },
     "content_preview": "# Mathematics, Geometry, Physics, Chemistry, and Biology Notes ---  ## Biology: Cell Evolution  ### Topic: The Endosymbiotic Theory  The **Endosymbiotic Theory** explains the origin of eukaryotic cells from prokaryotic organisms. It proposes that key organelles\u2014specifically **mitochondria** and **ch..."
+  },
+  "0a6fb562": {
+    "id": "0a6fb562",
+    "type": "v14_pipeline",
+    "params": {
+      "subject": "General Science",
+      "grade": "12",
+      "file_path": "/tmp/ai_education_jobs/70175427aa16792b.md",
+      "source_file": "Sample_subjects_v2.md",
+      "skip_wan": false,
+      "skip_avatar": false,
+      "tts_provider": "pyttsx3"
+    },
+    "status": "completed",
+    "current_step": 2,
+    "current_step_name": "Complete!",
+    "current_phase_key": "completed",
+    "status_message": "Achievement unlocked: Video Complete!",
+    "steps_completed": 3,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-22T18:13:34.317189",
+    "started_at": "2025-12-22T18:13:34.363388",
+    "completed_at": "2025-12-22T18:18:52.771773",
+    "error": null,
+    "result": {
+      "status": "completed",
+      "pipeline_version": "1.2",
+      "started_at": "2025-12-22T18:13:34.382352",
+      "source_file": "Sample_subjects_v2.md",
+      "steps": [
+        {
+          "step": "extract_images",
+          "status": "completed",
+          "count": 0
+        },
+        {
+          "step": "generate_presentation_v14_hybrid",
+          "status": "completed",
+          "analytics": {
+            "job_id": "78cf48ac",
+            "status": "completed",
+            "total_duration_seconds": 277.61,
+            "total_cost_usd": 0.4034,
+            "total_tokens": 60639,
+            "phases_completed": 11,
+            "phases_failed": 0,
+            "cost_breakdown": {
+              "smart_chunker": {
+                "cost_usd": 0.0351,
+                "duration_seconds": 27.13,
+                "tokens": 4982
+              },
+              "content_director": {
+                "cost_usd": 0.0632,
+                "duration_seconds": 43.44,
+                "tokens": 7932
+              },
+              "recap_director": {
+                "cost_usd": 0.0677,
+                "duration_seconds": 53.56,
+                "tokens": 9604
+              },
+              "remotion_renderer_ssection_1": {
+                "cost_usd": 0.0133,
+                "duration_seconds": 6.44,
+                "tokens": 1842
+              },
+              "remotion_renderer_ssection_2": {
+                "cost_usd": 0.0182,
+                "duration_seconds": 9.63,
+                "tokens": 2312
+              },
+              "video_renderer_ssection_3": {
+                "cost_usd": 0.0345,
+                "duration_seconds": 31.9,
+                "tokens": 5187
+              },
+              "video_renderer_ssection_3_retry1": {
+                "cost_usd": 0.0249,
+                "duration_seconds": 23.28,
+                "tokens": 4229
+              },
+              "manim_renderer_ssection_4": {
+                "cost_usd": 0.0308,
+                "duration_seconds": 15.5,
+                "tokens": 3910
+              },
+              "remotion_renderer_ssection_5": {
+                "cost_usd": 0.0369,
+                "duration_seconds": 18.76,
+                "tokens": 3980
+              },
+              "remotion_renderer_ssection_6": {
+                "cost_usd": 0.0317,
+                "duration_seconds": 16.83,
+                "tokens": 3194
+              },
+              "video_renderer_ssection_7": {
+                "cost_usd": 0.047,
+                "duration_seconds": 31.0,
+                "tokens": 13467
+              }
+            }
+          }
+        },
+        {
+          "step": "validation",
+          "status": "passed",
+          "note": "Handled in Director with retries"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": "section_1",
+              "section_type": "intro",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'intro' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": "section_2",
+              "section_type": "summary",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'summary' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": "section_3",
+              "section_type": "content",
+              "renderer": "video",
+              "status": "failed",
+              "video_path": null,
+              "error": "WAN prompt validation failed: Section section_3: Beat 0: Prompt has 107 words, minimum 300 required. Prompt preview: 'The scene opens in a murky, microscopic primordial sea, illuminated by a diffuse, ambient underwater...'",
+              "visual_beats_used": 0,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 175, in _render_visual_beats\n    hard_fail_on_short_prompts(video_prompts, topic_id)\n  File \"/home/runner/workspace/core/wan_prompt_validator.py\", line 229, in hard_fail_on_short_prompts\n    raise WanPromptHardFailError(\ncore.wan_prompt_validator.WanPromptHardFailError: Section section_3: Beat 0: Prompt has 107 words, minimum 300 required. Prompt preview: 'The scene opens in a murky, microscopic primordial sea, illuminated by a diffuse, ambient underwater...'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 165, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 49, in render_wan_video\n    return _render_visual_beats(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 177, in _render_visual_beats\n    raise WanRenderError(f\"WAN prompt validation failed: {e}\")\nrender.wan.wan_runner.WanRenderError: WAN prompt validation failed: Section section_3: Beat 0: Prompt has 107 words, minimum 300 required. Prompt preview: 'The scene opens in a murky, microscopic primordial sea, illuminated by a diffuse, ambient underwater...'\n"
+            },
+            {
+              "topic_id": "section_4",
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section section_4: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        ",
+              "visual_beats_used": 0,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 163, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 123, in render_manim_video\n    return _render_v12_manim_spec(\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 414, in _render_v12_manim_spec\n    result = _execute_spec_generated_render(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 856, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section section_4: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        \n"
+            },
+            {
+              "topic_id": "section_5",
+              "section_type": "quiz",
+              "renderer": "remotion",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section section_5 (quiz): No WAN prompt available. Content/example sections must have visual_beats. Other sections need explicit wan_prompt in explanation_plan.",
+              "visual_beats_used": 0,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": false,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 165, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 83, in render_wan_video\n    raise WanRenderError(\nrender.wan.wan_runner.WanRenderError: Section section_5 (quiz): No WAN prompt available. Content/example sections must have visual_beats. Other sections need explicit wan_prompt in explanation_plan.\n"
+            },
+            {
+              "topic_id": "section_6",
+              "section_type": "memory",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'memory' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": "section_7",
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "failed",
+              "video_path": null,
+              "error": "Recap prompt validation failed: Section section_7: Beat 0: Prompt has 235 words, minimum 300 required. Prompt preview: 'A cinematic journey into a microscopic, primordial world billions of years ago. The camera drifts th...'",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 295, in _render_recap_scenes\n    hard_fail_on_short_prompts(recap_prompts, topic_id)\n  File \"/home/runner/workspace/core/wan_prompt_validator.py\", line 229, in hard_fail_on_short_prompts\n    raise WanPromptHardFailError(\ncore.wan_prompt_validator.WanPromptHardFailError: Section section_7: Beat 0: Prompt has 235 words, minimum 300 required. Prompt preview: 'A cinematic journey into a microscopic, primordial world billions of years ago. The camera drifts th...'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 165, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 66, in render_wan_video\n    recap_result = _render_recap_scenes(\n                   ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 297, in _render_recap_scenes\n    raise WanRenderError(f\"Recap prompt validation failed: {e}\")\nrender.wan.wan_runner.WanRenderError: Recap prompt validation failed: Section section_7: Beat 0: Prompt has 235 words, minimum 300 required. Prompt preview: 'A cinematic journey into a microscopic, primordial world billions of years ago. The camera drifts th...'\n"
+            }
+          ],
+          "success_count": 3,
+          "fail_count": 4,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": "section_1",
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/0a6fb562/audio/section_section_1.mp3",
+              "actual_duration_seconds": 24.0
+            },
+            {
+              "section_id": "section_2",
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/0a6fb562/audio/section_section_2.mp3",
+              "actual_duration_seconds": 25.0
+            },
+            {
+              "section_id": "section_3",
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/0a6fb562/audio/section_section_3.mp3",
+              "actual_duration_seconds": 49.0
+            },
+            {
+              "section_id": "section_4",
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/0a6fb562/audio/section_section_4.mp3",
+              "actual_duration_seconds": 35.0
+            },
+            {
+              "section_id": "section_5",
+              "section_type": "quiz",
+              "audio_path": "/home/runner/workspace/player/jobs/0a6fb562/audio/section_section_5.mp3",
+              "actual_duration_seconds": 42.0
+            },
+            {
+              "section_id": "section_6",
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/0a6fb562/audio/section_section_6.mp3",
+              "actual_duration_seconds": 23.0
+            },
+            {
+              "section_id": "section_7",
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/0a6fb562/audio/section_section_7.mp3",
+              "actual_duration_seconds": 174.0
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-22T18:18:52.763206",
+      "presentation_path": "/home/runner/workspace/player/jobs/0a6fb562/presentation.json",
+      "analytics_path": "/home/runner/workspace/player/jobs/0a6fb562/analytics.json",
+      "sections_count": 7,
+      "total_cost_usd": 0.4034290000000001,
+      "dry_run": false
+    },
+    "content_preview": "# Mathematics, Geometry, Physics, Chemistry, and Biology Notes ---  ## Biology: Cell Evolution  ### Topic: The Endosymbiotic Theory  The **Endosymbiotic Theory** explains the origin of eukaryotic cells from prokaryotic organisms. It proposes that key organelles\u2014specifically **mitochondria** and **ch..."
   }
 }
