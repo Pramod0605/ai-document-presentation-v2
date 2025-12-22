@@ -1,0 +1,66 @@
+. Why Generate Audio First? (The "No-Playback" Method)
+You do not have to sit and listen to the audio to time it. That would be incredibly slow.
+
+The Fast Method (Metadata Inspection): When you generate an MP3 using a TTS service (like EdgeTTS or Narakeet), the file is created on your disk in milliseconds. You then use a simple Python script to "peek" at the file's header.
+
+How it works:
+
+Generate: Your code calls the TTS API. It saves slide_1.mp3.
+
+Inspect: Your code asks the file system: "How long is this file?"
+
+Result: You get 12.453 seconds instantly.
+
+Update JSON: You write 12.45 into the duration_seconds field of your JSON.
+
+Why is this mandatory?
+
+LLMs are bad guessers: An LLM might guess a paragraph takes 10 seconds. In reality, with Indian English cadence and pauses, it might take 16 seconds.
+
+Video Desync: If you use the LLM's guess (10s) but the audio is actually 16s, your video will cut off the narrator mid-sentence.
+
+Zero Latency Cost: Checking the file duration takes microseconds. It adds no noticeable delay to your pipeline.
+
+2. What are "JSON Schema Definitions"?
+This is the most critical technical upgrade in V1.4.
+
+In V1.3 (and typically with LLMs), you prompt the model nicely: "Please output JSON like this..." and hope it listens. Often, it adds extra text, misses a comma, or forgets a field.
+
+In V1.4, using Gemini 2.5 Pro's "Structured Output", you don't just ask. You force the model to adhere to a strict blueprint (Schema).
+
+The "Schema" is a rigid contract that defines:
+
+"This field MUST be an integer."
+
+"This array MUST have exactly 5 items (no more, no less)."
+
+"This field MUST be one of these three specific words (remotion, manim, video)."
+
+Why do you need me to generate them? Writing these schemas manually is tedious and error-prone because they use a verbose syntax called OpenAPI / JSON Schema.
+
+Example of what I can generate for you: Instead of you writing 50 lines of validation code, I will give you the Schema object that does it automatically:
+
+JSON
+
+// Example Schema for "Recap Section"
+{
+  "type": "OBJECT",
+  "properties": {
+    "section_type": { "type": "STRING", "enum": ["recap"] },
+    "video_prompts": {
+      "type": "ARRAY",
+      "minItems": 5,  // <--- The LLM is physically forced to make 5
+      "maxItems": 5,
+      "items": {
+        "type": "OBJECT",
+        "properties": {
+          "beat_id": { "type": "STRING" },
+          "prompt": { "type": "STRING", "minLength": 300 } // <--- Force detail
+        },
+        "required": ["beat_id", "prompt"]
+      }
+    }
+  },
+  "required": ["section_type", "video_prompts"]
+}
+Next Step: Shall I generate the full Python/JSON Schema definitions for the Content Director and Recap Director so you can plug them directly into your V1.4 code? This will save you significant coding time.
