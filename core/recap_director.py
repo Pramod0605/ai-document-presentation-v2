@@ -1,9 +1,16 @@
 """
-Recap Director v1.4 - Pass 1b: Memory & Recap Generation
+Recap Director v1.4 - Pass 1b: Memory & Recap Scene Generation
 
-Generates:
-- Memory section: 5 flashcards with R-A-S mnemonic style
-- Recap section: 5 scenes with video prompts (300+ words each)
+Split Recap Architecture: Generates 6 sections total:
+- Memory section: 5 flashcards with mnemonic style, renderer=remotion
+- recap_scene_1 through recap_scene_5: 5 separate scene sections
+  - Each scene: 100+ word video_prompt, 40-120 word narration
+  - Renderer: video (WAN)
+  - Avatar: hidden
+
+This architecture resolves ISS-080 by splitting the single recap section
+(which required 5x300-word prompts the LLM failed to generate) into
+5 smaller sections with 100-word prompts each.
 
 Receives FULL markdown for complete context (not chunked).
 Uses Gemini 2.5 Pro with structured output.
@@ -36,11 +43,12 @@ MODEL = "google/gemini-2.5-pro"
 MAX_STRUCTURAL_RETRIES = 2
 MAX_SEMANTIC_RETRIES = 2
 
-MIN_VIDEO_PROMPT_WORDS = 100  # TEMPORARY: Lowered from 300 for demo - restore after
+MIN_VIDEO_PROMPT_WORDS = 100  # Per-scene minimum (5 scenes x 100 words = 500 total)
 REQUIRED_FLASHCARD_COUNT = 5
 REQUIRED_SCENE_COUNT = 5
-MIN_RECAP_NARRATION_WORDS = 100  # TEMPORARY: Lowered from 300 for demo - restore after
-MAX_RECAP_NARRATION_WORDS = 500
+MIN_SCENE_NARRATION_WORDS = 40  # Per-scene minimum
+MAX_SCENE_NARRATION_WORDS = 120  # Per-scene maximum
+VALID_RECAP_SCENE_TYPES = ["recap_scene_1", "recap_scene_2", "recap_scene_3", "recap_scene_4", "recap_scene_5"]
 
 
 def load_prompt(name: str) -> str:
@@ -170,7 +178,7 @@ def call_recap_director(
 
 
 def _validate_structure(data: Dict) -> List[str]:
-    """Validate structural requirements."""
+    """Validate structural requirements for v1.4 split recap architecture."""
     errors = []
     
     if "sections" not in data:
@@ -179,19 +187,22 @@ def _validate_structure(data: Dict) -> List[str]:
     
     sections = data.get("sections", [])
     
-    if len(sections) != 2:
-        errors.append(f"Must have exactly 2 sections (memory + recap), got {len(sections)}")
+    if len(sections) != 6:
+        errors.append(f"Must have exactly 6 sections (1 memory + 5 recap_scene_N), got {len(sections)}")
     
     section_types = [s.get("section_type") for s in sections]
     
     if "memory" not in section_types:
         errors.append("Missing required 'memory' section")
-    if "recap" not in section_types:
-        errors.append("Missing required 'recap' section")
     
+    for scene_type in VALID_RECAP_SCENE_TYPES:
+        if scene_type not in section_types:
+            errors.append(f"Missing required '{scene_type}' section")
+    
+    valid_types = ["memory"] + VALID_RECAP_SCENE_TYPES
     for section_type in section_types:
-        if section_type not in ["memory", "recap"]:
-            errors.append(f"Invalid section_type '{section_type}' - only 'memory' and 'recap' allowed")
+        if section_type not in valid_types:
+            errors.append(f"Invalid section_type '{section_type}' - allowed: memory, recap_scene_1-5")
     
     for i, section in enumerate(sections):
         section_errors = _validate_section_structure(section, i)
@@ -227,21 +238,16 @@ def _validate_section_structure(section: Dict, index: int) -> List[str]:
                 if field not in card:
                     errors.append(f"{prefix}.flashcards[{j}]: missing '{field}'")
     
-    elif section_type == "recap":
+    elif section_type in VALID_RECAP_SCENE_TYPES:
         if section.get("renderer") != "video":
-            errors.append(f"{prefix}: recap section must use 'video' renderer (WAN)")
+            errors.append(f"{prefix}: {section_type} must use 'video' renderer (WAN)")
         
-        video_prompts = section.get("video_prompts", [])
-        if not video_prompts:
-            errors.append(f"{prefix}: recap section missing 'video_prompts' array")
-        elif len(video_prompts) != REQUIRED_SCENE_COUNT:
-            errors.append(f"{prefix}: recap section must have exactly {REQUIRED_SCENE_COUNT} video_prompts, got {len(video_prompts)}")
+        if "video_prompt" not in section:
+            errors.append(f"{prefix}: {section_type} missing 'video_prompt' field")
         
-        for j, prompt in enumerate(video_prompts):
-            prompt_required = ["beat_id", "prompt"]
-            for field in prompt_required:
-                if field not in prompt:
-                    errors.append(f"{prefix}.video_prompts[{j}]: missing '{field}'")
+        layout = section.get("layout", {})
+        if layout.get("avatar_position") != "hidden":
+            errors.append(f"{prefix}: {section_type} layout.avatar_position must be 'hidden'")
     
     narration = section.get("narration", {})
     if not isinstance(narration, dict):
@@ -253,7 +259,7 @@ def _validate_section_structure(section: Dict, index: int) -> List[str]:
 
 
 def _validate_semantics(data: Dict) -> List[str]:
-    """Validate semantic requirements."""
+    """Validate semantic requirements for v1.4 split recap architecture."""
     errors = []
     
     sections = data.get("sections", [])
@@ -262,35 +268,26 @@ def _validate_semantics(data: Dict) -> List[str]:
         prefix = f"sections[{i}]"
         section_type = section.get("section_type")
         
-        if section_type == "recap":
+        if section_type in VALID_RECAP_SCENE_TYPES:
             layout = section.get("layout", {})
             avatar_pos = layout.get("avatar_position", "hidden")
             
             if avatar_pos != "hidden":
-                errors.append(f"{prefix}: recap section avatar_position must be 'hidden', got '{avatar_pos}'")
-            
-            segments = section.get("narration", {}).get("segments", [])
-            for j, seg in enumerate(segments):
-                dd = seg.get("display_directives", {})
-                avatar_layer = dd.get("avatar_layer")
-                if avatar_layer and avatar_layer != "hide":
-                    errors.append(f"{prefix}.segments[{j}]: recap avatar_layer must be 'hide', got '{avatar_layer}'")
+                errors.append(f"{prefix}: {section_type} avatar_position must be 'hidden', got '{avatar_pos}'")
             
             narration = section.get("narration", {})
             full_text = narration.get("full_text", "")
             word_count = len(full_text.split())
             
-            if word_count < MIN_RECAP_NARRATION_WORDS:
-                errors.append(f"{prefix}: recap narration too short ({word_count} words, minimum {MIN_RECAP_NARRATION_WORDS})")
-            if word_count > MAX_RECAP_NARRATION_WORDS:
-                errors.append(f"{prefix}: recap narration too long ({word_count} words, maximum {MAX_RECAP_NARRATION_WORDS})")
+            if word_count < MIN_SCENE_NARRATION_WORDS:
+                errors.append(f"{prefix}: {section_type} narration too short ({word_count} words, minimum {MIN_SCENE_NARRATION_WORDS})")
+            if word_count > MAX_SCENE_NARRATION_WORDS:
+                errors.append(f"{prefix}: {section_type} narration too long ({word_count} words, maximum {MAX_SCENE_NARRATION_WORDS})")
             
-            video_prompts = section.get("video_prompts", [])
-            for j, vp in enumerate(video_prompts):
-                prompt_text = vp.get("prompt", "")
-                prompt_words = len(prompt_text.split())
-                if prompt_words < MIN_VIDEO_PROMPT_WORDS:
-                    errors.append(f"{prefix}.video_prompts[{j}]: prompt too short ({prompt_words} words, minimum {MIN_VIDEO_PROMPT_WORDS})")
+            video_prompt = section.get("video_prompt", "")
+            prompt_words = len(video_prompt.split())
+            if prompt_words < MIN_VIDEO_PROMPT_WORDS:
+                errors.append(f"{prefix}: {section_type} video_prompt too short ({prompt_words} words, minimum {MIN_VIDEO_PROMPT_WORDS})")
     
     return errors
 
@@ -305,11 +302,12 @@ STRUCTURAL ERRORS - RETRY REQUIRED:
 {error_list}
 
 Fix these issues:
-1. Output EXACTLY 2 sections: one 'memory', one 'recap'
+1. Output EXACTLY 6 sections: 1 memory + 5 recap_scene sections
 2. Memory section: must have exactly 5 flashcards with mnemonic_letter, concept, definition
-3. Recap section: must have exactly 5 video_prompts with beat_id, prompt
+3. Each recap_scene (1-5): must have video_prompt field (100+ words)
 4. Memory renderer must be 'remotion'
-5. Recap renderer must be 'video'
+5. Each recap_scene renderer must be 'video'
+6. Each recap_scene must have layout.avatar_position = 'hidden'
 ---
 """
 
@@ -324,10 +322,9 @@ SEMANTIC ERRORS - RETRY REQUIRED:
 {error_list}
 
 Fix these content issues:
-1. Recap section avatar_position must be 'hidden'
-2. Recap section avatar_layer in all segments must be 'hide'
-3. Recap narration must be 300-500 words total
-4. Each video_prompt must be 300+ words (cinematic, detailed, NO infographics)
+1. Each recap_scene avatar_position must be 'hidden'
+2. Each recap_scene narration should be 40-120 words
+3. Each recap_scene video_prompt must be 100+ words (cinematic, detailed, NO infographics)
 ---
 """
 

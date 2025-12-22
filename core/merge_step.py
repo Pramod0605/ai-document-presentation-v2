@@ -76,6 +76,9 @@ def merge_director_outputs(
     return presentation
 
 
+RECAP_SCENE_ORDER = ["recap_scene_1", "recap_scene_2", "recap_scene_3", "recap_scene_4", "recap_scene_5"]
+
+
 def _order_sections(content_sections: List[Dict], recap_sections: List[Dict]) -> List[Dict]:
     """
     Order sections in pedagogical sequence:
@@ -83,7 +86,7 @@ def _order_sections(content_sections: List[Dict], recap_sections: List[Dict]) ->
     2. summary
     3. content/example/quiz (in original order)
     4. memory
-    5. recap
+    5. recap_scene_1 through recap_scene_5 (in order)
     """
     ordered = []
     
@@ -108,19 +111,21 @@ def _order_sections(content_sections: List[Dict], recap_sections: List[Dict]) ->
     ordered.extend(other_content)
     
     memory = None
-    recap = None
+    recap_scenes = {}
     
     for section in recap_sections:
         section_type = section.get("section_type")
         if section_type == "memory":
             memory = section
-        elif section_type == "recap":
-            recap = section
+        elif section_type in RECAP_SCENE_ORDER:
+            recap_scenes[section_type] = section
     
     if memory:
         ordered.append(memory)
-    if recap:
-        ordered.append(recap)
+    
+    for scene_type in RECAP_SCENE_ORDER:
+        if scene_type in recap_scenes:
+            ordered.append(recap_scenes[scene_type])
     
     return ordered
 
@@ -134,7 +139,7 @@ def _validate_merged_output(presentation: Dict) -> None:
     sections = presentation.get("sections", [])
     section_types = [s.get("section_type") for s in sections]
     
-    required_types = ["intro", "summary", "memory", "recap"]
+    required_types = ["intro", "summary", "memory"] + RECAP_SCENE_ORDER
     missing = [t for t in required_types if t not in section_types]
     
     if missing:

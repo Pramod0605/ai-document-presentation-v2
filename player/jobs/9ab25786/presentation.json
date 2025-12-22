@@ -1,0 +1,644 @@
+{
+  "spec_version": "v1.4",
+  "title": "The Magic of Photosynthesis",
+  "subject": "Biology",
+  "grade": "Grade 10",
+  "sections": [
+    {
+      "section_id": "section_1",
+      "section_type": "intro",
+      "title": "Welcome to the World of Photosynthesis!",
+      "renderer": "remotion",
+      "renderer_reasoning": "This section is a standard introduction with an avatar and title card, which is best handled by Remotion's templating capabilities.",
+      "layout": {
+        "avatar_position": "center",
+        "avatar_width_percent": 50,
+        "content_zone": "100% full",
+        "avatar_zone": "50% center"
+      },
+      "narration": {
+        "full_text": "Namaste students! Have you ever wondered how plants make their own food? It's like magic! Today, we're going to uncover this amazing process called Photosynthesis. By the end of this lesson, you'll understand how plants use sunlight to create energy, and why this is so important for all life on Earth.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Namaste students! Have you ever wondered how plants make their own food? It's like magic!",
+            "duration_estimate": 6.5,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "The Magic of Photosynthesis"
+              ]
+            },
+            "avatar_gesture": "welcoming"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Today, we're going to uncover this amazing process called Photosynthesis.",
+            "duration_estimate": 5.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": {
+              "labels": [
+                "Sunlight -> Plant -> Food"
+              ]
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "By the end of this lesson, you'll understand how plants use sunlight to create energy, and why this is so important for all life on Earth.",
+            "duration_estimate": 9.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "How plants make food",
+                "The role of sunlight",
+                "Why it's vital for life"
+              ]
+            },
+            "avatar_gesture": "nodding"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "section_2",
+      "section_type": "summary",
+      "title": "Key Takeaways",
+      "renderer": "remotion",
+      "renderer_reasoning": "A summary section with an avatar and key bullet points is a classic use case for Remotion's templated layouts.",
+      "layout": {
+        "avatar_position": "right",
+        "avatar_width_percent": 40,
+        "content_zone": "60% left",
+        "avatar_zone": "40% right"
+      },
+      "narration": {
+        "full_text": "So, let's quickly summarize what we've learned. Photosynthesis is the plant's way of cooking, using sunlight as the stove. The key ingredients, or reactants, are Carbon Dioxide and Water. The final products are Glucose for the plant's energy, and Oxygen for us. And the master chef in this whole process is the green pigment, Chlorophyll!",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "So, let's quickly summarize what we've learned. Photosynthesis is the plant's way of cooking, using sunlight as the stove.",
+            "duration_estimate": 8.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Photosynthesis: Plant's method to make food using sunlight."
+              ]
+            },
+            "avatar_gesture": "summarizing"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "The key ingredients, or reactants, are Carbon Dioxide and Water.",
+            "duration_estimate": 5.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Inputs: Carbon Dioxide + Water"
+              ]
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "The final products are Glucose for the plant's energy, and Oxygen for us.",
+            "duration_estimate": 6.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Outputs: Glucose (Food) + Oxygen (Gas)"
+              ]
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "And the master chef in this whole process is the green pigment, Chlorophyll!",
+            "duration_estimate": 5.5,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Key Player: Chlorophyll"
+              ]
+            },
+            "avatar_gesture": "celebrate"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "section_3",
+      "section_type": "content",
+      "title": "What is Photosynthesis?",
+      "renderer": "remotion",
+      "renderer_reasoning": "This section explains the core concepts using bullet points and simple labels, which is well-suited for Remotion's text and layout animations.",
+      "layout": {
+        "avatar_position": "left",
+        "avatar_width_percent": 40,
+        "content_zone": "60% right",
+        "avatar_zone": "40% left"
+      },
+      "narration": {
+        "full_text": "So, what exactly is Photosynthesis? Think of it as a plant's kitchen. It's a chemical process used by plants to convert light energy into chemical energy, which is basically their food. The magic ingredient that makes this possible is a green pigment called Chlorophyll. It's what gives leaves their green colour. To cook this meal, a plant needs three things: Carbon Dioxide from the air, Water from the soil, and Sunlight as the energy source. After the process, the plant produces two vital things: Glucose, a sugar that acts as the plant's food, and Oxygen, which is released into the atmosphere for us to breathe.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "So, what exactly is Photosynthesis? Think of it as a plant's kitchen. It's a chemical process used by plants to convert light energy into chemical energy, which is basically their food.",
+            "duration_estimate": 12.5,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Photosynthesis: A process to convert light energy into chemical energy (food)."
+              ]
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "The magic ingredient that makes this possible is a green pigment called Chlorophyll. It's what gives leaves their green colour.",
+            "duration_estimate": 8.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": {
+              "labels": [
+                "Key Ingredient: Chlorophyll (Green Pigment)"
+              ]
+            },
+            "avatar_gesture": "pointing"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "To cook this meal, a plant needs three things: Carbon Dioxide from the air, Water from the soil, and Sunlight as the energy source.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Ingredients (Reactants):",
+                "1. Carbon Dioxide (CO\u2082)",
+                "2. Water (H\u2082O)",
+                "3. Sunlight"
+              ]
+            },
+            "avatar_gesture": "thinking"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "After the process, the plant produces two vital things: Glucose, a sugar that acts as the plant's food, and Oxygen, which is released into the atmosphere for us to breathe.",
+            "duration_estimate": 12.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Final Products:",
+                "1. Glucose (C\u2086H\u2081\u2082O\u2086) - Plant's Food",
+                "2. Oxygen (O\u2082) - Released Gas"
+              ]
+            },
+            "avatar_gesture": "explaining"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "section_4",
+      "section_type": "example",
+      "title": "Let's Trace the Journey",
+      "renderer": "remotion",
+      "renderer_reasoning": "This section uses a step-by-step visual explanation with labels, which can be effectively animated in Remotion without needing complex physics simulations.",
+      "layout": {
+        "avatar_position": "hidden",
+        "avatar_width_percent": 0,
+        "content_zone": "100% full",
+        "avatar_zone": "0% hidden"
+      },
+      "narration": {
+        "full_text": "Let's follow the ingredients on their journey. First, imagine a water molecule travelling up from the roots of a mango tree, all the way to a leaf. At the same time, carbon dioxide from the air enters the leaf through tiny pores. Inside the leaf, sunlight hits the chlorophyll, providing the energy to start the reaction. This energy breaks apart the water and carbon dioxide molecules. Finally, these broken atoms rearrange to form glucose, the tree's energy-rich food, and oxygen, which the tree releases for us to breathe!",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Let's follow the ingredients on their journey. First, imagine a water molecule travelling up from the roots of a mango tree, all the way to a leaf.",
+            "duration_estimate": 9.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "labels": [
+                "Step 1: Water (H\u2082O) travels from roots to leaves."
+              ]
+            },
+            "avatar_gesture": "none"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "At the same time, carbon dioxide from the air enters the leaf through tiny pores.",
+            "duration_estimate": 6.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "labels": [
+                "Step 2: Carbon Dioxide (CO\u2082) enters the leaf."
+              ]
+            },
+            "avatar_gesture": "none"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Inside the leaf, sunlight hits the chlorophyll, providing the energy to start the reaction. This energy breaks apart the water and carbon dioxide molecules.",
+            "duration_estimate": 10.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "labels": [
+                "Step 3: Sunlight provides energy to Chlorophyll, breaking down H\u2082O and CO\u2082."
+              ]
+            },
+            "avatar_gesture": "none"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Finally, these broken atoms rearrange to form glucose, the tree's energy-rich food, and oxygen, which the tree releases for us to breathe!",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "labels": [
+                "Step 4: Atoms rearrange to form Glucose (food) and Oxygen (gas)."
+              ]
+            },
+            "avatar_gesture": "none"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "section_5",
+      "section_type": "quiz",
+      "title": "Check Your Understanding",
+      "renderer": "remotion",
+      "renderer_reasoning": "Quiz sections are text-based with simple layouts and answer reveals, making them ideal for Remotion.",
+      "layout": {
+        "avatar_position": "hidden",
+        "avatar_width_percent": 0,
+        "content_zone": "100% full",
+        "avatar_zone": "0% hidden"
+      },
+      "narration": {
+        "full_text": "Time for a quick quiz! Question 1: What gas do plants take from the atmosphere for photosynthesis? Is it A) Oxygen, B) Nitrogen, C) Carbon Dioxide, or D) Hydrogen? The correct answer is C) Carbon Dioxide. Plants absorb CO\u2082 and release oxygen. Question 2: What is the name of the sugar that plants produce for food? Is it A) Fructose, B) Sucrose, C) Lactose, or D) Glucose? The answer is D) Glucose. This is the simple sugar that provides energy to the plant.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Time for a quick quiz! Question 1: What gas do plants take from the atmosphere for photosynthesis? Is it A) Oxygen, B) Nitrogen, C) Carbon Dioxide, or D) Hydrogen?",
+            "duration_estimate": 12.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "1. What gas do plants take from the atmosphere for photosynthesis?",
+                "A) Oxygen",
+                "B) Nitrogen",
+                "C) Carbon Dioxide",
+                "D) Hydrogen"
+              ]
+            },
+            "avatar_gesture": "none"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "The correct answer is C) Carbon Dioxide. Plants absorb CO\u2082 and release oxygen.",
+            "duration_estimate": 6.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "labels": [
+                "Correct Answer: C) Carbon Dioxide"
+              ]
+            },
+            "avatar_gesture": "none"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Question 2: What is the name of the sugar that plants produce for food? Is it A) Fructose, B) Sucrose, C) Lactose, or D) Glucose?",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "2. What is the name of the sugar that plants produce for food?",
+                "A) Fructose",
+                "B) Sucrose",
+                "C) Lactose",
+                "D) Glucose"
+              ]
+            },
+            "avatar_gesture": "none"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "The answer is D) Glucose. This is the simple sugar that provides energy to the plant.",
+            "duration_estimate": 6.5,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "labels": [
+                "Correct Answer: D) Glucose"
+              ]
+            },
+            "avatar_gesture": "none"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "section_6",
+      "section_type": "memory",
+      "title": "Remember This!",
+      "renderer": "remotion",
+      "layout": {
+        "avatar_position": "right",
+        "avatar_width_percent": 30
+      },
+      "narration": {
+        "full_text": "To remember the key components of photosynthesis, just think of the word LIGHT! L for the Light Energy from the sun. I for the Intake of Carbon Dioxide and Water. G for Glucose, the sugary food the plant makes. H for H2O, the chemical name for water. And T for the Transformation of energy and Transport of nutrients. L-I-G-H-T!",
+        "segments": [
+          {
+            "segment_id": "mem_seg_1",
+            "text": "To remember the key components of photosynthesis, just think of the word LIGHT!",
+            "display_directives": {}
+          },
+          {
+            "segment_id": "mem_seg_2",
+            "text": "L for the Light Energy from the sun.",
+            "display_directives": {}
+          },
+          {
+            "segment_id": "mem_seg_3",
+            "text": "I for the Intake of Carbon Dioxide and Water.",
+            "display_directives": {}
+          },
+          {
+            "segment_id": "mem_seg_4",
+            "text": "G for Glucose, the sugary food the plant makes.",
+            "display_directives": {}
+          },
+          {
+            "segment_id": "mem_seg_5",
+            "text": "H for H2O, the chemical name for water.",
+            "display_directives": {}
+          },
+          {
+            "segment_id": "mem_seg_6",
+            "text": "And T for the Transformation of energy and Transport of nutrients. L-I-G-H-T!",
+            "display_directives": {}
+          }
+        ]
+      },
+      "flashcards": [
+        {
+          "card_id": "card_1",
+          "mnemonic_letter": "L",
+          "concept": "Light Energy",
+          "definition": "The energy from the sun that powers photosynthesis."
+        },
+        {
+          "card_id": "card_2",
+          "mnemonic_letter": "I",
+          "concept": "Intake",
+          "definition": "The process of absorbing Carbon Dioxide (CO2) from the air and Water (H2O) from the soil."
+        },
+        {
+          "card_id": "card_3",
+          "mnemonic_letter": "G",
+          "concept": "Glucose",
+          "definition": "The sugar (C6H12O6) produced by the plant, which serves as its food."
+        },
+        {
+          "card_id": "card_4",
+          "mnemonic_letter": "H",
+          "concept": "H2O (Water)",
+          "definition": "An essential reactant absorbed through the roots and transported to the leaves."
+        },
+        {
+          "card_id": "card_5",
+          "mnemonic_letter": "T",
+          "concept": "Transformation & Transport",
+          "definition": "Light energy is transformed into chemical energy (glucose), which is then transported."
+        }
+      ]
+    },
+    {
+      "section_id": "section_7",
+      "section_type": "recap_scene_1",
+      "title": "The Sun's Gift",
+      "renderer": "video",
+      "layout": {
+        "avatar_position": "hidden",
+        "avatar_width_percent": 0
+      },
+      "narration": {
+        "full_text": "It all begins with our sun. This star bathes our world in light, a constant stream of pure energy. This radiant energy travels across the vastness of space, arriving on Earth as waves of light. For a plant, this isn't just warmth; it's the primary ingredient for life itself. Each leaf, a perfectly designed solar panel, positions itself to catch these golden rays, preparing for the incredible transformation that is about to unfold within its microscopic world.",
+        "segments": [
+          {
+            "segment_id": "recap_1_seg_1",
+            "text": "It all begins with our sun. This star bathes our world in light, a constant stream of pure energy. This radiant energy travels across the vastness of space, arriving on Earth as waves of light.",
+            "display_directives": {}
+          },
+          {
+            "segment_id": "recap_1_seg_2",
+            "text": "For a plant, this isn't just warmth; it's the primary ingredient for life itself. Each leaf, a perfectly designed solar panel, positions itself to catch these golden rays, preparing for the incredible transformation that is about to unfold.",
+            "display_directives": {}
+          }
+        ]
+      },
+      "video_prompt": "An extreme wide shot of the sun rising over a lush, green landscape in the Western Ghats of India. The camera performs a super-fast dolly zoom, hurtling through the atmosphere towards a specific Banyan tree. The light is golden and warm, with long shadows creating a dramatic, high-contrast scene. We slow down as we approach the tree, the camera gracefully weaving through its aerial roots and branches.\n\nOur focus settles on a single, vibrant green leaf, backlit by the morning sun, making its veins glow like a golden roadmap. Dewdrops on its surface sparkle like tiny jewels. The camera pushes in slowly, the leaf filling the entire frame. The texture is hyper-detailed, showing the fine hairs and waxy cuticle. The mood is one of awe and grand anticipation for the process to begin."
+    },
+    {
+      "section_id": "section_8",
+      "section_type": "recap_scene_2",
+      "title": "The Plant's Breath",
+      "renderer": "video",
+      "layout": {
+        "avatar_position": "hidden",
+        "avatar_width_percent": 0
+      },
+      "narration": {
+        "full_text": "To create its food, the plant needs more than just light. It must 'breathe in' a gas from the air around us: carbon dioxide. Tiny pores on the underside of the leaf, called stomata, open like microscopic gates. At the same time, deep in the earth, the plant's roots act like straws, drawing up water from the soil. This water embarks on a long journey up through the stem, a vital delivery for the chemical reaction waiting to happen in the leaves.",
+        "segments": [
+          {
+            "segment_id": "recap_2_seg_1",
+            "text": "To create its food, the plant needs more than just light. It must 'breathe in' a gas from the air around us: carbon dioxide. Tiny pores on the underside of the leaf, called stomata, open like microscopic gates.",
+            "display_directives": {}
+          },
+          {
+            "segment_id": "recap_2_seg_2",
+            "text": "At the same time, deep in the earth, the plant's roots act like straws, drawing up water from the soil. This water embarks on a long journey up through the stem, a vital delivery for the chemical reaction waiting to happen.",
+            "display_directives": {}
+          }
+        ]
+      },
+      "video_prompt": "We are at a micro-level, looking at the textured, bumpy landscape of the leaf's underside. The camera glides across this terrain, where the lighting is diffuse and soft, as if we are under a dense canopy. We approach a stoma, a mouth-like opening that is the focus of the shot. The camera performs a slow, orbital pan around it, highlighting its structure before preparing to dive inside.\n\nThe stoma gently pulses, its guard cells swelling to open the pore. Shimmering, abstract particles representing CO2 drift inside. A quick cross-dissolve transitions the view to an underground shot of the Banyan's roots. Water molecules, visualized as glowing blue orbs, are absorbed by root hairs and begin a rapid, illuminated journey upwards through the xylem, which appears like a series of interconnected, futuristic glass tubes."
+    },
+    {
+      "section_id": "section_9",
+      "section_type": "recap_scene_3",
+      "title": "The Green Engine",
+      "renderer": "video",
+      "layout": {
+        "avatar_position": "hidden",
+        "avatar_width_percent": 0
+      },
+      "narration": {
+        "full_text": "Inside the leaf, we enter a bustling city of cells. Our destination is a specialized factory, the engine of photosynthesis: the chloroplast. These tiny green structures are where the magic truly happens. They are filled with chlorophyll, the pigment that not only gives plants their green color but also possesses the unique ability to capture the sun's light energy. It's here that all the ingredients\u2014light, water, and carbon dioxide\u2014are brought together for the grand synthesis.",
+        "segments": [
+          {
+            "segment_id": "recap_3_seg_1",
+            "text": "Inside the leaf, we enter a bustling city of cells. Our destination is a specialized factory, the engine of photosynthesis: the chloroplast. These tiny green structures are where the magic truly happens.",
+            "display_directives": {}
+          },
+          {
+            "segment_id": "recap_3_seg_2",
+            "text": "They are filled with chlorophyll, the pigment that gives plants their color and captures light energy. It's here that all the ingredients\u2014light, water, and carbon dioxide\u2014are brought together for the grand synthesis.",
+            "display_directives": {}
+          }
+        ]
+      },
+      "video_prompt": "The camera dives through the stoma into the spongy mesophyll layer of the leaf. This is a vast, cavernous space filled with irregularly shaped cells. Beams of light filter down from above, creating a sublime, cathedral-like effect with visible light rays. The camera drifts serenely through this inner space, moving towards a single, translucent plant cell, its wall glowing softly in the filtered light.\n\nWe pass through the cell wall and membrane, entering the cytoplasm. Floating within are numerous oval-shaped chloroplasts, glowing with a vibrant green energy. They drift and gently rotate, like tiny living spaceships. The camera slowly zooms in on one specific chloroplast, its internal structures\u2014the grana, which are stacks of thylakoids\u2014becoming visible like stacks of glowing green coins, pulsating with latent energy."
+    },
+    {
+      "section_id": "section_10",
+      "section_type": "recap_scene_4",
+      "title": "The Recipe of Life",
+      "renderer": "video",
+      "layout": {
+        "avatar_position": "hidden",
+        "avatar_width_percent": 0
+      },
+      "narration": {
+        "full_text": "Within the chloroplast, the captured light energy acts as a powerful spark. It triggers a complex chemical reaction, breaking apart the water molecules and combining them with carbon dioxide. This is the core of photosynthesis: the transformation of simple, inorganic molecules into a complex, energy-rich sugar called glucose. It is a moment of pure creation, converting the sun's fleeting light into a stable, storable form of chemical energy that will power the entire plant.",
+        "segments": [
+          {
+            "segment_id": "recap_4_seg_1",
+            "text": "Within the chloroplast, the captured light energy acts as a powerful spark. It triggers a complex chemical reaction, breaking apart the water molecules and combining them with carbon dioxide.",
+            "display_directives": {}
+          },
+          {
+            "segment_id": "recap_4_seg_2",
+            "text": "This is the core of photosynthesis: transforming simple molecules into an energy-rich sugar called glucose. It is a moment of pure creation, converting the sun's light into stable chemical energy.",
+            "display_directives": {}
+          }
+        ]
+      },
+      "video_prompt": "We are now deep inside the chloroplast, amidst the thylakoid stacks (grana). The lighting is dynamic and energetic, with intense pulses of golden light (representing sunlight) striking the green surfaces. The camera orbits a stack of grana as particles representing water (blue orbs) and carbon dioxide (shimmering grey particles) converge on its surface, drawn in by the energy.\n\nAs a brilliant pulse of light hits, the water molecules split apart in a flash of blue-white energy. Their components then swirl and combine with the carbon dioxide particles in a beautiful, choreographed dance of light and matter. This energetic ballet culminates in the formation of a new, larger molecule, visualized as a complex, glowing hexagonal structure\u2014glucose. The mood is powerful and transformative."
+    },
+    {
+      "section_id": "section_11",
+      "section_type": "recap_scene_5",
+      "title": "The Gift of Life",
+      "renderer": "video",
+      "layout": {
+        "avatar_position": "hidden",
+        "avatar_width_percent": 0
+      },
+      "narration": {
+        "full_text": "The process is complete. The newly created glucose is the plant's food, transported to power its growth, build new leaves, and store energy for later. But there's a crucial byproduct. As a result of this reaction, oxygen is released. The plant 'exhales' this gas through the stomata, sending it out into the atmosphere. This oxygen, a waste product for the plant, is the very air we breathe, a gift of life to almost every creature on Earth, completing a beautiful, life-sustaining cycle.",
+        "segments": [
+          {
+            "segment_id": "recap_5_seg_1",
+            "text": "The process is complete. The newly created glucose is the plant's food, transported to power its growth, build new leaves, and store energy for later. But there's a crucial byproduct: oxygen is released.",
+            "display_directives": {}
+          },
+          {
+            "segment_id": "recap_5_seg_2",
+            "text": "The plant 'exhales' this gas, sending it into the atmosphere. This oxygen, a waste product for the plant, is the very air we breathe, a gift of life to almost every creature on Earth, completing a beautiful, life-sustaining cycle.",
+            "display_directives": {}
+          }
+        ]
+      },
+      "video_prompt": "The camera pulls back from the chloroplast, showing the newly formed glucose molecules (glowing hexagons) being transported away through glowing channels that lead out of the cell. We then reverse our entire journey, pulling back out of the leaf through a stoma. The camera is now outside the leaf again, looking up at the Banyan tree against a bright blue afternoon sky.\n\nAs we exit the stoma, we are followed by a stream of shimmering, ethereal white particles representing oxygen, which gracefully dissipate into the air. The camera continues to pull back, showing the entire tree, then the surrounding paddy fields, and finally the Earth from a distance, with a faint green and blue atmospheric glow representing the oxygen-producing life on its surface. The mood is peaceful, profound, and cyclical."
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-12-22T12:27:27.040903Z",
+    "pipeline_version": "v1.4",
+    "content_director_model": "google/gemini-2.5-pro",
+    "recap_director_model": "google/gemini-2.5-pro",
+    "section_count": 11,
+    "section_types": [
+      "intro",
+      "summary",
+      "content",
+      "example",
+      "quiz",
+      "memory",
+      "recap_scene_1",
+      "recap_scene_2",
+      "recap_scene_3",
+      "recap_scene_4",
+      "recap_scene_5"
+    ]
+  }
+}

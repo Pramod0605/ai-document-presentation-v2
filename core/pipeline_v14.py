@@ -24,7 +24,7 @@ from core.smart_chunker import call_smart_chunker, ChunkerError
 from core.content_director import call_content_director, ContentDirectorError
 from core.recap_director import call_recap_director, RecapDirectorError
 from core.merge_step import merge_director_outputs, get_section_stats
-from core.tts_duration import update_durations_from_tts, cleanup_temp_audio
+from core.tts_duration import update_durations_from_tts, cleanup_temp_audio, TTSProvider
 from core.analytics import AnalyticsTracker, create_tracker
 
 logger = logging.getLogger(__name__)
@@ -48,7 +48,7 @@ def process_markdown_to_presentation_v14(
     update_status_callback = None,
     generate_tts: bool = True,
     output_dir: Optional[Path] = None,
-    tts_provider: str = "narakeet"
+    tts_provider: TTSProvider = "narakeet"
 ) -> Tuple[Dict, AnalyticsTracker]:
     """
     V1.4 Pipeline: Process markdown to presentation.json.
@@ -179,6 +179,10 @@ def process_markdown_to_presentation_v14(
         raise PipelineError(f"Pipeline failed: {e}", phase="unknown")
 
 
+RECAP_SCENE_TYPES = ["recap_scene_1", "recap_scene_2", "recap_scene_3", "recap_scene_4", "recap_scene_5"]
+SKIP_DIRECTIVE_SECTIONS = ["memory"] + RECAP_SCENE_TYPES
+
+
 def validate_presentation_v14(presentation: Dict) -> Dict:
     """
     Run 3-tier validation on merged presentation.
@@ -196,7 +200,7 @@ def validate_presentation_v14(presentation: Dict) -> Dict:
     sections = presentation.get("sections", [])
     section_types = [s.get("section_type") for s in sections]
     
-    required_types = ["intro", "summary", "memory", "recap"]
+    required_types = ["intro", "summary", "memory"] + RECAP_SCENE_TYPES
     for req_type in required_types:
         if req_type not in section_types:
             errors.append(f"Missing required section: {req_type}")
@@ -222,9 +226,9 @@ def validate_presentation_v14(presentation: Dict) -> Dict:
             dd = seg.get("display_directives", {})
             
             if not dd:
-                if section_type not in ["memory", "recap"]:
+                if section_type not in SKIP_DIRECTIVE_SECTIONS:
                     errors.append(f"{seg_prefix}: missing display_directives")
-            elif section_type not in ["memory", "recap"]:
+            elif section_type not in SKIP_DIRECTIVE_SECTIONS:
                 text_layer = dd.get("text_layer")
                 visual_layer = dd.get("visual_layer")
                 
@@ -237,29 +241,28 @@ def validate_presentation_v14(presentation: Dict) -> Dict:
         if len(flashcards) != 5:
             errors.append(f"Memory section must have exactly 5 flashcards, got {len(flashcards)}")
     
-    recap_sections = [s for s in sections if s.get("section_type") == "recap"]
-    for recap in recap_sections:
-        video_prompts = recap.get("video_prompts", [])
-        if len(video_prompts) != 5:
-            errors.append(f"Recap section must have exactly 5 video prompts, got {len(video_prompts)}")
-        
-        layout = recap.get("layout", {})
-        if layout.get("avatar_position") != "hidden":
-            errors.append("Recap section avatar must be hidden")
-        
-        narration = recap.get("narration", {})
-        full_text = narration.get("full_text", "")
-        word_count = len(full_text.split())
-        if word_count < 100:  # TEMPORARY: Lowered from 300 for demo
-            errors.append(f"Recap narration too short: {word_count} words (min 100)")
-        if word_count > 500:
-            errors.append(f"Recap narration too long: {word_count} words (max 500)")
-        
-        for j, vp in enumerate(video_prompts):
-            prompt = vp.get("prompt", "")
-            prompt_words = len(prompt.split())
-            if prompt_words < 100:  # TEMPORARY: Lowered from 300 for demo
-                errors.append(f"Recap video_prompt[{j}] too short: {prompt_words} words (min 100)")
+    for scene_type in RECAP_SCENE_TYPES:
+        scene_sections = [s for s in sections if s.get("section_type") == scene_type]
+        for scene in scene_sections:
+            video_prompt = scene.get("video_prompt", "")
+            if not video_prompt:
+                errors.append(f"{scene_type} missing video_prompt")
+            else:
+                prompt_words = len(video_prompt.split())
+                if prompt_words < 100:
+                    errors.append(f"{scene_type} video_prompt too short: {prompt_words} words (min 100)")
+            
+            layout = scene.get("layout", {})
+            if layout.get("avatar_position") != "hidden":
+                errors.append(f"{scene_type} avatar must be hidden")
+            
+            narration = scene.get("narration", {})
+            full_text = narration.get("full_text", "")
+            word_count = len(full_text.split())
+            if word_count < 40:
+                errors.append(f"{scene_type} narration too short: {word_count} words (min 40)")
+            if word_count > 120:
+                warnings.append(f"{scene_type} narration long: {word_count} words (max 120)")
     
     content_sections = [s for s in sections if s.get("section_type") == "content"]
     for content in content_sections:
@@ -336,13 +339,17 @@ def get_pipeline_info() -> Dict:
     """Return pipeline information for debugging."""
     return {
         "version": PIPELINE_VERSION,
-        "architecture": "Split Director",
+        "architecture": "Split Director with Scene Architecture",
         "passes": {
             "0": "Smart Chunker (topic extraction)",
             "1a": "Content Director (intro/summary/content/example/quiz)",
-            "1b": "Recap Director (memory/recap)",
+            "1b": "Recap Director (memory + 5 recap_scene sections)",
             "1.5": "TTS Duration (audio measurement)",
             "2": "Renderers (Remotion/Manim/WAN)"
+        },
+        "section_types": {
+            "from_content_director": ["intro", "summary", "content", "example", "quiz"],
+            "from_recap_director": ["memory", "recap_scene_1", "recap_scene_2", "recap_scene_3", "recap_scene_4", "recap_scene_5"]
         },
         "retry_strategy": {
             "smart_chunker": {"structural": 2, "semantic": 0},
