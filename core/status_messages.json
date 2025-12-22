@@ -109,7 +109,7 @@
       "dev_hint": "Check Gemini Pro response. Verify recap_director.py validation. Review 5 recap_scene requirements."
     },
     
-    "merge_step": {
+    "merge": {
       "display_name": "Combining Lesson Parts",
       "messages": [
         "Merging content and recap into final lesson...",
@@ -120,6 +120,19 @@
       "failure_message": "MERGE STEP FAILED: Could not combine Content + Recap Director outputs",
       "impact": "No presentation.json generated. Rendering cannot proceed.",
       "dev_hint": "Check merge_step.py. Verify section ordering and recap scene merging logic."
+    },
+    
+    "tts_duration": {
+      "display_name": "Measuring Audio Timing",
+      "messages": [
+        "Recording narration to measure precise timing...",
+        "Calculating audio durations for sync...",
+        "Measuring how long each section will take...",
+        "Timing the spoken explanations..."
+      ],
+      "failure_message": "TTS DURATION FAILED: Could not measure audio durations",
+      "impact": "Timing may be inaccurate. Display directives could fire at wrong times.",
+      "dev_hint": "Check TTS provider (narakeet/pyttsx3/estimate). Verify audio file generation."
     },
     
     "validation": {
