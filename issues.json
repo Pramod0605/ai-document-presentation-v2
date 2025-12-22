@@ -1443,15 +1443,28 @@
       "fix": "Updated recap_director_system_v1.4.txt to require 300+ words for video_prompt, emphasized this in multiple places",
       "files_modified": ["core/prompts/recap_director_system_v1.4.txt"],
       "lesson": "Always verify prompt requirements match downstream validator requirements"
+    },
+    {
+      "id": "ISS-091",
+      "title": "Recap Director FORBIDDEN phrases list incomplete - missing 'etc'",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "Recap Director prompt FORBIDDEN section only had generic examples but didn't list the exact phrases the validator checks for ('etc', 'and so on', 'various', etc). LLM generated 'etc' which was rejected by validator.",
+      "error": "Video renderer: Beat 3: Contains vague phrase 'etc'. Retrying (1/1)... then failed",
+      "root_cause": "FORBIDDEN section in prompt didn't explicitly list all phrases that validator rejects",
+      "fix": "Updated FORBIDDEN section to list exact phrases that cause rejection, matching wan_prompt_validator.py",
+      "files_modified": ["core/prompts/recap_director_system_v1.4.txt"],
+      "lesson": "Prompt FORBIDDEN lists must exactly match validator phrase detection lists"
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-22T18:00:00.000000",
-    "version": "14.9",
+    "last_updated": "2025-12-22T18:15:00.000000",
+    "version": "14.10",
     "spec_version": "v1.4",
     "spec_file": "docs/llm_output_requirements_v1.4.json",
-    "resolved_count": 82,
+    "resolved_count": 83,
     "open_count": 1,
-    "testing_lesson": "Verify prompt word count requirements match validator thresholds"
+    "testing_lesson": "Prompt FORBIDDEN lists must exactly match validator detection patterns"
   }
 }
