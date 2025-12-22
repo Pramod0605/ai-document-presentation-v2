@@ -81,6 +81,47 @@
       "dev_hint": "Check director_retry prompts. Review schema validation errors for specific missing fields."
     },
     
+    "content_director": {
+      "display_name": "Planning Main Content",
+      "messages": [
+        "The Content Director is crafting your lesson...",
+        "Building intro, summary, and core teachings...",
+        "Designing the educational narrative...",
+        "Structuring knowledge for maximum clarity...",
+        "Creating engaging content sections..."
+      ],
+      "failure_message": "CONTENT DIRECTOR FAILED: Could not generate main lesson sections",
+      "impact": "No intro/summary/content sections. Pipeline cannot proceed.",
+      "dev_hint": "Check Gemini Pro response. Verify content_director.py validation. Review structural errors."
+    },
+    
+    "recap_director": {
+      "display_name": "Creating Recap & Memory Aids",
+      "messages": [
+        "The Recap Director is reinforcing key concepts...",
+        "Building memory flashcards for retention...",
+        "Creating visual recap scenes...",
+        "Designing the review experience...",
+        "Crafting memorable summaries..."
+      ],
+      "failure_message": "RECAP DIRECTOR FAILED: Could not generate memory and recap sections",
+      "impact": "No memory flashcards or recap scenes. Pipeline cannot proceed.",
+      "dev_hint": "Check Gemini Pro response. Verify recap_director.py validation. Review 5 recap_scene requirements."
+    },
+    
+    "merge_step": {
+      "display_name": "Combining Lesson Parts",
+      "messages": [
+        "Merging content and recap into final lesson...",
+        "Combining all the pieces together...",
+        "Assembling the complete learning experience...",
+        "Finalizing the lesson structure..."
+      ],
+      "failure_message": "MERGE STEP FAILED: Could not combine Content + Recap Director outputs",
+      "impact": "No presentation.json generated. Rendering cannot proceed.",
+      "dev_hint": "Check merge_step.py. Verify section ordering and recap scene merging logic."
+    },
+    
     "validation": {
       "display_name": "Quality Check",
       "messages": [
