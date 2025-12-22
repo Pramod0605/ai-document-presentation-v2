@@ -62,7 +62,8 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     # For recap sections, render each recap_scene as a separate video
     recap_scenes = topic.get("recap_scenes", [])
     if section_type == "recap" and recap_scenes:
-        return _render_recap_scenes(
+        # ISS-092 FIX: _render_recap_scenes now returns dict with all paths
+        recap_result = _render_recap_scenes(
             topic_id=topic_id,
             topic_title=topic_title,
             recap_scenes=recap_scenes,
@@ -71,6 +72,9 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             skip_wan=skip_wan,
             trace_output_dir=trace_output_dir
         )
+        # Store all paths on the topic for reconciliation
+        topic["_recap_video_paths"] = recap_result.get("all_paths", [])
+        return recap_result.get("first_path")
     
     # For other section types, use section-level prompt
     wan_prompt = explanation_plan.get("wan_prompt")
@@ -261,7 +265,7 @@ def _render_recap_scenes(
     dry_run: bool,
     skip_wan: bool,
     trace_output_dir: str
-) -> str:
+) -> dict:
     """
     Render each recap scene as a separate WAN video.
     
@@ -269,7 +273,9 @@ def _render_recap_scenes(
     Each scene has: concept_title, description, wan_prompt, narration
     
     Creates: recap_{topic_id}_scene_{1..5}.mp4
-    Returns path to first video (player sequences all 5).
+    
+    ISS-092 FIX: Returns dict with first_path and all_paths for player sequencing.
+    Returns: {"first_path": str, "all_paths": [str, str, str, str, str]}
     """
     if not recap_scenes:
         raise WanRenderError(
@@ -353,8 +359,11 @@ def _render_recap_scenes(
     
     print(f"[WAN] Completed {len(video_paths)} recap scene videos for section {topic_id}")
     
-    # Return path to first scene (player will sequence all 5)
-    return video_paths[0] if video_paths else None
+    # ISS-092 FIX: Return all paths for player sequencing
+    return {
+        "first_path": video_paths[0] if video_paths else None,
+        "all_paths": video_paths
+    }
 
 
 def _create_recap_placeholder(scene_num: int, topic_id: int, concept_title: str, output_path: str, duration: int) -> str:

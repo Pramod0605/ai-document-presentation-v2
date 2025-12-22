@@ -88,25 +88,43 @@ def _reconcile_video_paths(presentation: dict, rendered_videos: list):
     """Update presentation sections with their rendered video paths.
     
     Matches rendered_videos results back to sections using section_id/topic_id.
+    ISS-092 FIX: Also sets recap_video_paths for recap sections.
     """
     sections = presentation.get("sections", presentation.get("topics", []))
     
     video_map = {}
+    recap_paths_map = {}
     for result in rendered_videos:
         topic_id = result.get("topic_id")
-        if topic_id and result.get("video_path"):
-            video_map[str(topic_id)] = result.get("video_path")
+        if topic_id:
+            if result.get("video_path"):
+                video_map[str(topic_id)] = result.get("video_path")
+            # ISS-092: Capture recap video paths if present
+            if result.get("recap_video_paths"):
+                recap_paths_map[str(topic_id)] = result.get("recap_video_paths")
     
+    recap_count = 0
     for section in sections:
         section_id = section.get("section_id", section.get("id"))
+        section_type = section.get("section_type", "")
+        
         if section_id and str(section_id) in video_map:
             video_path = video_map[str(section_id)]
             video_filename = Path(video_path).name if video_path else None
             if video_filename:
                 section["content_video_path"] = f"videos/{video_filename}"
                 section["has_content_video"] = True
+        
+        # ISS-092 FIX: Set recap_video_paths for recap sections
+        if section_type == "recap" and str(section_id) in recap_paths_map:
+            all_paths = recap_paths_map[str(section_id)]
+            # Convert full paths to relative paths
+            section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in all_paths]
+            section["has_content_video"] = True
+            recap_count += 1
+            print(f"[RECONCILE] Set recap_video_paths for section {section_id}: {len(all_paths)} videos")
     
-    print(f"[RECONCILE] Updated {len(video_map)} sections with video paths")
+    print(f"[RECONCILE] Updated {len(video_map)} sections with video paths, {recap_count} with recap paths")
 
 
 def process_pdf_to_videos_v12(
@@ -721,13 +739,25 @@ def resume_job_from_phase(
     return job_status
 
 
-def _reconcile_video_paths(presentation: dict, rendered_videos: list):
-    """Helper to update presentation with rendered video paths."""
+def _reconcile_video_paths_v2(presentation: dict, rendered_videos: list):
+    """Helper to update presentation with rendered video paths.
+    
+    ISS-092 FIX: Also sets recap_video_paths for recap sections.
+    """
     video_map = {v.get("section_id"): v for v in rendered_videos}
     
     for section in presentation.get("sections", []):
         section_id = section.get("section_id") or section.get("id")
+        section_type = section.get("section_type", "")
+        
         if section_id in video_map:
             video_info = video_map[section_id]
             section["video_path"] = video_info.get("video_path")
             section["video_status"] = video_info.get("status")
+            
+            # ISS-092 FIX: Set recap_video_paths for recap sections
+            if section_type == "recap" and video_info.get("recap_video_paths"):
+                all_paths = video_info.get("recap_video_paths")
+                section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in all_paths]
+                section["has_content_video"] = True
+                print(f"[RECONCILE v2] Set recap_video_paths for section {section_id}: {len(all_paths)} videos")

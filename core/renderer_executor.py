@@ -166,6 +166,11 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
         
         result["status"] = "success"
         result["video_path"] = video_path
+        
+        # ISS-092 FIX: Capture recap video paths if they were set by WAN renderer
+        if topic.get("_recap_video_paths"):
+            result["recap_video_paths"] = topic["_recap_video_paths"]
+            print(f"[RENDER] Captured {len(result['recap_video_paths'])} recap video paths for section {topic_id}")
     except Exception as e:
         result["status"] = "failed"
         result["error"] = str(e)

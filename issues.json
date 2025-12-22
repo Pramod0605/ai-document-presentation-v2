@@ -1456,6 +1456,19 @@
       "fix": "Updated FORBIDDEN section to list exact phrases that cause rejection, matching wan_prompt_validator.py",
       "files_modified": ["core/prompts/recap_director_system_v1.4.txt"],
       "lesson": "Prompt FORBIDDEN lists must exactly match validator phrase detection lists"
+    },
+    {
+      "id": "ISS-092",
+      "title": "recap_video_paths never set - 5 recap videos generated but not wired to player",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "WAN renderer generates 5 recap videos (recap_{topic_id}_scene_{1..5}.mp4) but _render_recap_scenes only returned first path. recap_video_paths was never populated on sections, so player only saw first video or no videos.",
+      "error": "Player shows 'No video available' for recap scenes 2-5, or only first recap video plays",
+      "root_cause": "Critical wiring gap: _render_recap_scenes returned video_paths[0] instead of all 5 paths. No code path set recap_video_paths on sections.",
+      "fix": "1) _render_recap_scenes returns dict with first_path and all_paths, 2) render_wan_video stores all_paths on topic._recap_video_paths, 3) execute_renderer captures recap_video_paths to result, 4) _reconcile_video_paths sets recap_video_paths on recap sections",
+      "files_modified": ["render/wan/wan_runner.py", "core/renderer_executor.py", "core/pipeline_v12.py"],
+      "lesson": "Verify complete data flow from renderer to player for multi-item outputs"
     }
   ],
   "metadata": {
