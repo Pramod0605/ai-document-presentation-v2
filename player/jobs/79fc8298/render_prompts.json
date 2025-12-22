@@ -1,0 +1,34 @@
+[
+  {
+    "timestamp": "2025-12-22T16:37:35.945914",
+    "section_id": "section_4",
+    "section_title": "The Fundamental Theorem of Calculus",
+    "renderer": "manim_v12",
+    "prompt": "axes = Axes(x_range=[-5, 5, 1], y_range=[-3, 3, 1], x_length=10, y_length=6, axis_config={\"include_tip\": True})\nself.play(Create(axes), run_time=1)\ntitle = MathTex(r\"\\text{The Fundamental Theorem of Calculus}\").scale(1.0).move_to(np.array([0, 3, 0]))\ncurve = axes.plot(lambda x: x**2, color=WHITE)\ntangent_line = Dot(point=np.array([-2, 0.5, 0]), color=RED)\ndiff_label = MathTex(r\"\\text{Differentiation}\").scale(0.7).move_to(np.array([-2, -1, 0]))\narea_shade = Dot(point=np.array([2, 0.5, 0]), color=GREEN)\nint_label = MathTex(r\"\\text{Integration}\").scale(0.7).move_to(np.array([2, -1, 0]))\npart1_formula = MathTex(r\"\\frac{d}{dx} \\int_{a}^{x} f(t) \\, dt = f(x)\").move_to(np.array([0, 1, 0]))\npart1_label = MathTex(r\"\\text{Part 1: Inverse Operations}\").scale(0.8).move_to(np.array([0, 2.5, 0]))\npart2_formula = MathTex(r\"\\int_{a}^{b} f(x) \\, dx = F(b) - F(a)\").move_to(np.array([0, 0, 0]))\npart2_label = MathTex(r\"\\text{Part 2: Definite Integral}\").scale(0.8).move_to(np.array([0, 1.5, 0]))\nsummary_point1 = MathTex(r\"\\text{Connects Differentiation and Integration}\").scale(0.8).move_to(np.array([0, 1, 0]))\nsummary_point2 = MathTex(r\"\\text{Calculates Area Under a Curve}\").scale(0.8).move_to(np.array([0, 0, 0]))\n\n# Animation sequence\nself.play(FadeIn(title), run_time=2)\nself.play(Create(curve), run_time=3)\nself.play(Create(tangent_line), run_time=2)\nself.play(FadeIn(diff_label), run_time=1)\nself.play(Create(area_shade), run_time=2)\nself.play(FadeIn(int_label), run_time=1)\nself.wait(9)\nself.play(FadeOut(title), run_time=1)\nself.play(FadeOut(curve), run_time=1)\nself.play(FadeOut(tangent_line), run_time=1)\nself.play(FadeOut(diff_label), run_time=1)\nself.play(FadeOut(area_shade), run_time=1)\nself.play(FadeOut(int_label), run_time=1)\nself.play(FadeIn(part1_label), run_time=1)\nself.play(Write(part1_formula), run_time=3)\nself.wait(12)\nself.play(FadeOut(part1_label), run_time=1)\nself.play(FadeOut(part1_formula), run_time=1)\nself.play(FadeIn(part2_label), run_time=1)\nself.play(Write(part2_formula), run_time=3)\nself.wait(12)\nself.play(FadeOut(part2_label), run_time=1)\nself.play(FadeOut(part2_formula), run_time=1)\nself.play(FadeIn(summary_point1), run_time=2)\nself.play(FadeIn(summary_point2), run_time=2)\nself.play(Indicate(summary_point1), run_time=1)\nself.play(Indicate(summary_point2), run_time=1)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/79fc8298/videos/topic_section_4.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v12_spec_generated",
+      "object_count": 12,
+      "animation_count": 27,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-22T16:37:44.756413",
+    "section_id": "section_5",
+    "section_title": "Example: Calculating Wave Speed",
+    "renderer": "manim_v12",
+    "prompt": "problem_statement = MathTex(r\"\\text{Problem: Calculate wave speed}\").scale(0.8).move_to(np.array([0, 2.5, 0]))\ngiven_frequency = MathTex(r\"\\text{Given: } f = 50 \\text{ Hz}\").scale(0.7).move_to(np.array([0, 1.5, 0]))\ngiven_wavelength = MathTex(r\"\\text{Given: } \\lambda = 2 \\text{ m}\").scale(0.7).move_to(np.array([0, 0.8, 0]))\nformula = MathTex(r\"v = f \\lambda\").move_to(np.array([0, 0, 0]))\nsubstitution = MathTex(r\"v = (50 \\text{ Hz}) \\times (2 \\text{ m})\").move_to(np.array([0, 0, 0]))\nresult = MathTex(r\"v = 100 \\text{ m/s}\").move_to(np.array([0, 0, 0]))\n\n# Animation sequence\nself.play(FadeIn(problem_statement), run_time=2.0)\nself.play(FadeIn(given_frequency), run_time=3.0)\nself.play(FadeIn(given_wavelength), run_time=3.0)\nself.play(Write(formula), run_time=5.0)\nself.play(FadeOut(problem_statement), run_time=1.0)\nself.play(FadeOut(given_frequency), run_time=1.0)\nself.play(FadeOut(given_wavelength), run_time=1.0)\nself.play(Write(substitution), run_time=3.0)\nself.play(Write(result), run_time=3.0)\nself.play(Indicate(result), run_time=2.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/79fc8298/videos/topic_section_5.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v12_spec_generated",
+      "object_count": 6,
+      "animation_count": 12,
+      "duration": 30,
+      "dry_run": false
+    }
+  }
+]
