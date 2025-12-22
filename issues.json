@@ -1332,14 +1332,28 @@
       "root_cause": "No type checking on video_prompt before calling .split()",
       "fix": "Added isinstance checks to handle dict case, extract text/prompt field or stringify",
       "files_modified": ["core/recap_director.py"]
+    },
+    {
+      "id": "ISS-082",
+      "title": "Recap Director system prompt had v1.3 format conflicting with v1.4 user prompt",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "System prompt said 'EXACTLY 2 sections: memory and recap' (v1.3) while user prompt said '6 sections with recap_scene_1-5' (v1.4). LLM followed system prompt and returned invalid 'recap' section_type.",
+      "error": "Structural errors: Invalid section_type 'recap' - allowed: memory, recap_scene_1-5",
+      "root_cause": "User prompt was updated to v1.4 split architecture but system prompt was not updated",
+      "fix": "Rewrote recap_director_system_v1.4.txt to match v1.4 architecture with 6 sections",
+      "files_modified": ["core/prompts/recap_director_system_v1.4.txt"],
+      "testing_gap": "Initial curl test happened to get compliant LLM output - did not verify prompt consistency or test multiple runs"
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-22T15:15:00.000000",
-    "version": "14.5",
+    "last_updated": "2025-12-22T15:25:00.000000",
+    "version": "14.6",
     "spec_version": "v1.4",
     "spec_file": "docs/llm_output_requirements_v1.4.json",
-    "resolved_count": 74,
-    "open_count": 2
+    "resolved_count": 75,
+    "open_count": 2,
+    "testing_lesson": "Single curl test insufficient - must verify prompt file consistency and test multiple LLM runs"
   }
 }
