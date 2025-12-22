@@ -13,8 +13,7 @@ from flask_cors import CORS
 
 from core.pipeline import process_pdf_to_videos
 from core.pipeline_v12 import process_markdown_to_videos_v12 as process_markdown_to_videos
-from core.pipeline_v14 import process_markdown_to_presentation_v14, get_pipeline_info, validate_presentation_v14
-from core.renderer_executor import render_all_topics
+from core.pipeline_v14 import get_pipeline_info
 from core.job_manager import job_manager, run_job_async, is_job_running, get_current_job_id
 
 app = Flask(__name__)
@@ -285,104 +284,20 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
 
 
 def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "narakeet") -> dict:
-    """Process markdown using V1.4 Split Director pipeline."""
-    job_output_dir = Path(output_dir)
-    
-    def status_callback(jid, phase, message):
-        job_manager.update_job(jid, {
-            "current_phase_key": phase,
-            "status_message": message
-        }, persist=True)
-    
-    generate_tts = tts_provider != "estimate" and not dry_run
-    effective_tts = "pyttsx3" if dry_run else tts_provider
-    
-    presentation, tracker = process_markdown_to_presentation_v14(
+    """Process markdown using V1.4 Hybrid pipeline (Split Directors + V1.3 infrastructure)."""
+    result = process_markdown_to_videos(
         markdown_content=markdown_content,
         subject=subject,
         grade=grade,
+        output_dir=output_dir,
         job_id=job_id,
-        update_status_callback=status_callback,
-        generate_tts=generate_tts,
-        output_dir=job_output_dir,
-        tts_provider=effective_tts
+        dry_run=dry_run,
+        skip_wan=skip_wan,
+        skip_avatar=skip_avatar,
+        source_file=source_file,
+        use_remotion=True
     )
-    
-    validation = validate_presentation_v14(presentation)
-    
-    pres_path = job_output_dir / "presentation.json"
-    with open(pres_path, "w") as f:
-        json.dump(presentation, f, indent=2)
-    
-    if validation.get("has_errors"):
-        job_manager.update_job(job_id, {
-            "status": "failed",
-            "progress": 100,
-            "validation": validation,
-            "error": "Presentation validation failed"
-        }, persist=True)
-        return {
-            "status": "validation_failed",
-            "job_id": job_id,
-            "validation": validation,
-            "pipeline_version": "v1.4"
-        }
-    
-    status_callback(job_id, "rendering", "Rendering videos...")
-    
-    videos_dir = job_output_dir / "videos"
-    os.makedirs(videos_dir, exist_ok=True)
-    
-    try:
-        rendered_videos = render_all_topics(
-            presentation=presentation,
-            output_dir=str(videos_dir),
-            dry_run=dry_run,
-            skip_wan=skip_wan,
-            output_dir_base=str(job_output_dir),
-            strict_mode=True
-        )
-        
-        success_count = sum(1 for v in rendered_videos if v.get("status") in ["success", "skipped"])
-        fail_count = len(rendered_videos) - success_count
-        
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        rendered_videos = []
-        fail_count = 1
-        success_count = 0
-    
-    analytics_summary = tracker.get_summary() if hasattr(tracker, 'get_summary') else {}
-    
-    final_status = "completed" if fail_count == 0 else "completed_with_warnings"
-    
-    job_manager.update_job(job_id, {
-        "status": final_status,
-        "progress": 100,
-        "validation": validation,
-        "analytics": analytics_summary,
-        "render_stats": {
-            "success": success_count,
-            "failed": fail_count,
-            "skip_wan": skip_wan
-        }
-    }, persist=True)
-    
-    return {
-        "status": "success" if fail_count == 0 else "partial_success",
-        "job_id": job_id,
-        "validation": validation,
-        "analytics": analytics_summary,
-        "output_path": str(pres_path),
-        "skip_wan": skip_wan,
-        "tts_provider": effective_tts,
-        "pipeline_version": "v1.4",
-        "render_stats": {
-            "success": success_count,
-            "failed": fail_count
-        }
-    }
+    return result
 
 
 @app.route("/process_pdf", methods=["POST"])

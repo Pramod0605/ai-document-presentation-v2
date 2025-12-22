@@ -24,7 +24,7 @@ from datetime import datetime
 from typing import Optional
 
 from core.datalab_client import pdf_to_markdown
-from core.llm_client_v12 import generate_presentation_v12, PipelineError
+from core.llm_client_v12 import generate_presentation_v12, generate_presentation_v14_hybrid, PipelineError
 from core.renderer_executor import render_all_topics, enforce_renderer_policy
 from core.image_processor import extract_images_from_markdown, strip_base64_from_markdown, create_image_list_for_llm
 from core.traceability import init_traceability, log_event, log_validation, log_hard_fail, complete_trace, save_render_prompts_json
@@ -187,7 +187,7 @@ def process_pdf_to_videos_v12(
         if images_list_text:
             llm_content = f"{images_list_text}\n\n---\n\n{markdown_for_llm}"
         
-        presentation, analytics_tracker = generate_presentation_v12(
+        presentation, analytics_tracker = generate_presentation_v14_hybrid(
             markdown_content=llm_content,
             subject=subject,
             grade=grade,
@@ -430,7 +430,7 @@ def process_markdown_to_videos_v12(
         if images_list_text:
             llm_content = f"{images_list_text}\n\n---\n\n{markdown_for_llm}"
         
-        presentation, analytics_tracker = generate_presentation_v12(
+        presentation, analytics_tracker = generate_presentation_v14_hybrid(
             markdown_content=llm_content,
             subject=subject,
             grade=grade,

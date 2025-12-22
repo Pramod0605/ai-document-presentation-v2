@@ -952,6 +952,101 @@ def rerender_sections_wan(
     return presentation
 
 
+def generate_presentation_v14_hybrid(
+    markdown_content: str,
+    subject: str = "General Science",
+    grade: str = "9",
+    chapter: str = "",
+    use_remotion: bool = True
+) -> Tuple[Dict, AnalyticsTracker]:
+    """
+    V1.4 HYBRID: Split Directors + V1.3 Rendering Infrastructure.
+    
+    This function uses the v1.4 Split Director approach (Content Director + Recap Director)
+    while keeping the v1.3 rendering pipeline (Manim, Remotion, WAN).
+    
+    Pipeline:
+    - Pass 0: Chunker (same as v1.3)
+    - Pass 1a: Content Director (intro, summary, content, example, quiz)
+    - Pass 1b: Recap Director (memory + 5 recap scenes)
+    - Merge: Combine Content + Recap outputs
+    - Pass 2: Dispatch Renderers (same as v1.3)
+    
+    Returns:
+        Tuple of (presentation dict, analytics tracker)
+    """
+    from core.smart_chunker import call_smart_chunker
+    from core.content_director import call_content_director
+    from core.recap_director import call_recap_director
+    from core.merge_step import merge_director_outputs
+    
+    import uuid
+    job_id = str(uuid.uuid4())[:8]
+    
+    tracker = create_tracker(job_id)
+    tracker.start_pipeline()
+    
+    try:
+        log("[V1.4 Hybrid] Pass 0: Smart Chunker...")
+        chunker_output = call_smart_chunker(
+            markdown_content=markdown_content,
+            subject=subject,
+            tracker=tracker,
+            max_retries=2
+        )
+        
+        log("[V1.4 Hybrid] Pass 1a: Content Director...")
+        content_output = call_content_director(
+            chunker_output=chunker_output,
+            subject=subject,
+            grade=grade,
+            tracker=tracker,
+            max_structural_retries=2,
+            max_semantic_retries=1
+        )
+        
+        log("[V1.4 Hybrid] Pass 1b: Recap Director...")
+        recap_output = call_recap_director(
+            full_markdown=markdown_content,
+            subject=subject,
+            grade=grade,
+            tracker=tracker,
+            max_structural_retries=2,
+            max_semantic_retries=1
+        )
+        
+        log("[V1.4 Hybrid] Merging Content + Recap outputs...")
+        merged_sections = merge_director_outputs(content_output, recap_output)
+        
+        presentation = {
+            "sections": merged_sections,
+            "metadata": {
+                "pipeline_version": "1.4_hybrid",
+                "chunker_topics": len(chunker_output.get("topics", [])),
+                "content_sections": len(content_output.get("sections", [])),
+                "recap_sections": len(recap_output.get("sections", []))
+            }
+        }
+        
+        log("[V1.4 Hybrid] Pass 2: Dispatch Renderers (v1.3 infrastructure)...")
+        presentation = pass2_dispatch_renderers(presentation, tracker, use_remotion=use_remotion)
+        
+        presentation["subject"] = subject
+        presentation["grade"] = grade
+        presentation["pipeline_version"] = "1.4_hybrid"
+        presentation["job_id"] = job_id
+        
+        tracker.end_pipeline(status="completed")
+        tracker.print_summary()
+        
+        return presentation, tracker
+        
+    except Exception as e:
+        tracker.end_pipeline(status="failed", error=str(e))
+        tracker.print_summary()
+        raise
+
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1:
