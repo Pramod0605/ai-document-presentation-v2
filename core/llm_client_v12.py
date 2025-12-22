@@ -1013,9 +1013,12 @@ def generate_presentation_v14_hybrid(
             max_retries=2
         )
         
+        topics = chunker_output.get("topics", [])
+        log(f"[V1.4 Hybrid] Smart Chunker produced {len(topics)} topics")
+        
         update_status("director", "Content Director planning lesson structure...")
         content_output = call_content_director(
-            chunker_output=chunker_output,
+            topics=topics,
             subject=subject,
             grade=grade,
             tracker=tracker,
