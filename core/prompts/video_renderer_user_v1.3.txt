@@ -4,17 +4,20 @@ SECTION DATA:
 {section_json}
 
 INSTRUCTIONS:
-1. Expand each visual beat description into a rich, 100-150 word cinematic prompt.
+1. Expand each visual beat description into a rich, 300+ word cinematic prompt.
 2. Focus on organic textures (wet tissue, fibrous muscle, glass-like lens).
 3. Ensure seamless transitions between the beats.
 4. Use fluid narrative transitions, NOT rigid timestamps.
 5. Define camera movement, lighting, and materials for every beat.
 
 REQUIREMENTS FOR EACH BEAT:
-- At least 100 words per prompt (MANDATORY).
+- MINIMUM 300 words per prompt (MANDATORY - prompts under 300 words will be REJECTED).
 - Describe each object explicitly with color, size, texture, material.
 - Specify camera framing: angle, movement, zoom level.
 - Include lighting conditions and atmosphere.
+- Add environmental details: particles, fog, depth of field, reflections.
+- Describe motion sequences: how objects move, transform, interact.
+- Include Indian context where applicable (familiar settings, cultural elements).
 - No narration text - describe visuals only.
 - No abstract phrases - be literal and specific.
 
@@ -33,7 +36,8 @@ RESPONSE FORMAT (use EXACTLY this structure):
 
 CRITICAL RULES:
 - Use exactly "video_prompts" as the key.
-- Each prompt MUST be at least 100 words.
+- Each prompt MUST be at least 300 words (HARD REQUIREMENT - shorter prompts will FAIL).
 - Use fluid transitions ("The scene opens...", "As the camera pulls back...", "Simultaneously...").
 - NO rigid timestamps like "At 0 seconds..." or "At 5 seconds...".
 - Output JSON only. No markdown. No backticks.
+- Include rich detail: camera angles, lighting, textures, colors, motion, atmosphere.

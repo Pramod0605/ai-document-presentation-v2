@@ -179,9 +179,18 @@ def _merge_recap_scenes_to_single_section(recap_scene_sections: Dict[str, Dict])
         
         scene_duration = narration.get("total_duration", 0) or scene.get("duration", 30)
         
+        # v1.4 FIX: Handle both video_prompt (legacy) and visual_beats (new v1.4)
         video_prompt = scene.get("video_prompt", "")
         if isinstance(video_prompt, dict):
             video_prompt = video_prompt.get("prompt", "") or video_prompt.get("description", "")
+        
+        # If no video_prompt, check visual_beats (new v1.4 format)
+        if not video_prompt:
+            scene_visual_beats = scene.get("visual_beats", [])
+            if scene_visual_beats and len(scene_visual_beats) > 0:
+                first_beat = scene_visual_beats[0]
+                if isinstance(first_beat, dict):
+                    video_prompt = first_beat.get("description", "") or first_beat.get("prompt", "")
         
         visual_beats.append({
             "scene_id": scene_index,

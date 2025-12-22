@@ -14,7 +14,7 @@ from core.dry_run_validator import (
 )
 
 
-TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory"]
+TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory", "quiz"]
 
 
 class DryRunValidationError(Exception):

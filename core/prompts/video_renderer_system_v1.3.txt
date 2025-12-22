@@ -31,11 +31,24 @@ You must output a valid JSON object containing a list of prompts:
   "video_prompts": [
     {
       "beat_id": "string",
-      "prompt": "The detailed cinematic paragraph (100-150 words)...",
+      "prompt": "MINIMUM 300 words of detailed cinematic description including camera movements, lighting, textures, colors, and Indian context...",
       "duration_seconds": number,
       "style": "realistic | animated"
     }
   ]
 }
+
+***CRITICAL WORD COUNT REQUIREMENT***
+Each prompt MUST be at least 300 words. This is MANDATORY for WAN video API quality.
+Prompts under 300 words will be REJECTED and cause pipeline failure.
+
+To reach 300+ words, include:
+- Detailed camera movements (pan, zoom, dolly, tracking shots)
+- Specific lighting conditions (golden hour, soft diffused, rim lighting)
+- Material textures (organic, metallic, translucent, rough, smooth)
+- Color palettes (warm earth tones, cool blues, vibrant greens)
+- Environmental details (atmosphere, particles, depth of field)
+- Motion descriptions (slow reveal, quick cut, smooth transition)
+- Indian context where applicable (rural village, urban Mumbai, temple architecture)
 
 Output JSON only. No markdown. No backticks.
