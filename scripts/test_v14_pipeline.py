@@ -11,7 +11,8 @@ It can be run in different modes:
 Usage:
     python scripts/test_v14_pipeline.py --mode info_only
     python scripts/test_v14_pipeline.py --mode dry_run
-    python scripts/test_v14_pipeline.py --mode full_test --skip-tts
+    python scripts/test_v14_pipeline.py --mode full_test --tts-provider pyttsx3
+    python scripts/test_v14_pipeline.py --mode full_test --markdown-file attached_assets/Sample_subjects_v2_1766399532763.md
 """
 
 import os
@@ -87,6 +88,16 @@ def print_section(text: str):
     print(f"\n--- {text} ---")
 
 
+def load_markdown_file(file_path: str) -> str:
+    """Load markdown content from a file."""
+    path = Path(file_path)
+    if not path.exists():
+        raise FileNotFoundError(f"Markdown file not found: {file_path}")
+    
+    with open(path, "r", encoding="utf-8") as f:
+        return f.read()
+
+
 def test_pipeline_info():
     """Test the pipeline info endpoint."""
     print_header("V1.4 Pipeline Information")
@@ -122,7 +133,7 @@ def test_pipeline_info():
         return False, None
 
 
-def test_dry_run():
+def test_dry_run(markdown: str = None):
     """Test the dry-run endpoint."""
     print_header("V1.4 Dry Run Test")
     
@@ -130,7 +141,7 @@ def test_dry_run():
         response = requests.post(
             f"{API_BASE}/api/v14/dry-run-test",
             json={
-                "markdown": SAMPLE_MARKDOWN,
+                "markdown": markdown or SAMPLE_MARKDOWN,
                 "subject": "Biology",
                 "grade": "10"
             },
@@ -181,35 +192,65 @@ def test_dry_run():
         return False, None
 
 
-def test_full_pipeline(skip_tts: bool = True):
+def test_full_pipeline(
+    markdown: str = None,
+    subject: str = "Biology",
+    grade: str = "10",
+    skip_wan: bool = True,
+    tts_provider: str = "pyttsx3"
+):
     """Test the full V1.4 pipeline with actual LLM calls."""
     print_header("V1.4 Full Pipeline Test")
     print(f"\nWARNING: This will incur LLM API costs!")
-    print(f"Skip TTS: {skip_tts}")
+    print(f"TTS Provider: {tts_provider}")
+    print(f"Skip WAN: {skip_wan}")
+    print(f"Subject: {subject}")
+    print(f"Grade: {grade}")
+    
+    content = markdown or SAMPLE_MARKDOWN
+    print(f"Markdown Length: {len(content)} chars")
     
     try:
         print("\nSubmitting job...")
+        start_time = datetime.now()
+        
         response = requests.post(
             f"{API_BASE}/api/v14/generate",
             json={
-                "markdown": SAMPLE_MARKDOWN,
-                "subject": "Biology",
-                "grade": "10",
-                "skip_tts": skip_tts
+                "markdown": content,
+                "subject": subject,
+                "grade": grade,
+                "skip_wan": skip_wan,
+                "tts_provider": tts_provider
             },
-            timeout=300
+            timeout=600
         )
+        
+        elapsed = (datetime.now() - start_time).total_seconds()
+        print(f"Response received in {elapsed:.2f}s")
         
         result = response.json()
         
         print(f"\nStatus: {result.get('status')}")
-        print(f"Job ID: {result.get('job_id')}")
+        print(f"Job ID: {result.get('job_id', 'N/A')}")
         
         if result.get("status") == "error":
             print_section("Error Details")
             print(f"  Error: {result.get('error')}")
             if result.get("traceback"):
                 print(f"\n  Traceback:\n{result.get('traceback')}")
+            
+            error_msg = result.get('error', '')
+            if "Recap Director" in error_msg:
+                print_section("Recap Director Failure Analysis")
+                print("  The Recap Director failed semantic validation.")
+                print("  This is an LLM prompt engineering issue, not a TTS code issue.")
+                print("  The TTS code path was not reached due to earlier pipeline failure.")
+            elif "Content Director" in error_msg:
+                print_section("Content Director Failure Analysis")
+                print("  The Content Director failed validation.")
+                print("  The TTS code path was not reached due to earlier pipeline failure.")
+            
             return False, result
         
         print_section("Validation Results")
@@ -240,12 +281,20 @@ def test_full_pipeline(skip_tts: bool = True):
         print(f"  Title: {presentation.get('title')}")
         print(f"  Subject: {presentation.get('subject')}")
         
+        metadata = presentation.get("metadata", {})
+        if metadata:
+            print(f"\n  Metadata:")
+            print(f"    TTS Provider: {metadata.get('tts_provider')}")
+            print(f"    Total Duration: {metadata.get('total_duration_seconds')}s")
+            print(f"    TTS Segments: {metadata.get('tts_segments_processed')}")
+        
         sections = presentation.get("sections", [])
         print(f"\n  Sections ({len(sections)}):")
         for s in sections:
             section_type = s.get("section_type")
             renderer = s.get("renderer")
             seg_count = len(s.get("narration", {}).get("segments", []))
+            duration = s.get("narration", {}).get("total_duration_seconds", 0)
             
             extra = ""
             if section_type == "memory":
@@ -255,10 +304,12 @@ def test_full_pipeline(skip_tts: bool = True):
                 vp_count = len(s.get("video_prompts", []))
                 extra = f", video_prompts={vp_count}"
             
-            print(f"    - {s.get('section_id')}: {section_type} (renderer={renderer}, segments={seg_count}{extra})")
+            print(f"    - {s.get('section_id')}: {section_type} (renderer={renderer}, segments={seg_count}, duration={duration:.1f}s{extra})")
         
         print_section("Output")
         print(f"  Output Path: {result.get('output_path')}")
+        print(f"  TTS Provider Used: {result.get('tts_provider')}")
+        print(f"  Skip WAN: {result.get('skip_wan')}")
         
         return True, result
         
@@ -275,7 +326,7 @@ def test_full_pipeline(skip_tts: bool = True):
         return False, None
 
 
-def generate_report(results: dict):
+def generate_report(results: dict, output_file: str = None):
     """Generate a summary report."""
     print_header("V1.4 PIPELINE TEST REPORT")
     
@@ -285,18 +336,66 @@ def generate_report(results: dict):
     
     print_section("Test Results Summary")
     
+    report_lines = [
+        f"# V1.4 Pipeline Test Report",
+        f"Generated: {timestamp}",
+        f"API Base: {API_BASE}",
+        "",
+        "## Test Results",
+        ""
+    ]
+    
     for test_name, (success, data) in results.items():
         status = "PASS" if success else "FAIL"
         print(f"  [{status}] {test_name}")
+        report_lines.append(f"- **{test_name}**: {status}")
     
     all_passed = all(success for success, _ in results.values())
     
     print(f"\n{'='*60}")
     if all_passed:
         print(" ALL TESTS PASSED")
+        report_lines.append("\n## Summary\n**ALL TESTS PASSED**")
     else:
         print(" SOME TESTS FAILED")
+        report_lines.append("\n## Summary\n**SOME TESTS FAILED**")
     print(f"{'='*60}")
+    
+    if "full_pipeline" in results:
+        success, data = results["full_pipeline"]
+        if data and success:
+            report_lines.extend([
+                "",
+                "## Full Pipeline Details",
+                f"- Job ID: {data.get('job_id')}",
+                f"- Output Path: {data.get('output_path')}",
+                f"- TTS Provider: {data.get('tts_provider')}"
+            ])
+            
+            validation = data.get("validation", {})
+            report_lines.extend([
+                "",
+                "### Validation",
+                f"- Section Count: {validation.get('section_count')}",
+                f"- Total Segments: {validation.get('total_segments')}",
+                f"- Errors: {len(validation.get('errors', []))}",
+                f"- Warnings: {len(validation.get('warnings', []))}"
+            ])
+            
+            presentation = data.get("presentation", {})
+            metadata = presentation.get("metadata", {})
+            report_lines.extend([
+                "",
+                "### Duration",
+                f"- Total Duration: {metadata.get('total_duration_seconds')}s",
+                f"- Segments Processed: {metadata.get('tts_segments_processed')}"
+            ])
+    
+    if output_file:
+        output_path = Path(output_file)
+        with open(output_path, "w") as f:
+            f.write("\n".join(report_lines))
+        print(f"\nReport saved to: {output_path}")
     
     return all_passed
 
@@ -310,15 +409,41 @@ def main():
         help="Test mode: info_only (no API calls), dry_run (structure check), full_test (actual LLM calls)"
     )
     parser.add_argument(
-        "--skip-tts",
+        "--markdown-file",
+        default=None,
+        help="Path to markdown file to use instead of sample content"
+    )
+    parser.add_argument(
+        "--subject",
+        default="Biology",
+        help="Subject area (default: Biology)"
+    )
+    parser.add_argument(
+        "--grade",
+        default="10",
+        help="Grade level (default: 10)"
+    )
+    parser.add_argument(
+        "--tts-provider",
+        choices=["narakeet", "pyttsx3", "estimate"],
+        default="pyttsx3",
+        help="TTS provider: narakeet (production), pyttsx3 (local/dry run), estimate (word-count based)"
+    )
+    parser.add_argument(
+        "--skip-wan",
         action="store_true",
         default=True,
-        help="Skip TTS generation in full_test mode (default: True)"
+        help="Skip WAN video rendering (default: True)"
     )
     parser.add_argument(
         "--api-base",
         default=None,
         help="API base URL (default: http://localhost:5000)"
+    )
+    parser.add_argument(
+        "--report",
+        default=None,
+        help="Path to save test report (optional)"
     )
     
     args = parser.parse_args()
@@ -327,21 +452,40 @@ def main():
     if args.api_base:
         API_BASE = args.api_base
     
+    markdown_content = None
+    if args.markdown_file:
+        try:
+            markdown_content = load_markdown_file(args.markdown_file)
+            print(f"Loaded markdown from: {args.markdown_file}")
+            print(f"Content length: {len(markdown_content)} chars")
+        except FileNotFoundError as e:
+            print(f"[ERROR] {e}")
+            sys.exit(1)
+    
     print(f"\nV1.4 Pipeline Test Script")
     print(f"Mode: {args.mode}")
     print(f"API: {API_BASE}")
+    if args.mode == "full_test":
+        print(f"TTS Provider: {args.tts_provider}")
+        print(f"Skip WAN: {args.skip_wan}")
     
     results = {}
     
     results["pipeline_info"] = test_pipeline_info()
     
     if args.mode == "dry_run" or args.mode == "full_test":
-        results["dry_run"] = test_dry_run()
+        results["dry_run"] = test_dry_run(markdown=markdown_content)
     
     if args.mode == "full_test":
-        results["full_pipeline"] = test_full_pipeline(skip_tts=args.skip_tts)
+        results["full_pipeline"] = test_full_pipeline(
+            markdown=markdown_content,
+            subject=args.subject,
+            grade=args.grade,
+            skip_wan=args.skip_wan,
+            tts_provider=args.tts_provider
+        )
     
-    success = generate_report(results)
+    success = generate_report(results, output_file=args.report)
     
     sys.exit(0 if success else 1)
 

@@ -135,7 +135,18 @@ def update_durations_from_tts(
             try:
                 if tts_provider == "narakeet":
                     audio_path = audio_dir / f"{audio_filename}.mp3"
-                    actual_duration = _generate_narakeet(text, audio_path)
+                    try:
+                        actual_duration = _generate_narakeet(text, audio_path)
+                    except NarakeetError as e:
+                        if PYTTSX3_AVAILABLE and pyttsx3_engine is None:
+                            logger.warning(f"[TTS Duration] Narakeet failed, falling back to pyttsx3: {e}")
+                            pyttsx3_engine = pyttsx3.init()
+                            pyttsx3_engine.setProperty('rate', 150)
+                        if pyttsx3_engine:
+                            audio_path = audio_dir / f"{audio_filename}.wav"
+                            actual_duration = _generate_pyttsx3(text, audio_path, pyttsx3_engine)
+                        else:
+                            raise
                 else:
                     audio_path = audio_dir / f"{audio_filename}.wav"
                     actual_duration = _generate_pyttsx3(text, audio_path, pyttsx3_engine)
@@ -169,6 +180,11 @@ def update_durations_from_tts(
     return presentation
 
 
+class NarakeetError(Exception):
+    """Raised when Narakeet API fails after all retries."""
+    pass
+
+
 def _generate_narakeet(text: str, output_path: Path) -> float:
     """
     Generate TTS audio using Narakeet API and measure its duration.
@@ -179,6 +195,9 @@ def _generate_narakeet(text: str, output_path: Path) -> float:
         
     Returns:
         Audio duration in seconds
+        
+    Raises:
+        NarakeetError: If Narakeet fails after all retries (allows fallback to pyttsx3)
     """
     for attempt in range(MAX_RETRIES):
         try:
@@ -216,16 +235,18 @@ def _generate_narakeet(text: str, output_path: Path) -> float:
                 
             else:
                 logger.error(f"[TTS Duration] API error: {response.status_code}")
-                raise Exception(f"Narakeet API error: {response.status_code}")
+                raise NarakeetError(f"Narakeet API error: {response.status_code}")
                 
+        except NarakeetError:
+            raise
         except Exception as e:
             if attempt < MAX_RETRIES - 1:
                 logger.warning(f"[TTS Duration] Retry {attempt + 1}/{MAX_RETRIES}: {e}")
                 time.sleep(RETRY_DELAY)
             else:
-                raise
+                raise NarakeetError(f"Failed after {MAX_RETRIES} attempts: {e}")
     
-    raise Exception(f"Failed to generate TTS after {MAX_RETRIES} attempts")
+    raise NarakeetError(f"Failed to generate TTS after {MAX_RETRIES} attempts")
 
 
 def _generate_pyttsx3(text: str, output_path: Path, engine) -> float:

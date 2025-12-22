@@ -77,16 +77,30 @@ The user wants an iterative development process. The agent should prioritize cle
 ## V1.4 API Endpoints
 - `GET /api/v14/pipeline-info` - Returns pipeline architecture information
 - `POST /api/v14/generate` - Run full V1.4 Split Director pipeline
+  - Parameters: `markdown` (required), `subject`, `grade`, `skip_wan`, `tts_provider`
+  - `tts_provider`: "narakeet" (production quality), "pyttsx3" (local/offline for testing), "estimate" (word-count only, skips audio)
 - `POST /api/v14/dry-run-test` - Test pipeline structure without LLM calls
+
+## TTS Provider Options
+- **narakeet**: Production-quality Indian English voice (Ravi). Requires NARAKEET_API_KEY. Falls back to pyttsx3 on failure.
+- **pyttsx3**: Local/offline TTS for testing. Duration measurement only, quality irrelevant. Saves to .wav files.
+- **estimate**: Word-count based duration estimation (~130 wpm). No audio generation. Fastest for dry runs.
 
 ## Test Scripts
 - `scripts/test_v14_pipeline.py` - End-to-end pipeline test script
   - `--mode info_only` - Check pipeline info only
   - `--mode dry_run` - Test endpoints without LLM calls
   - `--mode full_test` - Run actual pipeline with LLMs (incurs costs)
+  - `--markdown-file <path>` - Use custom markdown file instead of sample
+  - `--tts-provider <narakeet|pyttsx3|estimate>` - Select TTS provider
+  - `--skip-wan` - Skip WAN video rendering
+  - `--report <path>` - Save test report to file
 
 ## Recent Changes (2025-12-22)
 - Created `docs/llm_output_requirements_v1.4.json` documenting Split Director architecture
 - Added V1.4 API endpoints to `api/app.py`
 - Created dry run test script for pipeline validation
 - Exposed `validate_presentation_v14` as public function
+- Added TTS provider selection (narakeet/pyttsx3/estimate) with proper fallback chain
+- Implemented pyttsx3 for local/offline duration measurement during testing
+- Enhanced test script with --markdown-file, --tts-provider, --skip-wan, --report parameters

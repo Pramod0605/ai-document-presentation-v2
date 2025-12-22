@@ -694,13 +694,15 @@ def generate_v14():
                 "status_message": message
             }, persist=True)
         
+        generate_tts = tts_provider != "estimate"
+        
         presentation, tracker = process_markdown_to_presentation_v14(
             markdown_content=markdown_content,
             subject=subject,
             grade=grade,
             job_id=job_id,
             update_status_callback=status_callback,
-            generate_tts=True,
+            generate_tts=generate_tts,
             output_dir=job_output_dir,
             tts_provider=tts_provider
         )
