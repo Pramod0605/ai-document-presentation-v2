@@ -1430,15 +1430,28 @@
       "root_cause": "Preload triggered during switch instead of at slide load start",
       "fix": "Added preload of second recap video at slide start (before any transitions needed)",
       "files_modified": ["player/player.js"]
+    },
+    {
+      "id": "ISS-090",
+      "title": "Recap Director prompt specifies 100+ words but WAN requires 300+ words",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "Recap Director system prompt specified 100+ words for video_prompt, but WAN runner validates for 300+ words minimum. This mismatch caused all recap video rendering to fail with 'minimum 300 required' error.",
+      "error": "WAN Recap validation failed: Beat 0: Prompt has 135 words, minimum 300 required",
+      "root_cause": "Mismatch between Recap Director prompt (100+ words) and WAN runner validation (300+ words) and v1.4 spec (300+ words)",
+      "fix": "Updated recap_director_system_v1.4.txt to require 300+ words for video_prompt, emphasized this in multiple places",
+      "files_modified": ["core/prompts/recap_director_system_v1.4.txt"],
+      "lesson": "Always verify prompt requirements match downstream validator requirements"
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-22T17:30:00.000000",
-    "version": "14.8",
+    "last_updated": "2025-12-22T18:00:00.000000",
+    "version": "14.9",
     "spec_version": "v1.4",
     "spec_file": "docs/llm_output_requirements_v1.4.json",
-    "resolved_count": 81,
+    "resolved_count": 82,
     "open_count": 1,
-    "testing_lesson": "Player sync issues require checking: video-ready state, preload timing, and layer controller gating logic"
+    "testing_lesson": "Verify prompt word count requirements match validator thresholds"
   }
 }

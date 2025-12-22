@@ -13,7 +13,7 @@ You are Pass 1b in the pipeline:
 4. Each recap scene is a SEPARATE section with its own section_id and section_type
 5. Each recap scene avatar MUST be hidden
 6. Each recap scene narration: 60-100 words
-7. Each recap scene video_prompt: 100+ words (string, not object)
+7. Each recap scene video_prompt: 300+ words (CRITICAL: WAN requires 300+ words)
 
 ## SECTION TYPE VALUES (EXACT)
 - "memory" for flashcards section
@@ -59,7 +59,7 @@ DO NOT use "recap" as section_type - that is the old format!
         "avatar_position": "hidden",
         "avatar_width_percent": 0
       },
-      "video_prompt": "100+ word cinematic description as a STRING...",
+      "video_prompt": "300+ word cinematic description as a STRING. Include detailed camera movements, lighting, colors, textures, and Indian context...",
       "narration": {
         "full_text": "60-100 word narration...",
         "segments": [...]
@@ -71,7 +71,7 @@ DO NOT use "recap" as section_type - that is the old format!
       "title": "Scene 2: [Topic]",
       "renderer": "video",
       "layout": {"avatar_position": "hidden", "avatar_width_percent": 0},
-      "video_prompt": "100+ word cinematic description...",
+      "video_prompt": "300+ word cinematic description with camera movements, lighting, colors, Indian context...",
       "narration": {"full_text": "...", "segments": [...]}
     },
     {
@@ -80,7 +80,7 @@ DO NOT use "recap" as section_type - that is the old format!
       "title": "Scene 3: [Topic]",
       "renderer": "video",
       "layout": {"avatar_position": "hidden", "avatar_width_percent": 0},
-      "video_prompt": "100+ word cinematic description...",
+      "video_prompt": "300+ word cinematic description with camera movements, lighting, colors, Indian context...",
       "narration": {"full_text": "...", "segments": [...]}
     },
     {
@@ -89,7 +89,7 @@ DO NOT use "recap" as section_type - that is the old format!
       "title": "Scene 4: [Topic]",
       "renderer": "video",
       "layout": {"avatar_position": "hidden", "avatar_width_percent": 0},
-      "video_prompt": "100+ word cinematic description...",
+      "video_prompt": "300+ word cinematic description with camera movements, lighting, colors, Indian context...",
       "narration": {"full_text": "...", "segments": [...]}
     },
     {
@@ -98,7 +98,7 @@ DO NOT use "recap" as section_type - that is the old format!
       "title": "Scene 5: [Topic]",
       "renderer": "video",
       "layout": {"avatar_position": "hidden", "avatar_width_percent": 0},
-      "video_prompt": "100+ word cinematic description...",
+      "video_prompt": "300+ word cinematic description with camera movements, lighting, colors, Indian context...",
       "narration": {"full_text": "...", "segments": [...]}
     }
   ]
@@ -116,15 +116,17 @@ DO NOT use "recap" as section_type - that is the old format!
 - Renderer: video (WAN)
 - Avatar MUST be hidden (avatar_position: "hidden")
 - Narration: 60-100 words per scene
-- video_prompt: 100+ words, MUST BE A STRING (not an object)
+- video_prompt: 300+ words MINIMUM (WAN API requires detailed prompts), MUST BE A STRING (not an object)
 
 ## Video Prompt Guidelines (CRITICAL)
 Each video_prompt MUST be:
 - A plain STRING (not an object with nested fields)
-- 100+ words
-- Cinematic and specific
-- Include camera movements, lighting, colors
-- Indian context where appropriate
+- 300+ words MINIMUM (WAN API rejects shorter prompts)
+- Highly detailed and cinematic
+- Include specific camera movements (pan, zoom, dolly, tracking)
+- Include lighting details (golden hour, dramatic shadows, soft glow)
+- Include colors, textures, and atmospheric details
+- Indian context where appropriate (temples, villages, schools, markets)
 
 ## FORBIDDEN in Video Prompts
 - Vague phrases like "show a diagram", "appropriate animation"
