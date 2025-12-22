@@ -1624,16 +1624,96 @@
         "core/prompts/content_director_system_v1.4.txt"
       ],
       "lesson": "When splitting a monolithic prompt, ALL rendering-related instructions must be preserved in the appropriate child prompt"
+    },
+    {
+      "id": "ISS-106",
+      "title": "V1.4 Pipeline does not execute renderers - videos folder empty",
+      "status": "open",
+      "created": "2025-12-22",
+      "severity": "high",
+      "description": "Full V1.4 pipeline test with skip_wan=false completes successfully but produces no video files. The videos/ folder is empty despite sections having renderer assignments (remotion, manim, video).",
+      "evidence": {
+        "job_id": "ffeff345",
+        "sections": "8 sections with renderers assigned",
+        "videos_folder": "empty (0 files)",
+        "expected": "Video files for each section"
+      },
+      "root_cause": "NEEDS INVESTIGATION - V1.4 pipeline may only run LLM passes (Chunker, Content Director, Recap Director) without invoking Pass 2 renderers",
+      "proposed_fix": "Verify process_with_renderers_v14() is being called and pass2_dispatch_renderers() executes properly",
+      "files_to_check": ["core/pipeline_v14.py", "core/llm_client_v12.py", "api/app.py"]
+    },
+    {
+      "id": "ISS-107",
+      "title": "Memory and Recap sections have 0 duration in segments",
+      "status": "open",
+      "created": "2025-12-22",
+      "severity": "medium",
+      "description": "Memory section (6 segments) and Recap section (25 segments) both show total duration = 0.0s. TTS estimate provider should still calculate word-based durations.",
+      "evidence": {
+        "memory_segments": 6,
+        "memory_duration": "0.0s",
+        "recap_segments": 25,
+        "recap_duration": "0.0s",
+        "other_sections": "intro=30s, summary=35s, content=46s+56s, example=57s, quiz=32s (all correct)"
+      },
+      "root_cause": "NEEDS INVESTIGATION - TTS duration estimation may not run for memory/recap sections, or Recap Director output format differs from expected",
+      "proposed_fix": "Check TTS duration pass applies to all sections including memory/recap"
+    },
+    {
+      "id": "ISS-108",
+      "title": "Recap scenes have 0 visual_beats after merge",
+      "status": "open",
+      "created": "2025-12-22",
+      "severity": "high",
+      "description": "All 5 recap scenes show visual_beats: 0 in final presentation. Per ISS-095 fix, Recap Director should output short visual_beats (50-80 words) for Video Renderer to expand.",
+      "evidence": {
+        "recap_scenes": 5,
+        "visual_beats_per_scene": [0, 0, 0, 0, 0],
+        "expected": "At least 1 visual_beat per scene with 50+ word description"
+      },
+      "root_cause": "NEEDS INVESTIGATION - Either Recap Director not generating visual_beats, or merge step not preserving them",
+      "proposed_fix": "1) Check Recap Director raw output for visual_beats, 2) Verify merge_step preserves visual_beats array"
+    },
+    {
+      "id": "ISS-109",
+      "title": "Content sections with manim renderer missing manim_scene_spec",
+      "status": "open",
+      "created": "2025-12-22",
+      "severity": "high",
+      "description": "Content sections assigned renderer=manim are missing manim_scene_spec entirely. One content section has 1 visual_beat, other has 0. Manim requires scene specifications to render.",
+      "evidence": {
+        "content_section_1": {"renderer": "remotion", "visual_beats": 0, "manim_scene_spec": "MISSING"},
+        "content_section_2": {"renderer": "manim", "visual_beats": 1, "manim_scene_spec": "MISSING"},
+        "example_section": {"renderer": "manim", "manim_scene_spec": "MISSING"}
+      },
+      "root_cause": "Content Director ISS-100 fix may not be fully effective - LLM still not generating manim_scene_spec for math/physics content",
+      "proposed_fix": "1) Strengthen manim_scene_spec requirement in Content Director prompt, 2) Add validation to reject manim sections without scene spec"
+    },
+    {
+      "id": "ISS-110",
+      "title": "Content Director cost shows $0 in analytics",
+      "status": "open",
+      "created": "2025-12-22",
+      "severity": "low",
+      "description": "Analytics show content_director cost/tokens/duration all as 0, while recap_director shows proper values. This may indicate Content Director call not being tracked or a logging issue.",
+      "evidence": {
+        "content_director": {"cost_usd": 0.0, "duration_seconds": 0.0, "tokens": 0},
+        "recap_director": {"cost_usd": 0.0728, "duration_seconds": 102.15, "tokens": 9512},
+        "smart_chunker": {"cost_usd": 0.0145, "duration_seconds": 12.05, "tokens": 2033}
+      },
+      "root_cause": "NEEDS INVESTIGATION - Possible analytics tracking bug in Content Director phase",
+      "proposed_fix": "Check analytics collection in content_director.py or pipeline_v14.py"
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-22T19:30:00.000000",
-    "version": "14.11",
+    "last_updated": "2025-12-22T20:10:00.000000",
+    "version": "14.12",
     "spec_version": "v1.4",
     "spec_file": "docs/llm_output_requirements_v1.4.json",
     "resolved_count": 86,
-    "open_count": 1,
+    "open_count": 6,
     "testing_lesson": "Prompt FORBIDDEN lists must exactly match validator detection patterns",
-    "v14_video_retries": "Video renderer now has 3 total attempts (max_retries=2) for 300+ word compliance"
+    "v14_video_retries": "Video renderer now has 3 total attempts (max_retries=2) for 300+ word compliance",
+    "v14_full_test_2025_12_22": "Job ffeff345 - 8 sections generated, 5 new issues identified"
   }
 }
