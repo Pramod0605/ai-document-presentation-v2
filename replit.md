@@ -107,6 +107,17 @@ The Merge Step converts 5 separate `recap_scene_N` sections (easier for LLM to g
 - Player layer: Receives exactly what it expects, NO CHANGES NEEDED
 
 ## Recent Changes (2025-12-22)
+- **ISS-094 FIX**: Video Renderer prompt/WAN validation mismatch
+  - Updated Video Renderer prompt to require 300+ words (was 100-150)
+  - Aligned with WAN validation threshold
+  - Added detailed guidance for reaching 300+ words
+- **ISS-095 FIX**: Recap Director outputting 300+ word video_prompts directly
+  - Changed to output short visual_beats (50-80 words)
+  - Video Renderer LLM now expands them to 300+ words
+  - Reduces cognitive load on Recap Director
+- **ISS-096 FIX**: Quiz section using WAN renderer
+  - Added "quiz" to TEXT_ONLY_SECTION_TYPES
+  - Quiz now properly uses Remotion (motion graphics)
 - **ISS-093 FIX**: Fixed Manim beat_videos wiring - same issue class as ISS-092
   - execute_renderer now detects list return from Manim multi-beat render
   - _reconcile_video_paths sets `beat_videos` array on sections
