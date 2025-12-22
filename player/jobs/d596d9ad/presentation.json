@@ -1,0 +1,2263 @@
+{
+  "spec_version": "v1.3",
+  "presentation_id": "phys12-special-relativity-01",
+  "subject": "Physics",
+  "grade": "Grade 12",
+  "chapter_title": "Special Relativity: Time Dilation and Length Contraction",
+  "avatar_global": {
+    "style": "teacher",
+    "default_position": "right",
+    "default_width_percent": 35,
+    "gesture_enabled": true
+  },
+  "sections": [
+    {
+      "section_id": 1,
+      "section_type": "intro",
+      "title": "Introduction to Special Relativity",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "center",
+        "position": "center",
+        "width_percent": 50
+      },
+      "narration": {
+        "full_text": "Welcome! Today, we journey into one of the most fascinating areas of modern physics: Albert Einstein's Special Theory of Relativity. In 1905, Einstein completely changed how we think about space and time. He proposed that they are not absolute, but relative, and intertwined in a single fabric called spacetime. This theory leads to mind-bending consequences, like time slowing down and lengths shrinking at high speeds. It might sound like science fiction, but these are real, measurable effects that have been confirmed by countless experiments. Get ready to challenge your everyday intuition as we explore the fundamental principles that govern our universe at its most extreme.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Welcome! Today, we journey into one of the most fascinating areas of modern physics: Albert Einstein's Special Theory of Relativity.",
+            "duration_seconds": 9,
+            "gesture_hint": "welcoming",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Special Theory of Relativity"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "In 1905, Einstein completely changed how we think about space and time. He proposed that they are not absolute, but relative, and intertwined in a single fabric called spacetime.",
+            "duration_seconds": 12,
+            "gesture_hint": "thinking",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "This theory leads to mind-bending consequences, like time slowing down and lengths shrinking at high speeds. It might sound like science fiction, but these are real, measurable effects that have been confirmed by countless experiments.",
+            "duration_seconds": 14,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Get ready to challenge your everyday intuition as we explore the fundamental principles that govern our universe at its most extreme.",
+            "duration_seconds": 9,
+            "gesture_hint": "enthusiastic",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "1A",
+          "segment_id": 2,
+          "visual_beat_type": "motion_graphic",
+          "description": "Animate the title 'Special Relativity' appearing. A stylized portrait of Einstein fades in. Abstract grid lines representing spacetime appear and gently warp."
+        },
+        {
+          "beat_id": "1B",
+          "segment_id": 3,
+          "visual_beat_type": "motion_graphic",
+          "description": "An animation of a clock with its hands slowing down, and a ruler that visually compresses."
+        },
+        {
+          "beat_id": "1C",
+          "segment_id": 4,
+          "visual_beat_type": "motion_graphic",
+          "description": "A fast-paced montage of concepts: a rocket ship, a light beam, a glowing atom. The final text 'The Rules of the Universe' appears."
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1320,
+        "elements": [
+          {
+            "id": "main_title",
+            "type": "text",
+            "content": "Special Theory of Relativity",
+            "position": {
+              "x": 400,
+              "y": 100
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 270
+            }
+          },
+          {
+            "id": "einstein_portrait",
+            "type": "image",
+            "content": "einstein_portrait.png",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "width": 200,
+              "height": 200
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 270,
+              "exit_frame": 630
+            }
+          },
+          {
+            "id": "spacetime_grid",
+            "type": "shape",
+            "content": "grid",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "width": 600,
+              "height": 400,
+              "color": "#4A90E2"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 270,
+              "exit_frame": 630
+            }
+          },
+          {
+            "id": "clock_icon",
+            "type": "icon",
+            "content": "clock",
+            "position": {
+              "x": 300,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 80,
+              "color": "#FFFFFF"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 630,
+              "exit_frame": 1050
+            }
+          },
+          {
+            "id": "ruler_icon",
+            "type": "icon",
+            "content": "ruler",
+            "position": {
+              "x": 500,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 80,
+              "color": "#FFFFFF"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 630,
+              "exit_frame": 1050
+            }
+          },
+          {
+            "id": "final_text",
+            "type": "text",
+            "content": "The Rules of the Universe",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 42,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 1050,
+              "exit_frame": 1320
+            }
+          }
+        ],
+        "background": {
+          "color": "#1A1A1A"
+        }
+      }
+    },
+    {
+      "section_id": 2,
+      "section_type": "summary",
+      "title": "What We Will Cover",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "In this lesson, we will build our understanding of special relativity from the ground up. First, we'll examine Einstein's two fundamental postulates: the principle of relativity and the constancy of the speed of light. These two simple ideas are the bedrock of the entire theory. Next, we will explore their first major consequence: time dilation, the phenomenon where moving clocks run slow. Then, we'll investigate length contraction, where moving objects appear shorter. Finally, we'll apply these concepts to solve a practical example: a high-speed journey to a nearby star, to see how these effects play out in a real-world scenario.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "In this lesson, we will build our understanding of special relativity from the ground up. First, we'll examine Einstein's two fundamental postulates: the principle of relativity and the constancy of the speed of light. These two simple ideas are the bedrock of the entire theory.",
+            "duration_seconds": 16,
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "The Two Postulates of Special Relativity"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Next, we will explore their first major consequence: time dilation, the phenomenon where moving clocks run slow.",
+            "duration_seconds": 8,
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Consequence 1: Time Dilation"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Then, we'll investigate length contraction, where moving objects appear shorter.",
+            "duration_seconds": 6,
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Consequence 2: Length Contraction"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Finally, we'll apply these concepts to solve a practical example: a high-speed journey to a nearby star, to see how these effects play out in a real-world scenario.",
+            "duration_seconds": 11,
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Worked Example: Interstellar Travel"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "2A",
+          "segment_id": 1,
+          "visual_beat_type": "motion_graphic",
+          "description": "An animated list appears. The first item 'Two Postulates' highlights."
+        },
+        {
+          "beat_id": "2B",
+          "segment_id": 2,
+          "visual_beat_type": "motion_graphic",
+          "description": "The second item 'Time Dilation' appears and highlights."
+        },
+        {
+          "beat_id": "2C",
+          "segment_id": 3,
+          "visual_beat_type": "motion_graphic",
+          "description": "The third item 'Length Contraction' appears and highlights."
+        },
+        {
+          "beat_id": "2D",
+          "segment_id": 4,
+          "visual_beat_type": "motion_graphic",
+          "description": "The fourth item 'Worked Example' appears and highlights."
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1230,
+        "elements": [
+          {
+            "id": "title_1",
+            "type": "text",
+            "content": "The Two Postulates of Special Relativity",
+            "position": {
+              "x": 100,
+              "y": 100
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 480
+            }
+          },
+          {
+            "id": "title_2",
+            "type": "text",
+            "content": "Consequence 1: Time Dilation",
+            "position": {
+              "x": 100,
+              "y": 160
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 480,
+              "exit_frame": 720
+            }
+          },
+          {
+            "id": "title_3",
+            "type": "text",
+            "content": "Consequence 2: Length Contraction",
+            "position": {
+              "x": 100,
+              "y": 220
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 720,
+              "exit_frame": 900
+            }
+          },
+          {
+            "id": "title_4",
+            "type": "text",
+            "content": "Worked Example: Interstellar Travel",
+            "position": {
+              "x": 100,
+              "y": 280
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 900,
+              "exit_frame": 1230
+            }
+          }
+        ],
+        "background": {
+          "color": "#000033"
+        }
+      }
+    },
+    {
+      "section_id": 3,
+      "section_type": "content",
+      "title": "The Two Postulates",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Everything in special relativity flows from two core ideas, or postulates. The first is the Principle of Relativity. It states that the laws of physics are identical in all inertial reference frames. An inertial frame is just a non-accelerating viewpoint, like being on a smoothly moving train or floating in deep space. This means if you perform an experiment\u2014like dropping a ball\u2014on a train moving at a constant 100 kilometers per hour, you'll get the exact same result as someone doing it on the ground. There's no 'special' or 'preferred' frame of reference; motion is purely relative. The second postulate is more radical: the speed of light in a vacuum, 'c', is the same for all observers, no matter how fast they or the light source are moving. If a spaceship traveling at half the speed of light fires a laser forward, an observer on Earth won't measure the laser's speed as 1.5 times 'c'. They will measure it as exactly 'c'. This breaks our everyday intuition about adding velocities, and it's the key that unlocks the rest of the theory.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Everything in special relativity flows from two core ideas, or postulates. The first is the Principle of Relativity. It states that the laws of physics are identical in all inertial reference frames.",
+            "duration_seconds": 13,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "First Postulate (Principle of Relativity)"
+                },
+                {
+                  "level": 2,
+                  "text": "The laws of physics are the same for all observers in uniform motion."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "An inertial frame is just a non-accelerating viewpoint, like being on a smoothly moving train or floating in deep space. This means if you perform an experiment\u2014like dropping a ball\u2014on a train moving at a constant 100 kilometers per hour, you'll get the exact same result as someone doing it on the ground. There's no 'special' or 'preferred' frame of reference; motion is purely relative.",
+            "duration_seconds": 22,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "The second postulate is more radical: the speed of light in a vacuum, 'c', is the same for all observers, no matter how fast they or the light source are moving.",
+            "duration_seconds": 12,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Second Postulate (Constancy of the Speed of Light)"
+                },
+                {
+                  "level": 2,
+                  "text": "The speed of light in a vacuum, c, is the same for all observers."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "If a spaceship traveling at half the speed of light fires a laser forward, an observer on Earth won't measure the laser's speed as 1.5 times 'c'. They will measure it as exactly 'c'. This breaks our everyday intuition about adding velocities, and it's the key that unlocks the rest of the theory.",
+            "duration_seconds": 19,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "3A",
+          "segment_id": 2,
+          "visual_beat_type": "animation",
+          "description": "Animate two reference frames. Frame S is a stationary platform. Frame S' is a train car moving at constant velocity v. Inside the train, a ball is dropped and falls straight down. From the platform's view, the ball follows a parabolic path. The laws (F=ma) are shown to be consistent in both frames.",
+          "manim_scene_spec": {
+            "scene_name": "InertialFrames",
+            "commands": [
+              "CreateAxes(label='S')",
+              "CreateBox(label='Train', color='blue').move(velocity=[1,0,0])",
+              "CreateCircle(label='ball').inside('Train').fall(gravity=-9.8)",
+              "ShowPath(target='ball', from_frame='S', color='yellow')",
+              "ShowPath(target='ball', from_frame='Train', color='white')",
+              "DisplayText('Laws of Physics are the same', position='top')"
+            ]
+          }
+        },
+        {
+          "beat_id": "3B",
+          "segment_id": 4,
+          "visual_beat_type": "animation",
+          "description": "Animate a spaceship moving at v=0.5c. It emits a light pulse forward. Create two 'speedometers'. One attached to the spaceship pilot, one to a stationary observer. Both speedometers animate to show the light pulse's speed as 'c', not '1.5c'. Contrast this with a ball thrown from the ship, where velocities do add.",
+          "manim_scene_spec": {
+            "scene_name": "ConstantLightSpeed",
+            "commands": [
+              "CreateObject(shape='spaceship').move(velocity=[0.5,0,0])",
+              "CreateObject(shape='light_pulse', color='yellow').emit_from('spaceship', velocity=[1,0,0])",
+              "CreateObserver(label='Pilot', attached_to='spaceship')",
+              "CreateObserver(label='Earth', position=[0,-2,0])",
+              "CreateMeter(label='Pilot Speedometer').measure('light_pulse').animate_to_value('c')",
+              "CreateMeter(label='Earth Speedometer').measure('light_pulse').animate_to_value('c')",
+              "DisplayText('Speed of light is constant for all observers', position='top')"
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title1",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "text": "First Postulate: Principle of Relativity",
+              "scale": 1.0,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "frame_s",
+            "type": "shape",
+            "position": [
+              -3,
+              0
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "width": 2,
+              "height": 2,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "frame_s_label",
+            "type": "label",
+            "position": [
+              -3,
+              1.5
+            ],
+            "properties": {
+              "text": "Frame S\n(Ground)",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "train",
+            "type": "shape",
+            "position": [
+              3,
+              0
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "width": 2,
+              "height": 2,
+              "color": "RED"
+            }
+          },
+          {
+            "id": "train_label",
+            "type": "label",
+            "position": [
+              3,
+              1.5
+            ],
+            "properties": {
+              "text": "Frame S'\n(Train)",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "ball_path_ground",
+            "type": "graph",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "function": "parabola",
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "ball_path_train",
+            "type": "vector",
+            "position": [
+              3,
+              0.5
+            ],
+            "properties": {
+              "direction": [
+                0,
+                -1
+              ],
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "title2",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "text": "Second Postulate: Constancy of Light Speed",
+              "scale": 1.0,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "spaceship",
+            "type": "shape",
+            "position": [
+              -2,
+              0
+            ],
+            "properties": {
+              "shape_type": "triangle",
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "light_beam",
+            "type": "vector",
+            "position": [
+              -1,
+              0
+            ],
+            "properties": {
+              "direction": [
+                1,
+                0
+              ],
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "speed_equation",
+            "type": "equation",
+            "position": [
+              0,
+              -2
+            ],
+            "properties": {
+              "latex": "c_{measured} = c",
+              "scale": 1.2
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title1",
+            "duration": 1.5
+          },
+          {
+            "action": "draw",
+            "target": "frame_s",
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "frame_s_label",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "train",
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "train_label",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "ball_path_ground",
+            "duration": 2
+          },
+          {
+            "action": "draw",
+            "target": "ball_path_train",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 2
+          },
+          {
+            "action": "fade_out",
+            "target": [
+              "frame_s",
+              "frame_s_label",
+              "train",
+              "train_label",
+              "ball_path_ground",
+              "ball_path_train",
+              "title1"
+            ],
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "title2",
+            "duration": 1.5
+          },
+          {
+            "action": "draw",
+            "target": "spaceship",
+            "duration": 2
+          },
+          {
+            "action": "draw",
+            "target": "light_beam",
+            "duration": 2
+          },
+          {
+            "action": "show_equation",
+            "target": "speed_equation",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "speed_equation",
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "wait",
+            "duration": 1.5
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 4,
+      "section_type": "content",
+      "title": "Time Dilation",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "The constancy of light speed leads to a startling conclusion: time itself is relative. This is called time dilation. It means that a clock in motion relative to you will tick slower than a clock at rest beside you. To understand this, we use a thought experiment with a 'light clock'. Imagine a clock made of two mirrors with a photon bouncing between them. One 'tick' is the time it takes for the photon to travel up and back down. This time, measured in the clock's own rest frame, is called the 'proper time', or t-zero. Now, let's observe this clock as it flies past us at a very high speed. From our perspective, the photon doesn't just go up and down. Because the clock is moving, the photon has to travel along a longer, diagonal path to catch up with the moving mirrors. Since the speed of light is constant for everyone, and the path is longer, the time for one tick must also be longer from our point of view. This longer time is the 'dilated time', t. The formula connecting them is t equals gamma times t-zero, where gamma is the Lorentz factor, which is always greater than or equal to one.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "The constancy of light speed leads to a startling conclusion: time itself is relative. This is called time dilation. It means that a clock in motion relative to you will tick slower than a clock at rest beside you.",
+            "duration_seconds": 15,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Time Dilation: Moving clocks run slow"
+                },
+                {
+                  "level": 2,
+                  "text": "A clock in motion ticks slower than a clock at rest."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "To understand this, we use a thought experiment with a 'light clock'. Imagine a clock made of two mirrors with a photon bouncing between them. One 'tick' is the time it takes for the photon to travel up and back down. This time, measured in the clock's own rest frame, is called the 'proper time', or t-zero.",
+            "duration_seconds": 20,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Now, let's observe this clock as it flies past us at a very high speed. From our perspective, the photon doesn't just go up and down. Because the clock is moving, the photon has to travel along a longer, diagonal path to catch up with the moving mirrors.",
+            "duration_seconds": 17,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Since the speed of light is constant for everyone, and the path is longer, the time for one tick must also be longer from our point of view. This longer time is the 'dilated time', t.",
+            "duration_seconds": 14,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "The formula connecting them is t equals gamma times t-zero, where gamma is the Lorentz factor, which is always greater than or equal to one.",
+            "duration_seconds": 10,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "4A",
+          "segment_id": 2,
+          "visual_beat_type": "animation",
+          "description": "Animate a 'light clock' at rest. Two parallel mirrors are shown. A photon (a small glowing circle) bounces vertically between them. A counter increments by 1 for each round trip. Label the time for one trip as 't\u2080 (Proper Time)'.",
+          "manim_scene_spec": {
+            "scene_name": "LightClockRest",
+            "commands": [
+              "CreateLine(start=[-1,1,0], end=[1,1,0], label='Mirror 1')",
+              "CreateLine(start=[-1,-1,0], end=[1,-1,0], label='Mirror 2')",
+              "CreateCircle(label='photon', radius=0.1, color='yellow').at([0,-1,0])",
+              "AnimatePath('photon', path=[[0,1,0], [0,-1,0]])",
+              "DisplayText('1 tick = t\u2080 (Proper Time)', position='bottom')"
+            ]
+          }
+        },
+        {
+          "beat_id": "4B",
+          "segment_id": 3,
+          "visual_beat_type": "animation",
+          "description": "The entire light clock assembly moves horizontally at a high velocity 'v'. From the stationary observer's viewpoint, the photon now travels a longer, diagonal path up to the top mirror and another diagonal path down.",
+          "manim_scene_spec": {
+            "scene_name": "LightClockMoving",
+            "commands": [
+              "CreateGroup(name='clock', elements=['Mirror 1', 'Mirror 2']).move(velocity=[2,0,0])",
+              "CreateCircle(label='photon', radius=0.1, color='yellow')",
+              "TracePath('photon', from_frame='stationary', color='cyan')",
+              "DisplayText('Observer Frame', position='top')"
+            ]
+          }
+        },
+        {
+          "beat_id": "4C",
+          "segment_id": 4,
+          "visual_beat_type": "comparison",
+          "description": "Show the two paths side-by-side. The vertical path from the rest frame (length 2d) and the diagonal path from the observer frame (length > 2d). Emphasize that since light speed 'c' is constant, the longer path must take more time. Label this longer time 't (Dilated Time)'.",
+          "manim_scene_spec": {
+            "scene_name": "PathComparison",
+            "commands": [
+              "ShowPath(path_name='rest_path', color='white', label='Path in Rest Frame')",
+              "ShowPath(path_name='moving_path', color='cyan', label='Path in Observer Frame')",
+              "DisplayText('Path_moving > Path_rest', position='middle')",
+              "DisplayText('Since c is constant, t > t\u2080', position='bottom')"
+            ]
+          }
+        },
+        {
+          "beat_id": "4D",
+          "segment_id": 5,
+          "visual_beat_type": "animation",
+          "description": "Display the time dilation formula t = \u03b3t\u2080. Then display the formula for the Lorentz factor, \u03b3 = 1 / sqrt(1 - v\u00b2/c\u00b2).",
+          "manim_scene_spec": {
+            "scene_name": "TimeDilationFormula",
+            "commands": [
+              "WriteFormula('t = \\gamma t_0', font_size=60)",
+              "Wait(2)",
+              "WriteFormula('\\gamma = \\frac{1}{\\sqrt{1 - v^2/c^2}}', position='bottom', font_size=48)"
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "equation",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Time Dilation}",
+              "scale": 1.2,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "mirror1",
+            "type": "shape",
+            "position": [
+              0,
+              1.5
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "width": 3,
+              "height": 0.1,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "mirror2",
+            "type": "shape",
+            "position": [
+              0,
+              -1.5
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "width": 3,
+              "height": 0.1,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "photon",
+            "type": "point",
+            "position": [
+              0,
+              -1.5
+            ],
+            "properties": {
+              "radius": 0.1,
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "proper_time_label",
+            "type": "label",
+            "position": [
+              -2,
+              0
+            ],
+            "properties": {
+              "latex": "t_0 \\text{ (Proper Time)}",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "moving_clock",
+            "type": "shape",
+            "position": [
+              -4,
+              0
+            ],
+            "properties": {
+              "shape_type": "group",
+              "elements": [
+                "mirror1",
+                "mirror2",
+                "photon"
+              ]
+            }
+          },
+          {
+            "id": "diagonal_path",
+            "type": "vector",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "color": "CYAN",
+              "stroke_width": 2
+            }
+          },
+          {
+            "id": "time_dilation_formula",
+            "type": "equation",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "latex": "t = \\gamma t_0",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "lorentz_factor",
+            "type": "equation",
+            "position": [
+              0,
+              -1.0
+            ],
+            "properties": {
+              "latex": "\\gamma = \\frac{1}{\\sqrt{1-\\frac{v^2}{c^2}}}",
+              "scale": 1.0
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title",
+            "duration": 1.0
+          },
+          {
+            "action": "draw",
+            "target": "mirror1",
+            "duration": 1.0
+          },
+          {
+            "action": "draw",
+            "target": "mirror2",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "photon",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "proper_time_label",
+            "duration": 1.0
+          },
+          {
+            "action": "move",
+            "target": "photon",
+            "duration": 15.5,
+            "path": "vertical_oscillation"
+          },
+          {
+            "action": "transform",
+            "target": "moving_clock",
+            "duration": 2.0,
+            "transform_type": "horizontal_motion"
+          },
+          {
+            "action": "draw",
+            "target": "diagonal_path",
+            "duration": 15.0
+          },
+          {
+            "action": "show_equation",
+            "target": "time_dilation_formula",
+            "duration": 2.0
+          },
+          {
+            "action": "show_equation",
+            "target": "lorentz_factor",
+            "duration": 3.0
+          },
+          {
+            "action": "highlight",
+            "target": "time_dilation_formula",
+            "duration": 2.0,
+            "color": "YELLOW"
+          },
+          {
+            "action": "fade_out",
+            "target": [
+              "mirror1",
+              "mirror2",
+              "photon",
+              "diagonal_path",
+              "proper_time_label"
+            ],
+            "duration": 3.0
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 5,
+      "section_type": "content",
+      "title": "Length Contraction",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Just as time is relative, so is space. The logical counterpart to time dilation is length contraction. This principle states that an object in motion is measured to be shorter in its direction of motion, compared to its length when at rest. The length of an object in its own rest frame is called its 'proper length', denoted L-zero. This is the longest possible measurement you can get for the object. When that same object moves at a high velocity 'v' relative to an observer, that observer will measure its length to be shorter. This 'contracted length' is denoted by L. It's important to note that only the dimension parallel to the direction of motion is affected. The height and width of the object remain unchanged. The formula for length contraction is L equals L-zero divided by the Lorentz factor, gamma. As an object's velocity approaches the speed of light, its gamma factor becomes very large, and its measured length approaches zero. This isn't an illusion or a trick of perspective; for the moving observer, the space itself in that direction is contracted.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Just as time is relative, so is space. The logical counterpart to time dilation is length contraction. This principle states that an object in motion is measured to be shorter in its direction of motion, compared to its length when at rest.",
+            "duration_seconds": 17,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Length Contraction: Moving objects are shorter"
+                },
+                {
+                  "level": 2,
+                  "text": "Length is measured to be shorter in the direction of motion."
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "The length of an object in its own rest frame is called its 'proper length', denoted L-zero. This is the longest possible measurement you can get for the object. When that same object moves at a high velocity 'v' relative to an observer, that observer will measure its length to be shorter. This 'contracted length' is denoted by L.",
+            "duration_seconds": 22,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "It's important to note that only the dimension parallel to the direction of motion is affected. The height and width of the object remain unchanged.",
+            "duration_seconds": 10,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "The formula for length contraction is L equals L-zero divided by the Lorentz factor, gamma. As an object's velocity approaches the speed of light, its gamma factor becomes very large, and its measured length approaches zero. This isn't an illusion or a trick of perspective; for the moving observer, the space itself in that direction is contracted.",
+            "duration_seconds": 22,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "5A",
+          "segment_id": 2,
+          "visual_beat_type": "animation",
+          "description": "Show a long spaceship at rest next to a large ruler. The ruler measures its length. Label this length 'L\u2080 (Proper Length)'.",
+          "manim_scene_spec": {
+            "scene_name": "ProperLength",
+            "commands": [
+              "CreateObject(shape='spaceship', length=8).at([0,0,0])",
+              "CreateObject(shape='ruler', length=10).below('spaceship')",
+              "AddMeasurement(target='spaceship', label='L\u2080 (Proper Length)')"
+            ]
+          }
+        },
+        {
+          "beat_id": "5B",
+          "segment_id": 3,
+          "visual_beat_type": "animation",
+          "description": "Animate the spaceship moving horizontally at v=0.9c. As it moves, its horizontal dimension visibly shrinks, but its height remains the same. A stationary ruler now measures a shorter length. Label this 'L (Contracted Length)'.",
+          "manim_scene_spec": {
+            "scene_name": "ContractedLength",
+            "commands": [
+              "AnimateObject('spaceship', property='scale_x', to_value=0.43, along_with_move=True)",
+              "CreateObject(shape='ruler', length=10).at([0,-2,0])",
+              "AddMeasurement(target='spaceship', label='L (Contracted Length)')",
+              "DisplayText('Contraction only in direction of motion', position='top')"
+            ]
+          }
+        },
+        {
+          "beat_id": "5C",
+          "segment_id": 4,
+          "visual_beat_type": "animation",
+          "description": "Display the length contraction formula L = L\u2080/\u03b3.",
+          "manim_scene_spec": {
+            "scene_name": "LengthContractionFormula",
+            "commands": [
+              "WriteFormula('L = \\frac{L_0}{\\gamma}', font_size=60)"
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "spaceship_rest",
+            "type": "shape",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "width": 4,
+              "height": 1,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "ruler_rest",
+            "type": "shape",
+            "position": [
+              0,
+              0.2
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "width": 5,
+              "height": 0.2,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "proper_length_label",
+            "type": "label",
+            "position": [
+              -2.5,
+              1.5
+            ],
+            "properties": {
+              "latex": "L_0 \\text{ (Proper Length)}",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "spaceship_moving",
+            "type": "shape",
+            "position": [
+              0,
+              -1.0
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "width": 4,
+              "height": 1,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "ruler_moving",
+            "type": "shape",
+            "position": [
+              0,
+              -1.8
+            ],
+            "properties": {
+              "shape_type": "rectangle",
+              "width": 5,
+              "height": 0.2,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "contracted_length_label",
+            "type": "label",
+            "position": [
+              -2.5,
+              -0.5
+            ],
+            "properties": {
+              "latex": "L \\text{ (Contracted Length)}",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "direction_note",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Contraction only in direction of motion}",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "formula",
+            "type": "equation",
+            "position": [
+              0,
+              -2.5
+            ],
+            "properties": {
+              "latex": "L = \\frac{L_0}{\\gamma}",
+              "scale": 1.2
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "spaceship_rest",
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "ruler_rest",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "proper_length_label",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "spaceship_moving",
+            "duration": 1.0
+          },
+          {
+            "action": "transform",
+            "target": "spaceship_moving",
+            "duration": 2.0,
+            "properties": {
+              "scale_x": 0.43
+            }
+          },
+          {
+            "action": "appear",
+            "target": "ruler_moving",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "contracted_length_label",
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "direction_note",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "formula",
+            "duration": 2.0
+          },
+          {
+            "action": "highlight",
+            "target": "formula",
+            "duration": 2.0,
+            "color": "YELLOW"
+          },
+          {
+            "action": "fade_out",
+            "target": [
+              "spaceship_rest",
+              "ruler_rest",
+              "proper_length_label",
+              "spaceship_moving",
+              "ruler_moving",
+              "contracted_length_label",
+              "direction_note"
+            ],
+            "duration": 2.0
+          },
+          {
+            "action": "highlight",
+            "target": "formula",
+            "duration": 1.5,
+            "color": "BLUE"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 6,
+      "section_type": "example",
+      "title": "Example: A Trip to Alpha Centauri",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "gesture_only"
+      },
+      "narration": {
+        "full_text": "Let's put this all together with an example. A spaceship travels to Alpha Centauri, 4.37 light-years away, at a speed of 0.95 times the speed of light. First, how long does the trip take for an observer on Earth? This is a simple calculation: time equals distance divided by speed. That's 4.37 light-years divided by 0.95c, which gives us 4.6 years. This is our dilated time, 't'. Next, let's find the time experienced by the astronauts. For this, we need the Lorentz factor, gamma. Plugging 0.95c into the formula, we find that gamma is approximately 3.2. Now we can find the astronauts' time, which is the proper time, t-zero. We rearrange the time dilation formula to t-zero equals t divided by gamma. So, 4.6 years divided by 3.2 gives us about 1.44 years. While 4.6 years pass on Earth, only 1.44 years pass for the crew! Finally, what distance do the astronauts perceive they are traveling? This is a length contraction problem. The proper length, L-zero, is 4.37 light-years. The contracted length, L, is L-zero divided by gamma. That's 4.37 light-years divided by 3.2, which is about 1.37 light-years. From their perspective, the journey is much shorter in both time and distance.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's put this all together with an example. A spaceship travels to Alpha Centauri, 4.37 light-years away, at a speed of 0.95 times the speed of light.",
+            "duration_seconds": 11,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "First, how long does the trip take for an observer on Earth? This is a simple calculation: time equals distance divided by speed. That's 4.37 light-years divided by 0.95c, which gives us 4.6 years. This is our dilated time, 't'.",
+            "duration_seconds": 16,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Next, let's find the time experienced by the astronauts. For this, we need the Lorentz factor, gamma. Plugging 0.95c into the formula, we find that gamma is approximately 3.2.",
+            "duration_seconds": 13,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Now we can find the astronauts' time, which is the proper time, t-zero. We rearrange the time dilation formula to t-zero equals t divided by gamma. So, 4.6 years divided by 3.2 gives us about 1.44 years. While 4.6 years pass on Earth, only 1.44 years pass for the crew!",
+            "duration_seconds": 20,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "Finally, what distance do the astronauts perceive they are traveling? This is a length contraction problem. The proper length, L-zero, is 4.37 light-years. The contracted length, L, is L-zero divided by gamma. That's 4.37 light-years divided by 3.2, which is about 1.37 light-years. From their perspective, the journey is much shorter in both time and distance.",
+            "duration_seconds": 24,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "6A",
+          "segment_id": 1,
+          "visual_beat_type": "problem_setup",
+          "description": "Display the problem statement. Show Earth and a distant star (Alpha Centauri). Label the distance 'L\u2080 = 4.37 ly'. Show a spaceship moving from Earth to the star with velocity 'v = 0.95c'.",
+          "manim_scene_spec": {
+            "scene_name": "ProblemSetup",
+            "commands": [
+              "CreateCircle(label='Earth').at([-6,0,0])",
+              "CreateStar(label='Alpha Centauri').at([6,0,0])",
+              "AddLine(start='Earth', end='Alpha Centauri', label='L\u2080 = 4.37 ly')",
+              "CreateObject(shape='spaceship').at('Earth').move_to('Alpha Centauri', velocity_label='v = 0.95c')"
+            ]
+          }
+        },
+        {
+          "beat_id": "6B",
+          "segment_id": 2,
+          "visual_beat_type": "calculation",
+          "description": "Show the calculation for time on Earth. Display the formula 't = distance / speed'. Substitute the values: 't = 4.37 ly / 0.95c'. Animate the result: 't = 4.6 years'. Label this 'Time on Earth'.",
+          "manim_scene_spec": {
+            "scene_name": "EarthTimeCalculation",
+            "commands": [
+              "WriteText('Step 1: Time on Earth (t)', font_size=48)",
+              "WriteFormula('t = \\frac{\\text{distance}}{v}')",
+              "SubstituteInFormula('t = \\frac{4.37 \\text{ ly}}{0.95c}')",
+              "AnimateCalculation('t = 4.6 \\text{ years}')"
+            ]
+          }
+        },
+        {
+          "beat_id": "6C",
+          "segment_id": 3,
+          "visual_beat_type": "calculation",
+          "description": "Show the calculation for the Lorentz factor. Display the formula for gamma. Substitute v=0.95c and animate the step-by-step simplification to get '\u03b3 \u2248 3.2'.",
+          "manim_scene_spec": {
+            "scene_name": "GammaCalculation",
+            "commands": [
+              "WriteText('Step 2: Lorentz Factor (\u03b3)', font_size=48)",
+              "WriteFormula('\\gamma = \\frac{1}{\\sqrt{1 - v^2/c^2}}')",
+              "SubstituteInFormula('\\gamma = \\frac{1}{\\sqrt{1 - (0.95c)^2/c^2}}')",
+              "AnimateCalculation('\\gamma = \\frac{1}{\\sqrt{1 - 0.9025}} = \\frac{1}{\\sqrt{0.0975}} \\approx 3.2')"
+            ]
+          }
+        },
+        {
+          "beat_id": "6D",
+          "segment_id": 4,
+          "visual_beat_type": "calculation",
+          "description": "Show the calculation for time on the spaceship. Display 't\u2080 = t / \u03b3'. Substitute 't = 4.6 years' and '\u03b3 = 3.2'. Animate the result: 't\u2080 \u2248 1.44 years'. Label this 'Time on Spaceship'.",
+          "manim_scene_spec": {
+            "scene_name": "ShipTimeCalculation",
+            "commands": [
+              "WriteText('Step 3: Time on Spaceship (t\u2080)', font_size=48)",
+              "WriteFormula('t_0 = \\frac{t}{\\gamma}')",
+              "SubstituteInFormula('t_0 = \\frac{4.6 \\text{ years}}{3.2}')",
+              "AnimateCalculation('t_0 \\approx 1.44 \\text{ years}')"
+            ]
+          }
+        },
+        {
+          "beat_id": "6E",
+          "segment_id": 5,
+          "visual_beat_type": "calculation",
+          "description": "Show the calculation for the contracted distance. Display 'L = L\u2080 / \u03b3'. Substitute 'L\u2080 = 4.37 ly' and '\u03b3 = 3.2'. Animate the result: 'L \u2248 1.37 ly'. Label this 'Distance for Astronauts'.",
+          "manim_scene_spec": {
+            "scene_name": "LengthContractionCalculation",
+            "commands": [
+              "WriteText('Step 4: Distance for Astronauts (L)', font_size=48)",
+              "WriteFormula('L = \\frac{L_0}{\\gamma}')",
+              "SubstituteInFormula('L = \\frac{4.37 \\text{ ly}}{3.2}')",
+              "AnimateCalculation('L \\approx 1.37 \\text{ ly}')"
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "earth",
+            "type": "shape",
+            "position": [
+              -4,
+              0
+            ],
+            "properties": {
+              "shape": "circle",
+              "radius": 0.3,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "earth_label",
+            "type": "label",
+            "position": [
+              -4,
+              -0.8
+            ],
+            "properties": {
+              "text": "Earth",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "alpha_centauri",
+            "type": "shape",
+            "position": [
+              4,
+              0
+            ],
+            "properties": {
+              "shape": "star",
+              "radius": 0.3,
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "star_label",
+            "type": "label",
+            "position": [
+              4,
+              -0.8
+            ],
+            "properties": {
+              "text": "Alpha Centauri",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "distance_line",
+            "type": "vector",
+            "position": [
+              -4,
+              0.5
+            ],
+            "properties": {
+              "end_point": [
+                4,
+                0.5
+              ],
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "distance_label",
+            "type": "label",
+            "position": [
+              0,
+              1
+            ],
+            "properties": {
+              "latex": "L_0 = 4.37\\text{ ly}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "velocity_label",
+            "type": "label",
+            "position": [
+              0,
+              -1
+            ],
+            "properties": {
+              "latex": "v = 0.95c",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "earth_time_eq",
+            "type": "equation",
+            "position": [
+              0,
+              2
+            ],
+            "properties": {
+              "latex": "t = \\frac{\\text{distance}}{v} = \\frac{4.37\\text{ ly}}{0.95c} = 4.6\\text{ years}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "gamma_eq",
+            "type": "equation",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "latex": "\\gamma = \\frac{1}{\\sqrt{1-v^2/c^2}} = \\frac{1}{\\sqrt{1-(0.95)^2}} \\approx 3.2",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "proper_time_eq",
+            "type": "equation",
+            "position": [
+              0,
+              -1
+            ],
+            "properties": {
+              "latex": "t_0 = \\frac{t}{\\gamma} = \\frac{4.6\\text{ years}}{3.2} \\approx 1.44\\text{ years}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "length_eq",
+            "type": "equation",
+            "position": [
+              0,
+              -2.5
+            ],
+            "properties": {
+              "latex": "L = \\frac{L_0}{\\gamma} = \\frac{4.37\\text{ ly}}{3.2} \\approx 1.37\\text{ ly}",
+              "scale": 1.0
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "earth",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "earth_label",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "alpha_centauri",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "star_label",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "distance_line",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "distance_label",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "velocity_label",
+            "duration": 2
+          },
+          {
+            "action": "show_equation",
+            "target": "earth_time_eq",
+            "duration": 4
+          },
+          {
+            "action": "highlight",
+            "target": "earth_time_eq",
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "show_equation",
+            "target": "gamma_eq",
+            "duration": 4
+          },
+          {
+            "action": "highlight",
+            "target": "gamma_eq",
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "show_equation",
+            "target": "proper_time_eq",
+            "duration": 4
+          },
+          {
+            "action": "highlight",
+            "target": "proper_time_eq",
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "show_equation",
+            "target": "length_eq",
+            "duration": 4
+          },
+          {
+            "action": "highlight",
+            "target": "length_eq",
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "fade_out",
+            "target": "earth_time_eq",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "gamma_eq",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "proper_time_eq",
+            "duration": 2,
+            "color": "GREEN"
+          },
+          {
+            "action": "highlight",
+            "target": "length_eq",
+            "duration": 2,
+            "color": "GREEN"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 7,
+      "section_type": "memory",
+      "title": "Quick Memory Flashcards",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "hidden"
+      },
+      "narration": {
+        "full_text": "First, the Principle of Relativity: the laws of physics are the same for all non-accelerating observers. Second, the Constancy of Light Speed: 'c' is the same value for everyone, always. Third, Time Dilation: moving clocks are observed to run slower. Fourth, Length Contraction: moving objects are observed to be shorter in their direction of motion. Fifth, the Lorentz Factor, gamma: this number determines the magnitude of relativistic effects and grows with velocity.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "First, the Principle of Relativity: the laws of physics are the same for all non-accelerating observers.",
+            "duration_seconds": 7,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Second, the Constancy of Light Speed: 'c' is the same value for everyone, always.",
+            "duration_seconds": 6,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Third, Time Dilation: moving clocks are observed to run slower.",
+            "duration_seconds": 5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Fourth, Length Contraction: moving objects are observed to be shorter in their direction of motion.",
+            "duration_seconds": 7,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "Fifth, the Lorentz Factor, gamma: this number determines the magnitude of relativistic effects and grows with velocity.",
+            "duration_seconds": 8,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "7B",
+          "segment_id": 1,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'Principle of Relativity'. Back: 'Laws of physics are the same in all inertial frames.'"
+        },
+        {
+          "beat_id": "7C",
+          "segment_id": 2,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'Constancy of Light Speed'. Back: 'Speed of light 'c' is constant for all observers.'"
+        },
+        {
+          "beat_id": "7D",
+          "segment_id": 3,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'Time Dilation'. Back: 'Moving clocks run slow. t = \u03b3t\u2080.'"
+        },
+        {
+          "beat_id": "7E",
+          "segment_id": 4,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'Length Contraction'. Back: 'Moving objects are shorter. L = L\u2080/\u03b3.'"
+        },
+        {
+          "beat_id": "7F",
+          "segment_id": 5,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard. Front: 'Lorentz Factor (\u03b3)'. Back: 'Measures relativistic effects. Increases with velocity.'"
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 990,
+        "elements": [
+          {
+            "id": "card1_front",
+            "type": "text",
+            "content": "Principle of Relativity",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#000000",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 105
+            }
+          },
+          {
+            "id": "card1_back",
+            "type": "text",
+            "content": "Laws of physics are the same in all inertial frames",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#000000",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 105,
+              "exit_frame": 210
+            }
+          },
+          {
+            "id": "card2_front",
+            "type": "text",
+            "content": "Constancy of Light Speed",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#000000",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 210,
+              "exit_frame": 300
+            }
+          },
+          {
+            "id": "card2_back",
+            "type": "text",
+            "content": "Speed of light 'c' is constant for all observers",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#000000",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 300,
+              "exit_frame": 390
+            }
+          },
+          {
+            "id": "card3_front",
+            "type": "text",
+            "content": "Time Dilation",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#000000",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 390,
+              "exit_frame": 465
+            }
+          },
+          {
+            "id": "card3_back",
+            "type": "text",
+            "content": "Moving clocks run slow. t = \u03b3t\u2080",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#000000",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 465,
+              "exit_frame": 540
+            }
+          },
+          {
+            "id": "card4_front",
+            "type": "text",
+            "content": "Length Contraction",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#000000",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 540,
+              "exit_frame": 645
+            }
+          },
+          {
+            "id": "card4_back",
+            "type": "text",
+            "content": "Moving objects are shorter. L = L\u2080/\u03b3",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#000000",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 645,
+              "exit_frame": 750
+            }
+          },
+          {
+            "id": "card5_front",
+            "type": "text",
+            "content": "Lorentz Factor (\u03b3)",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#000000",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 750,
+              "exit_frame": 870
+            }
+          },
+          {
+            "id": "card5_back",
+            "type": "text",
+            "content": "Measures relativistic effects. Increases with velocity",
+            "position": {
+              "x": 540,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#000000",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 870,
+              "exit_frame": 990
+            }
+          }
+        ],
+        "background": {
+          "color": "#FFFFFF"
+        }
+      }
+    },
+    {
+      "section_id": 8,
+      "section_type": "recap",
+      "title": "Chapter Recap",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "hidden"
+      },
+      "narration": {
+        "full_text": "Our journey began with Einstein's two postulates. Imagine you're on a perfectly smooth bullet train, with no windows. If you toss a coin, it flies up and lands in your hand, exactly as it would on solid ground. This is the Principle of Relativity in action: the laws of physics don't change just because you're moving uniformly. It establishes that there is no absolute 'rest' in the universe; all motion is relative to the observer. This simple, elegant idea sets the stage for the strangeness to come. Now, picture a lighthouse on the shore as a spaceship speeds past. The lighthouse emits a beam of light. Counter-intuitively, both a person on the shore and the pilot in the spaceship measure that light beam traveling at the exact same speed: 'c'. This is the second postulate, the constancy of the speed of light. It shatters our everyday experience with velocities and forces us to reconsider the very nature of space and time, as one of them must change to keep 'c' constant. This leads us to time dilation. Visualize two twins. One stays on Earth while the other embarks on a near-light-speed journey through the cosmos. When the traveling twin returns, they are visibly younger than their sibling who remained behind. For the traveler, time itself flowed more slowly. Their clock, their heartbeat, their aging process\u2014all were dilated by their immense velocity. This isn't a paradox; it's a fundamental feature of our universe's geometry. The consequence for space is just as profound. From the perspective of the space-faring twin, the universe itself shrinks in their direction of travel. The vast distance to a distant star, measured as light-years from Earth, contracts to a much more manageable journey. The spaceship and everything in it remains normal to the crew, but the space outside is compressed. This is length contraction, the inseparable partner of time dilation, showing how space and time flex and warp together. Ultimately, special relativity reveals a unified four-dimensional reality called spacetime. Time dilation and length contraction are not separate phenomena but two sides of the same coin\u2014projections of motion through spacetime. An object's path through this fabric is absolute, but how different observers split that path into components of 'space' and 'time' is entirely relative to their own motion. This is Einstein's revolutionary insight: a universe more interconnected and bizarre than we ever imagined.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Our journey began with Einstein's two postulates. Imagine you're on a perfectly smooth bullet train, with no windows. If you toss a coin, it flies up and lands in your hand, exactly as it would on solid ground. This is the Principle of Relativity in action: the laws of physics don't change just because you're moving uniformly. It establishes that there is no absolute 'rest' in the universe; all motion is relative to the observer. This simple, elegant idea sets the stage for the strangeness to come.",
+            "duration_seconds": 25,
+            "word_count": 96,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Now, picture a lighthouse on the shore as a spaceship speeds past. The lighthouse emits a beam of light. Counter-intuitively, both a person on the shore and the pilot in the spaceship measure that light beam traveling at the exact same speed: 'c'. This is the second postulate, the constancy of the speed of light. It shatters our everyday experience with velocities and forces us to reconsider the very nature of space and time, as one of them must change to keep 'c' constant.",
+            "duration_seconds": 26,
+            "word_count": 98,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "This leads us to time dilation. Visualize two twins. One stays on Earth while the other embarks on a near-light-speed journey through the cosmos. When the traveling twin returns, they are visibly younger than their sibling who remained behind. For the traveler, time itself flowed more slowly. Their clock, their heartbeat, their aging process\u2014all were dilated by their immense velocity. This isn't a paradox; it's a fundamental feature of our universe's geometry.",
+            "duration_seconds": 26,
+            "word_count": 93,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "The consequence for space is just as profound. From the perspective of the space-faring twin, the universe itself shrinks in their direction of travel. The vast distance to a distant star, measured as light-years from Earth, contracts to a much more manageable journey. The spaceship and everything in it remains normal to the crew, but the space outside is compressed. This is length contraction, the inseparable partner of time dilation, showing how space and time flex and warp together.",
+            "duration_seconds": 27,
+            "word_count": 97,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "Ultimately, special relativity reveals a unified four-dimensional reality called spacetime. Time dilation and length contraction are not separate phenomena but two sides of the same coin\u2014projections of motion through spacetime. An object's path through this fabric is absolute, but how different observers split that path into components of 'space' and 'time' is entirely relative to their own motion. This is Einstein's revolutionary insight: a universe more interconnected and bizarre than we ever imagined.",
+            "duration_seconds": 28,
+            "word_count": 98,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "8A",
+          "segment_id": 1,
+          "visual_beat_type": "video_scene",
+          "description": "Cinematic shot from inside a futuristic, windowless train car. A person calmly tosses and catches a glowing coin. The camera pulls back through the wall of the train to reveal it's moving at incredible speed past a static landscape."
+        },
+        {
+          "beat_id": "8B",
+          "segment_id": 2,
+          "visual_beat_type": "video_scene",
+          "description": "A sleek spaceship flies past a space station. A light pulse is emitted from the station. We see a split screen with two holographic readouts: one from the station's point of view and one from the spaceship's cockpit. Both readouts lock onto the value 'c = 299,792,458 m/s'."
+        },
+        {
+          "beat_id": "8C",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "A time-lapse video showing a split screen. On the left, a twin on Earth ages normally over decades. On the right, their astronaut twin is shown on a spaceship, aging only a few years. The video ends with their reunion, showing a stark age difference."
+        },
+        {
+          "beat_id": "8D",
+          "segment_id": 4,
+          "visual_beat_type": "video_scene",
+          "description": "A stunning point-of-view shot from a spaceship's cockpit as it accelerates to near-light speed. The starfield ahead appears to compress and blue-shift, with the destination star seeming to rush towards the ship as the distance contracts."
+        },
+        {
+          "beat_id": "8E",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "An abstract, beautiful visualization of a glowing 4D spacetime grid. A line representing a spaceship's worldline cuts through it. We see two different observers' perspectives (grids at different angles) trying to measure the line, getting different values for 'space' and 'time' but agreeing on the total spacetime interval."
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "8A",
+          "prompt": "The scene opens inside a futuristic, windowless bullet train car, rendered in cinematic photorealism. The interior is minimalist, with walls of brushed gunmetal grey and soft, indirect cool-white LED lighting. A person in simple, dark clothing sits calmly, tossing a single, polished silver coin that emits a warm, golden glow. The coin tumbles in a perfect, slow-motion parabolic arc, its light tracing faint trails in the still air. As the glowing coin is caught, the camera begins a slow, seamless pull-back, moving directly through the solid metallic wall of the train. The exterior is revealed in a shocking contrast: a sun-drenched desert landscape is a violent, directional blur, conveying immense velocity. The train itself is a featureless silver streak, yet inside, the physics of the coin toss remained perfectly calm and normal.",
+          "duration_seconds": 25,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "8B",
+          "prompt": "An establishing shot captures a sleek, black carbon-fiber spaceship gliding silently past a massive, slowly rotating space station made of white composite panels and metallic trusses. Suddenly, a beacon on the station emits an instantaneous, brilliant sphere of pure white light. The view elegantly splits into two perspectives. On the left, from the station's observation dome, a semi-transparent holographic display materializes, its digits shimmering as they lock onto 'c = 299,792,458 m/s'. Simultaneously, on the right, the spaceship cockpit's point-of-view shows the same expanding light sphere. An identical holographic readout projects from the dashboard, its glowing blue numbers also resolving to the exact same value for 'c'. The camera pushes in on both readouts, highlighting their impossible agreement despite the vast relative motion.",
+          "duration_seconds": 26,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "8C",
+          "prompt": "A soft vertical wipe splits the screen. On the left, a hyper-realistic time-lapse shows a woman in a sunlit room on Earth. Seasons change rapidly outside her window as she visibly ages over decades: her skin develops fine lines, her hair transitions from dark to silver. On the right, her identical twin is shown in the sterile, metallic environment of a spaceship cabin. Her clock ticks at a glacial pace as she gazes out at swirling nebulae. Her aging is almost imperceptible. The split-screen dissolves, transitioning to a brightly lit, minimalist spaceport hangar. The two twins reunite. The camera performs a slow, 360-degree orbit around them as they embrace, starkly contrasting the elderly, weathered Earth-bound twin with her still-youthful, space-faring sibling.",
+          "duration_seconds": 26,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "8D",
+          "prompt": "A breathtaking first-person point-of-view from inside a spaceship cockpit, looking through a vast, seamless bubble canopy. The pilot's gloved hands rest on a glowing control yoke. The ship accelerates. Outside, the pinprick stars of deep space elongate into brilliant streaks of light. The starfield directly ahead compresses visually, and the light from distant stars intensely blue-shifts, creating a tunnel of sapphire and cobalt light. The destination star, once a distant point, swells rapidly in size and brightness, seeming to rush towards the cockpit as the vast cosmic distance contracts. The entire effect is smooth and physically accurate, conveying a profound warping of space itself from the traveler's perspective. The camera remains fixed, emphasizing the compression of the universe ahead.",
+          "duration_seconds": 27,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "8E",
+          "prompt": "The scene visualizes a luminous, four-dimensional spacetime grid, not as a wireframe, but as a tangible, volumetric fabric glowing with an internal, soft purple and blue light. A brilliant golden ribbon of energy\u2014a worldline\u2014cuts a straight, unwavering path through this flexing grid. The camera begins a majestic, slow orbit. As it moves, the entire 4D grid skews and rotates relative to the viewer, representing a shift to a moving observer's frame. From this new, angled perspective, the golden worldline's projection onto the grid's axes changes, appearing shorter in time and longer in space. The camera then smoothly transitions to another skewed angle, showing a different projection. The absolute path of the golden ribbon remains unchanged, only its perceived components of space and time differ for each observer.",
+          "duration_seconds": 28,
+          "style": "realistic"
+        }
+      ]
+    }
+  ],
+  "pipeline_version": "1.2",
+  "job_id": "2ebed6d3",
+  "use_remotion": true,
+  "source_file": "test_input.md"
+}
