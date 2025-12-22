@@ -8677,18 +8677,253 @@
       "dry_run": false,
       "content_preview": "# Biology: Cell Evolution  ## Topic: The Endosymbiotic Theory  The **Endosymbiotic Theory** explains the origin of eukaryotic cells from prokaryotic organisms. It proposes that key organelles\u2014specifically **mitochondria** and **chloroplasts**\u2014were once free-living bacteria that were engulfed by a la..."
     },
-    "status": "processing",
-    "current_step": 0,
-    "current_step_name": "Planning the Lesson",
-    "current_phase_key": "director",
-    "status_message": "The AI director is storyboarding your lesson...",
-    "steps_completed": 0,
+    "status": "completed",
+    "current_step": 2,
+    "current_step_name": "Complete!",
+    "current_phase_key": "completed",
+    "status_message": "Mic drop! Your video is done!",
+    "steps_completed": 3,
     "total_steps": 3,
-    "progress": 0,
+    "progress": 100,
     "created_at": "2025-12-22T07:08:34.917859",
     "started_at": "2025-12-22T07:08:34.931821",
-    "completed_at": null,
+    "completed_at": "2025-12-22T07:16:11.936108",
     "error": null,
-    "result": null
+    "result": {
+      "status": "completed",
+      "pipeline_version": "1.2",
+      "started_at": "2025-12-22T07:08:34.967422",
+      "source_file": null,
+      "steps": [
+        {
+          "step": "extract_images",
+          "status": "completed",
+          "count": 0
+        },
+        {
+          "step": "generate_presentation_v12",
+          "status": "completed",
+          "analytics": {
+            "job_id": "c2937309",
+            "status": "completed",
+            "total_duration_seconds": 404.33,
+            "total_cost_usd": 0.5566,
+            "total_tokens": 95408,
+            "phases_completed": 12,
+            "phases_failed": 1,
+            "cost_breakdown": {
+              "chunker": {
+                "cost_usd": 0.0009,
+                "duration_seconds": 1.96,
+                "tokens": 912
+              },
+              "director_gemini-2.5-pro": {
+                "cost_usd": 0.1219,
+                "duration_seconds": 96.02,
+                "tokens": 16506
+              },
+              "director_claude-sonnet-4": {
+                "cost_usd": 0.0,
+                "duration_seconds": 0.0,
+                "tokens": 0
+              },
+              "director_gemini-2.0-flash-001": {
+                "cost_usd": 0.0,
+                "duration_seconds": 29.59,
+                "tokens": 11284
+              },
+              "director_retry_1": {
+                "cost_usd": 0.1205,
+                "duration_seconds": 80.55,
+                "tokens": 18296
+              },
+              "director_retry_2": {
+                "cost_usd": 0.1509,
+                "duration_seconds": 103.8,
+                "tokens": 22399
+              },
+              "remotion_renderer_s1": {
+                "cost_usd": 0.0134,
+                "duration_seconds": 6.96,
+                "tokens": 2038
+              },
+              "remotion_renderer_s2": {
+                "cost_usd": 0.0226,
+                "duration_seconds": 11.74,
+                "tokens": 2715
+              },
+              "video_renderer_s3": {
+                "cost_usd": 0.016,
+                "duration_seconds": 15.13,
+                "tokens": 3523
+              },
+              "video_renderer_s4": {
+                "cost_usd": 0.0247,
+                "duration_seconds": 21.53,
+                "tokens": 4406
+              },
+              "video_renderer_s5": {
+                "cost_usd": 0.0218,
+                "duration_seconds": 19.84,
+                "tokens": 3849
+              },
+              "remotion_renderer_s6": {
+                "cost_usd": 0.0298,
+                "duration_seconds": 14.66,
+                "tokens": 3520
+              },
+              "video_renderer_s7": {
+                "cost_usd": 0.034,
+                "duration_seconds": 32.11,
+                "tokens": 5960
+              }
+            }
+          }
+        },
+        {
+          "step": "validation",
+          "status": "passed",
+          "note": "Handled in Director with retries"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": 1,
+              "section_type": "intro",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'intro' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 2,
+              "section_type": "summary",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'summary' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 3,
+              "section_type": "content",
+              "renderer": "video",
+              "status": "failed",
+              "video_path": null,
+              "error": "WAN prompt validation failed: Section 3: Beat 0: Prompt has 142 words, minimum 300 required. Prompt preview: 'The scene opens with an extreme macro camera pushing through the aqueous, greenish stroma and into t...'",
+              "visual_beats_used": 1,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 170, in _render_visual_beats\n    hard_fail_on_short_prompts(video_prompts, topic_id)\n  File \"/home/runner/workspace/core/wan_prompt_validator.py\", line 229, in hard_fail_on_short_prompts\n    raise WanPromptHardFailError(\ncore.wan_prompt_validator.WanPromptHardFailError: Section 3: Beat 0: Prompt has 142 words, minimum 300 required. Prompt preview: 'The scene opens with an extreme macro camera pushing through the aqueous, greenish stroma and into t...'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 165, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 48, in render_wan_video\n    return _render_visual_beats(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 172, in _render_visual_beats\n    raise WanRenderError(f\"WAN prompt validation failed: {e}\")\nrender.wan.wan_runner.WanRenderError: WAN prompt validation failed: Section 3: Beat 0: Prompt has 142 words, minimum 300 required. Prompt preview: 'The scene opens with an extreme macro camera pushing through the aqueous, greenish stroma and into t...'\n"
+            },
+            {
+              "topic_id": 4,
+              "section_type": "content",
+              "renderer": "video",
+              "status": "failed",
+              "video_path": null,
+              "error": "WAN prompt validation failed: Section 4: Beat 0: Prompt has 153 words, minimum 300 required. Prompt preview: 'The scene opens with a slow, drifting shot through the stroma of a chloroplast, a dense, viscous env...'",
+              "visual_beats_used": 1,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 170, in _render_visual_beats\n    hard_fail_on_short_prompts(video_prompts, topic_id)\n  File \"/home/runner/workspace/core/wan_prompt_validator.py\", line 229, in hard_fail_on_short_prompts\n    raise WanPromptHardFailError(\ncore.wan_prompt_validator.WanPromptHardFailError: Section 4: Beat 0: Prompt has 153 words, minimum 300 required. Prompt preview: 'The scene opens with a slow, drifting shot through the stroma of a chloroplast, a dense, viscous env...'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 165, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 48, in render_wan_video\n    return _render_visual_beats(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 172, in _render_visual_beats\n    raise WanRenderError(f\"WAN prompt validation failed: {e}\")\nrender.wan.wan_runner.WanRenderError: WAN prompt validation failed: Section 4: Beat 0: Prompt has 153 words, minimum 300 required. Prompt preview: 'The scene opens with a slow, drifting shot through the stroma of a chloroplast, a dense, viscous env...'\n"
+            },
+            {
+              "topic_id": 5,
+              "section_type": "example",
+              "renderer": "video",
+              "status": "failed",
+              "video_path": null,
+              "error": "WAN prompt validation failed: Section 5: Beat 0: Prompt has 129 words, minimum 300 required. Prompt preview: 'The scene opens with an extreme macro shot of a single, vibrant green plant leaf, its surface detail...'",
+              "visual_beats_used": 1,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 170, in _render_visual_beats\n    hard_fail_on_short_prompts(video_prompts, topic_id)\n  File \"/home/runner/workspace/core/wan_prompt_validator.py\", line 229, in hard_fail_on_short_prompts\n    raise WanPromptHardFailError(\ncore.wan_prompt_validator.WanPromptHardFailError: Section 5: Beat 0: Prompt has 129 words, minimum 300 required. Prompt preview: 'The scene opens with an extreme macro shot of a single, vibrant green plant leaf, its surface detail...'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 165, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 48, in render_wan_video\n    return _render_visual_beats(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 172, in _render_visual_beats\n    raise WanRenderError(f\"WAN prompt validation failed: {e}\")\nrender.wan.wan_runner.WanRenderError: WAN prompt validation failed: Section 5: Beat 0: Prompt has 129 words, minimum 300 required. Prompt preview: 'The scene opens with an extreme macro shot of a single, vibrant green plant leaf, its surface detail...'\n"
+            },
+            {
+              "topic_id": 6,
+              "section_type": "memory",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'memory' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": 7,
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "success",
+              "video_path": "/home/runner/workspace/player/jobs/c72fb3af/videos/topic_7.mp4",
+              "error": null,
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true
+            }
+          ],
+          "success_count": 4,
+          "fail_count": 3,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": 1,
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/c72fb3af/audio/section_1.mp3",
+              "actual_duration_seconds": 28.0
+            },
+            {
+              "section_id": 2,
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/c72fb3af/audio/section_2.mp3",
+              "actual_duration_seconds": 32.0
+            },
+            {
+              "section_id": 3,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/c72fb3af/audio/section_3.mp3",
+              "actual_duration_seconds": 93.0
+            },
+            {
+              "section_id": 4,
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/c72fb3af/audio/section_4.mp3",
+              "actual_duration_seconds": 84.0
+            },
+            {
+              "section_id": 5,
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/c72fb3af/audio/section_5.mp3",
+              "actual_duration_seconds": 50.0
+            },
+            {
+              "section_id": 6,
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/c72fb3af/audio/section_6.mp3",
+              "actual_duration_seconds": 25.0
+            },
+            {
+              "section_id": 7,
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/c72fb3af/audio/section_7.mp3",
+              "actual_duration_seconds": 176.0
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-22T07:16:11.933686",
+      "presentation_path": "/home/runner/workspace/player/jobs/c72fb3af/presentation.json",
+      "analytics_path": "/home/runner/workspace/player/jobs/c72fb3af/analytics.json",
+      "sections_count": 7,
+      "total_cost_usd": 0.556593,
+      "dry_run": false
+    }
   }
 }
