@@ -13,6 +13,7 @@ from flask_cors import CORS
 
 from core.pipeline import process_pdf_to_videos
 from core.pipeline_v12 import process_markdown_to_videos_v12 as process_markdown_to_videos
+from core.pipeline_v14 import process_markdown_to_presentation_v14, get_pipeline_info, validate_presentation_v14
 from core.job_manager import job_manager, run_job_async, is_job_running, get_current_job_id
 
 app = Flask(__name__)
@@ -48,8 +49,8 @@ def health_check():
     return jsonify({
         "status": "healthy",
         "service": "ai-animated-education-phase1",
-        "version": "1.1.0",
-        "features": ["job_mode", "pdf", "markdown"]
+        "version": "1.4.0",
+        "features": ["job_mode", "pdf", "markdown", "v14_pipeline", "split_director"]
     })
 
 
@@ -625,6 +626,244 @@ def generate_videos_from_prompts(job_id):
             "status": "error",
             "error": str(e),
             "job_id": job_id
+        }), 500
+
+
+@app.route("/api/v14/pipeline-info", methods=["GET"])
+def get_v14_pipeline_info():
+    """Return V1.4 pipeline architecture information."""
+    return jsonify(get_pipeline_info())
+
+
+@app.route("/api/v14/generate", methods=["POST"])
+def generate_v14():
+    """
+    V1.4 Split Director Pipeline endpoint.
+    
+    Request body (JSON):
+    - markdown: Markdown content to process (required)
+    - subject: Subject area (default: "General Science")
+    - grade: Grade level (default: "9")
+    - dry_run: If true, skips TTS generation (default: false)
+    - skip_tts: If true, uses estimated durations instead of Narakeet (default: false)
+    
+    Returns:
+    - presentation.json following v1.3 schema with spec_version v1.4
+    - analytics data including token usage and timing
+    - validation results
+    """
+    try:
+        if is_job_running():
+            current_id = get_current_job_id()
+            return jsonify({
+                "status": "busy",
+                "message": "A job is already running. Please wait for it to complete.",
+                "current_job_id": current_id
+            }), 409
+        
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+        
+        markdown_content = data.get("markdown", "")
+        if not markdown_content:
+            return jsonify({"error": "markdown field is required"}), 400
+        
+        subject = data.get("subject", "General Science")
+        grade = data.get("grade", "9")
+        dry_run = data.get("dry_run", False)
+        skip_tts = data.get("skip_tts", False)
+        
+        job_id = job_manager.create_job("v14_pipeline", {
+            "subject": subject,
+            "grade": grade,
+            "dry_run": dry_run,
+            "skip_tts": skip_tts,
+            "content_preview": markdown_content[:200] + "..." if len(markdown_content) > 200 else markdown_content
+        })
+        
+        job_output_dir = JOBS_DIR / job_id
+        setup_job_folder(job_output_dir)
+        
+        def status_callback(jid, phase, message):
+            job_manager.update_job(jid, {
+                "current_phase_key": phase,
+                "status_message": message
+            }, persist=True)
+        
+        presentation, tracker = process_markdown_to_presentation_v14(
+            markdown_content=markdown_content,
+            subject=subject,
+            grade=grade,
+            job_id=job_id,
+            update_status_callback=status_callback,
+            generate_tts=not skip_tts,
+            output_dir=job_output_dir
+        )
+        
+        validation = validate_presentation_v14(presentation)
+        
+        pres_path = job_output_dir / "presentation.json"
+        with open(pres_path, "w") as f:
+            json.dump(presentation, f, indent=2)
+        
+        analytics_summary = tracker.get_summary() if hasattr(tracker, 'get_summary') else {}
+        
+        job_manager.update_job(job_id, {
+            "status": "completed" if not validation.get("has_errors") else "failed",
+            "progress": 100,
+            "validation": validation
+        }, persist=True)
+        
+        return jsonify({
+            "status": "success" if not validation.get("has_errors") else "validation_failed",
+            "job_id": job_id,
+            "presentation": presentation,
+            "validation": validation,
+            "analytics": analytics_summary,
+            "output_path": str(pres_path),
+            "dry_run": dry_run,
+            "skip_tts": skip_tts
+        })
+        
+    except Exception as e:
+        import traceback
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
+
+
+@app.route("/api/v14/dry-run-test", methods=["POST"])
+def dry_run_test_v14():
+    """
+    Dry run test for V1.4 pipeline.
+    
+    This endpoint runs the full pipeline but captures output without actually
+    calling LLMs or TTS services. Useful for validating pipeline structure.
+    
+    Request body (JSON):
+    - markdown: Markdown content (optional, uses sample if not provided)
+    - subject: Subject area (default: "Biology")
+    - grade: Grade level (default: "10")
+    
+    Returns:
+    - Pipeline info and expected flow
+    - Sample topics structure
+    - Expected section structure
+    """
+    try:
+        data = request.get_json() or {}
+        
+        sample_markdown = data.get("markdown") or """
+# Cell Structure and Function
+
+## Introduction
+Cells are the basic building blocks of all living organisms. Understanding cell structure is fundamental to biology.
+
+## Cell Membrane
+The cell membrane is a semi-permeable barrier that controls what enters and exits the cell.
+- Made of phospholipid bilayer
+- Contains proteins for transport
+- Maintains cell homeostasis
+
+### Transport Mechanisms
+1. **Passive Transport**: Movement without energy (diffusion, osmosis)
+2. **Active Transport**: Requires ATP energy
+
+## Example: Red Blood Cells
+Red blood cells demonstrate osmosis:
+- In hypotonic solution: cells swell and burst
+- In hypertonic solution: cells shrink
+- In isotonic solution: cells remain normal
+
+## Summary
+Cells are complex structures with specialized components working together to maintain life.
+"""
+        
+        subject = data.get("subject", "Biology")
+        grade = data.get("grade", "10")
+        
+        pipeline_info = get_pipeline_info()
+        
+        expected_topics = {
+            "source_topic": "Cell Structure and Function",
+            "topics": [
+                {
+                    "topic_id": "t1",
+                    "title": "Cell Membrane",
+                    "concept_type": "definition",
+                    "has_formula": False,
+                    "suggested_renderer": "video"
+                },
+                {
+                    "topic_id": "t2", 
+                    "title": "Transport Mechanisms",
+                    "concept_type": "process",
+                    "has_formula": False,
+                    "suggested_renderer": "video"
+                },
+                {
+                    "topic_id": "t3",
+                    "title": "Red Blood Cells Osmosis",
+                    "concept_type": "example",
+                    "has_formula": False,
+                    "suggested_renderer": "video"
+                }
+            ]
+        }
+        
+        expected_sections = {
+            "from_content_director": ["intro", "summary", "content", "example", "quiz"],
+            "from_recap_director": ["memory", "recap"],
+            "merge_result_order": ["intro", "summary", "content", "example", "quiz", "memory", "recap"]
+        }
+        
+        validation_criteria = {
+            "memory": {
+                "flashcard_count": 5,
+                "mnemonic_style": "R-A-S letters"
+            },
+            "recap": {
+                "video_prompt_count": 5,
+                "per_prompt_min_words": 300,
+                "total_narration_words": "300-500",
+                "avatar": "MUST be hidden"
+            }
+        }
+        
+        return jsonify({
+            "status": "dry_run_complete",
+            "pipeline_version": pipeline_info["version"],
+            "pipeline_architecture": pipeline_info["architecture"],
+            "passes": pipeline_info["passes"],
+            "models": pipeline_info["models"],
+            "retry_strategy": pipeline_info["retry_strategy"],
+            "test_input": {
+                "subject": subject,
+                "grade": grade,
+                "markdown_length": len(sample_markdown),
+                "markdown_preview": sample_markdown[:300] + "..."
+            },
+            "expected_output": {
+                "topics": expected_topics,
+                "sections": expected_sections,
+                "validation_criteria": validation_criteria
+            },
+            "next_steps": [
+                "Use /api/v14/generate with actual markdown to run full pipeline",
+                "Set skip_tts=true to avoid Narakeet costs during testing",
+                "Set dry_run=true for fastest iteration"
+            ]
+        })
+        
+    except Exception as e:
+        import traceback
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "traceback": traceback.format_exc()
         }), 500
 
 

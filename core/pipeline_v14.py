@@ -136,7 +136,7 @@ def process_markdown_to_presentation_v14(
             )
         
         update_status("validation", "Validating lesson structure...")
-        validation_result = _run_validation(presentation)
+        validation_result = validate_presentation_v14(presentation)
         
         if validation_result["has_errors"]:
             error_summary = "; ".join(validation_result["errors"][:5])
@@ -176,7 +176,7 @@ def process_markdown_to_presentation_v14(
         raise PipelineError(f"Pipeline failed: {e}", phase="unknown")
 
 
-def _run_validation(presentation: Dict) -> Dict:
+def validate_presentation_v14(presentation: Dict) -> Dict:
     """
     Run 3-tier validation on merged presentation.
     

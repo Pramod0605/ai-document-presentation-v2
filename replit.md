@@ -9,7 +9,8 @@ The user wants an iterative development process. The agent should prioritize cle
 ### NON-NEGOTIABLE RULES (CRITICAL)
 1. **Before proposing ANY solution**, the agent MUST check:
    - `attached_assets/` folder for specification documents (especially LLM brain prompts)
-   - `docs/llm_output_requirements_v1.3.json` for definitive LLM output specification (v1.3)
+   - `docs/llm_output_requirements_v1.4.json` for definitive LLM output specification (v1.4)
+   - `docs/llm_output_requirements_v1.3.json` for legacy v1.3 specification
    - `replit.md` for documented architecture and decisions
    - Existing prompt files in `core/prompts/` (v1.3 prompts)
    - `issues.json` for tracked problems and their agreed solutions
@@ -17,7 +18,7 @@ The user wants an iterative development process. The agent should prioritize cle
 3. Nothing is a "solution" until the user explicitly agrees.
 4. When in doubt, ASK the user - do not proceed with assumptions.
 5. The LLM is the "brain" - timing, durations, and creative decisions come from LLM output, not from post-processing calculations.
-6. **ALL LLM OUTPUTS MUST CONFORM TO `docs/llm_output_requirements_v1.3.json` OR FAIL** - this is non-negotiable. There are NO FALLBACKS. Missing required fields = generation failure.
+6. **ALL LLM OUTPUTS MUST CONFORM TO `docs/llm_output_requirements_v1.4.json` OR FAIL** - this is non-negotiable. There are NO FALLBACKS. Missing required fields = generation failure.
 7. **Player is a DUMB display layer** - it consumes LLM output without modification. No duration calculations, no content fallbacks, no graceful degradation.
 8. **Issue Tracking First** - Any issue noticed MUST be logged to `issues.json` with full details BEFORE proposing any solution.
 9. **Upstream/Downstream Impact Analysis** - Before code changes, verify upstream and downstream components are not affected. If they are, include those fixes in the proposal and ask for user approval.
@@ -71,3 +72,21 @@ The user wants an iterative development process. The agent should prioritize cle
 - **MoviePy**: Video editing library.
 - **OpenAI Python Client**: Used for OpenRouter gateway.
 - **Tenacity**: For API call retry logic.
+- **Mutagen**: For TTS audio duration measurement.
+
+## V1.4 API Endpoints
+- `GET /api/v14/pipeline-info` - Returns pipeline architecture information
+- `POST /api/v14/generate` - Run full V1.4 Split Director pipeline
+- `POST /api/v14/dry-run-test` - Test pipeline structure without LLM calls
+
+## Test Scripts
+- `scripts/test_v14_pipeline.py` - End-to-end pipeline test script
+  - `--mode info_only` - Check pipeline info only
+  - `--mode dry_run` - Test endpoints without LLM calls
+  - `--mode full_test` - Run actual pipeline with LLMs (incurs costs)
+
+## Recent Changes (2025-12-22)
+- Created `docs/llm_output_requirements_v1.4.json` documenting Split Director architecture
+- Added V1.4 API endpoints to `api/app.py`
+- Created dry run test script for pipeline validation
+- Exposed `validate_presentation_v14` as public function
