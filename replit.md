@@ -78,6 +78,12 @@ The user wants an iterative development process. The agent should prioritize cle
    - Remotion: Strict JSON-only output, single retry on parse failure
    - WAN: ≥300 words per beat, forbidden vague phrases, single retry on validation failure
 
+8. **Production Readiness Validation** (ISS-074 to ISS-079):
+   - **Dry Run Validator** (`core/dry_run_validator.py`): Validates all render specs before generation
+   - **WAN Hard Fail** (`core/wan_prompt_validator.py`): Production runs abort if any prompt <300 words
+   - **Player Validation** (`player/player.js`): SlideValidator shows error overlay for missing v1.3 fields
+   - **Renderer-Subject Match**: Biology content must use video renderer, not manim
+
 ### Prompt Files (v1.3)
 Located in `core/prompts/`:
 - `director_system_v1.3.txt` / `director_user_v1.3.txt` (v1.3 with canonical JSON example)
