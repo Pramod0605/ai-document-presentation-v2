@@ -1534,14 +1534,40 @@
       "files_to_modify": ["core/prompts/chunker_prompt.txt", "core/prompts/content_director_system_v1.4.txt", "core/hard_fail_validator.py"],
       "priority": "medium",
       "blocked_by": null
+    },
+    {
+      "id": "ISS-098",
+      "title": "Content Director only creates 2 sections from 5 Smart Chunker topics (60% content loss)",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "Smart Chunker correctly identifies 5 topics from source markdown, but Content Director only creates 2 content sections. 3 topics (Mathematics, Geometry, Chemistry) are completely lost.",
+      "error": "Job 0a6fb562: Source has 5 topics, presentation.json only has 2 content sections",
+      "root_cause": "V1.4 Content Director prompt was missing critical V1.3 instructions: 1) 'content (multiple)' instruction, 2) 'one section per topic' requirement, 3) 'extract from source document' rule",
+      "fix": "Rewrote content_director_system_v1.4.txt with explicit TOPIC-TO-SECTION MAPPING rule: one content section per Chunker topic. Added source document extraction and LaTeX preservation rules.",
+      "files_modified": ["core/prompts/content_director_system_v1.4.txt"],
+      "lesson": "When splitting a prompt (v1.3 Director → v1.4 Content+Recap), all critical instructions must be carefully distributed to the right prompt"
+    },
+    {
+      "id": "ISS-099",
+      "title": "LaTeX formulas from source markdown not preserved in presentation",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "Source markdown contains 6+ LaTeX formulas (integrals, sector area, equilibrium constant, etc.) but only 1 formula appears in final presentation. Formulas must be passed through to visual_content.formula.",
+      "error": "Missing formulas: integral F(b)-F(a), sector area, cylinder volume, period formula, equilibrium Kc",
+      "root_cause": "V1.4 Content Director prompt had no LaTeX preservation instructions",
+      "fix": "Added LATEX FORMULA PRESERVATION section to content_director_system_v1.4.txt with explicit rules to preserve formulas exactly as written in source",
+      "files_modified": ["core/prompts/content_director_system_v1.4.txt"],
+      "lesson": "Content extraction rules must explicitly cover formula/LaTeX passthrough"
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-22T18:15:00.000000",
-    "version": "14.10",
+    "last_updated": "2025-12-22T19:30:00.000000",
+    "version": "14.11",
     "spec_version": "v1.4",
     "spec_file": "docs/llm_output_requirements_v1.4.json",
-    "resolved_count": 83,
+    "resolved_count": 85,
     "open_count": 1,
     "testing_lesson": "Prompt FORBIDDEN lists must exactly match validator detection patterns",
     "v14_video_retries": "Video renderer now has 3 total attempts (max_retries=2) for 300+ word compliance"

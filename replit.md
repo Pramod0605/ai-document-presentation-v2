@@ -107,6 +107,13 @@ The Merge Step converts 5 separate `recap_scene_N` sections (easier for LLM to g
 - Player layer: Receives exactly what it expects, NO CHANGES NEEDED
 
 ## Recent Changes (2025-12-22)
+- **ISS-098 FIX**: Content Director creating only 2 sections from 5 topics (60% content loss)
+  - V1.4 prompt was missing critical V1.3 instructions: "content (multiple)", "one per topic"
+  - Added explicit TOPIC-TO-SECTION MAPPING rule: one content section per Chunker topic
+  - Added source document extraction rules and LaTeX preservation
+- **ISS-099 FIX**: LaTeX formulas from source not preserved in presentation
+  - Added LATEX FORMULA PRESERVATION section to Content Director prompt
+  - Formulas must be extracted exactly as written from source markdown
 - **ISS-094 FIX**: Video Renderer prompt/WAN validation mismatch
   - Updated Video Renderer prompt to require 300+ words (was 100-150)
   - Aligned with WAN validation threshold
