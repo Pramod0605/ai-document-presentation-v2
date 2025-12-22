@@ -7,9 +7,19 @@ from render.manim.manim_runner import render_manim_video
 from core.visual_compiler import compile_section_visuals, VisualCompilationError
 from core.traceability import log_render_prompt
 from core.wan_prompt_validator import validate_video_prompts, log_prompt_quality_summary
+from core.dry_run_validator import (
+    validate_presentation_dry_run,
+    format_validation_report,
+    DryRunValidationResult
+)
 
 
 TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory"]
+
+
+class DryRunValidationError(Exception):
+    """Raised when dry run validation fails."""
+    pass
 
 
 def enforce_renderer_policy(presentation: dict) -> dict:
@@ -165,10 +175,63 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     return result
 
 
+def validate_before_render(presentation: dict, output_dir: str, strict_v13: bool = True) -> DryRunValidationResult:
+    """
+    ISS-078 FIX: Run comprehensive validation before rendering.
+    
+    This validates all render specs are complete:
+    - WAN prompts have 300+ words (v1.3)
+    - Manim scene specs are complete
+    - Display directives are present
+    - Renderer-subject matches are valid
+    
+    Args:
+        presentation: The presentation dict
+        output_dir: Output directory for videos
+        strict_v13: Enforce v1.3 requirements
+    
+    Returns:
+        DryRunValidationResult with all errors and warnings
+    """
+    result = validate_presentation_dry_run(presentation, output_dir, strict_v13=strict_v13)
+    
+    report = format_validation_report(result)
+    print(report)
+    
+    report_path = Path(output_dir).parent / "dry_run_validation.txt"
+    try:
+        with open(report_path, "w") as f:
+            f.write(report)
+        print(f"[DRY RUN] Validation report saved to: {report_path}")
+    except Exception as e:
+        print(f"[DRY RUN] Could not save report: {e}")
+    
+    return result
+
+
 def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, output_dir_base: str = "", strict_mode: bool = True) -> list:
     os.makedirs(output_dir, exist_ok=True)
     
     trace_output_dir = output_dir_base or str(Path(output_dir).parent)
+    
+    if dry_run:
+        print("[DRY RUN] Running comprehensive validation before render simulation...")
+        validation_result = validate_before_render(
+            presentation, 
+            output_dir, 
+            strict_v13=strict_mode
+        )
+        
+        if not validation_result.is_valid:
+            print(f"[DRY RUN] VALIDATION FAILED with {len(validation_result.errors)} errors")
+            for err in validation_result.errors[:10]:
+                print(f"  {err}")
+            raise DryRunValidationError(
+                f"Dry run validation failed: {len(validation_result.errors)} errors. "
+                f"Fix these issues before production run. See dry_run_validation.txt for details."
+            )
+        else:
+            print(f"[DRY RUN] Validation PASSED ({len(validation_result.warnings)} warnings)")
     
     rendered_videos = []
     topics = presentation.get("sections", presentation.get("topics", []))

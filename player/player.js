@@ -1,6 +1,124 @@
 let lessonData = null;
 
 /**
+ * SlideValidator - ISS-079 FIX: Validates slide data and provides user feedback
+ * Checks for required v1.3 fields and logs validation errors
+ */
+class SlideValidator {
+  constructor() {
+    this.validationErrors = [];
+  }
+
+  validateSlide(slide, slideIndex) {
+    this.validationErrors = [];
+    const sectionType = slide.section_type || slide.slide_type || 'content';
+    const specVersion = lessonData?.spec_version || '';
+    const isV13 = specVersion.startsWith('v1.3');
+
+    if (!slide.section_id && !slide.id) {
+      this.addError(`Slide ${slideIndex}: Missing section_id`);
+    }
+
+    if (!slide.title) {
+      this.addWarning(`Slide ${slideIndex}: Missing title`);
+    }
+
+    const narration = slide.narration || {};
+    const segments = narration.segments || slide.narration_segments || [];
+    
+    if (segments.length === 0 && !['recap'].includes(sectionType)) {
+      this.addWarning(`Slide ${slideIndex}: No narration segments`);
+    }
+
+    if (isV13 && sectionType !== 'recap') {
+      let missingDirectives = 0;
+      for (let i = 0; i < segments.length; i++) {
+        if (!segments[i].display_directives) {
+          missingDirectives++;
+        }
+      }
+      if (missingDirectives > 0 && segments.length > 0) {
+        this.addError(`Slide ${slideIndex}: ${missingDirectives}/${segments.length} segments missing display_directives (v1.3 REQUIRED)`);
+      }
+    }
+
+    if (sectionType === 'content' || sectionType === 'example') {
+      const hasVisualContent = slide.visual_content && (
+        slide.visual_content.bullet_points?.length > 0 ||
+        slide.visual_content.formula
+      );
+      
+      const hasSegmentVisualContent = segments.some(seg => 
+        seg.visual_content && (
+          seg.visual_content.bullet_points?.length > 0 ||
+          seg.visual_content.formula
+        )
+      );
+      
+      if (!hasVisualContent && !hasSegmentVisualContent) {
+        this.addWarning(`Slide ${slideIndex}: No visual_content - text display may fall back to narration`);
+      }
+    }
+
+    return this.validationErrors.length === 0;
+  }
+
+  addError(message) {
+    this.validationErrors.push({ level: 'error', message });
+    console.error(`[SlideValidator] ERROR: ${message}`);
+  }
+
+  addWarning(message) {
+    this.validationErrors.push({ level: 'warning', message });
+    console.warn(`[SlideValidator] WARNING: ${message}`);
+  }
+
+  showValidationOverlay(slideIndex) {
+    const errors = this.validationErrors.filter(e => e.level === 'error');
+    if (errors.length === 0) return;
+
+    let overlay = document.getElementById('validation-error-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'validation-error-overlay';
+      overlay.style.cssText = `
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(200, 50, 50, 0.9);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 12px;
+        max-width: 300px;
+        z-index: 1000;
+        cursor: pointer;
+      `;
+      overlay.onclick = () => overlay.style.display = 'none';
+      document.getElementById('stage').appendChild(overlay);
+    }
+
+    overlay.innerHTML = `
+      <strong>Slide ${slideIndex + 1} Validation Issues</strong><br>
+      ${errors.map(e => `• ${e.message}`).join('<br>')}
+      <br><small>(click to dismiss)</small>
+    `;
+    overlay.style.display = 'block';
+
+    setTimeout(() => {
+      if (overlay) overlay.style.display = 'none';
+    }, 10000);
+  }
+
+  hideValidationOverlay() {
+    const overlay = document.getElementById('validation-error-overlay');
+    if (overlay) overlay.style.display = 'none';
+  }
+}
+
+const slideValidator = new SlideValidator();
+
+/**
  * LayerController - v1.3 display_directives handler
  * Controls text_layer, visual_layer, avatar_layer visibility
  * Enforces: text must hide BEFORE visuals appear (mutual exclusion)
@@ -553,10 +671,16 @@ function loadSlide(index) {
   audio.pause();
 
   layerController.reset();
+  slideValidator.hideValidationOverlay();
 
   currentSlideIndex = index;
   currentBeatIndex = 0;
   const slide = lessonData.slides[index];
+  
+  slideValidator.validateSlide(slide, index);
+  if (slideValidator.validationErrors.filter(e => e.level === 'error').length > 0) {
+    slideValidator.showValidationOverlay(index);
+  }
   
   const sectionType = slide.section_type || slide.slide_type || 'content';
   layerController.applySectionAvatarRules(sectionType, slide.layout);

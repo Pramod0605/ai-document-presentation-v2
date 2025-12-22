@@ -3,11 +3,14 @@ WAN Video Runner - Generates videos from visual beats using Kie.ai API
 
 CRITICAL: Each visual beat becomes a separate video segment.
 NO fallback to generic prompts - fail if visual beats are missing.
+
+ISS-076 FIX: Production runs now validate 300+ word prompts before API calls.
 """
 from pathlib import Path
 from typing import List
 from .wan_client import WANClient
 from render.render_trace import log_render_prompt
+from core.wan_prompt_validator import hard_fail_on_short_prompts, WanPromptHardFailError
 
 
 class WanRenderError(Exception):
@@ -107,6 +110,12 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
         print(f"[SKIP WAN] Placeholder for section {topic_id}")
         return _create_placeholder_video(topic_id, topic_title, output_path, duration)
     
+    # ISS-076 FIX: Validate section-level prompt before API call
+    try:
+        hard_fail_on_short_prompts([{"prompt": prompt}], topic_id)
+    except WanPromptHardFailError as e:
+        raise WanRenderError(f"Section-level WAN prompt validation failed: {e}")
+    
     client = WANClient()
     result_path = client.generate_video(
         prompt=prompt,
@@ -155,6 +164,13 @@ def _render_visual_beats(
     else:
         print(f"[WAN] Rendering {len(visual_beats)} visual beats for section {topic_id}")
     
+    # ISS-076 FIX: Validate prompt lengths BEFORE making any API calls (production mode only)
+    if not dry_run and not skip_wan and use_precompiled:
+        try:
+            hard_fail_on_short_prompts(video_prompts, topic_id)
+        except WanPromptHardFailError as e:
+            raise WanRenderError(f"WAN prompt validation failed: {e}")
+    
     beat_duration = max(5, duration // num_beats)
     video_paths = []
     client = WANClient() if not skip_wan and not dry_run else None
@@ -175,6 +191,15 @@ def _render_visual_beats(
                     f"Section {topic_id}, Beat {beat_idx}: Visual beat compilation failed. "
                     f"Reason: {e.reason}"
                 )
+            
+            # ISS-076 FIX: Validate compiled prompt before API call (production only)
+            if not dry_run and not skip_wan:
+                word_count = len(wan_prompt.split()) if wan_prompt else 0
+                if word_count < 300:
+                    raise WanRenderError(
+                        f"Section {topic_id}, Beat {beat_idx}: Compiled WAN prompt has {word_count} words, "
+                        f"v1.3 REQUIRES 300+ words. Prompt preview: '{wan_prompt[:80]}...'"
+                    )
         
         # Generate output path for this beat
         beat_output_path = str(Path(output_dir) / f"topic_{topic_id}_beat_{beat_idx}.mp4")
@@ -255,6 +280,14 @@ def _render_recap_scenes(
         print(f"[WARN] Section {topic_id}: Expected 5 recap scenes, got {len(recap_scenes)}")
     
     print(f"[WAN] Rendering {len(recap_scenes)} recap scenes for section {topic_id}")
+    
+    # ISS-076 FIX: Validate recap prompts before API calls (production mode only)
+    if not dry_run and not skip_wan:
+        recap_prompts = [{"prompt": scene.get("wan_prompt", "")} for scene in recap_scenes]
+        try:
+            hard_fail_on_short_prompts(recap_prompts, topic_id)
+        except WanPromptHardFailError as e:
+            raise WanRenderError(f"Recap prompt validation failed: {e}")
     
     video_paths = []
     client = WANClient() if not skip_wan and not dry_run else None
@@ -476,6 +509,13 @@ def render_from_video_prompts(
         raise WanRenderError(f"Section {section_id}: No video_prompts available")
     
     print(f"[WAN] Rendering {len(video_prompts)} video prompts for section {section_id}")
+    
+    # ISS-076 FIX: Validate all prompts before any API calls (production only)
+    if not dry_run and not skip_wan:
+        try:
+            hard_fail_on_short_prompts(video_prompts, section_id)
+        except WanPromptHardFailError as e:
+            raise WanRenderError(f"Video prompts validation failed: {e}")
     
     from pathlib import Path
     output_path = Path(output_dir)

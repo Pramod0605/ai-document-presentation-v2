@@ -8,10 +8,22 @@ Validation checks:
 1. Banned vague phrases detection
 2. Minimum prompt length
 3. Required specificity elements (subject, action, context)
+
+ISS-076 FIX: Added hard_fail_on_short_prompts() for production enforcement.
 """
 
 import re
 from typing import List, Dict, Tuple
+
+
+MIN_WAN_PROMPT_WORDS_V13 = 300
+
+
+class WanPromptHardFailError(Exception):
+    """Raised when WAN prompt validation fails hard (no fallback allowed)."""
+    def __init__(self, section_id: int, message: str):
+        self.section_id = section_id
+        super().__init__(f"Section {section_id}: {message}")
 
 
 BANNED_VAGUE_PHRASES = [
@@ -189,3 +201,35 @@ def log_prompt_quality_summary(video_prompts: List[Dict], section_id: int = 0) -
         "avg_quality": round(total_quality / len(video_prompts), 2),
         "issues": issues
     }
+
+
+def hard_fail_on_short_prompts(video_prompts: List[Dict], section_id: int, min_words: int = MIN_WAN_PROMPT_WORDS_V13) -> None:
+    """
+    ISS-076 FIX: Hard fail validation for WAN prompts.
+    
+    Raises WanPromptHardFailError if any prompt is below minimum word count.
+    This should be called before production WAN API calls.
+    
+    Args:
+        video_prompts: List of video prompt dicts
+        section_id: Section identifier
+        min_words: Minimum words required per prompt
+    
+    Raises:
+        WanPromptHardFailError: If any prompt fails validation
+    """
+    if not video_prompts:
+        raise WanPromptHardFailError(section_id, "No video_prompts provided")
+    
+    for i, vp in enumerate(video_prompts):
+        prompt = vp.get("prompt", "") if isinstance(vp, dict) else str(vp)
+        word_count = len(prompt.split()) if prompt else 0
+        
+        if word_count < min_words:
+            raise WanPromptHardFailError(
+                section_id,
+                f"Beat {i}: Prompt has {word_count} words, minimum {min_words} required. "
+                f"Prompt preview: '{prompt[:100]}...'"
+            )
+    
+    print(f"[WAN Validator] Section {section_id}: All {len(video_prompts)} prompts meet {min_words}+ word requirement")

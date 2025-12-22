@@ -1126,9 +1126,10 @@
     {
       "id": "ISS-075",
       "title": "Subject-aware renderer validation not invoked in pipeline",
-      "status": "open",
+      "status": "resolved",
       "priority": "high",
       "created": "2025-12-22",
+      "resolved": "2025-12-22",
       "category": "validation",
       "impact": "Biology content could incorrectly be routed to manim renderer instead of video/WAN. No subject gating enforced.",
       "root_cause": {
@@ -1153,9 +1154,10 @@
     {
       "id": "ISS-076",
       "title": "WAN prompt word count validation not enforced - prompts often <50 words",
-      "status": "open",
+      "status": "resolved",
       "priority": "critical",
       "created": "2025-12-22",
+      "resolved": "2025-12-22",
       "category": "validation",
       "impact": "Video prompts too short/vague for quality WAN video generation. Job artifacts show <50 word prompts when spec requires 300+.",
       "root_cause": {
@@ -1211,9 +1213,10 @@
     {
       "id": "ISS-078",
       "title": "Dry run does not validate rendered asset paths - placeholders accepted as success",
-      "status": "open",
+      "status": "resolved",
       "priority": "critical",
       "created": "2025-12-22",
+      "resolved": "2025-12-22",
       "category": "validation",
       "impact": "Dry run completes 'successfully' but presentation.json references non-existent video files. Player fails to load videos.",
       "root_cause": {
@@ -1242,9 +1245,10 @@
     {
       "id": "ISS-079",
       "title": "Player has no validation - silently fails when display_directives or visual_content missing",
-      "status": "open",
+      "status": "resolved",
       "priority": "high",
       "created": "2025-12-22",
+      "resolved": "2025-12-22",
       "category": "player",
       "impact": "Player silently ignores missing data. Visuals don't show, segments don't highlight, no error shown to user.",
       "root_cause": {
@@ -1269,11 +1273,11 @@
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-22T04:00:00.000000",
-    "version": "14.0",
+    "last_updated": "2025-12-22T05:00:00.000000",
+    "version": "14.1",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
-    "resolved_count": 62,
-    "open_count": 8
+    "resolved_count": 66,
+    "open_count": 4
   }
 }
