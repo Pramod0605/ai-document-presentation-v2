@@ -2,7 +2,7 @@
 
 **Version:** 1.4  
 **Created:** 2025-12-22  
-**Status:** PENDING USER APPROVAL  
+**Status:** IMPLEMENTED  
 **Resolves:** ISS-080 (Director LLM Fails v1.3 Structural Validation Consistently)
 
 ---
@@ -172,6 +172,32 @@ This architecture guarantees perfect output by:
 │   - Duration sanity checks                                                       │
 │                                                                                  │
 │ IF VALIDATION FAILS → HARD FAIL (no fallbacks)                                  │
+└─────────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ PASS 1.5: TTS DURATION MEASUREMENT (NEW in v1.4)                                │
+│                                                                                  │
+│ Purpose: Replace LLM duration estimates with actual TTS audio durations         │
+│                                                                                  │
+│ Process:                                                                         │
+│ 1. For each narration segment, call Narakeet TTS API                            │
+│ 2. Inspect MP3 metadata using mutagen library (no playback needed)              │
+│ 3. Update duration_seconds field with actual value                              │
+│ 4. Calculate section total_duration_seconds                                      │
+│                                                                                  │
+│ Implementation:                                                                  │
+│   audio = MP3(audio_path)                                                        │
+│   duration = audio.info.length  # Microsecond-accurate                          │
+│                                                                                  │
+│ Fallback:                                                                        │
+│ - If Narakeet fails: estimate at 130 words/minute                               │
+│ - If NARAKEET_API_KEY not set: use estimates only                               │
+│                                                                                  │
+│ Benefits:                                                                        │
+│ - Accurate timing for player synchronization                                    │
+│ - No runtime surprises from duration mismatches                                 │
+│ - Audio files cached for later use                                              │
 └─────────────────────────────────────────────────────────────────────────────────┘
                                       │
                                       ▼

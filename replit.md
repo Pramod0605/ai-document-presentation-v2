@@ -1,7 +1,7 @@
-# AI Animated Education - Phase 1 (v1.3)
+# AI Animated Education - Phase 1 (v1.4)
 
 ## Overview
-This project develops a **Deterministic Educational Film Engine** that transforms PDF chapters into pedagogically structured, animated explanation videos with synchronized narration. It uses a **3-pass LLM architecture** with strict role separation. Version 1.3 introduces display_directives for layer control, mandatory section validation, and avatar rules per section type.
+This project is a **Deterministic Educational Film Engine** designed to transform PDF chapters into pedagogically structured, animated explanation videos with synchronized narration. Its core purpose is to automate the creation of high-quality educational content, targeting a market for accessible and engaging learning materials. Version 1.4 introduces a **Split Director Architecture** to enhance output reliability and precision.
 
 ## User Preferences
 The user wants an iterative development process. The agent should prioritize clear, concise, and accurate communication. Before making any major architectural changes or introducing new dependencies, the agent must ask for explicit approval. The user prefers detailed explanations for complex technical decisions. The agent should ensure that all code is well-documented and follows best practices for maintainability and readability.
@@ -23,233 +23,51 @@ The user wants an iterative development process. The agent should prioritize cle
 9. **Upstream/Downstream Impact Analysis** - Before code changes, verify upstream and downstream components are not affected. If they are, include those fixes in the proposal and ask for user approval.
 10. **No Deviation Without Approval** - No deviations from the initial goal. Any code changes must be approved by the user first.
 
-## System Architecture (v1.3)
+## System Architecture
 
-### Pipeline Architecture (v1.3 Deterministic Film Engine)
+### Pipeline Architecture (v1.4 Split Director)
 
 | Pass | Phase | Model | Role | Output |
 |------|-------|-------|------|--------|
-| **0** | Chunker | Gemini 2.5 Flash | Pure preprocessing - split markdown | Chunked JSON |
-| **1** | Director | Gemini 2.5 Pro | Pedagogy + structure + timing + display_directives | presentation.json (v1.3 schema) |
-| **2** | Renderers | Various | Deterministic rendering (NO creative LLM decisions) | MP4 videos |
-| **3** | Player | N/A | DUMB execution - follows JSON instructions exactly | Video playback |
+| **0** | Smart Chunker | Gemini 2.5 Pro | Extract logical topics with metadata | topics.json |
+| **1a** | Content Director | Gemini 2.5 Pro | Generate intro/summary/content/example/quiz | content_sections.json |
+| **1b** | Recap Director | Gemini 2.5 Pro | Generate memory (5 flashcards) + recap (5 scenes) | recap_sections.json |
+| **Merge** | Merge Step | Python | Deterministic merge of 1a + 1b | presentation.json |
+| **1.5** | TTS Duration | Narakeet + Mutagen | Generate audio, measure actual duration | Updated presentation.json |
+| **2** | Renderers | Various | Deterministic rendering | MP4 videos |
+| **3** | Player | N/A | DUMB execution - follows JSON instructions | Video playback |
 
-### v1.3 Key Changes (NEW)
-1. **display_directives** - Every narration segment MUST have:
-   - `text_layer`: show | hide | swap
-   - `visual_layer`: show | hide | replace
-   - `avatar_layer`: show | hide | gesture_only
-   - **Rule**: Text MUST hide BEFORE complex visuals appear
+### Core Architectural Principles
+- **PLAYER IS DUMB**: The player only executes JSON instructions; it does not determine layout, timing, or pedagogy.
+- **ONE PRIMARY ATTENTION LAYER AT A TIME**: Either text OR visuals are prominent, never simultaneously.
+- **TEACH → THEN SHOW**: Narration explains first, then visuals reinforce.
+- **EVERYTHING IS TIMED**: All segments have precise durations, with visuals synchronized.
+- **TWO-CHANNEL SEPARATION**: Narration is audio-only; `visual_content` is screen display only.
 
-2. **Mandatory Sections** (hard fail if missing):
-   - intro
-   - summary
-   - memory (5 flashcards)
-   - recap (5 scenes, 300-500 words)
-
-3. **Avatar Rules per Section Type**:
-   - **INTRO**: visible, center/overlay, ≥50% width
-   - **CONTENT**: side position, 30-40% width
-   - **EXAMPLE**: side small OR gesture_only
-   - **QUIZ**: hidden or minimal
-   - **MEMORY**: optional
-   - **RECAP**: hidden (video only)
-
-4. **Manim Hard Rule**: If renderer=manim, EVERY visual beat MUST include manim_scene_spec. Prose-only = HARD FAILURE.
-
-5. **Two-Channel Content Separation** (ISS-056):
-   - `narration.segments[].text` = TTS audio only, NEVER displayed on screen
-   - `visual_content` = Screen display only (bullet_points, formula, labels)
-   - Director extracts displayable content from source document into visual_content
-   - Player aggregates segment visual_content for backward-compatible slide rendering
-
-6. **Legacy Version Guard**:
-   - Whitelist: `['', 'v1.0', 'v1.1', 'v1.2']` use narration text fallback
-   - v1.3+ enforces visual_content, shows error placeholder if missing
-
-### Core Principles (v1.3)
-- **PLAYER IS DUMB**: Does NOT decide layout, timing, or pedagogy. Only executes JSON.
-- **ONE PRIMARY ATTENTION LAYER AT A TIME**: Text OR visual - never together.
-- **TEACH → THEN SHOW**: First explain with narration, THEN visualize.
-- **EVERYTHING IS TIMED**: Every segment has duration_seconds, visuals align to timing.
-- **TWO-CHANNEL SEPARATION**: narration=audio, visual_content=display (never mixed).
-
-7. **Renderer Hardening** (ISS-057):
-   - Remotion: Strict JSON-only output, single retry on parse failure
-   - WAN: ≥300 words per beat, forbidden vague phrases, single retry on validation failure
-
-8. **Production Readiness Validation** (ISS-074 to ISS-079):
-   - **Dry Run Validator** (`core/dry_run_validator.py`): Validates all render specs before generation
-   - **WAN Hard Fail** (`core/wan_prompt_validator.py`): Production runs abort if any prompt <300 words
-   - **Player Validation** (`player/player.js`): SlideValidator shows error overlay for missing v1.3 fields
-   - **Renderer-Subject Match**: Biology content must use video renderer, not manim
-
-### Prompt Files (v1.3)
-Located in `core/prompts/`:
-- `director_system_v1.3.txt` / `director_user_v1.3.txt` (v1.3 with canonical JSON example)
-- `director_retry_system.txt` / `director_retry_user.txt` (structure-repair-only retry)
-- `chunker_system_v1.3.txt` / `chunker_user_v1.3.txt`
-- `manim_renderer_system_v1.2.txt` / `manim_renderer_user_v1.2.txt`
-- `remotion_renderer_system_v1.3.txt` / `remotion_renderer_user_v1.3.txt` (HARDENED - JSON-only)
-- `video_renderer_system_v1.3.txt` / `video_renderer_user_v1.3.txt` (HARDENED - 300+ words)
-
-Backups stored in `core/prompts/v1.1_backup/` and `core/prompts/v1.2_backup/`.
-
-### Renderer Validation (v1.3 NEW - ISS-057)
-
-**Remotion Renderer:**
-- `validate_remotion_output()` checks valid JSON with `remotion_scene_spec` key
-- Strips markdown/backticks before parsing
-- Single retry on parse failure
-
-**WAN/Video Renderer:**
-- `validate_video_prompts()` checks:
-  - Each prompt ≥300 words (MIN_WAN_PROMPT_WORDS)
-  - No forbidden vague phrases
-- Single retry on validation failure
-
-**Forbidden Phrases (WAN):**
-- "clear diagram", "appropriate animation", "educational visualization"
-- "relevant imagery", "suitable graphics", "show a diagram of"
-- "illustrate the concept", "visual representation"
-
-### Schema Validation (v1.3 NEW)
-JSON Schema validation runs FIRST, before Python semantic validation:
-1. `schemas/presentation_v1.3.schema.json` - Strict JSON Schema
-2. `core/schema_validator.py` - Validates against schema
-3. If schema fails → retry with structure-repair prompt (max 2 retries)
-4. If still fails → HARD FAIL (no fallbacks, no normalization repair)
-
-### Director Retry Logic (v1.3 NEW)
-- Max 2 retries with structure-repair-only prompts
-- Retry prompt preserves narration/pedagogy, only fixes missing structure
-- Hard fail after 2 retries (no fallbacks)
-
-### Director Gemini Parameters (v1.3 NEW)
-Optimized for deterministic output:
-- `temperature: 0.2` (low creativity, high determinism)
-- `top_p: 0.9`
-- `max_tokens: 8192`
-
-### Hard Fail Validation (v1.3)
-The `core/hard_fail_validator.py` now enforces:
-
-**Structure Checks:**
-- missing_intro_section → FAIL
-- missing_summary_section → FAIL
-- missing_memory_section → FAIL
-- missing_recap_section → FAIL
-
-**Narration Checks:**
-- content narration < 150 words → FAIL
-- recap total narration < 300 or > 500 words → FAIL
-
-**Display Directive Checks:**
-- narration segment missing display_directives → FAIL
-- text and visuals shown simultaneously → FAIL
-
-**Avatar Checks:**
-- intro avatar not visible or < 50% → FAIL
-- recap avatar visible → FAIL
-
-**Renderer Checks:**
-- manim section without manim_scene_spec → FAIL
-
-### Renderer Decision Rules (v1.3 - Director Decides)
-| Renderer | Use Cases |
-|----------|-----------|
-| **Manim** | Formulas, equations, graphs, vectors, geometry, numeric physics |
-| **Video (WAN)** | Biology processes, chemistry reactions, physical phenomena, recap storytelling |
-| **Remotion** | intro/summary/memory/quiz sections (motion graphics, flashcard animations) |
-
-**v1.3 Change:** Director decides renderer. Pipeline obeys. No Remotion→WAN collapse logic.
-All sections (including intro/summary/memory) now have visual_beats assigned.
-
-### Normalization Layer (v1.3 - PASS-THROUGH MODE)
-The `normalize_director_output()` function in `core/pipeline_v12.py` is now PASS-THROUGH ONLY:
-- Normalizes field NAMES only (narration_beats → narration.segments)
-- Does NOT invent missing required fields
-- Missing structure → schema validation failure → retry or hard fail
-
-**v1.3 Change:** Normalization no longer back-fills or creates missing structures. If the Director LLM omits required fields, schema validation will fail and trigger retry logic.
-
-### Technical Implementation
-- **Backend**: Python Flask API.
-- **Frontend**: Vanilla HTML5/JavaScript video player with dynamic layouts, subtitle synchronization, and chroma key avatar overlay.
-- **LLM Pipeline**: 3-pass architecture via OpenRouter. Chunker → Director → Renderers.
-- **Normalization**: Post-Director normalization layer converts LLM output variations to canonical schema.
-- **Video Rendering**: Dual renderer system: Manim for mathematical animations, WAN/kie.ai for conceptual science videos.
-- **Audio**: Narakeet TTS (Indian male voice "ravi") using streaming for short text and polling for long text.
-- **Job Processing**: Asynchronous system for PDF/Markdown file submission, progress polling, and asset generation.
+### Key Features and Design Decisions
+- **Split Director Architecture**: Divides the Director LLM into `Content Director` (intro, summary, content, example, quiz) and `Recap Director` (memory, recap scenes) to reduce cognitive load and improve LLM compliance.
+- **TTS Duration Measurement**: Actual TTS audio is generated via Narakeet, and mutagen is used to measure precise durations, updating the presentation JSON.
+- **Targeted Retry Strategy**: Implements specific retry counts for `Smart Chunker`, `Content Director`, and `Recap Director` for structural and semantic errors.
+- **JSON Repair Pre-Validation**: Includes steps to strip markdown fences, fix trailing commas, and close unclosed brackets before validation.
+- **Display Directives**: Each narration segment includes explicit `display_directives` for `text_layer`, `visual_layer`, and `avatar_layer` control. A critical rule is that text MUST hide before complex visuals appear.
+- **Mandatory Sections**: `intro`, `summary`, `memory` (5 flashcards), and `recap` (5 scenes) are strictly required.
+- **Avatar Rules**: Specific avatar visibility and size rules apply to different section types (e.g., `INTRO`: visible, center, ≥50% width; `RECAP`: hidden).
+- **Manim Hard Rule**: Manim renderer requires `manim_scene_spec` for every visual beat.
+- **Two-Channel Content Separation**: `narration.segments[].text` is for TTS only, while `visual_content` is for on-screen display.
+- **Renderer Hardening**: Strict validation rules for Remotion (JSON-only output) and WAN/Video (minimum word count, no vague phrases).
+- **Schema Validation**: Uses `schemas/presentation_v1.3.schema.json` for strict JSON Schema validation, with limited retries for structural repair.
+- **Renderer Decision Rules**: The Director LLM dynamically selects the renderer: Manim for math/physics, Video (WAN) for biology/chemistry/recap, and Remotion for intro/summary/memory/quiz motion graphics.
+- **Khan Academy-Style Theme**: A dark theme is used for the player with specific color codes and font choices (Lato, Caveat).
+- **Technical Stack**: Python Flask API backend, vanilla HTML5/JavaScript frontend, OpenRouter for LLM pipeline, Narakeet for TTS, MoviePy for video editing.
 - **Fail-Fast Policy**: Strict fail-fast behavior with no fallbacks for critical components.
 
-### Khan Academy-Style Theme
-The player uses a blackboard-inspired dark theme:
-- **Background**: #0a0a0a (near-black)
-- **Fonts**: Lato (body text), Caveat (handwritten-style headers)
-- **Primary Text**: #f0f0e8 (chalk-white)
-- **Accent Green**: #00ff88 (headers, new button, step indicators)
-- **Accent Cyan**: #00d4ff (active items, borders, progress bar)
-
-### Data Structure (v1.3)
-The `Presentation` JSON schema includes:
-- `spec_version`: "v1.3"
-- `title`, `subject`, `grade`
-- `sections` array with:
-  - `section_id`, `section_type`, `title`
-  - `renderer`, `renderer_reasoning`
-  - `layout` (content_zone, avatar_zone)
-  - `narration`, `narration_segments` with `display_directives`
-  - `visual_beats` with `manim_scene_spec` for manim sections
-
-## Version History
-- **v1.1**: Two-LLM architecture (Chunker + Director).
-- **v1.2**: Three-pass architecture with specialized renderers. Adds analytics tracking.
-- **v1.3**: Deterministic Film Engine. Adds display_directives, mandatory sections, avatar rules per section type. Hard-fail validation for missing sections.
-
 ## External Dependencies
-- **OpenRouter**: For Gemini 2.5 Flash, Gemini 2.5 Pro, and Claude Sonnet LLMs.
+- **OpenRouter**: For LLM access (Gemini 2.5 Flash, Gemini 2.5 Pro, Claude Sonnet).
 - **Narakeet API**: Text-to-Speech service.
-- **Kie.ai API (WAN)**: For conceptual video generation.
-- **Datalab API**: For PDF to Markdown conversion.
-- **Flask**: Backend web framework.
+- **Kie.ai API (WAN)**: Conceptual video generation.
+- **Datalab API**: PDF to Markdown conversion.
+- **Flask**: Web framework for the backend.
 - **Flask-CORS**: Handles Cross-Origin Resource Sharing.
-- **MoviePy**: Video editing tasks.
-- **OpenAI Python Client**: For OpenRouter gateway.
+- **MoviePy**: Video editing library.
+- **OpenAI Python Client**: Used for OpenRouter gateway.
 - **Tenacity**: For API call retry logic.
-
-## File Structure
-```
-core/
-├── prompts/
-│   ├── v1.1_backup/                  # v1.1 prompt backups
-│   ├── v1.2_backup/                  # v1.2 prompt backups
-│   ├── director_system_v1.3.txt      # v1.3 with canonical JSON example
-│   ├── director_user_v1.3.txt        # v1.3
-│   ├── director_retry_system.txt     # NEW - structure-repair-only retry
-│   ├── director_retry_user.txt       # NEW - retry user template
-│   ├── chunker_system_v1.3.txt       # NEW v1.3
-│   ├── chunker_user_v1.3.txt         # NEW v1.3
-│   ├── manim_renderer_system_v1.2.txt
-│   ├── manim_renderer_user_v1.2.txt
-│   ├── remotion_renderer_system_v1.2.txt
-│   ├── remotion_renderer_user_v1.2.txt
-│   ├── video_renderer_system_v1.2.txt
-│   └── video_renderer_user_v1.2.txt
-├── analytics.py             # Cost/time tracking per phase
-├── pipeline_v12.py          # v1.3 pipeline (uses v1.3 prompts)
-├── llm_client_v12.py        # v1.3 LLM calls
-├── director_client.py       # NEW - Director client with retry logic
-├── schema_validator.py      # NEW - JSON Schema validation
-├── hard_fail_validator.py   # v1.3 validation rules
-├── traceability.py          # Generation trace logging
-└── latex_to_speech.py       # LaTeX→speakable text for TTS
-
-schemas/
-└── presentation_v1.3.schema.json  # NEW - Strict JSON Schema
-
-docs/
-├── llm_output_requirements_v1.3.json  # v1.3 specification (CURRENT)
-├── llm_output_requirements.json       # v1.2 backup
-└── llm_output_requirements_v1.1.json  # v1.1 backup
-```
