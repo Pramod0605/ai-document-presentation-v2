@@ -1406,15 +1406,39 @@
       "mitigation": "Current code logs stderr from Manim subprocess. May need: 1) Code validation before exec, 2) Better error messages, 3) Safe code template constraints",
       "files_to_check": ["render/manim/manim_runner.py", "core/visual_compiler.py"],
       "next_steps": "Monitor actual Manim failures in production. Collect error samples to identify common LLM code generation mistakes."
+    },
+    {
+      "id": "ISS-088",
+      "title": "Player video-ready class not cleared on mid-slide video switch",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "When VideoBufferManager.switchTo() loaded a new video mid-slide (e.g., recap scene transitions), the 'video-ready' class was never cleared. LayerController.isVideoReady() returned true immediately, hiding text before new video was actually ready.",
+      "error": "Text layer hides too early during recap scene transitions, causing blank screen while video buffers",
+      "root_cause": "switchTo() never cleared video-ready class, so LayerController assumed new video was ready immediately",
+      "fix": "Updated switchTo() to: 1) Clear video-ready class immediately, 2) Add canplay listener to re-add class when new video is ready",
+      "files_modified": ["player/player.js"]
+    },
+    {
+      "id": "ISS-089",
+      "title": "Recap video preload happens too late - first transition stutters",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "preloadNext() was called AFTER switchTo() during recap scene transitions, so the first recap transition always hit the 150ms fallback path instead of instant switch.",
+      "error": "First recap scene transition has potential stutter/gap because second video not preloaded in time",
+      "root_cause": "Preload triggered during switch instead of at slide load start",
+      "fix": "Added preload of second recap video at slide start (before any transitions needed)",
+      "files_modified": ["player/player.js"]
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-22T17:00:00.000000",
-    "version": "14.7",
+    "last_updated": "2025-12-22T17:30:00.000000",
+    "version": "14.8",
     "spec_version": "v1.4",
     "spec_file": "docs/llm_output_requirements_v1.4.json",
-    "resolved_count": 79,
+    "resolved_count": 81,
     "open_count": 1,
-    "testing_lesson": "LLM output is correct - trace wiring issues by checking field names at each stage of the pipeline"
+    "testing_lesson": "Player sync issues require checking: video-ready state, preload timing, and layer controller gating logic"
   }
 }

@@ -376,6 +376,19 @@ class VideoBufferManager {
   switchTo(inlineVideo, videoPath, playbackRate = 1.0) {
     if (!inlineVideo || !videoPath) return;
     
+    // ISS-088 FIX: Clear video-ready class immediately so LayerController knows video is not ready yet
+    const videoBox = document.getElementById('video-box');
+    if (videoBox) {
+      videoBox.classList.remove('video-ready');
+    }
+    
+    // Setup canplay listener to mark video ready when new video is actually playable
+    const markVideoReady = () => {
+      if (videoBox) videoBox.classList.add('video-ready');
+      inlineVideo.removeEventListener('canplay', markVideoReady);
+    };
+    inlineVideo.addEventListener('canplay', markVideoReady);
+    
     if (this.preload && this.nextVideoPath === videoPath && this.preloadReady) {
       console.log(`[VideoBuffer] Instant switch to preloaded: ${videoPath}`);
       inlineVideo.src = videoPath;
@@ -1163,6 +1176,12 @@ function loadSlide(index) {
           inlineVideo.play().catch(e => {});
         }
       }, 100);
+      
+      // ISS-089 FIX: Preload second recap video at slide start (before first switch)
+      if (sectionType === 'recap' && slide.recap_video_paths && slide.recap_video_paths.length > 1) {
+        console.log(`[ISS-089] Preloading second recap video at slide start`);
+        videoBufferManager.preloadVideo(slide.recap_video_paths[1]);
+      }
     }
     
     bgVideo.pause();
