@@ -261,6 +261,15 @@
                 <input type="hidden" id="subject" name="subject" value="General Science">
                 <input type="hidden" id="grade" name="grade" value="12">
 
+                <div class="form-group">
+                    <label for="tts_provider">TTS Provider</label>
+                    <select id="tts_provider" name="tts_provider" style="width: 100%; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; background: rgba(0, 0, 0, 0.3); color: #fff; font-size: 1rem;">
+                        <option value="narakeet">Narakeet (Production Quality)</option>
+                        <option value="pyttsx3" selected>pyttsx3 (Local/Test)</option>
+                        <option value="estimate">Estimate Only (No Audio)</option>
+                    </select>
+                </div>
+
                 <div class="checkbox-group">
                     <div class="checkbox-item">
                         <input type="checkbox" id="dry_run" name="dry_run">
@@ -377,6 +386,7 @@
             formData.append('dry_run', document.getElementById('dry_run').checked ? 'true' : 'false');
             formData.append('skip_wan', document.getElementById('skip_wan').checked ? 'true' : 'false');
             formData.append('skip_avatar', document.getElementById('skip_avatar').checked ? 'true' : 'false');
+            formData.append('tts_provider', document.getElementById('tts_provider').value);
 
             try {
                 const response = await fetch('/submit_job', {

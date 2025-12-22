@@ -70,6 +70,7 @@ def submit_job():
         dry_run = request.form.get("dry_run", "false").lower() == "true"
         skip_wan = request.form.get("skip_wan", "false").lower() == "true"
         skip_avatar = request.form.get("skip_avatar", "false").lower() == "true"
+        tts_provider = request.form.get("tts_provider", "narakeet")
         
         if "file" in request.files:
             uploaded_file = request.files["file"]
@@ -91,11 +92,14 @@ def submit_job():
             uploaded_file.save(str(temp_file))
             original_filename = uploaded_file.filename
             
-            job_id = job_manager.create_job(job_type, {
+            job_id = job_manager.create_job("v14_pipeline", {
                 "subject": subject,
                 "grade": grade,
                 "file_path": str(temp_file),
-                "source_file": original_filename
+                "source_file": original_filename,
+                "skip_wan": skip_wan,
+                "skip_avatar": skip_avatar,
+                "tts_provider": tts_provider
             })
             
             job_output_dir = JOBS_DIR / job_id
@@ -135,7 +139,8 @@ def submit_job():
                     dry_run=dry_run,
                     skip_wan=skip_wan,
                     skip_avatar=skip_avatar,
-                    source_file=original_filename
+                    source_file=original_filename,
+                    tts_provider=tts_provider
                 )
         
         elif request.is_json:
@@ -146,6 +151,7 @@ def submit_job():
             dry_run = data.get("dry_run", False)
             skip_wan = data.get("skip_wan", False)
             skip_avatar = data.get("skip_avatar", False)
+            tts_provider = data.get("tts_provider", "narakeet")
             
             if not markdown_content:
                 return jsonify({"error": "Markdown content is required"}), 400
@@ -154,10 +160,13 @@ def submit_job():
             if len(markdown_content) > 300:
                 content_preview += "..."
             
-            job_id = job_manager.create_job("markdown", {
+            job_id = job_manager.create_job("v14_pipeline", {
                 "subject": subject,
                 "grade": grade,
                 "dry_run": dry_run,
+                "skip_wan": skip_wan,
+                "skip_avatar": skip_avatar,
+                "tts_provider": tts_provider,
                 "content_preview": content_preview
             })
             
@@ -173,7 +182,8 @@ def submit_job():
                 output_dir=str(job_output_dir),
                 dry_run=dry_run,
                 skip_wan=skip_wan,
-                skip_avatar=skip_avatar
+                skip_avatar=skip_avatar,
+                tts_provider=tts_provider
             )
         
         else:
@@ -273,18 +283,55 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
             os.unlink(pdf_path)
 
 
-def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None) -> dict:
-    return process_markdown_to_videos(
+def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "narakeet") -> dict:
+    """Process markdown using V1.4 Split Director pipeline."""
+    job_output_dir = Path(output_dir)
+    
+    def status_callback(jid, phase, message):
+        job_manager.update_job(jid, {
+            "current_phase_key": phase,
+            "status_message": message
+        }, persist=True)
+    
+    generate_tts = tts_provider != "estimate" and not dry_run
+    effective_tts = "pyttsx3" if dry_run else tts_provider
+    
+    presentation, tracker = process_markdown_to_presentation_v14(
         markdown_content=markdown_content,
         subject=subject,
         grade=grade,
-        output_dir=output_dir,
         job_id=job_id,
-        dry_run=dry_run,
-        skip_wan=skip_wan,
-        skip_avatar=skip_avatar,
-        source_file=source_file
+        update_status_callback=status_callback,
+        generate_tts=generate_tts,
+        output_dir=job_output_dir,
+        tts_provider=effective_tts
     )
+    
+    validation = validate_presentation_v14(presentation)
+    
+    pres_path = job_output_dir / "presentation.json"
+    with open(pres_path, "w") as f:
+        json.dump(presentation, f, indent=2)
+    
+    analytics_summary = tracker.get_summary() if hasattr(tracker, 'get_summary') else {}
+    
+    job_manager.update_job(job_id, {
+        "status": "completed" if not validation.get("has_errors") else "failed",
+        "progress": 100,
+        "validation": validation,
+        "analytics": analytics_summary
+    }, persist=True)
+    
+    return {
+        "status": "success" if not validation.get("has_errors") else "validation_failed",
+        "job_id": job_id,
+        "validation": validation,
+        "analytics": analytics_summary,
+        "output_path": str(pres_path),
+        "skip_wan": skip_wan,
+        "tts_provider": effective_tts,
+        "pipeline_version": "v1.4"
+    }
 
 
 @app.route("/process_pdf", methods=["POST"])
