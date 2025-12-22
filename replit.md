@@ -96,10 +96,23 @@ The user wants an iterative development process. The agent should prioritize cle
   - `--skip-wan` - Skip WAN video rendering
   - `--report <path>` - Save test report to file
 
+## Architecture Documentation
+**See `docs/v14_hybrid_architecture.md` for complete pipeline documentation.**
+
+Key principle: **"Only change the LLM layer - display will display"**
+
+The Merge Step converts 5 separate `recap_scene_N` sections (easier for LLM to generate) into ONE `recap` section (player-compatible format). This ensures:
+- LLM layer: Generates smaller, manageable sections
+- Merge Step: Converts to player-compatible format (no LLM cost)
+- Player layer: Receives exactly what it expects, NO CHANGES NEEDED
+
 ## Recent Changes (2025-12-22)
-- **Split Recap Architecture**: Converted single "recap" section into 5 separate "recap_scene_1" through "recap_scene_5" sections
-  - Each scene: 100+ word video_prompt (was 300), 40-120 word narration
+- **V1.4 Hybrid Pipeline**: Split Directors (Content + Recap) feed into V1.3 rendering infrastructure
+- **Merge Step Enhancement**: Converts 5 recap_scene_N → 1 recap section for player compatibility
+- **Split Recap Architecture**: Recap Director generates 5 separate scenes (100+ words each)
   - Resolves ISS-080 by reducing per-section cognitive load on LLM
+- **Status Callbacks**: Real-time job progress updates during pipeline execution
+- Created `docs/v14_hybrid_architecture.md` with complete pipeline documentation
 - Created `docs/llm_output_requirements_v1.4.json` documenting Split Director architecture
 - Added V1.4 API endpoints to `api/app.py`
 - Created dry run test script for pipeline validation
