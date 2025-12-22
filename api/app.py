@@ -14,6 +14,7 @@ from flask_cors import CORS
 from core.pipeline import process_pdf_to_videos
 from core.pipeline_v12 import process_markdown_to_videos_v12 as process_markdown_to_videos
 from core.pipeline_v14 import process_markdown_to_presentation_v14, get_pipeline_info, validate_presentation_v14
+from core.renderer_executor import render_all_topics
 from core.job_manager import job_manager, run_job_async, is_job_running, get_current_job_id
 
 app = Flask(__name__)
@@ -313,24 +314,74 @@ def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade
     with open(pres_path, "w") as f:
         json.dump(presentation, f, indent=2)
     
+    if validation.get("has_errors"):
+        job_manager.update_job(job_id, {
+            "status": "failed",
+            "progress": 100,
+            "validation": validation,
+            "error": "Presentation validation failed"
+        }, persist=True)
+        return {
+            "status": "validation_failed",
+            "job_id": job_id,
+            "validation": validation,
+            "pipeline_version": "v1.4"
+        }
+    
+    status_callback(job_id, "rendering", "Rendering videos...")
+    
+    videos_dir = job_output_dir / "videos"
+    os.makedirs(videos_dir, exist_ok=True)
+    
+    try:
+        rendered_videos = render_all_topics(
+            presentation=presentation,
+            output_dir=str(videos_dir),
+            dry_run=dry_run,
+            skip_wan=skip_wan,
+            output_dir_base=str(job_output_dir),
+            strict_mode=True
+        )
+        
+        success_count = sum(1 for v in rendered_videos if v.get("status") in ["success", "skipped"])
+        fail_count = len(rendered_videos) - success_count
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        rendered_videos = []
+        fail_count = 1
+        success_count = 0
+    
     analytics_summary = tracker.get_summary() if hasattr(tracker, 'get_summary') else {}
     
+    final_status = "completed" if fail_count == 0 else "completed_with_warnings"
+    
     job_manager.update_job(job_id, {
-        "status": "completed" if not validation.get("has_errors") else "failed",
+        "status": final_status,
         "progress": 100,
         "validation": validation,
-        "analytics": analytics_summary
+        "analytics": analytics_summary,
+        "render_stats": {
+            "success": success_count,
+            "failed": fail_count,
+            "skip_wan": skip_wan
+        }
     }, persist=True)
     
     return {
-        "status": "success" if not validation.get("has_errors") else "validation_failed",
+        "status": "success" if fail_count == 0 else "partial_success",
         "job_id": job_id,
         "validation": validation,
         "analytics": analytics_summary,
         "output_path": str(pres_path),
         "skip_wan": skip_wan,
         "tts_provider": effective_tts,
-        "pipeline_version": "v1.4"
+        "pipeline_version": "v1.4",
+        "render_stats": {
+            "success": success_count,
+            "failed": fail_count
+        }
     }
 
 

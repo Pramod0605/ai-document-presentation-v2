@@ -1345,6 +1345,18 @@
       "fix": "Rewrote recap_director_system_v1.4.txt to match v1.4 architecture with 6 sections",
       "files_modified": ["core/prompts/recap_director_system_v1.4.txt"],
       "testing_gap": "Initial curl test happened to get compliant LLM output - did not verify prompt consistency or test multiple runs"
+    },
+    {
+      "id": "ISS-083",
+      "title": "V1.4 pipeline missing video rendering step - only generates presentation.json",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "process_markdown_job() only called process_markdown_to_presentation_v14() which generates presentation.json, but did NOT call render_all_topics() to generate WAN videos.",
+      "root_cause": "Incomplete v1.4 pipeline implementation - rendering step was not wired up",
+      "fix": "Added render_all_topics() call after presentation validation in process_markdown_job(), with proper status updates and error handling",
+      "files_modified": ["api/app.py"],
+      "testing_gap": "Did not verify end-to-end output files - only checked presentation.json generation"
     }
   ],
   "metadata": {
