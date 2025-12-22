@@ -107,6 +107,11 @@ The Merge Step converts 5 separate `recap_scene_N` sections (easier for LLM to g
 - Player layer: Receives exactly what it expects, NO CHANGES NEEDED
 
 ## Recent Changes (2025-12-22)
+- **ISS-093 FIX**: Fixed Manim beat_videos wiring - same issue class as ISS-092
+  - execute_renderer now detects list return from Manim multi-beat render
+  - _reconcile_video_paths sets `beat_videos` array on sections
+  - Player loader uses section.beat_videos from metadata-first (not filesystem probing)
+  - Beat-to-narration timing already synced via timed_segments
 - **ISS-092 FIX**: Fixed critical wiring bug where recap_video_paths was never set on sections
   - WAN renderer now returns all 5 recap video paths (not just the first)
   - _reconcile_video_paths sets both `video_path` and `recap_video_paths` for recap sections

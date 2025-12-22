@@ -89,11 +89,13 @@ def _reconcile_video_paths(presentation: dict, rendered_videos: list):
     
     Matches rendered_videos results back to sections using section_id/topic_id.
     ISS-092 FIX: Also sets recap_video_paths for recap sections.
+    ISS-093 FIX: Also sets beat_videos for Manim multi-beat sections.
     """
     sections = presentation.get("sections", presentation.get("topics", []))
     
     video_map = {}
     recap_paths_map = {}
+    beat_videos_map = {}
     for result in rendered_videos:
         topic_id = result.get("topic_id")
         if topic_id:
@@ -102,8 +104,12 @@ def _reconcile_video_paths(presentation: dict, rendered_videos: list):
             # ISS-092: Capture recap video paths if present
             if result.get("recap_video_paths"):
                 recap_paths_map[str(topic_id)] = result.get("recap_video_paths")
+            # ISS-093: Capture Manim beat videos if present
+            if result.get("beat_videos"):
+                beat_videos_map[str(topic_id)] = result.get("beat_videos")
     
     recap_count = 0
+    beat_count = 0
     for section in sections:
         section_id = section.get("section_id", section.get("id"))
         section_type = section.get("section_type", "")
@@ -113,7 +119,16 @@ def _reconcile_video_paths(presentation: dict, rendered_videos: list):
             video_filename = Path(video_path).name if video_path else None
             if video_filename:
                 section["content_video_path"] = f"videos/{video_filename}"
+                section["video_path"] = f"videos/{video_filename}"
                 section["has_content_video"] = True
+        
+        # ISS-093 FIX: Set beat_videos for Manim multi-beat sections
+        if str(section_id) in beat_videos_map:
+            all_beats = beat_videos_map[str(section_id)]
+            section["beat_videos"] = [f"videos/{Path(p).name}" for p in all_beats]
+            section["has_content_video"] = True
+            beat_count += 1
+            print(f"[RECONCILE] Set beat_videos for section {section_id}: {len(all_beats)} beats")
         
         # ISS-092 FIX: Set recap_video_paths for recap sections
         if section_type == "recap" and str(section_id) in recap_paths_map:
@@ -127,7 +142,7 @@ def _reconcile_video_paths(presentation: dict, rendered_videos: list):
             recap_count += 1
             print(f"[RECONCILE] Set recap_video_paths for section {section_id}: {len(all_paths)} videos")
     
-    print(f"[RECONCILE] Updated {len(video_map)} sections with video paths, {recap_count} with recap paths")
+    print(f"[RECONCILE] Updated {len(video_map)} sections with video paths, {recap_count} with recap paths, {beat_count} with beat videos")
 
 
 def process_pdf_to_videos_v12(

@@ -1662,6 +1662,20 @@ async function checkExistingPresentation() {
               hasContentVideo = true;
             }
             
+            // ISS-093 FIX: Use beat_videos from presentation.json if available
+            let beatVideos = [];
+            if (section.beat_videos && section.beat_videos.length > 0) {
+              beatVideos = section.beat_videos.map(p => 
+                p.startsWith('/') ? p : BASE_PATH + p
+              );
+              console.log(`[ISS-093] Using section-level beat_videos: ${beatVideos.length} beats`);
+              // Update content_video_path to first beat if not already set
+              if (!contentVideoPath && beatVideos.length > 0) {
+                contentVideoPath = beatVideos[0];
+                hasContentVideo = true;
+              }
+            }
+            
             return {
               slide_number: sectionId,
               section_type: section.section_type || 'content',
@@ -1681,7 +1695,7 @@ async function checkExistingPresentation() {
               recap_video_paths: recapVideoPaths,
               section_id: sectionId,
               id: sectionId,
-              beat_videos: [],
+              beat_videos: beatVideos,
               audio_duration: section.duration,
               full_narration: section.narration,
               visual_content: aggregatedVisualContent,

@@ -1469,6 +1469,19 @@
       "fix": "1) _render_recap_scenes returns dict with first_path and all_paths, 2) render_wan_video stores all_paths on topic._recap_video_paths, 3) execute_renderer captures recap_video_paths to result, 4) _reconcile_video_paths sets recap_video_paths on recap sections",
       "files_modified": ["render/wan/wan_runner.py", "core/renderer_executor.py", "core/pipeline_v12.py"],
       "lesson": "Verify complete data flow from renderer to player for multi-item outputs"
+    },
+    {
+      "id": "ISS-093",
+      "title": "Manim beat_videos never set - multi-beat videos detected by filesystem probe not metadata",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "Manim render_manim_video returns list of beat video paths for multi-beat sections, but execute_renderer stored the list as result['video_path']. _reconcile_video_paths assumed string, only extracted first filename. Player fell back to HTTP HEAD filesystem detection.",
+      "error": "Player uses fragile filesystem probing for beat videos instead of presentation.json metadata",
+      "root_cause": "Same wiring gap as ISS-092 - multi-item outputs from renderer not properly surfaced to presentation.json",
+      "fix": "1) execute_renderer detects list return and stores as beat_videos, 2) _reconcile_video_paths handles beat_videos arrays, 3) Player loader uses section.beat_videos from metadata-first before filesystem fallback",
+      "files_modified": ["core/renderer_executor.py", "core/pipeline_v12.py", "player/player.js"],
+      "lesson": "All renderers returning multiple outputs need explicit wiring to presentation.json, not filesystem detection"
     }
   ],
   "metadata": {

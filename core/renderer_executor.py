@@ -165,7 +165,14 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)
         
         result["status"] = "success"
-        result["video_path"] = video_path
+        
+        # ISS-093 FIX: Handle Manim multi-beat returns (list of paths)
+        if isinstance(video_path, list):
+            result["video_path"] = video_path[0] if video_path else None
+            result["beat_videos"] = video_path
+            print(f"[RENDER] Manim multi-beat: {len(video_path)} beat videos for section {topic_id}")
+        else:
+            result["video_path"] = video_path
         
         # ISS-092 FIX: Capture recap video paths if they were set by WAN renderer
         if topic.get("_recap_video_paths"):
