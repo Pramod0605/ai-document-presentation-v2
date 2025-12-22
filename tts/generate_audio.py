@@ -17,10 +17,10 @@ class TTSGenerationError(Exception):
     pass
 
 
-def _narakeet_streaming(narration: str, output_path: str, section_id: int) -> str:
+def _narakeet_streaming(narration: str, output_path: str, section_id: int) -> tuple:
     """Use Narakeet streaming API for short text (<= 1024 chars).
     
-    Returns: output_path
+    Returns: (output_path, actual_duration_seconds)
     """
     response = requests.post(
         f"https://api.narakeet.com/text-to-speech/mp3?voice={NARAKEET_VOICE}",
@@ -36,19 +36,23 @@ def _narakeet_streaming(narration: str, output_path: str, section_id: int) -> st
     if response.status_code == 200:
         with open(output_path, 'wb') as f:
             f.write(response.content)
-        duration = response.headers.get('x-duration-seconds', 'unknown')
-        print(f"[TTS] Section {section_id}: Narakeet streaming SUCCESS - {output_path} (actual_duration={duration}s)")
-        return output_path
+        duration_str = response.headers.get('x-duration-seconds', '')
+        try:
+            actual_duration = float(duration_str) if duration_str else None
+        except ValueError:
+            actual_duration = None
+        print(f"[TTS] Section {section_id}: Narakeet streaming SUCCESS - {output_path} (actual_duration={actual_duration}s)")
+        return output_path, actual_duration
     else:
         raise TTSGenerationError(
             f"Narakeet streaming API failed: {response.status_code} - {response.text[:200]}"
         )
 
 
-def _narakeet_polling(narration: str, output_path: str, section_id: int) -> str:
+def _narakeet_polling(narration: str, output_path: str, section_id: int) -> tuple:
     """Use Narakeet polling API for long text (> 1024 chars).
     
-    Returns: output_path
+    Returns: (output_path, actual_duration_seconds)
     """
     print(f"[TTS] Section {section_id}: Using Narakeet polling API (text_len={len(narration)})")
     
@@ -106,9 +110,13 @@ def _narakeet_polling(narration: str, output_path: str, section_id: int) -> str:
                 with open(output_path, 'wb') as f:
                     f.write(audio_response.content)
                 
-                duration = status_data.get('durationInSeconds', 'unknown')
-                print(f"[TTS] Section {section_id}: Narakeet polling SUCCESS - {output_path} (actual_duration={duration}s)")
-                return output_path
+                actual_duration = status_data.get('durationInSeconds')
+                try:
+                    actual_duration = float(actual_duration) if actual_duration else None
+                except (ValueError, TypeError):
+                    actual_duration = None
+                print(f"[TTS] Section {section_id}: Narakeet polling SUCCESS - {output_path} (actual_duration={actual_duration}s)")
+                return output_path, actual_duration
             else:
                 raise TTSGenerationError("Narakeet polling task failed")
         
@@ -118,16 +126,15 @@ def _narakeet_polling(narration: str, output_path: str, section_id: int) -> str:
     raise TTSGenerationError(f"Narakeet polling timed out after {max_wait}s")
 
 
-def generate_section_audio(section: dict, output_dir: str) -> str:
+def generate_section_audio(section: dict, output_dir: str) -> tuple:
     """Generate audio for a section using Narakeet TTS.
     
     FAIL-FAST: No fallback to gTTS. Raises TTSGenerationError if Narakeet fails.
     Uses streaming API for short text, polling API for long text.
     
-    NOTE: Timing information comes from LLM's narration_segments[].duration_seconds field.
-    TTS does NOT calculate or override timing - the LLM is the "brain" for timing decisions.
+    ISS-074 FIX: Now returns actual audio duration for timing sync.
     
-    Returns: audio file path
+    Returns: (audio_path, actual_duration_seconds)
     """
     section_id = section.get("section_id") or section.get("id", 1)
     section_type = section.get("section_type", "content")
@@ -174,9 +181,10 @@ def generate_section_audio(section: dict, output_dir: str) -> str:
     
     try:
         if len(narration) <= NARAKEET_STREAMING_LIMIT:
-            return _narakeet_streaming(narration, output_path, section_id)
+            path, duration = _narakeet_streaming(narration, output_path, section_id)
         else:
-            return _narakeet_polling(narration, output_path, section_id)
+            path, duration = _narakeet_polling(narration, output_path, section_id)
+        return path, duration
     except requests.exceptions.RequestException as e:
         raise TTSGenerationError(f"Narakeet API request failed: {e}")
 
@@ -184,9 +192,8 @@ def generate_section_audio(section: dict, output_dir: str) -> str:
 def generate_all_audio(presentation: dict, output_dir: str) -> list:
     """Generate audio for all sections in presentation.
     
-    NOTE: This function only generates audio files. It does NOT modify timing data.
-    Timing comes from the LLM's narration_segments[].duration_seconds field.
-    The player uses LLM-provided durations directly.
+    ISS-074 FIX: Now collects actual durations for timing sync.
+    Returns audio file info including actual duration from Narakeet API.
     """
     os.makedirs(output_dir, exist_ok=True)
     
@@ -194,11 +201,70 @@ def generate_all_audio(presentation: dict, output_dir: str) -> list:
     sections = presentation.get("sections", presentation.get("topics", []))
     
     for section in sections:
-        audio_path = generate_section_audio(section, output_dir)
+        audio_path, actual_duration = generate_section_audio(section, output_dir)
         audio_files.append({
-            "section_id": section.get("id"),
+            "section_id": section.get("section_id") or section.get("id"),
             "section_type": section.get("section_type", "content"),
-            "audio_path": audio_path
+            "audio_path": audio_path,
+            "actual_duration_seconds": actual_duration
         })
     
     return audio_files
+
+
+def sync_timing_with_audio(presentation: dict, audio_files: list) -> dict:
+    """
+    ISS-074 FIX: Synchronize segment durations with actual TTS audio durations.
+    
+    This ensures display_directives fire at correct times matching audio playback.
+    
+    Args:
+        presentation: The presentation dict with sections
+        audio_files: List of audio info dicts with actual_duration_seconds
+    
+    Returns:
+        Updated presentation with synchronized timing
+    """
+    audio_by_section = {af["section_id"]: af for af in audio_files}
+    
+    sections = presentation.get("sections", presentation.get("topics", []))
+    
+    for section in sections:
+        section_id = section.get("section_id") or section.get("id")
+        audio_info = audio_by_section.get(section_id)
+        
+        if not audio_info or audio_info.get("actual_duration_seconds") is None:
+            continue
+        
+        actual_total = audio_info["actual_duration_seconds"]
+        
+        narration = section.get("narration", {})
+        segments = narration.get("segments", []) if isinstance(narration, dict) else section.get("narration_segments", [])
+        
+        if not segments:
+            continue
+        
+        llm_total = sum(seg.get("duration_seconds", 0) for seg in segments)
+        
+        if llm_total <= 0:
+            continue
+        
+        scale_factor = actual_total / llm_total
+        
+        if abs(scale_factor - 1.0) > 0.05:
+            print(f"[TIMING SYNC] Section {section_id}: Scaling durations by {scale_factor:.2f} (LLM={llm_total:.1f}s, actual={actual_total:.1f}s)")
+            
+            cumulative = 0.0
+            for seg in segments:
+                old_duration = seg.get("duration_seconds", 0)
+                new_duration = round(old_duration * scale_factor, 2)
+                seg["duration_seconds"] = new_duration
+                seg["start"] = round(cumulative, 2)
+                cumulative += new_duration
+            
+            section["actual_duration_seconds"] = actual_total
+            section["timing_scaled"] = True
+        else:
+            print(f"[TIMING SYNC] Section {section_id}: Durations match (diff < 5%)")
+    
+    return presentation

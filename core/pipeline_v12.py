@@ -30,7 +30,7 @@ from core.image_processor import extract_images_from_markdown, strip_base64_from
 from core.traceability import init_traceability, log_event, log_validation, log_hard_fail, complete_trace, save_render_prompts_json
 from core.schema_validator import validate_presentation as validate_schema
 from core.validators import validate as validate_3tier, ValidationResult
-from tts.generate_audio import generate_all_audio
+from tts.generate_audio import generate_all_audio, sync_timing_with_audio
 from render.render_trace import clear_render_trace
 
 
@@ -324,6 +324,15 @@ def process_pdf_to_videos_v12(
                 job_manager.set_step(job_id, "Generating audio narration...", 3, phase_key="audio")
             job_status["steps"].append({"step": "generate_audio", "status": "started"})
             audio_files = generate_all_audio(presentation, str(audio_dir))
+            
+            # ISS-074 FIX: Sync timing with actual TTS durations
+            presentation = sync_timing_with_audio(presentation, audio_files)
+            
+            # Re-save presentation with updated timings
+            with open(presentation_path, 'w') as f:
+                json.dump(presentation, f, indent=2)
+            print(f"[TIMING SYNC] Updated presentation saved with synchronized timings")
+            
             job_status["steps"][-1]["status"] = "completed"
             job_status["steps"][-1]["audio_files"] = audio_files
             if job_id:
@@ -489,6 +498,12 @@ def process_markdown_to_videos_v12(
                 job_manager.set_step(job_id, "Generating audio narration...", 2, phase_key="audio")
             job_status["steps"].append({"step": "generate_audio", "status": "started"})
             audio_files = generate_all_audio(presentation, str(audio_dir))
+            
+            # ISS-074 FIX: Sync timing with actual TTS durations
+            presentation = sync_timing_with_audio(presentation, audio_files)
+            with open(presentation_path, 'w') as f:
+                json.dump(presentation, f, indent=2)
+            
             job_status["steps"][-1]["status"] = "completed"
             job_status["steps"][-1]["audio_files"] = audio_files
             if job_id:
@@ -649,6 +664,12 @@ def resume_job_from_phase(
                 print(f"[Resume] Generating audio narration...")
                 job_status["steps"].append({"step": "generate_audio", "status": "started"})
                 audio_files = generate_all_audio(presentation, str(audio_dir))
+                
+                # ISS-074 FIX: Sync timing with actual TTS durations
+                presentation = sync_timing_with_audio(presentation, audio_files)
+                with open(presentation_path, 'w') as f:
+                    json.dump(presentation, f, indent=2)
+                
                 job_status["steps"][-1]["status"] = "completed"
                 job_status["steps"][-1]["audio_files"] = audio_files
                 job_status["steps"][-1]["audio_count"] = len(audio_files)
