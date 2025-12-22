@@ -22,6 +22,7 @@ import json
 import re
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional, Any
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from openai import OpenAI
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -43,14 +44,24 @@ client = OpenAI(
 )
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"
+SCHEMAS_DIR = Path(__file__).parent.parent / "schemas"
 
 MODELS = {
     "chunker": "google/gemini-2.5-flash",
     "director": "google/gemini-2.5-pro",
-    "manim_renderer": "anthropic/claude-3.5-sonnet",
-    "remotion_renderer": "anthropic/claude-3.5-sonnet",
+    "manim_renderer": "anthropic/claude-sonnet-4",
+    "remotion_renderer": "anthropic/claude-sonnet-4",
     "video_renderer": "google/gemini-2.5-pro"
 }
+
+DIRECTOR_PARALLEL_MODELS = [
+    "google/gemini-2.5-pro",
+    "anthropic/claude-sonnet-4",
+    "google/gemini-2.0-flash-001",
+]
+
+ENABLE_PARALLEL_DIRECTOR = True
+ENABLE_STRUCTURED_OUTPUT = True
 
 
 class PipelineError(Exception):
@@ -123,6 +134,15 @@ def parse_json_response(text: str, phase: str) -> Dict:
         raise PipelineError(f"Failed to parse JSON from {phase}", phase, {"error": str(e)})
 
 
+def load_director_schema() -> Dict:
+    """Load simplified JSON schema for structured output."""
+    schema_path = SCHEMAS_DIR / "presentation_v1.3.schema.json"
+    if schema_path.exists():
+        with open(schema_path, "r") as f:
+            return json.load(f)
+    return {}
+
+
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=30))
 def call_llm(
     model: str,
@@ -131,23 +151,40 @@ def call_llm(
     phase: str,
     tracker: Optional[AnalyticsTracker] = None,
     max_tokens: int = 16000,
-    temperature: float = 0.3
+    temperature: float = 0.3,
+    response_format: Optional[Dict] = None
 ) -> Tuple[str, Dict]:
-    """Make an LLM call with retry and analytics tracking."""
+    """Make an LLM call with retry and analytics tracking.
+    
+    Args:
+        response_format: Optional dict for structured output, e.g.:
+            {"type": "json_object"} for basic JSON mode
+            {"type": "json_schema", "json_schema": {...}} for strict schema
+    """
     
     if tracker:
         tracker.start_phase(phase, model)
     
     try:
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
+        create_kwargs = {
+            "model": model,
+            "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            temperature=temperature,
-            max_tokens=max_tokens
-        )
+            "temperature": temperature,
+            "max_tokens": max_tokens
+        }
+        
+        if response_format:
+            create_kwargs["response_format"] = response_format
+            create_kwargs["extra_body"] = {
+                "provider": {
+                    "require_parameters": True
+                }
+            }
+        
+        response = client.chat.completions.create(**create_kwargs)
         
         content = response.choices[0].message.content or ""
         usage = {
@@ -199,8 +236,108 @@ def pass0_chunker(
     return chunks
 
 
-MAX_STRUCTURAL_RETRIES = 2
-MAX_SEMANTIC_RETRIES = 1
+MAX_STRUCTURAL_RETRIES = 4
+MAX_SEMANTIC_RETRIES = 2
+
+
+def get_director_response_format() -> Optional[Dict]:
+    """Get structured output format for Director if enabled."""
+    if not ENABLE_STRUCTURED_OUTPUT:
+        return None
+    
+    return {
+        "type": "json_object"
+    }
+
+
+def call_director_single_model(
+    model: str,
+    system_prompt: str,
+    user_prompt: str,
+    tracker: Optional[AnalyticsTracker],
+    phase_suffix: str = ""
+) -> Tuple[str, Dict, str]:
+    """Call a single model for Director and return (response, usage, model_name)."""
+    phase_name = f"director_{model.split('/')[-1]}{phase_suffix}"
+    
+    response_format = get_director_response_format()
+    
+    response_text, usage = call_llm(
+        model=model,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        phase=phase_name,
+        tracker=tracker,
+        max_tokens=32000,
+        temperature=0.2,
+        response_format=response_format
+    )
+    
+    return response_text, usage, model
+
+
+def call_director_parallel(
+    system_prompt: str,
+    user_prompt: str,
+    tracker: Optional[AnalyticsTracker] = None,
+    phase_suffix: str = ""
+) -> Tuple[str, Dict, str]:
+    """Fire multiple Director models in parallel, return first successful response.
+    
+    Uses a race pattern: all models start simultaneously, we take the first
+    response that parses as valid JSON.
+    """
+    if not ENABLE_PARALLEL_DIRECTOR or len(DIRECTOR_PARALLEL_MODELS) <= 1:
+        model = MODELS["director"]
+        log(f"[Direct] Using single model: {model}")
+        return call_director_single_model(
+            model, system_prompt, user_prompt, tracker, phase_suffix
+        )
+    
+    log(f"[Direct] Parallel mode: firing {len(DIRECTOR_PARALLEL_MODELS)} models...")
+    
+    results = []
+    errors = []
+    
+    with ThreadPoolExecutor(max_workers=len(DIRECTOR_PARALLEL_MODELS)) as executor:
+        futures = {
+            executor.submit(
+                call_director_single_model,
+                model, system_prompt, user_prompt, tracker, phase_suffix
+            ): model
+            for model in DIRECTOR_PARALLEL_MODELS
+        }
+        
+        for future in as_completed(futures):
+            model = futures[future]
+            try:
+                response_text, usage, model_name = future.result()
+                
+                try:
+                    fixed = fix_json(response_text)
+                    parsed = json.loads(fixed)
+                    
+                    if "sections" in parsed or "lesson_plan" in parsed or "topics" in parsed:
+                        log(f"[Direct] Winner: {model_name} (valid JSON with sections)")
+                        return response_text, usage, model_name
+                    else:
+                        log(f"[Direct] {model_name}: JSON valid but missing sections key")
+                        results.append((response_text, usage, model_name))
+                        
+                except json.JSONDecodeError as e:
+                    log(f"[Direct] {model_name}: JSON parse error - {e}")
+                    errors.append((model_name, str(e)))
+                    
+            except Exception as e:
+                log(f"[Direct] {model}: API error - {e}")
+                errors.append((model, str(e)))
+    
+    if results:
+        log(f"[Direct] Using first result (missing ideal structure)")
+        return results[0]
+    
+    error_summary = "; ".join([f"{m}: {e}" for m, e in errors[:3]])
+    raise PipelineError(f"All parallel Director models failed: {error_summary}", "director")
 
 
 def pass1_director(
@@ -244,18 +381,17 @@ def pass1_director(
         phase_name = f"director" if total_attempts == 1 else f"director_retry_{total_attempts - 1}"
         
         if total_attempts == 1:
-            log("[Direct] Initial attempt...")
-            response_text, usage = call_llm(
-                model=MODELS["director"],
+            log("[Direct] Initial attempt (parallel mode)...")
+            response_text, usage, winning_model = call_director_parallel(
                 system_prompt=system_prompt,
                 user_prompt=user_prompt,
-                phase=phase_name,
                 tracker=tracker,
-                max_tokens=32000,
-                temperature=0.2
+                phase_suffix=""
             )
+            log(f"[Direct] Using response from: {winning_model}")
         else:
             log(f"[Direct] Retry attempt {total_attempts - 1}...")
+            response_format = get_director_response_format()
             response_text, usage = call_llm(
                 model=MODELS["director"],
                 system_prompt=retry_system,
@@ -263,7 +399,8 @@ def pass1_director(
                 phase=phase_name,
                 tracker=tracker,
                 max_tokens=32000,
-                temperature=0.2
+                temperature=0.2,
+                response_format=response_format
             )
         
         try:
