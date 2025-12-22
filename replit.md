@@ -107,9 +107,13 @@ The Merge Step converts 5 separate `recap_scene_N` sections (easier for LLM to g
 - Player layer: Receives exactly what it expects, NO CHANGES NEEDED
 
 ## Recent Changes (2025-12-22)
+- **ISS-092 FIX**: Fixed critical wiring bug where recap_video_paths was never set on sections
+  - WAN renderer now returns all 5 recap video paths (not just the first)
+  - _reconcile_video_paths sets both `video_path` and `recap_video_paths` for recap sections
+  - Player now correctly sequences through all 5 recap scene videos
 - **V1.4 Hybrid Pipeline**: Split Directors (Content + Recap) feed into V1.3 rendering infrastructure
 - **Merge Step Enhancement**: Converts 5 recap_scene_N → 1 recap section for player compatibility
-- **Split Recap Architecture**: Recap Director generates 5 separate scenes (100+ words each)
+- **Split Recap Architecture**: Recap Director generates 5 separate scenes (300+ words each)
   - Resolves ISS-080 by reducing per-section cognitive load on LLM
 - **Status Callbacks**: Real-time job progress updates during pipeline execution
 - Created `docs/v14_hybrid_architecture.md` with complete pipeline documentation
