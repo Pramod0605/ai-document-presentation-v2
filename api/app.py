@@ -644,8 +644,8 @@ def generate_v14():
     - markdown: Markdown content to process (required)
     - subject: Subject area (default: "General Science")
     - grade: Grade level (default: "9")
-    - dry_run: If true, skips TTS generation (default: false)
-    - skip_tts: If true, uses estimated durations instead of Narakeet (default: false)
+    - skip_wan: If true, skips WAN video rendering (default: false) 
+    - tts_provider: TTS provider - "narakeet" (production), "pyttsx3" (dry run local), "estimate" (default: "narakeet")
     
     Returns:
     - presentation.json following v1.3 schema with spec_version v1.4
@@ -671,14 +671,17 @@ def generate_v14():
         
         subject = data.get("subject", "General Science")
         grade = data.get("grade", "9")
-        dry_run = data.get("dry_run", False)
-        skip_tts = data.get("skip_tts", False)
+        skip_wan = data.get("skip_wan", False)
+        tts_provider = data.get("tts_provider", "narakeet")
+        
+        if tts_provider not in ["narakeet", "pyttsx3", "estimate"]:
+            return jsonify({"error": f"Invalid tts_provider: {tts_provider}. Use 'narakeet', 'pyttsx3', or 'estimate'"}), 400
         
         job_id = job_manager.create_job("v14_pipeline", {
             "subject": subject,
             "grade": grade,
-            "dry_run": dry_run,
-            "skip_tts": skip_tts,
+            "skip_wan": skip_wan,
+            "tts_provider": tts_provider,
             "content_preview": markdown_content[:200] + "..." if len(markdown_content) > 200 else markdown_content
         })
         
@@ -697,8 +700,9 @@ def generate_v14():
             grade=grade,
             job_id=job_id,
             update_status_callback=status_callback,
-            generate_tts=not skip_tts,
-            output_dir=job_output_dir
+            generate_tts=True,
+            output_dir=job_output_dir,
+            tts_provider=tts_provider
         )
         
         validation = validate_presentation_v14(presentation)
@@ -722,8 +726,8 @@ def generate_v14():
             "validation": validation,
             "analytics": analytics_summary,
             "output_path": str(pres_path),
-            "dry_run": dry_run,
-            "skip_tts": skip_tts
+            "skip_wan": skip_wan,
+            "tts_provider": tts_provider
         })
         
     except Exception as e:

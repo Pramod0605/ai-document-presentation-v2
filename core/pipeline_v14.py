@@ -47,7 +47,8 @@ def process_markdown_to_presentation_v14(
     job_id: str,
     update_status_callback = None,
     generate_tts: bool = True,
-    output_dir: Optional[Path] = None
+    output_dir: Optional[Path] = None,
+    tts_provider: str = "narakeet"
 ) -> Tuple[Dict, AnalyticsTracker]:
     """
     V1.4 Pipeline: Process markdown to presentation.json.
@@ -67,6 +68,7 @@ def process_markdown_to_presentation_v14(
         update_status_callback: Optional callback for status updates
         generate_tts: Whether to generate TTS audio for duration measurement
         output_dir: Output directory for assets
+        tts_provider: TTS provider - "narakeet" (production), "pyttsx3" (dry run), "estimate"
         
     Returns:
         Tuple of (presentation dict, analytics tracker)
@@ -128,11 +130,12 @@ def process_markdown_to_presentation_v14(
         logger.info(f"[Pipeline v1.4] Merged: {stats}")
         
         if generate_tts:
-            update_status("tts_duration", "Measuring audio durations...")
+            update_status("tts_duration", f"Measuring audio durations ({tts_provider})...")
             presentation = update_durations_from_tts(
                 presentation=presentation,
                 output_dir=output_dir,
-                generate_audio=True
+                generate_audio=True,
+                tts_provider=tts_provider
             )
         
         update_status("validation", "Validating lesson structure...")
