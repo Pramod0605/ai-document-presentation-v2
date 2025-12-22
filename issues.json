@@ -1357,15 +1357,64 @@
       "fix": "Added render_all_topics() call after presentation validation in process_markdown_job(), with proper status updates and error handling",
       "files_modified": ["api/app.py"],
       "testing_gap": "Did not verify end-to-end output files - only checked presentation.json generation"
+    },
+    {
+      "id": "ISS-084",
+      "title": "Content section video_prompts not wired to WAN renderer",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "WAN renderer looked for video_prompts in explanation_plan (line 44), but llm_client_v12.py stores them directly on section['video_prompts'] (line 794). LLM was working perfectly - only wiring was wrong.",
+      "error": "Content sections with valid video_prompts were not rendering because WAN runner couldn't find them",
+      "root_cause": "Field location mismatch: llm_client stores at section.video_prompts, wan_runner reads from section.explanation_plan.video_prompts",
+      "fix": "Updated wan_runner.py line 44 to check topic.get('video_prompts', []) first, then fall back to explanation_plan",
+      "files_modified": ["render/wan/wan_runner.py"],
+      "lesson": "LLM layer is working - issues are in renderer wiring. Trace data flow from LLM output through merge step to renderer input."
+    },
+    {
+      "id": "ISS-085",
+      "title": "Recap scenes wan_prompt field name mismatch",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "Merge step created recap_scenes with 'video_prompt' field, but WAN runner expected 'wan_prompt' field. Caused 'Beat 0: Prompt has 0 words' error.",
+      "error": "WAN renderer showed 0 word prompts for recap scenes despite presentation.json having valid prompts",
+      "root_cause": "Field name mismatch: merge_step used 'video_prompt', wan_runner.py _render_recap_scenes() reads 'wan_prompt'",
+      "fix": "Updated merge_step.py to include both wan_prompt and video_prompt fields in recap_scenes",
+      "files_modified": ["core/merge_step.py"],
+      "lesson": "When integrating components, verify exact field names expected by downstream consumers. Add both field names for compatibility."
+    },
+    {
+      "id": "ISS-086",
+      "title": "Audio path not set in presentation.json sections",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "sync_timing_with_audio() was not setting audio_path and audio_duration on sections, so player couldn't find audio files.",
+      "root_cause": "TTS duration sync function only updated timing but didn't store audio file paths",
+      "fix": "Updated sync_timing_with_audio() in generate_audio.py to set audio_path and audio_duration on each section",
+      "files_modified": ["tts/generate_audio.py"]
+    },
+    {
+      "id": "ISS-087",
+      "title": "Manim generated code may have syntax/runtime errors",
+      "status": "open",
+      "created": "2025-12-22",
+      "description": "LLM-generated Manim code may contain Python syntax errors or use unsupported Manim APIs, causing subprocess crashes during rendering.",
+      "severity": "medium",
+      "impact": "Math/physics sections fail to render, falling back to placeholder or failing hard",
+      "mitigation": "Current code logs stderr from Manim subprocess. May need: 1) Code validation before exec, 2) Better error messages, 3) Safe code template constraints",
+      "files_to_check": ["render/manim/manim_runner.py", "core/visual_compiler.py"],
+      "next_steps": "Monitor actual Manim failures in production. Collect error samples to identify common LLM code generation mistakes."
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-22T15:25:00.000000",
-    "version": "14.6",
+    "last_updated": "2025-12-22T17:00:00.000000",
+    "version": "14.7",
     "spec_version": "v1.4",
     "spec_file": "docs/llm_output_requirements_v1.4.json",
-    "resolved_count": 75,
-    "open_count": 2,
-    "testing_lesson": "Single curl test insufficient - must verify prompt file consistency and test multiple LLM runs"
+    "resolved_count": 79,
+    "open_count": 1,
+    "testing_lesson": "LLM output is correct - trace wiring issues by checking field names at each stage of the pipeline"
   }
 }

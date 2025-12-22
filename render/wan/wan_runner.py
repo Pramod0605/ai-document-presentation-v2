@@ -40,8 +40,9 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     # Check for compiled WAN prompt from visual_compiler
     compiled_wan_prompt = explanation_plan.get("compiled_wan_prompt")
     
-    # ISS-067: Check for pre-compiled video_prompts from Director/Video Renderer LLM
-    video_prompts = explanation_plan.get("video_prompts", [])
+    # ISS-084 FIX: Check for video_prompts at section level first (where llm_client stores them),
+    # then fall back to explanation_plan (legacy ISS-067 location)
+    video_prompts = topic.get("video_prompts", []) or explanation_plan.get("video_prompts", [])
     
     # For content/example sections, use visual beats (or pre-compiled video_prompts)
     if section_type in ["content", "example"] and (visual_beats or video_prompts):
