@@ -129,10 +129,23 @@ class LayerController {
     this.currentVisualState = 'hide';
     this.currentAvatarState = 'show';
     this.lastSegmentIndex = -1;
+    this.pendingDirectives = null;
+    this.videoReadyHandler = null;
+  }
+
+  /**
+   * Check if inline video is ready to play
+   */
+  isVideoReady() {
+    const inlineVideo = document.getElementById('inline-video');
+    const videoBox = document.getElementById('video-box');
+    if (!inlineVideo) return false;
+    return inlineVideo.readyState >= 3 || (videoBox && videoBox.classList.contains('video-ready'));
   }
 
   /**
    * Apply display_directives for a narration segment
+   * ISS-062 FIX: Waits for video ready before hiding text layer
    * @param {Object} segment - narration_segment with display_directives
    * @param {string} sectionType - section type (intro, content, example, etc.)
    * @param {number} segmentIndex - current segment index
@@ -148,12 +161,6 @@ class LayerController {
     this.lastSegmentIndex = segmentIndex;
 
     const directives = segment.display_directives;
-    const stage = document.getElementById('stage');
-    const contentBox = document.getElementById('content-box');
-    const segmentsList = document.getElementById('segments-list');
-    const videoBox = document.getElementById('video-box');
-    const avatarCanvas = document.getElementById('avatar-canvas');
-
     const textLayer = directives.text_layer || 'hide';
     const visualLayer = directives.visual_layer || 'hide';
     const avatarLayer = directives.avatar_layer || 'show';
@@ -161,6 +168,56 @@ class LayerController {
     if (textLayer === 'show' && visualLayer === 'show') {
       console.error(`[v1.3 VIOLATION] Segment ${segmentIndex}: text_layer=show + visual_layer=show violates mutual exclusion`);
     }
+
+    if (this.videoReadyHandler) {
+      const inlineVideo = document.getElementById('inline-video');
+      if (inlineVideo) {
+        inlineVideo.removeEventListener('canplay', this.videoReadyHandler);
+      }
+      this.videoReadyHandler = null;
+    }
+
+    const needsVideoGating = (textLayer === 'hide' || textLayer === 'swap') && 
+                              (visualLayer === 'show' || visualLayer === 'replace') &&
+                              !this.isVideoReady();
+
+    if (needsVideoGating) {
+      console.log(`[LayerController] Segment ${segmentIndex}: Waiting for video ready before hiding text...`);
+      this.pendingDirectives = { textLayer, visualLayer, avatarLayer, sectionType, segmentIndex };
+      
+      const inlineVideo = document.getElementById('inline-video');
+      if (inlineVideo) {
+        this.videoReadyHandler = () => {
+          console.log(`[LayerController] Video ready! Applying pending directives for segment ${segmentIndex}`);
+          this.applyDirectivesImmediate(this.pendingDirectives);
+          this.pendingDirectives = null;
+          this.videoReadyHandler = null;
+        };
+        inlineVideo.addEventListener('canplay', this.videoReadyHandler, { once: true });
+        
+        setTimeout(() => {
+          if (this.pendingDirectives && this.pendingDirectives.segmentIndex === segmentIndex) {
+            console.log(`[LayerController] Video timeout - applying directives anyway for segment ${segmentIndex}`);
+            this.applyDirectivesImmediate(this.pendingDirectives);
+            this.pendingDirectives = null;
+          }
+        }, 2000);
+      }
+      
+      this.applyAvatarDirectives(avatarLayer, sectionType);
+      return;
+    }
+
+    this.applyDirectivesImmediate({ textLayer, visualLayer, avatarLayer, sectionType, segmentIndex });
+  }
+
+  /**
+   * Apply directives immediately (internal helper)
+   */
+  applyDirectivesImmediate({ textLayer, visualLayer, avatarLayer, sectionType, segmentIndex }) {
+    const stage = document.getElementById('stage');
+    const segmentsList = document.getElementById('segments-list');
+    const videoBox = document.getElementById('video-box');
 
     this.currentTextState = textLayer;
     this.currentVisualState = visualLayer;
@@ -189,6 +246,17 @@ class LayerController {
       if (videoBox) videoBox.classList.remove('video-ready');
     }
 
+    this.applyAvatarDirectives(avatarLayer, sectionType);
+
+    console.log(`[LayerController] Segment ${segmentIndex}: text=${textLayer}, visual=${visualLayer}, avatar=${avatarLayer}`);
+  }
+
+  /**
+   * Apply avatar layer directives (extracted for reuse)
+   */
+  applyAvatarDirectives(avatarLayer, sectionType) {
+    const avatarCanvas = document.getElementById('avatar-canvas');
+
     if (avatarCanvas) {
       avatarCanvas.style.opacity = '';
       avatarCanvas.style.transform = '';
@@ -214,8 +282,6 @@ class LayerController {
         avatarCanvas.style.opacity = '0';
       }
     }
-
-    console.log(`[LayerController] Segment ${segmentIndex}: text=${textLayer}, visual=${visualLayer}, avatar=${avatarLayer}`);
   }
 
   /**

@@ -336,8 +336,10 @@
     {
       "id": "ISS-030",
       "title": "v1.2 Pipeline Test Playback Issues - Misdiagnosis",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-20",
+      "resolved": "2025-12-22",
+      "resolution_note": "Obsolete - v1.2 pipeline replaced by v1.3 pipeline with different architecture",
       "description": "Full pipeline test with use_remotion=False produced output in player/jobs/full_test_no_remotion/ but playback appeared broken. Initial diagnosis suggested major schema incompatibility, but investigation revealed:",
       "root_cause_analysis": {
         "initial_symptoms": [
@@ -931,13 +933,15 @@
     {
       "id": "ISS-062",
       "title": "Content visual swap happens too fast before video ready",
-      "status": "open",
+      "status": "resolved",
       "severity": "medium",
       "component": "player/player.js",
       "description": "Text layer hides immediately on segment change, but video is not ready yet. Creates jarring \"too fast\" visual swap.",
       "root_cause": "applyDirectives() changes layer visibility synchronously on segment change without waiting for video canplay event. display_directives say hide text before visual, but no video-ready gating.",
       "proposed_fix": "Wait for video canplay event before applying display_directives that hide text and show visuals. Add async video state management.",
-      "created": "2025-12-21T13:00:17.594645"
+      "created": "2025-12-21T13:00:17.594645",
+      "resolved": "2025-12-22",
+      "resolution_note": "Added video-ready gating to LayerController.applyDirectives(). Waits for canplay event (max 2s timeout) before hiding text when transitioning to video display."
     },
     {
       "id": "ISS-063",
@@ -1280,11 +1284,11 @@
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-22T07:00:00.000000",
-    "version": "14.3",
+    "last_updated": "2025-12-22T08:00:00.000000",
+    "version": "14.4",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
-    "resolved_count": 70,
-    "open_count": 5
+    "resolved_count": 72,
+    "open_count": 3
   }
 }
