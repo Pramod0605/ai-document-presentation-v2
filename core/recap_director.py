@@ -285,6 +285,10 @@ def _validate_semantics(data: Dict) -> List[str]:
                 errors.append(f"{prefix}: {section_type} narration too long ({word_count} words, maximum {MAX_SCENE_NARRATION_WORDS})")
             
             video_prompt = section.get("video_prompt", "")
+            if isinstance(video_prompt, dict):
+                video_prompt = video_prompt.get("text", "") or video_prompt.get("prompt", "") or str(video_prompt)
+            if not isinstance(video_prompt, str):
+                video_prompt = str(video_prompt) if video_prompt else ""
             prompt_words = len(video_prompt.split())
             if prompt_words < MIN_VIDEO_PROMPT_WORDS:
                 errors.append(f"{prefix}: {section_type} video_prompt too short ({prompt_words} words, minimum {MIN_VIDEO_PROMPT_WORDS})")

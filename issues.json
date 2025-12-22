@@ -1320,14 +1320,26 @@
         "Multi-subject content",
         "Physics content"
       ]
+    },
+    {
+      "id": "ISS-081",
+      "title": "Recap Director semantic validation crashes when LLM returns video_prompt as dict",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "Job dc0c1a05 failed with AttributeError: 'dict' object has no attribute 'split' in _validate_semantics(). LLM returned video_prompt as dict object instead of string.",
+      "error": "AttributeError: 'dict' object has no attribute 'split' at line 288 in recap_director.py",
+      "root_cause": "No type checking on video_prompt before calling .split()",
+      "fix": "Added isinstance checks to handle dict case, extract text/prompt field or stringify",
+      "files_modified": ["core/recap_director.py"]
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-22T08:00:00.000000",
-    "version": "14.4",
-    "spec_version": "v1.3",
-    "spec_file": "docs/llm_output_requirements_v1.3.json",
-    "resolved_count": 73,
+    "last_updated": "2025-12-22T15:15:00.000000",
+    "version": "14.5",
+    "spec_version": "v1.4",
+    "spec_file": "docs/llm_output_requirements_v1.4.json",
+    "resolved_count": 74,
     "open_count": 2
   }
 }
