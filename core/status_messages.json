@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "description": "Status messages for job progress display. Fun messages for progress, clear messages for failures.",
+  "version": "1.1",
+  "description": "Status messages for job progress display. Fun messages for progress, precise error messages with impact for failures.",
   
   "phases": {
     "queued": {
@@ -13,9 +13,26 @@
         "The learning journey is about to begin...",
         "Aligning the educational stars...",
         "Brewing a fresh pot of knowledge...",
-        "Stretching our neural networks..."
+        "Stretching our neural networks...",
+        "Sharpening the digital pencils...",
+        "Calibrating the imagination sensors..."
       ],
-      "failure_message": "JOB FAILED: An error occurred before processing could begin. Please check the input and try again."
+      "failure_message": "QUEUE ERROR: Job failed before processing started",
+      "impact": "No artifacts generated. Check input file format.",
+      "dev_hint": "Check job submission params and file upload handling"
+    },
+    
+    "pdf_conversion": {
+      "display_name": "Converting PDF",
+      "messages": [
+        "Extracting wisdom from your PDF...",
+        "Teaching our AI to read your document...",
+        "Decoding the knowledge within...",
+        "Scanning pages with laser focus..."
+      ],
+      "failure_message": "PDF CONVERSION FAILED: Could not extract content from PDF",
+      "impact": "No markdown generated. Pipeline cannot proceed.",
+      "dev_hint": "Check Datalab API key and PDF structure. Look for encryption or scan-only PDFs."
     },
     
     "chunker": {
@@ -25,9 +42,13 @@
         "Breaking down the wisdom into bite-sized pieces...",
         "Organizing thoughts like a librarian...",
         "Finding the story in your content...",
-        "Mapping the learning journey ahead..."
+        "Mapping the learning journey ahead...",
+        "Untangling the threads of knowledge...",
+        "Sorting concepts like a master chef preps ingredients..."
       ],
-      "failure_message": "PARSE FAILED: Could not process the input document. Please check the file format and content."
+      "failure_message": "PARSE FAILED: Chunker could not segment content",
+      "impact": "No chunks generated. Director phase cannot start.",
+      "dev_hint": "Check Gemini Flash API response. Verify markdown structure and content length."
     },
     
     "director": {
@@ -37,9 +58,13 @@
         "Crafting the perfect educational narrative...",
         "Deciding how best to teach this concept...",
         "Choreographing visuals and narration...",
-        "Building a bridge from confusion to clarity..."
+        "Building a bridge from confusion to clarity...",
+        "Assembling the educational dream team...",
+        "Plotting the path to enlightenment..."
       ],
-      "failure_message": "DIRECTOR FAILED: Could not structure the educational content. The AI was unable to create a valid lesson plan."
+      "failure_message": "DIRECTOR FAILED: Could not create lesson structure",
+      "impact": "No presentation.json generated. Rendering cannot proceed.",
+      "dev_hint": "Check Gemini Pro API response. Verify schema validation errors in logs."
     },
     
     "director_retry": {
@@ -48,9 +73,12 @@
         "Polishing the lesson structure...",
         "Fine-tuning the educational flow...",
         "Making sure every detail is perfect...",
-        "Double-checking the teaching approach..."
+        "Double-checking the teaching approach...",
+        "Ironing out the wrinkles in our plan..."
       ],
-      "failure_message": "DIRECTOR RETRY FAILED: Unable to fix lesson structure after multiple attempts."
+      "failure_message": "DIRECTOR RETRY FAILED: Structure repair unsuccessful after 2 attempts",
+      "impact": "Invalid presentation structure. Hard fail - no fallbacks.",
+      "dev_hint": "Check director_retry prompts. Review schema validation errors for specific missing fields."
     },
     
     "validation": {
@@ -59,9 +87,25 @@
         "Running quality checks on the lesson...",
         "Making sure everything meets our standards...",
         "Verifying the educational integrity...",
-        "Checking all the boxes..."
+        "Checking all the boxes...",
+        "The quality inspector has arrived..."
       ],
-      "failure_message": "VALIDATION FAILED: The lesson plan did not pass quality checks."
+      "failure_message": "VALIDATION FAILED: Presentation did not pass v1.3 requirements",
+      "impact": "Missing required sections or fields. Check hard_fail_validator output.",
+      "dev_hint": "Review 3-tier validation results. Check for missing intro/summary/memory/recap sections."
+    },
+    
+    "dry_run": {
+      "display_name": "Dry Run Validation",
+      "messages": [
+        "Running pre-flight checks...",
+        "Testing the waters before diving in...",
+        "Validating everything is in order...",
+        "Performing dress rehearsal..."
+      ],
+      "failure_message": "DRY RUN FAILED: Render specs failed pre-validation",
+      "impact": "Would fail during actual rendering. Check WAN prompts (<300 words) or missing manim specs.",
+      "dev_hint": "Review dry_run_validator.py output. Check video_prompts word counts."
     },
     
     "remotion_renderer": {
@@ -70,9 +114,12 @@
         "Designing beautiful intro animations...",
         "Crafting visual elements with care...",
         "Adding that professional polish...",
-        "Making your content shine..."
+        "Making your content shine...",
+        "Sprinkling motion magic..."
       ],
-      "failure_message": "REMOTION RENDER FAILED: Could not generate motion graphics for this section."
+      "failure_message": "REMOTION RENDER FAILED: Motion graphics generation error",
+      "impact": "Intro/summary/memory sections missing animations. Player shows placeholder.",
+      "dev_hint": "Check Claude Sonnet response. Verify remotion_scene_spec is valid JSON."
     },
     
     "manim_renderer": {
@@ -82,9 +129,12 @@
         "Drawing mathematical beauty...",
         "Animating the dance of numbers...",
         "Creating visual proofs...",
-        "Making abstract concepts visible..."
+        "Making abstract concepts visible...",
+        "Graphing the path to understanding..."
       ],
-      "failure_message": "MANIM RENDER FAILED: Could not generate mathematical animation for this section."
+      "failure_message": "MANIM RENDER FAILED: Mathematical animation generation error",
+      "impact": "Math/physics sections missing animations. Player shows placeholder.",
+      "dev_hint": "Check Claude Sonnet response. Verify manim_scene_spec has valid animation_sequence."
     },
     
     "video_renderer": {
@@ -94,9 +144,12 @@
         "Generating cinematic explanations...",
         "Creating videos that teach...",
         "Visualizing complex concepts...",
-        "Turning ideas into moving pictures..."
+        "Turning ideas into moving pictures...",
+        "The visual storyteller is at work..."
       ],
-      "failure_message": "VIDEO RENDER FAILED: Could not generate video content for this section."
+      "failure_message": "VIDEO RENDER FAILED: Video prompt generation error",
+      "impact": "Content sections missing conceptual videos. Player shows black panel.",
+      "dev_hint": "Check video_prompts in presentation.json. Verify 300+ word requirement met."
     },
     
     "wan_video": {
@@ -106,9 +159,27 @@
         "Creating stunning visual explanations...",
         "Rendering knowledge into video form...",
         "Patience... beautiful things take time...",
-        "Each frame is being crafted with care..."
+        "Each frame is being crafted with care...",
+        "The pixels are learning to teach...",
+        "Summoning the video generation wizards..."
       ],
-      "failure_message": "WAN VIDEO FAILED: Video generation service encountered an error."
+      "failure_message": "WAN VIDEO FAILED: kie.ai video generation service error",
+      "impact": "Section video not generated. Player shows placeholder or black screen.",
+      "dev_hint": "Check KIE_API_KEY. Review wan_runner.py logs for API response. Verify prompt >300 words."
+    },
+    
+    "wan_polling": {
+      "display_name": "Waiting for Video",
+      "messages": [
+        "The video is rendering in the cloud...",
+        "AI artists are hard at work...",
+        "Patience is a virtue... and so is great video...",
+        "Good things come to those who wait...",
+        "The masterpiece is almost ready..."
+      ],
+      "failure_message": "WAN POLLING TIMEOUT: Video generation did not complete in time",
+      "impact": "Section video incomplete. May have partial result or need retry.",
+      "dev_hint": "Check wan_runner.py poll timeout. Review kie.ai task status."
     },
     
     "audio": {
@@ -117,9 +188,25 @@
         "The narrator is warming up...",
         "Converting text to speech...",
         "Adding the voice of knowledge...",
-        "Recording the explanation..."
+        "Recording the explanation...",
+        "The voice of wisdom speaks...",
+        "Giving life to the written word..."
       ],
-      "failure_message": "AUDIO FAILED: Could not generate narration audio."
+      "failure_message": "AUDIO FAILED: Narakeet TTS generation error",
+      "impact": "Section has no narration audio. Playback will be silent.",
+      "dev_hint": "Check NARAKEET_API_KEY. Review narration text length and character encoding."
+    },
+    
+    "timing_sync": {
+      "display_name": "Synchronizing Timing",
+      "messages": [
+        "Aligning audio and visuals...",
+        "Making sure everything is in sync...",
+        "Calibrating the timeline..."
+      ],
+      "failure_message": "TIMING SYNC FAILED: Could not reconcile audio durations",
+      "impact": "Display directives may fire at wrong times. Audio/visual drift possible.",
+      "dev_hint": "Check sync_timing_with_audio() in generate_audio.py. Review actual vs LLM durations."
     },
     
     "assembly": {
@@ -128,9 +215,12 @@
         "Putting all the pieces together...",
         "Mixing audio and visuals...",
         "Adding the finishing touches...",
-        "Almost there..."
+        "Almost there...",
+        "The final countdown begins..."
       ],
-      "failure_message": "ASSEMBLY FAILED: Could not combine video and audio elements."
+      "failure_message": "ASSEMBLY FAILED: Could not combine video and audio elements",
+      "impact": "Final video not created. Individual assets may be available.",
+      "dev_hint": "Check moviepy or ffmpeg logs. Verify all input files exist."
     },
     
     "completed": {
@@ -139,7 +229,9 @@
         "Your educational masterpiece is ready!",
         "Knowledge has been transformed into video!",
         "The lesson is ready to inspire!",
-        "Success! Time to learn and grow!"
+        "Success! Time to learn and grow!",
+        "Mic drop! Your video is done!",
+        "Achievement unlocked: Video Complete!"
       ]
     },
     
@@ -147,7 +239,8 @@
       "display_name": "Error Occurred",
       "messages": [
         "Something went wrong during processing."
-      ]
+      ],
+      "impact": "Job incomplete. Check error details below."
     }
   },
   
@@ -156,7 +249,9 @@
     "Building something amazing takes time...",
     "Your patience will be rewarded...",
     "The best lessons are worth waiting for...",
-    "Quality education can't be rushed..."
+    "Quality education can't be rushed...",
+    "Rome wasn't built in a day, and neither is great content...",
+    "The AI hamsters are running as fast as they can..."
   ],
   
   "progress_milestones": {

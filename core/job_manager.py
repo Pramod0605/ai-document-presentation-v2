@@ -189,19 +189,30 @@ class JobManager:
         effective_phase = phase_key or (job.get("current_phase_key") if job else None)
         
         failure_message = None
+        impact = None
+        dev_hint = None
+        
         if effective_phase:
             messages = load_status_messages()
             phases = messages.get("phases", {})
             phase_key_normalized = effective_phase.lower().replace(" ", "_")
             for key in [phase_key_normalized, effective_phase]:
-                if key in phases and "failure_message" in phases[key]:
-                    failure_message = phases[key]["failure_message"]
+                if key in phases:
+                    phase_data = phases[key]
+                    if "failure_message" in phase_data:
+                        failure_message = phase_data["failure_message"]
+                    if "impact" in phase_data:
+                        impact = phase_data["impact"]
+                    if "dev_hint" in phase_data:
+                        dev_hint = phase_data["dev_hint"]
                     break
         
         self.update_job(job_id, {
             "status": "failed",
             "error": error,
             "failure_message": failure_message,
+            "impact": impact,
+            "dev_hint": dev_hint,
             "failed_phase": effective_phase,
             "completed_at": datetime.now().isoformat()
         }, persist=True)
