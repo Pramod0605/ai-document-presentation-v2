@@ -179,19 +179,28 @@ def process_pdf_to_videos_v12(
         
         if job_id:
             job_manager.complete_step(job_id, 0)
-            job_manager.set_step(job_id, "LLM generating presentation (3-pass v1.2)...", 1, phase_key="director")
+            job_manager.set_step(job_id, "LLM generating presentation (V1.4 Split Directors)...", 1, phase_key="director")
         
-        job_status["steps"].append({"step": "generate_presentation_v12", "status": "started"})
+        job_status["steps"].append({"step": "generate_presentation_v14_hybrid", "status": "started"})
         
         llm_content = markdown_for_llm
         if images_list_text:
             llm_content = f"{images_list_text}\n\n---\n\n{markdown_for_llm}"
         
+        def hybrid_status_callback(phase: str, message: str):
+            """Wire hybrid pipeline status to job manager."""
+            if job_id:
+                job_manager.update_job(job_id, {
+                    "current_phase_key": phase,
+                    "status_message": message
+                }, persist=True)
+        
         presentation, analytics_tracker = generate_presentation_v14_hybrid(
             markdown_content=llm_content,
             subject=subject,
             grade=grade,
-            use_remotion=use_remotion
+            use_remotion=use_remotion,
+            status_callback=hybrid_status_callback
         )
         
         if presentation and images_mapping:
@@ -422,19 +431,28 @@ def process_markdown_to_videos_v12(
             job_status["steps"].append({"step": "extract_images", "status": "failed", "error": str(e)})
         
         if job_id:
-            job_manager.set_step(job_id, "LLM generating presentation (3-pass v1.2)...", 0, phase_key="director")
+            job_manager.set_step(job_id, "LLM generating presentation (V1.4 Split Directors)...", 0, phase_key="director")
         
-        job_status["steps"].append({"step": "generate_presentation_v12", "status": "started"})
+        job_status["steps"].append({"step": "generate_presentation_v14_hybrid", "status": "started"})
         
         llm_content = markdown_for_llm
         if images_list_text:
             llm_content = f"{images_list_text}\n\n---\n\n{markdown_for_llm}"
         
+        def hybrid_status_callback(phase: str, message: str):
+            """Wire hybrid pipeline status to job manager."""
+            if job_id:
+                job_manager.update_job(job_id, {
+                    "current_phase_key": phase,
+                    "status_message": message
+                }, persist=True)
+        
         presentation, analytics_tracker = generate_presentation_v14_hybrid(
             markdown_content=llm_content,
             subject=subject,
             grade=grade,
-            use_remotion=use_remotion
+            use_remotion=use_remotion,
+            status_callback=hybrid_status_callback
         )
         
         if presentation and images_mapping:

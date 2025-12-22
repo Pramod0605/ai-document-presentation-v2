@@ -957,7 +957,8 @@ def generate_presentation_v14_hybrid(
     subject: str = "General Science",
     grade: str = "9",
     chapter: str = "",
-    use_remotion: bool = True
+    use_remotion: bool = True,
+    status_callback: Optional[callable] = None
 ) -> Tuple[Dict, AnalyticsTracker]:
     """
     V1.4 HYBRID: Split Directors + V1.3 Rendering Infrastructure.
@@ -969,8 +970,16 @@ def generate_presentation_v14_hybrid(
     - Pass 0: Chunker (same as v1.3)
     - Pass 1a: Content Director (intro, summary, content, example, quiz)
     - Pass 1b: Recap Director (memory + 5 recap scenes)
-    - Merge: Combine Content + Recap outputs
+    - Merge: Combine Content + Recap outputs (returns full presentation Dict)
     - Pass 2: Dispatch Renderers (same as v1.3)
+    
+    Args:
+        markdown_content: Source markdown
+        subject: Subject area
+        grade: Grade level
+        chapter: Chapter name
+        use_remotion: Enable Remotion renderer
+        status_callback: Optional callback(phase, message) for progress updates
     
     Returns:
         Tuple of (presentation dict, analytics tracker)
@@ -986,8 +995,17 @@ def generate_presentation_v14_hybrid(
     tracker = create_tracker(job_id)
     tracker.start_pipeline()
     
+    def update_status(phase: str, message: str):
+        """Internal helper to call status callback if provided."""
+        log(f"[V1.4 Hybrid] {phase}: {message}")
+        if status_callback:
+            try:
+                status_callback(phase, message)
+            except Exception as e:
+                log(f"[V1.4 Hybrid] Status callback error: {e}")
+    
     try:
-        log("[V1.4 Hybrid] Pass 0: Smart Chunker...")
+        update_status("chunker", "Parsing content into logical topics...")
         chunker_output = call_smart_chunker(
             markdown_content=markdown_content,
             subject=subject,
@@ -995,7 +1013,7 @@ def generate_presentation_v14_hybrid(
             max_retries=2
         )
         
-        log("[V1.4 Hybrid] Pass 1a: Content Director...")
+        update_status("director", "Content Director planning lesson structure...")
         content_output = call_content_director(
             chunker_output=chunker_output,
             subject=subject,
@@ -1005,7 +1023,7 @@ def generate_presentation_v14_hybrid(
             max_semantic_retries=1
         )
         
-        log("[V1.4 Hybrid] Pass 1b: Recap Director...")
+        update_status("director", "Recap Director creating memory and recap scenes...")
         recap_output = call_recap_director(
             full_markdown=markdown_content,
             subject=subject,
@@ -1015,35 +1033,33 @@ def generate_presentation_v14_hybrid(
             max_semantic_retries=1
         )
         
-        log("[V1.4 Hybrid] Merging Content + Recap outputs...")
-        merged_sections = merge_director_outputs(content_output, recap_output)
+        update_status("validation", "Merging Content + Recap outputs...")
+        presentation = merge_director_outputs(
+            content_output=content_output,
+            recap_output=recap_output,
+            subject=subject,
+            grade=grade
+        )
         
-        presentation = {
-            "sections": merged_sections,
-            "metadata": {
-                "pipeline_version": "1.4_hybrid",
-                "chunker_topics": len(chunker_output.get("topics", [])),
-                "content_sections": len(content_output.get("sections", [])),
-                "recap_sections": len(recap_output.get("sections", []))
-            }
-        }
+        presentation["metadata"]["chunker_topics"] = len(chunker_output.get("topics", []))
+        presentation["metadata"]["content_sections"] = len(content_output.get("sections", []))
+        presentation["metadata"]["recap_sections"] = len(recap_output.get("sections", []))
         
-        log("[V1.4 Hybrid] Pass 2: Dispatch Renderers (v1.3 infrastructure)...")
+        update_status("remotion_renderer", "Dispatching to renderers...")
         presentation = pass2_dispatch_renderers(presentation, tracker, use_remotion=use_remotion)
         
-        presentation["subject"] = subject
-        presentation["grade"] = grade
-        presentation["pipeline_version"] = "1.4_hybrid"
         presentation["job_id"] = job_id
         
         tracker.end_pipeline(status="completed")
         tracker.print_summary()
         
+        update_status("completed", "Pipeline completed successfully!")
         return presentation, tracker
         
     except Exception as e:
         tracker.end_pipeline(status="failed", error=str(e))
         tracker.print_summary()
+        update_status("failed", str(e))
         raise
 
 
