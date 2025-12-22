@@ -217,13 +217,14 @@ def sync_timing_with_audio(presentation: dict, audio_files: list) -> dict:
     ISS-074 FIX: Synchronize segment durations with actual TTS audio durations.
     
     This ensures display_directives fire at correct times matching audio playback.
+    Also sets audio_path and audio_duration on each section for player consumption.
     
     Args:
         presentation: The presentation dict with sections
         audio_files: List of audio info dicts with actual_duration_seconds
     
     Returns:
-        Updated presentation with synchronized timing
+        Updated presentation with synchronized timing and audio paths
     """
     audio_by_section = {af["section_id"]: af for af in audio_files}
     
@@ -233,10 +234,15 @@ def sync_timing_with_audio(presentation: dict, audio_files: list) -> dict:
         section_id = section.get("section_id") or section.get("id")
         audio_info = audio_by_section.get(section_id)
         
-        if not audio_info or audio_info.get("actual_duration_seconds") is None:
+        if not audio_info:
             continue
         
-        actual_total = audio_info["actual_duration_seconds"]
+        section["audio_path"] = audio_info.get("audio_path")
+        section["audio_duration"] = audio_info.get("actual_duration_seconds")
+        
+        actual_total = audio_info.get("actual_duration_seconds")
+        if actual_total is None:
+            continue
         
         narration = section.get("narration", {})
         segments = narration.get("segments", []) if isinstance(narration, dict) else section.get("narration_segments", [])

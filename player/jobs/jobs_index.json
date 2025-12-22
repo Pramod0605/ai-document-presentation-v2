@@ -9386,19 +9386,274 @@
       "skip_avatar": false,
       "tts_provider": "pyttsx3"
     },
-    "status": "processing",
+    "status": "completed",
     "current_step": 2,
-    "current_step_name": "Recording Narration",
-    "current_phase_key": "audio",
-    "status_message": "The voice of wisdom speaks...",
-    "steps_completed": 2,
+    "current_step_name": "Complete!",
+    "current_phase_key": "completed",
+    "status_message": "Achievement unlocked: Video Complete!",
+    "steps_completed": 3,
     "total_steps": 3,
-    "progress": 66,
+    "progress": 100,
     "created_at": "2025-12-22T16:31:19.375405",
     "started_at": "2025-12-22T16:31:19.428114",
-    "completed_at": null,
+    "completed_at": "2025-12-22T16:38:31.070984",
     "error": null,
-    "result": null,
+    "result": {
+      "status": "completed",
+      "pipeline_version": "1.2",
+      "started_at": "2025-12-22T16:31:19.449192",
+      "source_file": "Sample_subjects_v2.md",
+      "steps": [
+        {
+          "step": "extract_images",
+          "status": "completed",
+          "count": 0
+        },
+        {
+          "step": "generate_presentation_v14_hybrid",
+          "status": "completed",
+          "analytics": {
+            "job_id": "6f146e8c",
+            "status": "completed",
+            "total_duration_seconds": 376.37,
+            "total_cost_usd": 0.4448,
+            "total_tokens": 70368,
+            "phases_completed": 13,
+            "phases_failed": 0,
+            "cost_breakdown": {
+              "smart_chunker": {
+                "cost_usd": 0.0316,
+                "duration_seconds": 24.91,
+                "tokens": 4632
+              },
+              "content_director": {
+                "cost_usd": 0.0,
+                "duration_seconds": 0.0,
+                "tokens": 0
+              },
+              "recap_director": {
+                "cost_usd": 0.0678,
+                "duration_seconds": 61.38,
+                "tokens": 9431
+              },
+              "remotion_renderer_ssection_1": {
+                "cost_usd": 0.0157,
+                "duration_seconds": 8.03,
+                "tokens": 2088
+              },
+              "remotion_renderer_ssection_2": {
+                "cost_usd": 0.0142,
+                "duration_seconds": 7.07,
+                "tokens": 2043
+              },
+              "video_renderer_ssection_3": {
+                "cost_usd": 0.0204,
+                "duration_seconds": 19.44,
+                "tokens": 3775
+              },
+              "video_renderer_ssection_3_retry1": {
+                "cost_usd": 0.0224,
+                "duration_seconds": 20.71,
+                "tokens": 3969
+              },
+              "manim_renderer_ssection_4": {
+                "cost_usd": 0.0315,
+                "duration_seconds": 15.79,
+                "tokens": 4032
+              },
+              "manim_renderer_ssection_5": {
+                "cost_usd": 0.021,
+                "duration_seconds": 9.41,
+                "tokens": 3155
+              },
+              "remotion_renderer_ssection_6": {
+                "cost_usd": 0.0296,
+                "duration_seconds": 15.35,
+                "tokens": 3251
+              },
+              "remotion_renderer_ssection_7": {
+                "cost_usd": 0.0326,
+                "duration_seconds": 18.18,
+                "tokens": 3381
+              },
+              "video_renderer_ssection_8": {
+                "cost_usd": 0.0344,
+                "duration_seconds": 25.67,
+                "tokens": 9977
+              },
+              "video_renderer_ssection_8_retry1": {
+                "cost_usd": 0.0409,
+                "duration_seconds": 29.66,
+                "tokens": 10623
+              }
+            }
+          }
+        },
+        {
+          "step": "validation",
+          "status": "passed",
+          "note": "Handled in Director with retries"
+        },
+        {
+          "step": "render_videos",
+          "status": "partial",
+          "videos": [
+            {
+              "topic_id": "section_1",
+              "section_type": "intro",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'intro' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": "section_2",
+              "section_type": "summary",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'summary' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": "section_3",
+              "section_type": "content",
+              "renderer": "video",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section section_3 (content): No WAN prompt available. Content/example sections must have visual_beats. Other sections need explicit wan_prompt in explanation_plan.",
+              "visual_beats_used": 0,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": false,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 165, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 78, in render_wan_video\n    raise WanRenderError(\nrender.wan.wan_runner.WanRenderError: Section section_3 (content): No WAN prompt available. Content/example sections must have visual_beats. Other sections need explicit wan_prompt in explanation_plan.\n"
+            },
+            {
+              "topic_id": "section_4",
+              "section_type": "content",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section section_4: Manim spec render failed. Return code: 1. Stderr: \nAnimation 0: Create(Axes of 2 submobjects):   0%|          | 0/15 [00:00<?, ?it/s]\n                                                                                  \n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                             ",
+              "visual_beats_used": 0,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 163, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 123, in render_manim_video\n    return _render_v12_manim_spec(\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 414, in _render_v12_manim_spec\n    result = _execute_spec_generated_render(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 856, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section section_4: Manim spec render failed. Return code: 1. Stderr: \nAnimation 0: Create(Axes of 2 submobjects):   0%|          | 0/15 [00:00<?, ?it/s]\n                                                                                  \n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                             \n"
+            },
+            {
+              "topic_id": "section_5",
+              "section_type": "example",
+              "renderer": "manim",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section section_5: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        ",
+              "visual_beats_used": 0,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": true,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 163, in execute_renderer\n    video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 123, in render_manim_video\n    return _render_v12_manim_spec(\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 414, in _render_v12_manim_spec\n    result = _execute_spec_generated_render(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/manim/manim_runner.py\", line 856, in _execute_spec_generated_render\n    raise ManimRenderError(\nrender.manim.manim_runner.ManimRenderError: Section section_5: Manim spec render failed. Return code: 1. Stderr: \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Traceback (most recent call last) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/manim/cli/render/commands.py:125 \u2502\n\u2502 in render                                                                                        \u2502\n\u2502                                                                                                  \u2502\n\u2502   122 \u2502   \u2502   \u2502   try:                                                                        \n"
+            },
+            {
+              "topic_id": "section_6",
+              "section_type": "quiz",
+              "renderer": "remotion",
+              "status": "failed",
+              "video_path": null,
+              "error": "Section section_6 (quiz): No WAN prompt available. Content/example sections must have visual_beats. Other sections need explicit wan_prompt in explanation_plan.",
+              "visual_beats_used": 0,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": false,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 165, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 78, in render_wan_video\n    raise WanRenderError(\nrender.wan.wan_runner.WanRenderError: Section section_6 (quiz): No WAN prompt available. Content/example sections must have visual_beats. Other sections need explicit wan_prompt in explanation_plan.\n"
+            },
+            {
+              "topic_id": "section_7",
+              "section_type": "memory",
+              "renderer": "none",
+              "status": "skipped",
+              "video_path": null,
+              "reason": "Section type 'memory' is text-only (no video rendering)"
+            },
+            {
+              "topic_id": "section_8",
+              "section_type": "recap",
+              "renderer": "wan_video",
+              "status": "failed",
+              "video_path": null,
+              "error": "Recap prompt validation failed: Section section_8: Beat 0: Prompt has 0 words, minimum 300 required. Prompt preview: '...'",
+              "visual_beats_used": 5,
+              "dry_run": false,
+              "compilation_errors": [],
+              "v12_specs_used": false,
+              "traceback": "Traceback (most recent call last):\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 288, in _render_recap_scenes\n    hard_fail_on_short_prompts(recap_prompts, topic_id)\n  File \"/home/runner/workspace/core/wan_prompt_validator.py\", line 229, in hard_fail_on_short_prompts\n    raise WanPromptHardFailError(\ncore.wan_prompt_validator.WanPromptHardFailError: Section section_8: Beat 0: Prompt has 0 words, minimum 300 required. Prompt preview: '...'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/renderer_executor.py\", line 165, in execute_renderer\n    video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 64, in render_wan_video\n    return _render_recap_scenes(\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/render/wan/wan_runner.py\", line 290, in _render_recap_scenes\n    raise WanRenderError(f\"Recap prompt validation failed: {e}\")\nrender.wan.wan_runner.WanRenderError: Recap prompt validation failed: Section section_8: Beat 0: Prompt has 0 words, minimum 300 required. Prompt preview: '...'\n"
+            }
+          ],
+          "success_count": 3,
+          "fail_count": 5,
+          "dry_run": false
+        },
+        {
+          "step": "generate_audio",
+          "status": "completed",
+          "audio_files": [
+            {
+              "section_id": "section_1",
+              "section_type": "intro",
+              "audio_path": "/home/runner/workspace/player/jobs/79fc8298/audio/section_section_1.mp3",
+              "actual_duration_seconds": 28.0
+            },
+            {
+              "section_id": "section_2",
+              "section_type": "summary",
+              "audio_path": "/home/runner/workspace/player/jobs/79fc8298/audio/section_section_2.mp3",
+              "actual_duration_seconds": 30.0
+            },
+            {
+              "section_id": "section_3",
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/79fc8298/audio/section_section_3.mp3",
+              "actual_duration_seconds": 60.0
+            },
+            {
+              "section_id": "section_4",
+              "section_type": "content",
+              "audio_path": "/home/runner/workspace/player/jobs/79fc8298/audio/section_section_4.mp3",
+              "actual_duration_seconds": 59.0
+            },
+            {
+              "section_id": "section_5",
+              "section_type": "example",
+              "audio_path": "/home/runner/workspace/player/jobs/79fc8298/audio/section_section_5.mp3",
+              "actual_duration_seconds": 33.0
+            },
+            {
+              "section_id": "section_6",
+              "section_type": "quiz",
+              "audio_path": "/home/runner/workspace/player/jobs/79fc8298/audio/section_section_6.mp3",
+              "actual_duration_seconds": 35.0
+            },
+            {
+              "section_id": "section_7",
+              "section_type": "memory",
+              "audio_path": "/home/runner/workspace/player/jobs/79fc8298/audio/section_section_7.mp3",
+              "actual_duration_seconds": 31.0
+            },
+            {
+              "section_id": "section_8",
+              "section_type": "recap",
+              "audio_path": "/home/runner/workspace/player/jobs/79fc8298/audio/section_section_8.mp3",
+              "actual_duration_seconds": 165.0
+            }
+          ]
+        }
+      ],
+      "completed_at": "2025-12-22T16:38:31.067563",
+      "presentation_path": "/home/runner/workspace/player/jobs/79fc8298/presentation.json",
+      "analytics_path": "/home/runner/workspace/player/jobs/79fc8298/analytics.json",
+      "sections_count": 8,
+      "total_cost_usd": 0.444787,
+      "dry_run": false
+    },
     "content_preview": "# Mathematics, Geometry, Physics, Chemistry, and Biology Notes ---  ## Biology: Cell Evolution  ### Topic: The Endosymbiotic Theory  The **Endosymbiotic Theory** explains the origin of eukaryotic cells from prokaryotic organisms. It proposes that key organelles\u2014specifically **mitochondria** and **ch..."
   }
 }
