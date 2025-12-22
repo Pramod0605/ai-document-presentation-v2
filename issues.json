@@ -1147,7 +1147,7 @@
         "summary": "validate_renderer_subject_match() exists but is never called",
         "details": [
           "hard_fail_validator.py has validate_renderer_subject_match() function",
-          "This function validates biology→video, math→manim, etc.",
+          "This function validates biology\u2192video, math\u2192manim, etc.",
           "pipeline_v12.py skips semantic validations when JSON schema passes",
           "Subject-aware renderer enforcement is bypassed entirely"
         ]
@@ -1282,6 +1282,43 @@
         "Show error overlay when critical fields missing (display_directives, visual_content for v1.3+)",
         "Log detailed validation errors to console for debugging",
         "Add spec_version guard: v1.3+ requires stricter validation"
+      ]
+    },
+    {
+      "id": "ISS-080",
+      "status": "open",
+      "severity": "high",
+      "created": "2025-12-22T06:51:56.915931",
+      "title": "Director LLM Fails v1.3 Structural Validation Consistently",
+      "description": "Director (Gemini 2.5 Pro) fails to follow v1.3 structural requirements after multiple retries. Common failures include: (1) Missing memory/recap sections, (2) text_layer=show + visual_layer=show mutual exclusion violations, (3) Memory section not having exactly 5 flashcards, (4) Recap section not having exactly 5 scenes, (5) Recap avatar_layer not set to 'hide'",
+      "observations": [
+        "Biology job 4efd2a9e failed with structural errors after 2 retries",
+        "Multi-subject job 6aca7933 failed with semantic errors (formula not visualized)",
+        "Previous Special Relativity job d596d9ad also showed 65 warnings",
+        "Director prompt has correct rules but LLM doesn't follow them consistently",
+        "Retry prompts may not be effective at correcting specific errors"
+      ],
+      "root_cause_hypothesis": [
+        "Prompt is too long (~400 lines) - LLM may lose focus on specific rules",
+        "Retry prompt doesn't explicitly list the specific errors to fix",
+        "No examples of WRONG output to avoid",
+        "LLM may be truncating output (JSON parse errors)"
+      ],
+      "proposed_solutions": [
+        "Add explicit 'DO NOT' examples showing wrong patterns",
+        "Pass specific validation errors to retry prompt",
+        "Consider structured output mode / JSON schema enforcement",
+        "Add pre-flight checklist at end of prompt",
+        "Split into smaller sub-prompts for each section type"
+      ],
+      "affected_components": [
+        "core/llm_client_v12.py",
+        "core/prompts/director_system_v1.3.txt"
+      ],
+      "test_cases": [
+        "Biology content",
+        "Multi-subject content",
+        "Physics content"
       ]
     }
   ],
