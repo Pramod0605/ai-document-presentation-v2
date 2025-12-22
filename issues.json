@@ -1056,6 +1056,41 @@
       "description": "User uploaded Sample_subjects.md with new content (Calculus/Biology) but job generated Human Eye content. No verification of uploaded content before processing.",
       "root_cause": "Possible browser file caching or sync issue; no content preview shown to user",
       "solution": "Add content preview in submit response showing first 200 chars of uploaded file"
+    },
+    {
+      "id": "ISS-073",
+      "title": "Video sections fail with 'Visual beat has no content' despite pre-compiled video_prompts",
+      "status": "open",
+      "priority": "critical",
+      "created": "2025-12-22",
+      "category": "wiring",
+      "impact": "All video sections (renderer=video/wan) fail to render. Sections 3 and 9 in job 9e2d677f failed despite having valid video_prompts from LLM.",
+      "root_cause": {
+        "summary": "Key mismatch between renderer_executor.py and wan_runner.py",
+        "details": [
+          "renderer_executor.py line 108 stores prompts as 'video_prompts_list' in explanation_plan",
+          "wan_runner.py line 41 looks for 'video_prompts' key in explanation_plan (not video_prompts_list)",
+          "Because key doesn't match, wan_runner falls through to visual_beats path",
+          "visual_beats array is empty or contains placeholder objects without content",
+          "visual_compiler.validate_visual_beat_structure() raises 'Visual beat has no content' error"
+        ],
+        "data_flow": [
+          "Director LLM \u2192 section['video_prompts'] (CORRECT)",
+          "renderer_executor.py \u2192 explanation_plan['video_prompts_list'] (WRONG KEY)",
+          "wan_runner.py \u2192 looks for explanation_plan['video_prompts'] (NOT FOUND)",
+          "Falls back to visual_beats \u2192 empty \u2192 FAIL"
+        ]
+      },
+      "fix": {
+        "file": "core/renderer_executor.py",
+        "line": 108,
+        "change": "Change 'video_prompts_list' to 'video_prompts'",
+        "verification": "Run dry run and verify video sections complete without 'Visual beat has no content' error"
+      },
+      "related_issues": [
+        "ISS-067"
+      ],
+      "notes": "ISS-067 added pre-compiled video_prompts support but used wrong key name during wiring"
     }
   ],
   "metadata": {
