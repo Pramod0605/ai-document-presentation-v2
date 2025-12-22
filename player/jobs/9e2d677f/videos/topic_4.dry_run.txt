@@ -1,0 +1,32 @@
+DRY RUN - Manim section 4
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/9e2d677f/videos/topic_4.mp4
+
+--- SCENE CODE ---
+title = Text("Power of Accommodation", font_size=28).move_to(np.array([0, 2.5, 0]))
+far_lens = Dot(point=np.array([0, 1.0, 0]), color=BLUE)
+far_rays = Arrow(start=np.array([-3, 1.0, 0]), end=np.array([-1, 1.0, 0]), color=YELLOW, buff=0)
+far_retina = Dot(point=np.array([3, 1.0, 0]), color=WHITE)
+far_label = Text("Distant Vision: Relaxed Muscles", font_size=28).move_to(np.array([0, 1.8, 0]))
+near_lens = Dot(point=np.array([0, -1.0, 0]), color=BLUE)
+near_rays = Arrow(start=np.array([-3, -1.0, 0]), end=np.array([-1, -1.0, 0]), color=YELLOW, buff=0)
+near_retina = Dot(point=np.array([3, -1.0, 0]), color=WHITE)
+near_label = Text("Near Vision: Contracted Muscles", font_size=28).move_to(np.array([0, -0.2, 0]))
+range_text = Text("Near Point: 25 cm | Far Point: ∞", font_size=28).move_to(np.array([0, -2.0, 0]))
+
+# Animation sequence
+self.play(FadeIn(title), run_time=1.0)
+self.play(Create(far_lens), run_time=2.0)
+self.play(FadeIn(far_retina), run_time=1.0)
+self.play(Create(far_rays), run_time=3.0)
+self.play(FadeIn(far_label), run_time=2.0)
+self.wait(3.0)
+self.play(Create(near_lens), run_time=2.0)
+self.play(FadeIn(near_retina), run_time=1.0)
+self.play(Create(near_rays), run_time=3.0)
+self.play(FadeIn(near_label), run_time=2.0)
+self.wait(2.0)
+self.play(FadeIn(range_text), run_time=2.0)
+self.play(Indicate(range_text), run_time=2.0)
+self.wait(1.0)
+self.wait(1)

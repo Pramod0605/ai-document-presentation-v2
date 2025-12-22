@@ -1,0 +1,25 @@
+DRY RUN - Manim section 6
+Duration: 30s
+Output would be: /home/runner/workspace/player/jobs/9e2d677f/videos/topic_6.mp4
+
+--- SCENE CODE ---
+eye_lens = Dot(point=np.array([1, 0, 0]), color=BLUE)
+retina_line = Dot(point=np.array([3, 0, 0]), color=WHITE)
+initial_rays = Dot(point=np.array([-3, 0, 0]), color=YELLOW)
+concave_lens = Dot(point=np.array([-1, 0, 0]), color=GREEN)
+diverging_rays = Dot(point=np.array([-3, 0, 0]), color=YELLOW)
+final_rays = Dot(point=np.array([-3, 0, 0]), color=YELLOW)
+clear_image_label = Text("Clear image\nforms here", font_size=28).move_to(np.array([3.5, -1, 0]))
+
+# Animation sequence
+self.play(FadeIn(eye_lens), run_time=1)
+self.play(FadeIn(retina_line), run_time=1)
+self.play(Create(initial_rays), run_time=6)
+self.play(FadeIn(concave_lens), run_time=2)
+self.play(FadeOut(initial_rays), run_time=1)
+self.play(Create(diverging_rays), run_time=6)
+self.play(FadeOut(diverging_rays), run_time=1)
+self.play(Create(final_rays), run_time=8)
+self.play(FadeIn(clear_image_label), run_time=2)
+self.play(Indicate(final_rays), run_time=3)
+self.wait(1)

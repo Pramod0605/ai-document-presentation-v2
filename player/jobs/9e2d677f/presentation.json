@@ -1,0 +1,4272 @@
+{
+  "spec_version": "v1.3",
+  "presentation_id": "sci12-human-eye-v1",
+  "subject": "General Science",
+  "grade": "12",
+  "chapter_title": "The Human Eye and the Colourful World",
+  "avatar_global": {
+    "style": "teacher",
+    "default_position": "right",
+    "default_width_percent": 35,
+    "gesture_enabled": true
+  },
+  "sections": [
+    {
+      "section_id": 1,
+      "section_type": "intro",
+      "title": "Introduction: Your Window to the World",
+      "renderer": "none",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "large",
+        "position": "center",
+        "width_percent": 50
+      },
+      "narration": {
+        "full_text": "Hello, and welcome! Today, we're going to explore one of the most incredible optical instruments known to us: the human eye. It's our personal window to the world, allowing us to see everything from the smallest details to the vastness of the cosmos. But how does it actually work? And what happens when this amazing instrument needs a little help? Let's find out.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Hello, and welcome! Today, we're going to explore one of the most incredible optical instruments known to us: the human eye.",
+            "duration_seconds": 9,
+            "gesture_hint": "welcoming",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "It's our personal window to the world, allowing us to see everything from the smallest details to the vastness of the cosmos.",
+            "duration_seconds": 8,
+            "gesture_hint": "expansive_gesture",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "But how does it actually work? And what happens when this amazing instrument needs a little help? Let's find out.",
+            "duration_seconds": 8,
+            "gesture_hint": "questioning",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "1A",
+          "segment_id": 1,
+          "visual_beat_type": "motion_graphic",
+          "description": "Title card appears with animated text: 'The Human Eye and the Colourful World'. A stylized, glowing eye icon animates into view."
+        },
+        {
+          "beat_id": "1B",
+          "segment_id": 2,
+          "visual_beat_type": "motion_graphic",
+          "description": "The eye icon transitions into a window frame, through which a fast-paced montage of beautiful scenes (nature, space, art) is visible."
+        },
+        {
+          "beat_id": "1C",
+          "segment_id": 3,
+          "visual_beat_type": "motion_graphic",
+          "description": "The window morphs into a question mark, which then resolves back into the title card, setting the stage for the lesson."
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 750,
+        "elements": [
+          {
+            "id": "main_title",
+            "type": "text",
+            "content": "The Human Eye and the Colourful World",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 270
+            }
+          },
+          {
+            "id": "eye_icon",
+            "type": "icon",
+            "content": "eye",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 120,
+              "color": "#00A5FF"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 30,
+              "exit_frame": 270
+            }
+          },
+          {
+            "id": "window_frame",
+            "type": "shape",
+            "content": "rectangle",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "width": 400,
+              "height": 300,
+              "color": "#FFFFFF"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 270,
+              "exit_frame": 510
+            }
+          },
+          {
+            "id": "question_mark",
+            "type": "text",
+            "content": "?",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 160,
+              "color": "#FFFFFF",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 510,
+              "exit_frame": 750
+            }
+          }
+        ],
+        "background": {
+          "color": "#1A1A1A"
+        }
+      },
+      "renderer_override_reason": "Section type 'intro' is text-only (no video rendering)"
+    },
+    {
+      "section_id": 2,
+      "section_type": "summary",
+      "title": "What We'll Cover",
+      "renderer": "none",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "In this chapter, we'll embark on a journey inside the human eye. First, we'll dissect its structure, learning about each part from the cornea to the retina. Next, we'll uncover the secret behind its focusing power, a concept known as accommodation. Then, we will investigate common vision defects like myopia, hypermetropia, and presbyopia. Finally, we'll see how simple lenses can correct these issues, restoring clear vision. Let's begin.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "In this chapter, we'll embark on a journey inside the human eye. First, we'll dissect its structure, learning about each part from the cornea to the retina.",
+            "duration_seconds": 10,
+            "gesture_hint": "point_to_list",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Structure of the Human Eye"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Next, we'll uncover the secret behind its focusing power, a concept known as accommodation.",
+            "duration_seconds": 6,
+            "gesture_hint": "point_to_list",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Power of Accommodation"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Then, we will investigate common vision defects like myopia, hypermetropia, and presbyopia.",
+            "duration_seconds": 7,
+            "gesture_hint": "point_to_list",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Common Vision Defects"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Finally, we'll see how simple lenses can correct these issues, restoring clear vision. Let's begin.",
+            "duration_seconds": 7,
+            "gesture_hint": "open_hand_forward",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Correction of Defects"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "2A",
+          "segment_id": 1,
+          "visual_beat_type": "motion_graphic",
+          "description": "An animated list appears on screen. The first item, 'Structure of the Human Eye', is highlighted."
+        },
+        {
+          "beat_id": "2B",
+          "segment_id": 2,
+          "visual_beat_type": "motion_graphic",
+          "description": "The highlight moves to the second item, 'Power of Accommodation'."
+        },
+        {
+          "beat_id": "2C",
+          "segment_id": 3,
+          "visual_beat_type": "motion_graphic",
+          "description": "The highlight moves to the third item, 'Common Vision Defects'."
+        },
+        {
+          "beat_id": "2D",
+          "segment_id": 4,
+          "visual_beat_type": "motion_graphic",
+          "description": "The highlight moves to the final item, 'Correction of Defects'. The entire list then animates off-screen."
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 900,
+        "elements": [
+          {
+            "id": "title_1",
+            "type": "text",
+            "content": "Structure of the Human Eye",
+            "position": {
+              "x": 100,
+              "y": 100
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 300
+            }
+          },
+          {
+            "id": "title_2",
+            "type": "text",
+            "content": "Power of Accommodation",
+            "position": {
+              "x": 100,
+              "y": 160
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 300,
+              "exit_frame": 480
+            }
+          },
+          {
+            "id": "title_3",
+            "type": "text",
+            "content": "Common Vision Defects",
+            "position": {
+              "x": 100,
+              "y": 220
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 480,
+              "exit_frame": 690
+            }
+          },
+          {
+            "id": "title_4",
+            "type": "text",
+            "content": "Correction of Defects",
+            "position": {
+              "x": 100,
+              "y": 280
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 690,
+              "exit_frame": 900
+            }
+          }
+        ],
+        "background": {
+          "color": "#FFFFFF"
+        }
+      },
+      "renderer_override_reason": "Section type 'summary' is text-only (no video rendering)"
+    },
+    {
+      "section_id": 3,
+      "section_type": "content",
+      "title": "The Structure of the Human Eye",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "The human eye is a remarkable and complex organ, functioning much like a photographic camera. Light enters through a thin membrane called the cornea, which forms a transparent bulge on the front surface. The cornea does most of the light refraction. Behind it, we find the iris, the colored part of the eye, which controls the size of the pupil. The pupil is an opening that regulates the amount of light entering the eye. The light then passes through the crystalline lens, which is a convex lens that fine-tunes the focus of light onto the retina. The retina is a delicate membrane at the back of the eye, containing millions of light-sensitive cells. These cells convert light into electrical signals. Finally, these signals are sent to the brain via the optic nerve, where they are interpreted as the images we see. Each part works in perfect harmony to create our sense of sight.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "The human eye is a remarkable and complex organ, functioning much like a photographic camera. Light enters through a thin membrane called the cornea, which forms a transparent bulge on the front surface.",
+            "duration_seconds": 13,
+            "gesture_hint": "point_center",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "The Human Eye: Works like a camera"
+                },
+                {
+                  "level": 2,
+                  "text": "Cornea: Transparent outer layer where light enters"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "The cornea does most of the light refraction. Behind it, we find the iris, the colored part of the eye, which controls the size of the pupil. The pupil is an opening that regulates the amount of light entering the eye.",
+            "duration_seconds": 15,
+            "gesture_hint": "point_center",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Iris: Controls the size of the pupil"
+                },
+                {
+                  "level": 1,
+                  "text": "Pupil: Regulates amount of light entering the eye"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "The light then passes through the crystalline lens, which is a convex lens that fine-tunes the focus of light onto the retina.",
+            "duration_seconds": 10,
+            "gesture_hint": "point_center",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Crystalline lens: A convex lens that focuses light"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "The retina is a delicate membrane at the back of the eye, containing millions of light-sensitive cells. These cells convert light into electrical signals.",
+            "duration_seconds": 12,
+            "gesture_hint": "point_center",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Retina: Light-sensitive screen at the back of the eye"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "Finally, these signals are sent to the brain via the optic nerve, where they are interpreted as the images we see. Each part works in perfect harmony to create our sense of sight.",
+            "duration_seconds": 12,
+            "gesture_hint": "open_hand_forward",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "3A",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "A 3D cross-section of the human eye appears. A light ray enters. The Cornea is highlighted and labeled. The ray bends as it passes through."
+        },
+        {
+          "beat_id": "3B",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "The video zooms in on the Iris, showing it contracting and expanding to change the Pupil's size. Both are labeled."
+        },
+        {
+          "beat_id": "3C",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "The light ray passes through the Pupil to the Crystalline Lens. The lens is highlighted and labeled."
+        },
+        {
+          "beat_id": "3D",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "The ray is focused by the lens and travels to the back of the eye, landing on the Retina, which lights up. The Retina is labeled."
+        },
+        {
+          "beat_id": "3E",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "An electrical pulse travels from the Retina along the Optic Nerve, which is highlighted and labeled. The pulse travels off-screen towards the 'brain'."
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "3A",
+          "prompt": "The scene opens on a photorealistic 3D cross-section of the human eye, suspended in a dark, minimalist void. A single, brilliant beam of volumetric white light approaches from off-screen. A slow, cinematic dolly shot tracks the beam as it makes contact with the cornea. The cornea is rendered as a perfectly transparent, multi-layered dome with a wet, glossy surface that subtly distorts the view behind it. As the light ray penetrates this outer layer, it visibly refracts, bending its path and creating faint caustic light patterns within the aqueous humor. The lighting is high-contrast and clinical, with the light beam itself acting as the primary source, casting soft highlights on the surrounding internal structures of the eye.",
+          "duration_seconds": 8,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "3B",
+          "prompt": "Following the light's entry, the camera pushes through the clear fluid of the anterior chamber for an extreme macro shot of the iris. The iris is a complex, fibrous structure with intricate, pigmented muscular strands of deep hazel and amber. Delicate crypts and furrows create a landscape of immense textural detail. Under soft, ambient illumination, the radial and sphincter muscles of the iris animate with lifelike motion, tensing and relaxing in a smooth, organic pulse. This action causes the central pupil, a void of pure, non-reflective black, to dynamically dilate and constrict. The camera remains in a tight, focused shot, drifting slightly to emphasize the living, mechanical nature of the structure.",
+          "duration_seconds": 8,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "3C",
+          "prompt": "The camera realigns with the path of the light ray as it passes through the now-constricted pupil. A smooth forward dolly shot carries the viewer through the dark aperture, immediately revealing the crystalline lens. The lens is a biconvex, perfectly transparent organic structure, but with subtle, onion-like internal layers visible under the intense light. Its surface is wet and glossy, reflecting the incoming beam. The light ray, now a more concentrated cylinder, travels directly through the center of the lens, its geometry sharpening as it is focused. The surrounding environment is dark, ensuring all visual emphasis is on the lens's glass-like material properties and its effect on the light path.",
+          "duration_seconds": 6,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "3D",
+          "prompt": "Continuing its journey, the camera follows the now sharply focused cone of light as it traverses the vitreous humor, a clear gel with microscopic, floating opacities that drift lazily past the frame. A rapid rack focus shifts attention from the lens in the foreground to the back wall of the eye. The light beam converges to a single, brilliant point on the surface of the retina. The retina is a delicate, pinkish-orange membrane, intricately mapped with a fine network of crimson blood vessels. Upon impact, the point of light flares brightly for a moment, causing the immediate area of the neural tissue to glow with a soft, warm incandescence that quickly fades.",
+          "duration_seconds": 7,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "3E",
+          "prompt": "From the point of light's impact on the retina, a pulse of crackling, blue-white bio-electrical energy erupts and begins to travel across the retinal surface. The camera pivots and pulls back, revealing the optic disc, where millions of nerve fibers converge. The electrical signal flows into this bundle, which forms the thick, fibrous cable of the optic nerve. Each axon within the nerve sheath glows faintly as the pulse passes through. The camera then tracks this energetic pulse as it races down the length of the optic nerve, which recedes into a dark, abstract background. The pulse accelerates, traveling off-screen into the deep blackness, leaving the faintly glowing nerve pathway in its wake.",
+          "duration_seconds": 7,
+          "style": "realistic"
+        }
+      ],
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "3A",
+            "segment_id": 5,
+            "visual_beat_type": "video_scene",
+            "description": "A 3D cross-section of the human eye appears. A light ray enters. The Cornea is highlighted and labeled. The ray bends as it passes through."
+          },
+          {
+            "beat_id": "3B",
+            "segment_id": 5,
+            "visual_beat_type": "video_scene",
+            "description": "The video zooms in on the Iris, showing it contracting and expanding to change the Pupil's size. Both are labeled."
+          },
+          {
+            "beat_id": "3C",
+            "segment_id": 5,
+            "visual_beat_type": "video_scene",
+            "description": "The light ray passes through the Pupil to the Crystalline Lens. The lens is highlighted and labeled."
+          },
+          {
+            "beat_id": "3D",
+            "segment_id": 5,
+            "visual_beat_type": "video_scene",
+            "description": "The ray is focused by the lens and travels to the back of the eye, landing on the Retina, which lights up. The Retina is labeled."
+          },
+          {
+            "beat_id": "3E",
+            "segment_id": 5,
+            "visual_beat_type": "video_scene",
+            "description": "An electrical pulse travels from the Retina along the Optic Nerve, which is highlighted and labeled. The pulse travels off-screen towards the 'brain'."
+          }
+        ],
+        "compiled_wan_prompt": "[Beat 3A]: The scene opens on a photorealistic 3D cross-section of the human eye, suspended in a dark, minimalist void. A single, brilliant beam of volumetric white light approaches from off-screen. A slow, cinematic dolly shot tracks the beam as it makes contact with the cornea. The cornea is rendered as a perfectly transparent, multi-layered dome with a wet, glossy surface that subtly distorts the view behind it. As the light ray penetrates this outer layer, it visibly refracts, bending its path and creating faint caustic light patterns within the aqueous humor. The lighting is high-contrast and clinical, with the light beam itself acting as the primary source, casting soft highlights on the surrounding internal structures of the eye.\n\n[Beat 3B]: Following the light's entry, the camera pushes through the clear fluid of the anterior chamber for an extreme macro shot of the iris. The iris is a complex, fibrous structure with intricate, pigmented muscular strands of deep hazel and amber. Delicate crypts and furrows create a landscape of immense textural detail. Under soft, ambient illumination, the radial and sphincter muscles of the iris animate with lifelike motion, tensing and relaxing in a smooth, organic pulse. This action causes the central pupil, a void of pure, non-reflective black, to dynamically dilate and constrict. The camera remains in a tight, focused shot, drifting slightly to emphasize the living, mechanical nature of the structure.\n\n[Beat 3C]: The camera realigns with the path of the light ray as it passes through the now-constricted pupil. A smooth forward dolly shot carries the viewer through the dark aperture, immediately revealing the crystalline lens. The lens is a biconvex, perfectly transparent organic structure, but with subtle, onion-like internal layers visible under the intense light. Its surface is wet and glossy, reflecting the incoming beam. The light ray, now a more concentrated cylinder, travels directly through the center of the lens, its geometry sharpening as it is focused. The surrounding environment is dark, ensuring all visual emphasis is on the lens's glass-like material properties and its effect on the light path.\n\n[Beat 3D]: Continuing its journey, the camera follows the now sharply focused cone of light as it traverses the vitreous humor, a clear gel with microscopic, floating opacities that drift lazily past the frame. A rapid rack focus shifts attention from the lens in the foreground to the back wall of the eye. The light beam converges to a single, brilliant point on the surface of the retina. The retina is a delicate, pinkish-orange membrane, intricately mapped with a fine network of crimson blood vessels. Upon impact, the point of light flares brightly for a moment, causing the immediate area of the neural tissue to glow with a soft, warm incandescence that quickly fades.\n\n[Beat 3E]: From the point of light's impact on the retina, a pulse of crackling, blue-white bio-electrical energy erupts and begins to travel across the retinal surface. The camera pivots and pulls back, revealing the optic disc, where millions of nerve fibers converge. The electrical signal flows into this bundle, which forms the thick, fibrous cable of the optic nerve. Each axon within the nerve sheath glows faintly as the pulse passes through. The camera then tracks this energetic pulse as it races down the length of the optic nerve, which recedes into a dark, abstract background. The pulse accelerates, traveling off-screen into the deep blackness, leaving the faintly glowing nerve pathway in its wake.",
+        "video_prompts_list": [
+          {
+            "beat_id": "3A",
+            "prompt": "The scene opens on a photorealistic 3D cross-section of the human eye, suspended in a dark, minimalist void. A single, brilliant beam of volumetric white light approaches from off-screen. A slow, cinematic dolly shot tracks the beam as it makes contact with the cornea. The cornea is rendered as a perfectly transparent, multi-layered dome with a wet, glossy surface that subtly distorts the view behind it. As the light ray penetrates this outer layer, it visibly refracts, bending its path and creating faint caustic light patterns within the aqueous humor. The lighting is high-contrast and clinical, with the light beam itself acting as the primary source, casting soft highlights on the surrounding internal structures of the eye.",
+            "duration_seconds": 8,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "3B",
+            "prompt": "Following the light's entry, the camera pushes through the clear fluid of the anterior chamber for an extreme macro shot of the iris. The iris is a complex, fibrous structure with intricate, pigmented muscular strands of deep hazel and amber. Delicate crypts and furrows create a landscape of immense textural detail. Under soft, ambient illumination, the radial and sphincter muscles of the iris animate with lifelike motion, tensing and relaxing in a smooth, organic pulse. This action causes the central pupil, a void of pure, non-reflective black, to dynamically dilate and constrict. The camera remains in a tight, focused shot, drifting slightly to emphasize the living, mechanical nature of the structure.",
+            "duration_seconds": 8,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "3C",
+            "prompt": "The camera realigns with the path of the light ray as it passes through the now-constricted pupil. A smooth forward dolly shot carries the viewer through the dark aperture, immediately revealing the crystalline lens. The lens is a biconvex, perfectly transparent organic structure, but with subtle, onion-like internal layers visible under the intense light. Its surface is wet and glossy, reflecting the incoming beam. The light ray, now a more concentrated cylinder, travels directly through the center of the lens, its geometry sharpening as it is focused. The surrounding environment is dark, ensuring all visual emphasis is on the lens's glass-like material properties and its effect on the light path.",
+            "duration_seconds": 6,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "3D",
+            "prompt": "Continuing its journey, the camera follows the now sharply focused cone of light as it traverses the vitreous humor, a clear gel with microscopic, floating opacities that drift lazily past the frame. A rapid rack focus shifts attention from the lens in the foreground to the back wall of the eye. The light beam converges to a single, brilliant point on the surface of the retina. The retina is a delicate, pinkish-orange membrane, intricately mapped with a fine network of crimson blood vessels. Upon impact, the point of light flares brightly for a moment, causing the immediate area of the neural tissue to glow with a soft, warm incandescence that quickly fades.",
+            "duration_seconds": 7,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "3E",
+            "prompt": "From the point of light's impact on the retina, a pulse of crackling, blue-white bio-electrical energy erupts and begins to travel across the retinal surface. The camera pivots and pulls back, revealing the optic disc, where millions of nerve fibers converge. The electrical signal flows into this bundle, which forms the thick, fibrous cable of the optic nerve. Each axon within the nerve sheath glows faintly as the pulse passes through. The camera then tracks this energetic pulse as it races down the length of the optic nerve, which recedes into a dark, abstract background. The pulse accelerates, traveling off-screen into the deep blackness, leaving the faintly glowing nerve pathway in its wake.",
+            "duration_seconds": 7,
+            "style": "realistic"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 4,
+      "section_type": "content",
+      "title": "The Power of Accommodation",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "One of the eye's most amazing features is its ability to adjust its focus. This is called the power of accommodation. The eye lens is held in place by ciliary muscles. When you look at something far away, these muscles are relaxed, and the lens is thin, having a long focal length. This allows parallel light rays from the distant object to focus perfectly on the retina. But when you look at something close, the ciliary muscles contract. This increases the curvature of the lens, making it thicker. A thicker lens has a shorter focal length, which is necessary to converge the diverging rays from the nearby object onto the retina. However, there's a limit to this. The closest you can see clearly is called the near point, typically 25 centimeters for a young adult. The farthest point is called the far point, which for a normal eye is infinity.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "One of the eye's most amazing features is its ability to adjust its focus. This is called the power of accommodation. The eye lens is held in place by ciliary muscles.",
+            "duration_seconds": 12,
+            "gesture_hint": "point_center",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Accommodation: The ability to adjust focal length"
+                },
+                {
+                  "level": 2,
+                  "text": "Controlled by ciliary muscles"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "When you look at something far away, these muscles are relaxed, and the lens is thin, having a long focal length. This allows parallel light rays from the distant object to focus perfectly on the retina.",
+            "duration_seconds": 14,
+            "gesture_hint": "point_far",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "But when you look at something close, the ciliary muscles contract. This increases the curvature of the lens, making it thicker. A thicker lens has a shorter focal length, which is necessary to converge the diverging rays from the nearby object onto the retina.",
+            "duration_seconds": 18,
+            "gesture_hint": "point_near",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "However, there's a limit to this. The closest you can see clearly is called the near point, typically 25 centimeters for a young adult. The farthest point is called the far point, which for a normal eye is infinity.",
+            "duration_seconds": 14,
+            "gesture_hint": "indicate_range",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Near Point: Minimum distance for clear vision (~25 cm)"
+                },
+                {
+                  "level": 1,
+                  "text": "Far Point: Maximum distance for clear vision (infinity)"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "4A",
+          "segment_id": 2,
+          "visual_beat_type": "manim_animation",
+          "description": "Manim scene showing a thin convex lens (labeled 'Eye Lens'). Parallel rays enter from the left and converge perfectly on a vertical line (labeled 'Retina'). Ciliary muscles are shown relaxed.",
+          "manim_scene_spec": {
+            "elements": [
+              {
+                "type": "lens",
+                "shape": "convex",
+                "state": "thin",
+                "label": "Eye Lens"
+              },
+              {
+                "type": "line",
+                "name": "retina",
+                "position": "right"
+              },
+              {
+                "type": "rays",
+                "source": "infinity",
+                "path": "converge_on_retina"
+              },
+              {
+                "type": "label",
+                "text": "Viewing Distant Object",
+                "position": "top"
+              },
+              {
+                "type": "label",
+                "text": "Ciliary Muscles Relaxed",
+                "position": "bottom"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "4B",
+          "segment_id": 3,
+          "visual_beat_type": "manim_animation",
+          "description": "The lens animates to become thicker. Diverging rays from a point on the left (labeled 'Near Object') enter the lens and are converged perfectly onto the retina. Ciliary muscles are shown contracted.",
+          "manim_scene_spec": {
+            "elements": [
+              {
+                "type": "lens",
+                "shape": "convex",
+                "state": "thick",
+                "label": "Eye Lens"
+              },
+              {
+                "type": "line",
+                "name": "retina",
+                "position": "right"
+              },
+              {
+                "type": "rays",
+                "source": "point_near",
+                "path": "converge_on_retina"
+              },
+              {
+                "type": "label",
+                "text": "Viewing Near Object",
+                "position": "top"
+              },
+              {
+                "type": "label",
+                "text": "Ciliary Muscles Contracted",
+                "position": "bottom"
+              }
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "text": "Power of Accommodation",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "far_lens",
+            "type": "shape",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "shape_type": "lens",
+              "width": 0.5,
+              "height": 2,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "far_rays",
+            "type": "vector",
+            "position": [
+              -3,
+              1.0
+            ],
+            "properties": {
+              "points": [
+                [
+                  -3,
+                  1
+                ],
+                [
+                  0,
+                  1
+                ],
+                [
+                  3,
+                  1
+                ]
+              ],
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "far_retina",
+            "type": "shape",
+            "position": [
+              3,
+              1.0
+            ],
+            "properties": {
+              "shape_type": "line",
+              "height": 2,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "far_label",
+            "type": "label",
+            "position": [
+              0,
+              1.8
+            ],
+            "properties": {
+              "text": "Distant Vision: Relaxed Muscles",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "near_lens",
+            "type": "shape",
+            "position": [
+              0,
+              -1.0
+            ],
+            "properties": {
+              "shape_type": "lens",
+              "width": 1.0,
+              "height": 2,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "near_rays",
+            "type": "vector",
+            "position": [
+              -3,
+              -1.0
+            ],
+            "properties": {
+              "points": [
+                [
+                  -3,
+                  -1
+                ],
+                [
+                  0,
+                  -1
+                ],
+                [
+                  3,
+                  -1
+                ]
+              ],
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "near_retina",
+            "type": "shape",
+            "position": [
+              3,
+              -1.0
+            ],
+            "properties": {
+              "shape_type": "line",
+              "height": 2,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "near_label",
+            "type": "label",
+            "position": [
+              0,
+              -0.2
+            ],
+            "properties": {
+              "text": "Near Vision: Contracted Muscles",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "range_text",
+            "type": "label",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "text": "Near Point: 25 cm | Far Point: \u221e",
+              "scale": 1.0
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title",
+            "duration": 1.0
+          },
+          {
+            "action": "draw",
+            "target": "far_lens",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "far_retina",
+            "duration": 1.0
+          },
+          {
+            "action": "draw",
+            "target": "far_rays",
+            "duration": 3.0
+          },
+          {
+            "action": "appear",
+            "target": "far_label",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "duration": 3.0
+          },
+          {
+            "action": "draw",
+            "target": "near_lens",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "near_retina",
+            "duration": 1.0
+          },
+          {
+            "action": "draw",
+            "target": "near_rays",
+            "duration": 3.0
+          },
+          {
+            "action": "appear",
+            "target": "near_label",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "range_text",
+            "duration": 2.0
+          },
+          {
+            "action": "highlight",
+            "target": "range_text",
+            "duration": 2.0,
+            "color": "YELLOW"
+          },
+          {
+            "action": "wait",
+            "duration": 1.0
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "4A",
+            "segment_id": 2,
+            "visual_beat_type": "manim_animation",
+            "description": "Manim scene showing a thin convex lens (labeled 'Eye Lens'). Parallel rays enter from the left and converge perfectly on a vertical line (labeled 'Retina'). Ciliary muscles are shown relaxed.",
+            "manim_scene_spec": {
+              "elements": [
+                {
+                  "type": "lens",
+                  "shape": "convex",
+                  "state": "thin",
+                  "label": "Eye Lens"
+                },
+                {
+                  "type": "line",
+                  "name": "retina",
+                  "position": "right"
+                },
+                {
+                  "type": "rays",
+                  "source": "infinity",
+                  "path": "converge_on_retina"
+                },
+                {
+                  "type": "label",
+                  "text": "Viewing Distant Object",
+                  "position": "top"
+                },
+                {
+                  "type": "label",
+                  "text": "Ciliary Muscles Relaxed",
+                  "position": "bottom"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "4B",
+            "segment_id": 3,
+            "visual_beat_type": "manim_animation",
+            "description": "The lens animates to become thicker. Diverging rays from a point on the left (labeled 'Near Object') enter the lens and are converged perfectly onto the retina. Ciliary muscles are shown contracted.",
+            "manim_scene_spec": {
+              "elements": [
+                {
+                  "type": "lens",
+                  "shape": "convex",
+                  "state": "thick",
+                  "label": "Eye Lens"
+                },
+                {
+                  "type": "line",
+                  "name": "retina",
+                  "position": "right"
+                },
+                {
+                  "type": "rays",
+                  "source": "point_near",
+                  "path": "converge_on_retina"
+                },
+                {
+                  "type": "label",
+                  "text": "Viewing Near Object",
+                  "position": "top"
+                },
+                {
+                  "type": "label",
+                  "text": "Ciliary Muscles Contracted",
+                  "position": "bottom"
+                }
+              ]
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "title",
+              "type": "label",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "text": "Power of Accommodation",
+                "scale": 1.2
+              }
+            },
+            {
+              "id": "far_lens",
+              "type": "shape",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "shape_type": "lens",
+                "width": 0.5,
+                "height": 2,
+                "color": "BLUE"
+              }
+            },
+            {
+              "id": "far_rays",
+              "type": "vector",
+              "position": [
+                -3,
+                1.0
+              ],
+              "properties": {
+                "points": [
+                  [
+                    -3,
+                    1
+                  ],
+                  [
+                    0,
+                    1
+                  ],
+                  [
+                    3,
+                    1
+                  ]
+                ],
+                "color": "YELLOW"
+              }
+            },
+            {
+              "id": "far_retina",
+              "type": "shape",
+              "position": [
+                3,
+                1.0
+              ],
+              "properties": {
+                "shape_type": "line",
+                "height": 2,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "far_label",
+              "type": "label",
+              "position": [
+                0,
+                1.8
+              ],
+              "properties": {
+                "text": "Distant Vision: Relaxed Muscles",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "near_lens",
+              "type": "shape",
+              "position": [
+                0,
+                -1.0
+              ],
+              "properties": {
+                "shape_type": "lens",
+                "width": 1.0,
+                "height": 2,
+                "color": "BLUE"
+              }
+            },
+            {
+              "id": "near_rays",
+              "type": "vector",
+              "position": [
+                -3,
+                -1.0
+              ],
+              "properties": {
+                "points": [
+                  [
+                    -3,
+                    -1
+                  ],
+                  [
+                    0,
+                    -1
+                  ],
+                  [
+                    3,
+                    -1
+                  ]
+                ],
+                "color": "YELLOW"
+              }
+            },
+            {
+              "id": "near_retina",
+              "type": "shape",
+              "position": [
+                3,
+                -1.0
+              ],
+              "properties": {
+                "shape_type": "line",
+                "height": 2,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "near_label",
+              "type": "label",
+              "position": [
+                0,
+                -0.2
+              ],
+              "properties": {
+                "text": "Near Vision: Contracted Muscles",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "range_text",
+              "type": "label",
+              "position": [
+                0,
+                -2.0
+              ],
+              "properties": {
+                "text": "Near Point: 25 cm | Far Point: \u221e",
+                "scale": 1.0
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "appear",
+              "target": "title",
+              "duration": 1.0
+            },
+            {
+              "action": "draw",
+              "target": "far_lens",
+              "duration": 2.0
+            },
+            {
+              "action": "appear",
+              "target": "far_retina",
+              "duration": 1.0
+            },
+            {
+              "action": "draw",
+              "target": "far_rays",
+              "duration": 3.0
+            },
+            {
+              "action": "appear",
+              "target": "far_label",
+              "duration": 2.0
+            },
+            {
+              "action": "wait",
+              "duration": 3.0
+            },
+            {
+              "action": "draw",
+              "target": "near_lens",
+              "duration": 2.0
+            },
+            {
+              "action": "appear",
+              "target": "near_retina",
+              "duration": 1.0
+            },
+            {
+              "action": "draw",
+              "target": "near_rays",
+              "duration": 3.0
+            },
+            {
+              "action": "appear",
+              "target": "near_label",
+              "duration": 2.0
+            },
+            {
+              "action": "wait",
+              "duration": 2.0
+            },
+            {
+              "action": "appear",
+              "target": "range_text",
+              "duration": 2.0
+            },
+            {
+              "action": "highlight",
+              "target": "range_text",
+              "duration": 2.0,
+              "color": "YELLOW"
+            },
+            {
+              "action": "wait",
+              "duration": 1.0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_id": 5,
+      "section_type": "content",
+      "title": "Defect of Vision: Myopia",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Sometimes, the eye cannot focus light correctly, leading to a defect of vision. The first we'll discuss is Myopia, also known as near-sightedness. A person with myopia can see nearby objects clearly, but distant objects appear blurry. This happens because the eye focuses the image of a distant object in front of the retina, instead of directly on it. There are two main causes for this: either the eyeball is too long, or the crystalline lens is too curved, giving it excessive converging power. Because the light converges too soon, the image that actually forms on the retina is out of focus. It's a fundamental mismatch between the eye's focusing power and its length. Imagine trying to watch a movie where the projector is focused on a screen that's too far away; the image would be a blur. That's essentially what a myopic person experiences when looking at distant things.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Sometimes, the eye cannot focus light correctly, leading to a defect of vision. The first we'll discuss is Myopia, also known as near-sightedness.",
+            "duration_seconds": 11,
+            "gesture_hint": "hand_slice",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Myopia (Near-sightedness)"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "A person with myopia can see nearby objects clearly, but distant objects appear blurry. This happens because the eye focuses the image of a distant object in front of the retina, instead of directly on it.",
+            "duration_seconds": 15,
+            "gesture_hint": "point_center",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Can see nearby objects clearly, distant objects are blurry"
+                },
+                {
+                  "level": 2,
+                  "text": "Image is formed in front of the retina"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "There are two main causes for this: either the eyeball is too long, or the crystalline lens is too curved, giving it excessive converging power.",
+            "duration_seconds": 12,
+            "gesture_hint": "two_fingers",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Causes:"
+                },
+                {
+                  "level": 2,
+                  "text": "Excessive curvature of the eye lens"
+                },
+                {
+                  "level": 2,
+                  "text": "Elongation of the eyeball"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Because the light converges too soon, the image that actually forms on the retina is out of focus. It's a fundamental mismatch between the eye's focusing power and its length. Imagine trying to watch a movie where the projector is focused on a screen that's too far away; the image would be a blur. That's essentially what a myopic person experiences when looking at distant things.",
+            "duration_seconds": 19,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "5A",
+          "segment_id": 4,
+          "visual_beat_type": "manim_animation",
+          "description": "Manim scene of a myopic eye. Parallel rays from a distant object enter the eye lens and converge at a focal point clearly in front of the retina. The rays then diverge again, hitting the retina as a blurry circle.",
+          "manim_scene_spec": {
+            "elements": [
+              {
+                "type": "lens",
+                "shape": "convex",
+                "state": "normal",
+                "label": "Eye Lens"
+              },
+              {
+                "type": "line",
+                "name": "retina",
+                "position": "right_elongated"
+              },
+              {
+                "type": "rays",
+                "source": "infinity",
+                "path": "converge_before_retina"
+              },
+              {
+                "type": "label",
+                "text": "Myopic Eye: Distant Object",
+                "position": "top"
+              },
+              {
+                "type": "label",
+                "text": "Image forms here",
+                "position": "at_focal_point"
+              },
+              {
+                "type": "label",
+                "text": "Blurry image on retina",
+                "position": "on_retina"
+              }
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "text": "Myopia (Near-sightedness)",
+              "scale": 1.2,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "eye_outline",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "shape_type": "eye_outline",
+              "color": "WHITE",
+              "scale": 2.0
+            }
+          },
+          {
+            "id": "lens",
+            "type": "shape",
+            "position": [
+              -1.5,
+              0
+            ],
+            "properties": {
+              "shape_type": "convex_lens",
+              "color": "BLUE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "retina",
+            "type": "shape",
+            "position": [
+              2,
+              0
+            ],
+            "properties": {
+              "shape_type": "curved_line",
+              "color": "RED",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "focal_point",
+            "type": "point",
+            "position": [
+              1,
+              0
+            ],
+            "properties": {
+              "color": "YELLOW",
+              "scale": 0.1
+            }
+          },
+          {
+            "id": "rays",
+            "type": "vector",
+            "position": [
+              -3,
+              0
+            ],
+            "properties": {
+              "color": "YELLOW",
+              "type": "light_rays"
+            }
+          },
+          {
+            "id": "focal_label",
+            "type": "label",
+            "position": [
+              1,
+              0.8
+            ],
+            "properties": {
+              "text": "Image forms here",
+              "scale": 0.7,
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "retina_label",
+            "type": "label",
+            "position": [
+              2,
+              -1
+            ],
+            "properties": {
+              "text": "Blurry image on retina",
+              "scale": 0.7,
+              "color": "RED"
+            }
+          },
+          {
+            "id": "causes_label",
+            "type": "label",
+            "position": [
+              0,
+              -2
+            ],
+            "properties": {
+              "text": "Causes:\\n1. Excessive lens curvature\\n2. Elongated eyeball",
+              "scale": 0.8,
+              "color": "WHITE"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title",
+            "duration": 1.5
+          },
+          {
+            "action": "draw",
+            "target": "eye_outline",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "lens",
+            "duration": 1.0
+          },
+          {
+            "action": "draw",
+            "target": "retina",
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "rays",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "focal_point",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "focal_label",
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "retina_label",
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "causes_label",
+            "duration": 2.0
+          },
+          {
+            "action": "highlight",
+            "target": "rays",
+            "duration": 2.0,
+            "color": "YELLOW"
+          },
+          {
+            "action": "highlight",
+            "target": "focal_point",
+            "duration": 2.0,
+            "color": "YELLOW"
+          },
+          {
+            "action": "highlight",
+            "target": "retina",
+            "duration": 2.0,
+            "color": "RED"
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "5A",
+            "segment_id": 4,
+            "visual_beat_type": "manim_animation",
+            "description": "Manim scene of a myopic eye. Parallel rays from a distant object enter the eye lens and converge at a focal point clearly in front of the retina. The rays then diverge again, hitting the retina as a blurry circle.",
+            "manim_scene_spec": {
+              "elements": [
+                {
+                  "type": "lens",
+                  "shape": "convex",
+                  "state": "normal",
+                  "label": "Eye Lens"
+                },
+                {
+                  "type": "line",
+                  "name": "retina",
+                  "position": "right_elongated"
+                },
+                {
+                  "type": "rays",
+                  "source": "infinity",
+                  "path": "converge_before_retina"
+                },
+                {
+                  "type": "label",
+                  "text": "Myopic Eye: Distant Object",
+                  "position": "top"
+                },
+                {
+                  "type": "label",
+                  "text": "Image forms here",
+                  "position": "at_focal_point"
+                },
+                {
+                  "type": "label",
+                  "text": "Blurry image on retina",
+                  "position": "on_retina"
+                }
+              ]
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "title",
+              "type": "label",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "text": "Myopia (Near-sightedness)",
+                "scale": 1.2,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "eye_outline",
+              "type": "shape",
+              "position": [
+                0,
+                0
+              ],
+              "properties": {
+                "shape_type": "eye_outline",
+                "color": "WHITE",
+                "scale": 2.0
+              }
+            },
+            {
+              "id": "lens",
+              "type": "shape",
+              "position": [
+                -1.5,
+                0
+              ],
+              "properties": {
+                "shape_type": "convex_lens",
+                "color": "BLUE",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "retina",
+              "type": "shape",
+              "position": [
+                2,
+                0
+              ],
+              "properties": {
+                "shape_type": "curved_line",
+                "color": "RED",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "focal_point",
+              "type": "point",
+              "position": [
+                1,
+                0
+              ],
+              "properties": {
+                "color": "YELLOW",
+                "scale": 0.1
+              }
+            },
+            {
+              "id": "rays",
+              "type": "vector",
+              "position": [
+                -3,
+                0
+              ],
+              "properties": {
+                "color": "YELLOW",
+                "type": "light_rays"
+              }
+            },
+            {
+              "id": "focal_label",
+              "type": "label",
+              "position": [
+                1,
+                0.8
+              ],
+              "properties": {
+                "text": "Image forms here",
+                "scale": 0.7,
+                "color": "YELLOW"
+              }
+            },
+            {
+              "id": "retina_label",
+              "type": "label",
+              "position": [
+                2,
+                -1
+              ],
+              "properties": {
+                "text": "Blurry image on retina",
+                "scale": 0.7,
+                "color": "RED"
+              }
+            },
+            {
+              "id": "causes_label",
+              "type": "label",
+              "position": [
+                0,
+                -2
+              ],
+              "properties": {
+                "text": "Causes:\\n1. Excessive lens curvature\\n2. Elongated eyeball",
+                "scale": 0.8,
+                "color": "WHITE"
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "appear",
+              "target": "title",
+              "duration": 1.5
+            },
+            {
+              "action": "draw",
+              "target": "eye_outline",
+              "duration": 2.0
+            },
+            {
+              "action": "appear",
+              "target": "lens",
+              "duration": 1.0
+            },
+            {
+              "action": "draw",
+              "target": "retina",
+              "duration": 1.5
+            },
+            {
+              "action": "appear",
+              "target": "rays",
+              "duration": 2.0
+            },
+            {
+              "action": "appear",
+              "target": "focal_point",
+              "duration": 1.0
+            },
+            {
+              "action": "appear",
+              "target": "focal_label",
+              "duration": 1.5
+            },
+            {
+              "action": "appear",
+              "target": "retina_label",
+              "duration": 1.5
+            },
+            {
+              "action": "appear",
+              "target": "causes_label",
+              "duration": 2.0
+            },
+            {
+              "action": "highlight",
+              "target": "rays",
+              "duration": 2.0,
+              "color": "YELLOW"
+            },
+            {
+              "action": "highlight",
+              "target": "focal_point",
+              "duration": 2.0,
+              "color": "YELLOW"
+            },
+            {
+              "action": "highlight",
+              "target": "retina",
+              "duration": 2.0,
+              "color": "RED"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_id": 6,
+      "section_type": "example",
+      "title": "Example: Correcting Myopia",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "gesture_only"
+      },
+      "narration": {
+        "full_text": "So, how do we fix myopia? We need to make the light rays diverge slightly before they enter the eye. This will effectively push the focal point backward, onto the retina. The perfect tool for this job is a concave lens. Let's see this in action. First, here is our myopic eye again, with light from a distant object focusing too early. Now, we place a concave lens of a suitable power in front of the eye. Watch what happens to the parallel rays as they first pass through this corrective lens. They spread out, or diverge. These diverging rays then enter the eye's natural lens. Because the rays are already spread out, the eye's lens now has to work a bit harder to converge them, and the final focal point lands perfectly on the retina. The result is a clear, sharp image. This is how glasses or contact lenses for near-sighted people work.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "So, how do we fix myopia? We need to make the light rays diverge slightly before they enter the eye. This will effectively push the focal point backward, onto the retina. The perfect tool for this job is a concave lens.",
+            "duration_seconds": 16,
+            "gesture_hint": "presenting",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Correction: Use a concave lens of suitable power"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Let's see this in action. First, here is our myopic eye again, with light from a distant object focusing too early.",
+            "duration_seconds": 8,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Now, we place a concave lens of a suitable power in front of the eye. Watch what happens to the parallel rays as they first pass through this corrective lens. They spread out, or diverge.",
+            "duration_seconds": 14,
+            "gesture_hint": "tracing_path",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "These diverging rays then enter the eye's natural lens. Because the rays are already spread out, the eye's lens now has to work a bit harder to converge them, and the final focal point lands perfectly on the retina. The result is a clear, sharp image. This is how glasses or contact lenses for near-sighted people work.",
+            "duration_seconds": 20,
+            "gesture_hint": "tracing_path_to_end",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "6A",
+          "segment_id": 2,
+          "visual_beat_type": "manim_animation",
+          "description": "Show the initial myopic eye diagram from the previous section: parallel rays converging in front of the retina.",
+          "manim_scene_spec": {
+            "elements": [
+              {
+                "type": "lens",
+                "shape": "convex",
+                "label": "Eye Lens"
+              },
+              {
+                "type": "line",
+                "name": "retina",
+                "position": "right_elongated"
+              },
+              {
+                "type": "rays",
+                "source": "infinity",
+                "path": "converge_before_retina"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "6B",
+          "segment_id": 3,
+          "visual_beat_type": "manim_animation",
+          "description": "A concave lens appears in front of the eye lens. Parallel rays from the left hit the concave lens and diverge slightly.",
+          "manim_scene_spec": {
+            "elements": [
+              {
+                "type": "lens",
+                "shape": "concave",
+                "label": "Corrective Lens",
+                "position": "left"
+              },
+              {
+                "type": "lens",
+                "shape": "convex",
+                "label": "Eye Lens"
+              },
+              {
+                "type": "line",
+                "name": "retina",
+                "position": "right_elongated"
+              },
+              {
+                "type": "rays",
+                "source": "infinity",
+                "path": "diverge_from_concave"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "6C",
+          "segment_id": 4,
+          "visual_beat_type": "manim_animation",
+          "description": "The diverging rays from the concave lens now enter the eye's convex lens, which converges them perfectly onto the retina, forming a sharp point.",
+          "manim_scene_spec": {
+            "elements": [
+              {
+                "type": "lens",
+                "shape": "concave",
+                "label": "Corrective Lens",
+                "position": "left"
+              },
+              {
+                "type": "lens",
+                "shape": "convex",
+                "label": "Eye Lens"
+              },
+              {
+                "type": "line",
+                "name": "retina",
+                "position": "right_elongated"
+              },
+              {
+                "type": "rays",
+                "source": "infinity",
+                "path": "corrected_to_retina"
+              },
+              {
+                "type": "label",
+                "text": "Clear image forms on retina",
+                "position": "on_retina"
+              }
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "eye_lens",
+            "type": "shape",
+            "position": [
+              1,
+              0
+            ],
+            "properties": {
+              "shape_type": "lens_convex",
+              "height": 2,
+              "color": "BLUE",
+              "opacity": 0.7
+            }
+          },
+          {
+            "id": "retina_line",
+            "type": "shape",
+            "position": [
+              3,
+              0
+            ],
+            "properties": {
+              "shape_type": "line",
+              "height": 3,
+              "color": "WHITE",
+              "stroke_width": 2
+            }
+          },
+          {
+            "id": "initial_rays",
+            "type": "shape",
+            "position": [
+              -3,
+              0
+            ],
+            "properties": {
+              "shape_type": "ray_bundle",
+              "color": "YELLOW",
+              "convergence_point": [
+                2,
+                0
+              ]
+            }
+          },
+          {
+            "id": "concave_lens",
+            "type": "shape",
+            "position": [
+              -1,
+              0
+            ],
+            "properties": {
+              "shape_type": "lens_concave",
+              "height": 2,
+              "color": "GREEN",
+              "opacity": 0.7
+            }
+          },
+          {
+            "id": "diverging_rays",
+            "type": "shape",
+            "position": [
+              -3,
+              0
+            ],
+            "properties": {
+              "shape_type": "ray_bundle",
+              "color": "YELLOW",
+              "divergence_point": [
+                -1,
+                0
+              ]
+            }
+          },
+          {
+            "id": "final_rays",
+            "type": "shape",
+            "position": [
+              -3,
+              0
+            ],
+            "properties": {
+              "shape_type": "ray_bundle",
+              "color": "YELLOW",
+              "convergence_point": [
+                3,
+                0
+              ]
+            }
+          },
+          {
+            "id": "clear_image_label",
+            "type": "label",
+            "position": [
+              3.5,
+              -1
+            ],
+            "properties": {
+              "text": "Clear image\\nforms here",
+              "color": "WHITE",
+              "scale": 0.8
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "eye_lens",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "retina_line",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "initial_rays",
+            "duration": 6
+          },
+          {
+            "action": "appear",
+            "target": "concave_lens",
+            "duration": 2
+          },
+          {
+            "action": "fade_out",
+            "target": "initial_rays",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "diverging_rays",
+            "duration": 6
+          },
+          {
+            "action": "fade_out",
+            "target": "diverging_rays",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "final_rays",
+            "duration": 8
+          },
+          {
+            "action": "appear",
+            "target": "clear_image_label",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "final_rays",
+            "duration": 3,
+            "color": "GREEN"
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "6A",
+            "segment_id": 2,
+            "visual_beat_type": "manim_animation",
+            "description": "Show the initial myopic eye diagram from the previous section: parallel rays converging in front of the retina.",
+            "manim_scene_spec": {
+              "elements": [
+                {
+                  "type": "lens",
+                  "shape": "convex",
+                  "label": "Eye Lens"
+                },
+                {
+                  "type": "line",
+                  "name": "retina",
+                  "position": "right_elongated"
+                },
+                {
+                  "type": "rays",
+                  "source": "infinity",
+                  "path": "converge_before_retina"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "6B",
+            "segment_id": 3,
+            "visual_beat_type": "manim_animation",
+            "description": "A concave lens appears in front of the eye lens. Parallel rays from the left hit the concave lens and diverge slightly.",
+            "manim_scene_spec": {
+              "elements": [
+                {
+                  "type": "lens",
+                  "shape": "concave",
+                  "label": "Corrective Lens",
+                  "position": "left"
+                },
+                {
+                  "type": "lens",
+                  "shape": "convex",
+                  "label": "Eye Lens"
+                },
+                {
+                  "type": "line",
+                  "name": "retina",
+                  "position": "right_elongated"
+                },
+                {
+                  "type": "rays",
+                  "source": "infinity",
+                  "path": "diverge_from_concave"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "6C",
+            "segment_id": 4,
+            "visual_beat_type": "manim_animation",
+            "description": "The diverging rays from the concave lens now enter the eye's convex lens, which converges them perfectly onto the retina, forming a sharp point.",
+            "manim_scene_spec": {
+              "elements": [
+                {
+                  "type": "lens",
+                  "shape": "concave",
+                  "label": "Corrective Lens",
+                  "position": "left"
+                },
+                {
+                  "type": "lens",
+                  "shape": "convex",
+                  "label": "Eye Lens"
+                },
+                {
+                  "type": "line",
+                  "name": "retina",
+                  "position": "right_elongated"
+                },
+                {
+                  "type": "rays",
+                  "source": "infinity",
+                  "path": "corrected_to_retina"
+                },
+                {
+                  "type": "label",
+                  "text": "Clear image forms on retina",
+                  "position": "on_retina"
+                }
+              ]
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "eye_lens",
+              "type": "shape",
+              "position": [
+                1,
+                0
+              ],
+              "properties": {
+                "shape_type": "lens_convex",
+                "height": 2,
+                "color": "BLUE",
+                "opacity": 0.7
+              }
+            },
+            {
+              "id": "retina_line",
+              "type": "shape",
+              "position": [
+                3,
+                0
+              ],
+              "properties": {
+                "shape_type": "line",
+                "height": 3,
+                "color": "WHITE",
+                "stroke_width": 2
+              }
+            },
+            {
+              "id": "initial_rays",
+              "type": "shape",
+              "position": [
+                -3,
+                0
+              ],
+              "properties": {
+                "shape_type": "ray_bundle",
+                "color": "YELLOW",
+                "convergence_point": [
+                  2,
+                  0
+                ]
+              }
+            },
+            {
+              "id": "concave_lens",
+              "type": "shape",
+              "position": [
+                -1,
+                0
+              ],
+              "properties": {
+                "shape_type": "lens_concave",
+                "height": 2,
+                "color": "GREEN",
+                "opacity": 0.7
+              }
+            },
+            {
+              "id": "diverging_rays",
+              "type": "shape",
+              "position": [
+                -3,
+                0
+              ],
+              "properties": {
+                "shape_type": "ray_bundle",
+                "color": "YELLOW",
+                "divergence_point": [
+                  -1,
+                  0
+                ]
+              }
+            },
+            {
+              "id": "final_rays",
+              "type": "shape",
+              "position": [
+                -3,
+                0
+              ],
+              "properties": {
+                "shape_type": "ray_bundle",
+                "color": "YELLOW",
+                "convergence_point": [
+                  3,
+                  0
+                ]
+              }
+            },
+            {
+              "id": "clear_image_label",
+              "type": "label",
+              "position": [
+                3.5,
+                -1
+              ],
+              "properties": {
+                "text": "Clear image\\nforms here",
+                "color": "WHITE",
+                "scale": 0.8
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "appear",
+              "target": "eye_lens",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "retina_line",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "initial_rays",
+              "duration": 6
+            },
+            {
+              "action": "appear",
+              "target": "concave_lens",
+              "duration": 2
+            },
+            {
+              "action": "fade_out",
+              "target": "initial_rays",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "diverging_rays",
+              "duration": 6
+            },
+            {
+              "action": "fade_out",
+              "target": "diverging_rays",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "final_rays",
+              "duration": 8
+            },
+            {
+              "action": "appear",
+              "target": "clear_image_label",
+              "duration": 2
+            },
+            {
+              "action": "highlight",
+              "target": "final_rays",
+              "duration": 3,
+              "color": "GREEN"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_id": 7,
+      "section_type": "content",
+      "title": "Defect of Vision: Hypermetropia",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Next, let's look at Hypermetropia, or far-sightedness. This is the opposite of myopia. A person with hypermetropia can see distant objects clearly, but has difficulty focusing on nearby objects, like the words in a book. In this case, the light rays from a nearby object are focused at a point behind the retina. This can happen for two reasons: either the eyeball is too short, or the eye lens has too long a focal length, meaning it doesn't have enough converging power. Because the eye can't bend the light sharply enough, the rays would only meet at a point beyond the retina if they could pass through it. This results in a blurry, unfocused image when looking at things up close. It's a problem of insufficient power. However, because parallel rays from distant objects require less converging power, a hypermetropic eye can often focus them onto the retina without issue.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Next, let's look at Hypermetropia, or far-sightedness. This is the opposite of myopia. A person with hypermetropia can see distant objects clearly, but has difficulty focusing on nearby objects, like the words in a book.",
+            "duration_seconds": 17,
+            "gesture_hint": "hand_slice",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Hypermetropia (Far-sightedness)"
+                },
+                {
+                  "level": 2,
+                  "text": "Can see distant objects, nearby objects are blurry"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "In this case, the light rays from a nearby object are focused at a point behind the retina.",
+            "duration_seconds": 8,
+            "gesture_hint": "point_center",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Image is formed behind the retina"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "This can happen for two reasons: either the eyeball is too short, or the eye lens has too long a focal length, meaning it doesn't have enough converging power.",
+            "duration_seconds": 13,
+            "gesture_hint": "two_fingers",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Causes:"
+                },
+                {
+                  "level": 2,
+                  "text": "Focal length of the eye lens is too long"
+                },
+                {
+                  "level": 2,
+                  "text": "The eyeball has become too small"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Because the eye can't bend the light sharply enough, the rays would only meet at a point beyond the retina if they could pass through it. This results in a blurry, unfocused image when looking at things up close. It's a problem of insufficient power. However, because parallel rays from distant objects require less converging power, a hypermetropic eye can often focus them onto the retina without issue.",
+            "duration_seconds": 22,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "7A",
+          "segment_id": 4,
+          "visual_beat_type": "manim_animation",
+          "description": "Manim scene of a hypermetropic eye. Diverging rays from a near object enter the eye lens. The rays are not converged enough and are still converging as they hit the retina. Dotted lines show them meeting at a point behind the retina.",
+          "manim_scene_spec": {
+            "elements": [
+              {
+                "type": "lens",
+                "shape": "convex",
+                "state": "weak",
+                "label": "Eye Lens"
+              },
+              {
+                "type": "line",
+                "name": "retina",
+                "position": "right_shortened"
+              },
+              {
+                "type": "rays",
+                "source": "point_near",
+                "path": "converge_after_retina"
+              },
+              {
+                "type": "label",
+                "text": "Hypermetropic Eye: Near Object",
+                "position": "top"
+              },
+              {
+                "type": "label",
+                "text": "Image would form here",
+                "position": "behind_retina"
+              },
+              {
+                "type": "label",
+                "text": "Blurry image on retina",
+                "position": "on_retina"
+              }
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "text": "Hypermetropia (Far-sightedness)",
+              "scale": 1.2,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "eye_outline",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "shape_type": "circle_segment",
+              "color": "BLUE",
+              "opacity": 0.3
+            }
+          },
+          {
+            "id": "lens",
+            "type": "shape",
+            "position": [
+              -2,
+              0
+            ],
+            "properties": {
+              "shape_type": "lens",
+              "color": "BLUE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "retina",
+            "type": "shape",
+            "position": [
+              2,
+              0
+            ],
+            "properties": {
+              "shape_type": "line",
+              "color": "WHITE",
+              "height": 3
+            }
+          },
+          {
+            "id": "incoming_rays",
+            "type": "vector",
+            "position": [
+              -4,
+              0
+            ],
+            "properties": {
+              "direction": "diverging",
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "focused_rays",
+            "type": "vector",
+            "position": [
+              -2,
+              0
+            ],
+            "properties": {
+              "direction": "converging_weak",
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "extended_rays",
+            "type": "vector",
+            "position": [
+              2,
+              0
+            ],
+            "properties": {
+              "direction": "converging_extended",
+              "color": "YELLOW",
+              "style": "dashed"
+            }
+          },
+          {
+            "id": "focus_point",
+            "type": "point",
+            "position": [
+              4,
+              0
+            ],
+            "properties": {
+              "color": "RED",
+              "scale": 0.5
+            }
+          },
+          {
+            "id": "blurry_label",
+            "type": "label",
+            "position": [
+              2,
+              1.5
+            ],
+            "properties": {
+              "text": "Blurry image on retina",
+              "scale": 0.8,
+              "color": "RED"
+            }
+          },
+          {
+            "id": "focus_label",
+            "type": "label",
+            "position": [
+              4,
+              -1.5
+            ],
+            "properties": {
+              "text": "Image forms here",
+              "scale": 0.8,
+              "color": "RED"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title",
+            "duration": 1.5
+          },
+          {
+            "action": "draw",
+            "target": "eye_outline",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "lens",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "retina",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "incoming_rays",
+            "duration": 2
+          },
+          {
+            "action": "draw",
+            "target": "focused_rays",
+            "duration": 2
+          },
+          {
+            "action": "draw",
+            "target": "extended_rays",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "focus_point",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "blurry_label",
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "focus_label",
+            "duration": 1.5
+          },
+          {
+            "action": "highlight",
+            "target": [
+              "incoming_rays",
+              "focused_rays",
+              "extended_rays"
+            ],
+            "duration": 2,
+            "color": "YELLOW"
+          },
+          {
+            "action": "highlight",
+            "target": [
+              "focus_point",
+              "focus_label"
+            ],
+            "duration": 2,
+            "color": "RED"
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "7A",
+            "segment_id": 4,
+            "visual_beat_type": "manim_animation",
+            "description": "Manim scene of a hypermetropic eye. Diverging rays from a near object enter the eye lens. The rays are not converged enough and are still converging as they hit the retina. Dotted lines show them meeting at a point behind the retina.",
+            "manim_scene_spec": {
+              "elements": [
+                {
+                  "type": "lens",
+                  "shape": "convex",
+                  "state": "weak",
+                  "label": "Eye Lens"
+                },
+                {
+                  "type": "line",
+                  "name": "retina",
+                  "position": "right_shortened"
+                },
+                {
+                  "type": "rays",
+                  "source": "point_near",
+                  "path": "converge_after_retina"
+                },
+                {
+                  "type": "label",
+                  "text": "Hypermetropic Eye: Near Object",
+                  "position": "top"
+                },
+                {
+                  "type": "label",
+                  "text": "Image would form here",
+                  "position": "behind_retina"
+                },
+                {
+                  "type": "label",
+                  "text": "Blurry image on retina",
+                  "position": "on_retina"
+                }
+              ]
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "title",
+              "type": "label",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "text": "Hypermetropia (Far-sightedness)",
+                "scale": 1.2,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "eye_outline",
+              "type": "shape",
+              "position": [
+                0,
+                0
+              ],
+              "properties": {
+                "shape_type": "circle_segment",
+                "color": "BLUE",
+                "opacity": 0.3
+              }
+            },
+            {
+              "id": "lens",
+              "type": "shape",
+              "position": [
+                -2,
+                0
+              ],
+              "properties": {
+                "shape_type": "lens",
+                "color": "BLUE",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "retina",
+              "type": "shape",
+              "position": [
+                2,
+                0
+              ],
+              "properties": {
+                "shape_type": "line",
+                "color": "WHITE",
+                "height": 3
+              }
+            },
+            {
+              "id": "incoming_rays",
+              "type": "vector",
+              "position": [
+                -4,
+                0
+              ],
+              "properties": {
+                "direction": "diverging",
+                "color": "YELLOW"
+              }
+            },
+            {
+              "id": "focused_rays",
+              "type": "vector",
+              "position": [
+                -2,
+                0
+              ],
+              "properties": {
+                "direction": "converging_weak",
+                "color": "YELLOW"
+              }
+            },
+            {
+              "id": "extended_rays",
+              "type": "vector",
+              "position": [
+                2,
+                0
+              ],
+              "properties": {
+                "direction": "converging_extended",
+                "color": "YELLOW",
+                "style": "dashed"
+              }
+            },
+            {
+              "id": "focus_point",
+              "type": "point",
+              "position": [
+                4,
+                0
+              ],
+              "properties": {
+                "color": "RED",
+                "scale": 0.5
+              }
+            },
+            {
+              "id": "blurry_label",
+              "type": "label",
+              "position": [
+                2,
+                1.5
+              ],
+              "properties": {
+                "text": "Blurry image on retina",
+                "scale": 0.8,
+                "color": "RED"
+              }
+            },
+            {
+              "id": "focus_label",
+              "type": "label",
+              "position": [
+                4,
+                -1.5
+              ],
+              "properties": {
+                "text": "Image forms here",
+                "scale": 0.8,
+                "color": "RED"
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "appear",
+              "target": "title",
+              "duration": 1.5
+            },
+            {
+              "action": "draw",
+              "target": "eye_outline",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "lens",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "retina",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "incoming_rays",
+              "duration": 2
+            },
+            {
+              "action": "draw",
+              "target": "focused_rays",
+              "duration": 2
+            },
+            {
+              "action": "draw",
+              "target": "extended_rays",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "focus_point",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "blurry_label",
+              "duration": 1.5
+            },
+            {
+              "action": "appear",
+              "target": "focus_label",
+              "duration": 1.5
+            },
+            {
+              "action": "highlight",
+              "target": [
+                "incoming_rays",
+                "focused_rays",
+                "extended_rays"
+              ],
+              "duration": 2,
+              "color": "YELLOW"
+            },
+            {
+              "action": "highlight",
+              "target": [
+                "focus_point",
+                "focus_label"
+              ],
+              "duration": 2,
+              "color": "RED"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_id": 8,
+      "section_type": "example",
+      "title": "Example: Correcting Hypermetropia",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "gesture_only"
+      },
+      "narration": {
+        "full_text": "To correct hypermetropia, we need to give the eye's lens a helping hand. We need to add more converging power to bend the light rays more sharply, moving the focal point forward onto the retina. The lens for this job is a convex lens. Let's visualize the correction. Here is our hypermetropic eye, struggling to focus on a nearby object. The image forms behind the retina. Now, we introduce a convex lens in front of the eye. This is what reading glasses do. As the diverging rays from the near object pass through the corrective lens, they are pre-converged. They are already bent inward before they even reach the eye. Now, the eye's own lens takes these pre-converged rays and adds its own focusing power. The combined power is enough to bring the focal point exactly onto the retina, producing a sharp, clear image. This allows the person to read or see other nearby objects distinctly.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "To correct hypermetropia, we need to give the eye's lens a helping hand. We need to add more converging power to bend the light rays more sharply, moving the focal point forward onto the retina. The lens for this job is a convex lens.",
+            "duration_seconds": 18,
+            "gesture_hint": "presenting",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Correction: Use a convex lens of appropriate power"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Let's visualize the correction. Here is our hypermetropic eye, struggling to focus on a nearby object. The image forms behind the retina.",
+            "duration_seconds": 10,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Now, we introduce a convex lens in front of the eye. This is what reading glasses do. As the diverging rays from the near object pass through the corrective lens, they are pre-converged.",
+            "duration_seconds": 14,
+            "gesture_hint": "tracing_path",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "They are already bent inward before they even reach the eye. Now, the eye's own lens takes these pre-converged rays and adds its own focusing power. The combined power is enough to bring the focal point exactly onto the retina, producing a sharp, clear image. This allows the person to read or see other nearby objects distinctly.",
+            "duration_seconds": 22,
+            "gesture_hint": "tracing_path_to_end",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "8A",
+          "segment_id": 2,
+          "visual_beat_type": "manim_animation",
+          "description": "Show the initial hypermetropic eye diagram: diverging rays from a near object focusing behind the retina.",
+          "manim_scene_spec": {
+            "elements": [
+              {
+                "type": "lens",
+                "shape": "convex",
+                "state": "weak"
+              },
+              {
+                "type": "line",
+                "name": "retina",
+                "position": "right_shortened"
+              },
+              {
+                "type": "rays",
+                "source": "point_near",
+                "path": "converge_after_retina"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "8B",
+          "segment_id": 3,
+          "visual_beat_type": "manim_animation",
+          "description": "A second convex lens (corrective) appears in front of the eye. Diverging rays from the near object hit this lens and are bent inward (pre-converged).",
+          "manim_scene_spec": {
+            "elements": [
+              {
+                "type": "lens",
+                "shape": "convex",
+                "label": "Corrective Lens",
+                "position": "left"
+              },
+              {
+                "type": "lens",
+                "shape": "convex",
+                "state": "weak"
+              },
+              {
+                "type": "line",
+                "name": "retina",
+                "position": "right_shortened"
+              },
+              {
+                "type": "rays",
+                "source": "point_near",
+                "path": "preconverge_from_convex"
+              }
+            ]
+          }
+        },
+        {
+          "beat_id": "8C",
+          "segment_id": 4,
+          "visual_beat_type": "manim_animation",
+          "description": "The pre-converged rays enter the eye's lens, which adds more convergence, bringing the final focus point perfectly onto the retina.",
+          "manim_scene_spec": {
+            "elements": [
+              {
+                "type": "lens",
+                "shape": "convex",
+                "label": "Corrective Lens",
+                "position": "left"
+              },
+              {
+                "type": "lens",
+                "shape": "convex",
+                "state": "weak"
+              },
+              {
+                "type": "line",
+                "name": "retina",
+                "position": "right_shortened"
+              },
+              {
+                "type": "rays",
+                "source": "point_near",
+                "path": "corrected_to_retina"
+              },
+              {
+                "type": "label",
+                "text": "Clear image forms on retina",
+                "position": "on_retina"
+              }
+            ]
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "eye_outline",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "shape_type": "eye_outline",
+              "color": "BLUE",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "eye_lens",
+            "type": "shape",
+            "position": [
+              -0.5,
+              0
+            ],
+            "properties": {
+              "shape_type": "convex_lens",
+              "color": "BLUE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "retina_line",
+            "type": "shape",
+            "position": [
+              1.5,
+              0
+            ],
+            "properties": {
+              "shape_type": "line",
+              "color": "WHITE",
+              "height": 2
+            }
+          },
+          {
+            "id": "initial_rays",
+            "type": "vector",
+            "position": [
+              -2,
+              0
+            ],
+            "properties": {
+              "path_type": "diverging_rays",
+              "color": "YELLOW",
+              "num_rays": 3
+            }
+          },
+          {
+            "id": "focal_point_wrong",
+            "type": "point",
+            "position": [
+              2.5,
+              0
+            ],
+            "properties": {
+              "color": "RED",
+              "scale": 0.1
+            }
+          },
+          {
+            "id": "corrective_lens",
+            "type": "shape",
+            "position": [
+              -1.5,
+              0
+            ],
+            "properties": {
+              "shape_type": "convex_lens",
+              "color": "GREEN",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "preconverged_rays",
+            "type": "vector",
+            "position": [
+              -2,
+              0
+            ],
+            "properties": {
+              "path_type": "converging_rays",
+              "color": "YELLOW",
+              "num_rays": 3
+            }
+          },
+          {
+            "id": "final_focal_point",
+            "type": "point",
+            "position": [
+              1.5,
+              0
+            ],
+            "properties": {
+              "color": "GREEN",
+              "scale": 0.1
+            }
+          },
+          {
+            "id": "clear_image_label",
+            "type": "label",
+            "position": [
+              1.8,
+              0.8
+            ],
+            "properties": {
+              "text": "Clear image",
+              "color": "GREEN",
+              "scale": 0.7
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "draw",
+            "target": "eye_outline",
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "eye_lens",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "retina_line",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "initial_rays",
+            "duration": 2.5
+          },
+          {
+            "action": "appear",
+            "target": "focal_point_wrong",
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "duration": 3
+          },
+          {
+            "action": "appear",
+            "target": "corrective_lens",
+            "duration": 2
+          },
+          {
+            "action": "fade_out",
+            "target": "initial_rays",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "preconverged_rays",
+            "duration": 3
+          },
+          {
+            "action": "fade_out",
+            "target": "focal_point_wrong",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "final_focal_point",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "clear_image_label",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "final_focal_point",
+            "duration": 2,
+            "color": "GREEN"
+          },
+          {
+            "action": "wait",
+            "duration": 2
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "8A",
+            "segment_id": 2,
+            "visual_beat_type": "manim_animation",
+            "description": "Show the initial hypermetropic eye diagram: diverging rays from a near object focusing behind the retina.",
+            "manim_scene_spec": {
+              "elements": [
+                {
+                  "type": "lens",
+                  "shape": "convex",
+                  "state": "weak"
+                },
+                {
+                  "type": "line",
+                  "name": "retina",
+                  "position": "right_shortened"
+                },
+                {
+                  "type": "rays",
+                  "source": "point_near",
+                  "path": "converge_after_retina"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "8B",
+            "segment_id": 3,
+            "visual_beat_type": "manim_animation",
+            "description": "A second convex lens (corrective) appears in front of the eye. Diverging rays from the near object hit this lens and are bent inward (pre-converged).",
+            "manim_scene_spec": {
+              "elements": [
+                {
+                  "type": "lens",
+                  "shape": "convex",
+                  "label": "Corrective Lens",
+                  "position": "left"
+                },
+                {
+                  "type": "lens",
+                  "shape": "convex",
+                  "state": "weak"
+                },
+                {
+                  "type": "line",
+                  "name": "retina",
+                  "position": "right_shortened"
+                },
+                {
+                  "type": "rays",
+                  "source": "point_near",
+                  "path": "preconverge_from_convex"
+                }
+              ]
+            }
+          },
+          {
+            "beat_id": "8C",
+            "segment_id": 4,
+            "visual_beat_type": "manim_animation",
+            "description": "The pre-converged rays enter the eye's lens, which adds more convergence, bringing the final focus point perfectly onto the retina.",
+            "manim_scene_spec": {
+              "elements": [
+                {
+                  "type": "lens",
+                  "shape": "convex",
+                  "label": "Corrective Lens",
+                  "position": "left"
+                },
+                {
+                  "type": "lens",
+                  "shape": "convex",
+                  "state": "weak"
+                },
+                {
+                  "type": "line",
+                  "name": "retina",
+                  "position": "right_shortened"
+                },
+                {
+                  "type": "rays",
+                  "source": "point_near",
+                  "path": "corrected_to_retina"
+                },
+                {
+                  "type": "label",
+                  "text": "Clear image forms on retina",
+                  "position": "on_retina"
+                }
+              ]
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "eye_outline",
+              "type": "shape",
+              "position": [
+                0,
+                0
+              ],
+              "properties": {
+                "shape_type": "eye_outline",
+                "color": "BLUE",
+                "scale": 1.2
+              }
+            },
+            {
+              "id": "eye_lens",
+              "type": "shape",
+              "position": [
+                -0.5,
+                0
+              ],
+              "properties": {
+                "shape_type": "convex_lens",
+                "color": "BLUE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "retina_line",
+              "type": "shape",
+              "position": [
+                1.5,
+                0
+              ],
+              "properties": {
+                "shape_type": "line",
+                "color": "WHITE",
+                "height": 2
+              }
+            },
+            {
+              "id": "initial_rays",
+              "type": "vector",
+              "position": [
+                -2,
+                0
+              ],
+              "properties": {
+                "path_type": "diverging_rays",
+                "color": "YELLOW",
+                "num_rays": 3
+              }
+            },
+            {
+              "id": "focal_point_wrong",
+              "type": "point",
+              "position": [
+                2.5,
+                0
+              ],
+              "properties": {
+                "color": "RED",
+                "scale": 0.1
+              }
+            },
+            {
+              "id": "corrective_lens",
+              "type": "shape",
+              "position": [
+                -1.5,
+                0
+              ],
+              "properties": {
+                "shape_type": "convex_lens",
+                "color": "GREEN",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "preconverged_rays",
+              "type": "vector",
+              "position": [
+                -2,
+                0
+              ],
+              "properties": {
+                "path_type": "converging_rays",
+                "color": "YELLOW",
+                "num_rays": 3
+              }
+            },
+            {
+              "id": "final_focal_point",
+              "type": "point",
+              "position": [
+                1.5,
+                0
+              ],
+              "properties": {
+                "color": "GREEN",
+                "scale": 0.1
+              }
+            },
+            {
+              "id": "clear_image_label",
+              "type": "label",
+              "position": [
+                1.8,
+                0.8
+              ],
+              "properties": {
+                "text": "Clear image",
+                "color": "GREEN",
+                "scale": 0.7
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "draw",
+              "target": "eye_outline",
+              "duration": 1.5
+            },
+            {
+              "action": "appear",
+              "target": "eye_lens",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "retina_line",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "initial_rays",
+              "duration": 2.5
+            },
+            {
+              "action": "appear",
+              "target": "focal_point_wrong",
+              "duration": 1
+            },
+            {
+              "action": "wait",
+              "duration": 3
+            },
+            {
+              "action": "appear",
+              "target": "corrective_lens",
+              "duration": 2
+            },
+            {
+              "action": "fade_out",
+              "target": "initial_rays",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "preconverged_rays",
+              "duration": 3
+            },
+            {
+              "action": "fade_out",
+              "target": "focal_point_wrong",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "final_focal_point",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "clear_image_label",
+              "duration": 2
+            },
+            {
+              "action": "highlight",
+              "target": "final_focal_point",
+              "duration": 2,
+              "color": "GREEN"
+            },
+            {
+              "action": "wait",
+              "duration": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_id": 9,
+      "section_type": "content",
+      "title": "Defect of Vision: Presbyopia",
+      "renderer": "video",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "side",
+        "position": "right",
+        "width_percent": 35
+      },
+      "narration": {
+        "full_text": "Finally, there is a vision defect that affects many people as they get older: Presbyopia. This is the age-related loss of the power of accommodation. Over time, the ciliary muscles that control the lens can weaken, and more importantly, the crystalline lens itself loses its flexibility and becomes more rigid. Because the lens can no longer change its shape as easily, it becomes difficult to focus on near objects. The near point gradually recedes farther away, making activities like reading a strain without corrective lenses. For many, presbyopia is like developing hypermetropia later in life. Sometimes, a person might suffer from both myopia for distance and presbyopia for near vision. In these cases, they may need bifocal lenses. A bifocal lens has two parts: the upper portion is a concave lens to correct myopia for distant viewing, while the lower portion is a convex lens to correct presbyopia for reading.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Finally, there is a vision defect that affects many people as they get older: Presbyopia. This is the age-related loss of the power of accommodation.",
+            "duration_seconds": 12,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Presbyopia: The power of accommodation decreases with age"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Over time, the ciliary muscles that control the lens can weaken, and more importantly, the crystalline lens itself loses its flexibility and becomes more rigid.",
+            "duration_seconds": 13,
+            "gesture_hint": "point_center",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Cause: Gradual weakening of ciliary muscles"
+                },
+                {
+                  "level": 1,
+                  "text": "Cause: Diminishing flexibility of the eye lens"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "swap",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Because the lens can no longer change its shape as easily, it becomes difficult to focus on near objects. The near point gradually recedes farther away, making activities like reading a strain without corrective lenses.",
+            "duration_seconds": 16,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "For many, presbyopia is like developing hypermetropia later in life. Sometimes, a person might suffer from both myopia for distance and presbyopia for near vision. In these cases, they may need bifocal lenses.",
+            "duration_seconds": 16,
+            "gesture_hint": "two_fingers",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Correction: Bifocal lenses for both myopia and hypermetropia"
+                }
+              ]
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "A bifocal lens has two parts: the upper portion is a concave lens to correct myopia for distant viewing, while the lower portion is a convex lens to correct presbyopia for reading.",
+            "duration_seconds": 14,
+            "gesture_hint": "point_center",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "gesture_only"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "9A",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "Animation showing a side-by-side comparison. On the left, a young, flexible lens easily thickens to focus on a near object. On the right, an older, rigid lens struggles to change shape, and the focus point for the near object falls behind the retina."
+        },
+        {
+          "beat_id": "9B",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "A graphic of a bifocal lens appears. The top section is highlighted, labeled 'Concave for Distance (Myopia)'. A ray diagram shows it correcting for a distant object. Then, the bottom section is highlighted, labeled 'Convex for Near (Presbyopia)'. A ray diagram shows it correcting for a near object."
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "9A",
+          "prompt": "The scene opens on a cinematic, split-screen macro view inside the human eye, rendered with photorealistic detail. On the left, a young, healthy eye focuses on a near object. Its crystalline lens, a perfectly transparent and pliable organic structure, visibly thickens as vibrant, fibrous ciliary muscles contract around it. Light rays bend precisely, converging into a sharp, brilliant point on the richly vascular retinal wall. On the right, an older, presbyopic eye attempts the same action. Its lens is slightly yellowed, more rigid and glass-like, resisting the pull of weaker, less defined ciliary muscles. It barely changes shape. Consequently, the light rays from the near object fail to converge properly, passing through the retina to form a blurry, unfocused patch of light behind it. The lighting is clinical and bright, emphasizing the glossy, wet textures and subsurface scattering within both lenses.",
+          "duration_seconds": 16,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "9B",
+          "prompt": "An extreme close-up shot reveals a photorealistic bifocal lens, with the camera slowly orbiting its surface. The subtle, curved dividing line between the upper and lower sections is clearly visible, refracting light differently. The scene transitions to a profile view showing light interacting with the lens and an eye behind it. First, parallel volumetric light rays, representing distant vision, stream from the left. As they pass through the upper, concave portion of the lens, it emits a subtle, cool blue glow. The rays are slightly diverged before entering the eye, where they are focused into a perfect point on the retina. Following this, the action resets. A new set of diverging rays, representing a near object, enters the frame. The lower, convex portion of the lens now glows with a warm amber light, converging the rays just enough for the eye's internal lens to achieve a crisp, sharp focus on the exact same retinal surface.",
+          "duration_seconds": 14,
+          "style": "realistic"
+        }
+      ],
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "9A",
+            "segment_id": 3,
+            "visual_beat_type": "video_scene",
+            "description": "Animation showing a side-by-side comparison. On the left, a young, flexible lens easily thickens to focus on a near object. On the right, an older, rigid lens struggles to change shape, and the focus point for the near object falls behind the retina."
+          },
+          {
+            "beat_id": "9B",
+            "segment_id": 5,
+            "visual_beat_type": "video_scene",
+            "description": "A graphic of a bifocal lens appears. The top section is highlighted, labeled 'Concave for Distance (Myopia)'. A ray diagram shows it correcting for a distant object. Then, the bottom section is highlighted, labeled 'Convex for Near (Presbyopia)'. A ray diagram shows it correcting for a near object."
+          }
+        ],
+        "compiled_wan_prompt": "[Beat 9A]: The scene opens on a cinematic, split-screen macro view inside the human eye, rendered with photorealistic detail. On the left, a young, healthy eye focuses on a near object. Its crystalline lens, a perfectly transparent and pliable organic structure, visibly thickens as vibrant, fibrous ciliary muscles contract around it. Light rays bend precisely, converging into a sharp, brilliant point on the richly vascular retinal wall. On the right, an older, presbyopic eye attempts the same action. Its lens is slightly yellowed, more rigid and glass-like, resisting the pull of weaker, less defined ciliary muscles. It barely changes shape. Consequently, the light rays from the near object fail to converge properly, passing through the retina to form a blurry, unfocused patch of light behind it. The lighting is clinical and bright, emphasizing the glossy, wet textures and subsurface scattering within both lenses.\n\n[Beat 9B]: An extreme close-up shot reveals a photorealistic bifocal lens, with the camera slowly orbiting its surface. The subtle, curved dividing line between the upper and lower sections is clearly visible, refracting light differently. The scene transitions to a profile view showing light interacting with the lens and an eye behind it. First, parallel volumetric light rays, representing distant vision, stream from the left. As they pass through the upper, concave portion of the lens, it emits a subtle, cool blue glow. The rays are slightly diverged before entering the eye, where they are focused into a perfect point on the retina. Following this, the action resets. A new set of diverging rays, representing a near object, enters the frame. The lower, convex portion of the lens now glows with a warm amber light, converging the rays just enough for the eye's internal lens to achieve a crisp, sharp focus on the exact same retinal surface.",
+        "video_prompts_list": [
+          {
+            "beat_id": "9A",
+            "prompt": "The scene opens on a cinematic, split-screen macro view inside the human eye, rendered with photorealistic detail. On the left, a young, healthy eye focuses on a near object. Its crystalline lens, a perfectly transparent and pliable organic structure, visibly thickens as vibrant, fibrous ciliary muscles contract around it. Light rays bend precisely, converging into a sharp, brilliant point on the richly vascular retinal wall. On the right, an older, presbyopic eye attempts the same action. Its lens is slightly yellowed, more rigid and glass-like, resisting the pull of weaker, less defined ciliary muscles. It barely changes shape. Consequently, the light rays from the near object fail to converge properly, passing through the retina to form a blurry, unfocused patch of light behind it. The lighting is clinical and bright, emphasizing the glossy, wet textures and subsurface scattering within both lenses.",
+            "duration_seconds": 16,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "9B",
+            "prompt": "An extreme close-up shot reveals a photorealistic bifocal lens, with the camera slowly orbiting its surface. The subtle, curved dividing line between the upper and lower sections is clearly visible, refracting light differently. The scene transitions to a profile view showing light interacting with the lens and an eye behind it. First, parallel volumetric light rays, representing distant vision, stream from the left. As they pass through the upper, concave portion of the lens, it emits a subtle, cool blue glow. The rays are slightly diverged before entering the eye, where they are focused into a perfect point on the retina. Following this, the action resets. A new set of diverging rays, representing a near object, enters the frame. The lower, convex portion of the lens now glows with a warm amber light, converging the rays just enough for the eye's internal lens to achieve a crisp, sharp focus on the exact same retinal surface.",
+            "duration_seconds": 14,
+            "style": "realistic"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 10,
+      "section_type": "memory",
+      "title": "Quick Memory Flashcards",
+      "renderer": "none",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "hidden"
+      },
+      "narration": {
+        "full_text": "Let's quickly review five key ideas. First, Accommodation is the eye's ability to adjust its focal length. Second, Myopia, or near-sightedness, is when the image forms in front of the retina. Third, Hypermetropia, or far-sightedness, is when the image forms behind the retina. Fourth, a Concave lens is used to correct myopia. Fifth, a Convex lens is used to correct hypermetropia and presbyopia.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's quickly review five key ideas.",
+            "duration_seconds": 3,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "hide",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "First, Accommodation is the eye's ability to adjust its focal length.",
+            "duration_seconds": 5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Second, Myopia, or near-sightedness, is when the image forms in front of the retina.",
+            "duration_seconds": 6,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Third, Hypermetropia, or far-sightedness, is when the image forms behind the retina.",
+            "duration_seconds": 6,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "Fourth, a Concave lens is used to correct myopia.",
+            "duration_seconds": 5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 6,
+            "text": "Fifth, a Convex lens is used to correct hypermetropia and presbyopia.",
+            "duration_seconds": 5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "10A",
+          "segment_id": 2,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard appears. Front: 'Accommodation'. Back: 'The ability of the eye lens to adjust its focal length.'"
+        },
+        {
+          "beat_id": "10B",
+          "segment_id": 3,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard appears. Front: 'Myopia'. Back: 'Near-sightedness. Image forms IN FRONT of the retina.'"
+        },
+        {
+          "beat_id": "10C",
+          "segment_id": 4,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard appears. Front: 'Hypermetropia'. Back: 'Far-sightedness. Image forms BEHIND the retina.'"
+        },
+        {
+          "beat_id": "10D",
+          "segment_id": 5,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard appears. Front: 'Myopia Correction'. Back: 'Concave Lens (diverges light).'"
+        },
+        {
+          "beat_id": "10E",
+          "segment_id": 6,
+          "visual_beat_type": "flashcard",
+          "description": "Flashcard appears. Front: 'Hypermetropia Correction'. Back: 'Convex Lens (converges light).'"
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 900,
+        "elements": [
+          {
+            "id": "title",
+            "type": "text",
+            "content": "Quick Review: 5 Key Ideas",
+            "position": {
+              "x": 400,
+              "y": 50
+            },
+            "style": {
+              "fontSize": 40,
+              "color": "#333333",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 90
+            }
+          },
+          {
+            "id": "card1_front",
+            "type": "text",
+            "content": "Accommodation",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#000000",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 90,
+              "exit_frame": 240
+            }
+          },
+          {
+            "id": "card2_front",
+            "type": "text",
+            "content": "Myopia (Near-sightedness)",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#000000",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 240,
+              "exit_frame": 420
+            }
+          },
+          {
+            "id": "card3_front",
+            "type": "text",
+            "content": "Hypermetropia (Far-sightedness)",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#000000",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 420,
+              "exit_frame": 600
+            }
+          },
+          {
+            "id": "card4_front",
+            "type": "text",
+            "content": "Myopia Correction: Concave Lens",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#000000",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 600,
+              "exit_frame": 750
+            }
+          },
+          {
+            "id": "card5_front",
+            "type": "text",
+            "content": "Hypermetropia Correction: Convex Lens",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#000000",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "slide_out",
+              "enter_frame": 750,
+              "exit_frame": 900
+            }
+          }
+        ],
+        "background": {
+          "color": "#FFFFFF"
+        }
+      },
+      "renderer_override_reason": "Section type 'memory' is text-only (no video rendering)"
+    },
+    {
+      "section_id": 11,
+      "section_type": "recap",
+      "title": "Chapter Recap",
+      "renderer": "wan_video",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "hidden"
+      },
+      "narration": {
+        "full_text": "Let's recap our journey through the human eye. First, we saw the eye as a living camera. Light enters the cornea, is controlled by the iris and pupil, and then focused by the crystalline lens. This projects an image onto the retina, a screen of light-sensitive cells that send signals to our brain through the optic nerve. This intricate system works together seamlessly to convert light from the world around us into the vibrant images that we perceive every single moment. Next, we explored the eye's dynamic focusing ability, known as accommodation. We saw how the ciliary muscles alter the shape of the lens, making it thinner for distant objects and thicker for near ones. This remarkable flexibility allows us to shift our focus in an instant, from a distant mountain peak to the text on this screen. This process ensures that, in a healthy eye, the image always lands perfectly on the retina for maximum clarity. Then, we examined myopia, or near-sightedness. For a myopic eye, distant objects appear blurry because the light focuses in front of the retina. We learned this can be caused by an elongated eyeball or an overly powerful lens. The solution is a concave lens, which diverges light rays before they enter the eye, effectively pushing the focal point back onto the retina and restoring clear distance vision, just like putting on a pair of glasses. We also investigated hypermetropia, or far-sightedness, where near objects are blurry because the eye's lens isn't strong enough to focus the light on the retina, causing the focal point to fall behind it. This is often due to a shorter eyeball or a weaker lens. The fix is a convex lens, like in reading glasses, which adds converging power to help the eye bend the light more sharply, pulling the focal point forward onto the retina. Finally, we understood that our vision is a delicate, precise process. From the biological structure of the eye to the physics of light and lenses, each component plays a vital role. By understanding how vision works and how it can be corrected, we gain a deeper appreciation for this incredible sense and the science that helps us see the world clearly. This knowledge connects biology, physics, and our everyday experience in a profound way.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's recap our journey through the human eye. First, we saw the eye as a living camera. Light enters the cornea, is controlled by the iris and pupil, and then focused by the crystalline lens. This projects an image onto the retina, a screen of light-sensitive cells that send signals to our brain through the optic nerve. This intricate system works together seamlessly to convert light from the world around us into the vibrant images that we perceive every single moment.",
+            "duration_seconds": 24,
+            "word_count": 92,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Next, we explored the eye's dynamic focusing ability, known as accommodation. We saw how the ciliary muscles alter the shape of the lens, making it thinner for distant objects and thicker for near ones. This remarkable flexibility allows us to shift our focus in an instant, from a distant mountain peak to the text on this screen. This process ensures that, in a healthy eye, the image always lands perfectly on the retina for maximum clarity.",
+            "duration_seconds": 24,
+            "word_count": 90,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Then, we examined myopia, or near-sightedness. For a myopic eye, distant objects appear blurry because the light focuses in front of the retina. We learned this can be caused by an elongated eyeball or an overly powerful lens. The solution is a concave lens, which diverges light rays before they enter the eye, effectively pushing the focal point back onto the retina and restoring clear distance vision, just like putting on a pair of glasses.",
+            "duration_seconds": 25,
+            "word_count": 91,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "We also investigated hypermetropia, or far-sightedness, where near objects are blurry because the eye's lens isn't strong enough to focus the light on the retina, causing the focal point to fall behind it. This is often due to a shorter eyeball or a weaker lens. The fix is a convex lens, like in reading glasses, which adds converging power to help the eye bend the light more sharply, pulling the focal point forward onto the retina.",
+            "duration_seconds": 25,
+            "word_count": 91,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "Finally, we understood that our vision is a delicate, precise process. From the biological structure of the eye to the physics of light and lenses, each component plays a vital role. By understanding how vision works and how it can be corrected, we gain a deeper appreciation for this incredible sense and the science that helps us see the world clearly. This knowledge connects biology, physics, and our everyday experience in a profound way.",
+            "duration_seconds": 25,
+            "word_count": 90,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "hide"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "11A",
+          "segment_id": 1,
+          "visual_beat_type": "video_scene",
+          "description": "Cinematic, photorealistic 3D animation of light traveling through the parts of the eye. Each part (cornea, lens, retina) is highlighted in sequence as the light passes through, ending with a pulse traveling down the optic nerve."
+        },
+        {
+          "beat_id": "11B",
+          "segment_id": 2,
+          "visual_beat_type": "video_scene",
+          "description": "A first-person view shifts focus from a blurry foreground object (a flower) to a sharp background (a mountain), then back. An overlay shows the lens thinning and thickening in sync with the focus shift."
+        },
+        {
+          "beat_id": "11C",
+          "segment_id": 3,
+          "visual_beat_type": "video_scene",
+          "description": "A first-person view of a blurry, distant road sign. An animated overlay of a concave lens slides into view, and the sign snaps into sharp focus. A simplified ray diagram animates over the scene to show the correction."
+        },
+        {
+          "beat_id": "11D",
+          "segment_id": 4,
+          "visual_beat_type": "video_scene",
+          "description": "A first-person view of a blurry book page. An animated overlay of a convex lens (like reading glasses) moves into place, and the text becomes crisp and clear. A simplified ray diagram animates over the scene."
+        },
+        {
+          "beat_id": "11E",
+          "segment_id": 5,
+          "visual_beat_type": "video_scene",
+          "description": "A montage of beautiful, high-definition clips: a smiling face, a detailed insect on a leaf, a starry night sky. The video ends with a slow zoom out from a close-up of a healthy, clear eye reflecting the world."
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "11A",
+          "prompt": "The scene opens with an extreme macro camera move, pushing forward into a photorealistic human eye. Volumetric beams of bright, clean light enter from the left, illuminating the transparent, wet surface of the cornea. As the camera travels through this first layer, the intricate, fibrous structure of a blue iris is revealed, its muscles subtly contracting to narrow the pupil. The light rays bend and converge, passing through the pupil into the crystalline lens, which is rendered as a layered, organic glass with visible internal striations and subtle subsurface scattering. The camera follows the focused beam of light through the clear, gelatinous vitreous humor, finally projecting a tiny, inverted image onto the delicate, blood-vessel-laced surface of the retina. Upon impact, a faint, shimmering pulse of blue bio-electrical energy ignites across the retina and funnels into the optic nerve, traveling away from the camera into darkness.",
+          "duration_seconds": 24,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "11B",
+          "prompt": "A first-person point-of-view shot opens in a sun-drenched alpine meadow. In the extreme foreground, a vibrant purple wildflower, covered in glistening dewdrops, is in razor-sharp focus. The background, a majestic snow-capped mountain range, is a soft, impressionistic blur. The camera executes a slow, smooth rack focus; the flower dissolves into a soft bokeh while the distant mountain peaks snap into crisp, stunning clarity, revealing individual rock fissures and snow drifts. Simultaneously, a ghosted, photorealistic cross-section of the eye subtly materializes on the right side of the frame. Within it, the crystalline lens is seen physically flattening and thinning as the focus shifts to the mountain. The focus then smoothly racks back to the foreground flower, and the ghosted lens visibly thickens and becomes more convex, its ciliary muscles tensing in perfect sync with the change in visual depth.",
+          "duration_seconds": 24,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "11C",
+          "prompt": "The scene is a first-person view from the passenger seat of a car on a highway under an overcast sky. A distant green road sign is visible but completely unreadable, its text a smeared, indecipherable blur. The entire world outside has a soft, unfocused quality. The subtle motion of a hand is seen at the edge of the frame, lifting a pair of dark-rimmed glasses. As the glasses are positioned in front of the viewer's eyes, the world seen through the lenses instantly snaps into perfect, sharp focus. The text on the road sign becomes crisp and legible. To visualize the physics, volumetric light rays from the distant sign are rendered converging into a blurry point *in front* of a transparent, ghosted retina. As the glasses' concave lenses slide into the light path, the rays visibly diverge slightly before entering the eye, pushing the focal point backward to land perfectly on the retinal surface.",
+          "duration_seconds": 25,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "11D",
+          "prompt": "A close-up, first-person perspective looks down at an open hardcover book resting on a dark wood table. Warm, soft light from a lamp outside the frame illuminates the scene, but the elegant serif text on the textured, cream-colored paper is frustratingly blurry and out of focus. The viewer's hand enters the frame, lowering a pair of metal-framed reading glasses. As the viewpoint shifts to look through the convex lenses, the page instantly becomes tack-sharp. The fine fibers of the paper and the subtle ink bleed of the letters are now perfectly clear. Simultaneously, a physical simulation of light is shown: volumetric rays reflecting from the page are seen focusing at a point *behind* a transparent, ghosted retina. As the reading glasses enter the view, their convex shape adds converging power, bending the light rays more acutely and pulling the focal point forward to resolve into a crisp image directly on the retina.",
+          "duration_seconds": 25,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "11E",
+          "prompt": "The scene begins with a rapid, cinematic montage. First, an extreme close-up of a young child's face, lit by warm sunlight, breaking into a joyful laugh, with sharp focus on the crinkling skin around their eyes. This dissolves into a macro shot of a vibrant red ladybug crawling on a dew-covered green leaf, its glossy carapace reflecting the sky. The scene then transitions to a breathtaking time-lapse of the Milky Way galaxy, a river of stars arching over a dark desert landscape. This starry sky is then revealed to be a reflection within the pupil of a human eye. The camera begins a very slow, deliberate zoom out from this extreme close-up. As it pulls back, we see the healthy, clear eye in its entirety, the wet surface of the cornea catching a glint of starlight. The final shot frames the person's face in profile, looking up in awe at the vast, star-filled night sky.",
+          "duration_seconds": 25,
+          "style": "realistic"
+        }
+      ],
+      "renderer_override_reason": "Recap sections use WAN for storyboard visualization",
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "11A",
+            "segment_id": 1,
+            "visual_beat_type": "video_scene",
+            "description": "Cinematic, photorealistic 3D animation of light traveling through the parts of the eye. Each part (cornea, lens, retina) is highlighted in sequence as the light passes through, ending with a pulse traveling down the optic nerve."
+          },
+          {
+            "beat_id": "11B",
+            "segment_id": 2,
+            "visual_beat_type": "video_scene",
+            "description": "A first-person view shifts focus from a blurry foreground object (a flower) to a sharp background (a mountain), then back. An overlay shows the lens thinning and thickening in sync with the focus shift."
+          },
+          {
+            "beat_id": "11C",
+            "segment_id": 3,
+            "visual_beat_type": "video_scene",
+            "description": "A first-person view of a blurry, distant road sign. An animated overlay of a concave lens slides into view, and the sign snaps into sharp focus. A simplified ray diagram animates over the scene to show the correction."
+          },
+          {
+            "beat_id": "11D",
+            "segment_id": 4,
+            "visual_beat_type": "video_scene",
+            "description": "A first-person view of a blurry book page. An animated overlay of a convex lens (like reading glasses) moves into place, and the text becomes crisp and clear. A simplified ray diagram animates over the scene."
+          },
+          {
+            "beat_id": "11E",
+            "segment_id": 5,
+            "visual_beat_type": "video_scene",
+            "description": "A montage of beautiful, high-definition clips: a smiling face, a detailed insect on a leaf, a starry night sky. The video ends with a slow zoom out from a close-up of a healthy, clear eye reflecting the world."
+          }
+        ],
+        "compiled_wan_prompt": "[Beat 11A]: The scene opens with an extreme macro camera move, pushing forward into a photorealistic human eye. Volumetric beams of bright, clean light enter from the left, illuminating the transparent, wet surface of the cornea. As the camera travels through this first layer, the intricate, fibrous structure of a blue iris is revealed, its muscles subtly contracting to narrow the pupil. The light rays bend and converge, passing through the pupil into the crystalline lens, which is rendered as a layered, organic glass with visible internal striations and subtle subsurface scattering. The camera follows the focused beam of light through the clear, gelatinous vitreous humor, finally projecting a tiny, inverted image onto the delicate, blood-vessel-laced surface of the retina. Upon impact, a faint, shimmering pulse of blue bio-electrical energy ignites across the retina and funnels into the optic nerve, traveling away from the camera into darkness.\n\n[Beat 11B]: A first-person point-of-view shot opens in a sun-drenched alpine meadow. In the extreme foreground, a vibrant purple wildflower, covered in glistening dewdrops, is in razor-sharp focus. The background, a majestic snow-capped mountain range, is a soft, impressionistic blur. The camera executes a slow, smooth rack focus; the flower dissolves into a soft bokeh while the distant mountain peaks snap into crisp, stunning clarity, revealing individual rock fissures and snow drifts. Simultaneously, a ghosted, photorealistic cross-section of the eye subtly materializes on the right side of the frame. Within it, the crystalline lens is seen physically flattening and thinning as the focus shifts to the mountain. The focus then smoothly racks back to the foreground flower, and the ghosted lens visibly thickens and becomes more convex, its ciliary muscles tensing in perfect sync with the change in visual depth.\n\n[Beat 11C]: The scene is a first-person view from the passenger seat of a car on a highway under an overcast sky. A distant green road sign is visible but completely unreadable, its text a smeared, indecipherable blur. The entire world outside has a soft, unfocused quality. The subtle motion of a hand is seen at the edge of the frame, lifting a pair of dark-rimmed glasses. As the glasses are positioned in front of the viewer's eyes, the world seen through the lenses instantly snaps into perfect, sharp focus. The text on the road sign becomes crisp and legible. To visualize the physics, volumetric light rays from the distant sign are rendered converging into a blurry point *in front* of a transparent, ghosted retina. As the glasses' concave lenses slide into the light path, the rays visibly diverge slightly before entering the eye, pushing the focal point backward to land perfectly on the retinal surface.\n\n[Beat 11D]: A close-up, first-person perspective looks down at an open hardcover book resting on a dark wood table. Warm, soft light from a lamp outside the frame illuminates the scene, but the elegant serif text on the textured, cream-colored paper is frustratingly blurry and out of focus. The viewer's hand enters the frame, lowering a pair of metal-framed reading glasses. As the viewpoint shifts to look through the convex lenses, the page instantly becomes tack-sharp. The fine fibers of the paper and the subtle ink bleed of the letters are now perfectly clear. Simultaneously, a physical simulation of light is shown: volumetric rays reflecting from the page are seen focusing at a point *behind* a transparent, ghosted retina. As the reading glasses enter the view, their convex shape adds converging power, bending the light rays more acutely and pulling the focal point forward to resolve into a crisp image directly on the retina.\n\n[Beat 11E]: The scene begins with a rapid, cinematic montage. First, an extreme close-up of a young child's face, lit by warm sunlight, breaking into a joyful laugh, with sharp focus on the crinkling skin around their eyes. This dissolves into a macro shot of a vibrant red ladybug crawling on a dew-covered green leaf, its glossy carapace reflecting the sky. The scene then transitions to a breathtaking time-lapse of the Milky Way galaxy, a river of stars arching over a dark desert landscape. This starry sky is then revealed to be a reflection within the pupil of a human eye. The camera begins a very slow, deliberate zoom out from this extreme close-up. As it pulls back, we see the healthy, clear eye in its entirety, the wet surface of the cornea catching a glint of starlight. The final shot frames the person's face in profile, looking up in awe at the vast, star-filled night sky.",
+        "video_prompts_list": [
+          {
+            "beat_id": "11A",
+            "prompt": "The scene opens with an extreme macro camera move, pushing forward into a photorealistic human eye. Volumetric beams of bright, clean light enter from the left, illuminating the transparent, wet surface of the cornea. As the camera travels through this first layer, the intricate, fibrous structure of a blue iris is revealed, its muscles subtly contracting to narrow the pupil. The light rays bend and converge, passing through the pupil into the crystalline lens, which is rendered as a layered, organic glass with visible internal striations and subtle subsurface scattering. The camera follows the focused beam of light through the clear, gelatinous vitreous humor, finally projecting a tiny, inverted image onto the delicate, blood-vessel-laced surface of the retina. Upon impact, a faint, shimmering pulse of blue bio-electrical energy ignites across the retina and funnels into the optic nerve, traveling away from the camera into darkness.",
+            "duration_seconds": 24,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "11B",
+            "prompt": "A first-person point-of-view shot opens in a sun-drenched alpine meadow. In the extreme foreground, a vibrant purple wildflower, covered in glistening dewdrops, is in razor-sharp focus. The background, a majestic snow-capped mountain range, is a soft, impressionistic blur. The camera executes a slow, smooth rack focus; the flower dissolves into a soft bokeh while the distant mountain peaks snap into crisp, stunning clarity, revealing individual rock fissures and snow drifts. Simultaneously, a ghosted, photorealistic cross-section of the eye subtly materializes on the right side of the frame. Within it, the crystalline lens is seen physically flattening and thinning as the focus shifts to the mountain. The focus then smoothly racks back to the foreground flower, and the ghosted lens visibly thickens and becomes more convex, its ciliary muscles tensing in perfect sync with the change in visual depth.",
+            "duration_seconds": 24,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "11C",
+            "prompt": "The scene is a first-person view from the passenger seat of a car on a highway under an overcast sky. A distant green road sign is visible but completely unreadable, its text a smeared, indecipherable blur. The entire world outside has a soft, unfocused quality. The subtle motion of a hand is seen at the edge of the frame, lifting a pair of dark-rimmed glasses. As the glasses are positioned in front of the viewer's eyes, the world seen through the lenses instantly snaps into perfect, sharp focus. The text on the road sign becomes crisp and legible. To visualize the physics, volumetric light rays from the distant sign are rendered converging into a blurry point *in front* of a transparent, ghosted retina. As the glasses' concave lenses slide into the light path, the rays visibly diverge slightly before entering the eye, pushing the focal point backward to land perfectly on the retinal surface.",
+            "duration_seconds": 25,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "11D",
+            "prompt": "A close-up, first-person perspective looks down at an open hardcover book resting on a dark wood table. Warm, soft light from a lamp outside the frame illuminates the scene, but the elegant serif text on the textured, cream-colored paper is frustratingly blurry and out of focus. The viewer's hand enters the frame, lowering a pair of metal-framed reading glasses. As the viewpoint shifts to look through the convex lenses, the page instantly becomes tack-sharp. The fine fibers of the paper and the subtle ink bleed of the letters are now perfectly clear. Simultaneously, a physical simulation of light is shown: volumetric rays reflecting from the page are seen focusing at a point *behind* a transparent, ghosted retina. As the reading glasses enter the view, their convex shape adds converging power, bending the light rays more acutely and pulling the focal point forward to resolve into a crisp image directly on the retina.",
+            "duration_seconds": 25,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "11E",
+            "prompt": "The scene begins with a rapid, cinematic montage. First, an extreme close-up of a young child's face, lit by warm sunlight, breaking into a joyful laugh, with sharp focus on the crinkling skin around their eyes. This dissolves into a macro shot of a vibrant red ladybug crawling on a dew-covered green leaf, its glossy carapace reflecting the sky. The scene then transitions to a breathtaking time-lapse of the Milky Way galaxy, a river of stars arching over a dark desert landscape. This starry sky is then revealed to be a reflection within the pupil of a human eye. The camera begins a very slow, deliberate zoom out from this extreme close-up. As it pulls back, we see the healthy, clear eye in its entirety, the wet surface of the cornea catching a glint of starlight. The final shot frames the person's face in profile, looking up in awe at the vast, star-filled night sky.",
+            "duration_seconds": 25,
+            "style": "realistic"
+          }
+        ]
+      }
+    }
+  ],
+  "pipeline_version": "1.2",
+  "job_id": "573d7331",
+  "use_remotion": true,
+  "source_file": "Sample_subjects_v2.md",
+  "skip_avatar": false
+}
