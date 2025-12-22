@@ -1093,14 +1093,187 @@
       "notes": "ISS-067 added pre-compiled video_prompts support but used wrong key name during wiring",
       "resolved": "2025-12-22",
       "resolution_note": "Fixed key mismatch in renderer_executor.py line 108: changed video_prompts_list to video_prompts"
+    },
+    {
+      "id": "ISS-074",
+      "title": "Duration/timing sync - duration_seconds not validated against actual TTS audio length",
+      "status": "open",
+      "priority": "critical",
+      "created": "2025-12-22",
+      "category": "validation",
+      "impact": "Audio/visual drift during playback. LLM-generated duration_seconds values don't match actual TTS audio durations.",
+      "root_cause": {
+        "summary": "No post-TTS timing reconciliation pass",
+        "details": [
+          "Director LLM generates duration_seconds per narration segment (often constant 6-8 seconds)",
+          "TTS (Narakeet) generates audio with actual word-based duration",
+          "No pipeline step reconciles duration_seconds with actual audio length",
+          "Player schedules segment transitions using LLM durations, not actual audio",
+          "Result: display_directives fire at wrong times, causing audio/visual desync"
+        ]
+      },
+      "affected_files": [
+        "core/pipeline_v12.py",
+        "tts/generate_audio.py",
+        "player/player.js"
+      ],
+      "fix_required": [
+        "Add post-TTS sync pass that updates duration_seconds based on actual audio length",
+        "Regenerate timed_segments after audio generation",
+        "Ensure display_directives align with actual segment durations"
+      ]
+    },
+    {
+      "id": "ISS-075",
+      "title": "Subject-aware renderer validation not invoked in pipeline",
+      "status": "open",
+      "priority": "high",
+      "created": "2025-12-22",
+      "category": "validation",
+      "impact": "Biology content could incorrectly be routed to manim renderer instead of video/WAN. No subject gating enforced.",
+      "root_cause": {
+        "summary": "validate_renderer_subject_match() exists but is never called",
+        "details": [
+          "hard_fail_validator.py has validate_renderer_subject_match() function",
+          "This function validates biology→video, math→manim, etc.",
+          "pipeline_v12.py skips semantic validations when JSON schema passes",
+          "Subject-aware renderer enforcement is bypassed entirely"
+        ]
+      },
+      "affected_files": [
+        "core/hard_fail_validator.py",
+        "core/pipeline_v12.py"
+      ],
+      "fix_required": [
+        "Wire validate_renderer_subject_match() into pipeline_v12.py",
+        "Call after Director output, before renderer dispatch",
+        "Hard fail or auto-correct renderer for biology/chemistry content"
+      ]
+    },
+    {
+      "id": "ISS-076",
+      "title": "WAN prompt word count validation not enforced - prompts often <50 words",
+      "status": "open",
+      "priority": "critical",
+      "created": "2025-12-22",
+      "category": "validation",
+      "impact": "Video prompts too short/vague for quality WAN video generation. Job artifacts show <50 word prompts when spec requires 300+.",
+      "root_cause": {
+        "summary": "No aggregated word count validation before WAN API call",
+        "details": [
+          "v1.3 spec requires 300+ words per WAN beat prompt",
+          "Director LLM sometimes generates short/vague video_prompts",
+          "wan_prompt_validator.py exists but only logs warnings, doesn't block",
+          "No hard fail when prompts are below minimum word count",
+          "Result: Low-quality or failed video generation from kie.ai"
+        ]
+      },
+      "affected_files": [
+        "core/wan_prompt_validator.py",
+        "core/renderer_executor.py",
+        "render/wan/wan_runner.py"
+      ],
+      "fix_required": [
+        "Add hard fail validation for video prompts < MIN_WAN_PROMPT_WORDS (300)",
+        "Block WAN API calls for under-specified prompts",
+        "Add retry logic to request Director to expand video_prompts"
+      ]
+    },
+    {
+      "id": "ISS-077",
+      "title": "Two-channel separation failing - visual_content not extracted, narration.text displayed instead",
+      "status": "open",
+      "priority": "high",
+      "created": "2025-12-22",
+      "category": "content",
+      "impact": "Player displays narration.text (meant for TTS only) on screen instead of proper visual_content (bullet_points, formulas).",
+      "root_cause": {
+        "summary": "Director not extracting displayable content into visual_content field",
+        "details": [
+          "v1.3 spec: narration.segments[].text = TTS audio ONLY (never displayed)",
+          "v1.3 spec: visual_content = screen display (bullet_points, formula, labels)",
+          "Director sometimes omits visual_content or leaves it empty",
+          "Player falls back to showing narration text when visual_content missing",
+          "Violates two-channel separation principle"
+        ]
+      },
+      "affected_files": [
+        "core/prompts/director_system_v1.3.txt",
+        "core/hard_fail_validator.py",
+        "player/player.js"
+      ],
+      "fix_required": [
+        "Add hard fail validation: content sections MUST have visual_content with bullet_points",
+        "Update Director prompt to emphasize visual_content extraction from source",
+        "Player should show error placeholder (not narration text) when visual_content missing for v1.3+"
+      ]
+    },
+    {
+      "id": "ISS-078",
+      "title": "Dry run does not validate rendered asset paths - placeholders accepted as success",
+      "status": "open",
+      "priority": "critical",
+      "created": "2025-12-22",
+      "category": "validation",
+      "impact": "Dry run completes 'successfully' but presentation.json references non-existent video files. Player fails to load videos.",
+      "root_cause": {
+        "summary": "Dry run skips video API but also skips asset verification",
+        "details": [
+          "Dry run mode skips actual manim/WAN video generation (correct)",
+          "But dry run should still verify: 1) prompts are complete, 2) output paths are set, 3) all required assets would be generated",
+          "Currently dry run writes 'dry_run.txt' placeholders",
+          "No validation that all referenced video_path values point to real/expected files",
+          "Player tries to load videos from presentation.json paths that don't exist"
+        ]
+      },
+      "affected_files": [
+        "core/renderer_executor.py",
+        "render/wan/wan_runner.py",
+        "render/manim/manim_runner.py",
+        "core/pipeline_v12.py"
+      ],
+      "fix_required": [
+        "Dry run should validate all render specs are complete (prompts, scene specs)",
+        "Dry run should write expected video paths to manifest for verification",
+        "Add asset manifest validation: all referenced paths exist or are expected",
+        "Player should handle missing videos gracefully with clear error message"
+      ]
+    },
+    {
+      "id": "ISS-079",
+      "title": "Player has no validation - silently fails when display_directives or visual_content missing",
+      "status": "open",
+      "priority": "high",
+      "created": "2025-12-22",
+      "category": "player",
+      "impact": "Player silently ignores missing data. Visuals don't show, segments don't highlight, no error shown to user.",
+      "root_cause": {
+        "summary": "Player is purely reactive with no defensive validation",
+        "details": [
+          "LayerController.applyDirectives() silently returns if display_directives missing",
+          "loadSlide() doesn't validate required fields exist before proceeding",
+          "checkExistingPresentation() has try-catch but logs generic message",
+          "No visual feedback to user when content fails to render",
+          "User sees blank sections with no explanation"
+        ]
+      },
+      "affected_files": [
+        "player/player.js"
+      ],
+      "fix_required": [
+        "Add validateSlideData() function to check required fields",
+        "Show error overlay when critical fields missing (display_directives, visual_content for v1.3+)",
+        "Log detailed validation errors to console for debugging",
+        "Add spec_version guard: v1.3+ requires stricter validation"
+      ]
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-21T17:10:00.000000",
-    "version": "13.4",
+    "last_updated": "2025-12-22T04:00:00.000000",
+    "version": "14.0",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
     "resolved_count": 62,
-    "open_count": 0
+    "open_count": 8
   }
 }
