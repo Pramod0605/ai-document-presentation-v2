@@ -245,12 +245,24 @@ def validate_presentation_v14(presentation: Dict) -> Dict:
         scene_sections = [s for s in sections if s.get("section_type") == scene_type]
         for scene in scene_sections:
             video_prompt = scene.get("video_prompt", "")
-            if not video_prompt:
-                errors.append(f"{scene_type} missing video_prompt")
-            else:
+            visual_beats = scene.get("visual_beats", [])
+            has_visual_beats = (
+                isinstance(visual_beats, list) and 
+                len(visual_beats) > 0 and 
+                visual_beats[0].get("description")
+            )
+            
+            if not video_prompt and not has_visual_beats:
+                errors.append(f"{scene_type} missing video_prompt or visual_beats")
+            elif video_prompt:
                 prompt_words = len(video_prompt.split())
                 if prompt_words < 100:
                     errors.append(f"{scene_type} video_prompt too short: {prompt_words} words (min 100)")
+            elif has_visual_beats:
+                beat_desc = visual_beats[0].get("description", "")
+                prompt_words = len(beat_desc.split())
+                if prompt_words < 50:
+                    errors.append(f"{scene_type} visual_beats description too short: {prompt_words} words (min 50)")
             
             layout = scene.get("layout", {})
             if layout.get("avatar_position") != "hidden":

@@ -242,8 +242,16 @@ def _validate_section_structure(section: Dict, index: int) -> List[str]:
         if section.get("renderer") != "video":
             errors.append(f"{prefix}: {section_type} must use 'video' renderer (WAN)")
         
-        if "video_prompt" not in section:
-            errors.append(f"{prefix}: {section_type} missing 'video_prompt' field")
+        has_video_prompt = "video_prompt" in section and section.get("video_prompt")
+        visual_beats = section.get("visual_beats", [])
+        has_visual_beats = (
+            isinstance(visual_beats, list) and 
+            len(visual_beats) > 0 and 
+            visual_beats[0].get("description")
+        )
+        
+        if not has_video_prompt and not has_visual_beats:
+            errors.append(f"{prefix}: {section_type} missing 'video_prompt' or 'visual_beats' with description")
         
         layout = section.get("layout", {})
         if layout.get("avatar_position") != "hidden":
@@ -289,9 +297,17 @@ def _validate_semantics(data: Dict) -> List[str]:
                 video_prompt = video_prompt.get("text", "") or video_prompt.get("prompt", "") or str(video_prompt)
             if not isinstance(video_prompt, str):
                 video_prompt = str(video_prompt) if video_prompt else ""
+            
+            if not video_prompt:
+                visual_beats = section.get("visual_beats", [])
+                if visual_beats and isinstance(visual_beats, list) and len(visual_beats) > 0:
+                    first_beat = visual_beats[0]
+                    video_prompt = first_beat.get("description", "") if isinstance(first_beat, dict) else ""
+            
             prompt_words = len(video_prompt.split())
-            if prompt_words < MIN_VIDEO_PROMPT_WORDS:
-                errors.append(f"{prefix}: {section_type} video_prompt too short ({prompt_words} words, minimum {MIN_VIDEO_PROMPT_WORDS})")
+            min_words = 50 if section.get("visual_beats") else MIN_VIDEO_PROMPT_WORDS
+            if prompt_words < min_words:
+                errors.append(f"{prefix}: {section_type} video_prompt/visual_beats too short ({prompt_words} words, minimum {min_words})")
     
     return errors
 
