@@ -121,6 +121,9 @@ def _reconcile_video_paths(presentation: dict, rendered_videos: list):
             # Convert full paths to relative paths
             section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in all_paths]
             section["has_content_video"] = True
+            # Also set video_path to first recap video (player expects this)
+            if all_paths:
+                section["video_path"] = f"videos/{Path(all_paths[0]).name}"
             recap_count += 1
             print(f"[RECONCILE] Set recap_video_paths for section {section_id}: {len(all_paths)} videos")
     
@@ -739,25 +742,3 @@ def resume_job_from_phase(
     return job_status
 
 
-def _reconcile_video_paths_v2(presentation: dict, rendered_videos: list):
-    """Helper to update presentation with rendered video paths.
-    
-    ISS-092 FIX: Also sets recap_video_paths for recap sections.
-    """
-    video_map = {v.get("section_id"): v for v in rendered_videos}
-    
-    for section in presentation.get("sections", []):
-        section_id = section.get("section_id") or section.get("id")
-        section_type = section.get("section_type", "")
-        
-        if section_id in video_map:
-            video_info = video_map[section_id]
-            section["video_path"] = video_info.get("video_path")
-            section["video_status"] = video_info.get("status")
-            
-            # ISS-092 FIX: Set recap_video_paths for recap sections
-            if section_type == "recap" and video_info.get("recap_video_paths"):
-                all_paths = video_info.get("recap_video_paths")
-                section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in all_paths]
-                section["has_content_video"] = True
-                print(f"[RECONCILE v2] Set recap_video_paths for section {section_id}: {len(all_paths)} videos")
