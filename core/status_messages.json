@@ -1,0 +1,169 @@
+{
+  "version": "1.0",
+  "description": "Status messages for job progress display. Fun messages for progress, clear messages for failures.",
+  
+  "phases": {
+    "queued": {
+      "display_name": "Waiting in Queue",
+      "messages": [
+        "Take a deep breath in... and breathe out...",
+        "Warming up the creative engines...",
+        "Gathering cosmic energy for your video...",
+        "Preparing the digital canvas...",
+        "The learning journey is about to begin...",
+        "Aligning the educational stars...",
+        "Brewing a fresh pot of knowledge...",
+        "Stretching our neural networks..."
+      ],
+      "failure_message": "JOB FAILED: An error occurred before processing could begin. Please check the input and try again."
+    },
+    
+    "chunker": {
+      "display_name": "Parsing Content",
+      "messages": [
+        "Reading through your document with care...",
+        "Breaking down the wisdom into bite-sized pieces...",
+        "Organizing thoughts like a librarian...",
+        "Finding the story in your content...",
+        "Mapping the learning journey ahead..."
+      ],
+      "failure_message": "PARSE FAILED: Could not process the input document. Please check the file format and content."
+    },
+    
+    "director": {
+      "display_name": "Planning the Lesson",
+      "messages": [
+        "The AI director is storyboarding your lesson...",
+        "Crafting the perfect educational narrative...",
+        "Deciding how best to teach this concept...",
+        "Choreographing visuals and narration...",
+        "Building a bridge from confusion to clarity..."
+      ],
+      "failure_message": "DIRECTOR FAILED: Could not structure the educational content. The AI was unable to create a valid lesson plan."
+    },
+    
+    "director_retry": {
+      "display_name": "Refining the Lesson Plan",
+      "messages": [
+        "Polishing the lesson structure...",
+        "Fine-tuning the educational flow...",
+        "Making sure every detail is perfect...",
+        "Double-checking the teaching approach..."
+      ],
+      "failure_message": "DIRECTOR RETRY FAILED: Unable to fix lesson structure after multiple attempts."
+    },
+    
+    "validation": {
+      "display_name": "Quality Check",
+      "messages": [
+        "Running quality checks on the lesson...",
+        "Making sure everything meets our standards...",
+        "Verifying the educational integrity...",
+        "Checking all the boxes..."
+      ],
+      "failure_message": "VALIDATION FAILED: The lesson plan did not pass quality checks."
+    },
+    
+    "remotion_renderer": {
+      "display_name": "Creating Motion Graphics",
+      "messages": [
+        "Designing beautiful intro animations...",
+        "Crafting visual elements with care...",
+        "Adding that professional polish...",
+        "Making your content shine..."
+      ],
+      "failure_message": "REMOTION RENDER FAILED: Could not generate motion graphics for this section."
+    },
+    
+    "manim_renderer": {
+      "display_name": "Animating Mathematics",
+      "messages": [
+        "Bringing equations to life...",
+        "Drawing mathematical beauty...",
+        "Animating the dance of numbers...",
+        "Creating visual proofs...",
+        "Making abstract concepts visible..."
+      ],
+      "failure_message": "MANIM RENDER FAILED: Could not generate mathematical animation for this section."
+    },
+    
+    "video_renderer": {
+      "display_name": "Generating Conceptual Videos",
+      "messages": [
+        "Painting visual stories with AI...",
+        "Generating cinematic explanations...",
+        "Creating videos that teach...",
+        "Visualizing complex concepts...",
+        "Turning ideas into moving pictures..."
+      ],
+      "failure_message": "VIDEO RENDER FAILED: Could not generate video content for this section."
+    },
+    
+    "wan_video": {
+      "display_name": "Generating Educational Video",
+      "messages": [
+        "The AI artist is at work...",
+        "Creating stunning visual explanations...",
+        "Rendering knowledge into video form...",
+        "Patience... beautiful things take time...",
+        "Each frame is being crafted with care..."
+      ],
+      "failure_message": "WAN VIDEO FAILED: Video generation service encountered an error."
+    },
+    
+    "audio": {
+      "display_name": "Recording Narration",
+      "messages": [
+        "The narrator is warming up...",
+        "Converting text to speech...",
+        "Adding the voice of knowledge...",
+        "Recording the explanation..."
+      ],
+      "failure_message": "AUDIO FAILED: Could not generate narration audio."
+    },
+    
+    "assembly": {
+      "display_name": "Assembling Final Video",
+      "messages": [
+        "Putting all the pieces together...",
+        "Mixing audio and visuals...",
+        "Adding the finishing touches...",
+        "Almost there..."
+      ],
+      "failure_message": "ASSEMBLY FAILED: Could not combine video and audio elements."
+    },
+    
+    "completed": {
+      "display_name": "Complete!",
+      "messages": [
+        "Your educational masterpiece is ready!",
+        "Knowledge has been transformed into video!",
+        "The lesson is ready to inspire!",
+        "Success! Time to learn and grow!"
+      ]
+    },
+    
+    "failed": {
+      "display_name": "Error Occurred",
+      "messages": [
+        "Something went wrong during processing."
+      ]
+    }
+  },
+  
+  "general_waiting": [
+    "Good things come to those who wait...",
+    "Building something amazing takes time...",
+    "Your patience will be rewarded...",
+    "The best lessons are worth waiting for...",
+    "Quality education can't be rushed..."
+  ],
+  
+  "progress_milestones": {
+    "10": "Just getting started...",
+    "25": "Making good progress...",
+    "50": "Halfway there!",
+    "75": "Almost done!",
+    "90": "Final touches..."
+  }
+}

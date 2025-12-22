@@ -208,18 +208,26 @@ def get_job_status(job_id):
     if not job:
         return jsonify({"error": "Job not found"}), 404
     
-    return jsonify({
+    response = {
         "job_id": job["id"],
         "status": job["status"],
         "progress": job["progress"],
         "current_step": job["current_step_name"],
+        "current_phase": job.get("current_phase_key"),
+        "status_message": job.get("status_message"),
         "steps_completed": job["steps_completed"],
         "total_steps": job["total_steps"],
         "created_at": job["created_at"],
         "started_at": job["started_at"],
         "completed_at": job["completed_at"],
         "error": job["error"]
-    })
+    }
+    
+    if job["status"] == "failed":
+        response["failure_message"] = job.get("failure_message")
+        response["failed_phase"] = job.get("failed_phase")
+    
+    return jsonify(response)
 
 
 @app.route("/jobs", methods=["GET"])

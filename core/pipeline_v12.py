@@ -159,7 +159,7 @@ def process_pdf_to_videos_v12(
     
     try:
         if job_id:
-            job_manager.set_step(job_id, "Converting PDF to text...", 0)
+            job_manager.set_step(job_id, "Converting PDF to text...", 0, phase_key="chunker")
         
         job_status["steps"].append({"step": "pdf_to_markdown", "status": "started"})
         markdown_content = pdf_to_markdown(pdf_path)
@@ -179,7 +179,7 @@ def process_pdf_to_videos_v12(
         
         if job_id:
             job_manager.complete_step(job_id, 0)
-            job_manager.set_step(job_id, "LLM generating presentation (3-pass v1.2)...", 1)
+            job_manager.set_step(job_id, "LLM generating presentation (3-pass v1.2)...", 1, phase_key="director")
         
         job_status["steps"].append({"step": "generate_presentation_v12", "status": "started"})
         
@@ -288,7 +288,7 @@ def process_pdf_to_videos_v12(
         
         if job_id:
             job_manager.complete_step(job_id, 1)
-            job_manager.set_step(job_id, "Rendering videos with AI...", 2)
+            job_manager.set_step(job_id, "Rendering videos with AI...", 2, phase_key="video_renderer")
         
         log_event("render_start", {"dry_run": dry_run, "skip_wan": skip_wan})
         
@@ -321,7 +321,7 @@ def process_pdf_to_videos_v12(
             audio_files = []
         else:
             if job_id:
-                job_manager.set_step(job_id, "Generating audio narration...", 3)
+                job_manager.set_step(job_id, "Generating audio narration...", 3, phase_key="audio")
             job_status["steps"].append({"step": "generate_audio", "status": "started"})
             audio_files = generate_all_audio(presentation, str(audio_dir))
             job_status["steps"][-1]["status"] = "completed"
@@ -413,7 +413,7 @@ def process_markdown_to_videos_v12(
             job_status["steps"].append({"step": "extract_images", "status": "failed", "error": str(e)})
         
         if job_id:
-            job_manager.set_step(job_id, "LLM generating presentation (3-pass v1.2)...", 0)
+            job_manager.set_step(job_id, "LLM generating presentation (3-pass v1.2)...", 0, phase_key="director")
         
         job_status["steps"].append({"step": "generate_presentation_v12", "status": "started"})
         
@@ -453,7 +453,7 @@ def process_markdown_to_videos_v12(
         
         if job_id:
             job_manager.complete_step(job_id, 0)
-            job_manager.set_step(job_id, "Rendering videos with AI...", 1)
+            job_manager.set_step(job_id, "Rendering videos with AI...", 1, phase_key="video_renderer")
         
         log_event("render_start", {"dry_run": dry_run, "skip_wan": skip_wan})
         
@@ -486,7 +486,7 @@ def process_markdown_to_videos_v12(
             audio_files = []
         else:
             if job_id:
-                job_manager.set_step(job_id, "Generating audio narration...", 2)
+                job_manager.set_step(job_id, "Generating audio narration...", 2, phase_key="audio")
             job_status["steps"].append({"step": "generate_audio", "status": "started"})
             audio_files = generate_all_audio(presentation, str(audio_dir))
             job_status["steps"][-1]["status"] = "completed"

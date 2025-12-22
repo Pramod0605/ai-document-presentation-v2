@@ -1060,7 +1060,7 @@
     {
       "id": "ISS-073",
       "title": "Video sections fail with 'Visual beat has no content' despite pre-compiled video_prompts",
-      "status": "open",
+      "status": "resolved",
       "priority": "critical",
       "created": "2025-12-22",
       "category": "wiring",
@@ -1090,7 +1090,9 @@
       "related_issues": [
         "ISS-067"
       ],
-      "notes": "ISS-067 added pre-compiled video_prompts support but used wrong key name during wiring"
+      "notes": "ISS-067 added pre-compiled video_prompts support but used wrong key name during wiring",
+      "resolved": "2025-12-22",
+      "resolution_note": "Fixed key mismatch in renderer_executor.py line 108: changed video_prompts_list to video_prompts"
     }
   ],
   "metadata": {

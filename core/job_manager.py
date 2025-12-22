@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import uuid
+import random
 import threading
 from pathlib import Path
 from datetime import datetime
@@ -9,6 +10,51 @@ from typing import Dict, Optional, Callable, List
 
 JOBS_DIR = Path("player/jobs")
 JOBS_INDEX_FILE = JOBS_DIR / "jobs_index.json"
+STATUS_MESSAGES_FILE = Path(__file__).parent / "status_messages.json"
+
+_status_messages_cache = None
+
+
+def load_status_messages() -> dict:
+    """Load status messages from JSON file (cached)."""
+    global _status_messages_cache
+    if _status_messages_cache is None:
+        try:
+            with open(STATUS_MESSAGES_FILE, 'r') as f:
+                _status_messages_cache = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            _status_messages_cache = {"phases": {}}
+    return _status_messages_cache
+
+
+def get_phase_message(phase_key: str, is_failure: bool = False) -> str:
+    """Get a random message for a phase, or failure message if is_failure=True."""
+    messages = load_status_messages()
+    phases = messages.get("phases", {})
+    
+    phase_key_normalized = phase_key.lower().replace(" ", "_")
+    for key in [phase_key_normalized, phase_key]:
+        if key in phases:
+            phase = phases[key]
+            if is_failure and "failure_message" in phase:
+                return phase["failure_message"]
+            if "messages" in phase and phase["messages"]:
+                return random.choice(phase["messages"])
+    
+    return phase_key
+
+
+def get_phase_display_name(phase_key: str) -> str:
+    """Get the display name for a phase."""
+    messages = load_status_messages()
+    phases = messages.get("phases", {})
+    
+    phase_key_normalized = phase_key.lower().replace(" ", "_")
+    for key in [phase_key_normalized, phase_key]:
+        if key in phases:
+            return phases[key].get("display_name", phase_key)
+    
+    return phase_key
 
 
 def log(msg: str):
@@ -53,6 +99,8 @@ class JobManager:
     def create_job(self, job_type: str, params: dict) -> str:
         job_id = str(uuid.uuid4())[:8]
         
+        queued_message = get_phase_message("queued")
+        
         with self._lock:
             self._jobs[job_id] = {
                 "id": job_id,
@@ -60,7 +108,9 @@ class JobManager:
                 "params": params,
                 "status": "queued",
                 "current_step": None,
-                "current_step_name": "Initializing...",
+                "current_step_name": "Waiting in Queue",
+                "current_phase_key": "queued",
+                "status_message": queued_message,
                 "steps_completed": 0,
                 "total_steps": 4 if job_type == "pdf" else 3,
                 "progress": 0,
@@ -92,16 +142,25 @@ class JobManager:
         if persist:
             self._persist()
     
-    def set_step(self, job_id: str, step_name: str, step_number: int):
+    def set_step(self, job_id: str, step_name: str, step_number: int, phase_key: str = None):
         job = self.get_job(job_id)
         if job:
             total = job.get("total_steps", 4)
             progress = int((step_number / total) * 100)
+            
+            display_name = step_name
+            status_message = None
+            if phase_key:
+                display_name = get_phase_display_name(phase_key)
+                status_message = get_phase_message(phase_key)
+            
             self.update_job(job_id, {
                 "current_step": step_number,
-                "current_step_name": step_name,
+                "current_step_name": display_name,
+                "current_phase_key": phase_key or step_name.lower().replace(" ", "_"),
+                "status_message": status_message,
                 "progress": progress
-            })
+            }, persist=True)
     
     def complete_step(self, job_id: str, step_number: int):
         job = self.get_job(job_id)
@@ -111,20 +170,39 @@ class JobManager:
             self.update_job(job_id, {
                 "steps_completed": step_number + 1,
                 "progress": min(progress, 99)
-            })
+            }, persist=True)
     
     def complete_job(self, job_id: str, result: dict = None):
+        completed_message = get_phase_message("completed")
         self.update_job(job_id, {
             "status": "completed",
             "progress": 100,
+            "current_step_name": "Complete!",
+            "current_phase_key": "completed",
+            "status_message": completed_message,
             "completed_at": datetime.now().isoformat(),
             "result": result
         }, persist=True)
     
-    def fail_job(self, job_id: str, error: str):
+    def fail_job(self, job_id: str, error: str, phase_key: str = None):
+        job = self.get_job(job_id)
+        effective_phase = phase_key or (job.get("current_phase_key") if job else None)
+        
+        failure_message = None
+        if effective_phase:
+            messages = load_status_messages()
+            phases = messages.get("phases", {})
+            phase_key_normalized = effective_phase.lower().replace(" ", "_")
+            for key in [phase_key_normalized, effective_phase]:
+                if key in phases and "failure_message" in phases[key]:
+                    failure_message = phases[key]["failure_message"]
+                    break
+        
         self.update_job(job_id, {
             "status": "failed",
             "error": error,
+            "failure_message": failure_message,
+            "failed_phase": effective_phase,
             "completed_at": datetime.now().isoformat()
         }, persist=True)
     

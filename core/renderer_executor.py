@@ -105,7 +105,7 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
                     for i, p in enumerate(video_prompts)
                 ])
                 topic["explanation_plan"]["compiled_wan_prompt"] = combined_prompts
-                topic["explanation_plan"]["video_prompts_list"] = video_prompts
+                topic["explanation_plan"]["video_prompts"] = video_prompts
                 print(f"  [OK] Using v1.2 video_prompts: {len(video_prompts)} beat prompts")
                 for i, p in enumerate(video_prompts):
                     log_render_prompt(topic_id, i, "video", p.get("prompt", ""))
