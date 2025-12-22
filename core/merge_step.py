@@ -218,7 +218,7 @@ def _merge_recap_scenes_to_single_section(recap_scene_sections: Dict[str, Dict])
     merged_recap = {
         "section_type": "recap",
         "section_title": "Lesson Recap",
-        "layout": "avatar_hidden",
+        "layout": {"avatar_position": "hidden"},
         "renderer": "video",
         "renderer_reasoning": "WAN video for cinematic recap visualization",
         "narration": {

@@ -179,8 +179,7 @@ def process_markdown_to_presentation_v14(
         raise PipelineError(f"Pipeline failed: {e}", phase="unknown")
 
 
-RECAP_SCENE_TYPES = ["recap_scene_1", "recap_scene_2", "recap_scene_3", "recap_scene_4", "recap_scene_5"]
-SKIP_DIRECTIVE_SECTIONS = ["memory"] + RECAP_SCENE_TYPES
+SKIP_DIRECTIVE_SECTIONS = ["memory", "recap"]
 
 
 def validate_presentation_v14(presentation: Dict) -> Dict:
@@ -200,7 +199,7 @@ def validate_presentation_v14(presentation: Dict) -> Dict:
     sections = presentation.get("sections", [])
     section_types = [s.get("section_type") for s in sections]
     
-    required_types = ["intro", "summary", "memory"] + RECAP_SCENE_TYPES
+    required_types = ["intro", "summary", "memory", "recap"]
     for req_type in required_types:
         if req_type not in section_types:
             errors.append(f"Missing required section: {req_type}")
@@ -241,40 +240,25 @@ def validate_presentation_v14(presentation: Dict) -> Dict:
         if len(flashcards) != 5:
             errors.append(f"Memory section must have exactly 5 flashcards, got {len(flashcards)}")
     
-    for scene_type in RECAP_SCENE_TYPES:
-        scene_sections = [s for s in sections if s.get("section_type") == scene_type]
-        for scene in scene_sections:
-            video_prompt = scene.get("video_prompt", "")
-            visual_beats = scene.get("visual_beats", [])
-            has_visual_beats = (
-                isinstance(visual_beats, list) and 
-                len(visual_beats) > 0 and 
-                visual_beats[0].get("description")
-            )
-            
-            if not video_prompt and not has_visual_beats:
-                errors.append(f"{scene_type} missing video_prompt or visual_beats")
-            elif video_prompt:
-                prompt_words = len(video_prompt.split())
-                if prompt_words < 100:
-                    errors.append(f"{scene_type} video_prompt too short: {prompt_words} words (min 100)")
-            elif has_visual_beats:
-                beat_desc = visual_beats[0].get("description", "")
-                prompt_words = len(beat_desc.split())
-                if prompt_words < 50:
-                    errors.append(f"{scene_type} visual_beats description too short: {prompt_words} words (min 50)")
-            
-            layout = scene.get("layout", {})
-            if layout.get("avatar_position") != "hidden":
-                errors.append(f"{scene_type} avatar must be hidden")
-            
-            narration = scene.get("narration", {})
-            full_text = narration.get("full_text", "")
-            word_count = len(full_text.split())
-            if word_count < 40:
-                errors.append(f"{scene_type} narration too short: {word_count} words (min 40)")
-            if word_count > 120:
-                warnings.append(f"{scene_type} narration long: {word_count} words (max 120)")
+    recap_sections = [s for s in sections if s.get("section_type") == "recap"]
+    for recap in recap_sections:
+        recap_scenes = recap.get("recap_scenes", [])
+        visual_beats = recap.get("visual_beats", [])
+        
+        if len(recap_scenes) < 5 and len(visual_beats) < 5:
+            errors.append(f"Recap section must have 5 scenes, got {max(len(recap_scenes), len(visual_beats))}")
+        
+        layout = recap.get("layout", {})
+        if layout.get("avatar_position") != "hidden":
+            errors.append("Recap avatar must be hidden")
+        
+        narration = recap.get("narration", {})
+        full_text = narration.get("full_text", "")
+        word_count = len(full_text.split())
+        if word_count < 150:
+            warnings.append(f"Recap narration short: {word_count} words (expected 200-600)")
+        if word_count > 700:
+            warnings.append(f"Recap narration long: {word_count} words (expected 200-600)")
     
     content_sections = [s for s in sections if s.get("section_type") == "content"]
     for content in content_sections:
