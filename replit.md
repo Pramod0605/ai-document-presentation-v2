@@ -107,6 +107,24 @@ The Merge Step converts 5 separate `recap_scene_N` sections (easier for LLM to g
 - Player layer: Receives exactly what it expects, NO CHANGES NEEDED
 
 ## Recent Changes (2025-12-22)
+- **ISS-102 FIX**: Recap Director validator mismatch with visual_beats
+  - Updated validator to accept either `video_prompt` or `visual_beats` with description
+  - Minimum 50 words for visual_beats (vs 100 for video_prompt)
+  - Aligns validator with ISS-095 prompt changes
+- **ISS-103 FIX**: Validation checking for recap_scene_N after merge
+  - Validation runs AFTER merge step converts recap_scene_1-5 → single 'recap' section
+  - Updated required_types to check for 'recap' instead of individual scenes
+  - Fixed SKIP_DIRECTIVE_SECTIONS to include 'recap'
+- **ISS-104 FIX**: Merge step layout format mismatch
+  - Changed `layout: "avatar_hidden"` to `layout: {"avatar_position": "hidden"}`
+  - Validation expects dict with avatar_position key
+- **ISS-105 FIX**: Missing import in api/app.py
+  - Added `validate_presentation_v14` to imports from pipeline_v14
+- **V1.4 PIPELINE VERIFIED**: Full pipeline now completes successfully
+  - Test output: 6 sections (intro, summary, content, quiz, memory, recap)
+  - Memory: 5 flashcards ✓
+  - Recap: 5 recap_scenes, 5 visual_beats ✓
+  - Quiz uses Remotion renderer ✓
 - **ISS-098 FIX**: Content Director creating only 2 sections from 5 topics (60% content loss)
   - V1.4 prompt was missing critical V1.3 instructions: "content (multiple)", "one per topic"
   - Added explicit TOPIC-TO-SECTION MAPPING rule: one content section per Chunker topic
