@@ -1,0 +1,355 @@
+"""
+Pipeline v1.4 - Split Director Architecture
+
+Orchestrates the complete V1.4 pipeline:
+- Pass 0: Smart Chunker (topic extraction)
+- Pass 1a: Content Director (intro/summary/content/example/quiz)
+- Pass 1b: Recap Director (memory/recap with video prompts)
+- Merge Step: Combine outputs into single presentation.json
+- Pass 1.5: TTS Duration (generate audio, measure actual duration)
+- Validation: 3-tier validation (structural, semantic, quality)
+- Pass 2: Renderers (Remotion/Manim/WAN)
+
+This resolves ISS-080: Director LLM Fails v1.3 Structural Validation.
+"""
+
+import os
+import json
+import logging
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple, Any
+from datetime import datetime
+
+from core.smart_chunker import call_smart_chunker, ChunkerError
+from core.content_director import call_content_director, ContentDirectorError
+from core.recap_director import call_recap_director, RecapDirectorError
+from core.merge_step import merge_director_outputs, get_section_stats
+from core.tts_duration import update_durations_from_tts, cleanup_temp_audio
+from core.analytics import AnalyticsTracker, create_tracker
+
+logger = logging.getLogger(__name__)
+
+PIPELINE_VERSION = "1.4"
+
+
+class PipelineError(Exception):
+    """Error raised when pipeline fails."""
+    def __init__(self, message: str, phase: str, details: Optional[Dict] = None):
+        super().__init__(message)
+        self.phase = phase
+        self.details = details or {}
+
+
+def process_markdown_to_presentation_v14(
+    markdown_content: str,
+    subject: str,
+    grade: str,
+    job_id: str,
+    update_status_callback = None,
+    generate_tts: bool = True,
+    output_dir: Optional[Path] = None
+) -> Tuple[Dict, AnalyticsTracker]:
+    """
+    V1.4 Pipeline: Process markdown to presentation.json.
+    
+    This is the main entry point for V1.4 pipeline. It orchestrates:
+    1. Smart Chunker (topic extraction)
+    2. Content Director + Recap Director (parallel or sequential)
+    3. Merge Step
+    4. TTS Duration measurement
+    5. Validation
+    
+    Args:
+        markdown_content: Raw markdown content from document
+        subject: Subject area (e.g., "Biology", "Physics")
+        grade: Grade level (e.g., "Grade 10")
+        job_id: Unique job identifier
+        update_status_callback: Optional callback for status updates
+        generate_tts: Whether to generate TTS audio for duration measurement
+        output_dir: Output directory for assets
+        
+    Returns:
+        Tuple of (presentation dict, analytics tracker)
+        
+    Raises:
+        PipelineError: If any pipeline phase fails
+    """
+    logger.info(f"[Pipeline v1.4] Starting for job {job_id}")
+    
+    tracker = create_tracker(job_id)
+    tracker.start_pipeline()
+    
+    def update_status(phase: str, message: str):
+        if update_status_callback:
+            update_status_callback(job_id, phase, message)
+        logger.info(f"[{phase}] {message}")
+    
+    try:
+        update_status("chunker", "Analyzing content structure...")
+        chunker_output = call_smart_chunker(
+            markdown_content=markdown_content,
+            subject=subject,
+            tracker=tracker,
+            max_retries=2
+        )
+        
+        topics = chunker_output.get("topics", [])
+        logger.info(f"[Pipeline v1.4] Extracted {len(topics)} topics")
+        
+        update_status("content_director", "Creating lesson structure...")
+        content_output = call_content_director(
+            topics=topics,
+            subject=subject,
+            grade=grade,
+            tracker=tracker,
+            max_structural_retries=4,
+            max_semantic_retries=2
+        )
+        
+        update_status("recap_director", "Creating memory aids and recap...")
+        recap_output = call_recap_director(
+            full_markdown=markdown_content,
+            subject=subject,
+            grade=grade,
+            tracker=tracker,
+            max_structural_retries=2,
+            max_semantic_retries=1
+        )
+        
+        update_status("merge", "Combining lesson components...")
+        presentation = merge_director_outputs(
+            content_output=content_output,
+            recap_output=recap_output,
+            subject=subject,
+            grade=grade
+        )
+        
+        stats = get_section_stats(presentation)
+        logger.info(f"[Pipeline v1.4] Merged: {stats}")
+        
+        if generate_tts:
+            update_status("tts_duration", "Measuring audio durations...")
+            presentation = update_durations_from_tts(
+                presentation=presentation,
+                output_dir=output_dir,
+                generate_audio=True
+            )
+        
+        update_status("validation", "Validating lesson structure...")
+        validation_result = _run_validation(presentation)
+        
+        if validation_result["has_errors"]:
+            error_summary = "; ".join(validation_result["errors"][:5])
+            raise PipelineError(
+                f"Validation failed: {error_summary}",
+                phase="validation",
+                details=validation_result
+            )
+        
+        if validation_result["warnings"]:
+            logger.warning(f"[Pipeline v1.4] Validation warnings: {validation_result['warnings']}")
+        
+        logger.info(f"[Pipeline v1.4] Trace: chunker={len(topics)} topics, "
+                    f"content={len(content_output.get('sections', []))} sections, "
+                    f"recap={len(recap_output.get('sections', []))} sections")
+        
+        tracker.end_pipeline(status="completed")
+        logger.info(f"[Pipeline v1.4] Completed successfully for job {job_id}")
+        
+        return presentation, tracker
+        
+    except ChunkerError as e:
+        tracker.end_pipeline(status="failed", error=str(e))
+        raise PipelineError(f"Chunker failed: {e}", phase="chunker")
+        
+    except ContentDirectorError as e:
+        tracker.end_pipeline(status="failed", error=str(e))
+        raise PipelineError(f"Content Director failed: {e}", phase="content_director")
+        
+    except RecapDirectorError as e:
+        tracker.end_pipeline(status="failed", error=str(e))
+        raise PipelineError(f"Recap Director failed: {e}", phase="recap_director")
+        
+    except Exception as e:
+        tracker.end_pipeline(status="failed", error=str(e))
+        logger.error(f"[Pipeline v1.4] Unexpected error: {e}")
+        raise PipelineError(f"Pipeline failed: {e}", phase="unknown")
+
+
+def _run_validation(presentation: Dict) -> Dict:
+    """
+    Run 3-tier validation on merged presentation.
+    
+    Tier 1: Structural (required fields, valid values)
+    Tier 2: Semantic (content rules, mutual exclusion)
+    Tier 3: Quality (warnings only)
+    
+    Returns:
+        Dict with has_errors, errors list, warnings list
+    """
+    errors = []
+    warnings = []
+    
+    sections = presentation.get("sections", [])
+    section_types = [s.get("section_type") for s in sections]
+    
+    required_types = ["intro", "summary", "memory", "recap"]
+    for req_type in required_types:
+        if req_type not in section_types:
+            errors.append(f"Missing required section: {req_type}")
+    
+    for i, section in enumerate(sections):
+        prefix = f"sections[{i}]"
+        
+        if "section_id" not in section:
+            errors.append(f"{prefix}: missing section_id")
+        if "section_type" not in section:
+            errors.append(f"{prefix}: missing section_type")
+        if "renderer" not in section:
+            errors.append(f"{prefix}: missing renderer")
+        if "narration" not in section:
+            errors.append(f"{prefix}: missing narration")
+        
+        narration = section.get("narration", {})
+        segments = narration.get("segments", [])
+        
+        for j, seg in enumerate(segments):
+            seg_prefix = f"{prefix}.segments[{j}]"
+            dd = seg.get("display_directives", {})
+            
+            if not dd:
+                errors.append(f"{seg_prefix}: missing display_directives")
+            else:
+                text_layer = dd.get("text_layer")
+                visual_layer = dd.get("visual_layer")
+                
+                if text_layer == "show" and visual_layer == "show":
+                    errors.append(f"{seg_prefix}: mutual exclusion violation")
+    
+    memory_sections = [s for s in sections if s.get("section_type") == "memory"]
+    for mem in memory_sections:
+        flashcards = mem.get("flashcards", [])
+        if len(flashcards) != 5:
+            errors.append(f"Memory section must have exactly 5 flashcards, got {len(flashcards)}")
+    
+    recap_sections = [s for s in sections if s.get("section_type") == "recap"]
+    for recap in recap_sections:
+        video_prompts = recap.get("video_prompts", [])
+        if len(video_prompts) != 5:
+            errors.append(f"Recap section must have exactly 5 video prompts, got {len(video_prompts)}")
+        
+        layout = recap.get("layout", {})
+        if layout.get("avatar_position") != "hidden":
+            errors.append("Recap section avatar must be hidden")
+        
+        narration = recap.get("narration", {})
+        full_text = narration.get("full_text", "")
+        word_count = len(full_text.split())
+        if word_count < 300:
+            errors.append(f"Recap narration too short: {word_count} words (min 300)")
+        if word_count > 500:
+            errors.append(f"Recap narration too long: {word_count} words (max 500)")
+        
+        for j, vp in enumerate(video_prompts):
+            prompt = vp.get("prompt", "")
+            prompt_words = len(prompt.split())
+            if prompt_words < 300:
+                errors.append(f"Recap video_prompt[{j}] too short: {prompt_words} words (min 300)")
+    
+    content_sections = [s for s in sections if s.get("section_type") == "content"]
+    for content in content_sections:
+        narration = content.get("narration", {})
+        full_text = narration.get("full_text", "")
+        word_count = len(full_text.split())
+        if word_count < 100:
+            warnings.append(f"Content section narration short: {word_count} words")
+    
+    total_segments = sum(
+        len(s.get("narration", {}).get("segments", []))
+        for s in sections
+    )
+    if total_segments > 50:
+        warnings.append(f"High segment count: {total_segments} (may affect performance)")
+    
+    return {
+        "has_errors": len(errors) > 0,
+        "errors": errors,
+        "warnings": warnings,
+        "section_count": len(sections),
+        "total_segments": total_segments
+    }
+
+
+def process_with_renderers_v14(
+    presentation: Dict,
+    tracker: AnalyticsTracker,
+    job_id: str,
+    update_status_callback = None,
+    use_remotion: bool = True
+) -> Dict:
+    """
+    Pass 2: Dispatch to renderers.
+    
+    This is called after presentation.json is generated and validated.
+    It calls the appropriate renderer for each section based on the renderer field.
+    
+    Note: This is a placeholder. The actual renderer logic is in the existing
+    llm_client_v12.py and will be called from there.
+    
+    Args:
+        presentation: Validated presentation.json
+        tracker: Analytics tracker
+        job_id: Job identifier
+        update_status_callback: Status callback
+        use_remotion: Enable Remotion renderer
+        use_manim: Enable Manim renderer
+        use_video: Enable WAN video renderer
+        
+    Returns:
+        Updated presentation with rendered content
+    """
+    from core.llm_client_v12 import pass2_dispatch_renderers
+    
+    if update_status_callback:
+        update_status_callback(job_id, "render", "Generating visual content...")
+    
+    presentation = pass2_dispatch_renderers(
+        presentation=presentation,
+        tracker=tracker,
+        use_remotion=use_remotion
+    )
+    
+    return presentation
+
+
+def get_pipeline_version() -> str:
+    """Return current pipeline version."""
+    return PIPELINE_VERSION
+
+
+def get_pipeline_info() -> Dict:
+    """Return pipeline information for debugging."""
+    return {
+        "version": PIPELINE_VERSION,
+        "architecture": "Split Director",
+        "passes": {
+            "0": "Smart Chunker (topic extraction)",
+            "1a": "Content Director (intro/summary/content/example/quiz)",
+            "1b": "Recap Director (memory/recap)",
+            "1.5": "TTS Duration (audio measurement)",
+            "2": "Renderers (Remotion/Manim/WAN)"
+        },
+        "retry_strategy": {
+            "smart_chunker": {"structural": 2, "semantic": 0},
+            "content_director": {"structural": 4, "semantic": 2},
+            "recap_director": {"structural": 2, "semantic": 1}
+        },
+        "models": {
+            "chunker": "google/gemini-2.5-pro",
+            "content_director": "google/gemini-2.5-pro",
+            "recap_director": "google/gemini-2.5-pro",
+            "remotion_renderer": "anthropic/claude-sonnet-4",
+            "manim_renderer": "anthropic/claude-sonnet-4",
+            "video_renderer": "google/gemini-2.5-pro"
+        }
+    }
