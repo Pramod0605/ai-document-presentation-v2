@@ -1195,9 +1195,10 @@
     {
       "id": "ISS-077",
       "title": "Two-channel separation failing - visual_content not extracted, narration.text displayed instead",
-      "status": "open",
+      "status": "resolved",
       "priority": "high",
       "created": "2025-12-22",
+      "resolved": "2025-12-22",
       "category": "content",
       "impact": "Player displays narration.text (meant for TTS only) on screen instead of proper visual_content (bullet_points, formulas).",
       "root_cause": {
@@ -1219,7 +1220,8 @@
         "Add hard fail validation: content sections MUST have visual_content with bullet_points",
         "Update Director prompt to emphasize visual_content extraction from source",
         "Player should show error placeholder (not narration text) when visual_content missing for v1.3+"
-      ]
+      ],
+      "resolution_note": "Added hard fail check 'missing_visual_content' in validate_v13_section_rules(). Validates that content/example/summary sections with text_layer=show have visual_content (bullet_points, formula, or labels). Director prompt already emphasizes visual_content. Player already shows error placeholder for v1.3+."
     },
     {
       "id": "ISS-078",
@@ -1288,7 +1290,7 @@
     "version": "14.4",
     "spec_version": "v1.3",
     "spec_file": "docs/llm_output_requirements_v1.3.json",
-    "resolved_count": 72,
-    "open_count": 3
+    "resolved_count": 73,
+    "open_count": 2
   }
 }

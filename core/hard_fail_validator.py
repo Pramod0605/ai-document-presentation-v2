@@ -18,6 +18,7 @@ NARRATION CHECKS:
 DISPLAY DIRECTIVE CHECKS:
 7. missing_display_directives
 8. text_and_visuals_simultaneous (v1.3: text must hide before visuals)
+9. missing_visual_content (ISS-077: content/example/summary with text_layer=show must have visual_content)
 
 VISUAL BEAT CHECKS:
 9. missing_visual_beats
@@ -484,6 +485,20 @@ def validate_v13_section_rules(section: Dict) -> List[HardFailError]:
                         section_id,
                         f"Narration segment {i}: text_layer=show + visual_layer={visual_layer} violates mutual exclusion rule"
                     ))
+                
+                # ISS-077: Two-channel separation - text_layer=show requires visual_content
+                if text_layer == "show" and section_type in ["content", "example", "summary"]:
+                    visual_content = segment.get("visual_content", {})
+                    has_bullet_points = visual_content.get("bullet_points") and len(visual_content.get("bullet_points", [])) > 0
+                    has_formula = visual_content.get("formula")
+                    has_labels = visual_content.get("labels") and len(visual_content.get("labels", [])) > 0
+                    
+                    if not (has_bullet_points or has_formula or has_labels):
+                        errors.append(HardFailError(
+                            "missing_visual_content",
+                            section_id,
+                            f"Narration segment {i}: text_layer=show but visual_content is empty. Two-channel separation requires visual_content for display."
+                        ))
                 
                 if section_type == "intro":
                     avatar_layer = display_directives.get("avatar_layer", "")
