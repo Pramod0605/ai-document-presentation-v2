@@ -1482,6 +1482,58 @@
       "fix": "1) execute_renderer detects list return and stores as beat_videos, 2) _reconcile_video_paths handles beat_videos arrays, 3) Player loader uses section.beat_videos from metadata-first before filesystem fallback",
       "files_modified": ["core/renderer_executor.py", "core/pipeline_v12.py", "player/player.js"],
       "lesson": "All renderers returning multiple outputs need explicit wiring to presentation.json, not filesystem detection"
+    },
+    {
+      "id": "ISS-094",
+      "title": "Video Renderer prompt/WAN validation word count mismatch",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "Video Renderer prompt instructed 100-150 words per prompt, but WAN runner validation requires 300+ words. This caused systematic WAN prompt rejections.",
+      "error": "WAN prompt validation failed: Beat X: Prompt has Y words, minimum 300 required",
+      "root_cause": "Prompt requirement (100-150) did not match validation threshold (300+)",
+      "fix": "Updated video_renderer_system_v1.3.txt and video_renderer_user_v1.3.txt to require 300+ words with guidance on how to reach that count",
+      "files_modified": ["core/prompts/video_renderer_system_v1.3.txt", "core/prompts/video_renderer_user_v1.3.txt"],
+      "lesson": "Prompt requirements must exactly match validation thresholds"
+    },
+    {
+      "id": "ISS-095",
+      "title": "Recap Director generating 300+ word video_prompts directly (cognitive overload)",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "Recap Director prompt asked for 300+ word video_prompts directly, putting too much cognitive load on the Director LLM and bypassing the Video Renderer LLM expansion step.",
+      "error": "Recap scenes with 235 words rejected (under 300 threshold) or LLM compliance failures",
+      "root_cause": "v1.4 Recap Director bypassed Video Renderer LLM, unlike v1.3 content sections which use short visual_beats expanded by Video Renderer",
+      "fix": "Changed Recap Director to output short visual_beats (50-80 words), Video Renderer LLM now expands them to 300+. Updated merge_step to handle visual_beats format.",
+      "files_modified": ["core/prompts/recap_director_system_v1.4.txt", "core/merge_step.py"],
+      "lesson": "Director LLMs should output short descriptions; Renderer LLMs expand to full prompts"
+    },
+    {
+      "id": "ISS-096",
+      "title": "Quiz section incorrectly using WAN renderer",
+      "status": "resolved",
+      "created": "2025-12-22",
+      "resolved": "2025-12-22",
+      "description": "Quiz sections were being passed to WAN renderer, which failed because quiz has no visual_beats or video_prompts.",
+      "error": "Section X (quiz): No WAN prompt available",
+      "root_cause": "Quiz not in TEXT_ONLY_SECTION_TYPES, so renderer policy didn't skip it",
+      "fix": "Added 'quiz' to TEXT_ONLY_SECTION_TYPES in renderer_executor.py",
+      "files_modified": ["core/renderer_executor.py"],
+      "lesson": "Text-only sections must be explicitly listed to skip video rendering"
+    },
+    {
+      "id": "ISS-097",
+      "title": "Quiz section always generated even when not in source markdown",
+      "status": "open",
+      "created": "2025-12-22",
+      "description": "Content Director always fabricates a quiz section regardless of whether quiz/exercise content exists in the source markdown. Quiz should be CONDITIONAL - only generated if the source .md contains quiz/exercise content.",
+      "error": "Fabricated quiz content displayed when original document had no quiz",
+      "root_cause": "1) Smart Chunker doesn't flag quiz presence, 2) Content Director prompt hard-requires quiz, 3) No signaling from Chunker to Director about quiz presence",
+      "proposed_fix": "1) Smart Chunker adds has_quiz flag, 2) Content Director conditionally generates quiz only if flagged, 3) Validation treats quiz as optional",
+      "files_to_modify": ["core/prompts/chunker_prompt.txt", "core/prompts/content_director_system_v1.4.txt", "core/hard_fail_validator.py"],
+      "priority": "medium",
+      "blocked_by": null
     }
   ],
   "metadata": {
