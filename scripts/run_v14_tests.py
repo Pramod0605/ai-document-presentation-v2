@@ -106,7 +106,7 @@ def run_test(config: dict) -> dict:
         response = requests.post(
             f"{API_BASE}/api/v14/generate",
             json=payload,
-            timeout=300
+            timeout=600
         )
         
         results["duration"] = time.time() - start_time
@@ -216,7 +216,7 @@ def run_test(config: dict) -> dict:
         results["success"] = len(results["errors"]) == 0
         
     except requests.exceptions.Timeout:
-        results["errors"].append("Request timed out after 300s")
+        results["errors"].append("Request timed out after 600s")
     except requests.exceptions.ConnectionError:
         results["errors"].append("Connection failed - is server running?")
     except Exception as e:
@@ -266,7 +266,7 @@ def main():
     print("="*70)
     
     try:
-        health = requests.get(f"{API_BASE}/api/health", timeout=5)
+        health = requests.get(f"{API_BASE}/health", timeout=5)
         if health.status_code != 200:
             print("ERROR: Server health check failed")
             sys.exit(1)

@@ -23,6 +23,7 @@ def repair_and_parse_json(response: str) -> dict:
     - Unclosed braces/brackets (truncated output)
     - Unclosed strings
     - Extra text before/after JSON
+    - Invalid control characters in strings
     
     Args:
         response: Raw LLM response string
@@ -47,6 +48,8 @@ def repair_and_parse_json(response: str) -> dict:
     
     json_str = _extract_json_object(response)
     
+    json_str = _fix_control_characters(json_str)
+    
     json_str = _fix_trailing_commas(json_str)
     
     json_str = _close_unclosed_structures(json_str)
@@ -56,6 +59,14 @@ def repair_and_parse_json(response: str) -> dict:
         logger.info("[JSON Repair] Successfully repaired malformed JSON")
         return result
     except json.JSONDecodeError as e:
+        json_str = _aggressive_control_char_fix(json_str)
+        try:
+            result = json.loads(json_str)
+            logger.info("[JSON Repair] Successfully repaired with aggressive control char fix")
+            return result
+        except json.JSONDecodeError:
+            pass
+        
         logger.error(f"[JSON Repair] Failed to repair JSON: {e}")
         logger.debug(f"[JSON Repair] Attempted to parse: {json_str[:500]}...")
         raise
@@ -107,6 +118,57 @@ def _fix_trailing_commas(json_str: str) -> str:
     json_str = re.sub(r',\s*}', '}', json_str)
     json_str = re.sub(r',\s*\]', ']', json_str)
     return json_str
+
+
+def _fix_control_characters(json_str: str) -> str:
+    """
+    Fix invalid control characters inside JSON strings.
+    Newlines, tabs, and other control chars inside strings must be escaped.
+    """
+    result = []
+    in_string = False
+    escape_next = False
+    
+    for char in json_str:
+        if escape_next:
+            result.append(char)
+            escape_next = False
+            continue
+            
+        if char == '\\':
+            result.append(char)
+            escape_next = True
+            continue
+            
+        if char == '"':
+            in_string = not in_string
+            result.append(char)
+            continue
+        
+        if in_string:
+            if char == '\n':
+                result.append('\\n')
+            elif char == '\r':
+                result.append('\\r')
+            elif char == '\t':
+                result.append('\\t')
+            elif ord(char) < 32:
+                result.append(f'\\u{ord(char):04x}')
+            else:
+                result.append(char)
+        else:
+            result.append(char)
+    
+    return ''.join(result)
+
+
+def _aggressive_control_char_fix(json_str: str) -> str:
+    """
+    Aggressively remove or escape any remaining control characters.
+    Used as a fallback when normal repair fails.
+    """
+    cleaned = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', ' ', json_str)
+    return cleaned
 
 
 def _close_unclosed_structures(json_str: str) -> str:

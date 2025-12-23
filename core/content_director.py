@@ -111,7 +111,7 @@ def call_content_director(
                     {"role": "user", "content": user_prompt}
                 ],
                 temperature=0.2,
-                max_tokens=16000,
+                max_tokens=32000,
                 response_format={"type": "json_object"}
             )
             
