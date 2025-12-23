@@ -1711,6 +1711,50 @@
       "root_cause": "Token tracking was broken during retries: start_phase called once, but end_phase called with current response tokens only (not accumulated). On retries, end_phase was called prematurely before success.",
       "fix": "Refactored call_content_director to: 1) Call start_phase once before retry loop, 2) Accumulate tokens across all retry attempts with total_input_tokens/total_output_tokens, 3) Call end_phase only on final success or terminal failure with accumulated totals.",
       "files_modified": ["core/content_director.py"]
+    },
+    {
+      "id": "ISS-111",
+      "title": "V1.4 pipeline never calls renderer_executor - Manim/WAN videos not generated",
+      "status": "open",
+      "created": "2025-12-23",
+      "severity": "critical",
+      "description": "process_with_renderers_v14() calls pass2_dispatch_renderers() which only generates render SPECS (manim_scene_spec, video_prompts) via LLM. It never calls render_all_topics() to actually execute the Manim CLI or WAN API. Result: presentation.json has specs but videos/ folder is empty.",
+      "root_cause": "Architectural gap: V1.3/V1.1 pipeline calls render_all_topics() after pass2_dispatch_renderers(), but V1.4 pipeline forgot to wire this call.",
+      "fix": "Add render_all_topics() call after pass2_dispatch_renderers() in process_with_renderers_v14()",
+      "files_to_modify": ["core/pipeline_v14.py"]
+    },
+    {
+      "id": "ISS-112",
+      "title": "Player BASE_PATH falls back to /player/assets/ - Audio files 404",
+      "status": "open", 
+      "created": "2025-12-23",
+      "severity": "critical",
+      "description": "getBasePath() in player.js checks for /jobs/<id>/ or /player/jobs/<id>/ patterns, but falls back to /player/assets/ if neither matches. When player is accessed via /player/index.html?job=xxx, path doesn't match either pattern, so BASE_PATH becomes /player/assets/ and audio_path becomes /player/assets/audio/section_N.mp3 instead of /player/jobs/xxx/audio/section_N.mp3",
+      "root_cause": "getBasePath() doesn't check URL query parameter 'job' as a fallback",
+      "fix": "Update getBasePath() to check URLSearchParams for 'job' param and construct path accordingly",
+      "files_to_modify": ["player/player.js"]
+    },
+    {
+      "id": "ISS-113",
+      "title": "Intro/Summary assigned renderer='remotion' instead of 'none'",
+      "status": "open",
+      "created": "2025-12-23",
+      "severity": "medium",
+      "description": "Content Director LLM assigns renderer='remotion' to intro/summary sections, but V1.3 spec says these should be text-only (renderer='none'). This wastes API calls trying to generate Remotion specs for text-only sections.",
+      "root_cause": "Content Director prompt doesn't enforce text-only for intro/summary. merge_step.py doesn't override.",
+      "fix": "Add renderer enforcement in merge_step.py to set intro/summary renderer='none'",
+      "files_to_modify": ["core/merge_step.py"]
+    },
+    {
+      "id": "ISS-114",
+      "title": "Player video paths use same broken BASE_PATH - Video files 404",
+      "status": "open",
+      "created": "2025-12-23",
+      "severity": "critical",
+      "description": "Same issue as ISS-112 but for video paths. All video_path construction uses BASE_PATH which falls back to wrong directory.",
+      "root_cause": "Same as ISS-112 - getBasePath() doesn't handle query param",
+      "fix": "Same fix as ISS-112 - update getBasePath()",
+      "files_to_modify": ["player/player.js"]
     }
   ],
   "metadata": {
