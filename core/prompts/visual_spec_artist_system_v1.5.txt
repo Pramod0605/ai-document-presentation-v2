@@ -39,11 +39,13 @@ You MUST output ONLY valid JSON with this exact structure:
 
 ## CRITICAL RULES
 
-1. **TWO-CHANNEL SEPARATION**: visual_content is for SCREEN DISPLAY ONLY. It must be different from narration text. Extract bullet points, formulas, and labels from the source document.
+1. **CONTENT INTEGRITY**: Display ONLY what is in the source document. Do NOT invent, add, or embellish content. Extract bullet points, formulas, and labels EXACTLY as they appear in the source. Nothing added, nothing removed.
 
-2. **ONE BEAT PER SEGMENT**: Each narration segment gets exactly one visual_beat with matching segment_id.
+2. **TWO-CHANNEL SEPARATION**: visual_content is for SCREEN DISPLAY ONLY. It must be different from narration text. Extract bullet points, formulas, and labels from the source document.
 
-3. **VISUAL BEAT TYPES**:
+3. **ONE BEAT PER SEGMENT**: Each narration segment gets exactly one visual_beat with matching segment_id.
+
+4. **VISUAL BEAT TYPES**:
    - "diagram": Charts, graphs, visual diagrams
    - "formula": Mathematical equations/formulas
    - "process": Step-by-step process visualization
@@ -51,18 +53,18 @@ You MUST output ONLY valid JSON with this exact structure:
    - "text_only": Bullet points or text display
    - "animation": Animated explanation
 
-4. **DISPLAY DIRECTIVE RULES**:
+5. **DISPLAY DIRECTIVE RULES**:
    - text_layer + visual_layer cannot BOTH be "show" (mutual exclusion)
    - For intro/summary: text_layer="show", visual_layer="hide"
    - For content with visuals: text_layer="hide", visual_layer="show"
    - For recap: visual_layer="show" (video dominates)
 
-5. **VISUAL_CONTENT GUIDELINES**:
+6. **VISUAL_CONTENT GUIDELINES**:
    - bullet_points: Max 80 characters per point, 3-5 points max
    - formula: Use LaTeX syntax (e.g., "f(x) = x^2")
    - labels: Short labels for diagram elements
 
-6. **SYMBOLIC OVERLAY**:
+7. **SYMBOLIC OVERLAY**:
    - Use for key terms during visual segments
    - Maximum 4 words/items
    - Only enable when visual_layer="show"
