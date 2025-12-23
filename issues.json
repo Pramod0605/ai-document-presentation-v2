@@ -1641,7 +1641,9 @@
       },
       "root_cause": "The /api/v14/generate endpoint only called process_markdown_to_presentation_v14() but NOT process_with_renderers_v14(). Renderers were never executed.",
       "fix": "Added process_with_renderers_v14() call to /api/v14/generate endpoint after validation passes",
-      "files_modified": ["api/app.py"]
+      "files_modified": [
+        "api/app.py"
+      ]
     },
     {
       "id": "ISS-107",
@@ -1660,7 +1662,9 @@
       },
       "root_cause": "Recap Director outputs segments with {start, end, text} format instead of {segment_id, text, duration_estimate, ...} format. TTS update_durations_from_tts() writes to duration_seconds but didn't have duration_estimate as fallback.",
       "fix": "Added _normalize_segment() and _normalize_memory_section() functions to merge_step.py that convert Recap Director segment format to Content Director format with calculated duration_estimate",
-      "files_modified": ["core/merge_step.py"]
+      "files_modified": [
+        "core/merge_step.py"
+      ]
     },
     {
       "id": "ISS-108",
@@ -1672,7 +1676,13 @@
       "description": "All 5 recap scenes show visual_beats: 0 in final presentation. Per ISS-095 fix, Recap Director should output short visual_beats (50-80 words) for Video Renderer to expand.",
       "evidence": {
         "recap_scenes": 5,
-        "visual_beats_per_scene": [0, 0, 0, 0, 0],
+        "visual_beats_per_scene": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
         "expected": "At least 1 visual_beat per scene with 50+ word description"
       },
       "root_cause": "NOT AN ISSUE - Recap Director was outputting video_prompt (400+ chars each) which is valid per validator. The merge step correctly extracts video_prompt from scenes and adds to visual_beats array in the merged recap section.",
@@ -1687,13 +1697,26 @@
       "severity": "high",
       "description": "Content sections assigned renderer=manim are missing manim_scene_spec entirely. One content section has 1 visual_beat, other has 0. Manim requires scene specifications to render.",
       "evidence": {
-        "content_section_1": {"renderer": "remotion", "visual_beats": 0, "manim_scene_spec": "MISSING"},
-        "content_section_2": {"renderer": "manim", "visual_beats": 1, "manim_scene_spec": "MISSING"},
-        "example_section": {"renderer": "manim", "manim_scene_spec": "MISSING"}
+        "content_section_1": {
+          "renderer": "remotion",
+          "visual_beats": 0,
+          "manim_scene_spec": "MISSING"
+        },
+        "content_section_2": {
+          "renderer": "manim",
+          "visual_beats": 1,
+          "manim_scene_spec": "MISSING"
+        },
+        "example_section": {
+          "renderer": "manim",
+          "manim_scene_spec": "MISSING"
+        }
       },
       "root_cause": "Content Director had manim instructions in prompt but NO validation to enforce compliance",
       "fix": "Added validation in _validate_section_structure() to require manim_scene_spec (with objects and animation_sequence) for manim sections, and visual_beats for manim/video sections. Updated retry prompt to include these requirements.",
-      "files_modified": ["core/content_director.py"]
+      "files_modified": [
+        "core/content_director.py"
+      ]
     },
     {
       "id": "ISS-110",
@@ -1704,13 +1727,27 @@
       "severity": "low",
       "description": "Analytics show content_director cost/tokens/duration all as 0, while recap_director shows proper values. This may indicate Content Director call not being tracked or a logging issue.",
       "evidence": {
-        "content_director": {"cost_usd": 0.0, "duration_seconds": 0.0, "tokens": 0},
-        "recap_director": {"cost_usd": 0.0728, "duration_seconds": 102.15, "tokens": 9512},
-        "smart_chunker": {"cost_usd": 0.0145, "duration_seconds": 12.05, "tokens": 2033}
+        "content_director": {
+          "cost_usd": 0.0,
+          "duration_seconds": 0.0,
+          "tokens": 0
+        },
+        "recap_director": {
+          "cost_usd": 0.0728,
+          "duration_seconds": 102.15,
+          "tokens": 9512
+        },
+        "smart_chunker": {
+          "cost_usd": 0.0145,
+          "duration_seconds": 12.05,
+          "tokens": 2033
+        }
       },
       "root_cause": "Token tracking was broken during retries: start_phase called once, but end_phase called with current response tokens only (not accumulated). On retries, end_phase was called prematurely before success.",
       "fix": "Refactored call_content_director to: 1) Call start_phase once before retry loop, 2) Accumulate tokens across all retry attempts with total_input_tokens/total_output_tokens, 3) Call end_phase only on final success or terminal failure with accumulated totals.",
-      "files_modified": ["core/content_director.py"]
+      "files_modified": [
+        "core/content_director.py"
+      ]
     },
     {
       "id": "ISS-111",
@@ -1722,7 +1759,9 @@
       "description": "process_with_renderers_v14() calls pass2_dispatch_renderers() which only generates render SPECS (manim_scene_spec, video_prompts) via LLM. It never calls render_all_topics() to actually execute the Manim CLI or WAN API. Result: presentation.json has specs but videos/ folder is empty.",
       "root_cause": "Architectural gap: V1.3/V1.1 pipeline calls render_all_topics() after pass2_dispatch_renderers(), but V1.4 pipeline forgot to wire this call.",
       "fix": "Added render_all_topics() call after pass2_dispatch_renderers() in process_with_renderers_v14(). Also added output_dir, dry_run, skip_wan params. Updates section video_path, beat_videos, recap_video_paths with rendered output.",
-      "files_modified": ["core/pipeline_v14.py"]
+      "files_modified": [
+        "core/pipeline_v14.py"
+      ]
     },
     {
       "id": "ISS-112",
@@ -1734,7 +1773,9 @@
       "description": "getBasePath() in player.js checks for /jobs/<id>/ or /player/jobs/<id>/ patterns, but falls back to /player/assets/ if neither matches. When player is accessed via /player/index.html?job=xxx, path doesn't match either pattern, so BASE_PATH becomes /player/assets/ and audio_path becomes /player/assets/audio/section_N.mp3 instead of /player/jobs/xxx/audio/section_N.mp3",
       "root_cause": "getBasePath() doesn't check URL query parameter 'job' as a fallback",
       "fix": "Updated getBasePath() to check URLSearchParams for 'job' param FIRST, then fall back to path-based matching. Returns /player/jobs/${jobParam}/ for query-based access.",
-      "files_modified": ["player/player.js"]
+      "files_modified": [
+        "player/player.js"
+      ]
     },
     {
       "id": "ISS-113",
@@ -1746,7 +1787,9 @@
       "description": "Content Director LLM assigns renderer='remotion' to intro/summary sections, but V1.3 spec says these should be text-only (renderer='none'). This wastes API calls trying to generate Remotion specs for text-only sections.",
       "root_cause": "Content Director prompt doesn't enforce text-only for intro/summary. merge_step.py doesn't override.",
       "fix": "Added TEXT_ONLY_SECTION_TYPES list and enforcement in merge_director_outputs() to force intro/summary/memory to renderer='none'. Logs override with renderer_override_reason field.",
-      "files_modified": ["core/merge_step.py"]
+      "files_modified": [
+        "core/merge_step.py"
+      ]
     },
     {
       "id": "ISS-114",
@@ -1758,7 +1801,85 @@
       "description": "Same issue as ISS-112 but for video paths. All video_path construction uses BASE_PATH which falls back to wrong directory.",
       "root_cause": "Same as ISS-112 - getBasePath() doesn't handle query param",
       "fix": "Fixed by same change as ISS-112 - getBasePath() now handles ?job= query param",
-      "files_modified": ["player/player.js"]
+      "files_modified": [
+        "player/player.js"
+      ]
+    },
+    {
+      "id": "ISS-115",
+      "title": "V1.5 TTS: No section-level audio_path in presentation.json",
+      "status": "open",
+      "created": "2025-12-23",
+      "severity": "critical",
+      "layer": "tts/merge",
+      "description": "TTS generates per-segment audio files (1_1.mp3, 1_2.mp3) but does not set section-level audio_path field. Player expects section.audio_path = \"section_1.mp3\"",
+      "root_cause": "TTS pass sets segment[\"audio_file\"] but never sets section[\"audio_path\"]",
+      "fix_required": "Post-TTS pass to concatenate segment audio into section audio and set audio_path"
+    },
+    {
+      "id": "ISS-116",
+      "title": "V1.5 Renderer: video_path not written to presentation.json after render",
+      "status": "open",
+      "created": "2025-12-23",
+      "severity": "critical",
+      "layer": "renderer",
+      "description": "Even when WAN video renders successfully (topic_9.mp4), the video_path is never written to presentation.json metadata",
+      "root_cause": "Renderer execution does not update presentation.json with generated file paths",
+      "fix_required": "Post-render pass to update section.metadata.video_path for each successfully rendered video"
+    },
+    {
+      "id": "ISS-117",
+      "title": "V1.5 Manim: All manim renders fail with Python errors",
+      "status": "open",
+      "created": "2025-12-23",
+      "severity": "critical",
+      "layer": "renderer/llm",
+      "description": "Sections 3,4,5,7 all fail with \"Manim spec render failed. Return code: 1\". LLM-generated manim_scene_spec creates invalid Python code.",
+      "root_cause": "LLM generates manim specs that produce Python syntax/runtime errors when executed",
+      "logs": "Animation 0: Create(Axes of 2 submobjects) crashes in scene = SceneClass()"
+    },
+    {
+      "id": "ISS-118",
+      "title": "V1.5 Remotion: RendererSpecAgent fails with JSON parse error",
+      "status": "open",
+      "created": "2025-12-23",
+      "severity": "high",
+      "layer": "llm",
+      "description": "Section 6 (remotion): RendererSpec failed after 3 attempts with \"Expecting value: line 1 column 1 (char 0)\"",
+      "root_cause": "LLM returns invalid JSON or empty response for remotion renderer spec",
+      "logs": "[Pipeline v1.5] RendererSpec failed for section_6: Invalid JSON response after 3 attempts"
+    },
+    {
+      "id": "ISS-119",
+      "title": "V1.5 Visual Compiler: Empty visual beats for remotion section",
+      "status": "open",
+      "created": "2025-12-23",
+      "severity": "high",
+      "layer": "llm/merge",
+      "description": "Section 6 Visual Compiler fails with 9 errors: \"Visual beat has no content. All fields are empty or missing.\"",
+      "root_cause": "When RendererSpec fails, visual_beats are empty but section still attempts to render",
+      "logs": "[VISUAL COMPILER] Compiling 9 visual beats for section 6 - All 9 FAIL"
+    },
+    {
+      "id": "ISS-120",
+      "title": "V1.5 WAN: Prompts exceed API length limit",
+      "status": "open",
+      "created": "2025-12-23",
+      "severity": "medium",
+      "layer": "llm",
+      "description": "WAN video prompts are 1500+ chars, causing \"Runway API error: Please reduce the length of prompt\"",
+      "root_cause": "RecapScene agent generates 300+ word prompts per the spec, but API has lower limit",
+      "logs": "Beat prompts: 1603, 1528, 1512 chars. API rejects some."
+    },
+    {
+      "id": "ISS-121",
+      "title": "V1.5 display_directives: Need section-level array for player",
+      "status": "open",
+      "created": "2025-12-23",
+      "severity": "medium",
+      "layer": "merge/player",
+      "description": "Player error: Cannot destructure property textLayer of null. display_directives are inside segments but player may expect section-level array.",
+      "root_cause": "V1.5 merge puts display_directives inside each segment, need to verify player expectations"
     }
   ],
   "metadata": {
@@ -1774,7 +1895,11 @@
     "v14_math_test_2025_12_23": {
       "job_id": "b81bc1e5",
       "sections": 10,
-      "renderers": {"remotion": 4, "manim": 5, "video": 1},
+      "renderers": {
+        "remotion": 4,
+        "manim": 5,
+        "video": 1
+      },
       "content_director_tokens": 35273,
       "recap_director_tokens": 8522,
       "total_cost_usd": 0.3791,
