@@ -1,0 +1,114 @@
+Here is the diagnosis and the fixes for your prompts.
+
+Part 1: The Manim Issue (Code vs. JSON)
+The Problem: You are building an abstraction layer: You want the LLM to output a JSON Spec (manim_scene_spec), which your Python script will then read to generate the animation. However, the model likely hears "Manim" and defaults to writing Raw Python Code (as seen in your render_prompts (2).json file, where sections 3-7 contain raw code like self.play(...)).
+
+
+
+This mismatch causes your pipeline to fail because your script expects a JSON object to parse, but it receives a block of Python code.
+
+The Fix: You must "break" the model's association with writing code. Do not call it a "Manim Compiler." Call it a "Scene Spec Generator" and explicitly forbid Python code.
+
+Recommended  prompt
+Plaintext
+
+You are a Scene Spec Generator. You convert educational narration into a strict JSON animation specification.
+
+## OUTPUT FORMAT (STRICT JSON ONLY)
+You must output a single JSON object with the key "manim_scene_spec".
+DO NOT write Python code. DO NOT write `self.play`. DO NOT write markdown backticks.
+
+Structure:
+{
+  "manim_scene_spec": {
+    "objects": [
+      {
+        "id": "obj_1",
+        "type": "equation", 
+        "position": [0, 2.5], 
+        "properties": {"latex": "E=mc^2", "scale": 1.2, "color": "YELLOW"}
+      }
+    ],
+    "animation_sequence": [
+      {
+        "action": "show_equation",
+        "target": "obj_1",
+        "duration": 2.0
+      }
+    ]
+  }
+}
+
+## RULES
+1. NO WAIT START: The first action must be 'appear' or 'show_equation'.
+2. LAYOUT: Use y-positions 2.5 (Title), 1.0 (Main), -2.0 (Result).
+3. TIMING: First visual must appear within 2 seconds.
+4. NO GUESSING: If input is vague, use a simple 'text' object.
+
+## FORBIDDEN
+- NEVER output Python code (e.g., `class Scene(Scene):`).
+- NEVER output standard Markdown text.
+- ONLY output the JSON object.
+Part 2: Wan Video Prompts Analysis
+You asked if the Wan prompts are sufficient. I have analyzed Section 9 ("Let's Review") from your logs.
+
+1. Quality Assessment (Visuals)
+
+Verdict: Very Strong.
+
+Why: The prompts are exceptionally visual and concrete, which Wan needs.
+
+
+Good Example: "A luminous, flowing ribbon of cosmic energy... semi-transparent tube of swirling nebular gas".
+
+
+Good Example: "Millions of microscopic, bioluminescent organisms bloom into existence... gelatinous texture".
+
+The prompts successfully avoid abstract concepts by using physical metaphors (water, sand, moss, light beams), exactly as requested in your instructions.
+
+2. Critical Issues (Why it might fail automation) Despite the good visuals, the current output fails your system constraints in recap_scene_system_v1.5.txt:
+
+
+JSON Failure: Your system prompt asks for JSON, but the output in render_prompts (2).json is a single text string separated by [Beat beat_1]. If your pipeline expects to parse {"video_prompts": [...]}, this text block will crash it.
+
+
+Banned Words Violation: You explicitly banned "beautiful," "amazing," and "stunning".
+
+
+Violation: Beat 4 uses "beautiful rangoli-like sculpture".
+
+
+Violation: Beat 5 uses "stunning patchwork" and "breathtaking sheet".
+
+Risk: These words confuse video models. They are subjective. A model doesn't know what "beautiful" looks like; it knows what "symmetrical" or "glowing" looks like.
+
+The Fix: You need to enforce the JSON structure and clean up the adjectives.
+
+Recommended prompt (Snippet)
+Plaintext
+
+You are RecapSceneAgent. Your task is to generate 5 video generation prompts in strict JSON format.
+
+## OUTPUT STRUCTURE
+You must output valid JSON. Do not wrap the JSON in markdown blocks (```json).
+
+{
+  "section_id": "recap",
+  "video_prompts": [
+    {
+      "prompt_id": 1,
+      "prompt": "Low angle shot of a moss-covered rock...",
+      "duration_seconds": 6
+    }
+  ]
+}
+
+## NEGATIVE CONSTRAINTS (STRICT)
+Do not use subjective adjectives. Replace them with physical descriptions:
+- INSTEAD OF "Beautiful" -> USE "Symmetrical, polished, ornate"
+- INSTEAD OF "Stunning" -> USE "High-contrast, vibrant, detailed"
+- INSTEAD OF "Amazing" -> USE "Complex, intricate"
+Summary of Next Steps
+For Manim: Switch the system prompt to forbid Python code and force the JSON spec. The current model is confused because it sees "Manim" and thinks "I should write code."
+
+For Wan: The visual ideas are great, but the formatting is broken. Update your prompt to enforce the JSON schema so your pipeline can split the 5 prompts correctly.
