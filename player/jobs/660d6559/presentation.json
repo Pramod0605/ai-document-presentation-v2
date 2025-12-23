@@ -676,28 +676,28 @@
         "objects": [
           {
             "id": "title",
-            "type": "label",
+            "type": "text",
             "position": [
               0,
               2.5
             ],
             "properties": {
-              "latex": "\\text{Definite Integral}",
-              "color": "WHITE",
-              "scale": 1.2
+              "text": "Definite Integral",
+              "scale": 1.2,
+              "color": "WHITE"
             }
           },
           {
             "id": "subtitle",
-            "type": "label",
+            "type": "text",
             "position": [
               0,
               1.8
             ],
             "properties": {
-              "latex": "\\text{Signed Area Under Curve}",
-              "color": "BLUE",
-              "scale": 0.8
+              "text": "Signed Area Under Curve",
+              "scale": 0.8,
+              "color": "BLUE"
             }
           },
           {
@@ -708,31 +708,29 @@
               -0.5
             ],
             "properties": {
-              "x_range": [
-                0,
-                6
-              ],
-              "y_range": [
-                0,
-                3
-              ],
+              "axes_config": {
+                "x_range": [
+                  0,
+                  6
+                ],
+                "y_range": [
+                  0,
+                  3
+                ]
+              },
               "color": "WHITE",
               "scale": 0.8
             }
           },
           {
             "id": "curve",
-            "type": "graph",
+            "type": "shape",
             "position": [
               0,
               -0.5
             ],
             "properties": {
-              "function": "x^2/4 + 0.5",
-              "x_range": [
-                1,
-                5
-              ],
+              "shape_type": "line",
               "color": "YELLOW",
               "scale": 0.8
             }
@@ -745,9 +743,8 @@
               -0.5
             ],
             "properties": {
-              "fill_color": "BLUE",
-              "fill_opacity": 0.3,
-              "stroke_color": "BLUE",
+              "shape_type": "rectangle",
+              "color": "BLUE",
               "scale": 0.8
             }
           },
@@ -759,9 +756,8 @@
               -0.5
             ],
             "properties": {
-              "fill_color": "GREEN",
-              "fill_opacity": 0.5,
-              "stroke_color": "GREEN",
+              "shape_type": "rectangle",
+              "color": "GREEN",
               "scale": 0.8
             }
           },
@@ -773,9 +769,8 @@
               -0.5
             ],
             "properties": {
-              "fill_color": "GREEN",
-              "fill_opacity": 0.6,
-              "stroke_color": "GREEN",
+              "shape_type": "rectangle",
+              "color": "GREEN",
               "scale": 0.8
             }
           },
@@ -789,44 +784,44 @@
             "properties": {
               "latex": "\\int_{a}^{b} f(x)\\,dx",
               "color": "WHITE",
-              "scale": 1.5
+              "scale": 1.2
             }
           },
           {
-            "id": "label_integral_symbol",
+            "id": "label_integral",
             "type": "label",
             "position": [
               -2.5,
               0.5
             ],
             "properties": {
-              "latex": "\\text{Integral Symbol}",
+              "text": "Integral Symbol",
               "color": "YELLOW",
               "scale": 0.6
             }
           },
           {
-            "id": "label_upper_limit",
+            "id": "label_upper",
             "type": "label",
             "position": [
               1.5,
-              2.0
+              1.8
             ],
             "properties": {
-              "latex": "\\text{Upper Limit (b)}",
+              "text": "Upper Limit (b)",
               "color": "YELLOW",
               "scale": 0.6
             }
           },
           {
-            "id": "label_lower_limit",
+            "id": "label_lower",
             "type": "label",
             "position": [
               -1.5,
-              -0.5
+              0.2
             ],
             "properties": {
-              "latex": "\\text{Lower Limit (a)}",
+              "text": "Lower Limit (a)",
               "color": "YELLOW",
               "scale": 0.6
             }
@@ -839,20 +834,20 @@
               0.5
             ],
             "properties": {
-              "latex": "\\text{Function f(x)}",
+              "text": "Function f(x)",
               "color": "YELLOW",
               "scale": 0.6
             }
           },
           {
-            "id": "summary_text",
-            "type": "label",
+            "id": "summary",
+            "type": "text",
             "position": [
               0,
               0
             ],
             "properties": {
-              "latex": "\\text{Powerful tool for calculating precise areas}",
+              "text": "Powerful tool for calculating precise areas",
               "color": "WHITE",
               "scale": 0.9
             }
@@ -871,7 +866,6 @@
           },
           {
             "action": "wait",
-            "target": "",
             "duration": 10.41
           },
           {
@@ -901,8 +895,7 @@
           },
           {
             "action": "wait",
-            "target": "",
-            "duration": 6.69
+            "duration": 7.19
           },
           {
             "action": "fade_out",
@@ -916,33 +909,29 @@
           },
           {
             "action": "wait",
-            "target": "",
-            "duration": 10.7
+            "duration": 9.2
           },
           {
             "action": "transform",
             "target": "rectangles_few",
+            "to_target": "rectangles_many",
             "duration": 2.5
           },
           {
-            "action": "appear",
+            "action": "highlight",
             "target": "rectangles_many",
+            "color": "YELLOW",
             "duration": 1.5
           },
           {
             "action": "transform",
             "target": "rectangles_many",
+            "to_target": "area_region",
             "duration": 2.0
           },
           {
-            "action": "appear",
-            "target": "area_region",
-            "duration": 1.5
-          },
-          {
             "action": "wait",
-            "target": "",
-            "duration": 2.17
+            "duration": 3.17
           },
           {
             "action": "fade_out",
@@ -960,28 +949,23 @@
             "duration": 0.5
           },
           {
-            "action": "fade_out",
-            "target": "rectangles_many",
-            "duration": 0.5
-          },
-          {
             "action": "show_equation",
             "target": "integral_notation",
             "duration": 2.0
           },
           {
             "action": "appear",
-            "target": "label_integral_symbol",
+            "target": "label_integral",
             "duration": 1.0
           },
           {
             "action": "appear",
-            "target": "label_upper_limit",
+            "target": "label_upper",
             "duration": 1.0
           },
           {
             "action": "appear",
-            "target": "label_lower_limit",
+            "target": "label_lower",
             "duration": 1.0
           },
           {
@@ -991,7 +975,6 @@
           },
           {
             "action": "wait",
-            "target": "",
             "duration": 6.38
           },
           {
@@ -1001,34 +984,34 @@
           },
           {
             "action": "fade_out",
-            "target": "label_integral_symbol",
-            "duration": 1.0
+            "target": "label_integral",
+            "duration": 0.5
           },
           {
             "action": "fade_out",
-            "target": "label_upper_limit",
-            "duration": 1.0
+            "target": "label_upper",
+            "duration": 0.5
           },
           {
             "action": "fade_out",
-            "target": "label_lower_limit",
-            "duration": 1.0
+            "target": "label_lower",
+            "duration": 0.5
           },
           {
             "action": "fade_out",
             "target": "label_function",
-            "duration": 1.0
+            "duration": 0.5
           },
           {
             "action": "appear",
-            "target": "summary_text",
+            "target": "summary",
             "duration": 2.0
           },
           {
             "action": "highlight",
-            "target": "summary_text",
-            "duration": 3.0,
-            "color": "BLUE"
+            "target": "summary",
+            "color": "BLUE",
+            "duration": 3.0
           }
         ]
       },
@@ -1126,28 +1109,28 @@
           "objects": [
             {
               "id": "title",
-              "type": "label",
+              "type": "text",
               "position": [
                 0,
                 2.5
               ],
               "properties": {
-                "latex": "\\text{Definite Integral}",
-                "color": "WHITE",
-                "scale": 1.2
+                "text": "Definite Integral",
+                "scale": 1.2,
+                "color": "WHITE"
               }
             },
             {
               "id": "subtitle",
-              "type": "label",
+              "type": "text",
               "position": [
                 0,
                 1.8
               ],
               "properties": {
-                "latex": "\\text{Signed Area Under Curve}",
-                "color": "BLUE",
-                "scale": 0.8
+                "text": "Signed Area Under Curve",
+                "scale": 0.8,
+                "color": "BLUE"
               }
             },
             {
@@ -1158,31 +1141,29 @@
                 -0.5
               ],
               "properties": {
-                "x_range": [
-                  0,
-                  6
-                ],
-                "y_range": [
-                  0,
-                  3
-                ],
+                "axes_config": {
+                  "x_range": [
+                    0,
+                    6
+                  ],
+                  "y_range": [
+                    0,
+                    3
+                  ]
+                },
                 "color": "WHITE",
                 "scale": 0.8
               }
             },
             {
               "id": "curve",
-              "type": "graph",
+              "type": "shape",
               "position": [
                 0,
                 -0.5
               ],
               "properties": {
-                "function": "x^2/4 + 0.5",
-                "x_range": [
-                  1,
-                  5
-                ],
+                "shape_type": "line",
                 "color": "YELLOW",
                 "scale": 0.8
               }
@@ -1195,9 +1176,8 @@
                 -0.5
               ],
               "properties": {
-                "fill_color": "BLUE",
-                "fill_opacity": 0.3,
-                "stroke_color": "BLUE",
+                "shape_type": "rectangle",
+                "color": "BLUE",
                 "scale": 0.8
               }
             },
@@ -1209,9 +1189,8 @@
                 -0.5
               ],
               "properties": {
-                "fill_color": "GREEN",
-                "fill_opacity": 0.5,
-                "stroke_color": "GREEN",
+                "shape_type": "rectangle",
+                "color": "GREEN",
                 "scale": 0.8
               }
             },
@@ -1223,9 +1202,8 @@
                 -0.5
               ],
               "properties": {
-                "fill_color": "GREEN",
-                "fill_opacity": 0.6,
-                "stroke_color": "GREEN",
+                "shape_type": "rectangle",
+                "color": "GREEN",
                 "scale": 0.8
               }
             },
@@ -1239,44 +1217,44 @@
               "properties": {
                 "latex": "\\int_{a}^{b} f(x)\\,dx",
                 "color": "WHITE",
-                "scale": 1.5
+                "scale": 1.2
               }
             },
             {
-              "id": "label_integral_symbol",
+              "id": "label_integral",
               "type": "label",
               "position": [
                 -2.5,
                 0.5
               ],
               "properties": {
-                "latex": "\\text{Integral Symbol}",
+                "text": "Integral Symbol",
                 "color": "YELLOW",
                 "scale": 0.6
               }
             },
             {
-              "id": "label_upper_limit",
+              "id": "label_upper",
               "type": "label",
               "position": [
                 1.5,
-                2.0
+                1.8
               ],
               "properties": {
-                "latex": "\\text{Upper Limit (b)}",
+                "text": "Upper Limit (b)",
                 "color": "YELLOW",
                 "scale": 0.6
               }
             },
             {
-              "id": "label_lower_limit",
+              "id": "label_lower",
               "type": "label",
               "position": [
                 -1.5,
-                -0.5
+                0.2
               ],
               "properties": {
-                "latex": "\\text{Lower Limit (a)}",
+                "text": "Lower Limit (a)",
                 "color": "YELLOW",
                 "scale": 0.6
               }
@@ -1289,20 +1267,20 @@
                 0.5
               ],
               "properties": {
-                "latex": "\\text{Function f(x)}",
+                "text": "Function f(x)",
                 "color": "YELLOW",
                 "scale": 0.6
               }
             },
             {
-              "id": "summary_text",
-              "type": "label",
+              "id": "summary",
+              "type": "text",
               "position": [
                 0,
                 0
               ],
               "properties": {
-                "latex": "\\text{Powerful tool for calculating precise areas}",
+                "text": "Powerful tool for calculating precise areas",
                 "color": "WHITE",
                 "scale": 0.9
               }
@@ -1321,7 +1299,6 @@
             },
             {
               "action": "wait",
-              "target": "",
               "duration": 10.41
             },
             {
@@ -1351,8 +1328,7 @@
             },
             {
               "action": "wait",
-              "target": "",
-              "duration": 6.69
+              "duration": 7.19
             },
             {
               "action": "fade_out",
@@ -1366,33 +1342,29 @@
             },
             {
               "action": "wait",
-              "target": "",
-              "duration": 10.7
+              "duration": 9.2
             },
             {
               "action": "transform",
               "target": "rectangles_few",
+              "to_target": "rectangles_many",
               "duration": 2.5
             },
             {
-              "action": "appear",
+              "action": "highlight",
               "target": "rectangles_many",
+              "color": "YELLOW",
               "duration": 1.5
             },
             {
               "action": "transform",
               "target": "rectangles_many",
+              "to_target": "area_region",
               "duration": 2.0
             },
             {
-              "action": "appear",
-              "target": "area_region",
-              "duration": 1.5
-            },
-            {
               "action": "wait",
-              "target": "",
-              "duration": 2.17
+              "duration": 3.17
             },
             {
               "action": "fade_out",
@@ -1410,28 +1382,23 @@
               "duration": 0.5
             },
             {
-              "action": "fade_out",
-              "target": "rectangles_many",
-              "duration": 0.5
-            },
-            {
               "action": "show_equation",
               "target": "integral_notation",
               "duration": 2.0
             },
             {
               "action": "appear",
-              "target": "label_integral_symbol",
+              "target": "label_integral",
               "duration": 1.0
             },
             {
               "action": "appear",
-              "target": "label_upper_limit",
+              "target": "label_upper",
               "duration": 1.0
             },
             {
               "action": "appear",
-              "target": "label_lower_limit",
+              "target": "label_lower",
               "duration": 1.0
             },
             {
@@ -1441,7 +1408,6 @@
             },
             {
               "action": "wait",
-              "target": "",
               "duration": 6.38
             },
             {
@@ -1451,34 +1417,34 @@
             },
             {
               "action": "fade_out",
-              "target": "label_integral_symbol",
-              "duration": 1.0
+              "target": "label_integral",
+              "duration": 0.5
             },
             {
               "action": "fade_out",
-              "target": "label_upper_limit",
-              "duration": 1.0
+              "target": "label_upper",
+              "duration": 0.5
             },
             {
               "action": "fade_out",
-              "target": "label_lower_limit",
-              "duration": 1.0
+              "target": "label_lower",
+              "duration": 0.5
             },
             {
               "action": "fade_out",
               "target": "label_function",
-              "duration": 1.0
+              "duration": 0.5
             },
             {
               "action": "appear",
-              "target": "summary_text",
+              "target": "summary",
               "duration": 2.0
             },
             {
               "action": "highlight",
-              "target": "summary_text",
-              "duration": 3.0,
-              "color": "BLUE"
+              "target": "summary",
+              "color": "BLUE",
+              "duration": 3.0
             }
           ]
         }
@@ -1836,28 +1802,15 @@
         "objects": [
           {
             "id": "title",
-            "type": "label",
+            "type": "text",
             "position": [
               0,
               2.5
             ],
             "properties": {
-              "latex": "\\text{Properties of Definite Integrals}",
-              "color": "YELLOW",
-              "scale": 1.2
-            }
-          },
-          {
-            "id": "linearity_label",
-            "type": "label",
-            "position": [
-              -4,
-              1.5
-            ],
-            "properties": {
-              "latex": "\\text{1. Linearity Property}",
-              "color": "BLUE",
-              "scale": 0.8
+              "text": "Properties of Definite Integrals",
+              "scale": 1.2,
+              "color": "YELLOW"
             }
           },
           {
@@ -1869,8 +1822,21 @@
             ],
             "properties": {
               "latex": "\\int_{a}^{b} [f(x) + g(x)]\\,dx = \\int_{a}^{b} f(x)\\,dx + \\int_{a}^{b} g(x)\\,dx",
-              "color": "WHITE",
-              "scale": 1.0
+              "scale": 0.8,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "linearity_label1",
+            "type": "text",
+            "position": [
+              -4,
+              1.5
+            ],
+            "properties": {
+              "text": "Linearity: Sum",
+              "scale": 0.7,
+              "color": "BLUE"
             }
           },
           {
@@ -1882,21 +1848,21 @@
             ],
             "properties": {
               "latex": "\\int_{a}^{b} c \\cdot f(x)\\,dx = c \\int_{a}^{b} f(x)\\,dx",
-              "color": "WHITE",
-              "scale": 1.0
+              "scale": 0.8,
+              "color": "WHITE"
             }
           },
           {
-            "id": "additivity_label",
-            "type": "label",
+            "id": "linearity_label2",
+            "type": "text",
             "position": [
               -4,
-              -1.5
+              -0.5
             ],
             "properties": {
-              "latex": "\\text{2. Additivity Property}",
-              "color": "BLUE",
-              "scale": 0.8
+              "text": "Linearity: Constant",
+              "scale": 0.7,
+              "color": "BLUE"
             }
           },
           {
@@ -1904,25 +1870,25 @@
             "type": "equation",
             "position": [
               0,
-              -2.0
+              1.0
             ],
             "properties": {
               "latex": "\\int_{a}^{c} f(x)\\,dx = \\int_{a}^{b} f(x)\\,dx + \\int_{b}^{c} f(x)\\,dx",
-              "color": "WHITE",
-              "scale": 1.0
+              "scale": 0.8,
+              "color": "WHITE"
             }
           },
           {
-            "id": "reverse_label",
-            "type": "label",
+            "id": "additivity_label",
+            "type": "text",
             "position": [
               -4,
-              -3.0
+              1.5
             ],
             "properties": {
-              "latex": "\\text{3. Reverse Limits}",
-              "color": "BLUE",
-              "scale": 0.8
+              "text": "Additivity",
+              "scale": 0.7,
+              "color": "GREEN"
             }
           },
           {
@@ -1930,12 +1896,25 @@
             "type": "equation",
             "position": [
               0,
-              -3.5
+              1.0
             ],
             "properties": {
               "latex": "\\int_{a}^{b} f(x)\\,dx = -\\int_{b}^{a} f(x)\\,dx",
-              "color": "WHITE",
-              "scale": 1.0
+              "scale": 0.8,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "reverse_label",
+            "type": "text",
+            "position": [
+              -4,
+              1.5
+            ],
+            "properties": {
+              "text": "Reverse Limits",
+              "scale": 0.7,
+              "color": "RED"
             }
           }
         ],
@@ -1946,13 +1925,8 @@
             "duration": 2.0
           },
           {
-            "action": "wait",
-            "target": "title",
-            "duration": 14.4
-          },
-          {
             "action": "appear",
-            "target": "linearity_label",
+            "target": "linearity_label1",
             "duration": 1.0
           },
           {
@@ -1961,9 +1935,9 @@
             "duration": 3.0
           },
           {
-            "action": "wait",
-            "target": "linearity_sum",
-            "duration": 7.21
+            "action": "appear",
+            "target": "linearity_label2",
+            "duration": 1.0
           },
           {
             "action": "show_equation",
@@ -1971,9 +1945,24 @@
             "duration": 3.0
           },
           {
-            "action": "wait",
+            "action": "fade_out",
+            "target": "linearity_sum",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
             "target": "linearity_constant",
-            "duration": 9.48
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "linearity_label1",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "linearity_label2",
+            "duration": 1.0
           },
           {
             "action": "appear",
@@ -1986,9 +1975,14 @@
             "duration": 4.0
           },
           {
-            "action": "wait",
+            "action": "fade_out",
             "target": "additivity_eq",
-            "duration": 21.52
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "additivity_label",
+            "duration": 1.0
           },
           {
             "action": "appear",
@@ -2001,42 +1995,20 @@
             "duration": 3.0
           },
           {
-            "action": "wait",
-            "target": "reverse_eq",
-            "duration": 9.46
-          },
-          {
-            "action": "highlight",
-            "target": "linearity_sum",
-            "duration": 2.0,
-            "color": "YELLOW"
-          },
-          {
-            "action": "highlight",
-            "target": "additivity_eq",
-            "duration": 2.0,
-            "color": "YELLOW"
-          },
-          {
             "action": "highlight",
             "target": "reverse_eq",
-            "duration": 2.0,
+            "duration": 3.0,
             "color": "YELLOW"
           },
           {
             "action": "fade_out",
-            "target": "linearity_label",
-            "duration": 1.0
-          },
-          {
-            "action": "fade_out",
-            "target": "additivity_label",
-            "duration": 1.0
+            "target": "reverse_eq",
+            "duration": 2.0
           },
           {
             "action": "fade_out",
             "target": "reverse_label",
-            "duration": 1.0
+            "duration": 2.0
           }
         ]
       },
@@ -2153,28 +2125,15 @@
           "objects": [
             {
               "id": "title",
-              "type": "label",
+              "type": "text",
               "position": [
                 0,
                 2.5
               ],
               "properties": {
-                "latex": "\\text{Properties of Definite Integrals}",
-                "color": "YELLOW",
-                "scale": 1.2
-              }
-            },
-            {
-              "id": "linearity_label",
-              "type": "label",
-              "position": [
-                -4,
-                1.5
-              ],
-              "properties": {
-                "latex": "\\text{1. Linearity Property}",
-                "color": "BLUE",
-                "scale": 0.8
+                "text": "Properties of Definite Integrals",
+                "scale": 1.2,
+                "color": "YELLOW"
               }
             },
             {
@@ -2186,8 +2145,21 @@
               ],
               "properties": {
                 "latex": "\\int_{a}^{b} [f(x) + g(x)]\\,dx = \\int_{a}^{b} f(x)\\,dx + \\int_{a}^{b} g(x)\\,dx",
-                "color": "WHITE",
-                "scale": 1.0
+                "scale": 0.8,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "linearity_label1",
+              "type": "text",
+              "position": [
+                -4,
+                1.5
+              ],
+              "properties": {
+                "text": "Linearity: Sum",
+                "scale": 0.7,
+                "color": "BLUE"
               }
             },
             {
@@ -2199,21 +2171,21 @@
               ],
               "properties": {
                 "latex": "\\int_{a}^{b} c \\cdot f(x)\\,dx = c \\int_{a}^{b} f(x)\\,dx",
-                "color": "WHITE",
-                "scale": 1.0
+                "scale": 0.8,
+                "color": "WHITE"
               }
             },
             {
-              "id": "additivity_label",
-              "type": "label",
+              "id": "linearity_label2",
+              "type": "text",
               "position": [
                 -4,
-                -1.5
+                -0.5
               ],
               "properties": {
-                "latex": "\\text{2. Additivity Property}",
-                "color": "BLUE",
-                "scale": 0.8
+                "text": "Linearity: Constant",
+                "scale": 0.7,
+                "color": "BLUE"
               }
             },
             {
@@ -2221,25 +2193,25 @@
               "type": "equation",
               "position": [
                 0,
-                -2.0
+                1.0
               ],
               "properties": {
                 "latex": "\\int_{a}^{c} f(x)\\,dx = \\int_{a}^{b} f(x)\\,dx + \\int_{b}^{c} f(x)\\,dx",
-                "color": "WHITE",
-                "scale": 1.0
+                "scale": 0.8,
+                "color": "WHITE"
               }
             },
             {
-              "id": "reverse_label",
-              "type": "label",
+              "id": "additivity_label",
+              "type": "text",
               "position": [
                 -4,
-                -3.0
+                1.5
               ],
               "properties": {
-                "latex": "\\text{3. Reverse Limits}",
-                "color": "BLUE",
-                "scale": 0.8
+                "text": "Additivity",
+                "scale": 0.7,
+                "color": "GREEN"
               }
             },
             {
@@ -2247,12 +2219,25 @@
               "type": "equation",
               "position": [
                 0,
-                -3.5
+                1.0
               ],
               "properties": {
                 "latex": "\\int_{a}^{b} f(x)\\,dx = -\\int_{b}^{a} f(x)\\,dx",
-                "color": "WHITE",
-                "scale": 1.0
+                "scale": 0.8,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "reverse_label",
+              "type": "text",
+              "position": [
+                -4,
+                1.5
+              ],
+              "properties": {
+                "text": "Reverse Limits",
+                "scale": 0.7,
+                "color": "RED"
               }
             }
           ],
@@ -2263,13 +2248,8 @@
               "duration": 2.0
             },
             {
-              "action": "wait",
-              "target": "title",
-              "duration": 14.4
-            },
-            {
               "action": "appear",
-              "target": "linearity_label",
+              "target": "linearity_label1",
               "duration": 1.0
             },
             {
@@ -2278,9 +2258,9 @@
               "duration": 3.0
             },
             {
-              "action": "wait",
-              "target": "linearity_sum",
-              "duration": 7.21
+              "action": "appear",
+              "target": "linearity_label2",
+              "duration": 1.0
             },
             {
               "action": "show_equation",
@@ -2288,9 +2268,24 @@
               "duration": 3.0
             },
             {
-              "action": "wait",
+              "action": "fade_out",
+              "target": "linearity_sum",
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
               "target": "linearity_constant",
-              "duration": 9.48
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "linearity_label1",
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "linearity_label2",
+              "duration": 1.0
             },
             {
               "action": "appear",
@@ -2303,9 +2298,14 @@
               "duration": 4.0
             },
             {
-              "action": "wait",
+              "action": "fade_out",
               "target": "additivity_eq",
-              "duration": 21.52
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "additivity_label",
+              "duration": 1.0
             },
             {
               "action": "appear",
@@ -2318,42 +2318,20 @@
               "duration": 3.0
             },
             {
-              "action": "wait",
-              "target": "reverse_eq",
-              "duration": 9.46
-            },
-            {
-              "action": "highlight",
-              "target": "linearity_sum",
-              "duration": 2.0,
-              "color": "YELLOW"
-            },
-            {
-              "action": "highlight",
-              "target": "additivity_eq",
-              "duration": 2.0,
-              "color": "YELLOW"
-            },
-            {
               "action": "highlight",
               "target": "reverse_eq",
-              "duration": 2.0,
+              "duration": 3.0,
               "color": "YELLOW"
             },
             {
               "action": "fade_out",
-              "target": "linearity_label",
-              "duration": 1.0
-            },
-            {
-              "action": "fade_out",
-              "target": "additivity_label",
-              "duration": 1.0
+              "target": "reverse_eq",
+              "duration": 2.0
             },
             {
               "action": "fade_out",
               "target": "reverse_label",
-              "duration": 1.0
+              "duration": 2.0
             }
           ]
         }
@@ -2697,51 +2675,52 @@
         "objects": [
           {
             "id": "title",
-            "type": "label",
+            "type": "text",
             "position": [
               0,
               2.5
             ],
             "properties": {
-              "latex": "\\text{The Fundamental Theorem of Calculus, Part 1}",
-              "color": "WHITE",
-              "scale": 1.0
+              "text": "The Fundamental Theorem of Calculus, Part 1",
+              "scale": 1.0,
+              "color": "WHITE"
             }
           },
           {
             "id": "diff_label",
-            "type": "label",
+            "type": "text",
             "position": [
               -3,
               1.0
             ],
             "properties": {
-              "latex": "\\text{Differentiation}",
-              "color": "BLUE",
-              "scale": 0.8
+              "text": "Differentiation",
+              "scale": 0.8,
+              "color": "BLUE"
             }
           },
           {
             "id": "int_label",
-            "type": "label",
+            "type": "text",
             "position": [
               3,
               1.0
             ],
             "properties": {
-              "latex": "\\text{Integration}",
-              "color": "ORANGE",
-              "scale": 0.8
+              "text": "Integration",
+              "scale": 0.8,
+              "color": "ORANGE"
             }
           },
           {
             "id": "arrow_right",
             "type": "shape",
             "position": [
-              0,
+              -1,
               0.5
             ],
             "properties": {
+              "shape_type": "arrow",
               "color": "WHITE",
               "scale": 1.0
             }
@@ -2750,25 +2729,26 @@
             "id": "arrow_left",
             "type": "shape",
             "position": [
-              0,
+              1,
               -0.5
             ],
             "properties": {
+              "shape_type": "arrow",
               "color": "WHITE",
               "scale": 1.0
             }
           },
           {
             "id": "inverse_label",
-            "type": "label",
+            "type": "text",
             "position": [
               0,
               -2.0
             ],
             "properties": {
-              "latex": "\\text{Inverse Operations}",
-              "color": "GREEN",
-              "scale": 0.9
+              "text": "Inverse Operations",
+              "scale": 0.9,
+              "color": "GREEN"
             }
           },
           {
@@ -2780,8 +2760,8 @@
             ],
             "properties": {
               "latex": "F(x) = \\int_{a}^{x} f(t)\\,dt",
-              "color": "WHITE",
-              "scale": 1.2
+              "scale": 1.2,
+              "color": "WHITE"
             }
           },
           {
@@ -2793,60 +2773,47 @@
             ],
             "properties": {
               "latex": "F'(x) = f(x)",
-              "color": "YELLOW",
-              "scale": 1.2
+              "scale": 1.2,
+              "color": "YELLOW"
             }
           },
           {
             "id": "process_step1",
-            "type": "label",
+            "type": "text",
             "position": [
               -3,
               1.0
             ],
             "properties": {
-              "latex": "\\text{1. Integrate}",
-              "color": "BLUE",
-              "scale": 0.8
+              "text": "1. Integrate",
+              "scale": 0.8,
+              "color": "BLUE"
             }
           },
           {
             "id": "process_step2",
-            "type": "label",
+            "type": "text",
             "position": [
               0,
               1.0
             ],
             "properties": {
-              "latex": "\\text{2. Differentiate}",
-              "color": "ORANGE",
-              "scale": 0.8
+              "text": "2. Differentiate",
+              "scale": 0.8,
+              "color": "ORANGE"
             }
           },
           {
             "id": "process_step3",
-            "type": "label",
+            "type": "text",
             "position": [
               3,
               1.0
             ],
             "properties": {
-              "latex": "\\text{3. Original Function}",
-              "color": "GREEN",
-              "scale": 0.8
-            }
-          },
-          {
-            "id": "variable_limit_label",
-            "type": "label",
-            "position": [
-              2.5,
-              1.5
-            ],
-            "properties": {
-              "latex": "\\text{Variable Upper Limit}",
-              "color": "BLUE",
-              "scale": 0.6
+              "text": "3. Original Function",
+              "scale": 0.8,
+              "color": "GREEN"
             }
           },
           {
@@ -2858,21 +2825,21 @@
             ],
             "properties": {
               "latex": "\\frac{d}{dx} \\left( \\int_{a}^{x} f(t)\\,dt \\right) = f(x)",
-              "color": "WHITE",
-              "scale": 1.3
+              "scale": 1.1,
+              "color": "WHITE"
             }
           },
           {
             "id": "final_summary",
-            "type": "label",
+            "type": "text",
             "position": [
               0,
               0
             ],
             "properties": {
-              "latex": "\\text{FTC Part 1: Derivative of integral = original function}",
-              "color": "GREEN",
-              "scale": 1.0
+              "text": "FTC Part 1: Derivative of integral = original function",
+              "scale": 1.0,
+              "color": "GREEN"
             }
           }
         ],
@@ -2884,7 +2851,6 @@
           },
           {
             "action": "wait",
-            "target": "title",
             "duration": 7.22
           },
           {
@@ -2919,7 +2885,6 @@
           },
           {
             "action": "wait",
-            "target": "inverse_label",
             "duration": 8.57
           },
           {
@@ -2959,7 +2924,6 @@
           },
           {
             "action": "wait",
-            "target": "ftc_result",
             "duration": 15.21
           },
           {
@@ -2989,7 +2953,6 @@
           },
           {
             "action": "wait",
-            "target": "process_step3",
             "duration": 5.78
           },
           {
@@ -3008,19 +2971,8 @@
             "duration": 0.5
           },
           {
-            "action": "appear",
-            "target": "variable_limit_label",
-            "duration": 1.0
-          },
-          {
             "action": "wait",
-            "target": "variable_limit_label",
-            "duration": 10.88
-          },
-          {
-            "action": "fade_out",
-            "target": "variable_limit_label",
-            "duration": 0.5
+            "duration": 11.88
           },
           {
             "action": "show_equation",
@@ -3035,7 +2987,6 @@
           },
           {
             "action": "wait",
-            "target": "example_formula",
             "duration": 8.46
           },
           {
@@ -3056,7 +3007,6 @@
           },
           {
             "action": "wait",
-            "target": "final_summary",
             "duration": 12.02
           }
         ]
@@ -3167,51 +3117,52 @@
           "objects": [
             {
               "id": "title",
-              "type": "label",
+              "type": "text",
               "position": [
                 0,
                 2.5
               ],
               "properties": {
-                "latex": "\\text{The Fundamental Theorem of Calculus, Part 1}",
-                "color": "WHITE",
-                "scale": 1.0
+                "text": "The Fundamental Theorem of Calculus, Part 1",
+                "scale": 1.0,
+                "color": "WHITE"
               }
             },
             {
               "id": "diff_label",
-              "type": "label",
+              "type": "text",
               "position": [
                 -3,
                 1.0
               ],
               "properties": {
-                "latex": "\\text{Differentiation}",
-                "color": "BLUE",
-                "scale": 0.8
+                "text": "Differentiation",
+                "scale": 0.8,
+                "color": "BLUE"
               }
             },
             {
               "id": "int_label",
-              "type": "label",
+              "type": "text",
               "position": [
                 3,
                 1.0
               ],
               "properties": {
-                "latex": "\\text{Integration}",
-                "color": "ORANGE",
-                "scale": 0.8
+                "text": "Integration",
+                "scale": 0.8,
+                "color": "ORANGE"
               }
             },
             {
               "id": "arrow_right",
               "type": "shape",
               "position": [
-                0,
+                -1,
                 0.5
               ],
               "properties": {
+                "shape_type": "arrow",
                 "color": "WHITE",
                 "scale": 1.0
               }
@@ -3220,25 +3171,26 @@
               "id": "arrow_left",
               "type": "shape",
               "position": [
-                0,
+                1,
                 -0.5
               ],
               "properties": {
+                "shape_type": "arrow",
                 "color": "WHITE",
                 "scale": 1.0
               }
             },
             {
               "id": "inverse_label",
-              "type": "label",
+              "type": "text",
               "position": [
                 0,
                 -2.0
               ],
               "properties": {
-                "latex": "\\text{Inverse Operations}",
-                "color": "GREEN",
-                "scale": 0.9
+                "text": "Inverse Operations",
+                "scale": 0.9,
+                "color": "GREEN"
               }
             },
             {
@@ -3250,8 +3202,8 @@
               ],
               "properties": {
                 "latex": "F(x) = \\int_{a}^{x} f(t)\\,dt",
-                "color": "WHITE",
-                "scale": 1.2
+                "scale": 1.2,
+                "color": "WHITE"
               }
             },
             {
@@ -3263,60 +3215,47 @@
               ],
               "properties": {
                 "latex": "F'(x) = f(x)",
-                "color": "YELLOW",
-                "scale": 1.2
+                "scale": 1.2,
+                "color": "YELLOW"
               }
             },
             {
               "id": "process_step1",
-              "type": "label",
+              "type": "text",
               "position": [
                 -3,
                 1.0
               ],
               "properties": {
-                "latex": "\\text{1. Integrate}",
-                "color": "BLUE",
-                "scale": 0.8
+                "text": "1. Integrate",
+                "scale": 0.8,
+                "color": "BLUE"
               }
             },
             {
               "id": "process_step2",
-              "type": "label",
+              "type": "text",
               "position": [
                 0,
                 1.0
               ],
               "properties": {
-                "latex": "\\text{2. Differentiate}",
-                "color": "ORANGE",
-                "scale": 0.8
+                "text": "2. Differentiate",
+                "scale": 0.8,
+                "color": "ORANGE"
               }
             },
             {
               "id": "process_step3",
-              "type": "label",
+              "type": "text",
               "position": [
                 3,
                 1.0
               ],
               "properties": {
-                "latex": "\\text{3. Original Function}",
-                "color": "GREEN",
-                "scale": 0.8
-              }
-            },
-            {
-              "id": "variable_limit_label",
-              "type": "label",
-              "position": [
-                2.5,
-                1.5
-              ],
-              "properties": {
-                "latex": "\\text{Variable Upper Limit}",
-                "color": "BLUE",
-                "scale": 0.6
+                "text": "3. Original Function",
+                "scale": 0.8,
+                "color": "GREEN"
               }
             },
             {
@@ -3328,21 +3267,21 @@
               ],
               "properties": {
                 "latex": "\\frac{d}{dx} \\left( \\int_{a}^{x} f(t)\\,dt \\right) = f(x)",
-                "color": "WHITE",
-                "scale": 1.3
+                "scale": 1.1,
+                "color": "WHITE"
               }
             },
             {
               "id": "final_summary",
-              "type": "label",
+              "type": "text",
               "position": [
                 0,
                 0
               ],
               "properties": {
-                "latex": "\\text{FTC Part 1: Derivative of integral = original function}",
-                "color": "GREEN",
-                "scale": 1.0
+                "text": "FTC Part 1: Derivative of integral = original function",
+                "scale": 1.0,
+                "color": "GREEN"
               }
             }
           ],
@@ -3354,7 +3293,6 @@
             },
             {
               "action": "wait",
-              "target": "title",
               "duration": 7.22
             },
             {
@@ -3389,7 +3327,6 @@
             },
             {
               "action": "wait",
-              "target": "inverse_label",
               "duration": 8.57
             },
             {
@@ -3429,7 +3366,6 @@
             },
             {
               "action": "wait",
-              "target": "ftc_result",
               "duration": 15.21
             },
             {
@@ -3459,7 +3395,6 @@
             },
             {
               "action": "wait",
-              "target": "process_step3",
               "duration": 5.78
             },
             {
@@ -3478,19 +3413,8 @@
               "duration": 0.5
             },
             {
-              "action": "appear",
-              "target": "variable_limit_label",
-              "duration": 1.0
-            },
-            {
               "action": "wait",
-              "target": "variable_limit_label",
-              "duration": 10.88
-            },
-            {
-              "action": "fade_out",
-              "target": "variable_limit_label",
-              "duration": 0.5
+              "duration": 11.88
             },
             {
               "action": "show_equation",
@@ -3505,7 +3429,6 @@
             },
             {
               "action": "wait",
-              "target": "example_formula",
               "duration": 8.46
             },
             {
@@ -3526,7 +3449,6 @@
             },
             {
               "action": "wait",
-              "target": "final_summary",
               "duration": 12.02
             }
           ]
@@ -3888,15 +3810,15 @@
         "objects": [
           {
             "id": "title",
-            "type": "label",
+            "type": "text",
             "position": [
               0,
               2.5
             ],
             "properties": {
-              "latex": "\\text{Fundamental Theorem of Calculus: Part 2}",
-              "color": "WHITE",
-              "scale": 1.0
+              "text": "Fundamental Theorem of Calculus: Part 2",
+              "scale": 1.0,
+              "color": "WHITE"
             }
           },
           {
@@ -3908,60 +3830,60 @@
             ],
             "properties": {
               "latex": "\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)",
-              "color": "BLUE",
-              "scale": 1.2
+              "scale": 1.2,
+              "color": "BLUE"
             }
           },
           {
             "id": "condition_label",
-            "type": "label",
+            "type": "text",
             "position": [
               0,
               -0.5
             ],
             "properties": {
-              "latex": "\\text{where } F(x) \\text{ is antiderivative of } f(x)",
-              "color": "YELLOW",
-              "scale": 0.8
+              "text": "where F(x) is antiderivative of f(x)",
+              "scale": 0.8,
+              "color": "YELLOW"
             }
           },
           {
             "id": "step1",
-            "type": "label",
+            "type": "text",
             "position": [
               -2,
               1.5
             ],
             "properties": {
-              "latex": "\\text{1. Find antiderivative } F(x)",
-              "color": "GREEN",
-              "scale": 0.8
+              "text": "1. Find antiderivative F(x)",
+              "scale": 0.8,
+              "color": "GREEN"
             }
           },
           {
             "id": "step2",
-            "type": "label",
+            "type": "text",
             "position": [
               -2,
               0.5
             ],
             "properties": {
-              "latex": "\\text{2. Evaluate } F(b) - F(a)",
-              "color": "GREEN",
-              "scale": 0.8
+              "text": "2. Evaluate F(b) - F(a)",
+              "scale": 0.8,
+              "color": "GREEN"
             }
           },
           {
             "id": "step3",
-            "type": "label",
+            "type": "text",
             "position": [
               -2,
               -0.5
             ],
             "properties": {
-              "latex": "\\text{3. Get exact value}",
-              "color": "GREEN",
-              "scale": 0.8
+              "text": "3. Get exact value",
+              "scale": 0.8,
+              "color": "GREEN"
             }
           },
           {
@@ -3973,8 +3895,8 @@
             ],
             "properties": {
               "latex": "f(x) = x^n \\implies F(x) = \\frac{x^{n+1}}{n+1} \\quad (n \\neq -1)",
-              "color": "BLUE",
-              "scale": 1.0
+              "scale": 1.0,
+              "color": "BLUE"
             }
           },
           {
@@ -3986,8 +3908,8 @@
             ],
             "properties": {
               "latex": "f(x) = \\frac{1}{x} \\implies F(x) = \\ln|x|",
-              "color": "ORANGE",
-              "scale": 1.0
+              "scale": 1.0,
+              "color": "ORANGE"
             }
           },
           {
@@ -3999,8 +3921,8 @@
             ],
             "properties": {
               "latex": "f(x) = e^x \\implies F(x) = e^x",
-              "color": "RED",
-              "scale": 1.0
+              "scale": 1.0,
+              "color": "RED"
             }
           },
           {
@@ -4012,21 +3934,21 @@
             ],
             "properties": {
               "latex": "\\begin{aligned} f(x) = \\sin(x) &\\implies F(x) = -\\cos(x) \\\\ f(x) = \\cos(x) &\\implies F(x) = \\sin(x) \\end{aligned}",
-              "color": "PURPLE",
-              "scale": 0.9
+              "scale": 0.9,
+              "color": "PURPLE"
             }
           },
           {
             "id": "summary_label",
-            "type": "label",
+            "type": "text",
             "position": [
               0,
               2.0
             ],
             "properties": {
-              "latex": "\\text{Master These Antiderivative Formulas}",
-              "color": "WHITE",
-              "scale": 1.0
+              "text": "Master These Antiderivative Formulas",
+              "scale": 1.0,
+              "color": "WHITE"
             }
           }
         ],
@@ -4034,27 +3956,17 @@
           {
             "action": "appear",
             "target": "title",
-            "duration": 1.5
-          },
-          {
-            "action": "wait",
-            "target": "title",
-            "duration": 9.3
+            "duration": 2.0
           },
           {
             "action": "show_equation",
             "target": "ftc_formula",
-            "duration": 2.0
+            "duration": 3.0
           },
           {
             "action": "appear",
             "target": "condition_label",
             "duration": 1.5
-          },
-          {
-            "action": "wait",
-            "target": "ftc_formula",
-            "duration": 18.6
           },
           {
             "action": "fade_out",
@@ -4087,11 +3999,6 @@
             "duration": 1.0
           },
           {
-            "action": "wait",
-            "target": "step1",
-            "duration": 10.56
-          },
-          {
             "action": "fade_out",
             "target": "step1",
             "duration": 1.0
@@ -4107,44 +4014,24 @@
             "duration": 1.0
           },
           {
-            "action": "wait",
-            "target": "step1",
-            "duration": 10.52
-          },
-          {
             "action": "show_equation",
             "target": "power_rule",
-            "duration": 2.0
-          },
-          {
-            "action": "wait",
-            "target": "power_rule",
-            "duration": 15.86
+            "duration": 3.0
           },
           {
             "action": "show_equation",
             "target": "ln_rule",
-            "duration": 2.0
-          },
-          {
-            "action": "wait",
-            "target": "ln_rule",
-            "duration": 7.77
+            "duration": 2.5
           },
           {
             "action": "show_equation",
             "target": "exp_rule",
-            "duration": 1.5
+            "duration": 2.0
           },
           {
             "action": "show_equation",
             "target": "trig_rules",
-            "duration": 2.0
-          },
-          {
-            "action": "wait",
-            "target": "exp_rule",
-            "duration": 11.31
+            "duration": 3.0
           },
           {
             "action": "fade_out",
@@ -4174,13 +4061,8 @@
           {
             "action": "highlight",
             "target": "summary_label",
-            "duration": 2.0,
+            "duration": 3.0,
             "color": "YELLOW"
-          },
-          {
-            "action": "wait",
-            "target": "summary_label",
-            "duration": 4.67
           }
         ]
       },
@@ -4301,15 +4183,15 @@
           "objects": [
             {
               "id": "title",
-              "type": "label",
+              "type": "text",
               "position": [
                 0,
                 2.5
               ],
               "properties": {
-                "latex": "\\text{Fundamental Theorem of Calculus: Part 2}",
-                "color": "WHITE",
-                "scale": 1.0
+                "text": "Fundamental Theorem of Calculus: Part 2",
+                "scale": 1.0,
+                "color": "WHITE"
               }
             },
             {
@@ -4321,60 +4203,60 @@
               ],
               "properties": {
                 "latex": "\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)",
-                "color": "BLUE",
-                "scale": 1.2
+                "scale": 1.2,
+                "color": "BLUE"
               }
             },
             {
               "id": "condition_label",
-              "type": "label",
+              "type": "text",
               "position": [
                 0,
                 -0.5
               ],
               "properties": {
-                "latex": "\\text{where } F(x) \\text{ is antiderivative of } f(x)",
-                "color": "YELLOW",
-                "scale": 0.8
+                "text": "where F(x) is antiderivative of f(x)",
+                "scale": 0.8,
+                "color": "YELLOW"
               }
             },
             {
               "id": "step1",
-              "type": "label",
+              "type": "text",
               "position": [
                 -2,
                 1.5
               ],
               "properties": {
-                "latex": "\\text{1. Find antiderivative } F(x)",
-                "color": "GREEN",
-                "scale": 0.8
+                "text": "1. Find antiderivative F(x)",
+                "scale": 0.8,
+                "color": "GREEN"
               }
             },
             {
               "id": "step2",
-              "type": "label",
+              "type": "text",
               "position": [
                 -2,
                 0.5
               ],
               "properties": {
-                "latex": "\\text{2. Evaluate } F(b) - F(a)",
-                "color": "GREEN",
-                "scale": 0.8
+                "text": "2. Evaluate F(b) - F(a)",
+                "scale": 0.8,
+                "color": "GREEN"
               }
             },
             {
               "id": "step3",
-              "type": "label",
+              "type": "text",
               "position": [
                 -2,
                 -0.5
               ],
               "properties": {
-                "latex": "\\text{3. Get exact value}",
-                "color": "GREEN",
-                "scale": 0.8
+                "text": "3. Get exact value",
+                "scale": 0.8,
+                "color": "GREEN"
               }
             },
             {
@@ -4386,8 +4268,8 @@
               ],
               "properties": {
                 "latex": "f(x) = x^n \\implies F(x) = \\frac{x^{n+1}}{n+1} \\quad (n \\neq -1)",
-                "color": "BLUE",
-                "scale": 1.0
+                "scale": 1.0,
+                "color": "BLUE"
               }
             },
             {
@@ -4399,8 +4281,8 @@
               ],
               "properties": {
                 "latex": "f(x) = \\frac{1}{x} \\implies F(x) = \\ln|x|",
-                "color": "ORANGE",
-                "scale": 1.0
+                "scale": 1.0,
+                "color": "ORANGE"
               }
             },
             {
@@ -4412,8 +4294,8 @@
               ],
               "properties": {
                 "latex": "f(x) = e^x \\implies F(x) = e^x",
-                "color": "RED",
-                "scale": 1.0
+                "scale": 1.0,
+                "color": "RED"
               }
             },
             {
@@ -4425,21 +4307,21 @@
               ],
               "properties": {
                 "latex": "\\begin{aligned} f(x) = \\sin(x) &\\implies F(x) = -\\cos(x) \\\\ f(x) = \\cos(x) &\\implies F(x) = \\sin(x) \\end{aligned}",
-                "color": "PURPLE",
-                "scale": 0.9
+                "scale": 0.9,
+                "color": "PURPLE"
               }
             },
             {
               "id": "summary_label",
-              "type": "label",
+              "type": "text",
               "position": [
                 0,
                 2.0
               ],
               "properties": {
-                "latex": "\\text{Master These Antiderivative Formulas}",
-                "color": "WHITE",
-                "scale": 1.0
+                "text": "Master These Antiderivative Formulas",
+                "scale": 1.0,
+                "color": "WHITE"
               }
             }
           ],
@@ -4447,27 +4329,17 @@
             {
               "action": "appear",
               "target": "title",
-              "duration": 1.5
-            },
-            {
-              "action": "wait",
-              "target": "title",
-              "duration": 9.3
+              "duration": 2.0
             },
             {
               "action": "show_equation",
               "target": "ftc_formula",
-              "duration": 2.0
+              "duration": 3.0
             },
             {
               "action": "appear",
               "target": "condition_label",
               "duration": 1.5
-            },
-            {
-              "action": "wait",
-              "target": "ftc_formula",
-              "duration": 18.6
             },
             {
               "action": "fade_out",
@@ -4500,11 +4372,6 @@
               "duration": 1.0
             },
             {
-              "action": "wait",
-              "target": "step1",
-              "duration": 10.56
-            },
-            {
               "action": "fade_out",
               "target": "step1",
               "duration": 1.0
@@ -4520,44 +4387,24 @@
               "duration": 1.0
             },
             {
-              "action": "wait",
-              "target": "step1",
-              "duration": 10.52
-            },
-            {
               "action": "show_equation",
               "target": "power_rule",
-              "duration": 2.0
-            },
-            {
-              "action": "wait",
-              "target": "power_rule",
-              "duration": 15.86
+              "duration": 3.0
             },
             {
               "action": "show_equation",
               "target": "ln_rule",
-              "duration": 2.0
-            },
-            {
-              "action": "wait",
-              "target": "ln_rule",
-              "duration": 7.77
+              "duration": 2.5
             },
             {
               "action": "show_equation",
               "target": "exp_rule",
-              "duration": 1.5
+              "duration": 2.0
             },
             {
               "action": "show_equation",
               "target": "trig_rules",
-              "duration": 2.0
-            },
-            {
-              "action": "wait",
-              "target": "exp_rule",
-              "duration": 11.31
+              "duration": 3.0
             },
             {
               "action": "fade_out",
@@ -4587,13 +4434,8 @@
             {
               "action": "highlight",
               "target": "summary_label",
-              "duration": 2.0,
+              "duration": 3.0,
               "color": "YELLOW"
-            },
-            {
-              "action": "wait",
-              "target": "summary_label",
-              "duration": 4.67
             }
           ]
         }
@@ -4938,15 +4780,15 @@
         "objects": [
           {
             "id": "title",
-            "type": "label",
+            "type": "text",
             "position": [
               0,
               2.5
             ],
             "properties": {
-              "latex": "\\text{Worked Example: Definite Integral}",
-              "color": "WHITE",
-              "scale": 0.8
+              "text": "Worked Example: Evaluating a Definite Integral",
+              "scale": 0.9,
+              "color": "WHITE"
             }
           },
           {
@@ -4958,21 +4800,21 @@
             ],
             "properties": {
               "latex": "\\int_{1}^{4} (3x^2 - 2x + 1)\\,dx",
-              "color": "BLUE",
-              "scale": 1.2
+              "scale": 1.2,
+              "color": "BLUE"
             }
           },
           {
             "id": "step1_label",
-            "type": "label",
+            "type": "text",
             "position": [
-              -3.5,
+              -3.0,
               -0.5
             ],
             "properties": {
-              "latex": "\\text{Step 1: Find antiderivative}",
-              "color": "YELLOW",
-              "scale": 0.7
+              "text": "Step 1: Find antiderivative",
+              "scale": 0.7,
+              "color": "YELLOW"
             }
           },
           {
@@ -4984,8 +4826,8 @@
             ],
             "properties": {
               "latex": "F(x) = x^3 - x^2 + x",
-              "color": "GREEN",
-              "scale": 1.0
+              "scale": 1.0,
+              "color": "GREEN"
             }
           },
           {
@@ -4997,21 +4839,21 @@
             ],
             "properties": {
               "latex": "\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)",
-              "color": "ORANGE",
-              "scale": 1.1
+              "scale": 1.1,
+              "color": "ORANGE"
             }
           },
           {
             "id": "step2_label",
-            "type": "label",
+            "type": "text",
             "position": [
-              -3.5,
+              -3.0,
               -2.0
             ],
             "properties": {
-              "latex": "\\text{Step 2: Apply FTC Part 2}",
-              "color": "YELLOW",
-              "scale": 0.7
+              "text": "Step 2: Apply FTC Part 2",
+              "scale": 0.7,
+              "color": "YELLOW"
             }
           },
           {
@@ -5023,8 +4865,8 @@
             ],
             "properties": {
               "latex": "F(4) - F(1) = (4^3 - 4^2 + 4) - (1^3 - 1^2 + 1)",
-              "color": "PURPLE",
-              "scale": 0.9
+              "scale": 0.8,
+              "color": "PURPLE"
             }
           },
           {
@@ -5036,8 +4878,8 @@
             ],
             "properties": {
               "latex": "= (64 - 16 + 4) - (1 - 1 + 1) = 52 - 1",
-              "color": "RED",
-              "scale": 0.9
+              "scale": 0.9,
+              "color": "RED"
             }
           },
           {
@@ -5045,12 +4887,12 @@
             "type": "equation",
             "position": [
               0,
-              -2.0
+              -1.0
             ],
             "properties": {
               "latex": "= 51",
-              "color": "WHITE",
-              "scale": 1.3
+              "scale": 1.4,
+              "color": "WHITE"
             }
           }
         ],
@@ -5066,6 +4908,10 @@
             "duration": 3.0
           },
           {
+            "action": "wait",
+            "duration": 6.57
+          },
+          {
             "action": "appear",
             "target": "step1_label",
             "duration": 1.5
@@ -5074,6 +4920,10 @@
             "action": "show_equation",
             "target": "antiderivative",
             "duration": 2.5
+          },
+          {
+            "action": "wait",
+            "duration": 5.98
           },
           {
             "action": "fade_out",
@@ -5102,6 +4952,10 @@
             "color": "YELLOW"
           },
           {
+            "action": "wait",
+            "duration": 14.3
+          },
+          {
             "action": "fade_out",
             "target": "ftc_formula",
             "duration": 1.0
@@ -5117,9 +4971,13 @@
             "duration": 3.0
           },
           {
-            "action": "transform",
+            "action": "wait",
+            "duration": 5.1
+          },
+          {
+            "action": "fade_out",
             "target": "substitution",
-            "duration": 2.0
+            "duration": 1.0
           },
           {
             "action": "show_equation",
@@ -5127,9 +4985,9 @@
             "duration": 3.0
           },
           {
-            "action": "transform",
+            "action": "fade_out",
             "target": "calculation",
-            "duration": 2.0
+            "duration": 1.0
           },
           {
             "action": "show_equation",
@@ -5143,14 +5001,31 @@
             "color": "GOLD"
           },
           {
+            "action": "wait",
+            "duration": 9.74
+          },
+          {
             "action": "fade_out",
             "target": "step2_label",
             "duration": 2.0
           },
           {
+            "action": "fade_out",
+            "target": "title",
+            "duration": 2.0
+          },
+          {
             "action": "move",
             "target": "final_answer",
+            "to_position": [
+              0,
+              0
+            ],
             "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "duration": 7.39
           }
         ]
       },
@@ -5259,15 +5134,15 @@
           "objects": [
             {
               "id": "title",
-              "type": "label",
+              "type": "text",
               "position": [
                 0,
                 2.5
               ],
               "properties": {
-                "latex": "\\text{Worked Example: Definite Integral}",
-                "color": "WHITE",
-                "scale": 0.8
+                "text": "Worked Example: Evaluating a Definite Integral",
+                "scale": 0.9,
+                "color": "WHITE"
               }
             },
             {
@@ -5279,21 +5154,21 @@
               ],
               "properties": {
                 "latex": "\\int_{1}^{4} (3x^2 - 2x + 1)\\,dx",
-                "color": "BLUE",
-                "scale": 1.2
+                "scale": 1.2,
+                "color": "BLUE"
               }
             },
             {
               "id": "step1_label",
-              "type": "label",
+              "type": "text",
               "position": [
-                -3.5,
+                -3.0,
                 -0.5
               ],
               "properties": {
-                "latex": "\\text{Step 1: Find antiderivative}",
-                "color": "YELLOW",
-                "scale": 0.7
+                "text": "Step 1: Find antiderivative",
+                "scale": 0.7,
+                "color": "YELLOW"
               }
             },
             {
@@ -5305,8 +5180,8 @@
               ],
               "properties": {
                 "latex": "F(x) = x^3 - x^2 + x",
-                "color": "GREEN",
-                "scale": 1.0
+                "scale": 1.0,
+                "color": "GREEN"
               }
             },
             {
@@ -5318,21 +5193,21 @@
               ],
               "properties": {
                 "latex": "\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)",
-                "color": "ORANGE",
-                "scale": 1.1
+                "scale": 1.1,
+                "color": "ORANGE"
               }
             },
             {
               "id": "step2_label",
-              "type": "label",
+              "type": "text",
               "position": [
-                -3.5,
+                -3.0,
                 -2.0
               ],
               "properties": {
-                "latex": "\\text{Step 2: Apply FTC Part 2}",
-                "color": "YELLOW",
-                "scale": 0.7
+                "text": "Step 2: Apply FTC Part 2",
+                "scale": 0.7,
+                "color": "YELLOW"
               }
             },
             {
@@ -5344,8 +5219,8 @@
               ],
               "properties": {
                 "latex": "F(4) - F(1) = (4^3 - 4^2 + 4) - (1^3 - 1^2 + 1)",
-                "color": "PURPLE",
-                "scale": 0.9
+                "scale": 0.8,
+                "color": "PURPLE"
               }
             },
             {
@@ -5357,8 +5232,8 @@
               ],
               "properties": {
                 "latex": "= (64 - 16 + 4) - (1 - 1 + 1) = 52 - 1",
-                "color": "RED",
-                "scale": 0.9
+                "scale": 0.9,
+                "color": "RED"
               }
             },
             {
@@ -5366,12 +5241,12 @@
               "type": "equation",
               "position": [
                 0,
-                -2.0
+                -1.0
               ],
               "properties": {
                 "latex": "= 51",
-                "color": "WHITE",
-                "scale": 1.3
+                "scale": 1.4,
+                "color": "WHITE"
               }
             }
           ],
@@ -5387,6 +5262,10 @@
               "duration": 3.0
             },
             {
+              "action": "wait",
+              "duration": 6.57
+            },
+            {
               "action": "appear",
               "target": "step1_label",
               "duration": 1.5
@@ -5395,6 +5274,10 @@
               "action": "show_equation",
               "target": "antiderivative",
               "duration": 2.5
+            },
+            {
+              "action": "wait",
+              "duration": 5.98
             },
             {
               "action": "fade_out",
@@ -5423,6 +5306,10 @@
               "color": "YELLOW"
             },
             {
+              "action": "wait",
+              "duration": 14.3
+            },
+            {
               "action": "fade_out",
               "target": "ftc_formula",
               "duration": 1.0
@@ -5438,9 +5325,13 @@
               "duration": 3.0
             },
             {
-              "action": "transform",
+              "action": "wait",
+              "duration": 5.1
+            },
+            {
+              "action": "fade_out",
               "target": "substitution",
-              "duration": 2.0
+              "duration": 1.0
             },
             {
               "action": "show_equation",
@@ -5448,9 +5339,9 @@
               "duration": 3.0
             },
             {
-              "action": "transform",
+              "action": "fade_out",
               "target": "calculation",
-              "duration": 2.0
+              "duration": 1.0
             },
             {
               "action": "show_equation",
@@ -5464,14 +5355,31 @@
               "color": "GOLD"
             },
             {
+              "action": "wait",
+              "duration": 9.74
+            },
+            {
               "action": "fade_out",
               "target": "step2_label",
               "duration": 2.0
             },
             {
+              "action": "fade_out",
+              "target": "title",
+              "duration": 2.0
+            },
+            {
               "action": "move",
               "target": "final_answer",
+              "to_position": [
+                0,
+                0
+              ],
               "duration": 2.0
+            },
+            {
+              "action": "wait",
+              "duration": 7.39
             }
           ]
         }
@@ -5693,31 +5601,31 @@
       "video_prompts": [
         {
           "beat_id": "beat_1",
-          "prompt": "The scene opens on a breathtaking, hyperrealistic wide shot of a vast, tranquil salt flat at night, reminiscent of the Great Rann of Kutch. The ground is a perfectly still, shallow layer of water, creating a flawless dark mirror that reflects a star-dusted cosmos above. The only light comes from the celestial bodies and a single, ethereal object hovering just above the water's surface: a luminous, flowing ribbon of cosmic energy, its form a gentle curve of f(x). This ribbon is not a solid line but a semi-transparent tube of swirling nebular gas, glowing with a soft, pulsating blue light. Two vertical beams of pure white light pierce the darkness, extending from the sky down to the water, marking the interval boundaries 'a' and 'b'. The camera begins a slow, majestic dolly movement, gliding parallel to the cosmic ribbon. As the camera travels from 'a' towards 'b', a magical event unfolds. The dark water directly beneath the curve and between the two light beams begins to awaken. Millions of microscopic, bioluminescent organisms bloom into existence, filling the volume with a brilliant cyan glow. This glowing mass has a tangible, gelatinous texture, with subtle internal currents and sparkling particles of light swirling within it, representing the positive area. The camera then smoothly transitions, plunging below the water's surface for a subsequent shot. Here, a different curve, one that dips below the axis, is made of smoldering orange light. As the camera tracks along this submerged curve, a deep magenta bioluminescence blooms downwards into the inky depths, its light scattering softly in the dark water, defining the negative signed area. The final shot pulls back to a wide view, showing a complex curve with both positive and negative sections, simultaneously filled with their distinct, glowing cyan and magenta volumes, creating a stunning visual contrast against the dark, star-reflected landscape.",
+          "prompt": "The scene opens on a breathtaking, hyperrealistic wide shot of a vast, tranquil salt flat at night, reminiscent of the Great Rann of Kutch. The ground is a perfectly still, shallow layer of water, creating a flawless dark mirror that reflects a star-dusted cosmos above. The only light comes from the celestial bodies and a single, ethereal object hovering just above the water's surface: a luminous, flowing ribbon of cosmic energy. This ribbon is not a solid line but a semi-transparent tube of swirling nebular gas, glowing with a soft, pulsating blue light. Two vertical beams of pure white light pierce the darkness, extending from the sky down to the water, marking interval boundaries. The camera begins a slow, majestic dolly movement, gliding parallel to the cosmic ribbon. As the camera travels, a magical event unfolds. The dark water directly beneath the curve and between the two light beams begins to awaken. Millions of microscopic, bioluminescent organisms bloom into existence, filling the volume with a brilliant cyan glow. This glowing mass has a tangible, gelatinous texture, with subtle internal currents and sparkling particles of light swirling within it. The camera then smoothly transitions, plunging below the water's surface for a subsequent shot. Here, a different curve, one that dips below the axis, is made of smoldering orange light. As the camera tracks along this submerged curve, a deep magenta bioluminescence blooms downwards into the inky depths, its light scattering softly in the dark water. The final shot pulls back to a wide view, showing a complex curve with both positive and negative sections, simultaneously filled with their distinct, glowing cyan and magenta volumes, creating a stunning visual contrast against the dark, star-reflected landscape.",
           "duration_seconds": 3.38,
           "style": "realistic"
         },
         {
           "beat_id": "beat_2",
-          "prompt": "The scene is set within a reimagined Jantar Mantar, an ancient Indian astronomical observatory, now augmented with intricate, steampunk-inspired machinery. The air is hazy with the golden light of a low sun, casting long, sharp shadows from the monumental stone structures. Our focus is a central apparatus where a physical representation of a function, f(x), exists as a curved brass rail, weathered and green with patina, mounted on a large sandstone block. The camera performs a slow, reverent orbit around a magnificent, intricately carved object made of dark, polished teakwood. This object, the antiderivative F(x), is a solid, three-dimensional form whose upper surface perfectly represents the integral of the brass curve. Its wood grain is deep and rich, catching the warm light. A complex mechanical arm, made of gleaming, oiled brass and studded with focusing lenses, descends with meticulous precision. It doesn't touch the teakwood form, but instead, two separate lens assemblies align themselves over points corresponding to 'b' and 'a' on the wooden shape. First, a brilliant beam of green light projects from a lens onto the teakwood at position 'b'. This light travels through the wood and projects a large, glowing numerical value for F(b) onto the rough, ancient stone wall of the observatory behind it. The camera then whip-pans to a second lens, which projects a ruby-red beam onto position 'a', casting the smaller numerical value of F(a) onto the wall just below the first. A visible shimmer of heat and energy appears on the wall as the two projected numbers animate, with F(a) sliding up and merging into F(b), performing a visual subtraction that resolves into a single, final value. Simultaneously, a shimmering field of golden energy fills the space under the brass f(x) rail, its volume precisely matching the calculated result.",
+          "prompt": "The scene is set within a reimagined Jantar Mantar, an ancient Indian astronomical observatory, now augmented with intricate, steampunk-inspired machinery. The air is hazy with the golden light of a low sun, casting long, sharp shadows from the monumental stone structures. Our focus is a central apparatus where a physical representation of a function exists as a curved brass rail, weathered and green with patina, mounted on a large sandstone block. The camera performs a slow, reverent orbit around a magnificent, intricately carved object made of dark, polished teakwood. This object is a solid, three-dimensional form whose upper surface perfectly represents the integral of the brass curve. Its wood grain is deep and rich, catching the warm light. A complex mechanical arm, made of gleaming, oiled brass and studded with focusing lenses, descends with meticulous precision. It doesn't touch the teakwood form, but instead, two separate lens assemblies align themselves over points on the wooden shape. First, a brilliant beam of green light projects from a lens onto the teakwood at one position. This light travels through the wood and projects a large, glowing numerical value onto the rough, ancient stone wall of the observatory behind it. The camera then whip-pans to a second lens, which projects a ruby-red beam onto another position, casting a smaller numerical value onto the wall just below the first. A visible shimmer of heat and energy appears on the wall as the two projected numbers animate, with the smaller value sliding up and merging into the larger, performing a visual subtraction that resolves into a single, final value. Simultaneously, a shimmering field of golden energy fills the space under the brass rail, its volume precisely matching the calculated result.",
           "duration_seconds": 3.43,
           "style": "realistic"
         },
         {
           "beat_id": "beat_3",
-          "prompt": "The scene unfolds in an ultra-high-resolution time-lapse, capturing the geological evolution of a deep, narrow canyon carved by a river. The camera is positioned low, near the water's surface, in a dynamic tracking shot that moves steadily downstream. The stratified, jagged rock of the canyon's right wall represents a complex function, f(t), its peaks and valleys sculpted over millennia. The riverbed itself is the t-axis, with a specific large, moss-covered boulder marking the starting point 'a'. The scene begins with the canyon floor being dry. Then, clear, pristine water, representing the accumulating area F(x), begins to rise from the riverbed, starting at the 'a' boulder and flowing downstream. The moving edge of the water is the boundary 'x'. The core of the visual action is what happens on the canyon wall at the precise, moving waterline. As the water level rises and the boundary 'x' slides along the canyon, a vibrant, emerald-green line of moss and tiny ferns instantly sprouts on the rock wall, exactly at the water's edge. This line of new life is the visualization of the derivative, F'(x). The camera's tracking shot keeps this phenomenon in sharp focus. As the water's edge 'x' moves past a high cliff face on the canyon wall (a high value of f(t)), the green line of growth is thick and lush, indicating a rapid rate of accumulation. As 'x' passes through a gentler slope (a low value of f(t)), the line of moss becomes thin and sparse. The camera pushes in for an extreme close-up, framing the top of the verdant growth line against the silhouette of the canyon wall above it, making it visually undeniable that the rate of new growth, F'(x), is identical to the height of the canyon wall, f(x), at every single point along the journey.",
+          "prompt": "The scene unfolds in an ultra-high-resolution time-lapse, capturing the geological evolution of a deep, narrow canyon carved by a river. The camera is positioned low, near the water's surface, in a dynamic tracking shot that moves steadily downstream. The stratified, jagged rock of the canyon's right wall represents a complex function, its peaks and valleys sculpted over millennia. The riverbed itself is the horizontal axis, with a specific large, moss-covered boulder marking a starting point. The scene begins with the canyon floor being dry. Then, clear, pristine water, representing an accumulating area, begins to rise from the riverbed, starting at the boulder and flowing downstream. The moving edge of the water is a boundary 'x'. The core of the visual action is what happens on the canyon wall at the precise, moving waterline. As the water level rises and the boundary 'x' slides along the canyon, a vibrant, emerald-green line of moss and tiny ferns instantly sprouts on the rock wall, exactly at the water's edge. This line of new life is the visualization of a derivative. The camera's tracking shot keeps this phenomenon in sharp focus. As the water's edge 'x' moves past a high cliff face on the canyon wall, the green line of growth is thick and lush. As 'x' passes through a gentler slope, the line of moss becomes thin and sparse. The camera pushes in for an extreme close-up, framing the top of the verdant growth line against the silhouette of the canyon wall above it, making it visually undeniable that the rate of new growth is identical to the height of the canyon wall at every single point along the journey.",
           "duration_seconds": 3.58,
           "style": "realistic"
         },
         {
           "beat_id": "beat_4",
-          "prompt": "The scene is set in the inner sanctum of a dimly lit, ancient South Indian temple. The air is thick with the fragrant smoke of incense, and the only light comes from hundreds of flickering brass diyas (oil lamps) that line the carved stone walls, casting deep, dancing shadows. The camera starts with a high-angle, top-down view, slowly spiraling downwards. In the center of the floor, on a circular slab of dark, polished granite, is a beautiful rangoli-like sculpture made of fine, golden sand, meticulously shaped into a perfect parabola, y = x^2. The sand grains glitter in the lamplight. A low, resonant hum fills the air as a disembodied, ethereal Sanskrit mantra, glowing with a vibrant green light, floats down from the darkness above. This mantra, representing '+1', hovers over the sand sculpture. With a surge of energy, the sand particles begin to levitate and swirl, magically reassembling themselves into a taller, steeper cubic curve, y = x^3. The transformation is fluid and organic, like a living thing. As the new shape settles, the green mantra fades, and a second mantra, this one glowing with a cool blue light and representing division, descends. This blue mantra passes vertically through the entire sand sculpture. As it does, the sculpture's form compresses, its height at every point visibly shrinking. The sand becomes more densely packed, its color deepening as it is squashed into its final form, (x^3)/3. The camera executes a dramatic low-angle arc shot, circling the final sculpture as the blue mantra dissipates into tiny motes of light. The final shot holds on the intricate, compressed sand sculpture, a testament to the mathematical transformation, its golden grains glowing warmly in the sacred, flickering light of the temple.",
+          "prompt": "The scene is set in the inner sanctum of a dimly lit, ancient South Indian temple. The air is thick with the fragrant smoke of incense, and the only light comes from hundreds of flickering brass diyas (oil lamps) that line the carved stone walls, casting deep, dancing shadows. The camera starts with a high-angle, top-down view, slowly spiraling downwards. In the center of the floor, on a circular slab of dark, polished granite, is a beautiful rangoli-like sculpture made of fine, golden sand, meticulously shaped into a perfect parabola. The sand grains glitter in the lamplight. A low, resonant hum fills the air as a disembodied, ethereal Sanskrit mantra, glowing with a vibrant green light, floats down from the darkness above. This mantra hovers over the sand sculpture. With a surge of energy, the sand particles begin to levitate and swirl, magically reassembling themselves into a taller, steeper cubic curve. The transformation is fluid and organic, like a living thing. As the new shape settles, the green mantra fades, and a second mantra, this one glowing with a cool blue light, descends. This blue mantra passes vertically through the entire sand sculpture. As it does, the sculpture's form compresses, its height at every point visibly shrinking. The sand becomes more densely packed, its color deepening as it is squashed into its final form. The camera executes a dramatic low-angle arc shot, circling the final sculpture as the blue mantra dissipates into tiny motes of light. The final shot holds on the intricate, compressed sand sculpture, a testament to the mathematical transformation, its golden grains glowing warmly in the sacred, flickering light of the temple.",
           "duration_seconds": 3.43,
           "style": "realistic"
         },
         {
           "beat_id": "beat_5",
-          "prompt": "The scene opens with a majestic, sweeping aerial drone shot, soaring high above a vast, terraced landscape of paddy fields in Kerala during the monsoon. The sky is filled with heavy, dramatic grey clouds, and a gentle rain creates a million ripples on the surface of the water-filled fields. In the distance, a range of misty, blue-green mountains forms a soft, undulating curve against the horizon; this is our function, f(x). The camera slowly descends as it flies forward. On the ground, ancient stone bunds (embankments) serve as our markers, with large, weathered stones clearly defining points 'a', 'b', and 'c'. The action begins as the terraced fields in the first interval, between 'a' and 'b', which are already filled with water, begin to change. The reflection on the water's surface intensifies, shifting to a vibrant, solid emerald green, as if the young rice shoots beneath are glowing with internal light. A moment later, the camera pans right to the adjacent interval, from 'b' to 'c'. Here, the water's surface takes on a deep, sapphire-blue hue, perfectly reflecting the dark monsoon clouds directly above. For a moment, the landscape is a stunning patchwork of distinct green and blue sections. Then, a dramatic shift in lighting occurs. The sun breaks through a gap in the clouds, and brilliant golden god rays sweep across the entire landscape from 'a' to 'c'. As this powerful light hits the water, the boundary at 'b' vanishes. The green and blue reflections dissolve and merge, swirling together in a beautiful transition before the entire surface of the water from 'a' to 'c' settles into a single, unified, breathtaking sheet of liquid gold, reflecting the newfound sunlight. The camera pulls back up to its original high-altitude position to reveal the complete, unified golden area under the mountain curve.",
+          "prompt": "The scene opens with a majestic, sweeping aerial drone shot, soaring high above a vast, terraced landscape of paddy fields in Kerala during the monsoon. The sky is filled with heavy, dramatic grey clouds, and a gentle rain creates a million ripples on the surface of the water-filled fields. In the distance, a range of misty, blue-green mountains forms a soft, undulating curve against the horizon. The camera slowly descends as it flies forward. On the ground, ancient stone bunds (embankments) serve as markers, with large, weathered stones clearly defining distinct points. The action begins as the terraced fields in the first interval, which are already filled with water, begin to change. The reflection on the water's surface intensifies, shifting to a vibrant, solid emerald green, as if the young rice shoots beneath are glowing with internal light. A moment later, the camera pans right to the adjacent interval. Here, the water's surface takes on a deep, sapphire-blue hue, perfectly reflecting the dark monsoon clouds directly above. For a moment, the landscape is a stunning patchwork of distinct green and blue sections. Then, a dramatic shift in lighting occurs. The sun breaks through a gap in the clouds, and brilliant golden god rays sweep across the entire landscape. As this powerful light hits the water, the boundary between the sections vanishes. The green and blue reflections dissolve and merge, swirling together in a beautiful transition before the entire surface of the water settles into a single, unified, breathtaking sheet of liquid gold, reflecting the newfound sunlight. The camera pulls back up to its original high-altitude position to reveal the complete, unified golden area under the mountain curve.",
           "duration_seconds": 3.5,
           "style": "realistic"
         }
@@ -5758,35 +5666,35 @@
             "description": "Recap video scene 5"
           }
         ],
-        "compiled_wan_prompt": "[Beat beat_1]: The scene opens on a breathtaking, hyperrealistic wide shot of a vast, tranquil salt flat at night, reminiscent of the Great Rann of Kutch. The ground is a perfectly still, shallow layer of water, creating a flawless dark mirror that reflects a star-dusted cosmos above. The only light comes from the celestial bodies and a single, ethereal object hovering just above the water's surface: a luminous, flowing ribbon of cosmic energy, its form a gentle curve of f(x). This ribbon is not a solid line but a semi-transparent tube of swirling nebular gas, glowing with a soft, pulsating blue light. Two vertical beams of pure white light pierce the darkness, extending from the sky down to the water, marking the interval boundaries 'a' and 'b'. The camera begins a slow, majestic dolly movement, gliding parallel to the cosmic ribbon. As the camera travels from 'a' towards 'b', a magical event unfolds. The dark water directly beneath the curve and between the two light beams begins to awaken. Millions of microscopic, bioluminescent organisms bloom into existence, filling the volume with a brilliant cyan glow. This glowing mass has a tangible, gelatinous texture, with subtle internal currents and sparkling particles of light swirling within it, representing the positive area. The camera then smoothly transitions, plunging below the water's surface for a subsequent shot. Here, a different curve, one that dips below the axis, is made of smoldering orange light. As the camera tracks along this submerged curve, a deep magenta bioluminescence blooms downwards into the inky depths, its light scattering softly in the dark water, defining the negative signed area. The final shot pulls back to a wide view, showing a complex curve with both positive and negative sections, simultaneously filled with their distinct, glowing cyan and magenta volumes, creating a stunning visual contrast against the dark, star-reflected landscape.\n\n[Beat beat_2]: The scene is set within a reimagined Jantar Mantar, an ancient Indian astronomical observatory, now augmented with intricate, steampunk-inspired machinery. The air is hazy with the golden light of a low sun, casting long, sharp shadows from the monumental stone structures. Our focus is a central apparatus where a physical representation of a function, f(x), exists as a curved brass rail, weathered and green with patina, mounted on a large sandstone block. The camera performs a slow, reverent orbit around a magnificent, intricately carved object made of dark, polished teakwood. This object, the antiderivative F(x), is a solid, three-dimensional form whose upper surface perfectly represents the integral of the brass curve. Its wood grain is deep and rich, catching the warm light. A complex mechanical arm, made of gleaming, oiled brass and studded with focusing lenses, descends with meticulous precision. It doesn't touch the teakwood form, but instead, two separate lens assemblies align themselves over points corresponding to 'b' and 'a' on the wooden shape. First, a brilliant beam of green light projects from a lens onto the teakwood at position 'b'. This light travels through the wood and projects a large, glowing numerical value for F(b) onto the rough, ancient stone wall of the observatory behind it. The camera then whip-pans to a second lens, which projects a ruby-red beam onto position 'a', casting the smaller numerical value of F(a) onto the wall just below the first. A visible shimmer of heat and energy appears on the wall as the two projected numbers animate, with F(a) sliding up and merging into F(b), performing a visual subtraction that resolves into a single, final value. Simultaneously, a shimmering field of golden energy fills the space under the brass f(x) rail, its volume precisely matching the calculated result.\n\n[Beat beat_3]: The scene unfolds in an ultra-high-resolution time-lapse, capturing the geological evolution of a deep, narrow canyon carved by a river. The camera is positioned low, near the water's surface, in a dynamic tracking shot that moves steadily downstream. The stratified, jagged rock of the canyon's right wall represents a complex function, f(t), its peaks and valleys sculpted over millennia. The riverbed itself is the t-axis, with a specific large, moss-covered boulder marking the starting point 'a'. The scene begins with the canyon floor being dry. Then, clear, pristine water, representing the accumulating area F(x), begins to rise from the riverbed, starting at the 'a' boulder and flowing downstream. The moving edge of the water is the boundary 'x'. The core of the visual action is what happens on the canyon wall at the precise, moving waterline. As the water level rises and the boundary 'x' slides along the canyon, a vibrant, emerald-green line of moss and tiny ferns instantly sprouts on the rock wall, exactly at the water's edge. This line of new life is the visualization of the derivative, F'(x). The camera's tracking shot keeps this phenomenon in sharp focus. As the water's edge 'x' moves past a high cliff face on the canyon wall (a high value of f(t)), the green line of growth is thick and lush, indicating a rapid rate of accumulation. As 'x' passes through a gentler slope (a low value of f(t)), the line of moss becomes thin and sparse. The camera pushes in for an extreme close-up, framing the top of the verdant growth line against the silhouette of the canyon wall above it, making it visually undeniable that the rate of new growth, F'(x), is identical to the height of the canyon wall, f(x), at every single point along the journey.\n\n[Beat beat_4]: The scene is set in the inner sanctum of a dimly lit, ancient South Indian temple. The air is thick with the fragrant smoke of incense, and the only light comes from hundreds of flickering brass diyas (oil lamps) that line the carved stone walls, casting deep, dancing shadows. The camera starts with a high-angle, top-down view, slowly spiraling downwards. In the center of the floor, on a circular slab of dark, polished granite, is a beautiful rangoli-like sculpture made of fine, golden sand, meticulously shaped into a perfect parabola, y = x^2. The sand grains glitter in the lamplight. A low, resonant hum fills the air as a disembodied, ethereal Sanskrit mantra, glowing with a vibrant green light, floats down from the darkness above. This mantra, representing '+1', hovers over the sand sculpture. With a surge of energy, the sand particles begin to levitate and swirl, magically reassembling themselves into a taller, steeper cubic curve, y = x^3. The transformation is fluid and organic, like a living thing. As the new shape settles, the green mantra fades, and a second mantra, this one glowing with a cool blue light and representing division, descends. This blue mantra passes vertically through the entire sand sculpture. As it does, the sculpture's form compresses, its height at every point visibly shrinking. The sand becomes more densely packed, its color deepening as it is squashed into its final form, (x^3)/3. The camera executes a dramatic low-angle arc shot, circling the final sculpture as the blue mantra dissipates into tiny motes of light. The final shot holds on the intricate, compressed sand sculpture, a testament to the mathematical transformation, its golden grains glowing warmly in the sacred, flickering light of the temple.\n\n[Beat beat_5]: The scene opens with a majestic, sweeping aerial drone shot, soaring high above a vast, terraced landscape of paddy fields in Kerala during the monsoon. The sky is filled with heavy, dramatic grey clouds, and a gentle rain creates a million ripples on the surface of the water-filled fields. In the distance, a range of misty, blue-green mountains forms a soft, undulating curve against the horizon; this is our function, f(x). The camera slowly descends as it flies forward. On the ground, ancient stone bunds (embankments) serve as our markers, with large, weathered stones clearly defining points 'a', 'b', and 'c'. The action begins as the terraced fields in the first interval, between 'a' and 'b', which are already filled with water, begin to change. The reflection on the water's surface intensifies, shifting to a vibrant, solid emerald green, as if the young rice shoots beneath are glowing with internal light. A moment later, the camera pans right to the adjacent interval, from 'b' to 'c'. Here, the water's surface takes on a deep, sapphire-blue hue, perfectly reflecting the dark monsoon clouds directly above. For a moment, the landscape is a stunning patchwork of distinct green and blue sections. Then, a dramatic shift in lighting occurs. The sun breaks through a gap in the clouds, and brilliant golden god rays sweep across the entire landscape from 'a' to 'c'. As this powerful light hits the water, the boundary at 'b' vanishes. The green and blue reflections dissolve and merge, swirling together in a beautiful transition before the entire surface of the water from 'a' to 'c' settles into a single, unified, breathtaking sheet of liquid gold, reflecting the newfound sunlight. The camera pulls back up to its original high-altitude position to reveal the complete, unified golden area under the mountain curve.",
+        "compiled_wan_prompt": "[Beat beat_1]: The scene opens on a breathtaking, hyperrealistic wide shot of a vast, tranquil salt flat at night, reminiscent of the Great Rann of Kutch. The ground is a perfectly still, shallow layer of water, creating a flawless dark mirror that reflects a star-dusted cosmos above. The only light comes from the celestial bodies and a single, ethereal object hovering just above the water's surface: a luminous, flowing ribbon of cosmic energy. This ribbon is not a solid line but a semi-transparent tube of swirling nebular gas, glowing with a soft, pulsating blue light. Two vertical beams of pure white light pierce the darkness, extending from the sky down to the water, marking interval boundaries. The camera begins a slow, majestic dolly movement, gliding parallel to the cosmic ribbon. As the camera travels, a magical event unfolds. The dark water directly beneath the curve and between the two light beams begins to awaken. Millions of microscopic, bioluminescent organisms bloom into existence, filling the volume with a brilliant cyan glow. This glowing mass has a tangible, gelatinous texture, with subtle internal currents and sparkling particles of light swirling within it. The camera then smoothly transitions, plunging below the water's surface for a subsequent shot. Here, a different curve, one that dips below the axis, is made of smoldering orange light. As the camera tracks along this submerged curve, a deep magenta bioluminescence blooms downwards into the inky depths, its light scattering softly in the dark water. The final shot pulls back to a wide view, showing a complex curve with both positive and negative sections, simultaneously filled with their distinct, glowing cyan and magenta volumes, creating a stunning visual contrast against the dark, star-reflected landscape.\n\n[Beat beat_2]: The scene is set within a reimagined Jantar Mantar, an ancient Indian astronomical observatory, now augmented with intricate, steampunk-inspired machinery. The air is hazy with the golden light of a low sun, casting long, sharp shadows from the monumental stone structures. Our focus is a central apparatus where a physical representation of a function exists as a curved brass rail, weathered and green with patina, mounted on a large sandstone block. The camera performs a slow, reverent orbit around a magnificent, intricately carved object made of dark, polished teakwood. This object is a solid, three-dimensional form whose upper surface perfectly represents the integral of the brass curve. Its wood grain is deep and rich, catching the warm light. A complex mechanical arm, made of gleaming, oiled brass and studded with focusing lenses, descends with meticulous precision. It doesn't touch the teakwood form, but instead, two separate lens assemblies align themselves over points on the wooden shape. First, a brilliant beam of green light projects from a lens onto the teakwood at one position. This light travels through the wood and projects a large, glowing numerical value onto the rough, ancient stone wall of the observatory behind it. The camera then whip-pans to a second lens, which projects a ruby-red beam onto another position, casting a smaller numerical value onto the wall just below the first. A visible shimmer of heat and energy appears on the wall as the two projected numbers animate, with the smaller value sliding up and merging into the larger, performing a visual subtraction that resolves into a single, final value. Simultaneously, a shimmering field of golden energy fills the space under the brass rail, its volume precisely matching the calculated result.\n\n[Beat beat_3]: The scene unfolds in an ultra-high-resolution time-lapse, capturing the geological evolution of a deep, narrow canyon carved by a river. The camera is positioned low, near the water's surface, in a dynamic tracking shot that moves steadily downstream. The stratified, jagged rock of the canyon's right wall represents a complex function, its peaks and valleys sculpted over millennia. The riverbed itself is the horizontal axis, with a specific large, moss-covered boulder marking a starting point. The scene begins with the canyon floor being dry. Then, clear, pristine water, representing an accumulating area, begins to rise from the riverbed, starting at the boulder and flowing downstream. The moving edge of the water is a boundary 'x'. The core of the visual action is what happens on the canyon wall at the precise, moving waterline. As the water level rises and the boundary 'x' slides along the canyon, a vibrant, emerald-green line of moss and tiny ferns instantly sprouts on the rock wall, exactly at the water's edge. This line of new life is the visualization of a derivative. The camera's tracking shot keeps this phenomenon in sharp focus. As the water's edge 'x' moves past a high cliff face on the canyon wall, the green line of growth is thick and lush. As 'x' passes through a gentler slope, the line of moss becomes thin and sparse. The camera pushes in for an extreme close-up, framing the top of the verdant growth line against the silhouette of the canyon wall above it, making it visually undeniable that the rate of new growth is identical to the height of the canyon wall at every single point along the journey.\n\n[Beat beat_4]: The scene is set in the inner sanctum of a dimly lit, ancient South Indian temple. The air is thick with the fragrant smoke of incense, and the only light comes from hundreds of flickering brass diyas (oil lamps) that line the carved stone walls, casting deep, dancing shadows. The camera starts with a high-angle, top-down view, slowly spiraling downwards. In the center of the floor, on a circular slab of dark, polished granite, is a beautiful rangoli-like sculpture made of fine, golden sand, meticulously shaped into a perfect parabola. The sand grains glitter in the lamplight. A low, resonant hum fills the air as a disembodied, ethereal Sanskrit mantra, glowing with a vibrant green light, floats down from the darkness above. This mantra hovers over the sand sculpture. With a surge of energy, the sand particles begin to levitate and swirl, magically reassembling themselves into a taller, steeper cubic curve. The transformation is fluid and organic, like a living thing. As the new shape settles, the green mantra fades, and a second mantra, this one glowing with a cool blue light, descends. This blue mantra passes vertically through the entire sand sculpture. As it does, the sculpture's form compresses, its height at every point visibly shrinking. The sand becomes more densely packed, its color deepening as it is squashed into its final form. The camera executes a dramatic low-angle arc shot, circling the final sculpture as the blue mantra dissipates into tiny motes of light. The final shot holds on the intricate, compressed sand sculpture, a testament to the mathematical transformation, its golden grains glowing warmly in the sacred, flickering light of the temple.\n\n[Beat beat_5]: The scene opens with a majestic, sweeping aerial drone shot, soaring high above a vast, terraced landscape of paddy fields in Kerala during the monsoon. The sky is filled with heavy, dramatic grey clouds, and a gentle rain creates a million ripples on the surface of the water-filled fields. In the distance, a range of misty, blue-green mountains forms a soft, undulating curve against the horizon. The camera slowly descends as it flies forward. On the ground, ancient stone bunds (embankments) serve as markers, with large, weathered stones clearly defining distinct points. The action begins as the terraced fields in the first interval, which are already filled with water, begin to change. The reflection on the water's surface intensifies, shifting to a vibrant, solid emerald green, as if the young rice shoots beneath are glowing with internal light. A moment later, the camera pans right to the adjacent interval. Here, the water's surface takes on a deep, sapphire-blue hue, perfectly reflecting the dark monsoon clouds directly above. For a moment, the landscape is a stunning patchwork of distinct green and blue sections. Then, a dramatic shift in lighting occurs. The sun breaks through a gap in the clouds, and brilliant golden god rays sweep across the entire landscape. As this powerful light hits the water, the boundary between the sections vanishes. The green and blue reflections dissolve and merge, swirling together in a beautiful transition before the entire surface of the water settles into a single, unified, breathtaking sheet of liquid gold, reflecting the newfound sunlight. The camera pulls back up to its original high-altitude position to reveal the complete, unified golden area under the mountain curve.",
         "video_prompts": [
           {
             "beat_id": "beat_1",
-            "prompt": "The scene opens on a breathtaking, hyperrealistic wide shot of a vast, tranquil salt flat at night, reminiscent of the Great Rann of Kutch. The ground is a perfectly still, shallow layer of water, creating a flawless dark mirror that reflects a star-dusted cosmos above. The only light comes from the celestial bodies and a single, ethereal object hovering just above the water's surface: a luminous, flowing ribbon of cosmic energy, its form a gentle curve of f(x). This ribbon is not a solid line but a semi-transparent tube of swirling nebular gas, glowing with a soft, pulsating blue light. Two vertical beams of pure white light pierce the darkness, extending from the sky down to the water, marking the interval boundaries 'a' and 'b'. The camera begins a slow, majestic dolly movement, gliding parallel to the cosmic ribbon. As the camera travels from 'a' towards 'b', a magical event unfolds. The dark water directly beneath the curve and between the two light beams begins to awaken. Millions of microscopic, bioluminescent organisms bloom into existence, filling the volume with a brilliant cyan glow. This glowing mass has a tangible, gelatinous texture, with subtle internal currents and sparkling particles of light swirling within it, representing the positive area. The camera then smoothly transitions, plunging below the water's surface for a subsequent shot. Here, a different curve, one that dips below the axis, is made of smoldering orange light. As the camera tracks along this submerged curve, a deep magenta bioluminescence blooms downwards into the inky depths, its light scattering softly in the dark water, defining the negative signed area. The final shot pulls back to a wide view, showing a complex curve with both positive and negative sections, simultaneously filled with their distinct, glowing cyan and magenta volumes, creating a stunning visual contrast against the dark, star-reflected landscape.",
+            "prompt": "The scene opens on a breathtaking, hyperrealistic wide shot of a vast, tranquil salt flat at night, reminiscent of the Great Rann of Kutch. The ground is a perfectly still, shallow layer of water, creating a flawless dark mirror that reflects a star-dusted cosmos above. The only light comes from the celestial bodies and a single, ethereal object hovering just above the water's surface: a luminous, flowing ribbon of cosmic energy. This ribbon is not a solid line but a semi-transparent tube of swirling nebular gas, glowing with a soft, pulsating blue light. Two vertical beams of pure white light pierce the darkness, extending from the sky down to the water, marking interval boundaries. The camera begins a slow, majestic dolly movement, gliding parallel to the cosmic ribbon. As the camera travels, a magical event unfolds. The dark water directly beneath the curve and between the two light beams begins to awaken. Millions of microscopic, bioluminescent organisms bloom into existence, filling the volume with a brilliant cyan glow. This glowing mass has a tangible, gelatinous texture, with subtle internal currents and sparkling particles of light swirling within it. The camera then smoothly transitions, plunging below the water's surface for a subsequent shot. Here, a different curve, one that dips below the axis, is made of smoldering orange light. As the camera tracks along this submerged curve, a deep magenta bioluminescence blooms downwards into the inky depths, its light scattering softly in the dark water. The final shot pulls back to a wide view, showing a complex curve with both positive and negative sections, simultaneously filled with their distinct, glowing cyan and magenta volumes, creating a stunning visual contrast against the dark, star-reflected landscape.",
             "duration_seconds": 3.38,
             "style": "realistic"
           },
           {
             "beat_id": "beat_2",
-            "prompt": "The scene is set within a reimagined Jantar Mantar, an ancient Indian astronomical observatory, now augmented with intricate, steampunk-inspired machinery. The air is hazy with the golden light of a low sun, casting long, sharp shadows from the monumental stone structures. Our focus is a central apparatus where a physical representation of a function, f(x), exists as a curved brass rail, weathered and green with patina, mounted on a large sandstone block. The camera performs a slow, reverent orbit around a magnificent, intricately carved object made of dark, polished teakwood. This object, the antiderivative F(x), is a solid, three-dimensional form whose upper surface perfectly represents the integral of the brass curve. Its wood grain is deep and rich, catching the warm light. A complex mechanical arm, made of gleaming, oiled brass and studded with focusing lenses, descends with meticulous precision. It doesn't touch the teakwood form, but instead, two separate lens assemblies align themselves over points corresponding to 'b' and 'a' on the wooden shape. First, a brilliant beam of green light projects from a lens onto the teakwood at position 'b'. This light travels through the wood and projects a large, glowing numerical value for F(b) onto the rough, ancient stone wall of the observatory behind it. The camera then whip-pans to a second lens, which projects a ruby-red beam onto position 'a', casting the smaller numerical value of F(a) onto the wall just below the first. A visible shimmer of heat and energy appears on the wall as the two projected numbers animate, with F(a) sliding up and merging into F(b), performing a visual subtraction that resolves into a single, final value. Simultaneously, a shimmering field of golden energy fills the space under the brass f(x) rail, its volume precisely matching the calculated result.",
+            "prompt": "The scene is set within a reimagined Jantar Mantar, an ancient Indian astronomical observatory, now augmented with intricate, steampunk-inspired machinery. The air is hazy with the golden light of a low sun, casting long, sharp shadows from the monumental stone structures. Our focus is a central apparatus where a physical representation of a function exists as a curved brass rail, weathered and green with patina, mounted on a large sandstone block. The camera performs a slow, reverent orbit around a magnificent, intricately carved object made of dark, polished teakwood. This object is a solid, three-dimensional form whose upper surface perfectly represents the integral of the brass curve. Its wood grain is deep and rich, catching the warm light. A complex mechanical arm, made of gleaming, oiled brass and studded with focusing lenses, descends with meticulous precision. It doesn't touch the teakwood form, but instead, two separate lens assemblies align themselves over points on the wooden shape. First, a brilliant beam of green light projects from a lens onto the teakwood at one position. This light travels through the wood and projects a large, glowing numerical value onto the rough, ancient stone wall of the observatory behind it. The camera then whip-pans to a second lens, which projects a ruby-red beam onto another position, casting a smaller numerical value onto the wall just below the first. A visible shimmer of heat and energy appears on the wall as the two projected numbers animate, with the smaller value sliding up and merging into the larger, performing a visual subtraction that resolves into a single, final value. Simultaneously, a shimmering field of golden energy fills the space under the brass rail, its volume precisely matching the calculated result.",
             "duration_seconds": 3.43,
             "style": "realistic"
           },
           {
             "beat_id": "beat_3",
-            "prompt": "The scene unfolds in an ultra-high-resolution time-lapse, capturing the geological evolution of a deep, narrow canyon carved by a river. The camera is positioned low, near the water's surface, in a dynamic tracking shot that moves steadily downstream. The stratified, jagged rock of the canyon's right wall represents a complex function, f(t), its peaks and valleys sculpted over millennia. The riverbed itself is the t-axis, with a specific large, moss-covered boulder marking the starting point 'a'. The scene begins with the canyon floor being dry. Then, clear, pristine water, representing the accumulating area F(x), begins to rise from the riverbed, starting at the 'a' boulder and flowing downstream. The moving edge of the water is the boundary 'x'. The core of the visual action is what happens on the canyon wall at the precise, moving waterline. As the water level rises and the boundary 'x' slides along the canyon, a vibrant, emerald-green line of moss and tiny ferns instantly sprouts on the rock wall, exactly at the water's edge. This line of new life is the visualization of the derivative, F'(x). The camera's tracking shot keeps this phenomenon in sharp focus. As the water's edge 'x' moves past a high cliff face on the canyon wall (a high value of f(t)), the green line of growth is thick and lush, indicating a rapid rate of accumulation. As 'x' passes through a gentler slope (a low value of f(t)), the line of moss becomes thin and sparse. The camera pushes in for an extreme close-up, framing the top of the verdant growth line against the silhouette of the canyon wall above it, making it visually undeniable that the rate of new growth, F'(x), is identical to the height of the canyon wall, f(x), at every single point along the journey.",
+            "prompt": "The scene unfolds in an ultra-high-resolution time-lapse, capturing the geological evolution of a deep, narrow canyon carved by a river. The camera is positioned low, near the water's surface, in a dynamic tracking shot that moves steadily downstream. The stratified, jagged rock of the canyon's right wall represents a complex function, its peaks and valleys sculpted over millennia. The riverbed itself is the horizontal axis, with a specific large, moss-covered boulder marking a starting point. The scene begins with the canyon floor being dry. Then, clear, pristine water, representing an accumulating area, begins to rise from the riverbed, starting at the boulder and flowing downstream. The moving edge of the water is a boundary 'x'. The core of the visual action is what happens on the canyon wall at the precise, moving waterline. As the water level rises and the boundary 'x' slides along the canyon, a vibrant, emerald-green line of moss and tiny ferns instantly sprouts on the rock wall, exactly at the water's edge. This line of new life is the visualization of a derivative. The camera's tracking shot keeps this phenomenon in sharp focus. As the water's edge 'x' moves past a high cliff face on the canyon wall, the green line of growth is thick and lush. As 'x' passes through a gentler slope, the line of moss becomes thin and sparse. The camera pushes in for an extreme close-up, framing the top of the verdant growth line against the silhouette of the canyon wall above it, making it visually undeniable that the rate of new growth is identical to the height of the canyon wall at every single point along the journey.",
             "duration_seconds": 3.58,
             "style": "realistic"
           },
           {
             "beat_id": "beat_4",
-            "prompt": "The scene is set in the inner sanctum of a dimly lit, ancient South Indian temple. The air is thick with the fragrant smoke of incense, and the only light comes from hundreds of flickering brass diyas (oil lamps) that line the carved stone walls, casting deep, dancing shadows. The camera starts with a high-angle, top-down view, slowly spiraling downwards. In the center of the floor, on a circular slab of dark, polished granite, is a beautiful rangoli-like sculpture made of fine, golden sand, meticulously shaped into a perfect parabola, y = x^2. The sand grains glitter in the lamplight. A low, resonant hum fills the air as a disembodied, ethereal Sanskrit mantra, glowing with a vibrant green light, floats down from the darkness above. This mantra, representing '+1', hovers over the sand sculpture. With a surge of energy, the sand particles begin to levitate and swirl, magically reassembling themselves into a taller, steeper cubic curve, y = x^3. The transformation is fluid and organic, like a living thing. As the new shape settles, the green mantra fades, and a second mantra, this one glowing with a cool blue light and representing division, descends. This blue mantra passes vertically through the entire sand sculpture. As it does, the sculpture's form compresses, its height at every point visibly shrinking. The sand becomes more densely packed, its color deepening as it is squashed into its final form, (x^3)/3. The camera executes a dramatic low-angle arc shot, circling the final sculpture as the blue mantra dissipates into tiny motes of light. The final shot holds on the intricate, compressed sand sculpture, a testament to the mathematical transformation, its golden grains glowing warmly in the sacred, flickering light of the temple.",
+            "prompt": "The scene is set in the inner sanctum of a dimly lit, ancient South Indian temple. The air is thick with the fragrant smoke of incense, and the only light comes from hundreds of flickering brass diyas (oil lamps) that line the carved stone walls, casting deep, dancing shadows. The camera starts with a high-angle, top-down view, slowly spiraling downwards. In the center of the floor, on a circular slab of dark, polished granite, is a beautiful rangoli-like sculpture made of fine, golden sand, meticulously shaped into a perfect parabola. The sand grains glitter in the lamplight. A low, resonant hum fills the air as a disembodied, ethereal Sanskrit mantra, glowing with a vibrant green light, floats down from the darkness above. This mantra hovers over the sand sculpture. With a surge of energy, the sand particles begin to levitate and swirl, magically reassembling themselves into a taller, steeper cubic curve. The transformation is fluid and organic, like a living thing. As the new shape settles, the green mantra fades, and a second mantra, this one glowing with a cool blue light, descends. This blue mantra passes vertically through the entire sand sculpture. As it does, the sculpture's form compresses, its height at every point visibly shrinking. The sand becomes more densely packed, its color deepening as it is squashed into its final form. The camera executes a dramatic low-angle arc shot, circling the final sculpture as the blue mantra dissipates into tiny motes of light. The final shot holds on the intricate, compressed sand sculpture, a testament to the mathematical transformation, its golden grains glowing warmly in the sacred, flickering light of the temple.",
             "duration_seconds": 3.43,
             "style": "realistic"
           },
           {
             "beat_id": "beat_5",
-            "prompt": "The scene opens with a majestic, sweeping aerial drone shot, soaring high above a vast, terraced landscape of paddy fields in Kerala during the monsoon. The sky is filled with heavy, dramatic grey clouds, and a gentle rain creates a million ripples on the surface of the water-filled fields. In the distance, a range of misty, blue-green mountains forms a soft, undulating curve against the horizon; this is our function, f(x). The camera slowly descends as it flies forward. On the ground, ancient stone bunds (embankments) serve as our markers, with large, weathered stones clearly defining points 'a', 'b', and 'c'. The action begins as the terraced fields in the first interval, between 'a' and 'b', which are already filled with water, begin to change. The reflection on the water's surface intensifies, shifting to a vibrant, solid emerald green, as if the young rice shoots beneath are glowing with internal light. A moment later, the camera pans right to the adjacent interval, from 'b' to 'c'. Here, the water's surface takes on a deep, sapphire-blue hue, perfectly reflecting the dark monsoon clouds directly above. For a moment, the landscape is a stunning patchwork of distinct green and blue sections. Then, a dramatic shift in lighting occurs. The sun breaks through a gap in the clouds, and brilliant golden god rays sweep across the entire landscape from 'a' to 'c'. As this powerful light hits the water, the boundary at 'b' vanishes. The green and blue reflections dissolve and merge, swirling together in a beautiful transition before the entire surface of the water from 'a' to 'c' settles into a single, unified, breathtaking sheet of liquid gold, reflecting the newfound sunlight. The camera pulls back up to its original high-altitude position to reveal the complete, unified golden area under the mountain curve.",
+            "prompt": "The scene opens with a majestic, sweeping aerial drone shot, soaring high above a vast, terraced landscape of paddy fields in Kerala during the monsoon. The sky is filled with heavy, dramatic grey clouds, and a gentle rain creates a million ripples on the surface of the water-filled fields. In the distance, a range of misty, blue-green mountains forms a soft, undulating curve against the horizon. The camera slowly descends as it flies forward. On the ground, ancient stone bunds (embankments) serve as markers, with large, weathered stones clearly defining distinct points. The action begins as the terraced fields in the first interval, which are already filled with water, begin to change. The reflection on the water's surface intensifies, shifting to a vibrant, solid emerald green, as if the young rice shoots beneath are glowing with internal light. A moment later, the camera pans right to the adjacent interval. Here, the water's surface takes on a deep, sapphire-blue hue, perfectly reflecting the dark monsoon clouds directly above. For a moment, the landscape is a stunning patchwork of distinct green and blue sections. Then, a dramatic shift in lighting occurs. The sun breaks through a gap in the clouds, and brilliant golden god rays sweep across the entire landscape. As this powerful light hits the water, the boundary between the sections vanishes. The green and blue reflections dissolve and merge, swirling together in a beautiful transition before the entire surface of the water settles into a single, unified, breathtaking sheet of liquid gold, reflecting the newfound sunlight. The camera pulls back up to its original high-altitude position to reveal the complete, unified golden area under the mountain curve.",
             "duration_seconds": 3.5,
             "style": "realistic"
           }
