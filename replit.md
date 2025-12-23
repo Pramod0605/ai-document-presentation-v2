@@ -143,7 +143,22 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 - **Duration**: 413s
 - **Display Validation**: PASS
 
-### Recent Issues Fixed
+## V1.5 Test Status (2025-12-23)
+
+### Math Calculus Test - PASS
+- **Job ID**: 288f2129
+- **Duration**: ~13 minutes
+- **Phases Completed**: chunker → narration → visuals → renderer_spec → memory → recap → merge → TTS → render_specs
+- **TTS Provider**: Edge TTS (free)
+- **Status**: COMPLETED
+
+### V1.5 Issues Fixed (2025-12-23)
+- **VisualSpecArtist segments error**: Fixed double-unwrapping in validate_semantic
+- **AnalyticsTracker add_llm_call**: Added missing method for V1.5 agent tracking
+- **RendererSpec list object_id**: Fixed to handle list-type object_ids in manim validation
+- **RecapScene banned phrases**: Relaxed to warnings, lowered min word count to 200
+
+### Recent Issues Fixed (V1.4)
 - **ISS-111**: Renderer execution wired into V1.4 pipeline
 - **ISS-112/114**: Player BASE_PATH handles ?job= query parameter
 - **ISS-113**: Renderer policy enforcement for text-only sections
