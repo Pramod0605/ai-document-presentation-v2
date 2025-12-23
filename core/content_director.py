@@ -96,12 +96,14 @@ def call_content_director(
     structural_attempts = 0
     semantic_attempts = 0
     last_error = None
+    total_input_tokens = 0
+    total_output_tokens = 0
+    
+    if tracker:
+        tracker.start_phase("content_director", MODEL)
     
     while True:
         try:
-            if tracker:
-                tracker.start_phase("content_director", MODEL)
-            
             response = client.chat.completions.create(
                 model=MODEL,
                 messages=[
@@ -120,9 +122,8 @@ def call_content_director(
             
             input_tokens = response.usage.prompt_tokens if response.usage else 0
             output_tokens = response.usage.completion_tokens if response.usage else 0
-            
-            if tracker:
-                tracker.end_phase("content_director", input_tokens, output_tokens)
+            total_input_tokens += input_tokens
+            total_output_tokens += output_tokens
             
             result = repair_and_parse_json(raw_response)
             
@@ -130,6 +131,8 @@ def call_content_director(
             if structural_errors:
                 structural_attempts += 1
                 if structural_attempts > max_structural_retries:
+                    if tracker:
+                        tracker.end_phase("content_director", total_input_tokens, total_output_tokens)
                     raise StructuralValidationError(structural_errors)
                 logger.warning(f"[Content Director] Structural retry {structural_attempts}/{max_structural_retries}")
                 user_prompt = _get_structural_retry_prompt(user_prompt, structural_errors)
@@ -139,10 +142,15 @@ def call_content_director(
             if semantic_errors:
                 semantic_attempts += 1
                 if semantic_attempts > max_semantic_retries:
+                    if tracker:
+                        tracker.end_phase("content_director", total_input_tokens, total_output_tokens)
                     raise SemanticValidationError(semantic_errors)
                 logger.warning(f"[Content Director] Semantic retry {semantic_attempts}/{max_semantic_retries}")
                 user_prompt = _get_semantic_retry_prompt(user_prompt, semantic_errors)
                 continue
+            
+            if tracker:
+                tracker.end_phase("content_director", total_input_tokens, total_output_tokens)
             
             section_count = len(result.get("sections", []))
             logger.info(f"[Content Director] Successfully generated {section_count} sections")
@@ -152,16 +160,22 @@ def call_content_director(
             structural_attempts += 1
             last_error = e
             if structural_attempts > max_structural_retries:
+                if tracker:
+                    tracker.end_phase("content_director", total_input_tokens, total_output_tokens)
                 raise ContentDirectorError(f"JSON parse failed: {e}")
             logger.warning(f"[Content Director] JSON retry {structural_attempts}/{max_structural_retries}: {e}")
             user_prompt = _get_json_repair_prompt(user_prompt, str(e))
             
         except (StructuralValidationError, SemanticValidationError) as e:
             last_error = e
+            if tracker:
+                tracker.end_phase("content_director", total_input_tokens, total_output_tokens)
             raise ContentDirectorError(f"Validation failed: {e}")
             
         except Exception as e:
             logger.error(f"[Content Director] Unexpected error: {e}")
+            if tracker:
+                tracker.end_phase("content_director", total_input_tokens, total_output_tokens)
             raise ContentDirectorError(f"Unexpected error: {e}")
 
 
@@ -213,6 +227,23 @@ def _validate_section_structure(section: Dict, index: int) -> List[str]:
     renderer = section.get("renderer")
     if renderer and renderer not in VALID_RENDERERS:
         errors.append(f"{prefix}: invalid renderer '{renderer}'")
+    
+    if renderer == "manim":
+        if "manim_scene_spec" not in section:
+            errors.append(f"{prefix}: manim renderer requires 'manim_scene_spec' field")
+        else:
+            manim_spec = section.get("manim_scene_spec", {})
+            if not isinstance(manim_spec, dict):
+                errors.append(f"{prefix}: manim_scene_spec must be an object")
+            elif "objects" not in manim_spec or "animation_sequence" not in manim_spec:
+                errors.append(f"{prefix}: manim_scene_spec must have 'objects' and 'animation_sequence' arrays")
+        
+        if "visual_beats" not in section or not section.get("visual_beats"):
+            errors.append(f"{prefix}: manim renderer requires at least one visual_beat")
+    
+    if renderer == "video":
+        if "visual_beats" not in section or not section.get("visual_beats"):
+            errors.append(f"{prefix}: video renderer requires at least one visual_beat")
     
     narration = section.get("narration", {})
     if not isinstance(narration, dict):
@@ -313,6 +344,8 @@ Fix these structural issues:
 2. Use only valid section_types: intro, summary, content, example, quiz
 3. Do NOT include memory or recap sections
 4. Every segment must have display_directives with text_layer, visual_layer, avatar_layer
+5. Manim sections MUST have manim_scene_spec with objects and animation_sequence arrays
+6. Manim and Video sections MUST have at least one visual_beat
 ---
 """
 

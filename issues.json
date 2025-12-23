@@ -1681,8 +1681,9 @@
     {
       "id": "ISS-109",
       "title": "Content sections with manim renderer missing manim_scene_spec",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-22",
+      "resolved": "2025-12-23",
       "severity": "high",
       "description": "Content sections assigned renderer=manim are missing manim_scene_spec entirely. One content section has 1 visual_beat, other has 0. Manim requires scene specifications to render.",
       "evidence": {
@@ -1690,14 +1691,16 @@
         "content_section_2": {"renderer": "manim", "visual_beats": 1, "manim_scene_spec": "MISSING"},
         "example_section": {"renderer": "manim", "manim_scene_spec": "MISSING"}
       },
-      "root_cause": "Content Director ISS-100 fix may not be fully effective - LLM still not generating manim_scene_spec for math/physics content",
-      "proposed_fix": "1) Strengthen manim_scene_spec requirement in Content Director prompt, 2) Add validation to reject manim sections without scene spec"
+      "root_cause": "Content Director had manim instructions in prompt but NO validation to enforce compliance",
+      "fix": "Added validation in _validate_section_structure() to require manim_scene_spec (with objects and animation_sequence) for manim sections, and visual_beats for manim/video sections. Updated retry prompt to include these requirements.",
+      "files_modified": ["core/content_director.py"]
     },
     {
       "id": "ISS-110",
       "title": "Content Director cost shows $0 in analytics",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-22",
+      "resolved": "2025-12-23",
       "severity": "low",
       "description": "Analytics show content_director cost/tokens/duration all as 0, while recap_director shows proper values. This may indicate Content Director call not being tracked or a logging issue.",
       "evidence": {
@@ -1705,8 +1708,9 @@
         "recap_director": {"cost_usd": 0.0728, "duration_seconds": 102.15, "tokens": 9512},
         "smart_chunker": {"cost_usd": 0.0145, "duration_seconds": 12.05, "tokens": 2033}
       },
-      "root_cause": "NEEDS INVESTIGATION - Possible analytics tracking bug in Content Director phase",
-      "proposed_fix": "Check analytics collection in content_director.py or pipeline_v14.py"
+      "root_cause": "Token tracking was broken during retries: start_phase called once, but end_phase called with current response tokens only (not accumulated). On retries, end_phase was called prematurely before success.",
+      "fix": "Refactored call_content_director to: 1) Call start_phase once before retry loop, 2) Accumulate tokens across all retry attempts with total_input_tokens/total_output_tokens, 3) Call end_phase only on final success or terminal failure with accumulated totals.",
+      "files_modified": ["core/content_director.py"]
     }
   ],
   "metadata": {
@@ -1714,8 +1718,8 @@
     "version": "14.13",
     "spec_version": "v1.4",
     "spec_file": "docs/llm_output_requirements_v1.4.json",
-    "resolved_count": 89,
-    "open_count": 2,
+    "resolved_count": 91,
+    "open_count": 0,
     "testing_lesson": "Prompt FORBIDDEN lists must exactly match validator detection patterns",
     "v14_video_retries": "Video renderer now has 3 total attempts (max_retries=2) for 300+ word compliance",
     "v14_full_test_2025_12_22": "Job ffeff345 - 8 sections generated, 5 issues identified, 3 fixed"
