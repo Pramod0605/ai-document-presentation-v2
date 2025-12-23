@@ -4,9 +4,11 @@ TTS Duration v1.4 - Pass 1.5: Audio Generation & Duration Measurement
 Generates TTS audio files and extracts actual duration via metadata inspection.
 Updates presentation.json with real durations (not LLM estimates).
 
-Supports two TTS providers:
-- narakeet: High-quality Indian voice for production
-- pyttsx3: Local/offline for dry run testing (duration measurement only)
+Supports TTS providers:
+- edge_tts: FREE Microsoft Edge TTS (default for production)
+- narakeet: Paid high-quality Indian voice
+- pyttsx3: Local/offline for dry run testing
+- estimate: No audio, word-count based estimates only
 """
 
 import os
@@ -14,6 +16,7 @@ import json
 import time
 import logging
 import tempfile
+import asyncio
 import requests
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Literal
@@ -21,8 +24,10 @@ from typing import Dict, List, Optional, Tuple, Literal
 MP3 = None
 MutagenFile = None
 pyttsx3 = None
+edge_tts = None
 MUTAGEN_AVAILABLE = False
 PYTTSX3_AVAILABLE = False
+EDGE_TTS_AVAILABLE = False
 
 try:
     from mutagen.mp3 import MP3
@@ -38,27 +43,37 @@ try:
 except ImportError:
     pass
 
+try:
+    import edge_tts as edge_tts_module
+    edge_tts = edge_tts_module
+    EDGE_TTS_AVAILABLE = True
+except ImportError:
+    pass
+
 logger = logging.getLogger(__name__)
 
 NARAKEET_API_KEY = os.environ.get("NARAKEET_API_KEY")
 NARAKEET_API_URL = "https://api.narakeet.com/text-to-speech/mp3"
 
-VOICE = "ravi"
-VOICE_SPEED = 1.0
+NARAKEET_VOICE = "ravi"
+NARAKEET_VOICE_SPEED = 1.0
+
+EDGE_TTS_VOICE = "en-IN-PrabhatNeural"
+EDGE_TTS_RATE = "+0%"
 
 MAX_RETRIES = 3
 RETRY_DELAY = 2
 
 TEMP_AUDIO_DIR = Path("/tmp/tts_audio")
 
-TTSProvider = Literal["narakeet", "pyttsx3", "estimate"]
+TTSProvider = Literal["edge_tts", "narakeet", "pyttsx3", "estimate"]
 
 
 def update_durations_from_tts(
     presentation: Dict,
     output_dir: Optional[Path] = None,
     generate_audio: bool = True,
-    tts_provider: TTSProvider = "narakeet"
+    tts_provider: TTSProvider = "edge_tts"
 ) -> Dict:
     """
     Pass 1.5: Generate TTS audio and update durations in presentation.json.
@@ -73,7 +88,7 @@ def update_durations_from_tts(
         presentation: Merged presentation.json
         output_dir: Directory to save audio files (if None, uses temp dir)
         generate_audio: If True, generate audio and measure. If False, use estimates.
-        tts_provider: "narakeet" (production), "pyttsx3" (dry run), or "estimate"
+        tts_provider: "edge_tts" (default), "narakeet", "pyttsx3", or "estimate"
         
     Returns:
         Updated presentation.json with actual durations
@@ -81,6 +96,11 @@ def update_durations_from_tts(
     if not generate_audio or tts_provider == "estimate":
         logger.info("[TTS Duration] Using word-count estimates (no audio generation)")
         return _apply_estimates(presentation)
+    
+    if tts_provider == "edge_tts":
+        if not EDGE_TTS_AVAILABLE:
+            logger.warning("[TTS Duration] edge_tts not available, falling back to narakeet")
+            tts_provider = "narakeet"
     
     if tts_provider == "narakeet":
         if not NARAKEET_API_KEY:
@@ -133,7 +153,35 @@ def update_durations_from_tts(
             audio_filename = f"{section_id}_{segment_id}"
             
             try:
-                if tts_provider == "narakeet":
+                if tts_provider == "edge_tts":
+                    audio_path = audio_dir / f"{audio_filename}.mp3"
+                    try:
+                        actual_duration = _generate_edge_tts(text, audio_path)
+                    except EdgeTTSError as e:
+                        logger.warning(f"[TTS Duration] Edge TTS failed, trying Narakeet: {e}")
+                        if NARAKEET_API_KEY:
+                            try:
+                                actual_duration = _generate_narakeet(text, audio_path)
+                            except NarakeetError as ne:
+                                logger.warning(f"[TTS Duration] Narakeet also failed: {ne}")
+                                if PYTTSX3_AVAILABLE:
+                                    if pyttsx3_engine is None:
+                                        pyttsx3_engine = pyttsx3.init()
+                                        pyttsx3_engine.setProperty('rate', 150)
+                                    audio_path = audio_dir / f"{audio_filename}.wav"
+                                    actual_duration = _generate_pyttsx3(text, audio_path, pyttsx3_engine)
+                                else:
+                                    raise
+                        elif PYTTSX3_AVAILABLE:
+                            if pyttsx3_engine is None:
+                                pyttsx3_engine = pyttsx3.init()
+                                pyttsx3_engine.setProperty('rate', 150)
+                            audio_path = audio_dir / f"{audio_filename}.wav"
+                            actual_duration = _generate_pyttsx3(text, audio_path, pyttsx3_engine)
+                        else:
+                            raise
+                        
+                elif tts_provider == "narakeet":
                     audio_path = audio_dir / f"{audio_filename}.mp3"
                     try:
                         actual_duration = _generate_narakeet(text, audio_path)
@@ -180,9 +228,63 @@ def update_durations_from_tts(
     return presentation
 
 
+class EdgeTTSError(Exception):
+    """Raised when Edge TTS fails."""
+    pass
+
+
 class NarakeetError(Exception):
     """Raised when Narakeet API fails after all retries."""
     pass
+
+
+async def _generate_edge_tts_async(text: str, output_path: Path) -> float:
+    """
+    Async function to generate TTS audio using Edge TTS.
+    
+    Args:
+        text: Text to convert to speech
+        output_path: Path to save the audio file
+        
+    Returns:
+        Audio duration in seconds
+    """
+    try:
+        communicate = edge_tts.Communicate(text, EDGE_TTS_VOICE, rate=EDGE_TTS_RATE)
+        await communicate.save(str(output_path))
+        
+        if output_path.exists() and MUTAGEN_AVAILABLE:
+            audio = MP3(output_path)
+            duration = audio.info.length
+            return duration
+        else:
+            return _estimate_duration(text)
+            
+    except Exception as e:
+        raise EdgeTTSError(f"Edge TTS generation failed: {e}")
+
+
+def _generate_edge_tts(text: str, output_path: Path) -> float:
+    """
+    Generate TTS audio using Edge TTS (sync wrapper for async).
+    
+    Args:
+        text: Text to convert to speech
+        output_path: Path to save the audio file
+        
+    Returns:
+        Audio duration in seconds
+    """
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            duration = loop.run_until_complete(_generate_edge_tts_async(text, output_path))
+            return duration
+        finally:
+            loop.close()
+    except Exception as e:
+        raise EdgeTTSError(f"Edge TTS failed: {e}")
 
 
 def _generate_narakeet(text: str, output_path: Path) -> float:
@@ -208,8 +310,8 @@ def _generate_narakeet(text: str, output_path: Path) -> float:
             }
             
             params = {
-                "voice": VOICE,
-                "voice-speed": VOICE_SPEED
+                "voice": NARAKEET_VOICE,
+                "voice-speed": NARAKEET_VOICE_SPEED
             }
             
             response = requests.post(

@@ -82,7 +82,7 @@ def process_markdown_to_presentation_v15(
     update_status_callback=None,
     generate_tts: bool = True,
     output_dir: Optional[Path] = None,
-    tts_provider: TTSProvider = "narakeet"
+    tts_provider: TTSProvider = "edge_tts"
 ) -> Tuple[Dict, AnalyticsTracker]:
     """
     V1.5 Pipeline: Process markdown to presentation.json using split agents.
@@ -107,7 +107,7 @@ def process_markdown_to_presentation_v15(
         update_status_callback: Optional callback for status updates
         generate_tts: Whether to generate TTS audio
         output_dir: Output directory for assets
-        tts_provider: TTS provider - "narakeet", "estimate"
+        tts_provider: TTS provider - "edge_tts" (default), "narakeet", "estimate"
         
     Returns:
         Tuple of (presentation dict, analytics tracker)

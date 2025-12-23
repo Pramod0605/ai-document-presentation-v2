@@ -48,7 +48,7 @@ def process_markdown_to_presentation_v14(
     update_status_callback = None,
     generate_tts: bool = True,
     output_dir: Optional[Path] = None,
-    tts_provider: TTSProvider = "narakeet"
+    tts_provider: TTSProvider = "edge_tts"
 ) -> Tuple[Dict, AnalyticsTracker]:
     """
     V1.4 Pipeline: Process markdown to presentation.json.
@@ -68,7 +68,7 @@ def process_markdown_to_presentation_v14(
         update_status_callback: Optional callback for status updates
         generate_tts: Whether to generate TTS audio for duration measurement
         output_dir: Output directory for assets
-        tts_provider: TTS provider - "narakeet" (production), "pyttsx3" (dry run), "estimate"
+        tts_provider: TTS provider - "edge_tts" (default), "narakeet", "pyttsx3", "estimate"
         
     Returns:
         Tuple of (presentation dict, analytics tracker)

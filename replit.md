@@ -91,13 +91,14 @@ Chunker → SectionPlanner → [per-section: NarrationWriter → VisualSpecArtis
 - **Backend**: Python Flask API
 - **Frontend**: Vanilla HTML5/JavaScript (FROZEN for V1.5)
 - **LLM Gateway**: OpenRouter (Gemini 2.5 Pro, Gemini 2.5 Flash, Claude Sonnet)
-- **TTS**: Narakeet
+- **TTS**: Edge TTS (default, free) with Narakeet fallback
 - **Video Editing**: MoviePy
 - **Renderers**: Manim, Remotion, WAN (Kie.ai)
 
 ## External Dependencies
 - **OpenRouter**: LLM access
-- **Narakeet API**: Text-to-Speech
+- **Edge TTS**: Microsoft free TTS (en-IN-PrabhatNeural Indian male voice)
+- **Narakeet API**: Text-to-Speech (fallback)
 - **Kie.ai API (WAN)**: Video generation
 - **Datalab API**: PDF to Markdown conversion
 - **Flask/Flask-CORS**: Web framework
