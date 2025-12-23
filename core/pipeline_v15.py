@@ -177,7 +177,7 @@ def process_markdown_to_presentation_v15(
             visual_artist = VisualSpecArtistAgent(tracker=tracker, log_func=log)
             visuals_output = visual_artist.run(
                 section_blueprint=blueprint,
-                narration=narration_output,
+                narration=narration_output.get("narration", {}),
                 source_markdown=source_content
             )
             
