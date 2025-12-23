@@ -1628,8 +1628,9 @@
     {
       "id": "ISS-106",
       "title": "V1.4 Pipeline does not execute renderers - videos folder empty",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-22",
+      "resolved": "2025-12-23",
       "severity": "high",
       "description": "Full V1.4 pipeline test with skip_wan=false completes successfully but produces no video files. The videos/ folder is empty despite sections having renderer assignments (remotion, manim, video).",
       "evidence": {
@@ -1638,15 +1639,16 @@
         "videos_folder": "empty (0 files)",
         "expected": "Video files for each section"
       },
-      "root_cause": "NEEDS INVESTIGATION - V1.4 pipeline may only run LLM passes (Chunker, Content Director, Recap Director) without invoking Pass 2 renderers",
-      "proposed_fix": "Verify process_with_renderers_v14() is being called and pass2_dispatch_renderers() executes properly",
-      "files_to_check": ["core/pipeline_v14.py", "core/llm_client_v12.py", "api/app.py"]
+      "root_cause": "The /api/v14/generate endpoint only called process_markdown_to_presentation_v14() but NOT process_with_renderers_v14(). Renderers were never executed.",
+      "fix": "Added process_with_renderers_v14() call to /api/v14/generate endpoint after validation passes",
+      "files_modified": ["api/app.py"]
     },
     {
       "id": "ISS-107",
       "title": "Memory and Recap sections have 0 duration in segments",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-22",
+      "resolved": "2025-12-23",
       "severity": "medium",
       "description": "Memory section (6 segments) and Recap section (25 segments) both show total duration = 0.0s. TTS estimate provider should still calculate word-based durations.",
       "evidence": {
@@ -1656,23 +1658,25 @@
         "recap_duration": "0.0s",
         "other_sections": "intro=30s, summary=35s, content=46s+56s, example=57s, quiz=32s (all correct)"
       },
-      "root_cause": "NEEDS INVESTIGATION - TTS duration estimation may not run for memory/recap sections, or Recap Director output format differs from expected",
-      "proposed_fix": "Check TTS duration pass applies to all sections including memory/recap"
+      "root_cause": "Recap Director outputs segments with {start, end, text} format instead of {segment_id, text, duration_estimate, ...} format. TTS update_durations_from_tts() writes to duration_seconds but didn't have duration_estimate as fallback.",
+      "fix": "Added _normalize_segment() and _normalize_memory_section() functions to merge_step.py that convert Recap Director segment format to Content Director format with calculated duration_estimate",
+      "files_modified": ["core/merge_step.py"]
     },
     {
       "id": "ISS-108",
       "title": "Recap scenes have 0 visual_beats after merge",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-22",
-      "severity": "high",
+      "resolved": "2025-12-23",
+      "severity": "medium",
       "description": "All 5 recap scenes show visual_beats: 0 in final presentation. Per ISS-095 fix, Recap Director should output short visual_beats (50-80 words) for Video Renderer to expand.",
       "evidence": {
         "recap_scenes": 5,
         "visual_beats_per_scene": [0, 0, 0, 0, 0],
         "expected": "At least 1 visual_beat per scene with 50+ word description"
       },
-      "root_cause": "NEEDS INVESTIGATION - Either Recap Director not generating visual_beats, or merge step not preserving them",
-      "proposed_fix": "1) Check Recap Director raw output for visual_beats, 2) Verify merge_step preserves visual_beats array"
+      "root_cause": "NOT AN ISSUE - Recap Director was outputting video_prompt (400+ chars each) which is valid per validator. The merge step correctly extracts video_prompt from scenes and adds to visual_beats array in the merged recap section.",
+      "resolution": "Working as designed. Validator accepts either visual_beats OR video_prompt. LLM chose video_prompt format."
     },
     {
       "id": "ISS-109",
@@ -1706,14 +1710,14 @@
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-22T20:10:00.000000",
-    "version": "14.12",
+    "last_updated": "2025-12-23T02:50:00.000000",
+    "version": "14.13",
     "spec_version": "v1.4",
     "spec_file": "docs/llm_output_requirements_v1.4.json",
-    "resolved_count": 86,
-    "open_count": 6,
+    "resolved_count": 89,
+    "open_count": 2,
     "testing_lesson": "Prompt FORBIDDEN lists must exactly match validator detection patterns",
     "v14_video_retries": "Video renderer now has 3 total attempts (max_retries=2) for 300+ word compliance",
-    "v14_full_test_2025_12_22": "Job ffeff345 - 8 sections generated, 5 new issues identified"
+    "v14_full_test_2025_12_22": "Job ffeff345 - 8 sections generated, 5 issues identified, 3 fixed"
   }
 }

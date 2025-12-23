@@ -722,6 +722,16 @@ def generate_v14():
         
         validation = validate_presentation_v14(presentation)
         
+        if not validation.get("has_errors"):
+            status_callback(job_id, "renderers", "Generating video content...")
+            presentation = process_with_renderers_v14(
+                presentation=presentation,
+                tracker=tracker,
+                job_id=job_id,
+                update_status_callback=status_callback,
+                use_remotion=True
+            )
+        
         pres_path = job_output_dir / "presentation.json"
         with open(pres_path, "w") as f:
             json.dump(presentation, f, indent=2)

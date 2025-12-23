@@ -79,6 +79,78 @@ def merge_director_outputs(
 RECAP_SCENE_ORDER = ["recap_scene_1", "recap_scene_2", "recap_scene_3", "recap_scene_4", "recap_scene_5"]
 
 
+def _normalize_segment(segment: Dict, scene_idx: int, seg_idx: int) -> Dict:
+    """
+    Normalize segment format to match Content Director output.
+    Ensures all segments have consistent fields for TTS and player.
+    
+    Input formats:
+    - Recap Director: {start, end, text, start_time, end_time}
+    - Content Director: {segment_id, text, duration_estimate, display_directives, ...}
+    
+    Output format (normalized):
+    - {segment_id, text, duration_estimate, display_directives, ...}
+    """
+    normalized = {}
+    
+    text = segment.get("text", "")
+    normalized["text"] = text
+    
+    segment_id = segment.get("segment_id") or f"recap_{scene_idx}_seg_{seg_idx}"
+    normalized["segment_id"] = segment_id
+    
+    if "duration_estimate" in segment:
+        normalized["duration_estimate"] = segment["duration_estimate"]
+    elif "start" in segment and "end" in segment:
+        duration = segment["end"] - segment["start"]
+        normalized["duration_estimate"] = max(1.0, duration)
+    else:
+        word_count = len(text.split())
+        normalized["duration_estimate"] = max(1.0, word_count / 2.2)
+    
+    if "display_directives" in segment:
+        normalized["display_directives"] = segment["display_directives"]
+    else:
+        normalized["display_directives"] = {
+            "text_layer": "hide",
+            "visual_layer": "show",
+            "avatar_layer": "hide"
+        }
+    
+    if "start" in segment:
+        normalized["start"] = segment["start"]
+    if "end" in segment:
+        normalized["end"] = segment["end"]
+    if "start_time" in segment:
+        normalized["start_time"] = segment["start_time"]
+    if "end_time" in segment:
+        normalized["end_time"] = segment["end_time"]
+    
+    return normalized
+
+
+def _normalize_memory_section(memory: Dict) -> Dict:
+    """
+    Normalize memory section segments to have consistent format.
+    Memory flashcards don't need segments normalized as heavily,
+    but we ensure duration_estimate is present.
+    """
+    narration = memory.get("narration", {})
+    segments = narration.get("segments", [])
+    
+    normalized_segments = []
+    for idx, seg in enumerate(segments, 1):
+        normalized = _normalize_segment(seg, 0, idx)
+        normalized_segments.append(normalized)
+    
+    if normalized_segments:
+        memory["narration"]["segments"] = normalized_segments
+        total_dur = sum(s.get("duration_estimate", 0) for s in normalized_segments)
+        memory["narration"]["total_duration_seconds"] = round(total_dur, 2)
+    
+    return memory
+
+
 def _order_sections(content_sections: List[Dict], recap_sections: List[Dict]) -> List[Dict]:
     """
     Order sections in pedagogical sequence:
@@ -125,6 +197,7 @@ def _order_sections(content_sections: List[Dict], recap_sections: List[Dict]) ->
             recap_scene_sections[section_type] = section
     
     if memory:
+        memory = _normalize_memory_section(memory)
         ordered.append(memory)
     
     merged_recap = _merge_recap_scenes_to_single_section(recap_scene_sections)
@@ -171,8 +244,8 @@ def _merge_recap_scenes_to_single_section(recap_scene_sections: Dict[str, Dict])
             all_narration_text.append(scene_text)
         
         segments = narration.get("segments", [])
-        for seg in segments:
-            adjusted_seg = seg.copy()
+        for seg_idx, seg in enumerate(segments):
+            adjusted_seg = _normalize_segment(seg, scene_index, seg_idx + 1)
             adjusted_seg["start_time"] = adjusted_seg.get("start_time", 0) + total_duration
             adjusted_seg["end_time"] = adjusted_seg.get("end_time", 0) + total_duration
             all_segments.append(adjusted_seg)
