@@ -3,7 +3,7 @@
 ## Overview
 This project is a **Deterministic Educational Film Engine** that converts PDF chapters into pedagogically structured, animated explanation videos with synchronized narration. Its primary goal is to automate the creation of high-quality, engaging educational content.
 
-**Current Status**: V1.4 operational, V1.5 Split Agent Architecture in planning.
+**Current Status**: V1.4 operational, V1.5 Split Agent Architecture PHASE-1 complete.
 
 ## SINGLE SOURCE OF TRUTH
 
@@ -108,11 +108,21 @@ Chunker → SectionPlanner → [per-section: NarrationWriter → VisualSpecArtis
 See `docs/v1.5_requirements.json` for detailed status of each requirement.
 
 ### Phase Status
-- **PHASE-0**: Requirements & Contracts - IN PROGRESS
-- **PHASE-1**: Agent Prompts & Contracts - OPEN
+- **PHASE-0**: Requirements & Contracts - COMPLETE (2025-12-23)
+- **PHASE-1**: Agent Prompts & Contracts - COMPLETE (2025-12-23)
 - **PHASE-2**: Orchestration & Merge - OPEN
 - **PHASE-3**: TTS & Renderer Integration - OPEN
 - **PHASE-4**: API & Dashboard Wiring - OPEN
+
+### V1.5 Agents Implemented (PHASE-1)
+| Agent | Files | Output Fields |
+|-------|-------|---------------|
+| SectionPlanner | `core/agents/section_planner.py` | ~10 fields per section |
+| NarrationWriter | `core/agents/narration_writer.py` | 5 fields (section_id, narration.full_text, segments) |
+| VisualSpecArtist | `core/agents/visual_spec_artist.py` | ~12 fields (visual_beats, segment_enrichments) |
+| RendererSpecAgent | `core/agents/renderer_spec_agent.py` | Variable (manim/video/remotion spec) |
+| MemoryFlashcard | `core/agents/memory_agent.py` | 5 flashcards |
+| RecapScene | `core/agents/recap_agent.py` | 5 video prompts (300+ words each) |
 
 ## V1.4 Test Status (2025-12-23)
 
