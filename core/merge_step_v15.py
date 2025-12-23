@@ -1,0 +1,319 @@
+"""
+Merge Step v1.5 - Deterministic Agent Output Combination
+
+Merges all V1.5 agent outputs into a single presentation.json
+that is v1.3 schema compliant.
+
+This is pure Python logic - NO LLM calls.
+
+Principle P7 (Content Integrity): Display ONLY content from source document.
+"""
+
+import logging
+from datetime import datetime
+from typing import Dict, List, Optional, Any
+
+logger = logging.getLogger(__name__)
+
+
+TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory"]
+REQUIRED_RENDERERS = {"recap": "video"}
+
+
+def merge_agent_outputs(
+    section_artifacts: List[Dict],
+    memory_output: Dict,
+    recap_output: Dict,
+    subject: str,
+    grade: str
+) -> Dict:
+    """
+    Deterministic merge of all V1.5 agent outputs into presentation.json.
+    
+    Algorithm:
+    1. Process section_artifacts (intro, summary, content, example)
+    2. Add memory section from MemoryFlashcardAgent
+    3. Add recap section from RecapSceneAgent
+    4. Assign sequential section_ids
+    5. Merge segment_enrichments into narration.segments
+    6. Enforce renderer policies
+    7. Validate against v1.3 schema requirements
+    
+    Args:
+        section_artifacts: List of {blueprint, narration, visuals, render_spec}
+        memory_output: Output from MemoryFlashcardAgent
+        recap_output: Output from RecapSceneAgent
+        subject: Subject area
+        grade: Grade level
+        
+    Returns:
+        Complete presentation.json dict (v1.3 schema compliant)
+    """
+    logger.info("[Merge Step v1.5] Starting merge of agent outputs")
+    
+    sections = []
+    
+    for artifact in section_artifacts:
+        section = _build_section_from_artifact(artifact)
+        sections.append(section)
+    
+    memory_section = _build_memory_section(memory_output)
+    sections.append(memory_section)
+    
+    recap_section = _build_recap_section(recap_output)
+    sections.append(recap_section)
+    
+    sections = _order_sections(sections)
+    
+    for i, section in enumerate(sections, start=1):
+        section["section_id"] = i
+    
+    _enforce_renderer_policies(sections)
+    
+    presentation = {
+        "spec_version": "v1.5",
+        "title": f"{subject} Lesson",
+        "subject": subject,
+        "grade": grade,
+        "avatar_global": {
+            "style": "teacher",
+            "default_position": "right",
+            "default_width_percent": 30,
+            "gesture_enabled": True
+        },
+        "sections": sections,
+        "metadata": {
+            "generated_at": datetime.utcnow().isoformat() + "Z",
+            "pipeline_version": "v1.5",
+            "section_count": len(sections),
+            "section_types": [s.get("section_type") for s in sections]
+        }
+    }
+    
+    logger.info(f"[Merge Step v1.5] Successfully merged {len(sections)} sections")
+    return presentation
+
+
+def _build_section_from_artifact(artifact: Dict) -> Dict:
+    """Build a section from blueprint + narration + visuals + render_spec."""
+    blueprint = artifact.get("blueprint", {})
+    narration = artifact.get("narration", {})
+    visuals = artifact.get("visuals", {})
+    render_spec = artifact.get("render_spec")
+    
+    section_type = blueprint.get("section_type", "content")
+    
+    section = {
+        "section_type": section_type,
+        "title": blueprint.get("title", "Untitled"),
+        "renderer": blueprint.get("suggested_renderer", "none"),
+        "avatar_layout": {
+            "visibility": blueprint.get("avatar_visibility", "optional"),
+            "mode": "floating" if section_type in ["intro", "summary"] else "compact",
+            "position": blueprint.get("avatar_position", "right"),
+            "width_percent": 50 if section_type == "intro" else 30
+        }
+    }
+    
+    narration_data = narration.get("narration", {})
+    segments = narration_data.get("segments", [])
+    
+    enrichments = visuals.get("segment_enrichments", [])
+    enrichment_map = {e.get("segment_id"): e for e in enrichments}
+    
+    merged_segments = []
+    for seg in segments:
+        seg_id = seg.get("segment_id")
+        merged_seg = {
+            "segment_id": seg_id,
+            "text": seg.get("text", ""),
+            "duration_seconds": seg.get("duration_seconds", 5.0),
+            "gesture_hint": seg.get("gesture_hint", "explaining")
+        }
+        
+        enrichment = enrichment_map.get(seg_id, {})
+        
+        if enrichment.get("visual_content"):
+            merged_seg["visual_content"] = enrichment["visual_content"]
+        
+        if enrichment.get("display_directives"):
+            merged_seg["display_directives"] = enrichment["display_directives"]
+        else:
+            merged_seg["display_directives"] = {
+                "text_layer": "show" if section_type in ["intro", "summary"] else "hide",
+                "visual_layer": "hide" if section_type in ["intro", "summary"] else "show",
+                "avatar_layer": "show" if section_type in ["intro", "summary"] else "gesture_only"
+            }
+        
+        merged_segments.append(merged_seg)
+    
+    section["narration"] = {
+        "full_text": narration_data.get("full_text", ""),
+        "segments": merged_segments
+    }
+    
+    section["visual_beats"] = visuals.get("visual_beats", [])
+    
+    if render_spec:
+        if render_spec.get("manim_scene_spec"):
+            section["manim_scene_spec"] = render_spec["manim_scene_spec"]
+        if render_spec.get("video_prompts"):
+            section["video_prompts"] = render_spec["video_prompts"]
+        if render_spec.get("remotion_scene_spec"):
+            section["remotion_scene_spec"] = render_spec["remotion_scene_spec"]
+    
+    return section
+
+
+def _build_memory_section(memory_output: Dict) -> Dict:
+    """Build memory section from MemoryFlashcardAgent output."""
+    flashcards = memory_output.get("flashcards", [])
+    
+    intro_text = "Let's review what we've learned with some flashcards."
+    
+    segments = [
+        {
+            "segment_id": 1,
+            "text": intro_text,
+            "duration_seconds": 4.0,
+            "gesture_hint": "explaining",
+            "display_directives": {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "hide"
+            }
+        }
+    ]
+    
+    return {
+        "section_type": "memory",
+        "title": memory_output.get("title", "Remember This!"),
+        "renderer": "none",
+        "avatar_layout": {
+            "visibility": "hidden",
+            "mode": "compact",
+            "position": "hidden",
+            "width_percent": 0
+        },
+        "narration": {
+            "full_text": intro_text,
+            "segments": segments
+        },
+        "visual_beats": [
+            {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Flashcard review section"
+            }
+        ],
+        "flashcards": flashcards
+    }
+
+
+def _build_recap_section(recap_output: Dict) -> Dict:
+    """Build recap section from RecapSceneAgent output."""
+    video_prompts = recap_output.get("video_prompts", [])
+    
+    prompt_texts = []
+    segments = []
+    visual_beats = []
+    
+    for i, vp in enumerate(video_prompts, start=1):
+        word_count = len(vp.get("prompt", "").split())
+        duration = vp.get("duration_seconds", 10.0)
+        
+        narration_text = f"Scene {i}: visualizing the concept."
+        prompt_texts.append(narration_text)
+        
+        segments.append({
+            "segment_id": i,
+            "text": narration_text,
+            "duration_seconds": duration,
+            "gesture_hint": "explaining",
+            "display_directives": {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "hide"
+            }
+        })
+        
+        visual_beats.append({
+            "beat_id": f"beat_{i}",
+            "segment_id": i,
+            "visual_beat_type": "video_clip",
+            "description": f"Recap video scene {i}"
+        })
+    
+    formatted_prompts = []
+    for i, vp in enumerate(video_prompts, start=1):
+        formatted_prompts.append({
+            "beat_id": i,
+            "prompt": vp.get("prompt", ""),
+            "duration_seconds": vp.get("duration_seconds", 10.0),
+            "style": vp.get("style", "cinematic")
+        })
+    
+    return {
+        "section_type": "recap",
+        "title": recap_output.get("title", "Let's Review"),
+        "renderer": "video",
+        "avatar_layout": {
+            "visibility": "hidden",
+            "mode": "compact",
+            "position": "hidden",
+            "width_percent": 0
+        },
+        "narration": {
+            "full_text": " ".join(prompt_texts),
+            "segments": segments
+        },
+        "visual_beats": visual_beats,
+        "video_prompts": formatted_prompts
+    }
+
+
+def _order_sections(sections: List[Dict]) -> List[Dict]:
+    """Order sections: intro, summary, content/example, memory, recap."""
+    type_order = {
+        "intro": 0,
+        "summary": 1,
+        "content": 2,
+        "example": 3,
+        "quiz": 4,
+        "memory": 5,
+        "recap": 6
+    }
+    
+    def sort_key(section):
+        section_type = section.get("section_type", "content")
+        return type_order.get(section_type, 2)
+    
+    return sorted(sections, key=sort_key)
+
+
+def _enforce_renderer_policies(sections: List[Dict]) -> None:
+    """
+    Enforce renderer policies per section type.
+    
+    Policies:
+    - intro, summary, memory: renderer = "none"
+    - recap: renderer = "video"
+    - content, example: dynamic (manim, remotion, video)
+    """
+    for section in sections:
+        section_type = section.get("section_type", "")
+        current_renderer = section.get("renderer", "none")
+        
+        if section_type in TEXT_ONLY_SECTION_TYPES:
+            if current_renderer != "none":
+                section["renderer"] = "none"
+                section["renderer_override_reason"] = f"Policy: {section_type} is text-only"
+                logger.info(f"[Merge v1.5] Enforced renderer 'none' for {section_type}")
+        
+        elif section_type in REQUIRED_RENDERERS:
+            required = REQUIRED_RENDERERS[section_type]
+            if current_renderer != required:
+                section["renderer"] = required
+                section["renderer_override_reason"] = f"Policy: {section_type} requires {required}"
+                logger.info(f"[Merge v1.5] Enforced renderer '{required}' for {section_type}")

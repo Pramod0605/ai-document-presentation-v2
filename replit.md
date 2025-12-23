@@ -3,11 +3,11 @@
 ## Overview
 This project is a **Deterministic Educational Film Engine** that converts PDF chapters into pedagogically structured, animated explanation videos with synchronized narration. Its primary goal is to automate the creation of high-quality, engaging educational content.
 
-**Current Status**: V1.4 operational, V1.5 Split Agent Architecture PHASE-1 complete.
+**Current Status**: V1.4 operational, V1.5 Split Agent Architecture ALL PHASES COMPLETE (PHASE-0 through PHASE-4).
 
 ## SINGLE SOURCE OF TRUTH
 
-### V1.5 Architecture (Planned)
+### V1.5 Architecture (Implemented)
 **Primary Reference**: `docs/v1.5_requirements.json`
 
 This file contains:
@@ -110,9 +110,18 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 ### Phase Status
 - **PHASE-0**: Requirements & Contracts - COMPLETE (2025-12-23)
 - **PHASE-1**: Agent Prompts & Contracts - COMPLETE (2025-12-23)
-- **PHASE-2**: Orchestration & Merge - OPEN
-- **PHASE-3**: TTS & Renderer Integration - OPEN
-- **PHASE-4**: API & Dashboard Wiring - OPEN
+- **PHASE-2**: Orchestration & Merge - COMPLETE (2025-12-23)
+- **PHASE-3**: TTS & Renderer Integration - COMPLETE (2025-12-23)
+- **PHASE-4**: API & Dashboard Wiring - COMPLETE (2025-12-23)
+
+### V1.5 New Files Created
+| Component | Files |
+|-----------|-------|
+| Pipeline Orchestrator | `core/pipeline_v15.py` |
+| Merge Step | `core/merge_step_v15.py` |
+| Narration Sync | `core/narration_sync.py` |
+| API Endpoints | `/api/v15/generate`, `/api/v15/pipeline-info` |
+| Dashboard | Pipeline selector dropdown added |
 
 ### V1.5 Agents Implemented (PHASE-1)
 | Agent | Files | Output Fields |

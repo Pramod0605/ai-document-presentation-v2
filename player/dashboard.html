@@ -261,13 +261,22 @@
                 <input type="hidden" id="subject" name="subject" value="General Science">
                 <input type="hidden" id="grade" name="grade" value="12">
 
-                <div class="form-group">
-                    <label for="tts_provider">TTS Provider <span style="color: #888; font-size: 0.8rem;">(keep pyttsx3 for testing)</span></label>
-                    <select id="tts_provider" name="tts_provider" style="width: 100%; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; background: rgba(0, 0, 0, 0.3); color: #fff; font-size: 1rem;">
-                        <option value="pyttsx3" selected>pyttsx3 (Local - Always Use for Testing)</option>
-                        <option value="narakeet">Narakeet (Production - Costs Money)</option>
-                        <option value="estimate">Estimate Only (Fastest - No Audio)</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pipeline_version">Pipeline Version</label>
+                        <select id="pipeline_version" name="pipeline_version" style="width: 100%; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; background: rgba(0, 0, 0, 0.3); color: #fff; font-size: 1rem;">
+                            <option value="v14" selected>V1.4 (Current - Split Directors)</option>
+                            <option value="v15">V1.5 (New - Split Agents)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tts_provider">TTS Provider <span style="color: #888; font-size: 0.8rem;">(keep pyttsx3 for testing)</span></label>
+                        <select id="tts_provider" name="tts_provider" style="width: 100%; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; background: rgba(0, 0, 0, 0.3); color: #fff; font-size: 1rem;">
+                            <option value="pyttsx3" selected>pyttsx3 (Local - Always Use for Testing)</option>
+                            <option value="narakeet">Narakeet (Production - Costs Money)</option>
+                            <option value="estimate">Estimate Only (Fastest - No Audio)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="checkbox-group">
@@ -387,6 +396,7 @@
             formData.append('skip_wan', document.getElementById('skip_wan').checked ? 'true' : 'false');
             formData.append('skip_avatar', document.getElementById('skip_avatar').checked ? 'true' : 'false');
             formData.append('tts_provider', document.getElementById('tts_provider').value);
+            formData.append('pipeline_version', document.getElementById('pipeline_version').value);
 
             try {
                 const response = await fetch('/submit_job', {

@@ -14,6 +14,7 @@ from flask_cors import CORS
 from core.pipeline import process_pdf_to_videos
 from core.pipeline_v12 import process_markdown_to_videos_v12 as process_markdown_to_videos
 from core.pipeline_v14 import get_pipeline_info, process_markdown_to_presentation_v14, process_with_renderers_v14, validate_presentation_v14
+from core.pipeline_v15 import process_markdown_to_presentation_v15, PipelineError as PipelineV15Error
 from core.job_manager import job_manager, run_job_async, is_job_running, get_current_job_id
 
 app = Flask(__name__)
@@ -71,6 +72,7 @@ def submit_job():
         skip_wan = request.form.get("skip_wan", "false").lower() == "true"
         skip_avatar = request.form.get("skip_avatar", "false").lower() == "true"
         tts_provider = request.form.get("tts_provider", "narakeet")
+        pipeline_version = request.form.get("pipeline_version", "v14")
         
         if "file" in request.files:
             uploaded_file = request.files["file"]
@@ -82,6 +84,11 @@ def submit_job():
             if filename.endswith(".pdf"):
                 job_type = "pdf"
                 suffix = ".pdf"
+                if pipeline_version == "v15":
+                    return jsonify({
+                        "error": "V1.5 pipeline does not support PDF files directly. Please convert to Markdown first.",
+                        "hint": "Upload a .md or .txt file, or use /api/v15/generate with markdown content."
+                    }), 400
             elif filename.endswith(".md") or filename.endswith(".markdown") or filename.endswith(".txt"):
                 job_type = "markdown_file"
                 suffix = ".md"
@@ -92,14 +99,16 @@ def submit_job():
             uploaded_file.save(str(temp_file))
             original_filename = uploaded_file.filename
             
-            job_id = job_manager.create_job("v14_pipeline", {
+            job_type_name = "v15_pipeline" if pipeline_version == "v15" else "v14_pipeline"
+            job_id = job_manager.create_job(job_type_name, {
                 "subject": subject,
                 "grade": grade,
                 "file_path": str(temp_file),
                 "source_file": original_filename,
                 "skip_wan": skip_wan,
                 "skip_avatar": skip_avatar,
-                "tts_provider": tts_provider
+                "tts_provider": tts_provider,
+                "pipeline_version": pipeline_version
             })
             
             job_output_dir = JOBS_DIR / job_id
@@ -129,9 +138,10 @@ def submit_job():
                 
                 job_manager.update_job(job_id, {"content_preview": content_preview}, persist=True)
                 
+                job_processor = process_markdown_job_v15 if pipeline_version == "v15" else process_markdown_job
                 run_job_async(
                     job_id,
-                    process_markdown_job,
+                    job_processor,
                     markdown_content=markdown_content,
                     subject=subject,
                     grade=grade,
@@ -152,6 +162,7 @@ def submit_job():
             skip_wan = data.get("skip_wan", False)
             skip_avatar = data.get("skip_avatar", False)
             tts_provider = data.get("tts_provider", "narakeet")
+            pipeline_version = data.get("pipeline_version", "v14")
             
             if not markdown_content:
                 return jsonify({"error": "Markdown content is required"}), 400
@@ -160,22 +171,25 @@ def submit_job():
             if len(markdown_content) > 300:
                 content_preview += "..."
             
-            job_id = job_manager.create_job("v14_pipeline", {
+            job_type_name = "v15_pipeline" if pipeline_version == "v15" else "v14_pipeline"
+            job_id = job_manager.create_job(job_type_name, {
                 "subject": subject,
                 "grade": grade,
                 "dry_run": dry_run,
                 "skip_wan": skip_wan,
                 "skip_avatar": skip_avatar,
                 "tts_provider": tts_provider,
+                "pipeline_version": pipeline_version,
                 "content_preview": content_preview
             })
             
             job_output_dir = JOBS_DIR / job_id
             setup_job_folder(job_output_dir)
             
+            job_processor = process_markdown_job_v15 if pipeline_version == "v15" else process_markdown_job
             run_job_async(
                 job_id,
-                process_markdown_job,
+                job_processor,
                 markdown_content=markdown_content,
                 subject=subject,
                 grade=grade,
@@ -298,6 +312,58 @@ def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade
         use_remotion=True
     )
     return result
+
+
+def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "narakeet") -> dict:
+    """Process markdown using V1.5 Split Agent pipeline."""
+    from pathlib import Path
+    
+    def status_callback(jid, phase, message):
+        job_manager.update_job(jid, {
+            "current_phase_key": phase,
+            "status_message": message
+        }, persist=True)
+    
+    generate_tts = tts_provider != "estimate"
+    output_path = Path(output_dir)
+    
+    presentation, tracker = process_markdown_to_presentation_v15(
+        markdown_content=markdown_content,
+        subject=subject,
+        grade=grade,
+        job_id=job_id,
+        update_status_callback=status_callback,
+        generate_tts=generate_tts,
+        output_dir=output_path,
+        tts_provider=tts_provider
+    )
+    
+    if not skip_wan and not dry_run:
+        status_callback(job_id, "renderers", "Generating video content...")
+        presentation = process_with_renderers_v14(
+            presentation=presentation,
+            tracker=tracker,
+            job_id=job_id,
+            update_status_callback=status_callback,
+            use_remotion=True,
+            output_dir=output_path,
+            dry_run=dry_run,
+            skip_wan=skip_wan
+        )
+    
+    pres_path = output_path / "presentation.json"
+    with open(pres_path, "w") as f:
+        json.dump(presentation, f, indent=2)
+    
+    analytics_summary = tracker.get_summary() if hasattr(tracker, 'get_summary') else {}
+    
+    return {
+        "status": "success",
+        "presentation": presentation,
+        "analytics": analytics_summary,
+        "output_path": str(pres_path),
+        "pipeline_version": "1.5"
+    }
 
 
 @app.route("/process_pdf", methods=["POST"])
@@ -757,6 +823,165 @@ def generate_v14():
             "skip_wan": skip_wan,
             "tts_provider": tts_provider
         })
+        
+    except Exception as e:
+        import traceback
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
+
+
+@app.route("/api/v15/pipeline-info", methods=["GET"])
+def get_v15_pipeline_info():
+    """Return V1.5 pipeline architecture information."""
+    return jsonify({
+        "version": "1.5",
+        "name": "Split Agent Architecture",
+        "agents": [
+            {"name": "SmartChunker", "output_fields": "5-10"},
+            {"name": "SectionPlanner", "output_fields": "10"},
+            {"name": "NarrationWriter", "output_fields": "5"},
+            {"name": "VisualSpecArtist", "output_fields": "12"},
+            {"name": "RendererSpecAgent", "output_fields": "variable"},
+            {"name": "MemoryFlashcard", "output_fields": "5"},
+            {"name": "RecapScene", "output_fields": "5"}
+        ],
+        "flow": [
+            "SmartChunker → topics",
+            "SectionPlanner(topics) → section_blueprints",
+            "FOR EACH blueprint: NarrationWriter → VisualSpecArtist → RendererSpec",
+            "MemoryFlashcardAgent → memory_section",
+            "RecapSceneAgent → recap_section",
+            "MergeStep → presentation.json",
+            "TTS → audio + durations",
+            "Renderers → video files"
+        ],
+        "improvements": [
+            "5-15 fields per agent (vs 50+ in V1.4)",
+            "Per-agent retries instead of full pipeline restarts",
+            "Focused prompts for better quality"
+        ]
+    })
+
+
+@app.route("/api/v15/generate", methods=["POST"])
+def generate_v15():
+    """
+    V1.5 Split Agent Pipeline endpoint.
+    
+    Request body (JSON):
+    - markdown: Markdown content to process (required)
+    - subject: Subject area (default: "General Science")
+    - grade: Grade level (default: "9")
+    - skip_wan: If true, skips WAN video rendering (default: false)
+    - tts_provider: TTS provider - "narakeet" or "estimate" (default: "narakeet")
+    
+    Returns:
+    - presentation.json following v1.3 schema with spec_version v1.5
+    - analytics data including per-agent token usage
+    """
+    try:
+        if is_job_running():
+            current_id = get_current_job_id()
+            return jsonify({
+                "status": "busy",
+                "message": "A job is already running. Please wait for it to complete.",
+                "current_job_id": current_id
+            }), 409
+        
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Request body must be JSON"}), 400
+        
+        markdown_content = data.get("markdown", "")
+        if not markdown_content:
+            return jsonify({"error": "markdown field is required"}), 400
+        
+        subject = data.get("subject", "General Science")
+        grade = data.get("grade", "9")
+        skip_wan = data.get("skip_wan", False)
+        tts_provider = data.get("tts_provider", "narakeet")
+        
+        if tts_provider not in ["narakeet", "estimate"]:
+            return jsonify({"error": f"Invalid tts_provider: {tts_provider}. Use 'narakeet' or 'estimate'"}), 400
+        
+        job_id = job_manager.create_job("v15_pipeline", {
+            "subject": subject,
+            "grade": grade,
+            "skip_wan": skip_wan,
+            "tts_provider": tts_provider,
+            "pipeline_version": "1.5",
+            "content_preview": markdown_content[:200] + "..." if len(markdown_content) > 200 else markdown_content
+        })
+        
+        job_output_dir = JOBS_DIR / job_id
+        setup_job_folder(job_output_dir)
+        
+        def status_callback(jid, phase, message):
+            job_manager.update_job(jid, {
+                "current_phase_key": phase,
+                "status_message": message
+            }, persist=True)
+        
+        generate_tts = tts_provider != "estimate"
+        
+        presentation, tracker = process_markdown_to_presentation_v15(
+            markdown_content=markdown_content,
+            subject=subject,
+            grade=grade,
+            job_id=job_id,
+            update_status_callback=status_callback,
+            generate_tts=generate_tts,
+            output_dir=job_output_dir,
+            tts_provider=tts_provider
+        )
+        
+        if not skip_wan:
+            status_callback(job_id, "renderers", "Generating video content...")
+            presentation = process_with_renderers_v14(
+                presentation=presentation,
+                tracker=tracker,
+                job_id=job_id,
+                update_status_callback=status_callback,
+                use_remotion=True,
+                output_dir=job_output_dir,
+                dry_run=False,
+                skip_wan=skip_wan
+            )
+        
+        pres_path = job_output_dir / "presentation.json"
+        with open(pres_path, "w") as f:
+            json.dump(presentation, f, indent=2)
+        
+        analytics_summary = tracker.get_summary() if hasattr(tracker, 'get_summary') else {}
+        
+        job_manager.update_job(job_id, {
+            "status": "completed",
+            "progress": 100,
+            "pipeline_version": "1.5"
+        }, persist=True)
+        
+        return jsonify({
+            "status": "success",
+            "job_id": job_id,
+            "presentation": presentation,
+            "analytics": analytics_summary,
+            "output_path": str(pres_path),
+            "pipeline_version": "1.5",
+            "skip_wan": skip_wan,
+            "tts_provider": tts_provider
+        })
+        
+    except PipelineV15Error as e:
+        import traceback
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "phase": e.phase,
+            "traceback": traceback.format_exc()
+        }), 500
         
     except Exception as e:
         import traceback
