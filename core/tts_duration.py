@@ -225,6 +225,85 @@ def update_durations_from_tts(
     
     logger.info(f"[TTS Duration] Processed {total_segments} segments, total duration: {total_duration:.2f}s")
     
+    # ISS-115 FIX: Consolidate segment audio into section-level audio files
+    if output_dir:
+        presentation = consolidate_section_audio(presentation, audio_dir)
+    
+    return presentation
+
+
+def consolidate_section_audio(presentation: Dict, audio_dir: Path) -> Dict:
+    """
+    ISS-115 FIX: Consolidate per-segment audio into per-section audio files.
+    
+    Player expects section-level audio_path like "section_1.mp3".
+    TTS generates per-segment files like "1_1.mp3", "1_2.mp3".
+    
+    This function:
+    1. Concatenates segment audio files into section audio file
+    2. Sets section["audio_path"] to the consolidated filename
+    """
+    try:
+        from pydub import AudioSegment
+        PYDUB_AVAILABLE = True
+    except ImportError:
+        logger.warning("[TTS Consolidate] pydub not available, using symlink to first segment instead")
+        PYDUB_AVAILABLE = False
+    
+    sections = presentation.get("sections", [])
+    
+    for section in sections:
+        section_id = section.get("section_id", 0)
+        narration = section.get("narration", {})
+        segments = narration.get("segments", [])
+        
+        if not segments:
+            continue
+        
+        # Collect segment audio files
+        segment_files = []
+        for seg in segments:
+            audio_file = seg.get("audio_file")
+            if audio_file:
+                audio_path = audio_dir / audio_file
+                if audio_path.exists():
+                    segment_files.append(audio_path)
+        
+        if not segment_files:
+            continue
+        
+        # Output filename matches player expectation
+        section_audio_name = f"section_{section_id}.mp3"
+        section_audio_path = audio_dir / section_audio_name
+        
+        if len(segment_files) == 1:
+            # Single segment - just copy/link
+            import shutil
+            shutil.copy(segment_files[0], section_audio_path)
+            logger.debug(f"[TTS Consolidate] Section {section_id}: Copied single segment audio")
+        elif PYDUB_AVAILABLE:
+            # Multiple segments - concatenate with pydub
+            try:
+                combined = AudioSegment.empty()
+                for seg_file in segment_files:
+                    audio = AudioSegment.from_file(seg_file)
+                    combined += audio
+                combined.export(section_audio_path, format="mp3")
+                logger.debug(f"[TTS Consolidate] Section {section_id}: Concatenated {len(segment_files)} segments")
+            except Exception as e:
+                logger.warning(f"[TTS Consolidate] Section {section_id} concat failed: {e}, using first segment")
+                import shutil
+                shutil.copy(segment_files[0], section_audio_path)
+        else:
+            # Fallback: use first segment
+            import shutil
+            shutil.copy(segment_files[0], section_audio_path)
+            logger.debug(f"[TTS Consolidate] Section {section_id}: Copied first segment (no pydub)")
+        
+        # ISS-115 FIX: Set section-level audio_path
+        section["audio_path"] = section_audio_name
+        logger.info(f"[TTS Consolidate] Section {section_id}: audio_path = {section_audio_name}")
+    
     return presentation
 
 

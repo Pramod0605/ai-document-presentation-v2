@@ -152,6 +152,11 @@ def _build_section_from_artifact(artifact: Dict) -> Dict:
         "segments": merged_segments
     }
     
+    # ISS-121 FIX: Also create section-level display_directives array for player compatibility
+    section["display_directives"] = [seg.get("display_directives", {
+        "text_layer": "hide", "visual_layer": "show", "avatar_layer": "gesture_only"
+    }) for seg in merged_segments]
+    
     section["visual_beats"] = visuals.get("visual_beats", [])
     
     if render_spec:
@@ -159,8 +164,13 @@ def _build_section_from_artifact(artifact: Dict) -> Dict:
             section["manim_scene_spec"] = render_spec["manim_scene_spec"]
         if render_spec.get("video_prompts"):
             section["video_prompts"] = render_spec["video_prompts"]
-        if render_spec.get("remotion_scene_spec"):
-            section["remotion_scene_spec"] = render_spec["remotion_scene_spec"]
+        # Note: remotion_scene_spec removed per user request - remotion not used
+    
+    # ISS-118 FIX: Guard against remotion renderer (convert to manim)
+    if section.get("renderer") == "remotion":
+        section["renderer"] = "manim"
+        section["renderer_override_reason"] = "Policy: remotion converted to manim (remotion not supported)"
+        logger.info(f"[Merge v1.5] Converted remotion to manim for section")
     
     return section
 
@@ -199,6 +209,8 @@ def _build_memory_section(memory_output: Dict) -> Dict:
             "full_text": intro_text,
             "segments": segments
         },
+        # ISS-121 FIX: Section-level display_directives for player
+        "display_directives": [seg["display_directives"] for seg in segments],
         "visual_beats": [
             {
                 "beat_id": "beat_1",
@@ -268,6 +280,8 @@ def _build_recap_section(recap_output: Dict) -> Dict:
             "full_text": " ".join(prompt_texts),
             "segments": segments
         },
+        # ISS-121 FIX: Section-level display_directives for player
+        "display_directives": [seg["display_directives"] for seg in segments],
         "visual_beats": visual_beats,
         "video_prompts": formatted_prompts
     }

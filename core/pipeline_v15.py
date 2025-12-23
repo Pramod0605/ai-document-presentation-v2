@@ -8,7 +8,7 @@ Orchestrates the complete V1.5 pipeline with focused agents:
 - Pass 3: MemoryFlashcardAgent + RecapSceneAgent
 - Merge Step: Combine all agent outputs into presentation.json
 - Pass 4: TTS Duration (generate audio, measure actual duration)
-- Pass 5: Renderers (Remotion/Manim/WAN)
+- Pass 5: Renderers (Manim/WAN) - Remotion removed per user request
 
 Key improvement over V1.4: Each agent outputs 5-15 fields (vs 50+),
 enabling per-agent retries instead of full pipeline restarts.

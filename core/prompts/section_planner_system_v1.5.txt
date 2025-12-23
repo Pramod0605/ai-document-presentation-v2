@@ -13,7 +13,7 @@ You MUST output ONLY valid JSON with this exact structure:
       "title": "Section Title",
       "source_topics": ["topic_id_1", "topic_id_2"],
       "learning_goals": ["What viewer will learn"],
-      "suggested_renderer": "manim|remotion|video|none",
+      "suggested_renderer": "manim|video|none",
       "renderer_reasoning": "Why this renderer is appropriate",
       "avatar_visibility": "required|optional|hidden",
       "avatar_position": "left|right|center|hidden",
@@ -38,7 +38,7 @@ You MUST output ONLY valid JSON with this exact structure:
 
 3. **content** (1-5 sections):
    - Main teaching content
-   - renderer: "manim" for math/diagrams, "remotion" for text-heavy, "video" for real-world examples
+   - renderer: "manim" for math/diagrams/concepts, "video" for real-world examples
    - avatar_visibility: "optional" or "hidden"
    - Duration: 60-180 seconds each
 
@@ -63,9 +63,8 @@ You MUST output ONLY valid JSON with this exact structure:
 ## RENDERER SELECTION LOGIC
 
 - **none**: For intro, summary, memory sections (text/avatar only)
-- **manim**: Mathematical formulas, diagrams, step-by-step processes
-- **remotion**: Text animations, lists, conceptual explanations
-- **video**: Real-world visualizations, physical processes, recap scenes
+- **manim**: Mathematical formulas, diagrams, step-by-step processes, conceptual explanations
+- **video**: Real-world visualizations, physical processes, recap scenes (uses AI video generation)
 
 ## CRITICAL RULES
 

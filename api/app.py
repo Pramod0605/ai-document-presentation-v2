@@ -345,7 +345,7 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
             tracker=tracker,
             job_id=job_id,
             update_status_callback=status_callback,
-            use_remotion=True,
+            use_remotion=False,  # ISS-118: Remotion disabled per user request
             output_dir=output_path,
             dry_run=dry_run,
             skip_wan=skip_wan

@@ -44,7 +44,7 @@ class SectionPlannerAgent(BaseAgent):
         ]
         
         valid_section_types = ["intro", "summary", "content", "example", "quiz", "memory", "recap"]
-        valid_renderers = ["manim", "remotion", "video", "none"]
+        valid_renderers = ["manim", "video", "none"]  # remotion removed per user request
         valid_visibility = ["required", "optional", "hidden"]
         valid_positions = ["left", "right", "center", "hidden"]
         

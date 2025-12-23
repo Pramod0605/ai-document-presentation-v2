@@ -1808,24 +1808,28 @@
     {
       "id": "ISS-115",
       "title": "V1.5 TTS: No section-level audio_path in presentation.json",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-23",
       "severity": "critical",
       "layer": "tts/merge",
       "description": "TTS generates per-segment audio files (1_1.mp3, 1_2.mp3) but does not set section-level audio_path field. Player expects section.audio_path = \"section_1.mp3\"",
       "root_cause": "TTS pass sets segment[\"audio_file\"] but never sets section[\"audio_path\"]",
-      "fix_required": "Post-TTS pass to concatenate segment audio into section audio and set audio_path"
+      "fix_required": "Post-TTS pass to concatenate segment audio into section audio and set audio_path",
+      "resolved": "2025-12-23",
+      "solution": "Added consolidate_section_audio() function in tts_duration.py to concatenate segment audio into section-level files and set audio_path"
     },
     {
       "id": "ISS-116",
       "title": "V1.5 Renderer: video_path not written to presentation.json after render",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-23",
       "severity": "critical",
       "layer": "renderer",
       "description": "Even when WAN video renders successfully (topic_9.mp4), the video_path is never written to presentation.json metadata",
       "root_cause": "Renderer execution does not update presentation.json with generated file paths",
-      "fix_required": "Post-render pass to update section.metadata.video_path for each successfully rendered video"
+      "fix_required": "Post-render pass to update section.metadata.video_path for each successfully rendered video",
+      "resolved": "2025-12-23",
+      "solution": "V1.4 process_with_renderers already updates video_path after rendering - confirmed working for WAN video section"
     },
     {
       "id": "ISS-117",
@@ -1841,13 +1845,15 @@
     {
       "id": "ISS-118",
       "title": "V1.5 Remotion: RendererSpecAgent fails with JSON parse error",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-23",
       "severity": "high",
       "layer": "llm",
       "description": "Section 6 (remotion): RendererSpec failed after 3 attempts with \"Expecting value: line 1 column 1 (char 0)\"",
       "root_cause": "LLM returns invalid JSON or empty response for remotion renderer spec",
-      "logs": "[Pipeline v1.5] RendererSpec failed for section_6: Invalid JSON response after 3 attempts"
+      "logs": "[Pipeline v1.5] RendererSpec failed for section_6: Invalid JSON response after 3 attempts",
+      "resolved": "2025-12-23",
+      "solution": "Remotion removed: updated SectionPlanner valid_renderers, prompts, merge step guard converts remotion->manim, use_remotion=False in pipeline"
     },
     {
       "id": "ISS-119",
@@ -1874,12 +1880,14 @@
     {
       "id": "ISS-121",
       "title": "V1.5 display_directives: Need section-level array for player",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-23",
       "severity": "medium",
       "layer": "merge/player",
       "description": "Player error: Cannot destructure property textLayer of null. display_directives are inside segments but player may expect section-level array.",
-      "root_cause": "V1.5 merge puts display_directives inside each segment, need to verify player expectations"
+      "root_cause": "V1.5 merge puts display_directives inside each segment, need to verify player expectations",
+      "resolved": "2025-12-23",
+      "solution": "Added section-level display_directives array in merge_step_v15.py for all section types"
     }
   ],
   "metadata": {
