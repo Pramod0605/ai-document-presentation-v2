@@ -729,7 +729,10 @@ def generate_v14():
                 tracker=tracker,
                 job_id=job_id,
                 update_status_callback=status_callback,
-                use_remotion=True
+                use_remotion=True,
+                output_dir=job_output_dir,
+                dry_run=False,
+                skip_wan=skip_wan
             )
         
         pres_path = job_output_dir / "presentation.json"

@@ -435,16 +435,23 @@ const videoBufferManager = new VideoBufferManager();
 
 function getBasePath() {
   const path = window.location.pathname;
-  // New structure: /jobs/<job_id>/
+  const params = new URLSearchParams(window.location.search);
+  const jobParam = params.get('job');
+  
+  if (jobParam) {
+    return `/player/jobs/${jobParam}/`;
+  }
+  
   const newJobMatch = path.match(/\/jobs\/([^\/]+)\//);
   if (newJobMatch) {
-    return `/jobs/${newJobMatch[1]}/`;
+    return `/player/jobs/${newJobMatch[1]}/`;
   }
-  // Legacy structure: /player/jobs/<job_id>/
+  
   const legacyJobMatch = path.match(/\/player\/jobs\/([^\/]+)\//);
   if (legacyJobMatch) {
-    return `/jobs/${legacyJobMatch[1]}/`;
+    return `/player/jobs/${legacyJobMatch[1]}/`;
   }
+  
   return '/player/assets/';
 }
 

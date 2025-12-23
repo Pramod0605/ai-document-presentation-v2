@@ -14,6 +14,9 @@ from typing import Dict, List, Optional
 logger = logging.getLogger(__name__)
 
 
+TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory"]
+
+
 def merge_director_outputs(
     content_output: Dict,
     recap_output: Dict,
@@ -30,6 +33,7 @@ def merge_director_outputs(
     3. Preserve all fields from both outputs
     4. Set spec_version: "v1.4"
     5. Add generation metadata
+    6. ISS-113 FIX: Enforce renderer policy (intro/summary/memory = none)
     
     Args:
         content_output: Output from Content Director (intro/summary/content/example/quiz)
@@ -51,6 +55,14 @@ def merge_director_outputs(
     
     for i, section in enumerate(ordered_sections, start=1):
         section["section_id"] = f"section_{i}"
+        
+        section_type = section.get("section_type", "")
+        if section_type in TEXT_ONLY_SECTION_TYPES:
+            old_renderer = section.get("renderer", "")
+            if old_renderer != "none":
+                section["renderer"] = "none"
+                section["renderer_override_reason"] = f"ISS-113: {section_type} is text-only, forced from '{old_renderer}' to 'none'"
+                logger.info(f"[Merge Step] ISS-113 FIX: Section {i} ({section_type}) renderer '{old_renderer}' -> 'none'")
     
     title = content_output.get("title", f"{subject} Lesson")
     

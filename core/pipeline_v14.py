@@ -289,16 +289,20 @@ def process_with_renderers_v14(
     tracker: AnalyticsTracker,
     job_id: str,
     update_status_callback = None,
-    use_remotion: bool = True
+    use_remotion: bool = True,
+    output_dir: Optional[Path] = None,
+    dry_run: bool = False,
+    skip_wan: bool = False
 ) -> Dict:
     """
-    Pass 2: Dispatch to renderers.
+    Pass 2: Dispatch to renderers and execute rendering.
     
     This is called after presentation.json is generated and validated.
-    It calls the appropriate renderer for each section based on the renderer field.
+    It does TWO things:
+    1. Generate render specs (manim_scene_spec, video_prompts) via LLM
+    2. Execute renderers (Manim CLI, WAN API) to create actual video files
     
-    Note: This is a placeholder. The actual renderer logic is in the existing
-    llm_client_v12.py and will be called from there.
+    ISS-111 FIX: Added render_all_topics() call to actually execute renderers.
     
     Args:
         presentation: Validated presentation.json
@@ -306,22 +310,62 @@ def process_with_renderers_v14(
         job_id: Job identifier
         update_status_callback: Status callback
         use_remotion: Enable Remotion renderer
-        use_manim: Enable Manim renderer
-        use_video: Enable WAN video renderer
+        output_dir: Output directory for rendered videos
+        dry_run: If True, validate only without actual rendering
+        skip_wan: If True, skip WAN API calls (for testing)
         
     Returns:
-        Updated presentation with rendered content
+        Updated presentation with rendered content and video paths
     """
     from core.llm_client_v12 import pass2_dispatch_renderers
+    from core.renderer_executor import render_all_topics, enforce_renderer_policy
     
     if update_status_callback:
-        update_status_callback(job_id, "render", "Generating visual content...")
+        update_status_callback(job_id, "render_specs", "Generating render specifications...")
     
     presentation = pass2_dispatch_renderers(
         presentation=presentation,
         tracker=tracker,
         use_remotion=use_remotion
     )
+    
+    if output_dir:
+        videos_dir = Path(output_dir) / "videos"
+        videos_dir.mkdir(parents=True, exist_ok=True)
+        
+        if update_status_callback:
+            update_status_callback(job_id, "render_execute", "Rendering videos...")
+        
+        presentation = enforce_renderer_policy(presentation)
+        
+        rendered_videos = render_all_topics(
+            presentation=presentation,
+            output_dir=str(videos_dir),
+            dry_run=dry_run,
+            skip_wan=skip_wan,
+            output_dir_base=str(output_dir)
+        )
+        
+        for result in rendered_videos:
+            section_id = result.get("topic_id")
+            video_path = result.get("video_path")
+            beat_videos = result.get("beat_videos", [])
+            recap_video_paths = result.get("recap_video_paths", [])
+            
+            for section in presentation.get("sections", []):
+                if section.get("section_id") == section_id:
+                    if video_path:
+                        rel_path = str(Path(video_path).name) if "/" in str(video_path) else video_path
+                        section["video_path"] = f"videos/{rel_path}"
+                    if beat_videos:
+                        section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
+                    if recap_video_paths:
+                        section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
+                    break
+        
+        success_count = sum(1 for r in rendered_videos if r.get("status") in ["success", "skipped"])
+        fail_count = sum(1 for r in rendered_videos if r.get("status") == "failed")
+        logger.info(f"[Pipeline v1.4] Rendering complete: {success_count} success, {fail_count} failed")
     
     return presentation
 

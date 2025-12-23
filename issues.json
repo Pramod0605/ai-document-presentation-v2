@@ -1715,54 +1715,58 @@
     {
       "id": "ISS-111",
       "title": "V1.4 pipeline never calls renderer_executor - Manim/WAN videos not generated",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-23",
+      "resolved": "2025-12-23",
       "severity": "critical",
       "description": "process_with_renderers_v14() calls pass2_dispatch_renderers() which only generates render SPECS (manim_scene_spec, video_prompts) via LLM. It never calls render_all_topics() to actually execute the Manim CLI or WAN API. Result: presentation.json has specs but videos/ folder is empty.",
       "root_cause": "Architectural gap: V1.3/V1.1 pipeline calls render_all_topics() after pass2_dispatch_renderers(), but V1.4 pipeline forgot to wire this call.",
-      "fix": "Add render_all_topics() call after pass2_dispatch_renderers() in process_with_renderers_v14()",
-      "files_to_modify": ["core/pipeline_v14.py"]
+      "fix": "Added render_all_topics() call after pass2_dispatch_renderers() in process_with_renderers_v14(). Also added output_dir, dry_run, skip_wan params. Updates section video_path, beat_videos, recap_video_paths with rendered output.",
+      "files_modified": ["core/pipeline_v14.py"]
     },
     {
       "id": "ISS-112",
       "title": "Player BASE_PATH falls back to /player/assets/ - Audio files 404",
-      "status": "open", 
+      "status": "resolved",
       "created": "2025-12-23",
+      "resolved": "2025-12-23",
       "severity": "critical",
       "description": "getBasePath() in player.js checks for /jobs/<id>/ or /player/jobs/<id>/ patterns, but falls back to /player/assets/ if neither matches. When player is accessed via /player/index.html?job=xxx, path doesn't match either pattern, so BASE_PATH becomes /player/assets/ and audio_path becomes /player/assets/audio/section_N.mp3 instead of /player/jobs/xxx/audio/section_N.mp3",
       "root_cause": "getBasePath() doesn't check URL query parameter 'job' as a fallback",
-      "fix": "Update getBasePath() to check URLSearchParams for 'job' param and construct path accordingly",
-      "files_to_modify": ["player/player.js"]
+      "fix": "Updated getBasePath() to check URLSearchParams for 'job' param FIRST, then fall back to path-based matching. Returns /player/jobs/${jobParam}/ for query-based access.",
+      "files_modified": ["player/player.js"]
     },
     {
       "id": "ISS-113",
       "title": "Intro/Summary assigned renderer='remotion' instead of 'none'",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-23",
+      "resolved": "2025-12-23",
       "severity": "medium",
       "description": "Content Director LLM assigns renderer='remotion' to intro/summary sections, but V1.3 spec says these should be text-only (renderer='none'). This wastes API calls trying to generate Remotion specs for text-only sections.",
       "root_cause": "Content Director prompt doesn't enforce text-only for intro/summary. merge_step.py doesn't override.",
-      "fix": "Add renderer enforcement in merge_step.py to set intro/summary renderer='none'",
-      "files_to_modify": ["core/merge_step.py"]
+      "fix": "Added TEXT_ONLY_SECTION_TYPES list and enforcement in merge_director_outputs() to force intro/summary/memory to renderer='none'. Logs override with renderer_override_reason field.",
+      "files_modified": ["core/merge_step.py"]
     },
     {
       "id": "ISS-114",
       "title": "Player video paths use same broken BASE_PATH - Video files 404",
-      "status": "open",
+      "status": "resolved",
       "created": "2025-12-23",
+      "resolved": "2025-12-23",
       "severity": "critical",
       "description": "Same issue as ISS-112 but for video paths. All video_path construction uses BASE_PATH which falls back to wrong directory.",
       "root_cause": "Same as ISS-112 - getBasePath() doesn't handle query param",
-      "fix": "Same fix as ISS-112 - update getBasePath()",
-      "files_to_modify": ["player/player.js"]
+      "fix": "Fixed by same change as ISS-112 - getBasePath() now handles ?job= query param",
+      "files_modified": ["player/player.js"]
     }
   ],
   "metadata": {
-    "last_updated": "2025-12-23T08:10:00.000000",
-    "version": "14.14",
+    "last_updated": "2025-12-23T10:00:00.000000",
+    "version": "14.15",
     "spec_version": "v1.4",
     "spec_file": "docs/llm_output_requirements_v1.4.json",
-    "resolved_count": 91,
+    "resolved_count": 95,
     "open_count": 0,
     "testing_lesson": "Prompt FORBIDDEN lists must exactly match validator detection patterns",
     "v14_video_retries": "Video renderer now has 3 total attempts (max_retries=2) for 300+ word compliance",
