@@ -235,6 +235,7 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
     
     code_lines = []
     object_vars = {}
+    axes_vars = {}
     
     objects = spec.get("objects", [])
     
@@ -248,9 +249,10 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
     
     for axes_name in required_axes:
         log(f"[WARN] Auto-creating missing '{axes_name}' axes for graph objects")
-        code_lines.append(f'{axes_name} = Axes(x_range=[-5, 5, 1], y_range=[-3, 3, 1], x_length=10, y_length=6, axis_config={{"include_tip": True}})')
-        code_lines.append(f'self.play(Create({axes_name}), run_time=1)')
-        object_vars[axes_name] = axes_name
+        auto_axes_var = f"auto_{axes_name}"
+        code_lines.append(f'{auto_axes_var} = Axes(x_range=[-5, 5, 1], y_range=[-3, 3, 1], x_length=10, y_length=6, axis_config={{"include_tip": True}})')
+        code_lines.append(f'self.play(Create({auto_axes_var}), run_time=1)')
+        axes_vars[axes_name] = auto_axes_var
     
     for obj in objects:
         obj_id = obj["id"]
@@ -262,7 +264,12 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
         label_text = props.get("label", "")
         radius = props.get("radius", 0.3)
         
-        var_name = obj_id.replace("-", "_").replace(" ", "_")
+        base_var_name = obj_id.replace("-", "_").replace(" ", "_")
+        if obj_type != "axes" and base_var_name in ["axes", "graph", "area", "curve"]:
+            var_name = f"obj_{base_var_name}"
+            log(f"[WARN] Renaming '{base_var_name}' to '{var_name}' to avoid variable collision")
+        else:
+            var_name = base_var_name
         object_vars[obj_id] = var_name
         
         if obj_type == "point_charge":
@@ -321,6 +328,7 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
             if len(y_range) == 2:
                 y_range = [y_range[0], y_range[1], 1]
             code_lines.append(f'{var_name} = Axes(x_range=[{x_range[0]}, {x_range[1]}, {x_range[2]}], y_range=[{y_range[0]}, {y_range[1]}, {y_range[2]}], x_length=8, y_length=6, axis_config={{"include_tip": True}})')
+            axes_vars[obj_id] = var_name
         
         elif obj_type == "graph":
             equation = obj.get("equation") or props.get("equation", "x**2")
@@ -329,14 +337,16 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
             graph_color = COLOR_MAP.get(props.get("color", "blue").lower().replace("#", ""), "BLUE")
             if props.get("color", "").startswith("#"):
                 graph_color = f'"{props.get("color")}"'
-            axes_var = props.get("axes", "axes")
+            axes_ref = props.get("axes", "axes")
+            axes_var = axes_vars.get(axes_ref) or object_vars.get(axes_ref, axes_ref)
             code_lines.append(f'{var_name} = {axes_var}.plot({equation}, color={graph_color})')
         
         elif obj_type == "area_under_graph":
             graph_id = props.get("graph_id", "graph")
             graph_var = object_vars.get(graph_id, graph_id)
             x_range = props.get("x_range", [0, 2])
-            axes_var = props.get("axes", "axes")
+            axes_ref = props.get("axes", "axes")
+            axes_var = axes_vars.get(axes_ref) or object_vars.get(axes_ref, axes_ref)
             fill_color = props.get("color", "#87CEEB")
             opacity = props.get("opacity", 0.5)
             code_lines.append(f'{var_name} = {axes_var}.get_area({graph_var}, x_range=[{x_range[0]}, {x_range[1]}], color="{fill_color}", opacity={opacity})')

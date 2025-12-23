@@ -1888,6 +1888,29 @@
       "root_cause": "V1.5 merge puts display_directives inside each segment, need to verify player expectations",
       "resolved": "2025-12-23",
       "solution": "Added section-level display_directives array in merge_step_v15.py for all section types"
+    },
+    {
+      "id": "ISS-122",
+      "title": "Manim visual_compiler variable name collision with axes/graph objects",
+      "status": "resolved",
+      "priority": "high",
+      "created": "2025-12-23",
+      "resolved": "2025-12-23",
+      "description": "When LLM generates objects with id \"axes\" but type \"graph\", the visual_compiler creates \"axes = axes.plot(...)\" which overwrites the axes variable, causing Manim render failures.",
+      "solution": "Added variable collision detection in translate_spec_to_manim_code(): 1) Auto-created axes now use \"auto_\" prefix, 2) Objects with reserved names (axes, graph, area, curve) get \"obj_\" prefix, 3) Graph/area handlers now lookup axes_var from object_vars dict",
+      "files_changed": [
+        "core/visual_compiler.py"
+      ]
+    },
+    {
+      "id": "ISS-123",
+      "title": "Manim LaTeX standalone.cls package not available in NixOS environment",
+      "status": "open",
+      "priority": "high",
+      "created": "2025-12-23",
+      "description": "Manim requires the LaTeX standalone.cls package for MathTex rendering. The NixOS texliveFull package is installed but standalone.cls is not found in the TeX path. This is an infrastructure/environment issue, not a code issue.",
+      "workaround": "Avoid using MathTex in Manim scenes until environment is configured correctly. Use Text() instead for labels.",
+      "files_affected": []
     }
   ],
   "metadata": {
