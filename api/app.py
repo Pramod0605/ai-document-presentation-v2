@@ -708,6 +708,162 @@ def generate_videos_from_prompts(job_id):
         }), 500
 
 
+@app.route("/jobs/<job_id>/regenerate_and_render", methods=["POST"])
+def regenerate_and_render(job_id):
+    """Regenerate render specs using updated prompts and execute renderers.
+    
+    POST body:
+    - section_ids: List of section IDs to regenerate (required)
+    - renderers: List of renderer types to regenerate ["manim", "wan", "all"] (default: ["all"])
+    - execute: Whether to execute renderers after generating specs (default: true)
+    - skip_wan: Skip WAN API calls during execution (default: false)
+    - dry_run: Only generate specs, don't execute (default: false)
+    
+    This endpoint:
+    1. Regenerates render specs (manim_scene_spec, video_prompts) via LLM with updated prompts
+    2. Optionally executes the renderers to create actual video files
+    """
+    from core.llm_client_v12 import pass2_manim_renderer, pass2_video_renderer, rerender_sections_wan
+    from core.renderer_executor import render_all_topics, enforce_renderer_policy
+    from core.analytics import create_tracker
+    
+    data = request.get_json() or {}
+    section_ids = data.get("section_ids", [])
+    renderers = data.get("renderers", ["all"])
+    execute = data.get("execute", True)
+    skip_wan = data.get("skip_wan", False)
+    dry_run = data.get("dry_run", False)
+    
+    if not section_ids:
+        return jsonify({"error": "section_ids required"}), 400
+    
+    job_dir = JOBS_DIR / job_id
+    if not job_dir.exists():
+        return jsonify({"error": "Job not found", "job_id": job_id}), 404
+    
+    pres_path = job_dir / "presentation.json"
+    if not pres_path.exists():
+        return jsonify({"error": "presentation.json not found"}), 400
+    
+    try:
+        with open(pres_path, "r") as f:
+            presentation = json.load(f)
+        
+        tracker = create_tracker(job_id)
+        videos_dir = job_dir / "videos"
+        videos_dir.mkdir(exist_ok=True)
+        
+        results = {"regenerated": [], "render_results": []}
+        do_all = "all" in renderers
+        do_manim = do_all or "manim" in renderers
+        do_wan = do_all or "wan" in renderers
+        
+        for section in presentation.get("sections", []):
+            sid = section.get("section_id") or section.get("id")
+            if sid not in section_ids:
+                continue
+            
+            renderer = section.get("renderer", "none")
+            section_title = section.get("title", "")[:40]
+            
+            try:
+                if renderer == "manim" and do_manim:
+                    print(f"[Regenerate] Section {sid}: Regenerating manim spec...")
+                    manim_result = pass2_manim_renderer(section, tracker)
+                    section["manim_scene_spec"] = manim_result.get("manim_scene_spec")
+                    results["regenerated"].append({
+                        "section_id": sid,
+                        "title": section_title,
+                        "renderer": "manim",
+                        "status": "success",
+                        "objects": len(section.get("manim_scene_spec", {}).get("objects", [])),
+                        "animations": len(section.get("manim_scene_spec", {}).get("animation_sequence", []))
+                    })
+                    
+                elif renderer in ["video", "wan_video", "wan"] and do_wan:
+                    print(f"[Regenerate] Section {sid}: Regenerating WAN video prompts...")
+                    video_result = pass2_video_renderer(section, tracker)
+                    section["video_prompts"] = video_result.get("video_prompts", [])
+                    results["regenerated"].append({
+                        "section_id": sid,
+                        "title": section_title,
+                        "renderer": renderer,
+                        "status": "success",
+                        "prompts_count": len(section.get("video_prompts", []))
+                    })
+                else:
+                    results["regenerated"].append({
+                        "section_id": sid,
+                        "title": section_title,
+                        "renderer": renderer,
+                        "status": "skipped",
+                        "reason": f"Renderer {renderer} not in requested types"
+                    })
+                    
+            except Exception as e:
+                results["regenerated"].append({
+                    "section_id": sid,
+                    "title": section_title,
+                    "renderer": renderer,
+                    "status": "error",
+                    "error": str(e)
+                })
+        
+        with open(pres_path, "w") as f:
+            json.dump(presentation, f, indent=2)
+        
+        if execute and not dry_run:
+            print(f"[Regenerate] Executing renderers for sections {section_ids}...")
+            presentation = enforce_renderer_policy(presentation)
+            
+            rendered_videos = render_all_topics(
+                presentation=presentation,
+                output_dir=str(videos_dir),
+                dry_run=False,
+                skip_wan=skip_wan,
+                output_dir_base=str(job_dir)
+            )
+            
+            for result in rendered_videos:
+                topic_id = result.get("topic_id")
+                if topic_id in section_ids:
+                    video_path = result.get("video_path")
+                    for section in presentation.get("sections", []):
+                        if section.get("section_id") == topic_id:
+                            if video_path:
+                                rel_path = Path(video_path).name if "/" in str(video_path) else video_path
+                                section["video_path"] = f"videos/{rel_path}"
+                            break
+                    
+                    results["render_results"].append({
+                        "section_id": topic_id,
+                        "status": result.get("status"),
+                        "video_path": result.get("video_path"),
+                        "error": result.get("error")
+                    })
+            
+            with open(pres_path, "w") as f:
+                json.dump(presentation, f, indent=2)
+        
+        return jsonify({
+            "status": "success",
+            "job_id": job_id,
+            "results": results,
+            "execute": execute,
+            "dry_run": dry_run,
+            "skip_wan": skip_wan
+        })
+        
+    except Exception as e:
+        import traceback
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "traceback": traceback.format_exc(),
+            "job_id": job_id
+        }), 500
+
+
 @app.route("/api/v14/pipeline-info", methods=["GET"])
 def get_v14_pipeline_info():
     """Return V1.4 pipeline architecture information."""
