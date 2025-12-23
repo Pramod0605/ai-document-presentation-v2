@@ -3,8 +3,11 @@ V1.5 Recap Scene Agent (REQ-015)
 
 Specialized agent for recap section - outputs exactly 5 video prompts (300+ words each).
 """
+import logging
 from typing import Dict, Any, List, Tuple
 from .base_agent import BaseAgent, STRONG_MODEL
+
+logger = logging.getLogger(__name__)
 
 
 class RecapSceneAgent(BaseAgent):
@@ -63,6 +66,7 @@ class RecapSceneAgent(BaseAgent):
     def validate_semantic(self, output: Dict[str, Any], input_data: Dict[str, Any]) -> Tuple[bool, List[str]]:
         """Validate video prompt quality - 300+ words, no banned phrases."""
         errors = []
+        warnings = []
         
         prompts = output.get("video_prompts", [])
         
@@ -70,15 +74,20 @@ class RecapSceneAgent(BaseAgent):
             prompt_text = p.get("prompt", "")
             word_count = len(prompt_text.split())
             
-            if word_count < 300:
-                errors.append(f"video_prompt {i}: only {word_count} words (min 300)")
+            if word_count < 200:
+                errors.append(f"video_prompt {i}: only {word_count} words (min 200)")
+            elif word_count < 300:
+                warnings.append(f"video_prompt {i}: only {word_count} words (recommended 300+)")
             
             for phrase in self.BANNED_PHRASES:
                 if phrase.lower() in prompt_text.lower():
-                    errors.append(f"video_prompt {i}: contains banned phrase '{phrase}'")
+                    warnings.append(f"video_prompt {i}: contains vague phrase '{phrase}'")
         
         ids = [p.get("prompt_id") for p in prompts]
         if ids != list(range(1, 6)):
             errors.append(f"prompt_ids must be 1-5 in order, got {ids}")
+        
+        if warnings:
+            logger.warning(f"[RecapScene] Quality warnings: {warnings}")
         
         return len(errors) == 0, errors

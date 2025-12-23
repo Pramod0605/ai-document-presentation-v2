@@ -1,0 +1,5106 @@
+{
+  "spec_version": "v1.5",
+  "title": "Mathematics Lesson",
+  "subject": "Mathematics",
+  "grade": "12",
+  "avatar_global": {
+    "style": "teacher",
+    "default_position": "right",
+    "default_width_percent": 30,
+    "gesture_enabled": true
+  },
+  "sections": [
+    {
+      "section_type": "intro",
+      "title": "Welcome to Definite Integrals!",
+      "renderer": "none",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "floating",
+        "position": "center",
+        "width_percent": 50
+      },
+      "narration": {
+        "full_text": "Hello and welcome to our exploration of definite integrals! In this lesson, we're going to uncover what definite integrals are, how they relate to areas under curves, and their incredible connection to derivatives through the Fundamental Theorem of Calculus. Get ready to build a strong foundation in this essential calculus concept. Let's dive in!",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Hello and welcome to our exploration of definite integrals! In this lesson, we're going to uncover what definite integrals are, how they relate to areas under curves, and their incredible connection to derivatives through the Fundamental Theorem of Calculus.",
+            "duration_seconds": 18.46,
+            "gesture_hint": "welcoming",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Explore definite integrals"
+                },
+                {
+                  "level": 1,
+                  "text": "Area under curves"
+                },
+                {
+                  "level": 1,
+                  "text": "Fundamental Theorem of Calculus"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "1_1.mp3"
+          },
+          {
+            "segment_id": 2,
+            "text": "Get ready to build a strong foundation in this essential calculus concept. Let's dive in!",
+            "duration_seconds": 7.78,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Build strong foundation"
+                },
+                {
+                  "level": 1,
+                  "text": "Essential calculus concept"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "1_2.mp3"
+          }
+        ],
+        "total_duration_seconds": 26.23
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": 1,
+          "visual_beat_type": "text_only",
+          "description": "Introduction to definite integrals and their concepts.",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": 2,
+          "visual_beat_type": "text_only",
+          "description": "Encouragement to build a strong foundation in calculus.",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        }
+      ],
+      "section_id": 1
+    },
+    {
+      "section_type": "summary",
+      "title": "What You'll Learn Today",
+      "renderer": "none",
+      "avatar_layout": {
+        "visibility": "required",
+        "mode": "floating",
+        "position": "left",
+        "width_percent": 30
+      },
+      "narration": {
+        "full_text": "In this lesson, we'll embark on a journey to truly understand the definite integral. We'll define what it is, how it connects to the idea of signed area under a curve, and explore its fundamental properties. You'll learn how to apply linearity, constant multiple, additivity, and reversal properties to simplify integral problems. Most importantly, we'll demystify the Fundamental Theorem of Calculus, breaking it down into its two powerful parts. This will show us the incredible link between differentiation and integration. Finally, we'll put this knowledge into practice by calculating definite integrals using antiderivatives, and we'll equip you with a set of common antiderivative formulas to make these calculations straightforward.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "In this lesson, we'll embark on a journey to truly understand the definite integral. We'll define what it is, how it connects to the idea of signed area under a curve, and explore its fundamental properties.",
+            "duration_seconds": 15.72,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Define definite integral & signed area"
+                },
+                {
+                  "level": 1,
+                  "text": "Explore fundamental properties"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "2_1.mp3"
+          },
+          {
+            "segment_id": 2,
+            "text": "You'll learn how to apply linearity, constant multiple, additivity, and reversal properties to simplify integral problems.",
+            "duration_seconds": 9.34,
+            "gesture_hint": "pointing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Apply linearity"
+                },
+                {
+                  "level": 1,
+                  "text": "Apply constant multiple"
+                },
+                {
+                  "level": 1,
+                  "text": "Apply additivity"
+                },
+                {
+                  "level": 1,
+                  "text": "Apply reversal properties"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "2_2.mp3"
+          },
+          {
+            "segment_id": 3,
+            "text": "Most importantly, we'll demystify the Fundamental Theorem of Calculus, breaking it down into its two powerful parts. This will show us the incredible link between differentiation and integration.",
+            "duration_seconds": 14.9,
+            "gesture_hint": "emphasizing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Understand Fundamental Theorem of Calculus"
+                },
+                {
+                  "level": 1,
+                  "text": "Two powerful parts"
+                },
+                {
+                  "level": 1,
+                  "text": "Link between differentiation & integration"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "2_3.mp3"
+          },
+          {
+            "segment_id": 4,
+            "text": "Finally, we'll put this knowledge into practice by calculating definite integrals using antiderivatives, and we'll equip you with a set of common antiderivative formulas to make these calculations straightforward.",
+            "duration_seconds": 14.71,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Calculate definite integrals using antiderivatives"
+                },
+                {
+                  "level": 1,
+                  "text": "Identify common antiderivative formulas"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "2_4.mp3"
+          }
+        ],
+        "total_duration_seconds": 54.67
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": 1,
+          "visual_beat_type": "text_only",
+          "description": "Introduction to definite integral and its properties.",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": 2,
+          "visual_beat_type": "text_only",
+          "description": "List of key properties of definite integrals.",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": 3,
+          "visual_beat_type": "text_only",
+          "description": "Introduction to the Fundamental Theorem of Calculus.",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": 4,
+          "visual_beat_type": "text_only",
+          "description": "Calculating definite integrals using antiderivatives and common formulas.",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        }
+      ],
+      "section_id": 2
+    },
+    {
+      "section_type": "content",
+      "title": "Defining the Definite Integral",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "optional",
+        "mode": "compact",
+        "position": "right",
+        "width_percent": 30
+      },
+      "narration": {
+        "full_text": "Now, let's dive into the core concept of the definite integral. At its heart, the definite integral represents the signed area under a curve between two specific points. Imagine a function plotted on a graph; the definite integral tells us the area enclosed by the function, the x-axis, and vertical lines at our start and end points. This concept is formally defined as the limit of Riemann sums. We divide the area under the curve into an infinite number of infinitesimally thin rectangles, and as the number of these rectangles approaches infinity, their sum gives us the exact area. For a continuous function over a given interval, this limit always exists, ensuring that the definite integral is well-defined. This powerful tool allows us to calculate precise areas, volumes, and many other quantities in various fields.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Now, let's dive into the core concept of the definite integral. At its heart, the definite integral represents the signed area under a curve between two specific points.",
+            "duration_seconds": 12.91,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Signed area under a curve"
+                },
+                {
+                  "level": 1,
+                  "text": "Between two specific points"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "3_1.mp3"
+          },
+          {
+            "segment_id": 2,
+            "text": "Imagine a function plotted on a graph; the definite integral tells us the area enclosed by the function, the x-axis, and vertical lines at our start and end points.",
+            "duration_seconds": 12.43,
+            "gesture_hint": "pointing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Area enclosed by function, x-axis"
+                },
+                {
+                  "level": 1,
+                  "text": "Vertical lines at start and end points"
+                }
+              ],
+              "formula": null,
+              "labels": [
+                "f(x)",
+                "x-axis",
+                "a",
+                "b"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "3_2.mp3"
+          },
+          {
+            "segment_id": 3,
+            "text": "This concept is formally defined as the limit of Riemann sums. We divide the area under the curve into an infinite number of infinitesimally thin rectangles, and as the number of these rectangles approaches infinity, their sum gives us the exact area.",
+            "duration_seconds": 18.31,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Defined as limit of Riemann sums"
+                },
+                {
+                  "level": 1,
+                  "text": "Infinite infinitesimally thin rectangles"
+                },
+                {
+                  "level": 1,
+                  "text": "Sum approaches exact area"
+                }
+              ],
+              "formula": null,
+              "labels": [
+                "Riemann Sums",
+                "Limit"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "3_3.mp3"
+          },
+          {
+            "segment_id": 4,
+            "text": "For a continuous function over a given interval, this limit always exists, ensuring that the definite integral is well-defined. This powerful tool allows us to calculate precise areas, volumes, and many other quantities in various fields.",
+            "duration_seconds": 18.62,
+            "gesture_hint": "emphasizing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "For continuous functions, limit always exists"
+                },
+                {
+                  "level": 1,
+                  "text": "Integral is well-defined"
+                },
+                {
+                  "level": 1,
+                  "text": "Calculates precise areas, volumes"
+                }
+              ],
+              "formula": "\\int_{a}^{b} f(x)\\,dx",
+              "labels": [
+                "Continuous Function",
+                "Interval [a, b]"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "3_4.mp3"
+          }
+        ],
+        "total_duration_seconds": 62.28
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": 1,
+          "visual_beat_type": "diagram",
+          "description": "Illustration of a curve with shaded area between two points, representing signed area.",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Signed Area",
+              "Under Curve"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": 2,
+          "visual_beat_type": "diagram",
+          "description": "Animated graph showing a function, x-axis, and vertical lines at 'a' and 'b' enclosing the area.",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Function",
+              "x-axis",
+              "a",
+              "b"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": 3,
+          "visual_beat_type": "animation",
+          "description": "Animation showing Riemann sums: rectangles approximating the area under a curve, then increasing in number and decreasing in width to approach the exact area.",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Riemann Sums",
+              "Limit",
+              "Rectangles",
+              "Infinity"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": 4,
+          "visual_beat_type": "formula",
+          "description": "Display of the definite integral formula, emphasizing its well-defined nature for continuous functions.",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Continuous",
+              "Well-defined"
+            ],
+            "max_words": 4
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "axes",
+            "type": "graph",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "x_range": [
+                0,
+                8,
+                1
+              ],
+              "y_range": [
+                0,
+                3,
+                1
+              ],
+              "color": "WHITE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "curve",
+            "type": "graph",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "function": "0.5*cos(x) + 1.5",
+              "x_range": [
+                0.5,
+                7.5
+              ],
+              "color": "BLUE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "area_shading",
+            "type": "shape",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "color": "BLUE",
+              "fill_opacity": 0.3,
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "area_label",
+            "type": "label",
+            "position": [
+              -3,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Signed Area}",
+              "color": "WHITE",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "v_line_a",
+            "type": "shape",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "color": "RED",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "v_line_b",
+            "type": "shape",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "color": "RED",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "a_label",
+            "type": "label",
+            "position": [
+              -1.5,
+              -2.5
+            ],
+            "properties": {
+              "latex": "a",
+              "color": "WHITE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "b_label",
+            "type": "label",
+            "position": [
+              1.5,
+              -2.5
+            ],
+            "properties": {
+              "latex": "b",
+              "color": "WHITE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "riemann_rects_few",
+            "type": "shape",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "color": "GREEN",
+              "fill_opacity": 0.6,
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "riemann_rects_many",
+            "type": "shape",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "color": "GREEN",
+              "fill_opacity": 0.6,
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "riemann_label",
+            "type": "label",
+            "position": [
+              -3,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Riemann Sums}",
+              "color": "WHITE",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "integral_formula",
+            "type": "equation",
+            "position": [
+              0,
+              1
+            ],
+            "properties": {
+              "latex": "\\int_a^b f(x) \\, dx",
+              "color": "YELLOW",
+              "scale": 1.5
+            }
+          },
+          {
+            "id": "continuous_label",
+            "type": "label",
+            "position": [
+              0,
+              -1.5
+            ],
+            "properties": {
+              "latex": "\\text{Well-defined for continuous functions}",
+              "color": "WHITE",
+              "scale": 0.6
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "draw",
+            "target": "axes",
+            "duration": 1.5
+          },
+          {
+            "action": "draw",
+            "target": "curve",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "area_shading",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "area_label",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "target": "area_label",
+            "duration": 5.91
+          },
+          {
+            "action": "fade_out",
+            "target": "area_label",
+            "duration": 0.5
+          },
+          {
+            "action": "fade_out",
+            "target": "area_shading",
+            "duration": 0.5
+          },
+          {
+            "action": "draw",
+            "target": "v_line_a",
+            "duration": 1
+          },
+          {
+            "action": "draw",
+            "target": "v_line_b",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "a_label",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "b_label",
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "target": "b_label",
+            "duration": 7.93
+          },
+          {
+            "action": "fade_out",
+            "target": "v_line_a",
+            "duration": 0.5
+          },
+          {
+            "action": "fade_out",
+            "target": "v_line_b",
+            "duration": 0.5
+          },
+          {
+            "action": "fade_out",
+            "target": "a_label",
+            "duration": 0.5
+          },
+          {
+            "action": "fade_out",
+            "target": "b_label",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "riemann_rects_few",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "riemann_label",
+            "duration": 1
+          },
+          {
+            "action": "transform",
+            "target": "riemann_rects_few",
+            "duration": 3
+          },
+          {
+            "action": "appear",
+            "target": "riemann_rects_many",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "target": "riemann_rects_many",
+            "duration": 9.81
+          },
+          {
+            "action": "fade_out",
+            "target": "axes",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "curve",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "riemann_rects_many",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "riemann_label",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "integral_formula",
+            "duration": 3
+          },
+          {
+            "action": "appear",
+            "target": "continuous_label",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "target": "continuous_label",
+            "duration": 10.62
+          },
+          {
+            "action": "highlight",
+            "target": "integral_formula",
+            "duration": 3,
+            "color": "GOLD"
+          }
+        ]
+      },
+      "section_id": 3,
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "beat_1",
+            "segment_id": 1,
+            "visual_beat_type": "diagram",
+            "description": "Illustration of a curve with shaded area between two points, representing signed area.",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Signed Area",
+                "Under Curve"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_2",
+            "segment_id": 2,
+            "visual_beat_type": "diagram",
+            "description": "Animated graph showing a function, x-axis, and vertical lines at 'a' and 'b' enclosing the area.",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Function",
+                "x-axis",
+                "a",
+                "b"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_3",
+            "segment_id": 3,
+            "visual_beat_type": "animation",
+            "description": "Animation showing Riemann sums: rectangles approximating the area under a curve, then increasing in number and decreasing in width to approach the exact area.",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Riemann Sums",
+                "Limit",
+                "Rectangles",
+                "Infinity"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_4",
+            "segment_id": 4,
+            "visual_beat_type": "formula",
+            "description": "Display of the definite integral formula, emphasizing its well-defined nature for continuous functions.",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Continuous",
+                "Well-defined"
+              ],
+              "max_words": 4
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "axes",
+              "type": "graph",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "x_range": [
+                  0,
+                  8,
+                  1
+                ],
+                "y_range": [
+                  0,
+                  3,
+                  1
+                ],
+                "color": "WHITE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "curve",
+              "type": "graph",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "function": "0.5*cos(x) + 1.5",
+                "x_range": [
+                  0.5,
+                  7.5
+                ],
+                "color": "BLUE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "area_shading",
+              "type": "shape",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "color": "BLUE",
+                "fill_opacity": 0.3,
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "area_label",
+              "type": "label",
+              "position": [
+                -3,
+                2.5
+              ],
+              "properties": {
+                "latex": "\\text{Signed Area}",
+                "color": "WHITE",
+                "scale": 0.7
+              }
+            },
+            {
+              "id": "v_line_a",
+              "type": "shape",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "color": "RED",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "v_line_b",
+              "type": "shape",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "color": "RED",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "a_label",
+              "type": "label",
+              "position": [
+                -1.5,
+                -2.5
+              ],
+              "properties": {
+                "latex": "a",
+                "color": "WHITE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "b_label",
+              "type": "label",
+              "position": [
+                1.5,
+                -2.5
+              ],
+              "properties": {
+                "latex": "b",
+                "color": "WHITE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "riemann_rects_few",
+              "type": "shape",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "color": "GREEN",
+                "fill_opacity": 0.6,
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "riemann_rects_many",
+              "type": "shape",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "color": "GREEN",
+                "fill_opacity": 0.6,
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "riemann_label",
+              "type": "label",
+              "position": [
+                -3,
+                2.5
+              ],
+              "properties": {
+                "latex": "\\text{Riemann Sums}",
+                "color": "WHITE",
+                "scale": 0.7
+              }
+            },
+            {
+              "id": "integral_formula",
+              "type": "equation",
+              "position": [
+                0,
+                1
+              ],
+              "properties": {
+                "latex": "\\int_a^b f(x) \\, dx",
+                "color": "YELLOW",
+                "scale": 1.5
+              }
+            },
+            {
+              "id": "continuous_label",
+              "type": "label",
+              "position": [
+                0,
+                -1.5
+              ],
+              "properties": {
+                "latex": "\\text{Well-defined for continuous functions}",
+                "color": "WHITE",
+                "scale": 0.6
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "draw",
+              "target": "axes",
+              "duration": 1.5
+            },
+            {
+              "action": "draw",
+              "target": "curve",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "area_shading",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "area_label",
+              "duration": 1.5
+            },
+            {
+              "action": "wait",
+              "target": "area_label",
+              "duration": 5.91
+            },
+            {
+              "action": "fade_out",
+              "target": "area_label",
+              "duration": 0.5
+            },
+            {
+              "action": "fade_out",
+              "target": "area_shading",
+              "duration": 0.5
+            },
+            {
+              "action": "draw",
+              "target": "v_line_a",
+              "duration": 1
+            },
+            {
+              "action": "draw",
+              "target": "v_line_b",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "a_label",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "b_label",
+              "duration": 1
+            },
+            {
+              "action": "wait",
+              "target": "b_label",
+              "duration": 7.93
+            },
+            {
+              "action": "fade_out",
+              "target": "v_line_a",
+              "duration": 0.5
+            },
+            {
+              "action": "fade_out",
+              "target": "v_line_b",
+              "duration": 0.5
+            },
+            {
+              "action": "fade_out",
+              "target": "a_label",
+              "duration": 0.5
+            },
+            {
+              "action": "fade_out",
+              "target": "b_label",
+              "duration": 0.5
+            },
+            {
+              "action": "appear",
+              "target": "riemann_rects_few",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "riemann_label",
+              "duration": 1
+            },
+            {
+              "action": "transform",
+              "target": "riemann_rects_few",
+              "duration": 3
+            },
+            {
+              "action": "appear",
+              "target": "riemann_rects_many",
+              "duration": 2
+            },
+            {
+              "action": "wait",
+              "target": "riemann_rects_many",
+              "duration": 9.81
+            },
+            {
+              "action": "fade_out",
+              "target": "axes",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "curve",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "riemann_rects_many",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "riemann_label",
+              "duration": 1
+            },
+            {
+              "action": "show_equation",
+              "target": "integral_formula",
+              "duration": 3
+            },
+            {
+              "action": "appear",
+              "target": "continuous_label",
+              "duration": 2
+            },
+            {
+              "action": "wait",
+              "target": "continuous_label",
+              "duration": 10.62
+            },
+            {
+              "action": "highlight",
+              "target": "integral_formula",
+              "duration": 3,
+              "color": "GOLD"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_type": "content",
+      "title": "Key Properties of Definite Integrals",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "compact",
+        "position": "hidden",
+        "width_percent": 30
+      },
+      "narration": {
+        "full_text": "Now, let's dive into some key properties that make working with definite integrals much more manageable. These properties allow us to manipulate and simplify integral expressions, often making complex problems easier to solve. First, we have the linearity property. This tells us that the integral of a sum of functions is the sum of their integrals, and we can pull constant multiples outside the integral sign. This is incredibly useful for breaking down complicated functions into simpler parts. Next, let's consider what happens if we reverse the limits of integration. If we swap the upper and lower limits, the sign of the definite integral simply flips. So, integrating from 'b' to 'a' gives us the negative of integrating from 'a' to 'b'. Finally, the additivity property states that if we have an interval from 'a' to 'c', and 'b' is any point between 'a' and 'c', then the integral from 'a' to 'c' can be split into the sum of the integral from 'a' to 'b' and the integral from 'b' to 'c'. This is particularly helpful when dealing with piecewise functions or when we need to evaluate an integral over a larger interval by breaking it into smaller, more manageable pieces. Understanding and applying these properties will be crucial as you work through various definite integral problems.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Now, let's dive into some key properties that make working with definite integrals much more manageable.",
+            "duration_seconds": 8.28,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Key Properties of Definite Integrals"
+                },
+                {
+                  "level": 1,
+                  "text": "Simplify integral expressions"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "4_1.mp3"
+          },
+          {
+            "segment_id": 2,
+            "text": "These properties allow us to manipulate and simplify integral expressions, often making complex problems easier to solve.",
+            "duration_seconds": 9.41,
+            "gesture_hint": "pointing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Manipulate integral expressions"
+                },
+                {
+                  "level": 1,
+                  "text": "Solve complex problems easier"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "4_2.mp3"
+          },
+          {
+            "segment_id": 3,
+            "text": "First, we have the linearity property. This tells us that the integral of a sum of functions is the sum of their integrals, and we can pull constant multiples outside the integral sign.",
+            "duration_seconds": 14.54,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [],
+              "formula": "$$\\int_{a}^{b} [c \\cdot f(x) + g(x)] \\,dx = c \\int_{a}^{b} f(x) \\,dx + \\int_{a}^{b} g(x) \\,dx$$",
+              "labels": [
+                "Linearity Property"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "4_3.mp3"
+          },
+          {
+            "segment_id": 4,
+            "text": "This is incredibly useful for breaking down complicated functions into simpler parts.",
+            "duration_seconds": 6.58,
+            "gesture_hint": "emphasizing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Break down complicated functions"
+                },
+                {
+                  "level": 1,
+                  "text": "Simplify into manageable parts"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "4_4.mp3"
+          },
+          {
+            "segment_id": 5,
+            "text": "Next, let's consider what happens if we reverse the limits of integration. If we swap the upper and lower limits, the sign of the definite integral simply flips.",
+            "duration_seconds": 12.82,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [],
+              "formula": "$$\\int_{a}^{b} f(x)\\,dx$$",
+              "labels": [
+                "Original Limits"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "4_5.mp3"
+          },
+          {
+            "segment_id": 6,
+            "text": "So, integrating from 'b' to 'a' gives us the negative of integrating from 'a' to 'b'.",
+            "duration_seconds": 6.77,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [],
+              "formula": "$$\\int_{b}^{a} f(x)\\,dx = -\\int_{a}^{b} f(x)\\,dx$$",
+              "labels": [
+                "Reversed Limits",
+                "Sign Flip"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "4_6.mp3"
+          },
+          {
+            "segment_id": 7,
+            "text": "Finally, the additivity property states that if we have an interval from 'a' to 'c', and 'b' is any point between 'a' and 'c', then the integral from 'a' to 'c' can be split into the sum of the integral from 'a' to 'b' and the integral from 'b' to 'c'.",
+            "duration_seconds": 17.88,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [],
+              "formula": "$$\\int_{a}^{c} f(x)\\,dx = \\int_{a}^{b} f(x)\\,dx + \\int_{b}^{c} f(x)\\,dx$$",
+              "labels": [
+                "Additivity Property",
+                "a < b < c"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "4_7.mp3"
+          },
+          {
+            "segment_id": 8,
+            "text": "This is particularly helpful when dealing with piecewise functions or when we need to evaluate an integral over a larger interval by breaking it into smaller, more manageable pieces.",
+            "duration_seconds": 13.49,
+            "gesture_hint": "emphasizing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Useful for piecewise functions"
+                },
+                {
+                  "level": 1,
+                  "text": "Break larger intervals into smaller parts"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "4_8.mp3"
+          },
+          {
+            "segment_id": 9,
+            "text": "Understanding and applying these properties will be crucial as you work through various definite integral problems.",
+            "duration_seconds": 8.16,
+            "gesture_hint": "pointing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Crucial for definite integral problems"
+                },
+                {
+                  "level": 1,
+                  "text": "Apply properties to solve"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "4_9.mp3"
+          }
+        ],
+        "total_duration_seconds": 97.92
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": 1,
+          "visual_beat_type": "text_only",
+          "description": "Introduction to key properties of definite integrals",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": 2,
+          "visual_beat_type": "text_only",
+          "description": "Explanation of properties' utility in simplifying expressions",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": 3,
+          "visual_beat_type": "formula",
+          "description": "Display linearity property of definite integrals",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Linearity",
+              "Property"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": 4,
+          "visual_beat_type": "text_only",
+          "description": "Emphasizing the usefulness of linearity property",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_5",
+          "segment_id": 5,
+          "visual_beat_type": "formula",
+          "description": "Display property for reversing integration limits",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Reverse",
+              "Limits"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_6",
+          "segment_id": 6,
+          "visual_beat_type": "formula",
+          "description": "Showing the effect of reversing limits on the integral sign",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Sign",
+              "Flip"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_7",
+          "segment_id": 7,
+          "visual_beat_type": "formula",
+          "description": "Display additivity property of definite integrals",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Additivity",
+              "Property"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_8",
+          "segment_id": 8,
+          "visual_beat_type": "text_only",
+          "description": "Explaining practical applications of additivity property",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_9",
+          "segment_id": 9,
+          "visual_beat_type": "text_only",
+          "description": "Summary of the importance of understanding these properties",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Key Properties of Definite Integrals}",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "linearity_label",
+            "type": "label",
+            "position": [
+              -3.5,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\text{1. Linearity Property}",
+              "color": "BLUE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "linearity_eq",
+            "type": "equation",
+            "position": [
+              0,
+              0.5
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} [c \\cdot f(x) + g(x)] \\,dx = c \\int_{a}^{b} f(x) \\,dx + \\int_{a}^{b} g(x) \\,dx",
+              "color": "BLUE",
+              "scale": 0.9
+            }
+          },
+          {
+            "id": "reversal_label",
+            "type": "label",
+            "position": [
+              -3.5,
+              -0.5
+            ],
+            "properties": {
+              "latex": "\\text{2. Reversing Limits}",
+              "color": "GREEN",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "reversal_eq1",
+            "type": "equation",
+            "position": [
+              -2.0,
+              -1.0
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} f(x)\\,dx",
+              "color": "GREEN",
+              "scale": 0.9
+            }
+          },
+          {
+            "id": "reversal_eq2",
+            "type": "equation",
+            "position": [
+              0,
+              -1.0
+            ],
+            "properties": {
+              "latex": "\\int_{b}^{a} f(x)\\,dx = -\\int_{a}^{b} f(x)\\,dx",
+              "color": "GREEN",
+              "scale": 0.9
+            }
+          },
+          {
+            "id": "additivity_label",
+            "type": "label",
+            "position": [
+              -3.5,
+              -2.0
+            ],
+            "properties": {
+              "latex": "\\text{3. Additivity Property}",
+              "color": "YELLOW",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "additivity_eq",
+            "type": "equation",
+            "position": [
+              0,
+              -2.5
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{c} f(x)\\,dx = \\int_{a}^{b} f(x)\\,dx + \\int_{b}^{c} f(x)\\,dx",
+              "color": "YELLOW",
+              "scale": 0.9
+            }
+          },
+          {
+            "id": "condition_label",
+            "type": "label",
+            "position": [
+              3.5,
+              -3.0
+            ],
+            "properties": {
+              "latex": "\\text{where } a < b < c",
+              "color": "YELLOW",
+              "scale": 0.6
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "target": "title",
+            "duration": 16.2
+          },
+          {
+            "action": "appear",
+            "target": "linearity_label",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "linearity_eq",
+            "duration": 2.5
+          },
+          {
+            "action": "highlight",
+            "target": "linearity_eq",
+            "duration": 1.5,
+            "color": "LIGHT_BLUE"
+          },
+          {
+            "action": "wait",
+            "target": "linearity_eq",
+            "duration": 9.5
+          },
+          {
+            "action": "appear",
+            "target": "reversal_label",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "reversal_eq1",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "target": "reversal_eq1",
+            "duration": 10.3
+          },
+          {
+            "action": "transform",
+            "target": "reversal_eq1",
+            "duration": 2.0
+          },
+          {
+            "action": "show_equation",
+            "target": "reversal_eq2",
+            "duration": 2.0
+          },
+          {
+            "action": "highlight",
+            "target": "reversal_eq2",
+            "duration": 1.5,
+            "color": "LIGHT_GREEN",
+            "target_latex_part": "-"
+          },
+          {
+            "action": "wait",
+            "target": "reversal_eq2",
+            "duration": 1.3
+          },
+          {
+            "action": "appear",
+            "target": "additivity_label",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "additivity_eq",
+            "duration": 3.0
+          },
+          {
+            "action": "appear",
+            "target": "condition_label",
+            "duration": 1.0
+          },
+          {
+            "action": "wait",
+            "target": "additivity_eq",
+            "duration": 12.9
+          },
+          {
+            "action": "wait",
+            "target": "additivity_eq",
+            "duration": 21.7
+          },
+          {
+            "action": "highlight",
+            "target": "linearity_eq",
+            "duration": 1.0,
+            "color": "LIGHT_BLUE"
+          },
+          {
+            "action": "highlight",
+            "target": "reversal_eq2",
+            "duration": 1.0,
+            "color": "LIGHT_GREEN"
+          },
+          {
+            "action": "highlight",
+            "target": "additivity_eq",
+            "duration": 1.0,
+            "color": "LIGHT_YELLOW"
+          },
+          {
+            "action": "wait",
+            "target": "title",
+            "duration": 3.0
+          }
+        ]
+      },
+      "section_id": 4,
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "beat_1",
+            "segment_id": 1,
+            "visual_beat_type": "text_only",
+            "description": "Introduction to key properties of definite integrals",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_2",
+            "segment_id": 2,
+            "visual_beat_type": "text_only",
+            "description": "Explanation of properties' utility in simplifying expressions",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_3",
+            "segment_id": 3,
+            "visual_beat_type": "formula",
+            "description": "Display linearity property of definite integrals",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Linearity",
+                "Property"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_4",
+            "segment_id": 4,
+            "visual_beat_type": "text_only",
+            "description": "Emphasizing the usefulness of linearity property",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_5",
+            "segment_id": 5,
+            "visual_beat_type": "formula",
+            "description": "Display property for reversing integration limits",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Reverse",
+                "Limits"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_6",
+            "segment_id": 6,
+            "visual_beat_type": "formula",
+            "description": "Showing the effect of reversing limits on the integral sign",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Sign",
+                "Flip"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_7",
+            "segment_id": 7,
+            "visual_beat_type": "formula",
+            "description": "Display additivity property of definite integrals",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Additivity",
+                "Property"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_8",
+            "segment_id": 8,
+            "visual_beat_type": "text_only",
+            "description": "Explaining practical applications of additivity property",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_9",
+            "segment_id": 9,
+            "visual_beat_type": "text_only",
+            "description": "Summary of the importance of understanding these properties",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "title",
+              "type": "label",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "latex": "\\text{Key Properties of Definite Integrals}",
+                "color": "WHITE",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "linearity_label",
+              "type": "label",
+              "position": [
+                -3.5,
+                1.0
+              ],
+              "properties": {
+                "latex": "\\text{1. Linearity Property}",
+                "color": "BLUE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "linearity_eq",
+              "type": "equation",
+              "position": [
+                0,
+                0.5
+              ],
+              "properties": {
+                "latex": "\\int_{a}^{b} [c \\cdot f(x) + g(x)] \\,dx = c \\int_{a}^{b} f(x) \\,dx + \\int_{a}^{b} g(x) \\,dx",
+                "color": "BLUE",
+                "scale": 0.9
+              }
+            },
+            {
+              "id": "reversal_label",
+              "type": "label",
+              "position": [
+                -3.5,
+                -0.5
+              ],
+              "properties": {
+                "latex": "\\text{2. Reversing Limits}",
+                "color": "GREEN",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "reversal_eq1",
+              "type": "equation",
+              "position": [
+                -2.0,
+                -1.0
+              ],
+              "properties": {
+                "latex": "\\int_{a}^{b} f(x)\\,dx",
+                "color": "GREEN",
+                "scale": 0.9
+              }
+            },
+            {
+              "id": "reversal_eq2",
+              "type": "equation",
+              "position": [
+                0,
+                -1.0
+              ],
+              "properties": {
+                "latex": "\\int_{b}^{a} f(x)\\,dx = -\\int_{a}^{b} f(x)\\,dx",
+                "color": "GREEN",
+                "scale": 0.9
+              }
+            },
+            {
+              "id": "additivity_label",
+              "type": "label",
+              "position": [
+                -3.5,
+                -2.0
+              ],
+              "properties": {
+                "latex": "\\text{3. Additivity Property}",
+                "color": "YELLOW",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "additivity_eq",
+              "type": "equation",
+              "position": [
+                0,
+                -2.5
+              ],
+              "properties": {
+                "latex": "\\int_{a}^{c} f(x)\\,dx = \\int_{a}^{b} f(x)\\,dx + \\int_{b}^{c} f(x)\\,dx",
+                "color": "YELLOW",
+                "scale": 0.9
+              }
+            },
+            {
+              "id": "condition_label",
+              "type": "label",
+              "position": [
+                3.5,
+                -3.0
+              ],
+              "properties": {
+                "latex": "\\text{where } a < b < c",
+                "color": "YELLOW",
+                "scale": 0.6
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "appear",
+              "target": "title",
+              "duration": 1.5
+            },
+            {
+              "action": "wait",
+              "target": "title",
+              "duration": 16.2
+            },
+            {
+              "action": "appear",
+              "target": "linearity_label",
+              "duration": 1.0
+            },
+            {
+              "action": "show_equation",
+              "target": "linearity_eq",
+              "duration": 2.5
+            },
+            {
+              "action": "highlight",
+              "target": "linearity_eq",
+              "duration": 1.5,
+              "color": "LIGHT_BLUE"
+            },
+            {
+              "action": "wait",
+              "target": "linearity_eq",
+              "duration": 9.5
+            },
+            {
+              "action": "appear",
+              "target": "reversal_label",
+              "duration": 1.0
+            },
+            {
+              "action": "show_equation",
+              "target": "reversal_eq1",
+              "duration": 1.5
+            },
+            {
+              "action": "wait",
+              "target": "reversal_eq1",
+              "duration": 10.3
+            },
+            {
+              "action": "transform",
+              "target": "reversal_eq1",
+              "duration": 2.0
+            },
+            {
+              "action": "show_equation",
+              "target": "reversal_eq2",
+              "duration": 2.0
+            },
+            {
+              "action": "highlight",
+              "target": "reversal_eq2",
+              "duration": 1.5,
+              "color": "LIGHT_GREEN",
+              "target_latex_part": "-"
+            },
+            {
+              "action": "wait",
+              "target": "reversal_eq2",
+              "duration": 1.3
+            },
+            {
+              "action": "appear",
+              "target": "additivity_label",
+              "duration": 1.0
+            },
+            {
+              "action": "show_equation",
+              "target": "additivity_eq",
+              "duration": 3.0
+            },
+            {
+              "action": "appear",
+              "target": "condition_label",
+              "duration": 1.0
+            },
+            {
+              "action": "wait",
+              "target": "additivity_eq",
+              "duration": 12.9
+            },
+            {
+              "action": "wait",
+              "target": "additivity_eq",
+              "duration": 21.7
+            },
+            {
+              "action": "highlight",
+              "target": "linearity_eq",
+              "duration": 1.0,
+              "color": "LIGHT_BLUE"
+            },
+            {
+              "action": "highlight",
+              "target": "reversal_eq2",
+              "duration": 1.0,
+              "color": "LIGHT_GREEN"
+            },
+            {
+              "action": "highlight",
+              "target": "additivity_eq",
+              "duration": 1.0,
+              "color": "LIGHT_YELLOW"
+            },
+            {
+              "action": "wait",
+              "target": "title",
+              "duration": 3.0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_type": "content",
+      "title": "The Fundamental Theorem of Calculus, Part 1",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "optional",
+        "mode": "compact",
+        "position": "left",
+        "width_percent": 30
+      },
+      "narration": {
+        "full_text": "Welcome to our deep dive into the world of derivatives! In this video, we'll unravel the fundamental concept of a derivative, which is a cornerstone of calculus and has vast applications across science and engineering. We'll start by defining what a derivative actually is, moving beyond just the mathematical notation to grasp its intuitive meaning. You'll learn how it represents the instantaneous rate of change of a function, giving us crucial insights into how things are changing at any given moment. Then, we'll explore the geometric interpretation of a derivative, understanding it as the slope of the tangent line to a curve at a specific point. This visual perspective is incredibly helpful for building a strong conceptual foundation. Finally, we'll touch upon the practical significance of derivatives, highlighting how they are used to solve real-world problems, from optimizing processes to predicting future trends. Get ready to unlock the power of calculus!",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Welcome to our deep dive into the world of derivatives! In this video, we'll unravel the fundamental concept of a derivative, which is a cornerstone of calculus and has vast applications across science and engineering.",
+            "duration_seconds": 16.46,
+            "gesture_hint": "welcoming",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Derivatives: Cornerstone of Calculus"
+                },
+                {
+                  "level": 1,
+                  "text": "Vast Applications"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "5_1.mp3"
+          },
+          {
+            "segment_id": 2,
+            "text": "We'll start by defining what a derivative actually is, moving beyond just the mathematical notation to grasp its intuitive meaning.",
+            "duration_seconds": 9.77,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Define Derivative"
+                },
+                {
+                  "level": 1,
+                  "text": "Intuitive Meaning"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "5_2.mp3"
+          },
+          {
+            "segment_id": 3,
+            "text": "You'll learn how it represents the instantaneous rate of change of a function, giving us crucial insights into how things are changing at any given moment.",
+            "duration_seconds": 11.26,
+            "gesture_hint": "pointing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Instantaneous Rate of Change"
+                },
+                {
+                  "level": 1,
+                  "text": "Insights into Function Behavior"
+                }
+              ],
+              "formula": null,
+              "labels": [
+                "Function",
+                "Rate of Change"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "5_3.mp3"
+          },
+          {
+            "segment_id": 4,
+            "text": "Then, we'll explore the geometric interpretation of a derivative, understanding it as the slope of the tangent line to a curve at a specific point.",
+            "duration_seconds": 10.82,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Geometric Interpretation"
+                },
+                {
+                  "level": 1,
+                  "text": "Slope of Tangent Line"
+                }
+              ],
+              "formula": null,
+              "labels": [
+                "Curve",
+                "Tangent Line",
+                "Point"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "5_4.mp3"
+          },
+          {
+            "segment_id": 5,
+            "text": "This visual perspective is incredibly helpful for building a strong conceptual foundation. Finally, we'll touch upon the practical significance of derivatives, highlighting how they are used to solve real-world problems, from optimizing processes to predicting future trends. Get ready to unlock the power of calculus!",
+            "duration_seconds": 23.21,
+            "gesture_hint": "emphasizing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Practical Significance"
+                },
+                {
+                  "level": 1,
+                  "text": "Solve Real-World Problems"
+                },
+                {
+                  "level": 1,
+                  "text": "Optimizing Processes"
+                },
+                {
+                  "level": 1,
+                  "text": "Predicting Trends"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "5_5.mp3"
+          }
+        ],
+        "total_duration_seconds": 71.52
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": 1,
+          "visual_beat_type": "text_only",
+          "description": "Introduction to derivatives and their importance.",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": 2,
+          "visual_beat_type": "text_only",
+          "description": "Defining what a derivative is intuitively.",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": 3,
+          "visual_beat_type": "diagram",
+          "description": "Visualizing instantaneous rate of change.",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Rate of Change",
+              "Function"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": 4,
+          "visual_beat_type": "diagram",
+          "description": "Geometric interpretation: slope of tangent line.",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Tangent Line",
+              "Slope"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_5",
+          "segment_id": 5,
+          "visual_beat_type": "text_only",
+          "description": "Practical significance and real-world applications.",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Derivatives: Cornerstone of Calculus}",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "axes",
+            "type": "graph",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "color": "WHITE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "function_curve",
+            "type": "graph",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "color": "BLUE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "rate_label",
+            "type": "label",
+            "position": [
+              0,
+              1.5
+            ],
+            "properties": {
+              "latex": "\\text{Instantaneous Rate of Change}",
+              "color": "YELLOW",
+              "scale": 0.9
+            }
+          },
+          {
+            "id": "point",
+            "type": "point",
+            "position": [
+              1.5,
+              0.5
+            ],
+            "properties": {
+              "color": "RED",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "tangent_line",
+            "type": "graph",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "color": "GREEN",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "tangent_label",
+            "type": "label",
+            "position": [
+              3.0,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\text{Tangent Line}",
+              "color": "GREEN",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "slope_label",
+            "type": "label",
+            "position": [
+              3.0,
+              0.5
+            ],
+            "properties": {
+              "latex": "\\text{Slope}",
+              "color": "GREEN",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "applications_text",
+            "type": "label",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\text{Real-World Applications}",
+              "color": "ORANGE",
+              "scale": 1.0
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "title",
+            "duration": 14.46
+          },
+          {
+            "action": "fade_out",
+            "target": "title",
+            "duration": 1.0
+          },
+          {
+            "action": "wait",
+            "target": "title",
+            "duration": 8.77
+          },
+          {
+            "action": "appear",
+            "target": "axes",
+            "duration": 1.5
+          },
+          {
+            "action": "draw",
+            "target": "function_curve",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "rate_label",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "target": "rate_label",
+            "duration": 6.26
+          },
+          {
+            "action": "fade_out",
+            "target": "rate_label",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "point",
+            "duration": 1.0
+          },
+          {
+            "action": "draw",
+            "target": "tangent_line",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "tangent_label",
+            "duration": 1.5
+          },
+          {
+            "action": "appear",
+            "target": "slope_label",
+            "duration": 1.5
+          },
+          {
+            "action": "highlight",
+            "target": "tangent_line",
+            "duration": 2.0,
+            "color": "YELLOW"
+          },
+          {
+            "action": "wait",
+            "target": "tangent_line",
+            "duration": 2.82
+          },
+          {
+            "action": "fade_out",
+            "target": "axes",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "function_curve",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "point",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "tangent_line",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "tangent_label",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "slope_label",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "applications_text",
+            "duration": 2.0
+          },
+          {
+            "action": "highlight",
+            "target": "applications_text",
+            "duration": 3.0,
+            "color": "YELLOW"
+          },
+          {
+            "action": "fade_out",
+            "target": "applications_text",
+            "duration": 2.0
+          }
+        ]
+      },
+      "section_id": 5,
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "beat_1",
+            "segment_id": 1,
+            "visual_beat_type": "text_only",
+            "description": "Introduction to derivatives and their importance.",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_2",
+            "segment_id": 2,
+            "visual_beat_type": "text_only",
+            "description": "Defining what a derivative is intuitively.",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_3",
+            "segment_id": 3,
+            "visual_beat_type": "diagram",
+            "description": "Visualizing instantaneous rate of change.",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Rate of Change",
+                "Function"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_4",
+            "segment_id": 4,
+            "visual_beat_type": "diagram",
+            "description": "Geometric interpretation: slope of tangent line.",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Tangent Line",
+                "Slope"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_5",
+            "segment_id": 5,
+            "visual_beat_type": "text_only",
+            "description": "Practical significance and real-world applications.",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "title",
+              "type": "label",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "latex": "\\text{Derivatives: Cornerstone of Calculus}",
+                "color": "WHITE",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "axes",
+              "type": "graph",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "color": "WHITE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "function_curve",
+              "type": "graph",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "color": "BLUE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "rate_label",
+              "type": "label",
+              "position": [
+                0,
+                1.5
+              ],
+              "properties": {
+                "latex": "\\text{Instantaneous Rate of Change}",
+                "color": "YELLOW",
+                "scale": 0.9
+              }
+            },
+            {
+              "id": "point",
+              "type": "point",
+              "position": [
+                1.5,
+                0.5
+              ],
+              "properties": {
+                "color": "RED",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "tangent_line",
+              "type": "graph",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "color": "GREEN",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "tangent_label",
+              "type": "label",
+              "position": [
+                3.0,
+                1.0
+              ],
+              "properties": {
+                "latex": "\\text{Tangent Line}",
+                "color": "GREEN",
+                "scale": 0.7
+              }
+            },
+            {
+              "id": "slope_label",
+              "type": "label",
+              "position": [
+                3.0,
+                0.5
+              ],
+              "properties": {
+                "latex": "\\text{Slope}",
+                "color": "GREEN",
+                "scale": 0.7
+              }
+            },
+            {
+              "id": "applications_text",
+              "type": "label",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "\\text{Real-World Applications}",
+                "color": "ORANGE",
+                "scale": 1.0
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "appear",
+              "target": "title",
+              "duration": 2.0
+            },
+            {
+              "action": "wait",
+              "target": "title",
+              "duration": 14.46
+            },
+            {
+              "action": "fade_out",
+              "target": "title",
+              "duration": 1.0
+            },
+            {
+              "action": "wait",
+              "target": "title",
+              "duration": 8.77
+            },
+            {
+              "action": "appear",
+              "target": "axes",
+              "duration": 1.5
+            },
+            {
+              "action": "draw",
+              "target": "function_curve",
+              "duration": 2.0
+            },
+            {
+              "action": "appear",
+              "target": "rate_label",
+              "duration": 1.5
+            },
+            {
+              "action": "wait",
+              "target": "rate_label",
+              "duration": 6.26
+            },
+            {
+              "action": "fade_out",
+              "target": "rate_label",
+              "duration": 1.0
+            },
+            {
+              "action": "appear",
+              "target": "point",
+              "duration": 1.0
+            },
+            {
+              "action": "draw",
+              "target": "tangent_line",
+              "duration": 2.0
+            },
+            {
+              "action": "appear",
+              "target": "tangent_label",
+              "duration": 1.5
+            },
+            {
+              "action": "appear",
+              "target": "slope_label",
+              "duration": 1.5
+            },
+            {
+              "action": "highlight",
+              "target": "tangent_line",
+              "duration": 2.0,
+              "color": "YELLOW"
+            },
+            {
+              "action": "wait",
+              "target": "tangent_line",
+              "duration": 2.82
+            },
+            {
+              "action": "fade_out",
+              "target": "axes",
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "function_curve",
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "point",
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "tangent_line",
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "tangent_label",
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "slope_label",
+              "duration": 1.0
+            },
+            {
+              "action": "appear",
+              "target": "applications_text",
+              "duration": 2.0
+            },
+            {
+              "action": "highlight",
+              "target": "applications_text",
+              "duration": 3.0,
+              "color": "YELLOW"
+            },
+            {
+              "action": "fade_out",
+              "target": "applications_text",
+              "duration": 2.0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_type": "content",
+      "title": "The Fundamental Theorem of Calculus, Part 2: Evaluation",
+      "renderer": "remotion",
+      "avatar_layout": {
+        "visibility": "optional",
+        "mode": "compact",
+        "position": "right",
+        "width_percent": 30
+      },
+      "narration": {
+        "full_text": "Now, let's dive into the second part of the Fundamental Theorem of Calculus, which provides a powerful method for evaluating definite integrals. This part is incredibly practical and forms the backbone of many calculations in calculus. Essentially, it tells us that to evaluate a definite integral from 'a' to 'b' of a function f(x), we first find any antiderivative of f(x), let's call it F(x). Then, we simply evaluate F(x) at the upper limit 'b' and subtract its value at the lower limit 'a'. This can be written as F(b) minus F(a). This elegant formula transforms the complex process of summing infinitely many tiny areas into a straightforward subtraction of two values. To apply this theorem effectively, we need to be proficient at finding antiderivatives. Let's quickly review some common ones. The antiderivative of x to the power of n, where n is not negative one, is x to the power of n plus one, all divided by n plus one. For one over x, the antiderivative is the natural logarithm of the absolute value of x. The antiderivative of e to the x is simply e to the x. And for trigonometric functions, the antiderivative of sine of x is negative cosine of x, while the antiderivative of cosine of x is sine of x. Mastering these basic antiderivatives will be crucial for applying the Fundamental Theorem of Calculus Part Two.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Now, let's dive into the second part of the Fundamental Theorem of Calculus, which provides a powerful method for evaluating definite integrals.",
+            "duration_seconds": 10.8,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Fundamental Theorem of Calculus, Part 2"
+                },
+                {
+                  "level": 1,
+                  "text": "Method for evaluating definite integrals"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "6_1.mp3"
+          },
+          {
+            "segment_id": 2,
+            "text": "This part is incredibly practical and forms the backbone of many calculations in calculus. Essentially, it tells us that to evaluate a definite integral from 'a' to 'b' of a function f(x), we first find any antiderivative of f(x), let's call it F(x).",
+            "duration_seconds": 22.01,
+            "gesture_hint": "pointing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Evaluate definite integral from 'a' to 'b'"
+                },
+                {
+                  "level": 1,
+                  "text": "Find antiderivative F(x) of f(x)"
+                }
+              ],
+              "formula": "\\int_{a}^{b} f(x)\\,dx",
+              "labels": [
+                "f(x): function",
+                "F(x): antiderivative"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "6_2.mp3"
+          },
+          {
+            "segment_id": 3,
+            "text": "Then, we simply evaluate F(x) at the upper limit 'b' and subtract its value at the lower limit 'a'. This can be written as F(b) minus F(a).",
+            "duration_seconds": 13.46,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Evaluate F(b) - F(a)"
+                }
+              ],
+              "formula": "\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)",
+              "labels": [
+                "b: upper limit",
+                "a: lower limit"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "6_3.mp3"
+          },
+          {
+            "segment_id": 4,
+            "text": "This elegant formula transforms the complex process of summing infinitely many tiny areas into a straightforward subtraction of two values.",
+            "duration_seconds": 10.44,
+            "gesture_hint": "emphasizing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Transforms complex summation to simple subtraction"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "6_4.mp3"
+          },
+          {
+            "segment_id": 5,
+            "text": "To apply this theorem effectively, we need to be proficient at finding antiderivatives. Let's quickly review some common ones.",
+            "duration_seconds": 10.01,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Proficiency in finding antiderivatives is key"
+                },
+                {
+                  "level": 1,
+                  "text": "Review common antiderivative formulas"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "6_5.mp3"
+          },
+          {
+            "segment_id": 6,
+            "text": "The antiderivative of x to the power of n, where n is not negative one, is x to the power of n plus one, all divided by n plus one.",
+            "duration_seconds": 10.63,
+            "gesture_hint": "pointing",
+            "visual_content": {
+              "bullet_points": [],
+              "formula": "x^n \\quad \\rightarrow \\quad \\frac{x^{n+1}}{n+1} \\quad (n \\neq -1)",
+              "labels": [
+                "Function",
+                "Antiderivative"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "6_6.mp3"
+          },
+          {
+            "segment_id": 7,
+            "text": "For one over x, the antiderivative is the natural logarithm of the absolute value of x. The antiderivative of e to the x is simply e to the x.",
+            "duration_seconds": 12.19,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [],
+              "formula": "\\frac{1}{x} \\quad \\rightarrow \\quad \\ln|x| \\\\ e^x \\quad \\rightarrow \\quad e^x",
+              "labels": [
+                "Function",
+                "Antiderivative"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "6_7.mp3"
+          },
+          {
+            "segment_id": 8,
+            "text": "And for trigonometric functions, the antiderivative of sine of x is negative cosine of x, while the antiderivative of cosine of x is sine of x.",
+            "duration_seconds": 11.88,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [],
+              "formula": "\\sin(x) \\quad \\rightarrow \\quad -\\cos(x) \\\\ \\cos(x) \\quad \\rightarrow \\quad \\sin(x)",
+              "labels": [
+                "Function",
+                "Antiderivative"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "6_8.mp3"
+          },
+          {
+            "segment_id": 9,
+            "text": "Mastering these basic antiderivatives will be crucial for applying the Fundamental Theorem of Calculus Part Two.",
+            "duration_seconds": 8.33,
+            "gesture_hint": "emphasizing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Mastering antiderivatives is crucial"
+                },
+                {
+                  "level": 1,
+                  "text": "Essential for FTC Part 2 application"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "6_9.mp3"
+          }
+        ],
+        "total_duration_seconds": 109.75
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": 1,
+          "visual_beat_type": "text_only",
+          "description": "Introduction to FTC Part 2",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": 2,
+          "visual_beat_type": "formula",
+          "description": "Introduce the general form of definite integral",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Definite Integral",
+              "Antiderivative"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": 3,
+          "visual_beat_type": "formula",
+          "description": "Show the FTC Part 2 formula",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "F(b) - F(a)",
+              "Upper Limit",
+              "Lower Limit"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": 4,
+          "visual_beat_type": "text_only",
+          "description": "Emphasize the simplicity of the formula",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_5",
+          "segment_id": 5,
+          "visual_beat_type": "text_only",
+          "description": "Transition to reviewing antiderivatives",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_6",
+          "segment_id": 6,
+          "visual_beat_type": "formula",
+          "description": "Display power rule for antiderivatives",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Power Rule",
+              "Antiderivative"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_7",
+          "segment_id": 7,
+          "visual_beat_type": "formula",
+          "description": "Display antiderivatives for 1/x and e^x",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "ln|x|",
+              "e^x"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_8",
+          "segment_id": 8,
+          "visual_beat_type": "formula",
+          "description": "Display antiderivatives for sin(x) and cos(x)",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "sin(x)",
+              "cos(x)"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_9",
+          "segment_id": 9,
+          "visual_beat_type": "text_only",
+          "description": "Concluding remarks on antiderivatives importance",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        }
+      ],
+      "section_id": 6,
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 3293,
+        "elements": [
+          {
+            "id": "title_1",
+            "type": "text",
+            "content": "Fundamental Theorem of Calculus, Part 2",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#2563eb",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 324
+            }
+          },
+          {
+            "id": "subtitle_1",
+            "type": "text",
+            "content": "Method for evaluating definite integrals",
+            "position": {
+              "x": 400,
+              "y": 280
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#64748b",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 60,
+              "exit_frame": 324
+            }
+          },
+          {
+            "id": "formula_2",
+            "type": "text",
+            "content": "\u222b\u1d47\u2090 f(x)dx",
+            "position": {
+              "x": 400,
+              "y": 250
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#1e40af",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 324,
+              "exit_frame": 985
+            }
+          },
+          {
+            "id": "label_2a",
+            "type": "text",
+            "content": "f(x): function",
+            "position": {
+              "x": 300,
+              "y": 350
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#475569",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 450,
+              "exit_frame": 985
+            }
+          },
+          {
+            "id": "label_2b",
+            "type": "text",
+            "content": "F(x): antiderivative",
+            "position": {
+              "x": 500,
+              "y": 350
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#475569",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 600,
+              "exit_frame": 985
+            }
+          },
+          {
+            "id": "formula_3",
+            "type": "text",
+            "content": "\u222b\u1d47\u2090 f(x)dx = F(b) - F(a)",
+            "position": {
+              "x": 400,
+              "y": 250
+            },
+            "style": {
+              "fontSize": 56,
+              "color": "#1e40af",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 985,
+              "exit_frame": 1389
+            }
+          },
+          {
+            "id": "label_3a",
+            "type": "text",
+            "content": "b: upper limit",
+            "position": {
+              "x": 300,
+              "y": 350
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#475569",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 1100,
+              "exit_frame": 1389
+            }
+          },
+          {
+            "id": "label_3b",
+            "type": "text",
+            "content": "a: lower limit",
+            "position": {
+              "x": 500,
+              "y": 350
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#475569",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 1200,
+              "exit_frame": 1389
+            }
+          },
+          {
+            "id": "text_4",
+            "type": "text",
+            "content": "Transforms complex summation to simple subtraction",
+            "position": {
+              "x": 400,
+              "y": 250
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#059669",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 1389,
+              "exit_frame": 1702
+            }
+          },
+          {
+            "id": "text_5a",
+            "type": "text",
+            "content": "Proficiency in finding antiderivatives is key",
+            "position": {
+              "x": 400,
+              "y": 220
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#dc2626",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 1702,
+              "exit_frame": 2002
+            }
+          },
+          {
+            "id": "text_5b",
+            "type": "text",
+            "content": "Review common antiderivative formulas",
+            "position": {
+              "x": 400,
+              "y": 280
+            },
+            "style": {
+              "fontSize": 28,
+              "color": "#7c2d12",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 1800,
+              "exit_frame": 2002
+            }
+          },
+          {
+            "id": "formula_6",
+            "type": "text",
+            "content": "x\u207f \u2192 x\u207f\u207a\u00b9/(n+1) (n\u2260-1)",
+            "position": {
+              "x": 400,
+              "y": 250
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#1e40af",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 2002,
+              "exit_frame": 2321
+            }
+          },
+          {
+            "id": "formula_7a",
+            "type": "text",
+            "content": "1/x \u2192 ln|x|",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#1e40af",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 2321,
+              "exit_frame": 2687
+            }
+          },
+          {
+            "id": "formula_7b",
+            "type": "text",
+            "content": "e\u02e3 \u2192 e\u02e3",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#1e40af",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 2450,
+              "exit_frame": 2687
+            }
+          },
+          {
+            "id": "formula_8a",
+            "type": "text",
+            "content": "sin(x) \u2192 -cos(x)",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#1e40af",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 2687,
+              "exit_frame": 3043
+            }
+          },
+          {
+            "id": "formula_8b",
+            "type": "text",
+            "content": "cos(x) \u2192 sin(x)",
+            "position": {
+              "x": 400,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#1e40af",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 2850,
+              "exit_frame": 3043
+            }
+          },
+          {
+            "id": "text_9a",
+            "type": "text",
+            "content": "Mastering antiderivatives is crucial",
+            "position": {
+              "x": 400,
+              "y": 220
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#dc2626",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 3043,
+              "exit_frame": 3293
+            }
+          },
+          {
+            "id": "text_9b",
+            "type": "text",
+            "content": "Essential for FTC Part 2 application",
+            "position": {
+              "x": 400,
+              "y": 280
+            },
+            "style": {
+              "fontSize": 28,
+              "color": "#7c2d12",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 3150,
+              "exit_frame": 3293
+            }
+          }
+        ],
+        "background": {
+          "color": "#f8fafc"
+        }
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "beat_1",
+            "segment_id": 1,
+            "visual_beat_type": "text_only",
+            "description": "Introduction to FTC Part 2",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_2",
+            "segment_id": 2,
+            "visual_beat_type": "formula",
+            "description": "Introduce the general form of definite integral",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Definite Integral",
+                "Antiderivative"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_3",
+            "segment_id": 3,
+            "visual_beat_type": "formula",
+            "description": "Show the FTC Part 2 formula",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "F(b) - F(a)",
+                "Upper Limit",
+                "Lower Limit"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_4",
+            "segment_id": 4,
+            "visual_beat_type": "text_only",
+            "description": "Emphasize the simplicity of the formula",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_5",
+            "segment_id": 5,
+            "visual_beat_type": "text_only",
+            "description": "Transition to reviewing antiderivatives",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_6",
+            "segment_id": 6,
+            "visual_beat_type": "formula",
+            "description": "Display power rule for antiderivatives",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Power Rule",
+                "Antiderivative"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_7",
+            "segment_id": 7,
+            "visual_beat_type": "formula",
+            "description": "Display antiderivatives for 1/x and e^x",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "ln|x|",
+                "e^x"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_8",
+            "segment_id": 8,
+            "visual_beat_type": "formula",
+            "description": "Display antiderivatives for sin(x) and cos(x)",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "sin(x)",
+                "cos(x)"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_9",
+            "segment_id": 9,
+            "visual_beat_type": "text_only",
+            "description": "Concluding remarks on antiderivatives importance",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_type": "example",
+      "title": "Worked Example: Calculating a Definite Integral",
+      "renderer": "manim",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "compact",
+        "position": "hidden",
+        "width_percent": 30
+      },
+      "narration": {
+        "full_text": "Now, let's put our knowledge of definite integrals and the Fundamental Theorem of Calculus into practice with a worked example. We'll calculate the definite integral of a polynomial function from one to four. First, our goal is to find the antiderivative of the function three x squared minus two x plus one. Remember, we apply the power rule for each term. Once we have the antiderivative, we'll use the second part of the Fundamental Theorem of Calculus. This means we evaluate the antiderivative at the upper limit of integration, which is four, and then subtract its value at the lower limit, which is one. Let's go through the calculation step by step. We substitute four into our antiderivative and then subtract the result of substituting one into the same antiderivative. After performing the arithmetic, we arrive at our final answer. This example demonstrates a common application of definite integrals in calculus.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Now, let's put our knowledge of definite integrals and the Fundamental Theorem of Calculus into practice with a worked example.",
+            "duration_seconds": 9.53,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Worked Example: Definite Integral"
+                },
+                {
+                  "level": 1,
+                  "text": "Apply FTC Part 2"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "7_1.mp3"
+          },
+          {
+            "segment_id": 2,
+            "text": "We'll calculate the definite integral of a polynomial function from one to four.",
+            "duration_seconds": 6.02,
+            "gesture_hint": "pointing",
+            "visual_content": {
+              "bullet_points": [],
+              "formula": "\\int_{1}^{4} (3x^2 - 2x + 1)\\,dx",
+              "labels": [
+                "Definite Integral",
+                "Limits of Integration"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "7_2.mp3"
+          },
+          {
+            "segment_id": 3,
+            "text": "First, our goal is to find the antiderivative of the function three x squared minus two x plus one.",
+            "duration_seconds": 7.78,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Find Antiderivative of $f(x) = 3x^2 - 2x + 1$"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "7_3.mp3"
+          },
+          {
+            "segment_id": 4,
+            "text": "Remember, we apply the power rule for each term.",
+            "duration_seconds": 4.2,
+            "gesture_hint": "emphasizing",
+            "visual_content": {
+              "bullet_points": [],
+              "formula": "\\int x^n \\,dx = \\frac{x^{n+1}}{n+1} + C",
+              "labels": [
+                "Power Rule"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "7_4.mp3"
+          },
+          {
+            "segment_id": 5,
+            "text": "Once we have the antiderivative, we'll use the second part of the Fundamental Theorem of Calculus.",
+            "duration_seconds": 7.51,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [],
+              "formula": "\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)",
+              "labels": [
+                "FTC Part 2",
+                "F(x) is antiderivative"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "7_5.mp3"
+          },
+          {
+            "segment_id": 6,
+            "text": "This means we evaluate the antiderivative at the upper limit of integration, which is four, and then subtract its value at the lower limit, which is one.",
+            "duration_seconds": 11.52,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Antiderivative: $F(x) = x^3 - x^2 + x$"
+                },
+                {
+                  "level": 1,
+                  "text": "Evaluate at upper limit (4)"
+                },
+                {
+                  "level": 1,
+                  "text": "Subtract value at lower limit (1)"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "7_6.mp3"
+          },
+          {
+            "segment_id": 7,
+            "text": "Let's go through the calculation step by step.",
+            "duration_seconds": 3.79,
+            "gesture_hint": "pointing",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Calculation Steps:"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "audio_file": "7_7.mp3"
+          },
+          {
+            "segment_id": 8,
+            "text": "We substitute four into our antiderivative and then subtract the result of substituting one into the same antiderivative.",
+            "duration_seconds": 9.1,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [],
+              "formula": "F(4) - F(1) = (4^3 - 4^2 + 4) - (1^3 - 1^2 + 1)",
+              "labels": [
+                "Substitute 4",
+                "Substitute 1"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "audio_file": "7_8.mp3"
+          },
+          {
+            "segment_id": 9,
+            "text": "After performing the arithmetic, we arrive at our final answer.",
+            "duration_seconds": 5.4,
+            "gesture_hint": "emphasizing",
+            "visual_content": {
+              "bullet_points": [],
+              "formula": "(64 - 16 + 4) - (1 - 1 + 1) = 52 - 1 = 51",
+              "labels": [
+                "Arithmetic",
+                "Final Answer"
+              ]
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "audio_file": "7_9.mp3"
+          },
+          {
+            "segment_id": 10,
+            "text": "This example demonstrates a common application of definite integrals in calculus.",
+            "duration_seconds": 6.62,
+            "gesture_hint": "explaining",
+            "visual_content": {
+              "bullet_points": [
+                {
+                  "level": 1,
+                  "text": "Definite Integrals in Calculus"
+                },
+                {
+                  "level": 1,
+                  "text": "Practical Application"
+                }
+              ],
+              "formula": null,
+              "labels": []
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "audio_file": "7_10.mp3"
+          }
+        ],
+        "total_duration_seconds": 71.47
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": 1,
+          "visual_beat_type": "text_only",
+          "description": "Introduction to definite integral worked example",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": 2,
+          "visual_beat_type": "formula",
+          "description": "Display the definite integral to be calculated",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Definite Integral",
+              "Polynomial",
+              "Limits"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": 3,
+          "visual_beat_type": "formula",
+          "description": "Display the function for which to find the antiderivative",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Antiderivative",
+              "Function"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": 4,
+          "visual_beat_type": "formula",
+          "description": "Show the power rule for antiderivatives",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Power Rule",
+              "Antiderivative"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_5",
+          "segment_id": 5,
+          "visual_beat_type": "formula",
+          "description": "Display the Fundamental Theorem of Calculus Part 2",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Fundamental Theorem",
+              "Part 2"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_6",
+          "segment_id": 6,
+          "visual_beat_type": "formula",
+          "description": "Show the antiderivative evaluated at limits of integration",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Evaluate",
+              "Upper Limit",
+              "Lower Limit"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_7",
+          "segment_id": 7,
+          "visual_beat_type": "process",
+          "description": "Transition to step-by-step calculation",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_8",
+          "segment_id": 8,
+          "visual_beat_type": "process",
+          "description": "Show the substitution and subtraction steps",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Substitution",
+              "Calculation"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_9",
+          "segment_id": 9,
+          "visual_beat_type": "process",
+          "description": "Display the final answer of the integral",
+          "symbolic_overlay": {
+            "enabled": true,
+            "content": [
+              "Final Answer"
+            ],
+            "max_words": 4
+          }
+        },
+        {
+          "beat_id": "beat_10",
+          "segment_id": 10,
+          "visual_beat_type": "text_only",
+          "description": "Summary of the worked example's relevance",
+          "symbolic_overlay": {
+            "enabled": false,
+            "content": [],
+            "max_words": 4
+          }
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\text{Worked Example: Definite Integral}",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "integral_problem",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\int_{1}^{4} (3x^2 - 2x + 1)\\,dx",
+              "color": "WHITE",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "function_label",
+            "type": "label",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "\\text{Find antiderivative of } f(x) = 3x^2 - 2x + 1",
+              "color": "BLUE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "power_rule",
+            "type": "equation",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "\\int x^n \\,dx = \\frac{x^{n+1}}{n+1} + C",
+              "color": "YELLOW",
+              "scale": 0.9
+            }
+          },
+          {
+            "id": "ftc_formula",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)",
+              "color": "GREEN",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "antiderivative",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "F(x) = x^3 - x^2 + x",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "evaluation_setup",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "F(4) - F(1) = (4^3 - 4^2 + 4) - (1^3 - 1^2 + 1)",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "arithmetic",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "(64 - 16 + 4) - (1 - 1 + 1) = 52 - 1 = 51",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "final_answer",
+            "type": "equation",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "latex": "\\int_{1}^{4} (3x^2 - 2x + 1)\\,dx = 51",
+              "color": "BLUE",
+              "scale": 1.3
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "target": "title",
+            "duration": 8.0
+          },
+          {
+            "action": "show_equation",
+            "target": "integral_problem",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "integral_problem",
+            "duration": 4.0
+          },
+          {
+            "action": "appear",
+            "target": "function_label",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "target": "function_label",
+            "duration": 6.3
+          },
+          {
+            "action": "show_equation",
+            "target": "power_rule",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "target": "power_rule",
+            "duration": 2.7
+          },
+          {
+            "action": "fade_out",
+            "target": "integral_problem",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "function_label",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "power_rule",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "ftc_formula",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "ftc_formula",
+            "duration": 5.5
+          },
+          {
+            "action": "appear",
+            "target": "antiderivative",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "target": "antiderivative",
+            "duration": 10.0
+          },
+          {
+            "action": "fade_out",
+            "target": "ftc_formula",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "antiderivative",
+            "duration": 1.0
+          },
+          {
+            "action": "wait",
+            "target": "title",
+            "duration": 2.8
+          },
+          {
+            "action": "show_equation",
+            "target": "evaluation_setup",
+            "duration": 2.5
+          },
+          {
+            "action": "wait",
+            "target": "evaluation_setup",
+            "duration": 6.6
+          },
+          {
+            "action": "appear",
+            "target": "arithmetic",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "arithmetic",
+            "duration": 3.4
+          },
+          {
+            "action": "fade_out",
+            "target": "title",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "evaluation_setup",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "arithmetic",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "final_answer",
+            "duration": 2.0
+          },
+          {
+            "action": "highlight",
+            "target": "final_answer",
+            "duration": 2.0,
+            "color": "YELLOW"
+          },
+          {
+            "action": "fade_out",
+            "target": "final_answer",
+            "duration": 2.6
+          }
+        ]
+      },
+      "section_id": 7,
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "beat_1",
+            "segment_id": 1,
+            "visual_beat_type": "text_only",
+            "description": "Introduction to definite integral worked example",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_2",
+            "segment_id": 2,
+            "visual_beat_type": "formula",
+            "description": "Display the definite integral to be calculated",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Definite Integral",
+                "Polynomial",
+                "Limits"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_3",
+            "segment_id": 3,
+            "visual_beat_type": "formula",
+            "description": "Display the function for which to find the antiderivative",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Antiderivative",
+                "Function"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_4",
+            "segment_id": 4,
+            "visual_beat_type": "formula",
+            "description": "Show the power rule for antiderivatives",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Power Rule",
+                "Antiderivative"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_5",
+            "segment_id": 5,
+            "visual_beat_type": "formula",
+            "description": "Display the Fundamental Theorem of Calculus Part 2",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Fundamental Theorem",
+                "Part 2"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_6",
+            "segment_id": 6,
+            "visual_beat_type": "formula",
+            "description": "Show the antiderivative evaluated at limits of integration",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Evaluate",
+                "Upper Limit",
+                "Lower Limit"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_7",
+            "segment_id": 7,
+            "visual_beat_type": "process",
+            "description": "Transition to step-by-step calculation",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_8",
+            "segment_id": 8,
+            "visual_beat_type": "process",
+            "description": "Show the substitution and subtraction steps",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Substitution",
+                "Calculation"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_9",
+            "segment_id": 9,
+            "visual_beat_type": "process",
+            "description": "Display the final answer of the integral",
+            "symbolic_overlay": {
+              "enabled": true,
+              "content": [
+                "Final Answer"
+              ],
+              "max_words": 4
+            }
+          },
+          {
+            "beat_id": "beat_10",
+            "segment_id": 10,
+            "visual_beat_type": "text_only",
+            "description": "Summary of the worked example's relevance",
+            "symbolic_overlay": {
+              "enabled": false,
+              "content": [],
+              "max_words": 4
+            }
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "title",
+              "type": "label",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "latex": "\\text{Worked Example: Definite Integral}",
+                "color": "WHITE",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "integral_problem",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "\\int_{1}^{4} (3x^2 - 2x + 1)\\,dx",
+                "color": "WHITE",
+                "scale": 1.2
+              }
+            },
+            {
+              "id": "function_label",
+              "type": "label",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "latex": "\\text{Find antiderivative of } f(x) = 3x^2 - 2x + 1",
+                "color": "BLUE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "power_rule",
+              "type": "equation",
+              "position": [
+                0,
+                -2.0
+              ],
+              "properties": {
+                "latex": "\\int x^n \\,dx = \\frac{x^{n+1}}{n+1} + C",
+                "color": "YELLOW",
+                "scale": 0.9
+              }
+            },
+            {
+              "id": "ftc_formula",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)",
+                "color": "GREEN",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "antiderivative",
+              "type": "equation",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "latex": "F(x) = x^3 - x^2 + x",
+                "color": "WHITE",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "evaluation_setup",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "F(4) - F(1) = (4^3 - 4^2 + 4) - (1^3 - 1^2 + 1)",
+                "color": "WHITE",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "arithmetic",
+              "type": "equation",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "latex": "(64 - 16 + 4) - (1 - 1 + 1) = 52 - 1 = 51",
+                "color": "WHITE",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "final_answer",
+              "type": "equation",
+              "position": [
+                0,
+                0
+              ],
+              "properties": {
+                "latex": "\\int_{1}^{4} (3x^2 - 2x + 1)\\,dx = 51",
+                "color": "BLUE",
+                "scale": 1.3
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "appear",
+              "target": "title",
+              "duration": 1.5
+            },
+            {
+              "action": "wait",
+              "target": "title",
+              "duration": 8.0
+            },
+            {
+              "action": "show_equation",
+              "target": "integral_problem",
+              "duration": 2.0
+            },
+            {
+              "action": "wait",
+              "target": "integral_problem",
+              "duration": 4.0
+            },
+            {
+              "action": "appear",
+              "target": "function_label",
+              "duration": 1.5
+            },
+            {
+              "action": "wait",
+              "target": "function_label",
+              "duration": 6.3
+            },
+            {
+              "action": "show_equation",
+              "target": "power_rule",
+              "duration": 1.5
+            },
+            {
+              "action": "wait",
+              "target": "power_rule",
+              "duration": 2.7
+            },
+            {
+              "action": "fade_out",
+              "target": "integral_problem",
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "function_label",
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "power_rule",
+              "duration": 1.0
+            },
+            {
+              "action": "show_equation",
+              "target": "ftc_formula",
+              "duration": 2.0
+            },
+            {
+              "action": "wait",
+              "target": "ftc_formula",
+              "duration": 5.5
+            },
+            {
+              "action": "appear",
+              "target": "antiderivative",
+              "duration": 1.5
+            },
+            {
+              "action": "wait",
+              "target": "antiderivative",
+              "duration": 10.0
+            },
+            {
+              "action": "fade_out",
+              "target": "ftc_formula",
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "antiderivative",
+              "duration": 1.0
+            },
+            {
+              "action": "wait",
+              "target": "title",
+              "duration": 2.8
+            },
+            {
+              "action": "show_equation",
+              "target": "evaluation_setup",
+              "duration": 2.5
+            },
+            {
+              "action": "wait",
+              "target": "evaluation_setup",
+              "duration": 6.6
+            },
+            {
+              "action": "appear",
+              "target": "arithmetic",
+              "duration": 2.0
+            },
+            {
+              "action": "wait",
+              "target": "arithmetic",
+              "duration": 3.4
+            },
+            {
+              "action": "fade_out",
+              "target": "title",
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "evaluation_setup",
+              "duration": 1.0
+            },
+            {
+              "action": "fade_out",
+              "target": "arithmetic",
+              "duration": 1.0
+            },
+            {
+              "action": "show_equation",
+              "target": "final_answer",
+              "duration": 2.0
+            },
+            {
+              "action": "highlight",
+              "target": "final_answer",
+              "duration": 2.0,
+              "color": "YELLOW"
+            },
+            {
+              "action": "fade_out",
+              "target": "final_answer",
+              "duration": 2.6
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_type": "memory",
+      "title": "Remember This!",
+      "renderer": "none",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "compact",
+        "position": "hidden",
+        "width_percent": 0
+      },
+      "narration": {
+        "full_text": "Let's review what we've learned with some flashcards.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's review what we've learned with some flashcards.",
+            "duration_seconds": 4.3,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "audio_file": "8_1.mp3"
+          }
+        ],
+        "total_duration_seconds": 4.3
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": 1,
+          "visual_beat_type": "text_only",
+          "description": "Flashcard review section"
+        }
+      ],
+      "flashcards": [
+        {
+          "flashcard_id": 1,
+          "front": "What does a definite integral represent?",
+          "back": "The signed area under a curve between two specified points, calculated as the limit of Riemann sums.",
+          "category": "Definition"
+        },
+        {
+          "flashcard_id": 2,
+          "front": "State the formula for the Fundamental Theorem of Calculus, Part 2.",
+          "back": "If F(x) is an antiderivative of f(x), then \\(\\int_{a}^{b} f(x)\\,dx = F(b) - F(a)\\).",
+          "category": "Formula"
+        },
+        {
+          "flashcard_id": 3,
+          "front": "What is the derivative of an integral function, according to FTC Part 1?",
+          "back": "If \\(F(x) = \\int_{a}^{x} f(t)\\,dt\\), then \\(\\frac{d}{dx}\\left[\\int_{a}^{x} f(t)\\,dt\\right] = f(x)\\).",
+          "category": "Formula"
+        },
+        {
+          "flashcard_id": 4,
+          "front": "What is the antiderivative of \\(x^n\\) (where n \u2260 -1)?",
+          "back": "The antiderivative is \\(\\frac{x^{n+1}}{n+1}\\).",
+          "category": "Formula"
+        },
+        {
+          "flashcard_id": 5,
+          "front": "How do you evaluate a definite integral like \\(\\int_{1}^{4} (3x^2 - 2x + 1)\\,dx\\)?",
+          "back": "Find the antiderivative (\\(x^3 - x^2 + x\\)), then apply FTC Part 2: \\(F(4) - F(1) = (64-16+4) - (1-1+1) = 52 - 1 = 51\\).",
+          "category": "Process"
+        }
+      ],
+      "section_id": 8
+    },
+    {
+      "section_type": "recap",
+      "title": "Let's Review",
+      "renderer": "wan_video",
+      "avatar_layout": {
+        "visibility": "hidden",
+        "mode": "compact",
+        "position": "hidden",
+        "width_percent": 0
+      },
+      "narration": {
+        "full_text": "Scene 1: visualizing the concept. Scene 2: visualizing the concept. Scene 3: visualizing the concept. Scene 4: visualizing the concept. Scene 5: visualizing the concept.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Scene 1: visualizing the concept.",
+            "duration_seconds": 3.38,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "audio_file": "9_1.mp3"
+          },
+          {
+            "segment_id": 2,
+            "text": "Scene 2: visualizing the concept.",
+            "duration_seconds": 3.43,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "audio_file": "9_2.mp3"
+          },
+          {
+            "segment_id": 3,
+            "text": "Scene 3: visualizing the concept.",
+            "duration_seconds": 3.58,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "audio_file": "9_3.mp3"
+          },
+          {
+            "segment_id": 4,
+            "text": "Scene 4: visualizing the concept.",
+            "duration_seconds": 3.43,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "audio_file": "9_4.mp3"
+          },
+          {
+            "segment_id": 5,
+            "text": "Scene 5: visualizing the concept.",
+            "duration_seconds": 3.5,
+            "gesture_hint": "explaining",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "audio_file": "9_5.mp3"
+          }
+        ],
+        "total_duration_seconds": 17.33
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": 1,
+          "visual_beat_type": "video_clip",
+          "description": "Recap video scene 1"
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": 2,
+          "visual_beat_type": "video_clip",
+          "description": "Recap video scene 2"
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": 3,
+          "visual_beat_type": "video_clip",
+          "description": "Recap video scene 3"
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": 4,
+          "visual_beat_type": "video_clip",
+          "description": "Recap video scene 4"
+        },
+        {
+          "beat_id": "beat_5",
+          "segment_id": 5,
+          "visual_beat_type": "video_clip",
+          "description": "Recap video scene 5"
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "beat_1",
+          "prompt": "The scene opens on a hyper-realistic, extreme close-up of a vibrant orange marigold flower, its velvety petals glistening with tiny morning dew drops. The setting is a bustling flower market in Mysore, India, during the golden hour. The background is a soft-focus bokeh of colorful sarees, moving crowds, and other flower garlands. The camera begins a slow, deliberate push-in towards the center of the marigold. As it moves, the focus racks to a young Indian woman in the mid-ground, her dark, expressive eyes reflecting the flower. The camera continues its trajectory, accelerating into a seamless dolly zoom that travels across the space between her and the flower, directly towards her right eye. The world blurs into streaks of warm color. The camera slows dramatically as it approaches her face, revealing the fine texture of her skin and the individual lashes of her eye. The final part of the movement is a macro probe lens effect, penetrating the tear film on the corneal surface. The cornea is rendered as a perfectly transparent, wet, and curved organic lens, with the distorted reflection of the market visible on its surface. The camera passes through this layer into the anterior chamber, a clear, fluid-filled space. Ahead, the iris is a magnificent, intricate structure of deep brown and amber fibrous tissue, contracting subtly in response to the perceived light. The pupil is a perfect black aperture at its center, beckoning the camera forward. The lighting transitions from the bright, warm sunlight of the market to a more focused, dimmer light filtered by the eye's own structures.",
+          "duration_seconds": 3.38,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "beat_2",
+          "prompt": "Following the previous shot, the camera glides through the pupil into the posterior chamber. The scene is now dominated by the crystalline lens, a remarkable biconvex structure suspended in space. It is rendered not as simple glass, but as a complex, layered, transparent organic tissue with visible onion-like strata and subtle subsurface scattering that catches the incoming light. The light from the outside world, representing the marigold flower, streams through the pupil as a focused cone of volumetric golden rays. The camera executes a slow, graceful orbital motion around the profile of the lens. Simultaneously, we witness the process of accommodation. The ciliary muscle, a ring of pinkish, fibrous tissue surrounding the lens, visibly tenses and contracts. This action loosens the tension on the nearly invisible, thread-like zonular fibers connecting the muscle to the lens. In response, the lens, due to its natural elasticity, bulges and becomes more convex and rounded. This change in shape is smooth and organic, like a soft gel being gently squeezed. As the lens thickens, the cone of light passing through it is bent more sharply, its focal point shifting. The surrounding vitreous humor is a clear gel, but filled with microscopic, floating particles and protein strands that drift lazily through the frame, catching the volumetric light and enhancing the sense of depth and biological reality within the eyeball. The lighting is internal and directional, originating from the light cone entering the pupil.",
+          "duration_seconds": 3.43,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "beat_3",
+          "prompt": "The camera now detaches from the lens and performs a smooth tracking shot, following the converging cone of golden light as it travels through the vast, dark expanse of the vitreous cavity. The journey is swift but clear, with the floating particles of the vitreous humor streaking past. The destination is the retina, the inner back surface of the eye. As the light rays arrive, they paint a shimmering, luminous image onto the retinal surface. The camera pulls back slightly to reveal this image in its entirety: a perfect, but fully inverted and smaller, projection of the orange marigold flower. The image glows with an internal light against the deep red, wet, and textured background of the retina. This surface is a rich tapestry of biological detail, with a network of fine, branching blood vessels (the fundus) snaking across it. The camera then begins a powerful macro zoom, pushing into the glowing, inverted image. We move past the blood vessels and dive deep into the retinal tissue itself. The scene transforms into a microscopic landscape, a dense forest of photoreceptor cells. We can clearly distinguish the two types: tall, slender rods and shorter, thicker cones, all rendered as pulsating, organic structures packed together. The light from the marigold image washes over this forest, causing the tips of the cones in the fovea to glow with intense color, signaling their activation. The lighting is now almost entirely bioluminescent, coming from the image projected onto this living sensor.",
+          "duration_seconds": 3.58,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "beat_4",
+          "prompt": "The scene continues from the extreme macro view of the photoreceptor forest. As the light from the inverted marigold image bathes the rods and cones, they begin to fire. This is visualized as a spectacular chain reaction of bio-electrical energy. Each activated photoreceptor emits a brilliant, instantaneous pulse of electric-blue light. The camera pulls back rapidly, revealing that these individual pulses are not random; they form a cascading wave of energy that sweeps across the retinal surface, perfectly mirroring the shape of the inverted flower. This wave of light travels through a complex, translucent network of intermediary neurons\u2014bipolar and ganglion cells\u2014rendered as intricate, branching structures. The pulses are channeled and collected, converging from all directions towards a single point: the optic disc. This area, the blind spot, is a distinct circular region where the neural fibers bundle together. As the torrent of blue energy pulses reaches the disc, the camera plunges into it, entering the optic nerve. The environment transforms into a tunnel composed of hundreds of thousands of parallel, translucent nerve fibers. The camera executes a high-speed dolly shot, racing through this biological data cable. The electrical signals travel alongside the camera as streaks of brilliant white and blue light, pulsing rhythmically as they carry the visual information away from the eye. The texture of the nerve bundle is fibrous and glossy, with the light from the signals reflecting off the interior walls of the tunnel, creating a sense of immense speed and purpose.",
+          "duration_seconds": 3.43,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "beat_5",
+          "prompt": "The camera bursts out from the end of the optic nerve tunnel into a vast, dark, abstract space representing the brain's visual cortex. The torrent of electrical signals, no longer confined, erupts into a swirling, chaotic nebula of light particles and energy threads. For a moment, it's a cosmic ballet of disorganized information, a galaxy of shimmering blue and white points of light. The camera performs a slow, majestic orbit around this swirling cloud of neural data. Then, a process of organization begins. The chaotic particles start to coalesce, drawn together by an unseen force. Threads of light weave themselves together, and the swirling motion gradually resolves into a coherent form. The colors shift from electric blue to the warm, natural oranges and greens of the original subject. The inverted image of the marigold flower begins to form, flipping upright as it solidifies. The image grows in clarity, detail, and vibrancy, becoming a hyper-realistic, three-dimensional reconstruction of the flower, floating in the center of the dark space. As the image becomes perfectly stable and vivid, the camera pushes directly into its center. The shot seamlessly cross-dissolves back to the real world, returning to the young woman in the Mysore market. The camera is now in a gentle close-up on her face as a soft smile forms on her lips, her eyes crinkling with appreciation as she looks at the real marigold flower. The warm, golden sunlight of the market fills the scene, bringing the entire visual journey to a satisfying, emotional conclusion.",
+          "duration_seconds": 3.5,
+          "style": "realistic"
+        }
+      ],
+      "section_id": 9,
+      "renderer_override_reason": "Recap sections use WAN for storyboard visualization",
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "beat_1",
+            "segment_id": 1,
+            "visual_beat_type": "video_clip",
+            "description": "Recap video scene 1"
+          },
+          {
+            "beat_id": "beat_2",
+            "segment_id": 2,
+            "visual_beat_type": "video_clip",
+            "description": "Recap video scene 2"
+          },
+          {
+            "beat_id": "beat_3",
+            "segment_id": 3,
+            "visual_beat_type": "video_clip",
+            "description": "Recap video scene 3"
+          },
+          {
+            "beat_id": "beat_4",
+            "segment_id": 4,
+            "visual_beat_type": "video_clip",
+            "description": "Recap video scene 4"
+          },
+          {
+            "beat_id": "beat_5",
+            "segment_id": 5,
+            "visual_beat_type": "video_clip",
+            "description": "Recap video scene 5"
+          }
+        ],
+        "compiled_wan_prompt": "[Beat beat_1]: The scene opens on a hyper-realistic, extreme close-up of a vibrant orange marigold flower, its velvety petals glistening with tiny morning dew drops. The setting is a bustling flower market in Mysore, India, during the golden hour. The background is a soft-focus bokeh of colorful sarees, moving crowds, and other flower garlands. The camera begins a slow, deliberate push-in towards the center of the marigold. As it moves, the focus racks to a young Indian woman in the mid-ground, her dark, expressive eyes reflecting the flower. The camera continues its trajectory, accelerating into a seamless dolly zoom that travels across the space between her and the flower, directly towards her right eye. The world blurs into streaks of warm color. The camera slows dramatically as it approaches her face, revealing the fine texture of her skin and the individual lashes of her eye. The final part of the movement is a macro probe lens effect, penetrating the tear film on the corneal surface. The cornea is rendered as a perfectly transparent, wet, and curved organic lens, with the distorted reflection of the market visible on its surface. The camera passes through this layer into the anterior chamber, a clear, fluid-filled space. Ahead, the iris is a magnificent, intricate structure of deep brown and amber fibrous tissue, contracting subtly in response to the perceived light. The pupil is a perfect black aperture at its center, beckoning the camera forward. The lighting transitions from the bright, warm sunlight of the market to a more focused, dimmer light filtered by the eye's own structures.\n\n[Beat beat_2]: Following the previous shot, the camera glides through the pupil into the posterior chamber. The scene is now dominated by the crystalline lens, a remarkable biconvex structure suspended in space. It is rendered not as simple glass, but as a complex, layered, transparent organic tissue with visible onion-like strata and subtle subsurface scattering that catches the incoming light. The light from the outside world, representing the marigold flower, streams through the pupil as a focused cone of volumetric golden rays. The camera executes a slow, graceful orbital motion around the profile of the lens. Simultaneously, we witness the process of accommodation. The ciliary muscle, a ring of pinkish, fibrous tissue surrounding the lens, visibly tenses and contracts. This action loosens the tension on the nearly invisible, thread-like zonular fibers connecting the muscle to the lens. In response, the lens, due to its natural elasticity, bulges and becomes more convex and rounded. This change in shape is smooth and organic, like a soft gel being gently squeezed. As the lens thickens, the cone of light passing through it is bent more sharply, its focal point shifting. The surrounding vitreous humor is a clear gel, but filled with microscopic, floating particles and protein strands that drift lazily through the frame, catching the volumetric light and enhancing the sense of depth and biological reality within the eyeball. The lighting is internal and directional, originating from the light cone entering the pupil.\n\n[Beat beat_3]: The camera now detaches from the lens and performs a smooth tracking shot, following the converging cone of golden light as it travels through the vast, dark expanse of the vitreous cavity. The journey is swift but clear, with the floating particles of the vitreous humor streaking past. The destination is the retina, the inner back surface of the eye. As the light rays arrive, they paint a shimmering, luminous image onto the retinal surface. The camera pulls back slightly to reveal this image in its entirety: a perfect, but fully inverted and smaller, projection of the orange marigold flower. The image glows with an internal light against the deep red, wet, and textured background of the retina. This surface is a rich tapestry of biological detail, with a network of fine, branching blood vessels (the fundus) snaking across it. The camera then begins a powerful macro zoom, pushing into the glowing, inverted image. We move past the blood vessels and dive deep into the retinal tissue itself. The scene transforms into a microscopic landscape, a dense forest of photoreceptor cells. We can clearly distinguish the two types: tall, slender rods and shorter, thicker cones, all rendered as pulsating, organic structures packed together. The light from the marigold image washes over this forest, causing the tips of the cones in the fovea to glow with intense color, signaling their activation. The lighting is now almost entirely bioluminescent, coming from the image projected onto this living sensor.\n\n[Beat beat_4]: The scene continues from the extreme macro view of the photoreceptor forest. As the light from the inverted marigold image bathes the rods and cones, they begin to fire. This is visualized as a spectacular chain reaction of bio-electrical energy. Each activated photoreceptor emits a brilliant, instantaneous pulse of electric-blue light. The camera pulls back rapidly, revealing that these individual pulses are not random; they form a cascading wave of energy that sweeps across the retinal surface, perfectly mirroring the shape of the inverted flower. This wave of light travels through a complex, translucent network of intermediary neurons\u2014bipolar and ganglion cells\u2014rendered as intricate, branching structures. The pulses are channeled and collected, converging from all directions towards a single point: the optic disc. This area, the blind spot, is a distinct circular region where the neural fibers bundle together. As the torrent of blue energy pulses reaches the disc, the camera plunges into it, entering the optic nerve. The environment transforms into a tunnel composed of hundreds of thousands of parallel, translucent nerve fibers. The camera executes a high-speed dolly shot, racing through this biological data cable. The electrical signals travel alongside the camera as streaks of brilliant white and blue light, pulsing rhythmically as they carry the visual information away from the eye. The texture of the nerve bundle is fibrous and glossy, with the light from the signals reflecting off the interior walls of the tunnel, creating a sense of immense speed and purpose.\n\n[Beat beat_5]: The camera bursts out from the end of the optic nerve tunnel into a vast, dark, abstract space representing the brain's visual cortex. The torrent of electrical signals, no longer confined, erupts into a swirling, chaotic nebula of light particles and energy threads. For a moment, it's a cosmic ballet of disorganized information, a galaxy of shimmering blue and white points of light. The camera performs a slow, majestic orbit around this swirling cloud of neural data. Then, a process of organization begins. The chaotic particles start to coalesce, drawn together by an unseen force. Threads of light weave themselves together, and the swirling motion gradually resolves into a coherent form. The colors shift from electric blue to the warm, natural oranges and greens of the original subject. The inverted image of the marigold flower begins to form, flipping upright as it solidifies. The image grows in clarity, detail, and vibrancy, becoming a hyper-realistic, three-dimensional reconstruction of the flower, floating in the center of the dark space. As the image becomes perfectly stable and vivid, the camera pushes directly into its center. The shot seamlessly cross-dissolves back to the real world, returning to the young woman in the Mysore market. The camera is now in a gentle close-up on her face as a soft smile forms on her lips, her eyes crinkling with appreciation as she looks at the real marigold flower. The warm, golden sunlight of the market fills the scene, bringing the entire visual journey to a satisfying, emotional conclusion.",
+        "video_prompts": [
+          {
+            "beat_id": "beat_1",
+            "prompt": "The scene opens on a hyper-realistic, extreme close-up of a vibrant orange marigold flower, its velvety petals glistening with tiny morning dew drops. The setting is a bustling flower market in Mysore, India, during the golden hour. The background is a soft-focus bokeh of colorful sarees, moving crowds, and other flower garlands. The camera begins a slow, deliberate push-in towards the center of the marigold. As it moves, the focus racks to a young Indian woman in the mid-ground, her dark, expressive eyes reflecting the flower. The camera continues its trajectory, accelerating into a seamless dolly zoom that travels across the space between her and the flower, directly towards her right eye. The world blurs into streaks of warm color. The camera slows dramatically as it approaches her face, revealing the fine texture of her skin and the individual lashes of her eye. The final part of the movement is a macro probe lens effect, penetrating the tear film on the corneal surface. The cornea is rendered as a perfectly transparent, wet, and curved organic lens, with the distorted reflection of the market visible on its surface. The camera passes through this layer into the anterior chamber, a clear, fluid-filled space. Ahead, the iris is a magnificent, intricate structure of deep brown and amber fibrous tissue, contracting subtly in response to the perceived light. The pupil is a perfect black aperture at its center, beckoning the camera forward. The lighting transitions from the bright, warm sunlight of the market to a more focused, dimmer light filtered by the eye's own structures.",
+            "duration_seconds": 3.38,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "beat_2",
+            "prompt": "Following the previous shot, the camera glides through the pupil into the posterior chamber. The scene is now dominated by the crystalline lens, a remarkable biconvex structure suspended in space. It is rendered not as simple glass, but as a complex, layered, transparent organic tissue with visible onion-like strata and subtle subsurface scattering that catches the incoming light. The light from the outside world, representing the marigold flower, streams through the pupil as a focused cone of volumetric golden rays. The camera executes a slow, graceful orbital motion around the profile of the lens. Simultaneously, we witness the process of accommodation. The ciliary muscle, a ring of pinkish, fibrous tissue surrounding the lens, visibly tenses and contracts. This action loosens the tension on the nearly invisible, thread-like zonular fibers connecting the muscle to the lens. In response, the lens, due to its natural elasticity, bulges and becomes more convex and rounded. This change in shape is smooth and organic, like a soft gel being gently squeezed. As the lens thickens, the cone of light passing through it is bent more sharply, its focal point shifting. The surrounding vitreous humor is a clear gel, but filled with microscopic, floating particles and protein strands that drift lazily through the frame, catching the volumetric light and enhancing the sense of depth and biological reality within the eyeball. The lighting is internal and directional, originating from the light cone entering the pupil.",
+            "duration_seconds": 3.43,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "beat_3",
+            "prompt": "The camera now detaches from the lens and performs a smooth tracking shot, following the converging cone of golden light as it travels through the vast, dark expanse of the vitreous cavity. The journey is swift but clear, with the floating particles of the vitreous humor streaking past. The destination is the retina, the inner back surface of the eye. As the light rays arrive, they paint a shimmering, luminous image onto the retinal surface. The camera pulls back slightly to reveal this image in its entirety: a perfect, but fully inverted and smaller, projection of the orange marigold flower. The image glows with an internal light against the deep red, wet, and textured background of the retina. This surface is a rich tapestry of biological detail, with a network of fine, branching blood vessels (the fundus) snaking across it. The camera then begins a powerful macro zoom, pushing into the glowing, inverted image. We move past the blood vessels and dive deep into the retinal tissue itself. The scene transforms into a microscopic landscape, a dense forest of photoreceptor cells. We can clearly distinguish the two types: tall, slender rods and shorter, thicker cones, all rendered as pulsating, organic structures packed together. The light from the marigold image washes over this forest, causing the tips of the cones in the fovea to glow with intense color, signaling their activation. The lighting is now almost entirely bioluminescent, coming from the image projected onto this living sensor.",
+            "duration_seconds": 3.58,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "beat_4",
+            "prompt": "The scene continues from the extreme macro view of the photoreceptor forest. As the light from the inverted marigold image bathes the rods and cones, they begin to fire. This is visualized as a spectacular chain reaction of bio-electrical energy. Each activated photoreceptor emits a brilliant, instantaneous pulse of electric-blue light. The camera pulls back rapidly, revealing that these individual pulses are not random; they form a cascading wave of energy that sweeps across the retinal surface, perfectly mirroring the shape of the inverted flower. This wave of light travels through a complex, translucent network of intermediary neurons\u2014bipolar and ganglion cells\u2014rendered as intricate, branching structures. The pulses are channeled and collected, converging from all directions towards a single point: the optic disc. This area, the blind spot, is a distinct circular region where the neural fibers bundle together. As the torrent of blue energy pulses reaches the disc, the camera plunges into it, entering the optic nerve. The environment transforms into a tunnel composed of hundreds of thousands of parallel, translucent nerve fibers. The camera executes a high-speed dolly shot, racing through this biological data cable. The electrical signals travel alongside the camera as streaks of brilliant white and blue light, pulsing rhythmically as they carry the visual information away from the eye. The texture of the nerve bundle is fibrous and glossy, with the light from the signals reflecting off the interior walls of the tunnel, creating a sense of immense speed and purpose.",
+            "duration_seconds": 3.43,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "beat_5",
+            "prompt": "The camera bursts out from the end of the optic nerve tunnel into a vast, dark, abstract space representing the brain's visual cortex. The torrent of electrical signals, no longer confined, erupts into a swirling, chaotic nebula of light particles and energy threads. For a moment, it's a cosmic ballet of disorganized information, a galaxy of shimmering blue and white points of light. The camera performs a slow, majestic orbit around this swirling cloud of neural data. Then, a process of organization begins. The chaotic particles start to coalesce, drawn together by an unseen force. Threads of light weave themselves together, and the swirling motion gradually resolves into a coherent form. The colors shift from electric blue to the warm, natural oranges and greens of the original subject. The inverted image of the marigold flower begins to form, flipping upright as it solidifies. The image grows in clarity, detail, and vibrancy, becoming a hyper-realistic, three-dimensional reconstruction of the flower, floating in the center of the dark space. As the image becomes perfectly stable and vivid, the camera pushes directly into its center. The shot seamlessly cross-dissolves back to the real world, returning to the young woman in the Mysore market. The camera is now in a gentle close-up on her face as a soft smile forms on her lips, her eyes crinkling with appreciation as she looks at the real marigold flower. The warm, golden sunlight of the market fills the scene, bringing the entire visual journey to a satisfying, emotional conclusion.",
+            "duration_seconds": 3.5,
+            "style": "realistic"
+          }
+        ]
+      },
+      "video_path": "videos/topic_9.mp4"
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-12-23T13:28:46.857241Z",
+    "pipeline_version": "v1.5",
+    "section_count": 9,
+    "section_types": [
+      "intro",
+      "summary",
+      "content",
+      "content",
+      "content",
+      "content",
+      "example",
+      "memory",
+      "recap"
+    ],
+    "total_duration_seconds": 515.47,
+    "tts_segments_processed": 49,
+    "tts_provider": "edge_tts"
+  }
+}

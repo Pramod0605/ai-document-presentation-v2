@@ -90,7 +90,7 @@ class VisualSpecArtistAgent(BaseAgent):
         """Validate semantic rules for visuals."""
         errors = []
         
-        narration = input_data.get("narration", {}).get("narration", {})
+        narration = input_data.get("narration", {})
         segments = narration.get("segments", [])
         segment_ids = {s.get("segment_id") for s in segments}
         

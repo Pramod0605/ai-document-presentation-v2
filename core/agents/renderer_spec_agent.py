@@ -122,7 +122,12 @@ class RendererSpecAgent(BaseAgent):
             object_ids = {obj.get("id") for obj in objects}
             
             for anim in sequence:
-                if anim.get("object_id") not in object_ids:
-                    errors.append(f"animation references unknown object_id: {anim.get('object_id')}")
+                obj_id = anim.get("object_id")
+                if isinstance(obj_id, list):
+                    for oid in obj_id:
+                        if oid not in object_ids:
+                            errors.append(f"animation references unknown object_id: {oid}")
+                elif obj_id not in object_ids:
+                    errors.append(f"animation references unknown object_id: {obj_id}")
         
         return len(errors) == 0, errors
