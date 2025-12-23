@@ -130,7 +130,7 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 | SectionPlanner | `core/agents/section_planner.py` | ~10 fields per section |
 | NarrationWriter | `core/agents/narration_writer.py` | 5 fields (section_id, narration.full_text, segments) |
 | VisualSpecArtist | `core/agents/visual_spec_artist.py` | ~12 fields (visual_beats, segment_enrichments) |
-| RendererSpecAgent | `core/agents/renderer_spec_agent.py` | Variable (manim/video/remotion spec) |
+| RendererSpecAgent | `core/agents/renderer_spec_agent.py` | Variable (manim/video spec) - remotion removed |
 | MemoryFlashcard | `core/agents/memory_agent.py` | 5 flashcards |
 | RecapScene | `core/agents/recap_agent.py` | 5 video prompts (300+ words each) |
 
@@ -157,6 +157,13 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 - **AnalyticsTracker add_llm_call**: Added missing method for V1.5 agent tracking
 - **RendererSpec list object_id**: Fixed to handle list-type object_ids in manim validation
 - **RecapScene banned phrases**: Relaxed to warnings, lowered min word count to 200
+- **ISS-115**: Post-TTS audio consolidation - concatenates segment audio into section_X.mp3
+- **ISS-118**: Remotion renderer removed - SectionPlanner only allows manim/video/none
+- **ISS-121**: Section-level display_directives arrays added for player compatibility
+
+### Remaining Issues
+- **ISS-117**: Manim renders fail due to LLM generating invalid Python code
+- **ISS-120**: WAN/Video prompts exceed API character limit (1900+ chars)
 
 ### Recent Issues Fixed (V1.4)
 - **ISS-111**: Renderer execution wired into V1.4 pipeline
