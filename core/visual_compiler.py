@@ -303,7 +303,8 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
                 pos_name = f"np.array([{obj_position[0]}, {obj_position[1]}, 0])"
             else:
                 pos_name = POSITION_MAP.get(obj_position, "ORIGIN")
-            code_lines.append(f'{var_name} = MathTex(r"{latex}").move_to({pos_name})')
+            display_text = latex.replace("\\", "").replace("{", "").replace("}", "").replace("_", "").replace("^", "")
+            code_lines.append(f'{var_name} = Text("{display_text}", font_size=32).move_to({pos_name})')
         
         elif obj_type == "label":
             latex = obj.get("latex") or props.get("latex", "")
@@ -316,7 +317,8 @@ def translate_spec_to_manim_code(spec: dict, section_id: int, beat_index: int) -
             else:
                 pos_str = POSITION_MAP.get(obj_position, "ORIGIN")
             if latex:
-                code_lines.append(f'{var_name} = MathTex(r"{latex}").scale({scale}).move_to({pos_str})')
+                display_text = latex.replace("\\", "").replace("{", "").replace("}", "").replace("_", "").replace("^", "")
+                code_lines.append(f'{var_name} = Text("{display_text}", font_size={int(font_size * scale)}).move_to({pos_str})')
             else:
                 code_lines.append(f'{var_name} = Text("{text}", font_size={font_size}).move_to({pos_str})')
         

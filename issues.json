@@ -1905,12 +1905,14 @@
     {
       "id": "ISS-123",
       "title": "Manim LaTeX standalone.cls package not available in NixOS environment",
-      "status": "open",
+      "status": "resolved",
       "priority": "high",
       "created": "2025-12-23",
       "description": "Manim requires the LaTeX standalone.cls package for MathTex rendering. The NixOS texliveFull package is installed but standalone.cls is not found in the TeX path. This is an infrastructure/environment issue, not a code issue.",
       "workaround": "Avoid using MathTex in Manim scenes until environment is configured correctly. Use Text() instead for labels.",
-      "files_affected": []
+      "files_affected": [],
+      "resolved": "2025-12-23",
+      "solution": "Applied workaround: visual_compiler now uses Text() instead of MathTex() for equations, avoiding LaTeX dependency."
     }
   ],
   "metadata": {
