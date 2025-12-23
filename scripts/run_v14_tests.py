@@ -17,6 +17,9 @@ import time
 import requests
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from scripts.validate_display_layer import validate_presentation_dict
+
 API_BASE = "http://localhost:5000"
 
 TEST_CONFIGS = [
@@ -78,7 +81,9 @@ def run_test(config: dict) -> dict:
         "warnings": [],
         "sections": [],
         "analytics": None,
-        "duration": 0
+        "duration": 0,
+        "display_validation": None,
+        "presentation": None
     }
     
     try:
@@ -119,6 +124,7 @@ def run_test(config: dict) -> dict:
         
         presentation = data.get("presentation", {})
         results["analytics"] = data.get("analytics", {})
+        results["presentation"] = presentation
         
         sections = presentation.get("sections", [])
         print(f"Sections generated: {len(sections)}")
@@ -184,6 +190,28 @@ def run_test(config: dict) -> dict:
             flashcards = memory_sections[0].get("flashcards", [])
             if len(flashcards) < 5:
                 results["warnings"].append(f"Memory section has {len(flashcards)} flashcards (expected 5)")
+        
+        print("\nRunning Display Layer Validation...")
+        display_success, display_errors, display_warnings, display_stats = validate_presentation_dict(presentation)
+        
+        if not display_success:
+            for err in display_errors:
+                results["errors"].append(f"DISPLAY: {err}")
+        
+        for warn in display_warnings:
+            results["warnings"].append(f"DISPLAY: {warn}")
+        
+        results["display_validation"] = {
+            "success": display_success,
+            "errors": display_errors,
+            "warnings": display_warnings,
+            "stats": display_stats
+        }
+        
+        if display_success:
+            print(f"Display Layer Validation: PASS ({display_stats['total_segments']} segments, {display_stats['total_duration']:.1f}s)")
+        else:
+            print(f"Display Layer Validation: FAIL ({len(display_errors)} errors)")
         
         results["success"] = len(results["errors"]) == 0
         
@@ -265,9 +293,17 @@ def main():
         
         output_file = f"test_outputs/{config['file'].split('/')[-1].replace('.md', '_result.json')}"
         os.makedirs("test_outputs", exist_ok=True)
+        
+        result_to_save = {k: v for k, v in result.items() if k != "presentation"}
         with open(output_file, 'w') as f:
-            json.dump(result, f, indent=2)
+            json.dump(result_to_save, f, indent=2)
         print(f"Result saved to: {output_file}")
+        
+        if result.get("presentation"):
+            pres_file = f"test_outputs/{config['file'].split('/')[-1].replace('.md', '_presentation.json')}"
+            with open(pres_file, 'w') as f:
+                json.dump(result["presentation"], f, indent=2)
+            print(f"Presentation saved to: {pres_file}")
     
     print_summary(all_results)
     
