@@ -1,0 +1,3382 @@
+{
+  "spec_version": "v1.4",
+  "title": "Understanding Definite Integrals",
+  "subject": "General Science",
+  "grade": "12",
+  "sections": [
+    {
+      "section_id": "section_1",
+      "section_type": "intro",
+      "title": "Welcome to Definite Integrals!",
+      "renderer": "none",
+      "renderer_reasoning": "The intro section is primarily text-based and sets the stage, making Remotion the ideal choice for simple text and avatar animations.",
+      "layout": {
+        "avatar_position": "center",
+        "avatar_width_percent": 50,
+        "content_zone": "100% full",
+        "avatar_zone": "50% center"
+      },
+      "narration": {
+        "full_text": "Namaste students! Welcome to our deep dive into one of the most powerful concepts in mathematics: the definite integral. Have you ever wondered how we can calculate the exact area of a shape with curved edges? Today, you'll find out! We will start by defining what a definite integral is and how it represents 'signed area'. Then, we'll explore the key properties that make working with integrals much easier. After that, we will unlock the secret that connects integrals back to derivatives with the Fundamental Theorem of Calculus, looking at both Part 1 and Part 2. We'll also review some common antiderivative formulas you'll need. Finally, we'll put it all together and walk through a complete example, step-by-step. By the end of this lesson, you'll be ready to tackle definite integrals with confidence. Let's begin!",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Namaste students! Welcome to our deep dive into one of the most powerful concepts in mathematics: the definite integral. Have you ever wondered how we can calculate the exact area of a shape with curved edges? Today, you'll find out!",
+            "duration_estimate": 15.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Welcome to Definite Integrals!"
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "welcoming"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "We will start by defining what a definite integral is and how it represents 'signed area'. Then, we'll explore the key properties that make working with integrals much easier.",
+            "duration_estimate": 12.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "What is a Definite Integral? (Signed Area)",
+                "Key Properties of Integrals"
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "After that, we will unlock the secret that connects integrals back to derivatives with the Fundamental Theorem of Calculus, looking at both Part 1 and Part 2. We'll also review some common antiderivative formulas you'll need.",
+            "duration_estimate": 14.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "The Fundamental Theorem of Calculus (Part 1 & 2)",
+                "Common Antiderivative Formulas"
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "thinking"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Finally, we'll put it all together and walk through a complete example, step-by-step. By the end of this lesson, you'll be ready to tackle definite integrals with confidence. Let's begin!",
+            "duration_estimate": 12.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Worked Example: Step-by-Step Calculation",
+                "Let's get started!"
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "encouraging"
+          }
+        ]
+      },
+      "renderer_override_reason": "ISS-113: intro is text-only, forced from 'remotion' to 'none'"
+    },
+    {
+      "section_id": "section_2",
+      "section_type": "summary",
+      "title": "Lesson Summary",
+      "renderer": "none",
+      "renderer_reasoning": "A summary is a text-heavy recap, perfect for Remotion's ability to display bullet points and text clearly alongside the avatar.",
+      "layout": {
+        "avatar_position": "right",
+        "avatar_width_percent": 30,
+        "content_zone": "70% left",
+        "avatar_zone": "30% right"
+      },
+      "narration": {
+        "full_text": "Let's quickly summarize what we've learned. First, the definite integral represents the signed area under a curve between two points. Second, integrals have important properties, like linearity, which allow us to simplify complex problems. Most importantly, we learned about the Fundamental Theorem of Calculus. Part 1 shows that differentiation and integration are inverse operations. Part 2 gives us a practical method to calculate definite integrals using antiderivatives, by evaluating at the upper and lower limits and taking the difference. Mastering these concepts is the key to unlocking calculus.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Let's quickly summarize what we've learned. First, the definite integral represents the signed area under a curve between two points.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Definite Integral: Represents the signed area under a function's curve."
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "summarizing"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Second, integrals have important properties, like linearity, which allow us to simplify complex problems.",
+            "duration_estimate": 8.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Key Properties: Linearity and additivity help simplify calculations."
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Most importantly, we learned about the Fundamental Theorem of Calculus. Part 1 shows that differentiation and integration are inverse operations.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "FTC Part 1: Links differentiation and integration as inverse processes."
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Part 2 gives us a practical method to calculate definite integrals using antiderivatives, by evaluating at the upper and lower limits and taking the difference. Mastering these concepts is the key to unlocking calculus.",
+            "duration_estimate": 14.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "FTC Part 2: Provides the method for evaluation: F(b) - F(a)."
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "encouraging"
+          }
+        ]
+      },
+      "renderer_override_reason": "ISS-113: summary is text-only, forced from 'remotion' to 'none'"
+    },
+    {
+      "section_id": "section_3",
+      "section_type": "content",
+      "title": "Defining the Definite Integral",
+      "renderer": "manim",
+      "renderer_reasoning": "This section defines the integral as an area under a curve. Manim is essential for drawing the function graph, axes, and shading the area, which is a core geometric concept.",
+      "layout": {
+        "avatar_position": "left",
+        "avatar_width_percent": 30,
+        "content_zone": "70% right",
+        "avatar_zone": "30% left"
+      },
+      "narration": {
+        "full_text": "So, what exactly is a definite integral? At its heart, it's a way to calculate the total accumulation of a quantity. Visually, it represents the 'signed area' under the graph of a function between two points on the x-axis. We write it using this special notation. The symbol that looks like a stretched 'S' is the integral sign. The function f(x) is called the integrand\u2014it's the function whose area we are measuring. The 'dx' tells us that we are integrating with respect to the variable x. Finally, 'a' and 'b' are the limits of integration; they define the interval on the x-axis. 'a' is the lower limit and 'b' is the upper limit. If the function is above the x-axis, the area is positive. If it's below, the area is negative. This is why we call it 'signed area'. This concept is built from the idea of slicing the area into infinitely many thin rectangles, called Riemann sums, and adding them up.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "So, what exactly is a definite integral? At its heart, it's a way to calculate the total accumulation of a quantity. Visually, it represents the 'signed area' under the graph of a function between two points on the x-axis.",
+            "duration_estimate": 18.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "visual_content": null,
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "We write it using this special notation. The symbol that looks like a stretched 'S' is the integral sign. The function f(x) is called the integrand\u2014it's the function whose area we are measuring.",
+            "duration_estimate": 15.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": null,
+            "avatar_gesture": "pointing"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "The 'dx' tells us that we are integrating with respect to the variable x. Finally, 'a' and 'b' are the limits of integration; they define the interval on the x-axis. 'a' is the lower limit and 'b' is the upper limit.",
+            "duration_estimate": 16.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": null,
+            "avatar_gesture": "pointing"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "If the function is above the x-axis, the area is positive. If it's below, the area is negative. This is why we call it 'signed area'. This concept is built from the idea of slicing the area into infinitely many thin rectangles, called Riemann sums, and adding them up.",
+            "duration_estimate": 20.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Area above x-axis is positive",
+                "Area below x-axis is negative",
+                "Foundation: Summing infinite thin rectangles (Riemann Sums)"
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "explaining"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "3_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "animation",
+          "description": "Draw a coordinate plane. Plot a simple curve, like y = x^2 + 2. Shade the area under the curve from x=a to x=b."
+        },
+        {
+          "beat_id": "3_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "formula",
+          "description": "Display the definite integral formula '\\int_{a}^{b} f(x) \\, dx'. Highlight the integral symbol 'S' and then the integrand 'f(x)' as they are mentioned."
+        },
+        {
+          "beat_id": "3_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "formula",
+          "description": "In the formula '\\int_{a}^{b} f(x) \\, dx', highlight 'dx', then 'a' (lower limit), and 'b' (upper limit) as they are mentioned."
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "axes",
+            "type": "graph",
+            "position": [
+              0,
+              -1
+            ],
+            "properties": {
+              "x_range": [
+                -1,
+                5
+              ],
+              "y_range": [
+                -1,
+                8
+              ],
+              "color": "WHITE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "curve",
+            "type": "graph",
+            "position": [
+              0,
+              -1
+            ],
+            "properties": {
+              "function": "x**2 + 2",
+              "x_range": [
+                0,
+                4
+              ],
+              "color": "BLUE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "shaded_area",
+            "type": "shape",
+            "position": [
+              0,
+              -1
+            ],
+            "properties": {
+              "area_under_curve": true,
+              "x_range": [
+                1,
+                3
+              ],
+              "color": "BLUE",
+              "opacity": 0.3
+            }
+          },
+          {
+            "id": "integral_formula",
+            "type": "equation",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} f(x) \\, dx",
+              "color": "WHITE",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "point_a",
+            "type": "point",
+            "position": [
+              -1.5,
+              -1
+            ],
+            "properties": {
+              "color": "RED",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "point_b",
+            "type": "point",
+            "position": [
+              1.5,
+              -1
+            ],
+            "properties": {
+              "color": "RED",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "label_a",
+            "type": "label",
+            "position": [
+              -1.5,
+              -2
+            ],
+            "properties": {
+              "latex": "a",
+              "color": "RED",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "label_b",
+            "type": "label",
+            "position": [
+              1.5,
+              -2
+            ],
+            "properties": {
+              "latex": "b",
+              "color": "RED",
+              "scale": 0.8
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "draw",
+            "target": "axes",
+            "duration": 2
+          },
+          {
+            "action": "draw",
+            "target": "curve",
+            "duration": 3
+          },
+          {
+            "action": "appear",
+            "target": "point_a",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "point_b",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "label_a",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "label_b",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "shaded_area",
+            "duration": 3
+          },
+          {
+            "action": "wait",
+            "target": "all",
+            "duration": 6
+          },
+          {
+            "action": "show_equation",
+            "target": "integral_formula",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "integral_formula",
+            "duration": 2,
+            "color": "YELLOW",
+            "target_latex_part": "\\int"
+          },
+          {
+            "action": "highlight",
+            "target": "integral_formula",
+            "duration": 2,
+            "color": "GREEN",
+            "target_latex_part": "f(x)"
+          },
+          {
+            "action": "wait",
+            "target": "all",
+            "duration": 9
+          },
+          {
+            "action": "highlight",
+            "target": "integral_formula",
+            "duration": 2,
+            "color": "ORANGE",
+            "target_latex_part": "dx"
+          },
+          {
+            "action": "highlight",
+            "target": "integral_formula",
+            "duration": 2,
+            "color": "RED",
+            "target_latex_part": "a"
+          },
+          {
+            "action": "highlight",
+            "target": "integral_formula",
+            "duration": 2,
+            "color": "RED",
+            "target_latex_part": "b"
+          },
+          {
+            "action": "wait",
+            "target": "all",
+            "duration": 10
+          },
+          {
+            "action": "fade_out",
+            "target": "axes",
+            "duration": 2
+          },
+          {
+            "action": "fade_out",
+            "target": "curve",
+            "duration": 2
+          },
+          {
+            "action": "fade_out",
+            "target": "shaded_area",
+            "duration": 2
+          },
+          {
+            "action": "fade_out",
+            "target": "point_a",
+            "duration": 2
+          },
+          {
+            "action": "fade_out",
+            "target": "point_b",
+            "duration": 2
+          },
+          {
+            "action": "fade_out",
+            "target": "label_a",
+            "duration": 2
+          },
+          {
+            "action": "fade_out",
+            "target": "label_b",
+            "duration": 2
+          },
+          {
+            "action": "move",
+            "target": "integral_formula",
+            "duration": 3,
+            "position": [
+              0,
+              0
+            ]
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "3_1",
+            "segment_id": "seg_1",
+            "visual_beat_type": "animation",
+            "description": "Draw a coordinate plane. Plot a simple curve, like y = x^2 + 2. Shade the area under the curve from x=a to x=b."
+          },
+          {
+            "beat_id": "3_2",
+            "segment_id": "seg_2",
+            "visual_beat_type": "formula",
+            "description": "Display the definite integral formula '\\int_{a}^{b} f(x) \\, dx'. Highlight the integral symbol 'S' and then the integrand 'f(x)' as they are mentioned."
+          },
+          {
+            "beat_id": "3_3",
+            "segment_id": "seg_3",
+            "visual_beat_type": "formula",
+            "description": "In the formula '\\int_{a}^{b} f(x) \\, dx', highlight 'dx', then 'a' (lower limit), and 'b' (upper limit) as they are mentioned."
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "axes",
+              "type": "graph",
+              "position": [
+                0,
+                -1
+              ],
+              "properties": {
+                "x_range": [
+                  -1,
+                  5
+                ],
+                "y_range": [
+                  -1,
+                  8
+                ],
+                "color": "WHITE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "curve",
+              "type": "graph",
+              "position": [
+                0,
+                -1
+              ],
+              "properties": {
+                "function": "x**2 + 2",
+                "x_range": [
+                  0,
+                  4
+                ],
+                "color": "BLUE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "shaded_area",
+              "type": "shape",
+              "position": [
+                0,
+                -1
+              ],
+              "properties": {
+                "area_under_curve": true,
+                "x_range": [
+                  1,
+                  3
+                ],
+                "color": "BLUE",
+                "opacity": 0.3
+              }
+            },
+            {
+              "id": "integral_formula",
+              "type": "equation",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "latex": "\\int_{a}^{b} f(x) \\, dx",
+                "color": "WHITE",
+                "scale": 1.2
+              }
+            },
+            {
+              "id": "point_a",
+              "type": "point",
+              "position": [
+                -1.5,
+                -1
+              ],
+              "properties": {
+                "color": "RED",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "point_b",
+              "type": "point",
+              "position": [
+                1.5,
+                -1
+              ],
+              "properties": {
+                "color": "RED",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "label_a",
+              "type": "label",
+              "position": [
+                -1.5,
+                -2
+              ],
+              "properties": {
+                "latex": "a",
+                "color": "RED",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "label_b",
+              "type": "label",
+              "position": [
+                1.5,
+                -2
+              ],
+              "properties": {
+                "latex": "b",
+                "color": "RED",
+                "scale": 0.8
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "draw",
+              "target": "axes",
+              "duration": 2
+            },
+            {
+              "action": "draw",
+              "target": "curve",
+              "duration": 3
+            },
+            {
+              "action": "appear",
+              "target": "point_a",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "point_b",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "label_a",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "label_b",
+              "duration": 1
+            },
+            {
+              "action": "appear",
+              "target": "shaded_area",
+              "duration": 3
+            },
+            {
+              "action": "wait",
+              "target": "all",
+              "duration": 6
+            },
+            {
+              "action": "show_equation",
+              "target": "integral_formula",
+              "duration": 2
+            },
+            {
+              "action": "highlight",
+              "target": "integral_formula",
+              "duration": 2,
+              "color": "YELLOW",
+              "target_latex_part": "\\int"
+            },
+            {
+              "action": "highlight",
+              "target": "integral_formula",
+              "duration": 2,
+              "color": "GREEN",
+              "target_latex_part": "f(x)"
+            },
+            {
+              "action": "wait",
+              "target": "all",
+              "duration": 9
+            },
+            {
+              "action": "highlight",
+              "target": "integral_formula",
+              "duration": 2,
+              "color": "ORANGE",
+              "target_latex_part": "dx"
+            },
+            {
+              "action": "highlight",
+              "target": "integral_formula",
+              "duration": 2,
+              "color": "RED",
+              "target_latex_part": "a"
+            },
+            {
+              "action": "highlight",
+              "target": "integral_formula",
+              "duration": 2,
+              "color": "RED",
+              "target_latex_part": "b"
+            },
+            {
+              "action": "wait",
+              "target": "all",
+              "duration": 10
+            },
+            {
+              "action": "fade_out",
+              "target": "axes",
+              "duration": 2
+            },
+            {
+              "action": "fade_out",
+              "target": "curve",
+              "duration": 2
+            },
+            {
+              "action": "fade_out",
+              "target": "shaded_area",
+              "duration": 2
+            },
+            {
+              "action": "fade_out",
+              "target": "point_a",
+              "duration": 2
+            },
+            {
+              "action": "fade_out",
+              "target": "point_b",
+              "duration": 2
+            },
+            {
+              "action": "fade_out",
+              "target": "label_a",
+              "duration": 2
+            },
+            {
+              "action": "fade_out",
+              "target": "label_b",
+              "duration": 2
+            },
+            {
+              "action": "move",
+              "target": "integral_formula",
+              "duration": 3,
+              "position": [
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_id": "section_4",
+      "section_type": "content",
+      "title": "Key Properties of Definite Integrals",
+      "renderer": "manim",
+      "renderer_reasoning": "This section is formula-heavy, dealing with algebraic properties. Manim is the best choice to display and manipulate these mathematical equations clearly.",
+      "layout": {
+        "avatar_position": "left",
+        "avatar_width_percent": 30,
+        "content_zone": "70% right",
+        "avatar_zone": "30% left"
+      },
+      "narration": {
+        "full_text": "Definite integrals follow a set of rules that make them much easier to work with. Let's go through the most important ones. First is the Constant Multiple Rule. If you are integrating a function multiplied by a constant, you can pull that constant outside the integral. This simplifies the calculation. Next is the Sum and Difference Rule. The integral of a sum of two functions is simply the sum of their individual integrals. The same applies to differences. This allows us to break down a complex integrand into simpler parts. Another key property is Additivity. If you integrate from 'a' to 'c', and then from 'c' to 'b', the sum is the same as integrating directly from 'a' to 'b', provided 'c' is between 'a' and 'b'. This is like adding adjacent areas. Finally, there's the Reversal of Interval property. If you swap the limits of integration, the value of the integral gets multiplied by negative one. These properties are your toolkit for simplifying and solving definite integrals.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Definite integrals follow a set of rules that make them much easier to work with. Let's go through the most important ones. First is the Constant Multiple Rule. If you are integrating a function multiplied by a constant, you can pull that constant outside the integral. This simplifies the calculation.",
+            "duration_estimate": 20.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "visual_content": null,
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Next is the Sum and Difference Rule. The integral of a sum of two functions is simply the sum of their individual integrals. The same applies to differences. This allows us to break down a complex integrand into simpler parts.",
+            "duration_estimate": 18.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            },
+            "visual_content": null,
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Another key property is Additivity. If you integrate from 'a' to 'c', and then from 'c' to 'b', the sum is the same as integrating directly from 'a' to 'b', provided 'c' is between 'a' and 'b'. This is like adding adjacent areas.",
+            "duration_estimate": 19.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            },
+            "visual_content": null,
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Finally, there's the Reversal of Interval property. If you swap the limits of integration, the value of the integral gets multiplied by negative one. These properties are your toolkit for simplifying and solving definite integrals.",
+            "duration_estimate": 15.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "replace",
+              "avatar_layer": "show"
+            },
+            "visual_content": null,
+            "avatar_gesture": "encouraging"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "4_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "formula",
+          "description": "Display the title 'Constant Multiple Rule'. Show the formula '\\int_{a}^{b} c f(x) \\, dx = c \\int_{a}^{b} f(x) \\, dx'. Animate the 'c' moving out of the integral."
+        },
+        {
+          "beat_id": "4_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "formula",
+          "description": "Display the title 'Sum/Difference Rule'. Show the formula '\\int_{a}^{b} [f(x) \\pm g(x)] \\, dx = \\int_{a}^{b} f(x) \\, dx \\pm \\int_{a}^{b} g(x) \\, dx'. Animate the integral splitting into two."
+        },
+        {
+          "beat_id": "4_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "formula",
+          "description": "Display the title 'Additivity Rule'. Show the formula '\\int_{a}^{c} f(x) \\, dx + \\int_{c}^{b} f(x) \\, dx = \\int_{a}^{b} f(x) \\, dx'."
+        },
+        {
+          "beat_id": "4_4",
+          "segment_id": "seg_4",
+          "visual_beat_type": "formula",
+          "description": "Display the title 'Reversal of Interval'. Show the formula '\\int_{a}^{b} f(x) \\, dx = - \\int_{b}^{a} f(x) \\, dx'. Animate the limits 'a' and 'b' swapping places as the minus sign appears."
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title1",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "text": "Constant Multiple Rule",
+              "color": "BLUE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "eq1",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} c f(x) \\, dx = c \\int_{a}^{b} f(x) \\, dx",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "title2",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "text": "Sum/Difference Rule",
+              "color": "BLUE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "eq2",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} [f(x) \\pm g(x)] \\, dx = \\int_{a}^{b} f(x) \\, dx \\pm \\int_{a}^{b} g(x) \\, dx",
+              "color": "WHITE",
+              "scale": 0.9
+            }
+          },
+          {
+            "id": "title3",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "text": "Additivity Rule",
+              "color": "BLUE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "eq3",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{c} f(x) \\, dx + \\int_{c}^{b} f(x) \\, dx = \\int_{a}^{b} f(x) \\, dx",
+              "color": "WHITE",
+              "scale": 0.9
+            }
+          },
+          {
+            "id": "title4",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "text": "Reversal of Interval",
+              "color": "BLUE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "eq4",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} f(x) \\, dx = - \\int_{b}^{a} f(x) \\, dx",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title1",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "eq1",
+            "duration": 2.0
+          },
+          {
+            "action": "highlight",
+            "target": "eq1",
+            "duration": 2.0,
+            "color": "YELLOW",
+            "target_latex_part": "c"
+          },
+          {
+            "action": "wait",
+            "target": "eq1",
+            "duration": 15.0
+          },
+          {
+            "action": "fade_out",
+            "target": "title1",
+            "duration": 0.5
+          },
+          {
+            "action": "fade_out",
+            "target": "eq1",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "title2",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "eq2",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "eq2",
+            "duration": 15.0
+          },
+          {
+            "action": "fade_out",
+            "target": "title2",
+            "duration": 0.5
+          },
+          {
+            "action": "fade_out",
+            "target": "eq2",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "title3",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "eq3",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "eq3",
+            "duration": 16.0
+          },
+          {
+            "action": "fade_out",
+            "target": "title3",
+            "duration": 0.5
+          },
+          {
+            "action": "fade_out",
+            "target": "eq3",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "title4",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "eq4",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "eq4",
+            "duration": 9.0
+          },
+          {
+            "action": "highlight",
+            "target": "eq4",
+            "duration": 3.0,
+            "color": "GREEN"
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "4_1",
+            "segment_id": "seg_1",
+            "visual_beat_type": "formula",
+            "description": "Display the title 'Constant Multiple Rule'. Show the formula '\\int_{a}^{b} c f(x) \\, dx = c \\int_{a}^{b} f(x) \\, dx'. Animate the 'c' moving out of the integral."
+          },
+          {
+            "beat_id": "4_2",
+            "segment_id": "seg_2",
+            "visual_beat_type": "formula",
+            "description": "Display the title 'Sum/Difference Rule'. Show the formula '\\int_{a}^{b} [f(x) \\pm g(x)] \\, dx = \\int_{a}^{b} f(x) \\, dx \\pm \\int_{a}^{b} g(x) \\, dx'. Animate the integral splitting into two."
+          },
+          {
+            "beat_id": "4_3",
+            "segment_id": "seg_3",
+            "visual_beat_type": "formula",
+            "description": "Display the title 'Additivity Rule'. Show the formula '\\int_{a}^{c} f(x) \\, dx + \\int_{c}^{b} f(x) \\, dx = \\int_{a}^{b} f(x) \\, dx'."
+          },
+          {
+            "beat_id": "4_4",
+            "segment_id": "seg_4",
+            "visual_beat_type": "formula",
+            "description": "Display the title 'Reversal of Interval'. Show the formula '\\int_{a}^{b} f(x) \\, dx = - \\int_{b}^{a} f(x) \\, dx'. Animate the limits 'a' and 'b' swapping places as the minus sign appears."
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "title1",
+              "type": "label",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "text": "Constant Multiple Rule",
+                "color": "BLUE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "eq1",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "\\int_{a}^{b} c f(x) \\, dx = c \\int_{a}^{b} f(x) \\, dx",
+                "color": "WHITE",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "title2",
+              "type": "label",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "text": "Sum/Difference Rule",
+                "color": "BLUE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "eq2",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "\\int_{a}^{b} [f(x) \\pm g(x)] \\, dx = \\int_{a}^{b} f(x) \\, dx \\pm \\int_{a}^{b} g(x) \\, dx",
+                "color": "WHITE",
+                "scale": 0.9
+              }
+            },
+            {
+              "id": "title3",
+              "type": "label",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "text": "Additivity Rule",
+                "color": "BLUE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "eq3",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "\\int_{a}^{c} f(x) \\, dx + \\int_{c}^{b} f(x) \\, dx = \\int_{a}^{b} f(x) \\, dx",
+                "color": "WHITE",
+                "scale": 0.9
+              }
+            },
+            {
+              "id": "title4",
+              "type": "label",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "text": "Reversal of Interval",
+                "color": "BLUE",
+                "scale": 0.8
+              }
+            },
+            {
+              "id": "eq4",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "\\int_{a}^{b} f(x) \\, dx = - \\int_{b}^{a} f(x) \\, dx",
+                "color": "WHITE",
+                "scale": 1.0
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "appear",
+              "target": "title1",
+              "duration": 1.0
+            },
+            {
+              "action": "show_equation",
+              "target": "eq1",
+              "duration": 2.0
+            },
+            {
+              "action": "highlight",
+              "target": "eq1",
+              "duration": 2.0,
+              "color": "YELLOW",
+              "target_latex_part": "c"
+            },
+            {
+              "action": "wait",
+              "target": "eq1",
+              "duration": 15.0
+            },
+            {
+              "action": "fade_out",
+              "target": "title1",
+              "duration": 0.5
+            },
+            {
+              "action": "fade_out",
+              "target": "eq1",
+              "duration": 0.5
+            },
+            {
+              "action": "appear",
+              "target": "title2",
+              "duration": 1.0
+            },
+            {
+              "action": "show_equation",
+              "target": "eq2",
+              "duration": 2.0
+            },
+            {
+              "action": "wait",
+              "target": "eq2",
+              "duration": 15.0
+            },
+            {
+              "action": "fade_out",
+              "target": "title2",
+              "duration": 0.5
+            },
+            {
+              "action": "fade_out",
+              "target": "eq2",
+              "duration": 0.5
+            },
+            {
+              "action": "appear",
+              "target": "title3",
+              "duration": 1.0
+            },
+            {
+              "action": "show_equation",
+              "target": "eq3",
+              "duration": 2.0
+            },
+            {
+              "action": "wait",
+              "target": "eq3",
+              "duration": 16.0
+            },
+            {
+              "action": "fade_out",
+              "target": "title3",
+              "duration": 0.5
+            },
+            {
+              "action": "fade_out",
+              "target": "eq3",
+              "duration": 0.5
+            },
+            {
+              "action": "appear",
+              "target": "title4",
+              "duration": 1.0
+            },
+            {
+              "action": "show_equation",
+              "target": "eq4",
+              "duration": 2.0
+            },
+            {
+              "action": "wait",
+              "target": "eq4",
+              "duration": 9.0
+            },
+            {
+              "action": "highlight",
+              "target": "eq4",
+              "duration": 3.0,
+              "color": "GREEN"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_id": "section_5",
+      "section_type": "content",
+      "title": "The Fundamental Theorem of Calculus, Part 1",
+      "renderer": "manim",
+      "renderer_reasoning": "FTC Part 1 is a deep theoretical concept linking derivatives and integrals. Manim is needed to visually represent the abstract formula and the relationship between the area function and the original function.",
+      "layout": {
+        "avatar_position": "left",
+        "avatar_width_percent": 30,
+        "content_zone": "70% right",
+        "avatar_zone": "30% left"
+      },
+      "narration": {
+        "full_text": "Now we arrive at a truly groundbreaking idea: The Fundamental Theorem of Calculus. Part 1 of this theorem creates a beautiful link between the two major branches of calculus: differentiation and integration. It shows they are inverse operations. Imagine we define a new function, let's call it g(x), which is the integral of another function f(t) from a constant 'a' up to a variable 'x'. So, g(x) represents the accumulated area under f(t) as x increases. What do you think happens if we take the derivative of this area function g(x)? The Fundamental Theorem of Calculus Part 1 states that the derivative of this integral function g(x) is simply the original function f(x) that we started with! In other words, if you integrate a function and then differentiate the result, you get back to the original function. This powerful idea, that differentiation undoes integration, is the foundation for how we actually compute integrals.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Now we arrive at a truly groundbreaking idea: The Fundamental Theorem of Calculus. Part 1 of this theorem creates a beautiful link between the two major branches of calculus: differentiation and integration. It shows they are inverse operations.",
+            "duration_estimate": 18.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "The Fundamental Theorem of Calculus (FTC)",
+                "Links Differentiation and Integration",
+                "They are inverse operations."
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Imagine we define a new function, let's call it g(x), which is the integral of another function f(t) from a constant 'a' up to a variable 'x'. So, g(x) represents the accumulated area under f(t) as x increases.",
+            "duration_estimate": 19.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "visual_content": null,
+            "avatar_gesture": "thinking"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "What do you think happens if we take the derivative of this area function g(x)? The Fundamental Theorem of Calculus Part 1 states that the derivative of this integral function g(x) is simply the original function f(x) that we started with!",
+            "duration_estimate": 19.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": null,
+            "avatar_gesture": "revealing"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "In other words, if you integrate a function and then differentiate the result, you get back to the original function. This powerful idea, that differentiation undoes integration, is the foundation for how we actually compute integrals.",
+            "duration_estimate": 16.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Differentiation undoes Integration.",
+                "d/dx (Integral of f) = f"
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "summarizing"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "5_1",
+          "segment_id": "seg_2",
+          "visual_beat_type": "formula",
+          "description": "Display the definition of the area function: 'g(x) = \\int_{a}^{x} f(t) \\, dt'. Show a graph of f(t) with the area from 'a' to 'x' shaded, and label the area as g(x)."
+        },
+        {
+          "beat_id": "5_2",
+          "segment_id": "seg_3",
+          "visual_beat_type": "formula",
+          "description": "Show the derivative being applied to g(x): 'g'(x) = \\frac{d}{dx} \\int_{a}^{x} f(t) \\, dt'. Then, transform this to reveal the result: '= f(x)'. This is the core statement of FTC Part 1."
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "area_func",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "g(x) = \\int_{a}^{x} f(t) \\, dt",
+              "scale": 1.2,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "area_label",
+            "type": "label",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "\\text{Area function from } a \\text{ to } x",
+              "scale": 0.7,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "derivative_setup",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "g'(x) = \\frac{d}{dx} \\int_{a}^{x} f(t) \\, dt",
+              "scale": 1.1,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "ftc_result",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "= f(x)",
+              "scale": 1.3,
+              "color": "YELLOW"
+            }
+          },
+          {
+            "id": "ftc_statement",
+            "type": "label",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "\\text{Fundamental Theorem of Calculus, Part 1}",
+              "scale": 0.8,
+              "color": "GREEN"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "area_func",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "area_label",
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "duration": 16
+          },
+          {
+            "action": "transform",
+            "target": "area_func",
+            "duration": 2
+          },
+          {
+            "action": "show_equation",
+            "target": "derivative_setup",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "area_label",
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "duration": 8
+          },
+          {
+            "action": "show_equation",
+            "target": "ftc_result",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "ftc_statement",
+            "duration": 1
+          },
+          {
+            "action": "wait",
+            "duration": 5
+          },
+          {
+            "action": "highlight",
+            "target": "ftc_result",
+            "duration": 2,
+            "color": "RED"
+          },
+          {
+            "action": "wait",
+            "duration": 14
+          },
+          {
+            "action": "highlight",
+            "target": "ftc_statement",
+            "duration": 3,
+            "color": "BLUE"
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "5_1",
+            "segment_id": "seg_2",
+            "visual_beat_type": "formula",
+            "description": "Display the definition of the area function: 'g(x) = \\int_{a}^{x} f(t) \\, dt'. Show a graph of f(t) with the area from 'a' to 'x' shaded, and label the area as g(x)."
+          },
+          {
+            "beat_id": "5_2",
+            "segment_id": "seg_3",
+            "visual_beat_type": "formula",
+            "description": "Show the derivative being applied to g(x): 'g'(x) = \\frac{d}{dx} \\int_{a}^{x} f(t) \\, dt'. Then, transform this to reveal the result: '= f(x)'. This is the core statement of FTC Part 1."
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "area_func",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "g(x) = \\int_{a}^{x} f(t) \\, dt",
+                "scale": 1.2,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "area_label",
+              "type": "label",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "latex": "\\text{Area function from } a \\text{ to } x",
+                "scale": 0.7,
+                "color": "BLUE"
+              }
+            },
+            {
+              "id": "derivative_setup",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "g'(x) = \\frac{d}{dx} \\int_{a}^{x} f(t) \\, dt",
+                "scale": 1.1,
+                "color": "WHITE"
+              }
+            },
+            {
+              "id": "ftc_result",
+              "type": "equation",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "latex": "= f(x)",
+                "scale": 1.3,
+                "color": "YELLOW"
+              }
+            },
+            {
+              "id": "ftc_statement",
+              "type": "label",
+              "position": [
+                0,
+                -2.0
+              ],
+              "properties": {
+                "latex": "\\text{Fundamental Theorem of Calculus, Part 1}",
+                "scale": 0.8,
+                "color": "GREEN"
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "show_equation",
+              "target": "area_func",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "area_label",
+              "duration": 1
+            },
+            {
+              "action": "wait",
+              "duration": 16
+            },
+            {
+              "action": "transform",
+              "target": "area_func",
+              "duration": 2
+            },
+            {
+              "action": "show_equation",
+              "target": "derivative_setup",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "area_label",
+              "duration": 1
+            },
+            {
+              "action": "wait",
+              "duration": 8
+            },
+            {
+              "action": "show_equation",
+              "target": "ftc_result",
+              "duration": 2
+            },
+            {
+              "action": "appear",
+              "target": "ftc_statement",
+              "duration": 1
+            },
+            {
+              "action": "wait",
+              "duration": 5
+            },
+            {
+              "action": "highlight",
+              "target": "ftc_result",
+              "duration": 2,
+              "color": "RED"
+            },
+            {
+              "action": "wait",
+              "duration": 14
+            },
+            {
+              "action": "highlight",
+              "target": "ftc_statement",
+              "duration": 3,
+              "color": "BLUE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_id": "section_6",
+      "section_type": "content",
+      "title": "The Fundamental Theorem of Calculus, Part 2: Evaluation",
+      "renderer": "manim",
+      "renderer_reasoning": "FTC Part 2 is the core computational tool. Manim is perfect for showing the formula and animating the process of substituting the limits of integration, which is a procedural and symbolic task.",
+      "layout": {
+        "avatar_position": "left",
+        "avatar_width_percent": 30,
+        "content_zone": "70% right",
+        "avatar_zone": "30% left"
+      },
+      "narration": {
+        "full_text": "While Part 1 of the FTC is profound, Part 2 is the practical workhorse that lets us actually calculate definite integrals. It's also known as the Evaluation Theorem. Here's how it works: to find the value of the definite integral of a function f(x) from a to b, we first need to find its 'antiderivative'. An antiderivative, which we'll call capital F(x), is a function whose derivative is our original function, f(x). Once we have the antiderivative F(x), the value of the integral is simply the value of the antiderivative at the upper limit 'b' minus its value at the lower limit 'a'. This is written as F(b) minus F(a). This simple subtraction gives us the exact signed area under the curve. This is a massive shortcut! Instead of dealing with the infinite rectangles of Riemann sums, we just need to find one antiderivative and plug in two numbers. This is the method you will use most often to solve definite integral problems.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "While Part 1 of the FTC is profound, Part 2 is the practical workhorse that lets us actually calculate definite integrals. It's also known as the Evaluation Theorem.",
+            "duration_estimate": 14.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "FTC Part 2: The Evaluation Theorem",
+                "A practical tool for calculating definite integrals."
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Here's how it works: to find the value of the definite integral of a function f(x) from a to b, we first need to find its 'antiderivative'. An antiderivative, which we'll call capital F(x), is a function whose derivative is our original function, f(x).",
+            "duration_estimate": 22.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Step 1: Find an antiderivative, F(x).",
+                "An antiderivative is a function where F'(x) = f(x)."
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Once we have the antiderivative F(x), the value of the integral is simply the value of the antiderivative at the upper limit 'b' minus its value at the lower limit 'a'. This is written as F(b) minus F(a).",
+            "duration_estimate": 19.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": null,
+            "avatar_gesture": "pointing"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "This simple subtraction gives us the exact signed area under the curve. This is a massive shortcut! Instead of dealing with the infinite rectangles of Riemann sums, we just need to find one antiderivative and plug in two numbers. This is the method you will use most often to solve definite integral problems.",
+            "duration_estimate": 22.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "A huge shortcut over Riemann sums.",
+                "Find Antiderivative -> Evaluate -> Subtract."
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "celebrating"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "6_1",
+          "segment_id": "seg_3",
+          "visual_beat_type": "formula",
+          "description": "Display the full FTC Part 2 formula: '\\int_{a}^{b} f(x) \\, dx = F(b) - F(a)'. Animate the 'b' from the integral limit moving into F(b), and 'a' moving into F(a)."
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "ftc2_eq",
+            "type": "equation",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} f(x) \\, dx = F(b) - F(a)",
+              "scale": 1.2,
+              "color": "WHITE"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "ftc2_eq",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 34
+          },
+          {
+            "action": "highlight",
+            "target": "ftc2_eq",
+            "duration": 3,
+            "color": "YELLOW",
+            "target_latex_part": "F(b)"
+          },
+          {
+            "action": "highlight",
+            "target": "ftc2_eq",
+            "duration": 3,
+            "color": "BLUE",
+            "target_latex_part": "F(a)"
+          },
+          {
+            "action": "wait",
+            "duration": 13
+          },
+          {
+            "action": "highlight",
+            "target": "ftc2_eq",
+            "duration": 3,
+            "color": "GREEN"
+          },
+          {
+            "action": "fade_out",
+            "target": "ftc2_eq",
+            "duration": 2
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "6_1",
+            "segment_id": "seg_3",
+            "visual_beat_type": "formula",
+            "description": "Display the full FTC Part 2 formula: '\\int_{a}^{b} f(x) \\, dx = F(b) - F(a)'. Animate the 'b' from the integral limit moving into F(b), and 'a' moving into F(a)."
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "ftc2_eq",
+              "type": "equation",
+              "position": [
+                0,
+                0
+              ],
+              "properties": {
+                "latex": "\\int_{a}^{b} f(x) \\, dx = F(b) - F(a)",
+                "scale": 1.2,
+                "color": "WHITE"
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "show_equation",
+              "target": "ftc2_eq",
+              "duration": 2
+            },
+            {
+              "action": "wait",
+              "duration": 34
+            },
+            {
+              "action": "highlight",
+              "target": "ftc2_eq",
+              "duration": 3,
+              "color": "YELLOW",
+              "target_latex_part": "F(b)"
+            },
+            {
+              "action": "highlight",
+              "target": "ftc2_eq",
+              "duration": 3,
+              "color": "BLUE",
+              "target_latex_part": "F(a)"
+            },
+            {
+              "action": "wait",
+              "duration": 13
+            },
+            {
+              "action": "highlight",
+              "target": "ftc2_eq",
+              "duration": 3,
+              "color": "GREEN"
+            },
+            {
+              "action": "fade_out",
+              "target": "ftc2_eq",
+              "duration": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_id": "section_7",
+      "section_type": "content",
+      "title": "Common Antiderivative Formulas",
+      "renderer": "remotion",
+      "renderer_reasoning": "This section is a list of formulas. Remotion is well-suited for displaying a clean, formatted list of text-based rules without complex animations, which is all that's needed here.",
+      "layout": {
+        "avatar_position": "left",
+        "avatar_width_percent": 30,
+        "content_zone": "70% right",
+        "avatar_zone": "30% left"
+      },
+      "narration": {
+        "full_text": "To use the Fundamental Theorem Part 2, you need to be good at finding antiderivatives. Let's review some of the most common ones you'll encounter. The most frequent is the Power Rule. The antiderivative of x to the power of n is x to the power of n plus 1, all divided by n plus 1. This works for any n except negative one. What about when n is negative one? That's the case of 1 over x. Its antiderivative is the natural logarithm of the absolute value of x. For the exponential function, e to the x, things are very simple: its antiderivative is just e to the x itself! Finally, let's look at basic trigonometry. The antiderivative of cosine of x is sine of x. And the antiderivative of sine of x is negative cosine of x. Be careful with that sign change! Memorizing these basic forms will make evaluating integrals much, much faster.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "To use the Fundamental Theorem Part 2, you need to be good at finding antiderivatives. Let's review some of the most common ones you'll encounter. The most frequent is the Power Rule. The antiderivative of x to the power of n is x to the power of n plus 1, all divided by n plus 1. This works for any n except negative one.",
+            "duration_estimate": 25.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Power Rule: Antiderivative of x\u207f is (x\u207f\u207a\u00b9)/(n+1)  (for n \u2260 -1)"
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "What about when n is negative one? That's the case of 1 over x. Its antiderivative is the natural logarithm of the absolute value of x.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Log Rule: Antiderivative of 1/x is ln|x|"
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "For the exponential function, e to the x, things are very simple: its antiderivative is just e to the x itself!",
+            "duration_estimate": 9.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Exponential Rule: Antiderivative of e\u02e3 is e\u02e3"
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "explaining"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Finally, let's look at basic trigonometry. The antiderivative of cosine of x is sine of x. And the antiderivative of sine of x is negative cosine of x. Be careful with that sign change! Memorizing these basic forms will make evaluating integrals much, much faster.",
+            "duration_estimate": 20.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Trig Rule 1: Antiderivative of cos(x) is sin(x)",
+                "Trig Rule 2: Antiderivative of sin(x) is -cos(x)"
+              ],
+              "formula": null,
+              "labels": null
+            },
+            "avatar_gesture": "encouraging"
+          }
+        ]
+      },
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1920,
+        "elements": [
+          {
+            "id": "title",
+            "type": "text",
+            "content": "Common Antiderivative Formulas",
+            "position": {
+              "x": 400,
+              "y": 100
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#2563eb",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 1920
+            }
+          },
+          {
+            "id": "power_rule",
+            "type": "text",
+            "content": "Power Rule: Antiderivative of x\u207f is (x\u207f\u207a\u00b9)/(n+1)  (for n \u2260 -1)",
+            "position": {
+              "x": 400,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 60,
+              "exit_frame": 1920
+            }
+          },
+          {
+            "id": "log_rule",
+            "type": "text",
+            "content": "Log Rule: Antiderivative of 1/x is ln|x|",
+            "position": {
+              "x": 400,
+              "y": 280
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 750,
+              "exit_frame": 1920
+            }
+          },
+          {
+            "id": "exponential_rule",
+            "type": "text",
+            "content": "Exponential Rule: Antiderivative of e\u02e3 is e\u02e3",
+            "position": {
+              "x": 400,
+              "y": 360
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 1050,
+              "exit_frame": 1920
+            }
+          },
+          {
+            "id": "trig_rule_1",
+            "type": "text",
+            "content": "Trig Rule 1: Antiderivative of cos(x) is sin(x)",
+            "position": {
+              "x": 400,
+              "y": 440
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 1320,
+              "exit_frame": 1920
+            }
+          },
+          {
+            "id": "trig_rule_2",
+            "type": "text",
+            "content": "Trig Rule 2: Antiderivative of sin(x) is -cos(x)",
+            "position": {
+              "x": 400,
+              "y": 520
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 1380,
+              "exit_frame": 1920
+            }
+          }
+        ],
+        "background": {
+          "color": "#f8fafc"
+        }
+      }
+    },
+    {
+      "section_id": "section_8",
+      "section_type": "example",
+      "title": "Worked Example: Calculating a Definite Integral",
+      "renderer": "manim",
+      "renderer_reasoning": "A worked example is a step-by-step procedure. Manim is ideal for showing each step of the calculation, from finding the antiderivative to substituting the values and simplifying the result.",
+      "layout": {
+        "avatar_position": "hidden",
+        "avatar_width_percent": 0,
+        "content_zone": "100% full",
+        "avatar_zone": "0% hidden"
+      },
+      "narration": {
+        "full_text": "Let's put everything together with an example. We want to calculate the definite integral of x squared plus 2, from x equals 1 to x equals 3. First, we need to find the antiderivative of our function, x squared plus 2. Using the power rule and the constant rule, the antiderivative of x squared is x cubed over 3. The antiderivative of 2 is 2x. So, our capital F(x) is x cubed over 3 plus 2x. Now, we apply the Fundamental Theorem, Part 2: F(3) minus F(1). First, we plug in the upper limit, 3. This gives us 3 cubed over 3, plus 2 times 3. That's 27 over 3, which is 9, plus 6, for a total of 15. Next, we plug in the lower limit, 1. This gives us 1 cubed over 3, plus 2 times 1. That's 1/3 plus 2, which is 7/3. The final step is to subtract: F(3) minus F(1) is 15 minus 7/3. Finding a common denominator, that's 45/3 minus 7/3, which equals 38/3. So, the area under the curve is 38/3.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Let's put everything together with an example. We want to calculate the definite integral of x squared plus 2, from x equals 1 to x equals 3.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": null,
+            "avatar_gesture": "pointing"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "First, we need to find the antiderivative of our function, x squared plus 2. Using the power rule and the constant rule, the antiderivative of x squared is x cubed over 3. The antiderivative of 2 is 2x. So, our capital F(x) is x cubed over 3 plus 2x.",
+            "duration_estimate": 20.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": null,
+            "avatar_gesture": "pointing"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Now, we apply the Fundamental Theorem, Part 2: F(3) minus F(1).",
+            "duration_estimate": 6.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": null,
+            "avatar_gesture": "pointing"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "First, we plug in the upper limit, 3. This gives us 3 cubed over 3, plus 2 times 3. That's 27 over 3, which is 9, plus 6, for a total of 15.",
+            "duration_estimate": 14.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": null,
+            "avatar_gesture": "pointing"
+          },
+          {
+            "segment_id": "seg_5",
+            "text": "Next, we plug in the lower limit, 1. This gives us 1 cubed over 3, plus 2 times 1. That's 1/3 plus 2, which is 7/3.",
+            "duration_estimate": 11.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": null,
+            "avatar_gesture": "pointing"
+          },
+          {
+            "segment_id": "seg_6",
+            "text": "The final step is to subtract: F(3) minus F(1) is 15 minus 7/3. Finding a common denominator, that's 45/3 minus 7/3, which equals 38/3. So, the area under the curve is 38/3.",
+            "duration_estimate": 18.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": null,
+            "avatar_gesture": "celebrating"
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "8_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "formula",
+          "description": "Display the problem: 'Calculate: \\int_{1}^{3} (x^2 + 2) \\, dx'"
+        },
+        {
+          "beat_id": "8_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "formula",
+          "description": "Show the antiderivative calculation. 'f(x) = x^2 + 2'. Then show 'F(x) = \\frac{x^3}{3} + 2x'."
+        },
+        {
+          "beat_id": "8_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "formula",
+          "description": "Show the evaluation setup: '[\\frac{x^3}{3} + 2x]_{1}^{3} = F(3) - F(1)'."
+        },
+        {
+          "beat_id": "8_4",
+          "segment_id": "seg_4",
+          "visual_beat_type": "formula",
+          "description": "Show the calculation for F(3): 'F(3) = \\frac{3^3}{3} + 2(3) = 9 + 6 = 15'."
+        },
+        {
+          "beat_id": "8_5",
+          "segment_id": "seg_5",
+          "visual_beat_type": "formula",
+          "description": "Show the calculation for F(1): 'F(1) = \\frac{1^3}{3} + 2(1) = \\frac{1}{3} + 2 = \\frac{7}{3}'."
+        },
+        {
+          "beat_id": "8_6",
+          "segment_id": "seg_6",
+          "visual_beat_type": "formula",
+          "description": "Show the final subtraction: '15 - \\frac{7}{3} = \\frac{45}{3} - \\frac{7}{3} = \\frac{38}{3}'. Box the final answer."
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "problem",
+            "type": "equation",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\int_{1}^{3} (x^2 + 2) \\, dx",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "function",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "f(x) = x^2 + 2",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "antiderivative",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "F(x) = \\frac{x^3}{3} + 2x",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "evaluation_setup",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\left[\\frac{x^3}{3} + 2x\\right]_{1}^{3} = F(3) - F(1)",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "f3_calc",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "F(3) = \\frac{3^3}{3} + 2(3) = 9 + 6 = 15",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "f1_calc",
+            "type": "equation",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "F(1) = \\frac{1^3}{3} + 2(1) = \\frac{1}{3} + 2 = \\frac{7}{3}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "final_calc",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "15 - \\frac{7}{3} = \\frac{45}{3} - \\frac{7}{3} = \\frac{38}{3}",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "answer_box",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "\\boxed{\\frac{38}{3}}",
+              "scale": 1.2,
+              "color": "BLUE"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "problem",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 8
+          },
+          {
+            "action": "show_equation",
+            "target": "function",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 3
+          },
+          {
+            "action": "show_equation",
+            "target": "antiderivative",
+            "duration": 3
+          },
+          {
+            "action": "wait",
+            "duration": 12
+          },
+          {
+            "action": "fade_out",
+            "target": "function",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "antiderivative",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "evaluation_setup",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 2
+          },
+          {
+            "action": "show_equation",
+            "target": "f3_calc",
+            "duration": 3
+          },
+          {
+            "action": "wait",
+            "duration": 11
+          },
+          {
+            "action": "show_equation",
+            "target": "f1_calc",
+            "duration": 3
+          },
+          {
+            "action": "wait",
+            "duration": 8
+          },
+          {
+            "action": "fade_out",
+            "target": "evaluation_setup",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "f3_calc",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "f1_calc",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "final_calc",
+            "duration": 3
+          },
+          {
+            "action": "wait",
+            "duration": 8
+          },
+          {
+            "action": "show_equation",
+            "target": "answer_box",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "answer_box",
+            "duration": 3,
+            "color": "YELLOW"
+          }
+        ]
+      },
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "beat_id": "8_1",
+            "segment_id": "seg_1",
+            "visual_beat_type": "formula",
+            "description": "Display the problem: 'Calculate: \\int_{1}^{3} (x^2 + 2) \\, dx'"
+          },
+          {
+            "beat_id": "8_2",
+            "segment_id": "seg_2",
+            "visual_beat_type": "formula",
+            "description": "Show the antiderivative calculation. 'f(x) = x^2 + 2'. Then show 'F(x) = \\frac{x^3}{3} + 2x'."
+          },
+          {
+            "beat_id": "8_3",
+            "segment_id": "seg_3",
+            "visual_beat_type": "formula",
+            "description": "Show the evaluation setup: '[\\frac{x^3}{3} + 2x]_{1}^{3} = F(3) - F(1)'."
+          },
+          {
+            "beat_id": "8_4",
+            "segment_id": "seg_4",
+            "visual_beat_type": "formula",
+            "description": "Show the calculation for F(3): 'F(3) = \\frac{3^3}{3} + 2(3) = 9 + 6 = 15'."
+          },
+          {
+            "beat_id": "8_5",
+            "segment_id": "seg_5",
+            "visual_beat_type": "formula",
+            "description": "Show the calculation for F(1): 'F(1) = \\frac{1^3}{3} + 2(1) = \\frac{1}{3} + 2 = \\frac{7}{3}'."
+          },
+          {
+            "beat_id": "8_6",
+            "segment_id": "seg_6",
+            "visual_beat_type": "formula",
+            "description": "Show the final subtraction: '15 - \\frac{7}{3} = \\frac{45}{3} - \\frac{7}{3} = \\frac{38}{3}'. Box the final answer."
+          }
+        ],
+        "v12_manim_scene_spec": {
+          "objects": [
+            {
+              "id": "problem",
+              "type": "equation",
+              "position": [
+                0,
+                2.5
+              ],
+              "properties": {
+                "latex": "\\int_{1}^{3} (x^2 + 2) \\, dx",
+                "scale": 1.2
+              }
+            },
+            {
+              "id": "function",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "f(x) = x^2 + 2",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "antiderivative",
+              "type": "equation",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "latex": "F(x) = \\frac{x^3}{3} + 2x",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "evaluation_setup",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "\\left[\\frac{x^3}{3} + 2x\\right]_{1}^{3} = F(3) - F(1)",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "f3_calc",
+              "type": "equation",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "latex": "F(3) = \\frac{3^3}{3} + 2(3) = 9 + 6 = 15",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "f1_calc",
+              "type": "equation",
+              "position": [
+                0,
+                -2.0
+              ],
+              "properties": {
+                "latex": "F(1) = \\frac{1^3}{3} + 2(1) = \\frac{1}{3} + 2 = \\frac{7}{3}",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "final_calc",
+              "type": "equation",
+              "position": [
+                0,
+                1.0
+              ],
+              "properties": {
+                "latex": "15 - \\frac{7}{3} = \\frac{45}{3} - \\frac{7}{3} = \\frac{38}{3}",
+                "scale": 1.0
+              }
+            },
+            {
+              "id": "answer_box",
+              "type": "equation",
+              "position": [
+                0,
+                -0.5
+              ],
+              "properties": {
+                "latex": "\\boxed{\\frac{38}{3}}",
+                "scale": 1.2,
+                "color": "BLUE"
+              }
+            }
+          ],
+          "animation_sequence": [
+            {
+              "action": "show_equation",
+              "target": "problem",
+              "duration": 2
+            },
+            {
+              "action": "wait",
+              "duration": 8
+            },
+            {
+              "action": "show_equation",
+              "target": "function",
+              "duration": 2
+            },
+            {
+              "action": "wait",
+              "duration": 3
+            },
+            {
+              "action": "show_equation",
+              "target": "antiderivative",
+              "duration": 3
+            },
+            {
+              "action": "wait",
+              "duration": 12
+            },
+            {
+              "action": "fade_out",
+              "target": "function",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "antiderivative",
+              "duration": 1
+            },
+            {
+              "action": "show_equation",
+              "target": "evaluation_setup",
+              "duration": 2
+            },
+            {
+              "action": "wait",
+              "duration": 2
+            },
+            {
+              "action": "show_equation",
+              "target": "f3_calc",
+              "duration": 3
+            },
+            {
+              "action": "wait",
+              "duration": 11
+            },
+            {
+              "action": "show_equation",
+              "target": "f1_calc",
+              "duration": 3
+            },
+            {
+              "action": "wait",
+              "duration": 8
+            },
+            {
+              "action": "fade_out",
+              "target": "evaluation_setup",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "f3_calc",
+              "duration": 1
+            },
+            {
+              "action": "fade_out",
+              "target": "f1_calc",
+              "duration": 1
+            },
+            {
+              "action": "show_equation",
+              "target": "final_calc",
+              "duration": 3
+            },
+            {
+              "action": "wait",
+              "duration": 8
+            },
+            {
+              "action": "show_equation",
+              "target": "answer_box",
+              "duration": 2
+            },
+            {
+              "action": "highlight",
+              "target": "answer_box",
+              "duration": 3,
+              "color": "YELLOW"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "section_id": "section_9",
+      "section_type": "memory",
+      "title": "Remember This!",
+      "renderer": "none",
+      "layout": {
+        "avatar_position": "right",
+        "avatar_width_percent": 30
+      },
+      "narration": {
+        "full_text": "To master the core concepts of integration, just remember the word GRADE. It stands for Geometric Area, Riemann Sums, Antiderivative, Derivative of Integral, and the Evaluation Theorem. This will help you recall the journey from the visual concept of area to the powerful calculation method provided by the Fundamental Theorem of Calculus.",
+        "segments": [
+          {
+            "text": "To master the core concepts of integration, just remember the word GRADE.",
+            "segment_id": "recap_0_seg_1",
+            "duration_estimate": 9.1,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 0,
+            "end": 9.1
+          },
+          {
+            "text": "It stands for Geometric Area, Riemann Sums, Antiderivative, Derivative of Integral, and the Evaluation Theorem.",
+            "segment_id": "recap_0_seg_2",
+            "duration_estimate": 10.700000000000001,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 9.1,
+            "end": 19.8
+          },
+          {
+            "text": "This will help you recall the journey from the visual concept of area to the powerful calculation method provided by the Fundamental Theorem of Calculus.",
+            "segment_id": "recap_0_seg_3",
+            "duration_estimate": 8.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 19.8,
+            "end": 27.8
+          }
+        ],
+        "total_duration_seconds": 27.8
+      },
+      "flashcards": [
+        {
+          "card_id": "card_1",
+          "mnemonic_letter": "G",
+          "concept": "Geometric Area",
+          "definition": "The definite integral represents the signed area under a function's curve between two points."
+        },
+        {
+          "card_id": "card_2",
+          "mnemonic_letter": "R",
+          "concept": "Riemann Sums",
+          "definition": "The method of approximating an area with rectangles. The integral is the limit of these sums."
+        },
+        {
+          "card_id": "card_3",
+          "mnemonic_letter": "A",
+          "concept": "Antiderivative",
+          "definition": "A function F(x) whose derivative is the original function f(x). It's the reverse of differentiation."
+        },
+        {
+          "card_id": "card_4",
+          "mnemonic_letter": "D",
+          "concept": "Derivative of Integral",
+          "definition": "Part 1 of the Fundamental Theorem: The derivative of an area function gives back the original function."
+        },
+        {
+          "card_id": "card_5",
+          "mnemonic_letter": "E",
+          "concept": "Evaluation Theorem",
+          "definition": "Part 2 of the Fundamental Theorem: The integral from a to b is the antiderivative evaluated at b minus a."
+        }
+      ],
+      "renderer_override_reason": "ISS-113: memory is text-only, forced from 'remotion' to 'none'"
+    },
+    {
+      "section_type": "recap",
+      "section_title": "Lesson Recap",
+      "layout": {
+        "avatar_position": "hidden"
+      },
+      "renderer": "wan_video",
+      "renderer_reasoning": "WAN video for cinematic recap visualization",
+      "narration": {
+        "full_text": "Imagine a grand architect designing a beautiful archway. The elegant curve is defined by a function, but the true challenge is understanding the space it encloses. This is the heart of the definite integral: it\u2019s not just a line, but a measure of the total signed area trapped between the curve and the axis. This area represents a real, tangible quantity\u2014the space to be filled, the material to be used. Calculus gives us the tools to find this value precisely. How can we measure such a complex, curved area? We can start by approximating. Think of filling the space with simple, rectangular tiles. At first, our approximation is rough. But as we use more and more tiles, each one narrower than the last, our collection of rectangles begins to trace the curve with incredible accuracy. This method of refining an approximation is the core idea behind Riemann Sums, the foundational process that leads us to the exact value of the integral. Approximating with infinite blocks is clever, but calculus offers a shortcut of profound genius: the antiderivative. Think of it as a master formula that reverses the process of finding a slope. Instead of measuring change at a point, it accumulates the total area up to that point. Finding this single, powerful function is the key to unlocking the integral. It\u2019s the secret blueprint that contains all the information about the area, waiting to be used. This is the magic of the Fundamental Theorem of Calculus. Once we have the antiderivative, our master formula, we don't need to sum up infinite rectangles. We only need to look at the endpoints. We evaluate our formula at the end of the interval, F of b, and subtract its value at the start of the interval, F of a. This simple subtraction miraculously yields the exact total area under the entire curve. It\u2019s a powerful link between the boundaries and the space within. From abstract symbols on a page to a masterpiece of architecture. The final number we calculated wasn't just a solution to a problem; it was a blueprint for creation. It defined the precise shape and area, allowing the vision to become reality. The finished archway stands as a testament to the power of integration, a perfect marriage of mathematical precision and physical beauty. This is why we learn calculus: to understand, design, and build the world around us.",
+        "segments": [
+          {
+            "text": "Imagine a grand architect designing a beautiful archway.",
+            "segment_id": "recap_1_seg_1",
+            "duration_estimate": 7.8,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 0,
+            "end": 7.8,
+            "start_time": 0.0,
+            "end_time": 0.0
+          },
+          {
+            "text": "The elegant curve is defined by a function, but the true challenge is understanding the space it encloses.",
+            "segment_id": "recap_1_seg_2",
+            "duration_estimate": 11.099999999999998,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 7.8,
+            "end": 18.9,
+            "start_time": 0.0,
+            "end_time": 0.0
+          },
+          {
+            "text": "This is the heart of the definite integral: it\u2019s not just a line, but a measure of the total signed area trapped between the curve and the axis.",
+            "segment_id": "recap_1_seg_3",
+            "duration_estimate": 9.200000000000003,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 18.9,
+            "end": 28.1,
+            "start_time": 0.0,
+            "end_time": 0.0
+          },
+          {
+            "text": "This area represents a real, tangible quantity\u2014the space to be filled, the material to be used.",
+            "segment_id": "recap_1_seg_4",
+            "duration_estimate": 7.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 28.1,
+            "end": 35.6,
+            "start_time": 0.0,
+            "end_time": 0.0
+          },
+          {
+            "text": "Calculus gives us the tools to find this value precisely.",
+            "segment_id": "recap_1_seg_5",
+            "duration_estimate": 4.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 35.6,
+            "end": 39.6,
+            "start_time": 0.0,
+            "end_time": 0.0
+          },
+          {
+            "text": "How can we measure such a complex, curved area?",
+            "segment_id": "recap_2_seg_1",
+            "duration_estimate": 3.8,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 0,
+            "end": 3.8,
+            "start_time": 30.0,
+            "end_time": 30.0
+          },
+          {
+            "text": "We can start by approximating. Think of filling the space with simple, rectangular tiles.",
+            "segment_id": "recap_2_seg_2",
+            "duration_estimate": 4.8999999999999995,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 3.8,
+            "end": 8.7,
+            "start_time": 30.0,
+            "end_time": 30.0
+          },
+          {
+            "text": "At first, our approximation is rough.",
+            "segment_id": "recap_2_seg_3",
+            "duration_estimate": 2.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 8.7,
+            "end": 11.2,
+            "start_time": 30.0,
+            "end_time": 30.0
+          },
+          {
+            "text": "But as we use more and more tiles, each one narrower than the last, our collection of rectangles begins to trace the curve with incredible accuracy.",
+            "segment_id": "recap_2_seg_4",
+            "duration_estimate": 12.900000000000002,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 11.2,
+            "end": 24.1,
+            "start_time": 30.0,
+            "end_time": 30.0
+          },
+          {
+            "text": "This method of refining an approximation is the core idea behind Riemann Sums, the foundational process that leads us to the exact value of the integral.",
+            "segment_id": "recap_2_seg_5",
+            "duration_estimate": 7.799999999999997,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 24.1,
+            "end": 31.9,
+            "start_time": 30.0,
+            "end_time": 30.0
+          },
+          {
+            "text": "Approximating with infinite blocks is clever, but calculus offers a shortcut of profound genius: the antiderivative.",
+            "segment_id": "recap_3_seg_1",
+            "duration_estimate": 7.9,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 0,
+            "end": 7.9,
+            "start_time": 60.0,
+            "end_time": 60.0
+          },
+          {
+            "text": "Think of it as a master formula that reverses the process of finding a slope. Instead of measuring change at a point, it accumulates the total area up to that point.",
+            "segment_id": "recap_3_seg_2",
+            "duration_estimate": 9.200000000000001,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 7.9,
+            "end": 17.1,
+            "start_time": 60.0,
+            "end_time": 60.0
+          },
+          {
+            "text": "Finding this single, powerful function is the key to unlocking the integral. It\u2019s the secret blueprint that contains all the information about the area, waiting to be used.",
+            "segment_id": "recap_3_seg_3",
+            "duration_estimate": 9.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 17.1,
+            "end": 26.1,
+            "start_time": 60.0,
+            "end_time": 60.0
+          },
+          {
+            "text": "This is the magic of the Fundamental Theorem of Calculus.",
+            "segment_id": "recap_4_seg_1",
+            "duration_estimate": 7.1,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 0,
+            "end": 7.1,
+            "start_time": 90.0,
+            "end_time": 90.0
+          },
+          {
+            "text": "Once we have the antiderivative, our master formula, we don't need to sum up infinite rectangles.",
+            "segment_id": "recap_4_seg_2",
+            "duration_estimate": 6.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 7.1,
+            "end": 13.1,
+            "start_time": 90.0,
+            "end_time": 90.0
+          },
+          {
+            "text": "We only need to look at the endpoints.",
+            "segment_id": "recap_4_seg_3",
+            "duration_estimate": 2.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 13.1,
+            "end": 15.6,
+            "start_time": 90.0,
+            "end_time": 90.0
+          },
+          {
+            "text": "We evaluate our formula at the end of the interval, F of b, and subtract its value at the start of the interval, F of a. This simple subtraction miraculously yields the exact total area under the entire curve.",
+            "segment_id": "recap_4_seg_4",
+            "duration_estimate": 12.500000000000002,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 15.6,
+            "end": 28.1,
+            "start_time": 90.0,
+            "end_time": 90.0
+          },
+          {
+            "text": "It\u2019s a powerful link between the boundaries and the space within.",
+            "segment_id": "recap_4_seg_5",
+            "duration_estimate": 4.799999999999997,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 28.1,
+            "end": 32.9,
+            "start_time": 90.0,
+            "end_time": 90.0
+          },
+          {
+            "text": "From abstract symbols on a page to a masterpiece of architecture.",
+            "segment_id": "recap_5_seg_1",
+            "duration_estimate": 5.4,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 0,
+            "end": 5.4,
+            "start_time": 120.0,
+            "end_time": 120.0
+          },
+          {
+            "text": "The final number we calculated wasn't just a solution to a problem; it was a blueprint for creation.",
+            "segment_id": "recap_5_seg_2",
+            "duration_estimate": 7.699999999999999,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 5.4,
+            "end": 13.1,
+            "start_time": 120.0,
+            "end_time": 120.0
+          },
+          {
+            "text": "It defined the precise shape and area, allowing the vision to become reality. The finished archway stands as a testament to the power of integration, a perfect marriage of mathematical precision and physical beauty.",
+            "segment_id": "recap_5_seg_3",
+            "duration_estimate": 10.200000000000001,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 13.1,
+            "end": 23.3,
+            "start_time": 120.0,
+            "end_time": 120.0
+          },
+          {
+            "text": "This is why we learn calculus: to understand, design, and build the world around us.",
+            "segment_id": "recap_5_seg_4",
+            "duration_estimate": 5.800000000000001,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 23.3,
+            "end": 29.1,
+            "start_time": 120.0,
+            "end_time": 120.0
+          }
+        ],
+        "total_duration": 150.0
+      },
+      "visual_beats": [
+        {
+          "scene_id": 1,
+          "time": 0.0,
+          "description": "In a sunlit Jaipur courtyard, a master architect sketches a complex, curved Jharokha archway onto aged parchment. The camera zooms into the drawing, and the area beneath the curve begins to glow with a soft, golden light. This glowing space fills with a pattern of intricate, shimmering blue tiles, visually representing the 'area under the curve'. The background shows detailed sandstone architecture under a clear sky.",
+          "video_prompt": "In a sunlit Jaipur courtyard, a master architect sketches a complex, curved Jharokha archway onto aged parchment. The camera zooms into the drawing, and the area beneath the curve begins to glow with a soft, golden light. This glowing space fills with a pattern of intricate, shimmering blue tiles, visually representing the 'area under the curve'. The background shows detailed sandstone architecture under a clear sky.",
+          "duration": 30
+        },
+        {
+          "scene_id": 2,
+          "time": 30.0,
+          "description": "A close-up on the architect's parchment. The glowing area under the arch is now being filled with a series of vertical, rectangular blocks of light. At first, a few large, clumsy blocks approximate the shape, leaving jagged gaps. Then, in a smooth animation, the blocks multiply and shrink, fitting the curve with increasing precision until the stepped edges dissolve into a perfect, smooth contour of the arch.",
+          "video_prompt": "A close-up on the architect's parchment. The glowing area under the arch is now being filled with a series of vertical, rectangular blocks of light. At first, a few large, clumsy blocks approximate the shape, leaving jagged gaps. Then, in a smooth animation, the blocks multiply and shrink, fitting the curve with increasing precision until the stepped edges dissolve into a perfect, smooth contour of the arch.",
+          "duration": 30
+        },
+        {
+          "scene_id": 3,
+          "time": 60.0,
+          "description": "The master architect's hands unroll an ancient scroll across the desk. A single, elegant mathematical formula\u2014the antiderivative\u2014glows with a soft, internal golden light. The camera pans from this glowing equation to the drawing of the arch. A shimmering line of energy then traces the curve on the parchment perfectly, demonstrating how this single function flawlessly describes the shape without any need for blocky approximations.",
+          "video_prompt": "The master architect's hands unroll an ancient scroll across the desk. A single, elegant mathematical formula\u2014the antiderivative\u2014glows with a soft, internal golden light. The camera pans from this glowing equation to the drawing of the arch. A shimmering line of energy then traces the curve on the parchment perfectly, demonstrating how this single function flawlessly describes the shape without any need for blocky approximations.",
+          "duration": 30
+        },
+        {
+          "scene_id": 4,
+          "time": 90.0,
+          "description": "The architect's hands move over the blueprint. His finger traces from the start of the arch, where a glowing 'a' appears, to the end, where a 'b' materializes. He then brings his hands together, and the values from the antiderivative function at these two points, F(b) and F(a), appear as ethereal numbers. He performs a symbolic subtraction in the air, and the two numbers combine to form the final, precise area value, which floats triumphantly over the drawing.",
+          "video_prompt": "The architect's hands move over the blueprint. His finger traces from the start of the arch, where a glowing 'a' appears, to the end, where a 'b' materializes. He then brings his hands together, and the values from the antiderivative function at these two points, F(b) and F(a), appear as ethereal numbers. He performs a symbolic subtraction in the air, and the two numbers combine to form the final, precise area value, which floats triumphantly over the drawing.",
+          "duration": 30
+        },
+        {
+          "scene_id": 5,
+          "time": 120.0,
+          "description": "A stunning, wide cinematic shot reveals the completed, real-life sandstone Jharokha at sunset. The intricate blue tiles beneath the archway shimmer in the warm, orange light of the setting sun. The camera slowly pulls back, showing the arch as a perfect, beautiful element of a magnificent Rajasthani palace. The scene evokes a powerful sense of awe and accomplishment, connecting the abstract math to a tangible, breathtaking reality.",
+          "video_prompt": "A stunning, wide cinematic shot reveals the completed, real-life sandstone Jharokha at sunset. The intricate blue tiles beneath the archway shimmer in the warm, orange light of the setting sun. The camera slowly pulls back, showing the arch as a perfect, beautiful element of a magnificent Rajasthani palace. The scene evokes a powerful sense of awe and accomplishment, connecting the abstract math to a tangible, breathtaking reality.",
+          "duration": 30
+        }
+      ],
+      "recap_scenes": [
+        {
+          "scene_id": 1,
+          "scene": 1,
+          "wan_prompt": "In a sunlit Jaipur courtyard, a master architect sketches a complex, curved Jharokha archway onto aged parchment. The camera zooms into the drawing, and the area beneath the curve begins to glow with a soft, golden light. This glowing space fills with a pattern of intricate, shimmering blue tiles, visually representing the 'area under the curve'. The background shows detailed sandstone architecture under a clear sky.",
+          "video_prompt": "In a sunlit Jaipur courtyard, a master architect sketches a complex, curved Jharokha archway onto aged parchment. The camera zooms into the drawing, and the area beneath the curve begins to glow with a soft, golden light. This glowing space fills with a pattern of intricate, shimmering blue tiles, visually representing the 'area under the curve'. The background shows detailed sandstone architecture under a clear sky.",
+          "narration_text": "Imagine a grand architect designing a beautiful archway. The elegant curve is defined by a function, but the true challenge is understanding the space it encloses. This is the heart of the definite integral: it\u2019s not just a line, but a measure of the total signed area trapped between the curve and the axis. This area represents a real, tangible quantity\u2014the space to be filled, the material to be used. Calculus gives us the tools to find this value precisely.",
+          "duration": 30
+        },
+        {
+          "scene_id": 2,
+          "scene": 2,
+          "wan_prompt": "A close-up on the architect's parchment. The glowing area under the arch is now being filled with a series of vertical, rectangular blocks of light. At first, a few large, clumsy blocks approximate the shape, leaving jagged gaps. Then, in a smooth animation, the blocks multiply and shrink, fitting the curve with increasing precision until the stepped edges dissolve into a perfect, smooth contour of the arch.",
+          "video_prompt": "A close-up on the architect's parchment. The glowing area under the arch is now being filled with a series of vertical, rectangular blocks of light. At first, a few large, clumsy blocks approximate the shape, leaving jagged gaps. Then, in a smooth animation, the blocks multiply and shrink, fitting the curve with increasing precision until the stepped edges dissolve into a perfect, smooth contour of the arch.",
+          "narration_text": "How can we measure such a complex, curved area? We can start by approximating. Think of filling the space with simple, rectangular tiles. At first, our approximation is rough. But as we use more and more tiles, each one narrower than the last, our collection of rectangles begins to trace the curve with incredible accuracy. This method of refining an approximation is the core idea behind Riemann Sums, the foundational process that leads us to the exact value of the integral.",
+          "duration": 30
+        },
+        {
+          "scene_id": 3,
+          "scene": 3,
+          "wan_prompt": "The master architect's hands unroll an ancient scroll across the desk. A single, elegant mathematical formula\u2014the antiderivative\u2014glows with a soft, internal golden light. The camera pans from this glowing equation to the drawing of the arch. A shimmering line of energy then traces the curve on the parchment perfectly, demonstrating how this single function flawlessly describes the shape without any need for blocky approximations.",
+          "video_prompt": "The master architect's hands unroll an ancient scroll across the desk. A single, elegant mathematical formula\u2014the antiderivative\u2014glows with a soft, internal golden light. The camera pans from this glowing equation to the drawing of the arch. A shimmering line of energy then traces the curve on the parchment perfectly, demonstrating how this single function flawlessly describes the shape without any need for blocky approximations.",
+          "narration_text": "Approximating with infinite blocks is clever, but calculus offers a shortcut of profound genius: the antiderivative. Think of it as a master formula that reverses the process of finding a slope. Instead of measuring change at a point, it accumulates the total area up to that point. Finding this single, powerful function is the key to unlocking the integral. It\u2019s the secret blueprint that contains all the information about the area, waiting to be used.",
+          "duration": 30
+        },
+        {
+          "scene_id": 4,
+          "scene": 4,
+          "wan_prompt": "The architect's hands move over the blueprint. His finger traces from the start of the arch, where a glowing 'a' appears, to the end, where a 'b' materializes. He then brings his hands together, and the values from the antiderivative function at these two points, F(b) and F(a), appear as ethereal numbers. He performs a symbolic subtraction in the air, and the two numbers combine to form the final, precise area value, which floats triumphantly over the drawing.",
+          "video_prompt": "The architect's hands move over the blueprint. His finger traces from the start of the arch, where a glowing 'a' appears, to the end, where a 'b' materializes. He then brings his hands together, and the values from the antiderivative function at these two points, F(b) and F(a), appear as ethereal numbers. He performs a symbolic subtraction in the air, and the two numbers combine to form the final, precise area value, which floats triumphantly over the drawing.",
+          "narration_text": "This is the magic of the Fundamental Theorem of Calculus. Once we have the antiderivative, our master formula, we don't need to sum up infinite rectangles. We only need to look at the endpoints. We evaluate our formula at the end of the interval, F of b, and subtract its value at the start of the interval, F of a. This simple subtraction miraculously yields the exact total area under the entire curve. It\u2019s a powerful link between the boundaries and the space within.",
+          "duration": 30
+        },
+        {
+          "scene_id": 5,
+          "scene": 5,
+          "wan_prompt": "A stunning, wide cinematic shot reveals the completed, real-life sandstone Jharokha at sunset. The intricate blue tiles beneath the archway shimmer in the warm, orange light of the setting sun. The camera slowly pulls back, showing the arch as a perfect, beautiful element of a magnificent Rajasthani palace. The scene evokes a powerful sense of awe and accomplishment, connecting the abstract math to a tangible, breathtaking reality.",
+          "video_prompt": "A stunning, wide cinematic shot reveals the completed, real-life sandstone Jharokha at sunset. The intricate blue tiles beneath the archway shimmer in the warm, orange light of the setting sun. The camera slowly pulls back, showing the arch as a perfect, beautiful element of a magnificent Rajasthani palace. The scene evokes a powerful sense of awe and accomplishment, connecting the abstract math to a tangible, breathtaking reality.",
+          "narration_text": "From abstract symbols on a page to a masterpiece of architecture. The final number we calculated wasn't just a solution to a problem; it was a blueprint for creation. It defined the precise shape and area, allowing the vision to become reality. The finished archway stands as a testament to the power of integration, a perfect marriage of mathematical precision and physical beauty. This is why we learn calculus: to understand, design, and build the world around us.",
+          "duration": 30
+        }
+      ],
+      "avatar": {
+        "visible": false,
+        "position": "hidden"
+      },
+      "section_id": "section_10",
+      "video_prompts": [
+        {
+          "beat_id": "recap_scene_1",
+          "prompt": "The scene opens with a medium close-up on the weathered, wise hands of an elderly Indian architect, his skin a tapestry of wrinkles and age spots. He is seated at a heavy, rustic sheesham wood desk within a sun-drenched Jaipur courtyard. Volumetric shafts of golden late-afternoon sunlight cut through the hazy air, illuminating swirling motes of dust. In the background, the intricate, rose-colored sandstone carvings of a Rajasthani palace are visible, softened by a shallow depth of field. The camera performs a slow, macro push-in, following the tip of a charcoal stick held in the architect's hand as it glides across a sheet of thick, fibrous, cream-colored parchment. The charcoal leaves a dark, textured line, its particles smudging slightly against the paper's grain as it forms the elegant, parabolic curve of a traditional Jharokha arch. As the final stroke connects, the camera's forward motion continues, moving past the hand and focusing entirely on the drawing. The real-world background dissolves into a warm, abstract bokeh. A moment later, the area enclosed by the charcoal line and the implied horizontal axis begins to emanate a soft, internal golden light. This luminescence is not cast upon the paper but seems to well up from within its very fibers, growing from a faint shimmer to a steady, contained, volumetric glow. Following this, the glowing space begins to fill with a mesmerizing tessellation of miniature blue tiles. These tiles materialize with a liquid-like grace, each one rendered with photorealistic detail: a glossy, deep cobalt blue ceramic surface with subtle crazing that catches and reflects the internal golden light. They shimmer and shift as they seamlessly pack together, perfectly occupying the entire area under the curve, transforming the abstract space into a tangible, beautiful mosaic.",
+          "duration_seconds": 30,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "recap_scene_2",
+          "prompt": "The scene transitions to an extreme close-up, top-down perspective of the architect's parchment. The intricate blue tiles have vanished, leaving only the dark charcoal line of the arch and the solid, warm golden glow filling the area beneath it. The camera is static, allowing the viewer to appreciate the highly detailed, fibrous texture of the handmade paper. Suddenly, a series of five large, vertical, rectangular blocks of brilliant white-gold light materialize within the glowing area. These blocks are volumetric and slightly hazy at the edges, casting sharp, localized highlights and micro-shadows on the paper fibers around them. Their formation is clumsy, creating a coarse, jagged, stepped approximation of the arch's smooth curve, with significant dark gaps visible between their upper edges and the charcoal line. A moment later, a seamless and fluid animation begins. The large, clumsy blocks dissolve into a shower of much smaller, thinner rectangular columns of light. This is not a cut, but a smooth, continuous transformation. The number of light columns multiplies exponentially, and as they become progressively narrower, their collective shape hugs the charcoal curve with ever-increasing accuracy. The camera executes an almost imperceptible, slow dolly-in, magnifying the process and emphasizing how the jagged gaps are shrinking into non-existence. The motion is like a cascade of liquid light being meticulously reshaped. The refinement process accelerates, the columns becoming as thin as threads of light, their stepped edges blurring into a smooth, continuous contour. The animation concludes as the individual blocks merge into a single, flawless, solid field of luminescence that perfectly fills the area, its light softening back to the gentle, warm golden hue from the beginning, pulsing with a soft, steady rhythm.",
+          "duration_seconds": 30,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "recap_scene_3",
+          "prompt": "The scene cuts to a wider shot, revealing the architect's hands carefully unrolling an ancient scroll across the dark wood of his desk. The scroll is made of a brittle, yellowed papyrus, its edges frayed and its surface marked with the stains of time. As it is fully unfurled, the camera cranes down and pushes in towards its center. In the middle of the scroll, a single, elegant mathematical formula is written in a sweeping, calligraphic style with dark ink. This formula begins to glow from within, the ink itself becoming a source of soft, contained golden light. Subtle volumetric rays emanate from the glowing symbols, silhouetting the surrounding ancient text and casting a warm light upon the scroll's textured surface. The camera then performs a slow, graceful rack focus and pan to the right. As the glowing formula on the scroll blurs into a soft, golden bokeh in the background, the parchment drawing of the Jharokha arch, lying beside it, snaps into sharp focus. A single, shimmering mote of golden light detaches from the blurred formula and drifts lazily through the air toward the drawing. Upon making contact with the starting point of the charcoal arch, it erupts into a brilliant, thin line of molten gold energy. This incandescent thread begins to trace the exact path of the charcoal curve with perfect, unwavering precision and a confident, steady speed. It moves with a flawless, fluid grace, leaving a faint, fading trail of light particles in its wake. As the energy line reaches the end of the curve, it flares brightly for a brief moment before dissipating into a thousand tiny, upward-drifting sparks, leaving the original charcoal drawing pristine and untouched.",
+          "duration_seconds": 30,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "recap_scene_4",
+          "prompt": "The scene holds on a close-up of the parchment drawing. The architect's weathered hand enters the frame, his index finger moving with deliberate grace to touch the exact starting point of the arch's base on the left. As his fingertip makes contact, a single, elegant letter 'a', composed of soft, volumetric white light, materializes on the paper. The light casts a gentle glow onto his skin. He then slowly traces the flat baseline under the arch, the camera tracking his finger's movement across the fibrous paper. When his finger reaches the end of the arch's base on the right, he taps the paper again, and a glowing letter 'b' materializes, identical in style to the 'a', marking the interval's boundaries. The architect lifts his hand away. As he does, two ethereal, three-dimensional numerical values coalesce in the air above the drawing. Above the glowing 'b', a value composed of swirling particles of golden light forms into a volumetric, semi-transparent number. Simultaneously, above the glowing 'a', a similar number forms, but composed of a cooler, silver light. These light-sculptures hover and gently rotate. The architect then brings his hands together in a symbolic gesture, cupping the space between the two floating numbers. This action creates an invisible force, pulling the two ethereal numbers from their positions towards the center, directly over the arch. The silver number drifts into and merges with the golden one. This causes a brilliant flash, and the golden number visibly diminishes in size, as if the silver value has been perfectly subtracted from it. The result is a single, new numerical value, glowing with a pure, triumphant golden light. This final number floats majestically for a moment before slowly dissolving into a cascade of upward-drifting motes of light.",
+          "duration_seconds": 30,
+          "style": "realistic"
+        },
+        {
+          "beat_id": "recap_scene_5",
+          "prompt": "The scene dissolves from the ethereal numbers to a breathtaking, photorealistic, cinematic shot. Initially, the frame is filled with the intricate detail of a real-life, physical Jharokha archway at sunset. The arch is constructed from warm, rose-colored sandstone, its surface showing a rough, grainy texture, weathered by centuries of sun and monsoon. The space beneath the arch is a stunning mosaic of deep cobalt blue and turquoise ceramic tiles, their high-gloss finish catching the last rays of the setting sun, causing them to shimmer with fiery orange and gold reflections. The lighting is pure magic hour, bathing the entire structure in a warm, saturated, golden-orange hue and casting long, soft shadows. The camera then commences a very slow, majestic pull-back, a smooth combination of a dolly-out and a crane-up. As it moves, the full, elegant form of the Jharokha is revealed, including its delicate latticework jali screen and ornate supporting brackets. The continuous pull-back reveals that this arch is not an isolated element but a perfect component of the grand facade of a magnificent Rajasthani palace. More domes, chhatris, and arches come into view, all glowing under the sunset. The palace is revealed to be situated beside a vast, serene lake, its still surface acting as a perfect mirror, reflecting the fiery colors of the sky and the dark silhouette of the colossal structure. The camera movement concludes on an epic wide shot, framing the entire palace against a dramatic sky streaked with vibrant orange, deep purple, and crimson clouds. The sun, a perfect orb, touches the horizon. The final image is one of profound awe and tangible accomplishment, holding for several seconds before a slow fade to black.",
+          "duration_seconds": 30,
+          "style": "realistic"
+        }
+      ],
+      "renderer_override_reason": "Recap sections use WAN for storyboard visualization",
+      "explanation_plan": {
+        "visual_beats": [
+          {
+            "scene_id": 1,
+            "time": 0.0,
+            "description": "In a sunlit Jaipur courtyard, a master architect sketches a complex, curved Jharokha archway onto aged parchment. The camera zooms into the drawing, and the area beneath the curve begins to glow with a soft, golden light. This glowing space fills with a pattern of intricate, shimmering blue tiles, visually representing the 'area under the curve'. The background shows detailed sandstone architecture under a clear sky.",
+            "video_prompt": "In a sunlit Jaipur courtyard, a master architect sketches a complex, curved Jharokha archway onto aged parchment. The camera zooms into the drawing, and the area beneath the curve begins to glow with a soft, golden light. This glowing space fills with a pattern of intricate, shimmering blue tiles, visually representing the 'area under the curve'. The background shows detailed sandstone architecture under a clear sky.",
+            "duration": 30
+          },
+          {
+            "scene_id": 2,
+            "time": 30.0,
+            "description": "A close-up on the architect's parchment. The glowing area under the arch is now being filled with a series of vertical, rectangular blocks of light. At first, a few large, clumsy blocks approximate the shape, leaving jagged gaps. Then, in a smooth animation, the blocks multiply and shrink, fitting the curve with increasing precision until the stepped edges dissolve into a perfect, smooth contour of the arch.",
+            "video_prompt": "A close-up on the architect's parchment. The glowing area under the arch is now being filled with a series of vertical, rectangular blocks of light. At first, a few large, clumsy blocks approximate the shape, leaving jagged gaps. Then, in a smooth animation, the blocks multiply and shrink, fitting the curve with increasing precision until the stepped edges dissolve into a perfect, smooth contour of the arch.",
+            "duration": 30
+          },
+          {
+            "scene_id": 3,
+            "time": 60.0,
+            "description": "The master architect's hands unroll an ancient scroll across the desk. A single, elegant mathematical formula\u2014the antiderivative\u2014glows with a soft, internal golden light. The camera pans from this glowing equation to the drawing of the arch. A shimmering line of energy then traces the curve on the parchment perfectly, demonstrating how this single function flawlessly describes the shape without any need for blocky approximations.",
+            "video_prompt": "The master architect's hands unroll an ancient scroll across the desk. A single, elegant mathematical formula\u2014the antiderivative\u2014glows with a soft, internal golden light. The camera pans from this glowing equation to the drawing of the arch. A shimmering line of energy then traces the curve on the parchment perfectly, demonstrating how this single function flawlessly describes the shape without any need for blocky approximations.",
+            "duration": 30
+          },
+          {
+            "scene_id": 4,
+            "time": 90.0,
+            "description": "The architect's hands move over the blueprint. His finger traces from the start of the arch, where a glowing 'a' appears, to the end, where a 'b' materializes. He then brings his hands together, and the values from the antiderivative function at these two points, F(b) and F(a), appear as ethereal numbers. He performs a symbolic subtraction in the air, and the two numbers combine to form the final, precise area value, which floats triumphantly over the drawing.",
+            "video_prompt": "The architect's hands move over the blueprint. His finger traces from the start of the arch, where a glowing 'a' appears, to the end, where a 'b' materializes. He then brings his hands together, and the values from the antiderivative function at these two points, F(b) and F(a), appear as ethereal numbers. He performs a symbolic subtraction in the air, and the two numbers combine to form the final, precise area value, which floats triumphantly over the drawing.",
+            "duration": 30
+          },
+          {
+            "scene_id": 5,
+            "time": 120.0,
+            "description": "A stunning, wide cinematic shot reveals the completed, real-life sandstone Jharokha at sunset. The intricate blue tiles beneath the archway shimmer in the warm, orange light of the setting sun. The camera slowly pulls back, showing the arch as a perfect, beautiful element of a magnificent Rajasthani palace. The scene evokes a powerful sense of awe and accomplishment, connecting the abstract math to a tangible, breathtaking reality.",
+            "video_prompt": "A stunning, wide cinematic shot reveals the completed, real-life sandstone Jharokha at sunset. The intricate blue tiles beneath the archway shimmer in the warm, orange light of the setting sun. The camera slowly pulls back, showing the arch as a perfect, beautiful element of a magnificent Rajasthani palace. The scene evokes a powerful sense of awe and accomplishment, connecting the abstract math to a tangible, breathtaking reality.",
+            "duration": 30
+          }
+        ],
+        "compiled_wan_prompt": "[Beat recap_scene_1]: The scene opens with a medium close-up on the weathered, wise hands of an elderly Indian architect, his skin a tapestry of wrinkles and age spots. He is seated at a heavy, rustic sheesham wood desk within a sun-drenched Jaipur courtyard. Volumetric shafts of golden late-afternoon sunlight cut through the hazy air, illuminating swirling motes of dust. In the background, the intricate, rose-colored sandstone carvings of a Rajasthani palace are visible, softened by a shallow depth of field. The camera performs a slow, macro push-in, following the tip of a charcoal stick held in the architect's hand as it glides across a sheet of thick, fibrous, cream-colored parchment. The charcoal leaves a dark, textured line, its particles smudging slightly against the paper's grain as it forms the elegant, parabolic curve of a traditional Jharokha arch. As the final stroke connects, the camera's forward motion continues, moving past the hand and focusing entirely on the drawing. The real-world background dissolves into a warm, abstract bokeh. A moment later, the area enclosed by the charcoal line and the implied horizontal axis begins to emanate a soft, internal golden light. This luminescence is not cast upon the paper but seems to well up from within its very fibers, growing from a faint shimmer to a steady, contained, volumetric glow. Following this, the glowing space begins to fill with a mesmerizing tessellation of miniature blue tiles. These tiles materialize with a liquid-like grace, each one rendered with photorealistic detail: a glossy, deep cobalt blue ceramic surface with subtle crazing that catches and reflects the internal golden light. They shimmer and shift as they seamlessly pack together, perfectly occupying the entire area under the curve, transforming the abstract space into a tangible, beautiful mosaic.\n\n[Beat recap_scene_2]: The scene transitions to an extreme close-up, top-down perspective of the architect's parchment. The intricate blue tiles have vanished, leaving only the dark charcoal line of the arch and the solid, warm golden glow filling the area beneath it. The camera is static, allowing the viewer to appreciate the highly detailed, fibrous texture of the handmade paper. Suddenly, a series of five large, vertical, rectangular blocks of brilliant white-gold light materialize within the glowing area. These blocks are volumetric and slightly hazy at the edges, casting sharp, localized highlights and micro-shadows on the paper fibers around them. Their formation is clumsy, creating a coarse, jagged, stepped approximation of the arch's smooth curve, with significant dark gaps visible between their upper edges and the charcoal line. A moment later, a seamless and fluid animation begins. The large, clumsy blocks dissolve into a shower of much smaller, thinner rectangular columns of light. This is not a cut, but a smooth, continuous transformation. The number of light columns multiplies exponentially, and as they become progressively narrower, their collective shape hugs the charcoal curve with ever-increasing accuracy. The camera executes an almost imperceptible, slow dolly-in, magnifying the process and emphasizing how the jagged gaps are shrinking into non-existence. The motion is like a cascade of liquid light being meticulously reshaped. The refinement process accelerates, the columns becoming as thin as threads of light, their stepped edges blurring into a smooth, continuous contour. The animation concludes as the individual blocks merge into a single, flawless, solid field of luminescence that perfectly fills the area, its light softening back to the gentle, warm golden hue from the beginning, pulsing with a soft, steady rhythm.\n\n[Beat recap_scene_3]: The scene cuts to a wider shot, revealing the architect's hands carefully unrolling an ancient scroll across the dark wood of his desk. The scroll is made of a brittle, yellowed papyrus, its edges frayed and its surface marked with the stains of time. As it is fully unfurled, the camera cranes down and pushes in towards its center. In the middle of the scroll, a single, elegant mathematical formula is written in a sweeping, calligraphic style with dark ink. This formula begins to glow from within, the ink itself becoming a source of soft, contained golden light. Subtle volumetric rays emanate from the glowing symbols, silhouetting the surrounding ancient text and casting a warm light upon the scroll's textured surface. The camera then performs a slow, graceful rack focus and pan to the right. As the glowing formula on the scroll blurs into a soft, golden bokeh in the background, the parchment drawing of the Jharokha arch, lying beside it, snaps into sharp focus. A single, shimmering mote of golden light detaches from the blurred formula and drifts lazily through the air toward the drawing. Upon making contact with the starting point of the charcoal arch, it erupts into a brilliant, thin line of molten gold energy. This incandescent thread begins to trace the exact path of the charcoal curve with perfect, unwavering precision and a confident, steady speed. It moves with a flawless, fluid grace, leaving a faint, fading trail of light particles in its wake. As the energy line reaches the end of the curve, it flares brightly for a brief moment before dissipating into a thousand tiny, upward-drifting sparks, leaving the original charcoal drawing pristine and untouched.\n\n[Beat recap_scene_4]: The scene holds on a close-up of the parchment drawing. The architect's weathered hand enters the frame, his index finger moving with deliberate grace to touch the exact starting point of the arch's base on the left. As his fingertip makes contact, a single, elegant letter 'a', composed of soft, volumetric white light, materializes on the paper. The light casts a gentle glow onto his skin. He then slowly traces the flat baseline under the arch, the camera tracking his finger's movement across the fibrous paper. When his finger reaches the end of the arch's base on the right, he taps the paper again, and a glowing letter 'b' materializes, identical in style to the 'a', marking the interval's boundaries. The architect lifts his hand away. As he does, two ethereal, three-dimensional numerical values coalesce in the air above the drawing. Above the glowing 'b', a value composed of swirling particles of golden light forms into a volumetric, semi-transparent number. Simultaneously, above the glowing 'a', a similar number forms, but composed of a cooler, silver light. These light-sculptures hover and gently rotate. The architect then brings his hands together in a symbolic gesture, cupping the space between the two floating numbers. This action creates an invisible force, pulling the two ethereal numbers from their positions towards the center, directly over the arch. The silver number drifts into and merges with the golden one. This causes a brilliant flash, and the golden number visibly diminishes in size, as if the silver value has been perfectly subtracted from it. The result is a single, new numerical value, glowing with a pure, triumphant golden light. This final number floats majestically for a moment before slowly dissolving into a cascade of upward-drifting motes of light.\n\n[Beat recap_scene_5]: The scene dissolves from the ethereal numbers to a breathtaking, photorealistic, cinematic shot. Initially, the frame is filled with the intricate detail of a real-life, physical Jharokha archway at sunset. The arch is constructed from warm, rose-colored sandstone, its surface showing a rough, grainy texture, weathered by centuries of sun and monsoon. The space beneath the arch is a stunning mosaic of deep cobalt blue and turquoise ceramic tiles, their high-gloss finish catching the last rays of the setting sun, causing them to shimmer with fiery orange and gold reflections. The lighting is pure magic hour, bathing the entire structure in a warm, saturated, golden-orange hue and casting long, soft shadows. The camera then commences a very slow, majestic pull-back, a smooth combination of a dolly-out and a crane-up. As it moves, the full, elegant form of the Jharokha is revealed, including its delicate latticework jali screen and ornate supporting brackets. The continuous pull-back reveals that this arch is not an isolated element but a perfect component of the grand facade of a magnificent Rajasthani palace. More domes, chhatris, and arches come into view, all glowing under the sunset. The palace is revealed to be situated beside a vast, serene lake, its still surface acting as a perfect mirror, reflecting the fiery colors of the sky and the dark silhouette of the colossal structure. The camera movement concludes on an epic wide shot, framing the entire palace against a dramatic sky streaked with vibrant orange, deep purple, and crimson clouds. The sun, a perfect orb, touches the horizon. The final image is one of profound awe and tangible accomplishment, holding for several seconds before a slow fade to black.",
+        "video_prompts": [
+          {
+            "beat_id": "recap_scene_1",
+            "prompt": "The scene opens with a medium close-up on the weathered, wise hands of an elderly Indian architect, his skin a tapestry of wrinkles and age spots. He is seated at a heavy, rustic sheesham wood desk within a sun-drenched Jaipur courtyard. Volumetric shafts of golden late-afternoon sunlight cut through the hazy air, illuminating swirling motes of dust. In the background, the intricate, rose-colored sandstone carvings of a Rajasthani palace are visible, softened by a shallow depth of field. The camera performs a slow, macro push-in, following the tip of a charcoal stick held in the architect's hand as it glides across a sheet of thick, fibrous, cream-colored parchment. The charcoal leaves a dark, textured line, its particles smudging slightly against the paper's grain as it forms the elegant, parabolic curve of a traditional Jharokha arch. As the final stroke connects, the camera's forward motion continues, moving past the hand and focusing entirely on the drawing. The real-world background dissolves into a warm, abstract bokeh. A moment later, the area enclosed by the charcoal line and the implied horizontal axis begins to emanate a soft, internal golden light. This luminescence is not cast upon the paper but seems to well up from within its very fibers, growing from a faint shimmer to a steady, contained, volumetric glow. Following this, the glowing space begins to fill with a mesmerizing tessellation of miniature blue tiles. These tiles materialize with a liquid-like grace, each one rendered with photorealistic detail: a glossy, deep cobalt blue ceramic surface with subtle crazing that catches and reflects the internal golden light. They shimmer and shift as they seamlessly pack together, perfectly occupying the entire area under the curve, transforming the abstract space into a tangible, beautiful mosaic.",
+            "duration_seconds": 30,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "recap_scene_2",
+            "prompt": "The scene transitions to an extreme close-up, top-down perspective of the architect's parchment. The intricate blue tiles have vanished, leaving only the dark charcoal line of the arch and the solid, warm golden glow filling the area beneath it. The camera is static, allowing the viewer to appreciate the highly detailed, fibrous texture of the handmade paper. Suddenly, a series of five large, vertical, rectangular blocks of brilliant white-gold light materialize within the glowing area. These blocks are volumetric and slightly hazy at the edges, casting sharp, localized highlights and micro-shadows on the paper fibers around them. Their formation is clumsy, creating a coarse, jagged, stepped approximation of the arch's smooth curve, with significant dark gaps visible between their upper edges and the charcoal line. A moment later, a seamless and fluid animation begins. The large, clumsy blocks dissolve into a shower of much smaller, thinner rectangular columns of light. This is not a cut, but a smooth, continuous transformation. The number of light columns multiplies exponentially, and as they become progressively narrower, their collective shape hugs the charcoal curve with ever-increasing accuracy. The camera executes an almost imperceptible, slow dolly-in, magnifying the process and emphasizing how the jagged gaps are shrinking into non-existence. The motion is like a cascade of liquid light being meticulously reshaped. The refinement process accelerates, the columns becoming as thin as threads of light, their stepped edges blurring into a smooth, continuous contour. The animation concludes as the individual blocks merge into a single, flawless, solid field of luminescence that perfectly fills the area, its light softening back to the gentle, warm golden hue from the beginning, pulsing with a soft, steady rhythm.",
+            "duration_seconds": 30,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "recap_scene_3",
+            "prompt": "The scene cuts to a wider shot, revealing the architect's hands carefully unrolling an ancient scroll across the dark wood of his desk. The scroll is made of a brittle, yellowed papyrus, its edges frayed and its surface marked with the stains of time. As it is fully unfurled, the camera cranes down and pushes in towards its center. In the middle of the scroll, a single, elegant mathematical formula is written in a sweeping, calligraphic style with dark ink. This formula begins to glow from within, the ink itself becoming a source of soft, contained golden light. Subtle volumetric rays emanate from the glowing symbols, silhouetting the surrounding ancient text and casting a warm light upon the scroll's textured surface. The camera then performs a slow, graceful rack focus and pan to the right. As the glowing formula on the scroll blurs into a soft, golden bokeh in the background, the parchment drawing of the Jharokha arch, lying beside it, snaps into sharp focus. A single, shimmering mote of golden light detaches from the blurred formula and drifts lazily through the air toward the drawing. Upon making contact with the starting point of the charcoal arch, it erupts into a brilliant, thin line of molten gold energy. This incandescent thread begins to trace the exact path of the charcoal curve with perfect, unwavering precision and a confident, steady speed. It moves with a flawless, fluid grace, leaving a faint, fading trail of light particles in its wake. As the energy line reaches the end of the curve, it flares brightly for a brief moment before dissipating into a thousand tiny, upward-drifting sparks, leaving the original charcoal drawing pristine and untouched.",
+            "duration_seconds": 30,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "recap_scene_4",
+            "prompt": "The scene holds on a close-up of the parchment drawing. The architect's weathered hand enters the frame, his index finger moving with deliberate grace to touch the exact starting point of the arch's base on the left. As his fingertip makes contact, a single, elegant letter 'a', composed of soft, volumetric white light, materializes on the paper. The light casts a gentle glow onto his skin. He then slowly traces the flat baseline under the arch, the camera tracking his finger's movement across the fibrous paper. When his finger reaches the end of the arch's base on the right, he taps the paper again, and a glowing letter 'b' materializes, identical in style to the 'a', marking the interval's boundaries. The architect lifts his hand away. As he does, two ethereal, three-dimensional numerical values coalesce in the air above the drawing. Above the glowing 'b', a value composed of swirling particles of golden light forms into a volumetric, semi-transparent number. Simultaneously, above the glowing 'a', a similar number forms, but composed of a cooler, silver light. These light-sculptures hover and gently rotate. The architect then brings his hands together in a symbolic gesture, cupping the space between the two floating numbers. This action creates an invisible force, pulling the two ethereal numbers from their positions towards the center, directly over the arch. The silver number drifts into and merges with the golden one. This causes a brilliant flash, and the golden number visibly diminishes in size, as if the silver value has been perfectly subtracted from it. The result is a single, new numerical value, glowing with a pure, triumphant golden light. This final number floats majestically for a moment before slowly dissolving into a cascade of upward-drifting motes of light.",
+            "duration_seconds": 30,
+            "style": "realistic"
+          },
+          {
+            "beat_id": "recap_scene_5",
+            "prompt": "The scene dissolves from the ethereal numbers to a breathtaking, photorealistic, cinematic shot. Initially, the frame is filled with the intricate detail of a real-life, physical Jharokha archway at sunset. The arch is constructed from warm, rose-colored sandstone, its surface showing a rough, grainy texture, weathered by centuries of sun and monsoon. The space beneath the arch is a stunning mosaic of deep cobalt blue and turquoise ceramic tiles, their high-gloss finish catching the last rays of the setting sun, causing them to shimmer with fiery orange and gold reflections. The lighting is pure magic hour, bathing the entire structure in a warm, saturated, golden-orange hue and casting long, soft shadows. The camera then commences a very slow, majestic pull-back, a smooth combination of a dolly-out and a crane-up. As it moves, the full, elegant form of the Jharokha is revealed, including its delicate latticework jali screen and ornate supporting brackets. The continuous pull-back reveals that this arch is not an isolated element but a perfect component of the grand facade of a magnificent Rajasthani palace. More domes, chhatris, and arches come into view, all glowing under the sunset. The palace is revealed to be situated beside a vast, serene lake, its still surface acting as a perfect mirror, reflecting the fiery colors of the sky and the dark silhouette of the colossal structure. The camera movement concludes on an epic wide shot, framing the entire palace against a dramatic sky streaked with vibrant orange, deep purple, and crimson clouds. The sun, a perfect orb, touches the horizon. The final image is one of profound awe and tangible accomplishment, holding for several seconds before a slow fade to black.",
+            "duration_seconds": 30,
+            "style": "realistic"
+          }
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-12-23T10:02:49.572507Z",
+    "pipeline_version": "v1.4",
+    "content_director_model": "google/gemini-2.5-pro",
+    "recap_director_model": "google/gemini-2.5-pro",
+    "section_count": 10,
+    "section_types": [
+      "intro",
+      "summary",
+      "content",
+      "content",
+      "content",
+      "content",
+      "content",
+      "example",
+      "memory",
+      "recap"
+    ],
+    "chunker_topics": 6,
+    "content_sections": 8,
+    "recap_sections": 6
+  },
+  "job_id": "809bbad0",
+  "use_remotion": true,
+  "source_file": "test_math_calculus.md",
+  "skip_avatar": false
+}

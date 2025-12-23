@@ -1,0 +1,82 @@
+[
+  {
+    "timestamp": "2025-12-23T10:06:40.950685",
+    "section_id": "section_3",
+    "section_title": "Defining the Definite Integral",
+    "renderer": "manim_v12",
+    "prompt": "axes = Axes(x_range=[-5, 5, 1], y_range=[-3, 3, 1], x_length=10, y_length=6, axis_config={\"include_tip\": True})\nself.play(Create(axes), run_time=1)\naxes = axes.plot(lambda x: x**2, color=WHITE)\ncurve = axes.plot(lambda x: x**2, color=BLUE)\nshaded_area = Dot(point=np.array([0, -1, 0]), color=BLUE)\nintegral_formula = MathTex(r\"\\int_{a}^{b} f(x) \\, dx\").move_to(np.array([0, 2.5, 0]))\npoint_a = Dot(point=np.array([-1.5, -1, 0]), color=RED)\npoint_b = Dot(point=np.array([1.5, -1, 0]), color=RED)\nlabel_a = MathTex(r\"a\").scale(0.8).move_to(np.array([-1.5, -2, 0]))\nlabel_b = MathTex(r\"b\").scale(0.8).move_to(np.array([1.5, -2, 0]))\n\n# Animation sequence\nself.play(Create(axes), run_time=2)\nself.play(Create(curve), run_time=3)\nself.play(FadeIn(point_a), run_time=1)\nself.play(FadeIn(point_b), run_time=1)\nself.play(FadeIn(label_a), run_time=1)\nself.play(FadeIn(label_b), run_time=1)\nself.play(FadeIn(shaded_area), run_time=3)\nself.wait(6)\nself.play(Write(integral_formula), run_time=2)\nself.play(Indicate(integral_formula), run_time=2)\nself.play(Indicate(integral_formula), run_time=2)\nself.wait(9)\nself.play(Indicate(integral_formula), run_time=2)\nself.play(Indicate(integral_formula), run_time=2)\nself.play(Indicate(integral_formula), run_time=2)\nself.wait(10)\nself.play(FadeOut(axes), run_time=2)\nself.play(FadeOut(curve), run_time=2)\nself.play(FadeOut(shaded_area), run_time=2)\nself.play(FadeOut(point_a), run_time=2)\nself.play(FadeOut(point_b), run_time=2)\nself.play(FadeOut(label_a), run_time=2)\nself.play(FadeOut(label_b), run_time=2)\nself.play(integral_formula.animate.move_to(np.array([0, 0, 0])), run_time=3)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/10fa88f6/videos/topic_section_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v12_spec_generated",
+      "object_count": 8,
+      "animation_count": 24,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-23T10:06:50.019254",
+    "section_id": "section_4",
+    "section_title": "Key Properties of Definite Integrals",
+    "renderer": "manim_v12",
+    "prompt": "title1 = Text(\"Constant Multiple Rule\", font_size=28).move_to(np.array([0, 2.5, 0]))\neq1 = MathTex(r\"\\int_{a}^{b} c f(x) \\, dx = c \\int_{a}^{b} f(x) \\, dx\").move_to(np.array([0, 1.0, 0]))\ntitle2 = Text(\"Sum/Difference Rule\", font_size=28).move_to(np.array([0, 2.5, 0]))\neq2 = MathTex(r\"\\int_{a}^{b} [f(x) \\pm g(x)] \\, dx = \\int_{a}^{b} f(x) \\, dx \\pm \\int_{a}^{b} g(x) \\, dx\").move_to(np.array([0, 1.0, 0]))\ntitle3 = Text(\"Additivity Rule\", font_size=28).move_to(np.array([0, 2.5, 0]))\neq3 = MathTex(r\"\\int_{a}^{c} f(x) \\, dx + \\int_{c}^{b} f(x) \\, dx = \\int_{a}^{b} f(x) \\, dx\").move_to(np.array([0, 1.0, 0]))\ntitle4 = Text(\"Reversal of Interval\", font_size=28).move_to(np.array([0, 2.5, 0]))\neq4 = MathTex(r\"\\int_{a}^{b} f(x) \\, dx = - \\int_{b}^{a} f(x) \\, dx\").move_to(np.array([0, 1.0, 0]))\n\n# Animation sequence\nself.play(FadeIn(title1), run_time=1.0)\nself.play(Write(eq1), run_time=2.0)\nself.play(Indicate(eq1), run_time=2.0)\nself.wait(15.0)\nself.play(FadeOut(title1), run_time=0.5)\nself.play(FadeOut(eq1), run_time=0.5)\nself.play(FadeIn(title2), run_time=1.0)\nself.play(Write(eq2), run_time=2.0)\nself.wait(15.0)\nself.play(FadeOut(title2), run_time=0.5)\nself.play(FadeOut(eq2), run_time=0.5)\nself.play(FadeIn(title3), run_time=1.0)\nself.play(Write(eq3), run_time=2.0)\nself.wait(16.0)\nself.play(FadeOut(title3), run_time=0.5)\nself.play(FadeOut(eq3), run_time=0.5)\nself.play(FadeIn(title4), run_time=1.0)\nself.play(Write(eq4), run_time=2.0)\nself.wait(9.0)\nself.play(Indicate(eq4), run_time=3.0)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/10fa88f6/videos/topic_section_4.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v12_spec_generated",
+      "object_count": 8,
+      "animation_count": 20,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-23T10:06:53.959110",
+    "section_id": "section_5",
+    "section_title": "The Fundamental Theorem of Calculus, Part 1",
+    "renderer": "manim_v12",
+    "prompt": "area_func = MathTex(r\"g(x) = \\int_{a}^{x} f(t) \\, dt\").move_to(np.array([0, 1.0, 0]))\narea_label = MathTex(r\"\\text{Area function from } a \\text{ to } x\").scale(0.7).move_to(np.array([0, -0.5, 0]))\nderivative_setup = MathTex(r\"g'(x) = \\frac{d}{dx} \\int_{a}^{x} f(t) \\, dt\").move_to(np.array([0, 1.0, 0]))\nftc_result = MathTex(r\"= f(x)\").move_to(np.array([0, -0.5, 0]))\nftc_statement = MathTex(r\"\\text{Fundamental Theorem of Calculus, Part 1}\").scale(0.8).move_to(np.array([0, -2.0, 0]))\n\n# Animation sequence\nself.play(Write(area_func), run_time=2)\nself.play(FadeIn(area_label), run_time=1)\nself.wait(16)\nself.play(Write(derivative_setup), run_time=1)\nself.play(FadeOut(area_label), run_time=1)\nself.wait(8)\nself.play(Write(ftc_result), run_time=2)\nself.play(FadeIn(ftc_statement), run_time=1)\nself.wait(5)\nself.play(Indicate(ftc_result), run_time=2)\nself.wait(14)\nself.play(Indicate(ftc_statement), run_time=3)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/10fa88f6/videos/topic_section_5.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v12_spec_generated",
+      "object_count": 5,
+      "animation_count": 13,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-23T10:06:56.306554",
+    "section_id": "section_6",
+    "section_title": "The Fundamental Theorem of Calculus, Part 2: Evaluation",
+    "renderer": "manim_v12",
+    "prompt": "ftc2_eq = MathTex(r\"\\int_{a}^{b} f(x) \\, dx = F(b) - F(a)\").move_to(np.array([0, 0, 0]))\n\n# Animation sequence\nself.play(Write(ftc2_eq), run_time=2)\nself.wait(34)\nself.play(Indicate(ftc2_eq), run_time=3)\nself.play(Indicate(ftc2_eq), run_time=3)\nself.wait(13)\nself.play(Indicate(ftc2_eq), run_time=3)\nself.play(FadeOut(ftc2_eq), run_time=2)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/10fa88f6/videos/topic_section_6.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v12_spec_generated",
+      "object_count": 1,
+      "animation_count": 7,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-23T10:06:58.647433",
+    "section_id": "section_8",
+    "section_title": "Worked Example: Calculating a Definite Integral",
+    "renderer": "manim_v12",
+    "prompt": "problem = MathTex(r\"\\int_{1}^{3} (x^2 + 2) \\, dx\").move_to(np.array([0, 2.5, 0]))\nfunction = MathTex(r\"f(x) = x^2 + 2\").move_to(np.array([0, 1.0, 0]))\nantiderivative = MathTex(r\"F(x) = \\frac{x^3}{3} + 2x\").move_to(np.array([0, -0.5, 0]))\nevaluation_setup = MathTex(r\"\\left[\\frac{x^3}{3} + 2x\\right]_{1}^{3} = F(3) - F(1)\").move_to(np.array([0, 1.0, 0]))\nf3_calc = MathTex(r\"F(3) = \\frac{3^3}{3} + 2(3) = 9 + 6 = 15\").move_to(np.array([0, -0.5, 0]))\nf1_calc = MathTex(r\"F(1) = \\frac{1^3}{3} + 2(1) = \\frac{1}{3} + 2 = \\frac{7}{3}\").move_to(np.array([0, -2.0, 0]))\nfinal_calc = MathTex(r\"15 - \\frac{7}{3} = \\frac{45}{3} - \\frac{7}{3} = \\frac{38}{3}\").move_to(np.array([0, 1.0, 0]))\nanswer_box = MathTex(r\"\\boxed{\\frac{38}{3}}\").move_to(np.array([0, -0.5, 0]))\n\n# Animation sequence\nself.play(Write(problem), run_time=2)\nself.wait(8)\nself.play(Write(function), run_time=2)\nself.wait(3)\nself.play(Write(antiderivative), run_time=3)\nself.wait(12)\nself.play(FadeOut(function), run_time=1)\nself.play(FadeOut(antiderivative), run_time=1)\nself.play(Write(evaluation_setup), run_time=2)\nself.wait(2)\nself.play(Write(f3_calc), run_time=3)\nself.wait(11)\nself.play(Write(f1_calc), run_time=3)\nself.wait(8)\nself.play(FadeOut(evaluation_setup), run_time=1)\nself.play(FadeOut(f3_calc), run_time=1)\nself.play(FadeOut(f1_calc), run_time=1)\nself.play(Write(final_calc), run_time=3)\nself.wait(8)\nself.play(Write(answer_box), run_time=2)\nself.play(Indicate(answer_box), run_time=3)\nself.wait(1)",
+    "output_path": "/home/runner/workspace/player/jobs/10fa88f6/videos/topic_section_8.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v12_spec_generated",
+      "object_count": 8,
+      "animation_count": 21,
+      "duration": 30,
+      "dry_run": false
+    }
+  }
+]
