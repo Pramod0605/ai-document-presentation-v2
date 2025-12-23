@@ -72,6 +72,10 @@ class SectionPlannerAgent(BaseAgent):
         errors = []
         sections = output.get("sections", [])
         
+        if not sections:
+            errors.append("No sections found")
+            return False, errors
+        
         section_types = [s.get("section_type") for s in sections]
         
         if section_types.count("intro") != 1:
@@ -80,11 +84,23 @@ class SectionPlannerAgent(BaseAgent):
         if section_types.count("summary") != 1:
             errors.append(f"Must have exactly 1 summary section, found {section_types.count('summary')}")
         
-        if sections and sections[0].get("section_type") != "intro":
+        if section_types.count("memory") != 1:
+            errors.append(f"Must have exactly 1 memory section, found {section_types.count('memory')}")
+        
+        if section_types.count("recap") != 1:
+            errors.append(f"Must have exactly 1 recap section, found {section_types.count('recap')}")
+        
+        if sections[0].get("section_type") != "intro":
             errors.append("First section must be 'intro'")
         
-        if sections and len(sections) > 1 and sections[1].get("section_type") != "summary":
+        if len(sections) > 1 and sections[1].get("section_type") != "summary":
             errors.append("Second section must be 'summary'")
+        
+        if sections[-1].get("section_type") != "recap":
+            errors.append("Last section must be 'recap'")
+        
+        if len(sections) >= 2 and sections[-2].get("section_type") != "memory":
+            errors.append("Second-to-last section must be 'memory'")
         
         content_count = section_types.count("content") + section_types.count("example")
         if content_count < 1:
@@ -99,5 +115,10 @@ class SectionPlannerAgent(BaseAgent):
             
             if st == "recap" and renderer != "video":
                 errors.append(f"Section {i} (recap): renderer must be 'video' for recap sections")
+        
+        expected_order = ["intro", "summary"]
+        actual_order = section_types[:2]
+        if actual_order != expected_order:
+            errors.append(f"Section order must start with intro, summary. Got: {actual_order}")
         
         return len(errors) == 0, errors
