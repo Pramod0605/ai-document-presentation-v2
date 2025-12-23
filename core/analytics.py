@@ -134,6 +134,29 @@ class AnalyticsTracker:
 
         return phase
 
+    def add_llm_call(
+        self,
+        phase: str,
+        model: str,
+        prompt_tokens: int,
+        completion_tokens: int
+    ) -> PhaseMetrics:
+        """Add a completed LLM call as a phase (convenience method for V1.5 agents)."""
+        phase_obj = PhaseMetrics(
+            phase_name=phase,
+            model=model,
+            started_at=datetime.utcnow().isoformat(),
+            completed_at=datetime.utcnow().isoformat(),
+            status="completed",
+            input_tokens=prompt_tokens,
+            output_tokens=completion_tokens,
+            total_tokens=prompt_tokens + completion_tokens,
+            duration_seconds=0.0,
+            cost_usd=self._calculate_cost(model, prompt_tokens, completion_tokens)
+        )
+        self.analytics.phases.append(phase_obj)
+        return phase_obj
+
     def _find_phase(self, phase_name: str) -> Optional[PhaseMetrics]:
         """Find a phase by name."""
         for phase in self.analytics.phases:
