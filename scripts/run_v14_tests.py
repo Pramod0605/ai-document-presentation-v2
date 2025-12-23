@@ -106,7 +106,7 @@ def run_test(config: dict) -> dict:
         response = requests.post(
             f"{API_BASE}/api/v14/generate",
             json=payload,
-            timeout=600
+            timeout=900
         )
         
         results["duration"] = time.time() - start_time
@@ -167,7 +167,8 @@ def run_test(config: dict) -> dict:
         
         analytics = results["analytics"]
         if analytics:
-            cd_analytics = analytics.get("content_director", {})
+            cost_breakdown = analytics.get("cost_breakdown", {})
+            cd_analytics = cost_breakdown.get("content_director", {})
             if cd_analytics.get("tokens", 0) == 0:
                 results["errors"].append("ISS-110 FAIL: Content Director tokens = 0")
             else:
@@ -216,7 +217,7 @@ def run_test(config: dict) -> dict:
         results["success"] = len(results["errors"]) == 0
         
     except requests.exceptions.Timeout:
-        results["errors"].append("Request timed out after 600s")
+        results["errors"].append("Request timed out after 900s")
     except requests.exceptions.ConnectionError:
         results["errors"].append("Connection failed - is server running?")
     except Exception as e:

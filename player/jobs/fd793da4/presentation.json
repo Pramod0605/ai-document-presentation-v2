@@ -1,0 +1,3474 @@
+{
+  "spec_version": "v1.4",
+  "title": "The Fundamental Theorem of Calculus",
+  "subject": "Mathematics",
+  "grade": "Grade 12",
+  "sections": [
+    {
+      "section_id": "section_1",
+      "section_type": "intro",
+      "title": "Introduction to Definite Integrals and Calculus",
+      "renderer": "remotion",
+      "renderer_reasoning": "The intro section sets the stage and is best handled with simple text and avatar animations provided by Remotion.",
+      "layout": {
+        "avatar_position": "center",
+        "avatar_width_percent": 50,
+        "content_zone": "100% full",
+        "avatar_zone": "100% full"
+      },
+      "narration": {
+        "full_text": "Hello students, and welcome! Today, we are diving into one of the most powerful concepts in all of mathematics: the definite integral and the Fundamental Theorem of Calculus. This is where everything you've learned about derivatives and areas comes together in a beautiful way. We'll start by understanding what a definite integral truly represents. Then, we'll explore its key properties. After that, we'll unravel the two parts of the incredible Fundamental Theorem of Calculus. We will also look at some common antiderivative formulas you'll need, walk through a complete example, and finish with a quick quiz to check your understanding. Let's begin!",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Hello students, and welcome! Today, we are diving into one of the most powerful concepts in all of mathematics: the definite integral and the Fundamental Theorem of Calculus.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {},
+            "avatar_gesture": "welcoming",
+            "duration_seconds": 11.5,
+            "audio_file": "section_1_seg_1.mp3"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "This is where everything you've learned about derivatives and areas comes together in a beautiful way. We'll start by understanding what a definite integral truly represents.",
+            "duration_estimate": 9.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Definition of the Definite Integral"
+              ]
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 10.8,
+            "audio_file": "section_1_seg_2.mp3"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Then, we'll explore its key properties. After that, we'll unravel the two parts of the incredible Fundamental Theorem of Calculus.",
+            "duration_estimate": 8.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Definition of the Definite Integral",
+                "Key Properties of Integrals",
+                "Fundamental Theorem of Calculus (Parts 1 & 2)"
+              ]
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 9.02,
+            "audio_file": "section_1_seg_3.mp3"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "We will also look at some common antiderivative formulas you'll need, walk through a complete example, and finish with a quick quiz to check your understanding. Let's begin!",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Definition of the Definite Integral",
+                "Key Properties of Integrals",
+                "Fundamental Theorem of Calculus (Parts 1 & 2)",
+                "Common Antiderivatives",
+                "Worked Example & Quiz"
+              ]
+            },
+            "avatar_gesture": "excited",
+            "duration_seconds": 10.78,
+            "audio_file": "section_1_seg_4.mp3"
+          }
+        ],
+        "total_duration_seconds": 42.1
+      },
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1263,
+        "elements": [
+          {
+            "id": "title",
+            "type": "text",
+            "content": "Introduction to Definite Integrals and Calculus",
+            "position": {
+              "x": 640,
+              "y": 100
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#2563eb",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 1263
+            }
+          },
+          {
+            "id": "bullet_1",
+            "type": "text",
+            "content": "Definition of the Definite Integral",
+            "position": {
+              "x": 640,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 345,
+              "exit_frame": 1263
+            }
+          },
+          {
+            "id": "bullet_2",
+            "type": "text",
+            "content": "Key Properties of Integrals",
+            "position": {
+              "x": 640,
+              "y": 360
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 669,
+              "exit_frame": 1263
+            }
+          },
+          {
+            "id": "bullet_3",
+            "type": "text",
+            "content": "Fundamental Theorem of Calculus (Parts 1 & 2)",
+            "position": {
+              "x": 640,
+              "y": 420
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 669,
+              "exit_frame": 1263
+            }
+          },
+          {
+            "id": "bullet_4",
+            "type": "text",
+            "content": "Common Antiderivatives",
+            "position": {
+              "x": 640,
+              "y": 480
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 940,
+              "exit_frame": 1263
+            }
+          },
+          {
+            "id": "bullet_5",
+            "type": "text",
+            "content": "Worked Example & Quiz",
+            "position": {
+              "x": 640,
+              "y": 540
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 940,
+              "exit_frame": 1263
+            }
+          }
+        ],
+        "background": {
+          "color": "#f8fafc"
+        }
+      }
+    },
+    {
+      "section_id": "section_2",
+      "section_type": "summary",
+      "title": "Lesson Summary",
+      "renderer": "remotion",
+      "renderer_reasoning": "The summary section recaps key points and is suitable for a simple text-based Remotion scene.",
+      "layout": {
+        "avatar_position": "right",
+        "avatar_width_percent": 40,
+        "content_zone": "60% left",
+        "avatar_zone": "40% right"
+      },
+      "narration": {
+        "full_text": "Let's quickly summarize what we've learned. First, the definite integral is the signed area under a curve, formally defined as the limit of Riemann sums. Second, we learned about essential properties like linearity and additivity, which help simplify complex integrals. Most importantly, we covered the two parts of the Fundamental Theorem of Calculus. Part 1 connects differentiation and integration, showing that the derivative of an integral function is the original function. Part 2 gives us the practical tool to evaluate definite integrals using antiderivatives, as the difference F(b) minus F(a). Mastering these concepts is the key to unlocking advanced calculus.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Let's quickly summarize what we've learned. First, the definite integral is the signed area under a curve, formally defined as the limit of Riemann sums.",
+            "duration_estimate": 9.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Definite Integral: Signed area under a curve (limit of Riemann sums)."
+              ]
+            },
+            "avatar_gesture": "summarizing",
+            "duration_seconds": 10.22,
+            "audio_file": "section_2_seg_1.mp3"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Second, we learned about essential properties like linearity and additivity, which help simplify complex integrals.",
+            "duration_estimate": 7.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Definite Integral: Signed area under a curve (limit of Riemann sums).",
+                "Key Properties: Linearity and additivity simplify calculations."
+              ]
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 7.8,
+            "audio_file": "section_2_seg_2.mp3"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Most importantly, we covered the two parts of the Fundamental Theorem of Calculus. Part 1 connects differentiation and integration, showing that the derivative of an integral function is the original function.",
+            "duration_estimate": 12.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "FTC Part 1: Links differentiation and integration (d/dx of integral is f(x))."
+              ]
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 13.08,
+            "audio_file": "section_2_seg_3.mp3"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Part 2 gives us the practical tool to evaluate definite integrals using antiderivatives, as the difference F(b) minus F(a). Mastering these concepts is the key to unlocking advanced calculus.",
+            "duration_estimate": 12.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "FTC Part 2: Evaluates integrals using antiderivatives: F(b) - F(a)."
+              ]
+            },
+            "avatar_gesture": "nodding",
+            "duration_seconds": 13.49,
+            "audio_file": "section_2_seg_4.mp3"
+          }
+        ],
+        "total_duration_seconds": 44.59
+      },
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1338,
+        "elements": [
+          {
+            "id": "title",
+            "type": "text",
+            "content": "Lesson Summary",
+            "position": {
+              "x": 150,
+              "y": 100
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#2563eb",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 1338
+            }
+          },
+          {
+            "id": "bullet_1",
+            "type": "text",
+            "content": "\u2022 Definite Integral: Signed area under a curve (limit of Riemann sums)",
+            "position": {
+              "x": 150,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 60,
+              "exit_frame": 1338
+            }
+          },
+          {
+            "id": "bullet_2",
+            "type": "text",
+            "content": "\u2022 Key Properties: Linearity and additivity simplify calculations",
+            "position": {
+              "x": 150,
+              "y": 280
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 306,
+              "exit_frame": 1338
+            }
+          },
+          {
+            "id": "bullet_3",
+            "type": "text",
+            "content": "\u2022 FTC Part 1: Links differentiation and integration (d/dx of integral is f(x))",
+            "position": {
+              "x": 150,
+              "y": 360
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 540,
+              "exit_frame": 1338
+            }
+          },
+          {
+            "id": "bullet_4",
+            "type": "text",
+            "content": "\u2022 FTC Part 2: Evaluates integrals using antiderivatives: F(b) - F(a)",
+            "position": {
+              "x": 150,
+              "y": 440
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 932,
+              "exit_frame": 1338
+            }
+          }
+        ],
+        "background": {
+          "color": "#f8fafc"
+        }
+      }
+    },
+    {
+      "section_id": "section_3",
+      "section_type": "content",
+      "title": "Definition of the Definite Integral",
+      "renderer": "manim",
+      "renderer_reasoning": "This section defines the integral using limits and Riemann sums, which requires mathematical animation of graphs and formulas, making Manim the ideal choice.",
+      "layout": {
+        "avatar_position": "left",
+        "avatar_width_percent": 35,
+        "content_zone": "65% right",
+        "avatar_zone": "35% left"
+      },
+      "narration": {
+        "full_text": "So, what exactly is a definite integral? Imagine you have a function f(x) and you want to find the area under its curve between two points, 'a' and 'b'. The definite integral gives us the 'signed area'. 'Signed' means that area above the x-axis is positive, and area below is negative. The concept is built from something called Riemann sums. We approximate the area by dividing it into many thin rectangles and adding up their areas. As we make these rectangles infinitely thin, their sum approaches the exact area. This limit is the definite integral. Formally, we write it like this: the integral from a to b of f(x) dx is the limit as n approaches infinity of the sum of f(x_i) times delta x. It looks complex, but it's just a precise way of saying 'add up all the tiny rectangles'.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "So, what exactly is a definite integral? Imagine you have a function f(x) and you want to find the area under its curve between two points, 'a' and 'b'.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "visual_content": {},
+            "avatar_gesture": "explaining",
+            "duration_seconds": 11.42,
+            "audio_file": "section_3_seg_1.mp3"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "The definite integral gives us the 'signed area'. 'Signed' means that area above the x-axis is positive, and area below is negative.",
+            "duration_estimate": 9.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "The definite integral calculates the 'signed area' under a curve.",
+                "Area above the x-axis is positive.",
+                "Area below the x-axis is negative."
+              ]
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 9.79,
+            "audio_file": "section_3_seg_2.mp3"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "The concept is built from something called Riemann sums. We approximate the area by dividing it into many thin rectangles and adding up their areas.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": {},
+            "avatar_gesture": "gesturing",
+            "duration_seconds": 9.74,
+            "audio_file": "section_3_seg_3.mp3"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "As we make these rectangles infinitely thin, their sum approaches the exact area. This limit is the definite integral.",
+            "duration_estimate": 8.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": {},
+            "avatar_gesture": "gesturing",
+            "duration_seconds": 8.54,
+            "audio_file": "section_3_seg_4.mp3"
+          },
+          {
+            "segment_id": "seg_5",
+            "text": "Formally, we write it like this: the integral from a to b of f(x) dx is the limit as n approaches infinity of the sum of f(x_i) times delta x. It looks complex, but it's just a precise way of saying 'add up all the tiny rectangles'.",
+            "duration_estimate": 15.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "formula": "\\int_{a}^{b} f(x) \\, dx = \\lim_{n \\to \\infty} \\sum_{i=1}^{n} f(x_i^*) \\Delta x"
+            },
+            "avatar_gesture": "presenting",
+            "duration_seconds": 17.52,
+            "audio_file": "section_3_seg_5.mp3"
+          }
+        ],
+        "total_duration_seconds": 57.02
+      },
+      "visual_beats": [
+        {
+          "beat_id": "3_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "diagram",
+          "description": "Draw a coordinate system with a generic curve f(x) above the x-axis. Label the x-axis, y-axis, and the points 'a' and 'b' on the x-axis. Shade the area under the curve between a and b."
+        },
+        {
+          "beat_id": "3_2",
+          "segment_id": "seg_3",
+          "visual_beat_type": "animation",
+          "description": "On the same graph, show the shaded area being approximated by 5-6 vertical rectangles (a Riemann sum)."
+        },
+        {
+          "beat_id": "3_3",
+          "segment_id": "seg_4",
+          "visual_beat_type": "animation",
+          "description": "Animate the number of rectangles increasing, making them thinner and thinner, showing the approximation getting better and converging to the smooth shaded area."
+        },
+        {
+          "beat_id": "3_4",
+          "segment_id": "seg_5",
+          "visual_beat_type": "formula",
+          "description": "Fade out the graph. Display the formal definition of the definite integral as the limit of a Riemann sum."
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "axes",
+            "type": "graph",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "x_range": [
+                -0.5,
+                5
+              ],
+              "y_range": [
+                -0.5,
+                4
+              ],
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "curve",
+            "type": "graph",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "latex": "0.3*x**2 + 0.5",
+              "x_range": [
+                0.5,
+                4.5
+              ],
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "point_a",
+            "type": "point",
+            "position": [
+              1,
+              -0.3
+            ],
+            "properties": {
+              "color": "RED"
+            }
+          },
+          {
+            "id": "point_b",
+            "type": "point",
+            "position": [
+              4,
+              -0.3
+            ],
+            "properties": {
+              "color": "RED"
+            }
+          },
+          {
+            "id": "label_a",
+            "type": "label",
+            "position": [
+              1,
+              -0.6
+            ],
+            "properties": {
+              "latex": "a",
+              "color": "RED",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "label_b",
+            "type": "label",
+            "position": [
+              4,
+              -0.6
+            ],
+            "properties": {
+              "latex": "b",
+              "color": "RED",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "shaded_area",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "color": "BLUE",
+              "opacity": 0.3
+            }
+          },
+          {
+            "id": "rectangles_5",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "color": "GREEN",
+              "opacity": 0.6
+            }
+          },
+          {
+            "id": "rectangles_10",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "color": "GREEN",
+              "opacity": 0.6
+            }
+          },
+          {
+            "id": "rectangles_20",
+            "type": "shape",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "color": "GREEN",
+              "opacity": 0.6
+            }
+          },
+          {
+            "id": "integral_formula",
+            "type": "equation",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} f(x) \\, dx = \\lim_{n \\to \\infty} \\sum_{i=1}^{n} f(x_i^*) \\Delta x",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "draw",
+            "target": "axes",
+            "duration": 1.5
+          },
+          {
+            "action": "draw",
+            "target": "curve",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "point_a",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "point_b",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "label_a",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "label_b",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "shaded_area",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "",
+            "duration": 4.42
+          },
+          {
+            "action": "fade_out",
+            "target": "shaded_area",
+            "duration": 0.5
+          },
+          {
+            "action": "appear",
+            "target": "rectangles_5",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "target": "",
+            "duration": 8.24
+          },
+          {
+            "action": "transform",
+            "target": "rectangles_5",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "rectangles_10",
+            "duration": 1.0
+          },
+          {
+            "action": "transform",
+            "target": "rectangles_10",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "rectangles_20",
+            "duration": 1.0
+          },
+          {
+            "action": "transform",
+            "target": "rectangles_20",
+            "duration": 1.0
+          },
+          {
+            "action": "appear",
+            "target": "shaded_area",
+            "duration": 1.5
+          },
+          {
+            "action": "wait",
+            "target": "",
+            "duration": 1.04
+          },
+          {
+            "action": "fade_out",
+            "target": "axes",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "curve",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "point_a",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "point_b",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "label_a",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "label_b",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "shaded_area",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "rectangles_20",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "integral_formula",
+            "duration": 3.0
+          },
+          {
+            "action": "wait",
+            "target": "",
+            "duration": 14.52
+          },
+          {
+            "action": "highlight",
+            "target": "integral_formula",
+            "duration": 2.0,
+            "color": "YELLOW"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "section_4",
+      "section_type": "content",
+      "title": "Key Properties of Definite Integrals",
+      "renderer": "manim",
+      "renderer_reasoning": "This section lists mathematical properties with specific formulas. Manim is perfect for displaying and animating these equations clearly.",
+      "layout": {
+        "avatar_position": "right",
+        "avatar_width_percent": 35,
+        "content_zone": "65% left",
+        "avatar_zone": "35% right"
+      },
+      "narration": {
+        "full_text": "Definite integrals have some very useful properties that help us solve them more easily. First is the constant multiple rule: you can pull a constant factor out of the integral. Next is the sum and difference rule: the integral of a sum is the sum of the integrals. Together, these are called linearity. Another key property is additivity. If you integrate from 'a' to 'c', it's the same as integrating from 'a' to 'b' and then adding the integral from 'b' to 'c', assuming 'b' is between 'a' and 'c'. Finally, if you reverse the limits of integration, from 'a' to 'b' becomes 'b' to 'a', the value of the integral is negated. It becomes minus the original integral. Let's look at these properties one by one.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Definite integrals have some very useful properties that help us solve them more easily. First is the constant multiple rule: you can pull a constant factor out of the integral.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "formula": "\\int_{a}^{b} c f(x) \\, dx = c \\int_{a}^{b} f(x) \\, dx"
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 11.18,
+            "audio_file": "section_4_seg_1.mp3"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Next is the sum and difference rule: the integral of a sum is the sum of the integrals. Together, these are called linearity.",
+            "duration_estimate": 8.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "formula": "\\int_{a}^{b} [f(x) \\pm g(x)] \\, dx = \\int_{a}^{b} f(x) \\, dx \\pm \\int_{a}^{b} g(x) \\, dx"
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 8.69,
+            "audio_file": "section_4_seg_2.mp3"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Another key property is additivity. If you integrate from 'a' to 'c', it's the same as integrating from 'a' to 'b' and then adding the integral from 'b' to 'c', assuming 'b' is between 'a' and 'c'.",
+            "duration_estimate": 13.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "formula": "\\int_{a}^{c} f(x) \\, dx = \\int_{a}^{b} f(x) \\, dx + \\int_{b}^{c} f(x) \\, dx"
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 15.19,
+            "audio_file": "section_4_seg_3.mp3"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Finally, if you reverse the limits of integration, from 'a' to 'b' becomes 'b' to 'a', the value of the integral is negated. It becomes minus the original integral. Let's look at these properties one by one.",
+            "duration_estimate": 13.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "formula": "\\int_{a}^{b} f(x) \\, dx = - \\int_{b}^{a} f(x) \\, dx"
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 15.6,
+            "audio_file": "section_4_seg_4.mp3"
+          }
+        ],
+        "total_duration_seconds": 50.66
+      },
+      "visual_beats": [
+        {
+          "beat_id": "4_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "formula",
+          "description": "Display the constant multiple rule formula. Animate the constant 'c' moving from inside the integral to outside."
+        },
+        {
+          "beat_id": "4_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "formula",
+          "description": "Display the sum/difference rule. Show the integral of the sum splitting into two separate integrals."
+        },
+        {
+          "beat_id": "4_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "formula",
+          "description": "Display the additivity rule. Perhaps show a number line with a, b, c to visualize the interval splitting."
+        },
+        {
+          "beat_id": "4_4",
+          "segment_id": "seg_4",
+          "visual_beat_type": "formula",
+          "description": "Display the limit reversal rule. Animate the 'a' and 'b' swapping positions as a minus sign appears."
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "label",
+            "position": [
+              0,
+              3.0
+            ],
+            "properties": {
+              "latex": "\\text{Key Properties of Definite Integrals}",
+              "color": "BLUE",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "prop1",
+            "type": "equation",
+            "position": [
+              0,
+              1.5
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} c f(x) \\, dx = c \\int_{a}^{b} f(x) \\, dx",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "label1",
+            "type": "label",
+            "position": [
+              -4.0,
+              1.8
+            ],
+            "properties": {
+              "latex": "\\text{Constant Multiple Rule}",
+              "color": "YELLOW",
+              "scale": 0.6
+            }
+          },
+          {
+            "id": "prop2",
+            "type": "equation",
+            "position": [
+              0,
+              0.0
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} [f(x) \\pm g(x)] \\, dx = \\int_{a}^{b} f(x) \\, dx \\pm \\int_{a}^{b} g(x) \\, dx",
+              "color": "WHITE",
+              "scale": 0.9
+            }
+          },
+          {
+            "id": "label2",
+            "type": "label",
+            "position": [
+              -4.5,
+              0.3
+            ],
+            "properties": {
+              "latex": "\\text{Linearity (Sum/Difference)}",
+              "color": "YELLOW",
+              "scale": 0.6
+            }
+          },
+          {
+            "id": "prop3",
+            "type": "equation",
+            "position": [
+              0,
+              -1.5
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{c} f(x) \\, dx = \\int_{a}^{b} f(x) \\, dx + \\int_{b}^{c} f(x) \\, dx",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "label3",
+            "type": "label",
+            "position": [
+              -4.0,
+              -1.2
+            ],
+            "properties": {
+              "latex": "\\text{Additivity}",
+              "color": "YELLOW",
+              "scale": 0.6
+            }
+          },
+          {
+            "id": "prop4",
+            "type": "equation",
+            "position": [
+              0,
+              -3.0
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} f(x) \\, dx = - \\int_{b}^{a} f(x) \\, dx",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "label4",
+            "type": "label",
+            "position": [
+              -4.0,
+              -2.7
+            ],
+            "properties": {
+              "latex": "\\text{Limit Reversal}",
+              "color": "YELLOW",
+              "scale": 0.6
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title",
+            "duration": 1.5
+          },
+          {
+            "action": "show_equation",
+            "target": "prop1",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "label1",
+            "duration": 1.0
+          },
+          {
+            "action": "highlight",
+            "target": "prop1",
+            "duration": 1.5,
+            "color": "YELLOW",
+            "target_latex_part": "c"
+          },
+          {
+            "action": "wait",
+            "duration": 5.68
+          },
+          {
+            "action": "show_equation",
+            "target": "prop2",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "label2",
+            "duration": 1.0
+          },
+          {
+            "action": "highlight",
+            "target": "prop2",
+            "duration": 1.5,
+            "color": "GREEN",
+            "target_latex_part": "\\pm"
+          },
+          {
+            "action": "wait",
+            "duration": 4.19
+          },
+          {
+            "action": "show_equation",
+            "target": "prop3",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "label3",
+            "duration": 1.0
+          },
+          {
+            "action": "highlight",
+            "target": "prop3",
+            "duration": 2.0,
+            "color": "BLUE",
+            "target_latex_part": "b"
+          },
+          {
+            "action": "wait",
+            "duration": 10.19
+          },
+          {
+            "action": "show_equation",
+            "target": "prop4",
+            "duration": 2.0
+          },
+          {
+            "action": "appear",
+            "target": "label4",
+            "duration": 1.0
+          },
+          {
+            "action": "highlight",
+            "target": "prop4",
+            "duration": 2.0,
+            "color": "RED",
+            "target_latex_part": "-"
+          },
+          {
+            "action": "wait",
+            "duration": 8.6
+          },
+          {
+            "action": "highlight",
+            "target": "prop1",
+            "duration": 1.0,
+            "color": "YELLOW"
+          },
+          {
+            "action": "highlight",
+            "target": "prop2",
+            "duration": 1.0,
+            "color": "GREEN"
+          },
+          {
+            "action": "highlight",
+            "target": "prop3",
+            "duration": 1.0,
+            "color": "BLUE"
+          },
+          {
+            "action": "highlight",
+            "target": "prop4",
+            "duration": 2.0,
+            "color": "RED"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "section_5",
+      "section_type": "content",
+      "title": "Fundamental Theorem of Calculus, Part 1",
+      "renderer": "manim",
+      "renderer_reasoning": "FTC Part 1 involves the concept of a derivative of an integral, a theoretical and formula-heavy concept ideal for Manim's visualization capabilities.",
+      "layout": {
+        "avatar_position": "left",
+        "avatar_width_percent": 35,
+        "content_zone": "65% right",
+        "avatar_zone": "35% left"
+      },
+      "narration": {
+        "full_text": "Now for the main event: The Fundamental Theorem of Calculus. Part 1 is mind-blowing because it connects differentiation and integration as inverse processes. Think about an 'area so far' function. Let's call it g(x). It's defined as the integral of some function f(t) from a constant 'a' up to a variable 'x'. So as 'x' changes, the area changes. What do you think happens if we take the derivative of this area function g(x)? The Fundamental Theorem of Calculus Part 1 tells us that the derivative of g(x) is simply the original function f(x) that we started with! In other words, if you integrate a function and then differentiate it, you get back to where you started. This shows that differentiation and integration are opposites, just like multiplication and division.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Now for the main event: The Fundamental Theorem of Calculus. Part 1 is mind-blowing because it connects differentiation and integration as inverse processes.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "labels": [
+                "The Fundamental Theorem of Calculus, Part 1",
+                "Connects Differentiation and Integration"
+              ]
+            },
+            "avatar_gesture": "excited",
+            "duration_seconds": 10.61,
+            "audio_file": "section_5_seg_1.mp3"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Think about an 'area so far' function. Let's call it g(x). It's defined as the integral of some function f(t) from a constant 'a' up to a variable 'x'. So as 'x' changes, the area changes.",
+            "duration_estimate": 13.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": {
+              "formula": "g(x) = \\int_{a}^{x} f(t) \\, dt"
+            },
+            "avatar_gesture": "gesturing",
+            "duration_seconds": 17.23,
+            "audio_file": "section_5_seg_2.mp3"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "What do you think happens if we take the derivative of this area function g(x)? The Fundamental Theorem of Calculus Part 1 tells us that the derivative of g(x) is simply the original function f(x) that we started with!",
+            "duration_estimate": 14.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "formula": "\\frac{d}{dx} g(x) = \\frac{d}{dx} \\int_{a}^{x} f(t) \\, dt = f(x)"
+            },
+            "avatar_gesture": "mind_blown",
+            "duration_seconds": 15.84,
+            "audio_file": "section_5_seg_3.mp3"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "In other words, if you integrate a function and then differentiate it, you get back to where you started. This shows that differentiation and integration are opposites, just like multiplication and division.",
+            "duration_estimate": 12.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Differentiation and Integration are inverse operations."
+              ]
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 13.06,
+            "audio_file": "section_5_seg_4.mp3"
+          }
+        ],
+        "total_duration_seconds": 56.74
+      },
+      "visual_beats": [
+        {
+          "beat_id": "5_1",
+          "segment_id": "seg_2",
+          "visual_beat_type": "animation",
+          "description": "Show a graph of f(t). Define g(x) with the integral formula. Animate the upper limit 'x' moving along the axis, and the corresponding area under the curve changing."
+        },
+        {
+          "beat_id": "5_2",
+          "segment_id": "seg_3",
+          "visual_beat_type": "formula",
+          "description": "Display the full FTC Part 1 formula. Animate the d/dx operator and the integral symbol 'canceling out' to leave just f(x)."
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "title",
+            "type": "label",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "text": "The Fundamental Theorem of Calculus, Part 1",
+              "color": "WHITE",
+              "scale": 1.0
+            }
+          },
+          {
+            "id": "connection_label",
+            "type": "label",
+            "position": [
+              0,
+              1.5
+            ],
+            "properties": {
+              "text": "Connects Differentiation and Integration",
+              "color": "YELLOW",
+              "scale": 0.8
+            }
+          },
+          {
+            "id": "g_definition",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "g(x) = \\int_{a}^{x} f(t) \\, dt",
+              "color": "WHITE",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "area_label",
+            "type": "label",
+            "position": [
+              0,
+              0.2
+            ],
+            "properties": {
+              "text": "\"Area so far\" function",
+              "color": "BLUE",
+              "scale": 0.7
+            }
+          },
+          {
+            "id": "ftc_formula",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "\\frac{d}{dx} g(x) = \\frac{d}{dx} \\int_{a}^{x} f(t) \\, dt = f(x)",
+              "color": "WHITE",
+              "scale": 1.1
+            }
+          },
+          {
+            "id": "inverse_label",
+            "type": "label",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "text": "Differentiation and Integration are inverse operations",
+              "color": "GREEN",
+              "scale": 0.9
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "appear",
+            "target": "title",
+            "duration": 2
+          },
+          {
+            "action": "appear",
+            "target": "connection_label",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 6.61
+          },
+          {
+            "action": "show_equation",
+            "target": "g_definition",
+            "duration": 3
+          },
+          {
+            "action": "appear",
+            "target": "area_label",
+            "duration": 2
+          },
+          {
+            "action": "wait",
+            "duration": 12.23
+          },
+          {
+            "action": "fade_out",
+            "target": "title",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "connection_label",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "area_label",
+            "duration": 1
+          },
+          {
+            "action": "show_equation",
+            "target": "ftc_formula",
+            "duration": 3
+          },
+          {
+            "action": "highlight",
+            "target": "ftc_formula",
+            "target_latex_part": "f(x)",
+            "color": "YELLOW",
+            "duration": 4
+          },
+          {
+            "action": "wait",
+            "duration": 8.84
+          },
+          {
+            "action": "appear",
+            "target": "inverse_label",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "ftc_formula",
+            "color": "GREEN",
+            "duration": 3
+          },
+          {
+            "action": "wait",
+            "duration": 8.06
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "section_6",
+      "section_type": "content",
+      "title": "Fundamental Theorem of Calculus, Part 2",
+      "renderer": "manim",
+      "renderer_reasoning": "FTC Part 2 is the core formula for evaluating integrals. Manim is essential for showing the formula and the process of substituting the limits of integration.",
+      "layout": {
+        "avatar_position": "right",
+        "avatar_width_percent": 35,
+        "content_zone": "65% left",
+        "avatar_zone": "35% right"
+      },
+      "narration": {
+        "full_text": "If Part 1 was the theory, Part 2 is the practical tool we've been waiting for. It tells us how to actually calculate a definite integral without using Riemann sums. Here's how it works. First, you need to find an 'antiderivative' of your function f(x). An antiderivative, which we'll call capital F(x), is a function whose derivative is f(x). Once you have the antiderivative, the Fundamental Theorem of Calculus Part 2 says that the definite integral of f(x) from 'a' to 'b' is simply the antiderivative evaluated at the upper limit 'b', minus the antiderivative evaluated at the lower limit 'a'. So, the integral is just F(b) minus F(a). This simple formula is the workhorse of integration.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "If Part 1 was the theory, Part 2 is the practical tool we've been waiting for. It tells us how to actually calculate a definite integral without using Riemann sums.",
+            "duration_estimate": 11.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "FTC Part 2: A practical tool for calculating definite integrals."
+              ]
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 10.9,
+            "audio_file": "section_6_seg_1.mp3"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Here's how it works. First, you need to find an 'antiderivative' of your function f(x). An antiderivative, which we'll call capital F(x), is a function whose derivative is f(x).",
+            "duration_estimate": 12.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "Step 1: Find an antiderivative, F(x).",
+                "An antiderivative is a function where F'(x) = f(x)."
+              ]
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 15.62,
+            "audio_file": "section_6_seg_2.mp3"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Once you have the antiderivative, the Fundamental Theorem of Calculus Part 2 says that the definite integral of f(x) from 'a' to 'b' is simply the antiderivative evaluated at the upper limit 'b', minus the antiderivative evaluated at the lower limit 'a'.",
+            "duration_estimate": 17.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "gesture_only"
+            },
+            "visual_content": {
+              "formula": "\\int_{a}^{b} f(x) \\, dx = F(b) - F(a)"
+            },
+            "avatar_gesture": "presenting",
+            "duration_seconds": 16.58,
+            "audio_file": "section_6_seg_3.mp3"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "So, the integral is just F(b) minus F(a). This simple formula is the workhorse of integration.",
+            "duration_estimate": 7.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "formula": "\\int_{a}^{b} f(x) \\, dx = F(b) - F(a)"
+            },
+            "avatar_gesture": "nodding",
+            "duration_seconds": 8.59,
+            "audio_file": "section_6_seg_4.mp3"
+          }
+        ],
+        "total_duration_seconds": 51.7
+      },
+      "visual_beats": [
+        {
+          "beat_id": "6_1",
+          "segment_id": "seg_3",
+          "visual_beat_type": "formula",
+          "description": "Display the FTC Part 2 formula. Highlight the integral on the left, then show its evaluation on the right."
+        },
+        {
+          "beat_id": "6_2",
+          "segment_id": "seg_4",
+          "visual_beat_type": "animation",
+          "description": "Animate the 'b' from the integral limit moving to the F(b) term, and the 'a' moving to the F(a) term, to emphasize the substitution."
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "ftc2_formula",
+            "type": "equation",
+            "position": [
+              0,
+              0
+            ],
+            "properties": {
+              "latex": "\\int_{a}^{b} f(x) \\, dx = F(b) - F(a)",
+              "scale": 1.2
+            }
+          },
+          {
+            "id": "antiderivative_note",
+            "type": "label",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "text": "where F'(x) = f(x) (F is an antiderivative of f)",
+              "scale": 0.7,
+              "color": "GRAY"
+            }
+          },
+          {
+            "id": "upper_limit_b",
+            "type": "label",
+            "position": [
+              -2.5,
+              1.5
+            ],
+            "properties": {
+              "text": "upper limit",
+              "scale": 0.6,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "lower_limit_a",
+            "type": "label",
+            "position": [
+              -2.5,
+              -1.0
+            ],
+            "properties": {
+              "text": "lower limit",
+              "scale": 0.6,
+              "color": "RED"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "ftc2_formula",
+            "duration": 3
+          },
+          {
+            "action": "appear",
+            "target": "antiderivative_note",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "ftc2_formula",
+            "target_latex_part": "\\int_{a}^{b} f(x) \\, dx",
+            "color": "YELLOW",
+            "duration": 3
+          },
+          {
+            "action": "highlight",
+            "target": "ftc2_formula",
+            "target_latex_part": "F(b) - F(a)",
+            "color": "GREEN",
+            "duration": 4
+          },
+          {
+            "action": "appear",
+            "target": "upper_limit_b",
+            "duration": 1
+          },
+          {
+            "action": "appear",
+            "target": "lower_limit_a",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "ftc2_formula",
+            "target_latex_part": "b",
+            "color": "BLUE",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "ftc2_formula",
+            "target_latex_part": "F(b)",
+            "color": "BLUE",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "ftc2_formula",
+            "target_latex_part": "a",
+            "color": "RED",
+            "duration": 2
+          },
+          {
+            "action": "highlight",
+            "target": "ftc2_formula",
+            "target_latex_part": "F(a)",
+            "color": "RED",
+            "duration": 2
+          },
+          {
+            "action": "fade_out",
+            "target": "upper_limit_b",
+            "duration": 1
+          },
+          {
+            "action": "fade_out",
+            "target": "lower_limit_a",
+            "duration": 1
+          },
+          {
+            "action": "highlight",
+            "target": "ftc2_formula",
+            "target_latex_part": "F(b) - F(a)",
+            "color": "GOLD",
+            "duration": 3
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "section_7",
+      "section_type": "content",
+      "title": "Common Antiderivative Formulas",
+      "renderer": "remotion",
+      "renderer_reasoning": "This section is a list of standard formulas. Remotion is sufficient for displaying this information as a clear, static list without complex animation.",
+      "layout": {
+        "avatar_position": "left",
+        "avatar_width_percent": 35,
+        "content_zone": "65% right",
+        "avatar_zone": "35% left"
+      },
+      "narration": {
+        "full_text": "To use the Fundamental Theorem Part 2, you must be good at finding antiderivatives. Let's review some of the most common ones. The power rule is essential: the integral of x to the power of n is x to the n+1, divided by n+1. For the special case of 1 over x, the integral is the natural logarithm of the absolute value of x. The integral of the exponential function e to the x is just itself, e to the x. For trigonometry, the integral of cosine x is sine x. And the integral of sine x is negative cosine x. You'll notice we often add a '+ C', the constant of integration, for indefinite integrals. For definite integrals, this constant cancels out, so we don't need it, but it's good practice to remember it's there!",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "To use the Fundamental Theorem Part 2, you must be good at finding antiderivatives. Let's review some of the most common ones.",
+            "duration_estimate": 8.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "labels": [
+                "Common Antiderivative Formulas"
+              ]
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 8.64,
+            "audio_file": "section_7_seg_1.mp3"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "The power rule is essential: the integral of x to the power of n is x to the n+1, divided by n+1.",
+            "duration_estimate": 7.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "formula": "\\int x^n \\, dx = \\frac{x^{n+1}}{n+1} + C"
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 7.78,
+            "audio_file": "section_7_seg_2.mp3"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "For the special case of 1 over x, the integral is the natural logarithm of the absolute value of x.",
+            "duration_estimate": 7.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "formula": "\\int \\frac{1}{x} \\, dx = \\ln|x| + C"
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 6.67,
+            "audio_file": "section_7_seg_3.mp3"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "The integral of the exponential function e to the x is just itself, e to the x.",
+            "duration_estimate": 6.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "formula": "\\int e^x \\, dx = e^x + C"
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 5.66,
+            "audio_file": "section_7_seg_4.mp3"
+          },
+          {
+            "segment_id": "seg_5",
+            "text": "For trigonometry, the integral of cosine x is sine x. And the integral of sine x is negative cosine x.",
+            "duration_estimate": 8.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "\\int \\cos(x) \\, dx = \\sin(x) + C",
+                "\\int \\sin(x) \\, dx = -\\cos(x) + C"
+              ]
+            },
+            "avatar_gesture": "explaining",
+            "duration_seconds": 8.47,
+            "audio_file": "section_7_seg_5.mp3"
+          },
+          {
+            "segment_id": "seg_6",
+            "text": "You'll notice we often add a '+ C', the constant of integration, for indefinite integrals. For definite integrals, this constant cancels out, so we don't need it, but it's good practice to remember it's there!",
+            "duration_estimate": 12.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            },
+            "visual_content": {
+              "labels": [
+                "Note: The '+ C' cancels out in definite integrals."
+              ]
+            },
+            "avatar_gesture": "thinking",
+            "duration_seconds": 13.61,
+            "audio_file": "section_7_seg_6.mp3"
+          }
+        ],
+        "total_duration_seconds": 50.83
+      },
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1525,
+        "elements": [
+          {
+            "id": "title",
+            "type": "text",
+            "content": "Common Antiderivative Formulas",
+            "position": {
+              "x": 960,
+              "y": 150
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#2563eb",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 259
+            }
+          },
+          {
+            "id": "power_rule",
+            "type": "text",
+            "content": "\u222b x^n dx = x^(n+1)/(n+1) + C",
+            "position": {
+              "x": 960,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 259,
+              "exit_frame": 493
+            }
+          },
+          {
+            "id": "ln_rule",
+            "type": "text",
+            "content": "\u222b 1/x dx = ln|x| + C",
+            "position": {
+              "x": 960,
+              "y": 400
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 493,
+              "exit_frame": 693
+            }
+          },
+          {
+            "id": "exp_rule",
+            "type": "text",
+            "content": "\u222b e^x dx = e^x + C",
+            "position": {
+              "x": 960,
+              "y": 500
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": 863,
+              "enter_frame": 693
+            }
+          },
+          {
+            "id": "cos_rule",
+            "type": "text",
+            "content": "\u222b cos(x) dx = sin(x) + C",
+            "position": {
+              "x": 960,
+              "y": 600
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 863,
+              "exit_frame": 1117
+            }
+          },
+          {
+            "id": "sin_rule",
+            "type": "text",
+            "content": "\u222b sin(x) dx = -cos(x) + C",
+            "position": {
+              "x": 960,
+              "y": 700
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 863,
+              "exit_frame": 1117
+            }
+          },
+          {
+            "id": "note",
+            "type": "text",
+            "content": "Note: The '+ C' cancels out in definite integrals.",
+            "position": {
+              "x": 960,
+              "y": 850
+            },
+            "style": {
+              "fontSize": 28,
+              "color": "#6b7280",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 1117,
+              "exit_frame": 1525
+            }
+          }
+        ],
+        "background": {
+          "color": "#ffffff"
+        }
+      }
+    },
+    {
+      "section_id": "section_8",
+      "section_type": "example",
+      "title": "Worked Example: Calculating a Definite Integral",
+      "renderer": "manim",
+      "renderer_reasoning": "A worked example requires step-by-step visualization of a mathematical calculation, which is Manim's primary strength.",
+      "layout": {
+        "avatar_position": "hidden",
+        "avatar_width_percent": 0,
+        "content_zone": "100% full",
+        "avatar_zone": "0%"
+      },
+      "narration": {
+        "full_text": "Let's put it all together with an example. We want to calculate the definite integral of x-squared plus 2, from x equals 1 to 3. First step: find the antiderivative of x-squared plus 2. Using the power rule and the constant rule, the antiderivative is x-cubed over 3, plus 2x. Second step: apply the Fundamental Theorem, Part 2. We evaluate the antiderivative at the upper limit, 3, and subtract its value at the lower limit, 1. Plugging in 3, we get 3-cubed over 3, plus 2 times 3. This is 9 plus 6, which equals 15. Plugging in 1, we get 1-cubed over 3, plus 2 times 1. This is one-third plus 2, which is 7 over 3. The final step is to subtract the two results: 15 minus 7 over 3. That's 45 over 3 minus 7 over 3, which gives us our final answer: 38 over 3.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Let's put it all together with an example. We want to calculate the definite integral of x-squared plus 2, from x equals 1 to 3.",
+            "duration_estimate": 9.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "formula": "\\int_{1}^{3} (x^2 + 2) \\, dx"
+            },
+            "avatar_gesture": "none",
+            "duration_seconds": 9.41,
+            "audio_file": "section_8_seg_1.mp3"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "First step: find the antiderivative of x-squared plus 2. Using the power rule and the constant rule, the antiderivative is x-cubed over 3, plus 2x.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "formula": "F(x) = \\frac{x^3}{3} + 2x"
+            },
+            "avatar_gesture": "none",
+            "duration_seconds": 11.23,
+            "audio_file": "section_8_seg_2.mp3"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Second step: apply the Fundamental Theorem, Part 2. We evaluate the antiderivative at the upper limit, 3, and subtract its value at the lower limit, 1.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "formula": "\\left[ \\frac{x^3}{3} + 2x \\right]_{1}^{3}"
+            },
+            "avatar_gesture": "none",
+            "duration_seconds": 11.42,
+            "audio_file": "section_8_seg_3.mp3"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Plugging in 3, we get 3-cubed over 3, plus 2 times 3. This is 9 plus 6, which equals 15.",
+            "duration_estimate": 8.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "formula": "F(3) = \\left( \\frac{3^3}{3} + 2(3) \\right) = (9 + 6) = 15"
+            },
+            "avatar_gesture": "none",
+            "duration_seconds": 8.47,
+            "audio_file": "section_8_seg_4.mp3"
+          },
+          {
+            "segment_id": "seg_5",
+            "text": "Plugging in 1, we get 1-cubed over 3, plus 2 times 1. This is one-third plus 2, which is 7 over 3.",
+            "duration_estimate": 8.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "formula": "F(1) = \\left( \\frac{1^3}{3} + 2(1) \\right) = \\left( \\frac{1}{3} + 2 \\right) = \\frac{7}{3}"
+            },
+            "avatar_gesture": "none",
+            "duration_seconds": 8.5,
+            "audio_file": "section_8_seg_5.mp3"
+          },
+          {
+            "segment_id": "seg_6",
+            "text": "The final step is to subtract the two results: 15 minus 7 over 3. That's 45 over 3 minus 7 over 3, which gives us our final answer: 38 over 3.",
+            "duration_estimate": 10.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "formula": "F(3) - F(1) = 15 - \\frac{7}{3} = \\frac{45 - 7}{3} = \\frac{38}{3}"
+            },
+            "avatar_gesture": "none",
+            "duration_seconds": 12.31,
+            "audio_file": "section_8_seg_6.mp3"
+          }
+        ],
+        "total_duration_seconds": 61.34
+      },
+      "visual_beats": [
+        {
+          "beat_id": "8_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "formula",
+          "description": "Display the problem: the definite integral of (x^2 + 2) from 1 to 3."
+        },
+        {
+          "beat_id": "8_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "formula",
+          "description": "Below the integral, show the antiderivative F(x) being found."
+        },
+        {
+          "beat_id": "8_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "formula",
+          "description": "Show the antiderivative in brackets with the limits 1 and 3."
+        },
+        {
+          "beat_id": "8_4",
+          "segment_id": "seg_4",
+          "visual_beat_type": "formula",
+          "description": "Show the calculation for F(3)."
+        },
+        {
+          "beat_id": "8_5",
+          "segment_id": "seg_5",
+          "visual_beat_type": "formula",
+          "description": "Show the calculation for F(1)."
+        },
+        {
+          "beat_id": "8_6",
+          "segment_id": "seg_6",
+          "visual_beat_type": "formula",
+          "description": "Show the final subtraction and the result."
+        }
+      ],
+      "manim_scene_spec": {
+        "objects": [
+          {
+            "id": "problem",
+            "type": "equation",
+            "position": [
+              0,
+              2.5
+            ],
+            "properties": {
+              "latex": "\\int_{1}^{3} (x^2 + 2) \\, dx",
+              "scale": 1.2,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "step1_label",
+            "type": "label",
+            "position": [
+              -3,
+              1.0
+            ],
+            "properties": {
+              "latex": "\\text{Step 1: Find antiderivative}",
+              "scale": 0.7,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "antiderivative",
+            "type": "equation",
+            "position": [
+              0,
+              1.0
+            ],
+            "properties": {
+              "latex": "F(x) = \\frac{x^3}{3} + 2x",
+              "scale": 1.0,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "step2_label",
+            "type": "label",
+            "position": [
+              -3,
+              -0.5
+            ],
+            "properties": {
+              "latex": "\\text{Step 2: Apply FTC Part 2}",
+              "scale": 0.7,
+              "color": "BLUE"
+            }
+          },
+          {
+            "id": "ftc_formula",
+            "type": "equation",
+            "position": [
+              0,
+              -0.5
+            ],
+            "properties": {
+              "latex": "\\left[ \\frac{x^3}{3} + 2x \\right]_{1}^{3}",
+              "scale": 1.0,
+              "color": "WHITE"
+            }
+          },
+          {
+            "id": "f3_calc",
+            "type": "equation",
+            "position": [
+              0,
+              -2.0
+            ],
+            "properties": {
+              "latex": "F(3) = \\frac{3^3}{3} + 2(3) = 9 + 6 = 15",
+              "scale": 0.9,
+              "color": "GREEN"
+            }
+          },
+          {
+            "id": "f1_calc",
+            "type": "equation",
+            "position": [
+              0,
+              -2.8
+            ],
+            "properties": {
+              "latex": "F(1) = \\frac{1^3}{3} + 2(1) = \\frac{1}{3} + 2 = \\frac{7}{3}",
+              "scale": 0.9,
+              "color": "GREEN"
+            }
+          },
+          {
+            "id": "final_calc",
+            "type": "equation",
+            "position": [
+              0,
+              -4.0
+            ],
+            "properties": {
+              "latex": "F(3) - F(1) = 15 - \\frac{7}{3} = \\frac{45}{3} - \\frac{7}{3} = \\frac{38}{3}",
+              "scale": 1.0,
+              "color": "YELLOW"
+            }
+          }
+        ],
+        "animation_sequence": [
+          {
+            "action": "show_equation",
+            "target": "problem",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "problem",
+            "duration": 7.41
+          },
+          {
+            "action": "appear",
+            "target": "step1_label",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "antiderivative",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "antiderivative",
+            "duration": 8.23
+          },
+          {
+            "action": "appear",
+            "target": "step2_label",
+            "duration": 1.0
+          },
+          {
+            "action": "show_equation",
+            "target": "ftc_formula",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "ftc_formula",
+            "duration": 8.42
+          },
+          {
+            "action": "show_equation",
+            "target": "f3_calc",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "f3_calc",
+            "duration": 6.47
+          },
+          {
+            "action": "show_equation",
+            "target": "f1_calc",
+            "duration": 2.0
+          },
+          {
+            "action": "wait",
+            "target": "f1_calc",
+            "duration": 6.5
+          },
+          {
+            "action": "show_equation",
+            "target": "final_calc",
+            "duration": 3.0
+          },
+          {
+            "action": "highlight",
+            "target": "final_calc",
+            "color": "YELLOW",
+            "duration": 2.0
+          },
+          {
+            "action": "fade_out",
+            "target": "step1_label",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "step2_label",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "f3_calc",
+            "duration": 1.0
+          },
+          {
+            "action": "fade_out",
+            "target": "f1_calc",
+            "duration": 1.0
+          },
+          {
+            "action": "wait",
+            "target": "final_calc",
+            "duration": 3.31
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "section_9",
+      "section_type": "quiz",
+      "title": "Quiz: Integration Concepts",
+      "renderer": "remotion",
+      "renderer_reasoning": "A quiz is a series of questions and answers, which can be effectively displayed using Remotion's text and layout capabilities.",
+      "layout": {
+        "avatar_position": "hidden",
+        "avatar_width_percent": 0,
+        "content_zone": "100% full",
+        "avatar_zone": "0%"
+      },
+      "narration": {
+        "full_text": "Time for a quick quiz to test your knowledge. Question 1: According to the Fundamental Theorem of Calculus, Part 1, what is the derivative with respect to x of the integral from 2 to x of sine of t-squared dt? Is it (A) cos(x-squared), (B) sine(x-squared), (C) 2x cos(x-squared), or (D) 0? The correct answer is B, sine of x-squared. You just replace 't' with 'x'. Question 2: Evaluate the definite integral of 2x from 0 to 1. Is it (A) 0, (B) 1, (C) 2, or (D) 1/2? The antiderivative of 2x is x-squared. Evaluated at 1 it is 1-squared, which is 1. Evaluated at 0 it is 0. So the answer is 1 minus 0, which is 1. The correct answer is B.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Time for a quick quiz to test your knowledge. Question 1: According to the Fundamental Theorem of Calculus, Part 1, what is the derivative with respect to x of the integral from 2 to x of sine of t-squared dt?",
+            "duration_estimate": 13.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "labels": [
+                "Question 1: What is the value of the following expression?",
+                "\\frac{d}{dx} \\int_{2}^{x} \\sin(t^2) \\, dt"
+              ]
+            },
+            "avatar_gesture": "none",
+            "duration_seconds": 13.7,
+            "audio_file": "section_9_seg_1.mp3"
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Is it (A) cos(x-squared), (B) sine(x-squared), (C) 2x cos(x-squared), or (D) 0?",
+            "duration_estimate": 7.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "bullet_points": [
+                "A) \\cos(x^2)",
+                "B) \\sin(x^2)",
+                "C) 2x \\cos(x^2)",
+                "D) 0"
+              ]
+            },
+            "avatar_gesture": "none",
+            "duration_seconds": 9.7,
+            "audio_file": "section_9_seg_2.mp3"
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "The correct answer is B, sine of x-squared. You just replace 't' with 'x'.",
+            "duration_estimate": 5.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "labels": [
+                "Correct Answer: B) \\sin(x^2)"
+              ]
+            },
+            "avatar_gesture": "none",
+            "duration_seconds": 6.82,
+            "audio_file": "section_9_seg_3.mp3"
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Question 2: Evaluate the definite integral of 2x from 0 to 1. Is it (A) 0, (B) 1, (C) 2, or (D) 1/2?",
+            "duration_estimate": 9.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "labels": [
+                "Question 2: Evaluate the integral:",
+                "\\int_{0}^{1} 2x \\, dx"
+              ],
+              "bullet_points": [
+                "A) 0",
+                "B) 1",
+                "C) 2",
+                "D) 1/2"
+              ]
+            },
+            "avatar_gesture": "none",
+            "duration_seconds": 11.57,
+            "audio_file": "section_9_seg_4.mp3"
+          },
+          {
+            "segment_id": "seg_5",
+            "text": "The antiderivative of 2x is x-squared. Evaluated at 1 it is 1-squared, which is 1. Evaluated at 0 it is 0. So the answer is 1 minus 0, which is 1. The correct answer is B.",
+            "duration_estimate": 12.0,
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "hide"
+            },
+            "visual_content": {
+              "labels": [
+                "Correct Answer: B) 1"
+              ]
+            },
+            "avatar_gesture": "none",
+            "duration_seconds": 15.94,
+            "audio_file": "section_9_seg_5.mp3"
+          }
+        ],
+        "total_duration_seconds": 57.72
+      },
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 1732,
+        "elements": [
+          {
+            "id": "quiz_title",
+            "type": "text",
+            "content": "Quiz: Integration Concepts",
+            "position": {
+              "x": 640,
+              "y": 100
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#2563eb",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 411
+            }
+          },
+          {
+            "id": "question_1_title",
+            "type": "text",
+            "content": "Question 1: What is the value of the following expression?",
+            "position": {
+              "x": 640,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 30,
+              "exit_frame": 411
+            }
+          },
+          {
+            "id": "question_1_formula",
+            "type": "text",
+            "content": "d/dx \u222b[2 to x] sin(t\u00b2) dt",
+            "position": {
+              "x": 640,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#059669",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 90,
+              "exit_frame": 411
+            }
+          },
+          {
+            "id": "options_1_a",
+            "type": "text",
+            "content": "A) cos(x\u00b2)",
+            "position": {
+              "x": 320,
+              "y": 450
+            },
+            "style": {
+              "fontSize": 28,
+              "color": "#374151",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 411,
+              "exit_frame": 702
+            }
+          },
+          {
+            "id": "options_1_b",
+            "type": "text",
+            "content": "B) sin(x\u00b2)",
+            "position": {
+              "x": 960,
+              "y": 450
+            },
+            "style": {
+              "fontSize": 28,
+              "color": "#374151",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 441,
+              "exit_frame": 702
+            }
+          },
+          {
+            "id": "options_1_c",
+            "type": "text",
+            "content": "C) 2x cos(x\u00b2)",
+            "position": {
+              "x": 320,
+              "y": 520
+            },
+            "style": {
+              "fontSize": 28,
+              "color": "#374151",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 471,
+              "exit_frame": 702
+            }
+          },
+          {
+            "id": "options_1_d",
+            "type": "text",
+            "content": "D) 0",
+            "position": {
+              "x": 960,
+              "y": 520
+            },
+            "style": {
+              "fontSize": 28,
+              "color": "#374151",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 501,
+              "exit_frame": 702
+            }
+          },
+          {
+            "id": "answer_1",
+            "type": "text",
+            "content": "Correct Answer: B) sin(x\u00b2)",
+            "position": {
+              "x": 640,
+              "y": 400
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#dc2626",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 702,
+              "exit_frame": 907
+            }
+          },
+          {
+            "id": "question_2_title",
+            "type": "text",
+            "content": "Question 2: Evaluate the integral:",
+            "position": {
+              "x": 640,
+              "y": 200
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#1f2937",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 907,
+              "exit_frame": 1254
+            }
+          },
+          {
+            "id": "question_2_formula",
+            "type": "text",
+            "content": "\u222b[0 to 1] 2x dx",
+            "position": {
+              "x": 640,
+              "y": 300
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#059669",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 937,
+              "exit_frame": 1254
+            }
+          },
+          {
+            "id": "options_2_a",
+            "type": "text",
+            "content": "A) 0",
+            "position": {
+              "x": 320,
+              "y": 450
+            },
+            "style": {
+              "fontSize": 28,
+              "color": "#374151",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 967,
+              "exit_frame": 1254
+            }
+          },
+          {
+            "id": "options_2_b",
+            "type": "text",
+            "content": "B) 1",
+            "position": {
+              "x": 960,
+              "y": 450
+            },
+            "style": {
+              "fontSize": 28,
+              "color": "#374151",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 997,
+              "exit_frame": 1254
+            }
+          },
+          {
+            "id": "options_2_c",
+            "type": "text",
+            "content": "C) 2",
+            "position": {
+              "x": 320,
+              "y": 520
+            },
+            "style": {
+              "fontSize": 28,
+              "color": "#374151",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 1027,
+              "exit_frame": 1254
+            }
+          },
+          {
+            "id": "options_2_d",
+            "type": "text",
+            "content": "D) 1/2",
+            "position": {
+              "x": 960,
+              "y": 520
+            },
+            "style": {
+              "fontSize": 28,
+              "color": "#374151",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 1057,
+              "exit_frame": 1254
+            }
+          },
+          {
+            "id": "answer_2",
+            "type": "text",
+            "content": "Correct Answer: B) 1",
+            "position": {
+              "x": 640,
+              "y": 400
+            },
+            "style": {
+              "fontSize": 36,
+              "color": "#dc2626",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 1254,
+              "exit_frame": 1732
+            }
+          }
+        ],
+        "background": {
+          "color": "#f8fafc"
+        }
+      }
+    },
+    {
+      "section_id": "section_10",
+      "section_type": "memory",
+      "title": "Remember This!",
+      "renderer": "remotion",
+      "layout": {
+        "avatar_position": "right",
+        "avatar_width_percent": 30
+      },
+      "narration": {
+        "full_text": "To master the core concepts of integration, remember the word ANTID. It sounds like 'antiderivative,' which is the key to solving integrals. A for Area, N for the Newton-Leibniz formula, T for the Fundamental Theorem, I for Inverse Process, and D for the Derivative of an integral. This mnemonic, ANTID, will help you recall the five pillars of the Fundamental Theorem of Calculus and its applications.",
+        "segments": [
+          {
+            "text": "To master the core concepts of integration, remember the word ANTID. It sounds like 'antiderivative,' which is the key to solving integrals.",
+            "segment_id": "recap_0_seg_1",
+            "duration_estimate": 9.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 0,
+            "end": 9.5,
+            "duration_seconds": 9.6,
+            "audio_file": "section_10_recap_0_seg_1.mp3"
+          },
+          {
+            "text": "A for Area, N for the Newton-Leibniz formula, T for the Fundamental Theorem, I for Inverse Process, and D for the Derivative of an integral.",
+            "segment_id": "recap_0_seg_2",
+            "duration_estimate": 8.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 10,
+            "end": 18.5,
+            "duration_seconds": 9.24,
+            "audio_file": "section_10_recap_0_seg_2.mp3"
+          },
+          {
+            "text": "This mnemonic, ANTID, will help you recall the five pillars of the Fundamental Theorem of Calculus and its applications.",
+            "segment_id": "recap_0_seg_3",
+            "duration_estimate": 5.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 19,
+            "end": 24.5,
+            "duration_seconds": 7.63,
+            "audio_file": "section_10_recap_0_seg_3.mp3"
+          }
+        ],
+        "total_duration_seconds": 26.47
+      },
+      "flashcards": [
+        {
+          "card_id": "card_1",
+          "mnemonic_letter": "A",
+          "concept": "Area Under Curve",
+          "definition": "The definite integral represents the signed area under a function's curve between two points."
+        },
+        {
+          "card_id": "card_2",
+          "mnemonic_letter": "N",
+          "concept": "Newton-Leibniz Formula",
+          "definition": "To evaluate an integral from a to b, calculate the antiderivative at b minus the antiderivative at a: F(b) - F(a)."
+        },
+        {
+          "card_id": "card_3",
+          "mnemonic_letter": "T",
+          "concept": "Theorem (Fundamental)",
+          "definition": "The crucial link that connects the concepts of differentiation and integration into a single framework."
+        },
+        {
+          "card_id": "card_4",
+          "mnemonic_letter": "I",
+          "concept": "Inverse Process",
+          "definition": "Integration is the inverse operation of differentiation, just as addition is the inverse of subtraction."
+        },
+        {
+          "card_id": "card_5",
+          "mnemonic_letter": "D",
+          "concept": "Derivative of an Integral",
+          "definition": "The derivative of an area function (an integral from a constant to x) gives you back the original function."
+        }
+      ],
+      "remotion_scene_spec": {
+        "fps": 30,
+        "duration_frames": 794,
+        "elements": [
+          {
+            "id": "title",
+            "type": "text",
+            "content": "Remember This!",
+            "position": {
+              "x": 640,
+              "y": 100
+            },
+            "style": {
+              "fontSize": 48,
+              "color": "#2563eb",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 0,
+              "exit_frame": 794
+            }
+          },
+          {
+            "id": "antid_word",
+            "type": "text",
+            "content": "ANTID",
+            "position": {
+              "x": 640,
+              "y": 250
+            },
+            "style": {
+              "fontSize": 72,
+              "color": "#dc2626",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "scale_up",
+              "exit": "fade_out",
+              "enter_frame": 60,
+              "exit_frame": 794
+            }
+          },
+          {
+            "id": "antiderivative_text",
+            "type": "text",
+            "content": "sounds like \"antiderivative\"",
+            "position": {
+              "x": 640,
+              "y": 320
+            },
+            "style": {
+              "fontSize": 24,
+              "color": "#374151",
+              "fontWeight": "normal"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 120,
+              "exit_frame": 300
+            }
+          },
+          {
+            "id": "letter_a",
+            "type": "text",
+            "content": "A - Area",
+            "position": {
+              "x": 200,
+              "y": 400
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#059669",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 300,
+              "exit_frame": 794
+            }
+          },
+          {
+            "id": "letter_n",
+            "type": "text",
+            "content": "N - Newton-Leibniz",
+            "position": {
+              "x": 200,
+              "y": 450
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#059669",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 350,
+              "exit_frame": 794
+            }
+          },
+          {
+            "id": "letter_t",
+            "type": "text",
+            "content": "T - Fundamental Theorem",
+            "position": {
+              "x": 200,
+              "y": 500
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#059669",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 400,
+              "exit_frame": 794
+            }
+          },
+          {
+            "id": "letter_i",
+            "type": "text",
+            "content": "I - Inverse Process",
+            "position": {
+              "x": 200,
+              "y": 550
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#059669",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 450,
+              "exit_frame": 794
+            }
+          },
+          {
+            "id": "letter_d",
+            "type": "text",
+            "content": "D - Derivative of integral",
+            "position": {
+              "x": 200,
+              "y": 600
+            },
+            "style": {
+              "fontSize": 32,
+              "color": "#059669",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "slide_in",
+              "exit": "fade_out",
+              "enter_frame": 500,
+              "exit_frame": 794
+            }
+          },
+          {
+            "id": "pillars_text",
+            "type": "text",
+            "content": "Five pillars of the Fundamental Theorem",
+            "position": {
+              "x": 640,
+              "y": 680
+            },
+            "style": {
+              "fontSize": 28,
+              "color": "#7c3aed",
+              "fontWeight": "bold"
+            },
+            "animation": {
+              "enter": "fade_in",
+              "exit": "fade_out",
+              "enter_frame": 570,
+              "exit_frame": 794
+            }
+          }
+        ],
+        "background": {
+          "color": "#f8fafc"
+        }
+      }
+    },
+    {
+      "section_type": "recap",
+      "section_title": "Lesson Recap",
+      "layout": {
+        "avatar_position": "hidden"
+      },
+      "renderer": "video",
+      "renderer_reasoning": "WAN video for cinematic recap visualization",
+      "narration": {
+        "full_text": "Imagine trying to find the exact area of an irregular shape, like the shadow cast by a grand archway. How would you measure it? This is the fundamental problem that integration solves. The definite integral is a powerful tool that calculates the precise area under any continuous curve. It does this by summing up an infinite number of infinitesimally thin rectangles packed under the curve, a concept known as a Riemann sum. This process transforms a complex problem into a single, elegant value. Differentiation and integration might seem like two separate worlds. One measures instantaneous change, like the steepness of a mountain path. The other measures accumulation, like the total volume of water in a river. The Fundamental Theorem of Calculus is the magical bridge that connects them. Part one of the theorem reveals a profound truth: the rate at which the integral accumulates area is equal to the original function itself. The derivative of the integral brings you right back to where you started. While the first part of the theorem is conceptual, the second part gives us a practical tool for calculation. It's called the Evaluation Theorem, or the Newton-Leibniz formula. It states that to find the definite integral, we don't need to sum infinite rectangles. Instead, we find the antiderivative, a function whose derivative is our original function. Then, we simply evaluate this antiderivative at our endpoints and find the difference: F of b minus F of a. It's a shortcut of genius. So, what is this antiderivative? Think of it as reversing a process. If differentiation is like a plant growing from a seed into a complex flower, then finding the antiderivative is like watching that process in reverse, tracing the flower back to its original seed. For every rule of differentiation, there is a corresponding rule for integration. For the power rule, where we decrease the exponent, here we increase it. Mastering these inverse rules is the key to unlocking the power of integration. Let's put it all together. To calculate the integral of 3x squared minus 2x plus 1, from 1 to 4, we follow the steps. First, we find the antiderivative by reversing the power rule for each term, giving us x cubed minus x squared plus x. Next, we apply the Evaluation Theorem. We plug in our upper bound, 4, and subtract the result of plugging in our lower bound, 1. The final calculation, 52 minus 1, gives us our answer: 51.",
+        "segments": [
+          {
+            "text": "Imagine trying to find the exact area of an irregular shape, like the shadow cast by a grand archway.",
+            "segment_id": "recap_1_seg_1",
+            "duration_estimate": 7.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 0,
+            "end": 7.5,
+            "start_time": 0.0,
+            "end_time": 0.0,
+            "duration_seconds": 6.77,
+            "audio_file": "section_11_recap_1_seg_1.mp3"
+          },
+          {
+            "text": "How would you measure it? This is the fundamental problem that integration solves.",
+            "segment_id": "recap_1_seg_2",
+            "duration_estimate": 4,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 8,
+            "end": 12,
+            "start_time": 0.0,
+            "end_time": 0.0,
+            "duration_seconds": 5.93,
+            "audio_file": "section_11_recap_1_seg_2.mp3"
+          },
+          {
+            "text": "The definite integral is a powerful tool that calculates the precise area under any continuous curve. It does this by summing up an infinite number of infinitesimally thin rectangles packed under the curve, a concept known as a Riemann sum.",
+            "segment_id": "recap_1_seg_3",
+            "duration_estimate": 10.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 12.5,
+            "end": 23,
+            "start_time": 0.0,
+            "end_time": 0.0,
+            "duration_seconds": 14.76,
+            "audio_file": "section_11_recap_1_seg_3.mp3"
+          },
+          {
+            "text": "This process transforms a complex problem into a single, elegant value.",
+            "segment_id": "recap_1_seg_4",
+            "duration_estimate": 3.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 23.5,
+            "end": 27,
+            "start_time": 0.0,
+            "end_time": 0.0,
+            "duration_seconds": 5.28,
+            "audio_file": "section_11_recap_1_seg_4.mp3"
+          },
+          {
+            "text": "Differentiation and integration might seem like two separate worlds.",
+            "segment_id": "recap_2_seg_1",
+            "duration_estimate": 3,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 0,
+            "end": 3,
+            "start_time": 30.0,
+            "end_time": 30.0,
+            "duration_seconds": 4.58,
+            "audio_file": "section_11_recap_2_seg_1.mp3"
+          },
+          {
+            "text": "One measures instantaneous change, like the steepness of a mountain path. The other measures accumulation, like the total volume of water in a river.",
+            "segment_id": "recap_2_seg_2",
+            "duration_estimate": 6.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 3.5,
+            "end": 9.5,
+            "start_time": 30.0,
+            "end_time": 30.0,
+            "duration_seconds": 10.08,
+            "audio_file": "section_11_recap_2_seg_2.mp3"
+          },
+          {
+            "text": "The Fundamental Theorem of Calculus is the magical bridge that connects them. Part one of the theorem reveals a profound truth: the rate at which the integral accumulates area is equal to the original function itself.",
+            "segment_id": "recap_2_seg_3",
+            "duration_estimate": 9,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 10,
+            "end": 19,
+            "start_time": 30.0,
+            "end_time": 30.0,
+            "duration_seconds": 13.08,
+            "audio_file": "section_11_recap_2_seg_3.mp3"
+          },
+          {
+            "text": "The derivative of the integral brings you right back to where you started.",
+            "segment_id": "recap_2_seg_4",
+            "duration_estimate": 3.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 19.5,
+            "end": 23,
+            "start_time": 30.0,
+            "end_time": 30.0,
+            "duration_seconds": 4.42,
+            "audio_file": "section_11_recap_2_seg_4.mp3"
+          },
+          {
+            "text": "While the first part of the theorem is conceptual, the second part gives us a practical tool for calculation.",
+            "segment_id": "recap_3_seg_1",
+            "duration_estimate": 6,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 0,
+            "end": 6,
+            "start_time": 60.0,
+            "end_time": 60.0,
+            "duration_seconds": 6.62,
+            "audio_file": "section_11_recap_3_seg_1.mp3"
+          },
+          {
+            "text": "It's called the Evaluation Theorem, or the Newton-Leibniz formula. It states that to find the definite integral, we don't need to sum infinite rectangles.",
+            "segment_id": "recap_3_seg_2",
+            "duration_estimate": 5.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 6.5,
+            "end": 12,
+            "start_time": 60.0,
+            "end_time": 60.0,
+            "duration_seconds": 10.08,
+            "audio_file": "section_11_recap_3_seg_2.mp3"
+          },
+          {
+            "text": "Instead, we find the antiderivative, a function whose derivative is our original function. Then, we simply evaluate this antiderivative at our endpoints and find the difference: F of b minus F of a.",
+            "segment_id": "recap_3_seg_3",
+            "duration_estimate": 9.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 12.5,
+            "end": 22,
+            "start_time": 60.0,
+            "end_time": 60.0,
+            "duration_seconds": 13.68,
+            "audio_file": "section_11_recap_3_seg_3.mp3"
+          },
+          {
+            "text": "It's a shortcut of genius.",
+            "segment_id": "recap_3_seg_4",
+            "duration_estimate": 1.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 22.5,
+            "end": 24,
+            "start_time": 60.0,
+            "end_time": 60.0,
+            "duration_seconds": 2.52,
+            "audio_file": "section_11_recap_3_seg_4.mp3"
+          },
+          {
+            "text": "So, what is this antiderivative?",
+            "segment_id": "recap_4_seg_1",
+            "duration_estimate": 2,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 0,
+            "end": 2,
+            "start_time": 90.0,
+            "end_time": 90.0,
+            "duration_seconds": 3.07,
+            "audio_file": "section_11_recap_4_seg_1.mp3"
+          },
+          {
+            "text": "Think of it as reversing a process. If differentiation is like a plant growing from a seed into a complex flower, then finding the antiderivative is like watching that process in reverse, tracing the flower back to its original seed.",
+            "segment_id": "recap_4_seg_2",
+            "duration_estimate": 8.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 2.5,
+            "end": 11,
+            "start_time": 90.0,
+            "end_time": 90.0,
+            "duration_seconds": 14.38,
+            "audio_file": "section_11_recap_4_seg_2.mp3"
+          },
+          {
+            "text": "For every rule of differentiation, there is a corresponding rule for integration. For the power rule, where we decrease the exponent, here we increase it.",
+            "segment_id": "recap_4_seg_3",
+            "duration_estimate": 8.0,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 11.5,
+            "end": 19.5,
+            "start_time": 90.0,
+            "end_time": 90.0,
+            "duration_seconds": 10.32,
+            "audio_file": "section_11_recap_4_seg_3.mp3"
+          },
+          {
+            "text": "Mastering these inverse rules is the key to unlocking the power of integration.",
+            "segment_id": "recap_4_seg_4",
+            "duration_estimate": 3,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 20,
+            "end": 23,
+            "start_time": 90.0,
+            "end_time": 90.0,
+            "duration_seconds": 5.06,
+            "audio_file": "section_11_recap_4_seg_4.mp3"
+          },
+          {
+            "text": "Let's put it all together. To calculate the integral of 3x squared minus 2x plus 1, from 1 to 4, we follow the steps.",
+            "segment_id": "recap_5_seg_1",
+            "duration_estimate": 7,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 0,
+            "end": 7,
+            "start_time": 120.0,
+            "end_time": 120.0,
+            "duration_seconds": 9.36,
+            "audio_file": "section_11_recap_5_seg_1.mp3"
+          },
+          {
+            "text": "First, we find the antiderivative by reversing the power rule for each term, giving us x cubed minus x squared plus x.",
+            "segment_id": "recap_5_seg_2",
+            "duration_estimate": 5.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 7.5,
+            "end": 13,
+            "start_time": 120.0,
+            "end_time": 120.0,
+            "duration_seconds": 8.23,
+            "audio_file": "section_11_recap_5_seg_2.mp3"
+          },
+          {
+            "text": "Next, we apply the Evaluation Theorem. We plug in our upper bound, 4, and subtract the result of plugging in our lower bound, 1.",
+            "segment_id": "recap_5_seg_3",
+            "duration_estimate": 6.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 13.5,
+            "end": 20,
+            "start_time": 120.0,
+            "end_time": 120.0,
+            "duration_seconds": 9.82,
+            "audio_file": "section_11_recap_5_seg_3.mp3"
+          },
+          {
+            "text": "The final calculation, 52 minus 1, gives us our answer: 51.",
+            "segment_id": "recap_5_seg_4",
+            "duration_estimate": 3.5,
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "hide"
+            },
+            "start": 20.5,
+            "end": 24,
+            "start_time": 120.0,
+            "end_time": 120.0,
+            "duration_seconds": 5.86,
+            "audio_file": "section_11_recap_5_seg_4.mp3"
+          }
+        ],
+        "total_duration": 150.0,
+        "total_duration_seconds": 163.9
+      },
+      "visual_beats": [
+        {
+          "scene_id": 1,
+          "time": 0.0,
+          "description": "A majestic, intricately carved sandstone archway in Jaisalmer at sunset casts a long, curved shadow on the golden desert floor. Thin, glowing rectangular bars of light begin to fill this shadow, starting wide and becoming progressively narrower. They multiply until they form a single, solid, glowing area, perfectly matching the shadow's curve. The scene is warm, with deep oranges and purples, creating a magical and mathematical atmosphere.",
+          "video_prompt": "A majestic, intricately carved sandstone archway in Jaisalmer at sunset casts a long, curved shadow on the golden desert floor. Thin, glowing rectangular bars of light begin to fill this shadow, starting wide and becoming progressively narrower. They multiply until they form a single, solid, glowing area, perfectly matching the shadow's curve. The scene is warm, with deep oranges and purples, creating a magical and mathematical atmosphere.",
+          "duration": 30
+        },
+        {
+          "scene_id": 2,
+          "time": 30.0,
+          "description": "A split screen shows two contrasting Indian landscapes. On the left, a serene river in the Kerala backwaters flows smoothly, representing accumulation. On the right, a steep, rocky Himalayan trail represents the instantaneous rate of change. A shimmering, ethereal bridge of light materializes, connecting a point on the riverbank to a point on the mountain path. The camera glides across this bridge, showing how movement along one directly corresponds to the steepness of the other.",
+          "video_prompt": "A split screen shows two contrasting Indian landscapes. On the left, a serene river in the Kerala backwaters flows smoothly, representing accumulation. On the right, a steep, rocky Himalayan trail represents the instantaneous rate of change. A shimmering, ethereal bridge of light materializes, connecting a point on the riverbank to a point on the mountain path. The camera glides across this bridge, showing how movement along one directly corresponds to the steepness of the other.",
+          "duration": 30
+        },
+        {
+          "scene_id": 3,
+          "time": 60.0,
+          "description": "In a sunlit workshop in Makrana, a sculptor works on a large block of white marble. The camera focuses on their hands, skillfully chipping away stone. We see the initial rough block, then a fast-motion sequence of the carving process. The final shot frames the finished, elegant statue next to the initial block's outline. The pile of discarded marble chips on the floor glows brightly, representing the total change\u2014the value of the integral.",
+          "video_prompt": "In a sunlit workshop in Makrana, a sculptor works on a large block of white marble. The camera focuses on their hands, skillfully chipping away stone. We see the initial rough block, then a fast-motion sequence of the carving process. The final shot frames the finished, elegant statue next to the initial block's outline. The pile of discarded marble chips on the floor glows brightly, representing the total change\u2014the value of the integral.",
+          "duration": 30
+        },
+        {
+          "scene_id": 4,
+          "time": 90.0,
+          "description": "A time-lapse sequence shows a complex marigold plant with vibrant orange flowers in full bloom against a soft-focus garden background. The camera then reverses the footage. The flowers retract into buds, leaves shrink back into the stem, and the entire plant deconstructs, finally collapsing back into a single, simple seed held in the palm of a hand. This reverse journey visualizes finding the simpler, original form\u2014the antiderivative\u2014from the complex, differentiated function.",
+          "video_prompt": "A time-lapse sequence shows a complex marigold plant with vibrant orange flowers in full bloom against a soft-focus garden background. The camera then reverses the footage. The flowers retract into buds, leaves shrink back into the stem, and the entire plant deconstructs, finally collapsing back into a single, simple seed held in the palm of a hand. This reverse journey visualizes finding the simpler, original form\u2014the antiderivative\u2014from the complex, differentiated function.",
+          "duration": 30
+        },
+        {
+          "scene_id": 5,
+          "time": 120.0,
+          "description": "A futuristic, transparent water tank is being filled. A digital graph next to it shows the fill rate as the curve y = 3x\u00b2 - 2x + 1. The water level is marked at time t=1. The camera fast-forwards as the water level rises rapidly, stopping at time t=4. The initial volume of water drains away, leaving only the amount added between t=1 and t=4. This final volume glows, and the number '51' materializes above it.",
+          "video_prompt": "A futuristic, transparent water tank is being filled. A digital graph next to it shows the fill rate as the curve y = 3x\u00b2 - 2x + 1. The water level is marked at time t=1. The camera fast-forwards as the water level rises rapidly, stopping at time t=4. The initial volume of water drains away, leaving only the amount added between t=1 and t=4. This final volume glows, and the number '51' materializes above it.",
+          "duration": 30
+        }
+      ],
+      "recap_scenes": [
+        {
+          "scene_id": 1,
+          "scene": 1,
+          "wan_prompt": "A majestic, intricately carved sandstone archway in Jaisalmer at sunset casts a long, curved shadow on the golden desert floor. Thin, glowing rectangular bars of light begin to fill this shadow, starting wide and becoming progressively narrower. They multiply until they form a single, solid, glowing area, perfectly matching the shadow's curve. The scene is warm, with deep oranges and purples, creating a magical and mathematical atmosphere.",
+          "video_prompt": "A majestic, intricately carved sandstone archway in Jaisalmer at sunset casts a long, curved shadow on the golden desert floor. Thin, glowing rectangular bars of light begin to fill this shadow, starting wide and becoming progressively narrower. They multiply until they form a single, solid, glowing area, perfectly matching the shadow's curve. The scene is warm, with deep oranges and purples, creating a magical and mathematical atmosphere.",
+          "narration_text": "Imagine trying to find the exact area of an irregular shape, like the shadow cast by a grand archway. How would you measure it? This is the fundamental problem that integration solves. The definite integral is a powerful tool that calculates the precise area under any continuous curve. It does this by summing up an infinite number of infinitesimally thin rectangles packed under the curve, a concept known as a Riemann sum. This process transforms a complex problem into a single, elegant value.",
+          "duration": 30
+        },
+        {
+          "scene_id": 2,
+          "scene": 2,
+          "wan_prompt": "A split screen shows two contrasting Indian landscapes. On the left, a serene river in the Kerala backwaters flows smoothly, representing accumulation. On the right, a steep, rocky Himalayan trail represents the instantaneous rate of change. A shimmering, ethereal bridge of light materializes, connecting a point on the riverbank to a point on the mountain path. The camera glides across this bridge, showing how movement along one directly corresponds to the steepness of the other.",
+          "video_prompt": "A split screen shows two contrasting Indian landscapes. On the left, a serene river in the Kerala backwaters flows smoothly, representing accumulation. On the right, a steep, rocky Himalayan trail represents the instantaneous rate of change. A shimmering, ethereal bridge of light materializes, connecting a point on the riverbank to a point on the mountain path. The camera glides across this bridge, showing how movement along one directly corresponds to the steepness of the other.",
+          "narration_text": "Differentiation and integration might seem like two separate worlds. One measures instantaneous change, like the steepness of a mountain path. The other measures accumulation, like the total volume of water in a river. The Fundamental Theorem of Calculus is the magical bridge that connects them. Part one of the theorem reveals a profound truth: the rate at which the integral accumulates area is equal to the original function itself. The derivative of the integral brings you right back to where you started.",
+          "duration": 30
+        },
+        {
+          "scene_id": 3,
+          "scene": 3,
+          "wan_prompt": "In a sunlit workshop in Makrana, a sculptor works on a large block of white marble. The camera focuses on their hands, skillfully chipping away stone. We see the initial rough block, then a fast-motion sequence of the carving process. The final shot frames the finished, elegant statue next to the initial block's outline. The pile of discarded marble chips on the floor glows brightly, representing the total change\u2014the value of the integral.",
+          "video_prompt": "In a sunlit workshop in Makrana, a sculptor works on a large block of white marble. The camera focuses on their hands, skillfully chipping away stone. We see the initial rough block, then a fast-motion sequence of the carving process. The final shot frames the finished, elegant statue next to the initial block's outline. The pile of discarded marble chips on the floor glows brightly, representing the total change\u2014the value of the integral.",
+          "narration_text": "While the first part of the theorem is conceptual, the second part gives us a practical tool for calculation. It's called the Evaluation Theorem, or the Newton-Leibniz formula. It states that to find the definite integral, we don't need to sum infinite rectangles. Instead, we find the antiderivative, a function whose derivative is our original function. Then, we simply evaluate this antiderivative at our endpoints and find the difference: F of b minus F of a. It's a shortcut of genius.",
+          "duration": 30
+        },
+        {
+          "scene_id": 4,
+          "scene": 4,
+          "wan_prompt": "A time-lapse sequence shows a complex marigold plant with vibrant orange flowers in full bloom against a soft-focus garden background. The camera then reverses the footage. The flowers retract into buds, leaves shrink back into the stem, and the entire plant deconstructs, finally collapsing back into a single, simple seed held in the palm of a hand. This reverse journey visualizes finding the simpler, original form\u2014the antiderivative\u2014from the complex, differentiated function.",
+          "video_prompt": "A time-lapse sequence shows a complex marigold plant with vibrant orange flowers in full bloom against a soft-focus garden background. The camera then reverses the footage. The flowers retract into buds, leaves shrink back into the stem, and the entire plant deconstructs, finally collapsing back into a single, simple seed held in the palm of a hand. This reverse journey visualizes finding the simpler, original form\u2014the antiderivative\u2014from the complex, differentiated function.",
+          "narration_text": "So, what is this antiderivative? Think of it as reversing a process. If differentiation is like a plant growing from a seed into a complex flower, then finding the antiderivative is like watching that process in reverse, tracing the flower back to its original seed. For every rule of differentiation, there is a corresponding rule for integration. For the power rule, where we decrease the exponent, here we increase it. Mastering these inverse rules is the key to unlocking the power of integration.",
+          "duration": 30
+        },
+        {
+          "scene_id": 5,
+          "scene": 5,
+          "wan_prompt": "A futuristic, transparent water tank is being filled. A digital graph next to it shows the fill rate as the curve y = 3x\u00b2 - 2x + 1. The water level is marked at time t=1. The camera fast-forwards as the water level rises rapidly, stopping at time t=4. The initial volume of water drains away, leaving only the amount added between t=1 and t=4. This final volume glows, and the number '51' materializes above it.",
+          "video_prompt": "A futuristic, transparent water tank is being filled. A digital graph next to it shows the fill rate as the curve y = 3x\u00b2 - 2x + 1. The water level is marked at time t=1. The camera fast-forwards as the water level rises rapidly, stopping at time t=4. The initial volume of water drains away, leaving only the amount added between t=1 and t=4. This final volume glows, and the number '51' materializes above it.",
+          "narration_text": "Let's put it all together. To calculate the integral of 3x squared minus 2x plus 1, from 1 to 4, we follow the steps. First, we find the antiderivative by reversing the power rule for each term, giving us x cubed minus x squared plus x. Next, we apply the Evaluation Theorem. We plug in our upper bound, 4, and subtract the result of plugging in our lower bound, 1. The final calculation, 52 minus 1, gives us our answer: 51.",
+          "duration": 30
+        }
+      ],
+      "avatar": {
+        "visible": false,
+        "position": "hidden"
+      },
+      "section_id": "section_11",
+      "renderer_error": "WAN renderer failed validation for section section_11 after 3 attempts: Beat 1: Contains vague phrase 'and more'"
+    }
+  ],
+  "metadata": {
+    "generated_at": "2025-12-23T07:50:22.823877Z",
+    "pipeline_version": "v1.4",
+    "content_director_model": "google/gemini-2.5-pro",
+    "recap_director_model": "google/gemini-2.5-pro",
+    "section_count": 11,
+    "section_types": [
+      "intro",
+      "summary",
+      "content",
+      "content",
+      "content",
+      "content",
+      "content",
+      "example",
+      "quiz",
+      "memory",
+      "recap"
+    ],
+    "total_duration_seconds": 663.07,
+    "tts_segments_processed": 65,
+    "tts_provider": "narakeet"
+  }
+}

@@ -81,3 +81,22 @@ The user wants an iterative development process. The agent should prioritize cle
 - **OpenAI Python Client**: Used for OpenRouter gateway.
 - **Tenacity**: General-purpose retry library.
 - **Mutagen**: Python module to handle audio metadata and measure duration.
+
+## V1.4 Test Status (2025-12-23)
+
+### Math Calculus Test - PASS
+- **Sections**: 10 (intro, summary, 5 content, example, memory, recap)
+- **Renderers**: Remotion (4), Manim (5), Video/WAN (1)
+- **Content Director**: 35,273 tokens, $0.29
+- **Recap Director**: 8,522 tokens, $0.06
+- **Total Cost**: $0.38
+- **Duration**: 413s
+- **Display Validation**: PASS
+- **Manim Specs**: All 5 manim sections have valid manim_scene_spec
+
+### Issues Verified Fixed
+- **ISS-106**: Renderers now executing (videos folder populated)
+- **ISS-107**: Duration normalization for memory/recap segments
+- **ISS-108**: Control character repair in JSON (newlines/tabs)
+- **ISS-109**: Manim section validation requires manim_scene_spec with objects/animation_sequence
+- **ISS-110**: Token accumulation across retries working correctly
