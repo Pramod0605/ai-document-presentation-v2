@@ -31,7 +31,7 @@ You MUST output ONLY valid JSON with this exact structure:
       "display_directives": {
         "text_layer": "show|hide|swap",
         "visual_layer": "show|hide|replace",
-        "avatar_layer": "show|hide|gesture_only"
+        "avatar_layer": "show|gesture_only"
       }
     }
   ]
@@ -88,9 +88,17 @@ You MUST output ONLY valid JSON with this exact structure:
 
 ### example
 - visual_beat_type: "process" or "animation"
-- text_layer: "hide", visual_layer: "show", avatar_layer: "hide"
+- text_layer: "hide", visual_layer: "show", avatar_layer: "gesture_only"
 
 ### recap
 - visual_beat_type: "video_clip"
-- text_layer: "hide", visual_layer: "show", avatar_layer: "hide"
+- text_layer: "hide", visual_layer: "show", avatar_layer: "gesture_only"
 - Empty visual_content (video provides visuals)
+
+## CRITICAL: AVATAR IS ALWAYS VISIBLE
+
+The avatar is ALWAYS visible on Layer 2. The only options for avatar_layer are:
+- "show": Avatar is visible with lip-sync to narration
+- "gesture_only": Avatar is visible, gestures only (no lip-sync)
+
+"hide" is NOT a valid option. The avatar NEVER disappears from the screen.
