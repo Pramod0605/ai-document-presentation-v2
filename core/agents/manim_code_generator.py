@@ -1,14 +1,14 @@
 """
 Manim Code Generator Agent (REQ-060 through REQ-068)
 
-Uses Claude Sonnet 4.5 via OpenRouter to generate Python code for Manim animations.
+Uses Claude Sonnet 3.5 via OpenRouter to generate Python code for Manim animations.
 Output is raw Python code for construct(self) method body, not JSON spec.
 """
 import re
 import os
 from typing import Dict, Any, List, Tuple, Optional
 
-CLAUDE_SONNET_4_5 = "anthropic/claude-sonnet-4-5-20250514"
+CLAUDE_SONNET_3_5 = "anthropic/claude-3.5-sonnet"
 
 class ManimCodeGenerator:
     """
@@ -19,7 +19,7 @@ class ManimCodeGenerator:
     """
     
     name = "ManimCodeGenerator"
-    model = CLAUDE_SONNET_4_5
+    model = CLAUDE_SONNET_3_5
     temperature = 0.3
     max_tokens = 8000
     max_retries = 3

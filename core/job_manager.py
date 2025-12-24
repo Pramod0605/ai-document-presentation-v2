@@ -229,7 +229,9 @@ job_manager = JobManager()
 
 def run_job_async(job_id: str, process_func: Callable, **kwargs):
     def worker():
+        log(f"[JOB {job_id}] Worker thread started, waiting for execution lock...")
         with job_manager._execution_lock:
+            log(f"[JOB {job_id}] Acquired execution lock")
             try:
                 job_manager._current_job_id = job_id
                 log(f"\n[JOB {job_id}] Starting job...")
@@ -245,9 +247,12 @@ def run_job_async(job_id: str, process_func: Callable, **kwargs):
                 job_manager.fail_job(job_id, str(e))
             finally:
                 job_manager._current_job_id = None
+                log(f"[JOB {job_id}] Released execution lock")
     
+    log(f"[JOB {job_id}] Creating worker thread...")
     thread = threading.Thread(target=worker, daemon=True)
     thread.start()
+    log(f"[JOB {job_id}] Worker thread started (thread={thread.name})")
     return thread
 
 

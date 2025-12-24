@@ -1032,7 +1032,7 @@ def generate_v15():
     - subject: Subject area (default: "General Science")
     - grade: Grade level (default: "9")
     - skip_wan: If true, skips WAN video rendering (default: false)
-    - tts_provider: TTS provider - "narakeet" or "estimate" (default: "narakeet")
+    - tts_provider: TTS provider - "edge" (default, free), "narakeet", or "estimate"
     
     Returns:
     - presentation.json following v1.3 schema with spec_version v1.5
@@ -1058,10 +1058,13 @@ def generate_v15():
         subject = data.get("subject", "General Science")
         grade = data.get("grade", "9")
         skip_wan = data.get("skip_wan", False)
-        tts_provider = data.get("tts_provider", "narakeet")
+        tts_provider = data.get("tts_provider", "edge")
         
-        if tts_provider not in ["narakeet", "estimate"]:
-            return jsonify({"error": f"Invalid tts_provider: {tts_provider}. Use 'narakeet' or 'estimate'"}), 400
+        if tts_provider not in ["narakeet", "estimate", "edge", "edge_tts"]:
+            return jsonify({"error": f"Invalid tts_provider: {tts_provider}. Use 'edge', 'narakeet', or 'estimate'"}), 400
+        
+        if tts_provider == "edge":
+            tts_provider = "edge_tts"
         
         job_id = job_manager.create_job("v15_pipeline", {
             "subject": subject,
@@ -1072,6 +1075,8 @@ def generate_v15():
             "content_preview": markdown_content[:200] + "..." if len(markdown_content) > 200 else markdown_content
         })
         
+        job_manager.start_job(job_id)
+        
         job_output_dir = JOBS_DIR / job_id
         setup_job_folder(job_output_dir)
         
@@ -1081,7 +1086,7 @@ def generate_v15():
                 "status_message": message
             }, persist=True)
         
-        generate_tts = tts_provider != "estimate"
+        generate_tts = tts_provider not in ["estimate"]
         
         presentation, tracker = process_markdown_to_presentation_v15(
             markdown_content=markdown_content,
@@ -1132,19 +1137,30 @@ def generate_v15():
         
     except PipelineV15Error as e:
         import traceback
+        tb = traceback.format_exc()
+        print(f"[V1.5 Pipeline Error] Phase: {e.phase}")
+        print(f"[V1.5 Pipeline Error] Error: {str(e)}")
+        print(f"[V1.5 Pipeline Error] Traceback:\n{tb}")
+        if 'job_id' in locals():
+            job_manager.fail_job(job_id, str(e), phase_key=e.phase)
         return jsonify({
             "status": "error",
             "error": str(e),
             "phase": e.phase,
-            "traceback": traceback.format_exc()
+            "traceback": tb
         }), 500
         
     except Exception as e:
         import traceback
+        tb = traceback.format_exc()
+        print(f"[V1.5 Pipeline Error] Error: {str(e)}")
+        print(f"[V1.5 Pipeline Error] Traceback:\n{tb}")
+        if 'job_id' in locals():
+            job_manager.fail_job(job_id, str(e))
         return jsonify({
             "status": "error",
             "error": str(e),
-            "traceback": traceback.format_exc()
+            "traceback": tb
         }), 500
 
 

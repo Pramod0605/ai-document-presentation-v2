@@ -259,7 +259,7 @@ def process_markdown_to_presentation_v15(
             )
         
         update_status("manim_code", "Generating Manim code with actual TTS timing...")
-        manim_generator = ManimCodeGenerator(tracker=tracker, log_func=log)
+        manim_generator = ManimCodeGenerator()
         
         for i, section in enumerate(presentation.get("sections", [])):
             renderer = section.get("renderer", "none")
@@ -268,7 +268,8 @@ def process_markdown_to_presentation_v15(
             if renderer == "manim":
                 logger.info(f"[Pipeline v1.5] Generating Manim code for {section_id}")
                 
-                segments = section.get("segments", [])
+                narration = section.get("narration", {})
+                segments = narration.get("segments", []) or section.get("segments", [])
                 visual_beats = section.get("visual_beats", [])
                 segment_enrichments = section.get("segment_enrichments", [])
                 
