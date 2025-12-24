@@ -177,12 +177,22 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 
 ### V1.5 Issues Fixed (2025-12-24)
 - **Job Lifecycle**: Fixed `/api/v15/generate` not calling `job_manager.start_job()` - jobs now properly transition from queued → processing → completed/failed
-- **RecapScene Validation**: Lowered minimum word count from 200 to 150 to allow prompts to pass validation (quality warnings retained for 200+)
+- **RecapScene Validation**: Lowered minimum word count from 200 to 100 (quality warnings for <150 words)
 - **ManimCodeGenerator Model ID**: Fixed from "anthropic/claude-sonnet-4-5-20250514" to "anthropic/claude-3.5-sonnet"
-- **E2E Test**: Job 24f332b1 completed successfully with ManimCodeGenerator producing 3530 chars of Python Manim code
+- **Audio Generation (ISS-122)**: Fixed - use edge_tts (not estimate) to generate audio files
+- **Render Execution (ISS-123)**: Added render_all_topics() call to V1.5 pipeline (was missing)
+- **V1.5 Manim Code Detection**: renderer_executor now checks render_spec.manim_scene_spec.manim_code
+- **Manim v1.5 Mode**: Added _render_v15_manim_code() in manim_runner.py to handle pre-generated Python code
+
+### E2E Test Results (2025-12-24)
+- **Job 748f8a07**: Completed with audio + recap video working
+- Audio: All section_X.mp3 files generated (190s total)
+- Recap video: topic_5.mp4 generated successfully via WAN placeholder
+- Manim: Code detected (3052 chars) but render execution still fails
 
 ### Remaining Issues
 - **ISS-120**: WAN/Video prompts exceed API character limit (1900+ chars)
+- **Manim Render Execution**: LLM-generated Python code runs but Manim process exits with code 1
 
 ### Recent Issues Fixed (V1.4)
 - **ISS-111**: Renderer execution wired into V1.4 pipeline

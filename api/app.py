@@ -335,21 +335,10 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
         update_status_callback=status_callback,
         generate_tts=generate_tts,
         output_dir=output_path,
-        tts_provider=tts_provider
+        tts_provider=tts_provider,
+        dry_run=dry_run,
+        skip_wan=skip_wan
     )
-    
-    if not skip_wan and not dry_run:
-        status_callback(job_id, "renderers", "Generating video content...")
-        presentation = process_with_renderers_v14(
-            presentation=presentation,
-            tracker=tracker,
-            job_id=job_id,
-            update_status_callback=status_callback,
-            use_remotion=False,  # ISS-118: Remotion disabled per user request
-            output_dir=output_path,
-            dry_run=dry_run,
-            skip_wan=skip_wan
-        )
     
     pres_path = output_path / "presentation.json"
     with open(pres_path, "w") as f:
@@ -1096,21 +1085,10 @@ def generate_v15():
             update_status_callback=status_callback,
             generate_tts=generate_tts,
             output_dir=job_output_dir,
-            tts_provider=tts_provider
+            tts_provider=tts_provider,
+            dry_run=False,
+            skip_wan=skip_wan
         )
-        
-        if not skip_wan:
-            status_callback(job_id, "renderers", "Generating video content...")
-            presentation = process_with_renderers_v14(
-                presentation=presentation,
-                tracker=tracker,
-                job_id=job_id,
-                update_status_callback=status_callback,
-                use_remotion=True,
-                output_dir=job_output_dir,
-                dry_run=False,
-                skip_wan=skip_wan
-            )
         
         pres_path = job_output_dir / "presentation.json"
         with open(pres_path, "w") as f:

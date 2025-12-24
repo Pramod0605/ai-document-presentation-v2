@@ -67,8 +67,8 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     section_type = topic.get("section_type", "content")
     visual_beats = topic.get("visual_beats", [])
     
-    manim_scene_spec = topic.get("manim_scene_spec")
-    video_prompts = topic.get("video_prompts")
+    manim_scene_spec = topic.get("manim_scene_spec") or topic.get("render_spec", {}).get("manim_scene_spec")
+    video_prompts = topic.get("video_prompts") or topic.get("render_spec", {}).get("video_prompts")
     has_v12_specs = bool(manim_scene_spec or video_prompts)
     
     if renderer == "none" or section_type in TEXT_ONLY_SECTION_TYPES:
@@ -105,9 +105,14 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             topic["explanation_plan"] = {}
         
         if manim_scene_spec and renderer == "manim":
-            topic["explanation_plan"]["v12_manim_scene_spec"] = manim_scene_spec
-            print(f"  [OK] Using v1.2 manim_scene_spec: {len(manim_scene_spec.get('objects', []))} objects, {len(manim_scene_spec.get('animation_sequence', []))} animations")
-            log_render_prompt(topic_id, 0, "manim", json.dumps(manim_scene_spec, indent=2))
+            if manim_scene_spec.get("manim_code"):
+                topic["explanation_plan"]["v15_manim_code"] = manim_scene_spec.get("manim_code")
+                print(f"  [OK] Using v1.5 manim_code: {len(manim_scene_spec.get('manim_code', ''))} chars")
+                log_render_prompt(topic_id, 0, "manim", manim_scene_spec.get("manim_code", "")[:500])
+            else:
+                topic["explanation_plan"]["v12_manim_scene_spec"] = manim_scene_spec
+                print(f"  [OK] Using v1.2 manim_scene_spec: {len(manim_scene_spec.get('objects', []))} objects, {len(manim_scene_spec.get('animation_sequence', []))} animations")
+                log_render_prompt(topic_id, 0, "manim", json.dumps(manim_scene_spec, indent=2))
         elif video_prompts:
             if isinstance(video_prompts, list):
                 combined_prompts = "\n\n".join([

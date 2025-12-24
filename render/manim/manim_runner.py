@@ -116,6 +116,21 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
     # Get narration_segments for per-beat duration lookup
     narration_segments = topic.get("narration_segments", [])
     
+    # v1.5 MODE: Check for pre-generated Python manim_code (bypasses translation step)
+    v15_manim_code = explanation_plan.get("v15_manim_code")
+    if v15_manim_code:
+        print(f"[MANIM v1.5] Section {topic_id}: Using pre-generated Python manim_code ({len(v15_manim_code)} chars)")
+        return _render_v15_manim_code(
+            manim_code=v15_manim_code,
+            topic_id=topic_id,
+            topic_title=topic_title,
+            section_type=section_type,
+            duration=duration,
+            output_dir=output_dir,
+            dry_run=dry_run,
+            trace_output_dir=trace_output_dir
+        )
+    
     # v1.2 MODE: Check for section-level manim_scene_spec (bypasses visual_beats iteration)
     v12_manim_scene_spec = explanation_plan.get("v12_manim_scene_spec")
     if v12_manim_scene_spec:
@@ -425,6 +440,63 @@ def _render_v12_manim_spec(
         )
     
     print(f"[MANIM v1.2] Rendered: {result}")
+    return result
+
+
+def _render_v15_manim_code(
+    manim_code: str,
+    topic_id: int,
+    topic_title: str,
+    section_type: str,
+    duration: float,
+    output_dir: str,
+    dry_run: bool = False,
+    trace_output_dir: str | None = None
+) -> str:
+    """
+    Render v1.5 pre-generated Manim Python code.
+    
+    v1.5 MODE: Claude Sonnet generates complete Python Manim code directly.
+    This bypasses the spec translation step - we execute the code directly.
+    """
+    output_path = str(Path(output_dir) / f"topic_{topic_id}.mp4")
+    
+    print(f"[MANIM v1.5] Rendering pre-generated code: {len(manim_code)} chars, duration={duration}s")
+    
+    log_render_prompt(
+        section_id=topic_id,
+        section_title=topic_title,
+        renderer="manim_v15",
+        prompt=manim_code,
+        output_path=output_path,
+        extra_data={
+            "section_type": section_type,
+            "scene_type": "v15_llm_generated",
+            "code_length": len(manim_code),
+            "duration": duration,
+            "dry_run": dry_run
+        },
+        trace_output_dir=trace_output_dir
+    )
+    
+    if dry_run:
+        print(f"[DRY RUN] Manim v1.5 render for section {topic_id}")
+        return _create_dry_run_marker(topic_id, output_path, duration, manim_code)
+    
+    result = _execute_spec_generated_render(
+        manim_code=manim_code,
+        duration=duration,
+        output_path=output_path,
+        topic_id=topic_id
+    )
+    
+    if not result or not os.path.exists(result):
+        raise ManimRenderError(
+            f"Section {topic_id}: Manim v1.5 render produced no output. "
+            f"Check Manim installation and generated code."
+        )
+    
+    print(f"[MANIM v1.5] Rendered: {result}")
     return result
 
 

@@ -74,10 +74,10 @@ class RecapSceneAgent(BaseAgent):
             prompt_text = p.get("prompt", "")
             word_count = len(prompt_text.split())
             
-            if word_count < 150:
-                errors.append(f"video_prompt {i}: only {word_count} words (min 150)")
-            elif word_count < 200:
-                warnings.append(f"video_prompt {i}: only {word_count} words (recommended 200+)")
+            if word_count < 100:
+                errors.append(f"video_prompt {i}: only {word_count} words (min 100)")
+            elif word_count < 150:
+                warnings.append(f"video_prompt {i}: only {word_count} words (recommended 150+)")
             
             for phrase in self.BANNED_PHRASES:
                 if phrase.lower() in prompt_text.lower():

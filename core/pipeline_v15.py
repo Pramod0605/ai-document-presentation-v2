@@ -42,6 +42,7 @@ from core.agents.manim_code_generator import (
 from core.merge_step_v15 import merge_agent_outputs
 from core.tts_duration import update_durations_from_tts, TTSProvider
 from core.analytics import AnalyticsTracker, create_tracker
+from core.renderer_executor import render_all_topics, enforce_renderer_policy
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +91,9 @@ def process_markdown_to_presentation_v15(
     update_status_callback=None,
     generate_tts: bool = True,
     output_dir: Optional[Path] = None,
-    tts_provider: TTSProvider = "edge_tts"
+    tts_provider: TTSProvider = "edge_tts",
+    dry_run: bool = False,
+    skip_wan: bool = False
 ) -> Tuple[Dict, AnalyticsTracker]:
     """
     V1.5 Pipeline: Process markdown to presentation.json using split agents.
@@ -293,6 +296,42 @@ def process_markdown_to_presentation_v15(
                     
                 except Exception as e:
                     logger.error(f"[Pipeline v1.5] Manim code generation failed for {section_id}: {e}")
+        
+        if output_dir and not dry_run:
+            update_status("render_execute", "Rendering videos...")
+            videos_dir = Path(output_dir) / "videos"
+            videos_dir.mkdir(parents=True, exist_ok=True)
+            
+            presentation = enforce_renderer_policy(presentation)
+            
+            rendered_videos = render_all_topics(
+                presentation=presentation,
+                output_dir=str(videos_dir),
+                dry_run=dry_run,
+                skip_wan=skip_wan,
+                output_dir_base=str(output_dir)
+            )
+            
+            for result in rendered_videos:
+                section_id_result = result.get("topic_id")
+                video_path = result.get("video_path")
+                beat_videos = result.get("beat_videos", [])
+                recap_video_paths = result.get("recap_video_paths", [])
+                
+                for section in presentation.get("sections", []):
+                    if section.get("section_id") == section_id_result:
+                        if video_path:
+                            rel_path = Path(video_path).name if "/" in str(video_path) else video_path
+                            section["video_path"] = f"videos/{rel_path}"
+                        if beat_videos:
+                            section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
+                        if recap_video_paths:
+                            section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
+                        break
+            
+            success_count = sum(1 for r in rendered_videos if r.get("status") in ["success", "skipped"])
+            fail_count = sum(1 for r in rendered_videos if r.get("status") == "failed")
+            logger.info(f"[Pipeline v1.5] Rendering complete: {success_count} success, {fail_count} failed")
         
         tracker.end_pipeline(status="completed")
         logger.info(f"[Pipeline v1.5] Completed successfully for job {job_id}")
