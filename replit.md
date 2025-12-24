@@ -7,6 +7,19 @@ This project is a **Deterministic Educational Film Engine** that converts PDF ch
 
 ## SINGLE SOURCE OF TRUTH
 
+### Display & Agent Reference (v2.0)
+**Primary Reference**: `docs/display_requirements.md`
+
+This document contains:
+- Display Summary Table (avatar widths: 60%/45%/35% by section type)
+- Layer Architecture (Layer 0=Background, Layer 1=Content, Layer 2=Avatar always visible)
+- ASCII diagrams for ALL 7 section types (intro, summary, content, example, quiz, memory, recap)
+- LLM Agent Reference (all 7 agents with inputs/outputs/prompt files)
+- Implementation Checklist (specific file paths and changes needed)
+- Narration Sync Architecture (timing flow from NarrationWriter → TTS → Player)
+- Requirement Tracking (REQ-001 through REQ-052)
+- Test Input Document specification
+
 ### V1.5 Architecture (Implemented)
 **Primary Reference**: `docs/v1.5_requirements.json`
 
@@ -15,7 +28,6 @@ This file contains:
 - Agent contracts and JSON schemas
 - Guardrails and validation rules
 - Presentation.json field mapping
-- Narration sync architecture
 
 ### V1.4 Architecture (Current)
 **Primary Reference**: `docs/llm_output_requirements_v1.4.json`
@@ -25,7 +37,8 @@ The user wants an iterative development process. The agent should prioritize cle
 
 ### Critical Rules
 1. Before proposing ANY solution, the agent MUST check:
-   - `docs/v1.5_requirements.json` for V1.5 architecture spec (SINGLE SOURCE OF TRUTH)
+   - `docs/display_requirements.md` for Display, Agent Reference, and Requirement Tracking (SINGLE SOURCE OF TRUTH)
+   - `docs/v1.5_requirements.json` for V1.5 architecture spec
    - `docs/llm_output_requirements_v1.4.json` for current V1.4 specification
    - `attached_assets/` for specification documents (especially LLM brain prompts)
    - `replit.md` for documented architecture and decisions

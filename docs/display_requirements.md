@@ -1,670 +1,800 @@
 # Display Requirements Specification
 
-**Version**: 1.0  
+**Version**: 2.0  
 **Last Updated**: 2025-12-24  
-**Status**: Reference Document  
+**Status**: SINGLE SOURCE OF TRUTH  
 
 ---
 
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Architecture Summary](#architecture-summary)
-3. [File References](#file-references)
-4. [Stage Layout](#stage-layout)
-5. [Section Types & Display Behavior](#section-types--display-behavior)
-6. [Avatar Behavior & Sizing](#avatar-behavior--sizing)
-7. [Display Directives System](#display-directives-system)
-8. [Timing & Synchronization](#timing--synchronization)
-9. [Current vs Required Behavior](#current-vs-required-behavior)
-10. [Gap Analysis](#gap-analysis)
+2. [Display Summary Table](#display-summary-table)
+3. [Layer Architecture](#layer-architecture)
+4. [Section Type Layouts (ASCII)](#section-type-layouts-ascii)
+5. [LLM Agent Reference](#llm-agent-reference)
+6. [Implementation Checklist](#implementation-checklist)
+7. [Narration Sync Architecture](#narration-sync-architecture)
+8. [Requirement Tracking](#requirement-tracking)
+9. [Test Input Document](#test-input-document)
 
 ---
 
 ## Overview
 
-This document defines how the AI Animated Education player displays educational content. It serves as the single source of truth for understanding:
+This document defines how the AI Animated Education player displays educational content. It serves as the **SINGLE SOURCE OF TRUTH** for:
 
-- **WHAT** is displayed (text, video, avatar, bullets)
-- **WHERE** components are positioned (left, right, center, fullscreen)
+- **WHAT** is displayed (text, video, avatar)
+- **WHERE** components are positioned (left, right, center)
 - **WHEN** transitions occur (timing from narration segments)
 - **HOW** the display_directives control layer visibility
 
-### Core Principle
+### Core Principles
 
-> **"The Player is DUMB"** - The player executes JSON instructions without making any decisions about layout, timing, or pedagogy. All intelligence comes from the LLM pipeline.
-
----
-
-## Architecture Summary
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                           PIPELINE FLOW                                  │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│  PDF/MD Input                                                            │
-│       │                                                                  │
-│       ▼                                                                  │
-│  ┌─────────┐    ┌───────────────┐    ┌──────────────────┐               │
-│  │ Chunker │───▶│ SectionPlanner│───▶│ NarrationWriter  │               │
-│  └─────────┘    └───────────────┘    └────────┬─────────┘               │
-│                                               │                          │
-│       ┌───────────────────────────────────────┘                          │
-│       ▼                                                                  │
-│  ┌─────────────────┐    ┌────────────────┐    ┌─────────────┐           │
-│  │ VisualSpecArtist│───▶│RendererSpec   │───▶│ Memory/Recap │           │
-│  └─────────────────┘    └────────────────┘    └──────┬──────┘           │
-│                                                       │                  │
-│       ┌───────────────────────────────────────────────┘                  │
-│       ▼                                                                  │
-│  ┌─────────────┐    ┌─────────┐    ┌──────────────────────────┐         │
-│  │ Merge Step  │───▶│   TTS   │───▶│ presentation.json OUTPUT │         │
-│  └─────────────┘    └─────────┘    └─────────────┬────────────┘         │
-│                                                   │                      │
-│                                                   ▼                      │
-│                                          ┌──────────────┐                │
-│                                          │  player.js   │                │
-│                                          │  index.html  │                │
-│                                          └──────────────┘                │
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
-```
+1. **"The Player is DUMB"** - The player executes JSON instructions without making decisions about layout, timing, or pedagogy.
+2. **Avatar is ALWAYS VISIBLE** - Layer 2 always renders the avatar. `gesture_only` is metadata for avatar VIDEO GENERATION (lip-sync vs gesture-only), NOT a display hide directive.
+3. **P7 Content Integrity** - Display ONLY content from the input source file. No fabricated content.
+4. **Narration Sync** - All timing flows from TTS audio duration, which updates segment.duration_seconds.
 
 ---
 
-## File References
+## Display Summary Table
 
-| Component | File Location | Purpose |
-|-----------|--------------|---------|
-| **Player Logic** | `player/player.js` | JavaScript that reads presentation.json and controls all display |
-| **Player UI** | `player/index.html` | HTML structure and CSS for stage, layers, controls |
-| **Presentation Data** | `player/jobs/{job_id}/presentation.json` | Single source of truth for playback |
-| **Videos** | `player/jobs/{job_id}/videos/topic_*.mp4` | Manim/WAN rendered videos |
-| **Audio** | `player/jobs/{job_id}/section_*.mp3` | TTS audio files |
-| **V1.5 Spec** | `docs/v1.5_requirements.json` | Pipeline architecture reference |
-
----
-
-## Stage Layout
-
-### Stage Dimensions
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        STAGE (1280 x 720)                       │
-│                                                                 │
-│  ┌──────────────────────────────┐  ┌──────────────────────────┐│
-│  │                              │  │                          ││
-│  │       CONTENT-BOX            │  │       VIDEO-BOX          ││
-│  │       (55% width)            │  │       (40% width)        ││
-│  │                              │  │                          ││
-│  │  - Title (h1)                │  │  - inline-video          ││
-│  │  - segments-list (bullets)   │  │  - Manim/WAN content     ││
-│  │  - Formulas                  │  │                          ││
-│  │                              │  │                          ││
-│  └──────────────────────────────┘  └──────────────────────────┘│
-│                                                                 │
-│                                         ┌───────────────────┐   │
-│                                         │   AVATAR-CANVAS   │   │
-│                                         │   (30% default)   │   │
-│                                         │   Bottom-right    │   │
-│                                         └───────────────────┘   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Layer Z-Index Stack
-
-| Z-Index | Element | Purpose |
-|---------|---------|---------|
-| 0 | `#bg-image-layer` | Background images |
-| 1 | `#scene-video` | Full-screen video (khan mode) |
-| 5 | `#content-wrapper` | Contains content-box and video-box |
-| 20 | `#avatar-canvas` | Avatar display |
-| 25 | `#content-wrapper` (content-video mode) | Raised for video swap |
-
-### Layout Modes (CSS Classes on #stage)
-
-| Mode | Class | Description |
-|------|-------|-------------|
-| Side | `mode-side` | Avatar right (85% height), content left |
-| Center | `mode-center` | Avatar center-right, content left (65% max) |
-| Content Video | `mode-content-video` | Content left + video right, avatar reduced |
-| Khan | `mode-khan` | Full-screen video, no content box |
-| Image | `mode-image` | Background image visible, content hidden |
+| Section  | Avatar Position | Avatar Width | Text/Content Area | Video Area | Renderer |
+|----------|-----------------|--------------|-------------------|------------|----------|
+| **Intro**   | Center       | **60%**      | Top 80%           | None       | none     |
+| **Summary** | Right        | **45%**      | Left 50%          | None       | none     |
+| **Content** | Right        | **35%**      | Left 60%          | Fullscreen when playing | manim/video |
+| **Example** | Right        | **35%**      | Left 60%          | Fullscreen when playing | manim |
+| **Quiz**    | Right        | **35%**      | Left 60%          | None       | none     |
+| **Memory**  | Right        | **35%**      | Flashcards        | None       | none     |
+| **Recap**   | Right        | **35%**      | None              | Fullscreen | video (WAN) |
 
 ---
 
-## Section Types & Display Behavior
+## Layer Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         LAYER STACK (Z-INDEX)                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   Layer 2 (Top):    AVATAR VIDEO (always rendered, never hidden)    │
+│                     - Position varies by section type               │
+│                     - Width: 60% / 45% / 35% per table              │
+│                     - gesture_only = generation metadata ONLY       │
+│                                                                      │
+│   Layer 1 (Middle): CONTENT AREA (Text OR Video - mutual exclusion) │
+│                     - Text: bullet points, formulas, flashcards     │
+│                     - Video: Manim animation OR WAN video           │
+│                     - Fills available space when video plays        │
+│                                                                      │
+│   Layer 0 (Bottom): BACKGROUND BLACK                                │
+│                     - Always black, no images                       │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Dev Mode Features (Planned)
+- Resize and move Content Box
+- Resize and move Video Box  
+- Resize and move Avatar position
+- All adjustments saved to presentation.json for replay
+
+---
+
+## Section Type Layouts (ASCII)
 
 ### Section 1: INTRO
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                           INTRO LAYOUT                          │
-│                                                                 │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │                                                          │   │
-│  │              WELCOME TEXT / BULLET POINTS                │   │
-│  │                                                          │   │
-│  │    "Welcome to Definite Integrals!"                      │   │
-│  │    - Explore Definite Integrals                          │   │
-│  │    - Understand Areas Under Curves                       │   │
-│  │                                                          │   │
-│  └──────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│                        ┌───────────────────┐                    │
-│                        │                   │                    │
-│                        │      AVATAR       │                    │
-│                        │     (CENTER)      │                    │
-│                        │   50% width       │                    │
-│                        │   Welcoming       │                    │
-│                        │                   │                    │
-│                        └───────────────────┘                    │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                           INTRO LAYOUT                               │
+│                        Avatar: CENTER, 60%                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   ┌──────────────────────────────────────────────────────────────┐  │
+│   │                     TEXT AREA (Top 80%)                      │  │
+│   │                                                              │  │
+│   │   "Welcome to Definite Integrals!"                           │  │
+│   │   - Today we explore integration                             │  │
+│   │   - You'll learn the fundamental theorem                     │  │
+│   │                                                              │  │
+│   └──────────────────────────────────────────────────────────────┘  │
+│                                                                      │
+│                    ┌─────────────────────────┐                       │
+│                    │                         │                       │
+│                    │     AVATAR (CENTER)     │                       │
+│                    │       Width: 60%        │                       │
+│                    │       Welcoming         │                       │
+│                    │                         │                       │
+│                    └─────────────────────────┘                       │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+
+display_directives: { text_layer: "show", visual_layer: "hide", avatar_layer: "show" }
+avatar_layout: { position: "center", width_percent: 60 }
+renderer: none
 ```
-
-| Attribute | Current Value | Required Value |
-|-----------|---------------|----------------|
-| **Avatar Position** | center | center |
-| **Avatar Size** | 50% width | 50% width |
-| **Avatar Visibility** | required | required |
-| **Content** | Text/bullets (LLM generated) | Text/bullets (LLM generated) |
-| **Video** | None | None |
-| **Renderer** | none | none |
-| **display_directives** | text=show, visual=hide, avatar=show | text=show, visual=hide, avatar=show |
-
-**Narration Style**: Welcoming, "Hello and welcome to our exploration of..."
 
 ---
 
 ### Section 2: SUMMARY
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                          SUMMARY LAYOUT                         │
-│                                                                 │
-│  ┌─────────────────────────────┐   ┌──────────────────────────┐ │
-│  │                             │   │                          │ │
-│  │    WHAT YOU'LL LEARN        │   │        AVATAR            │ │
-│  │                             │   │        (RIGHT)           │ │
-│  │  - Define definite integral │   │        30% width         │ │
-│  │  - Properties overview      │   │        Medium size       │ │
-│  │  - Fundamental theorem      │   │        Explaining        │ │
-│  │  - Worked examples          │   │                          │ │
-│  │                             │   │                          │ │
-│  └─────────────────────────────┘   └──────────────────────────┘ │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                          SUMMARY LAYOUT                              │
+│                        Avatar: RIGHT, 45%                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   ┌───────────────────────────┐   ┌─────────────────────────────┐   │
+│   │   TEXT AREA (Left 50%)    │   │      AVATAR (RIGHT)         │   │
+│   │                           │   │                             │   │
+│   │   WHAT YOU'LL LEARN       │   │       Width: 45%            │   │
+│   │                           │   │       Medium-Large          │   │
+│   │   - Define integrals      │   │       Explaining            │   │
+│   │   - Properties overview   │   │                             │   │
+│   │   - Fundamental theorem   │   │                             │   │
+│   │   - Worked examples       │   │                             │   │
+│   │                           │   │                             │   │
+│   └───────────────────────────┘   └─────────────────────────────┘   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+
+display_directives: { text_layer: "show", visual_layer: "hide", avatar_layer: "show" }
+avatar_layout: { position: "right", width_percent: 45 }
+renderer: none
 ```
-
-| Attribute | Current Value | Required Value |
-|-----------|---------------|----------------|
-| **Avatar Position** | left (incorrect) | right |
-| **Avatar Size** | 30% width | 30% width (medium) |
-| **Avatar Visibility** | required | required |
-| **Content** | Bullet points (LLM generated) | Bullet points (LLM generated) |
-| **Video** | None | None |
-| **Renderer** | none | none |
-| **display_directives** | text=show, visual=hide, avatar=show | text=show, visual=hide, avatar=show |
-
-**Narration Style**: Overview, "In this lesson, you will learn..."
 
 ---
 
-### Section 3-6: CONTENT
+### Section 3-N: CONTENT (Text Mode)
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                       CONTENT LAYOUT (TEXT)                     │
-│                                                                 │
-│  ┌─────────────────────────────┐   ┌──────────────────────────┐ │
-│  │                             │   │                          │ │
-│  │   CONTENT FROM SOURCE       │   │        AVATAR            │ │
-│  │   (P7: Input file only!)    │   │        (RIGHT)           │ │
-│  │                             │   │        30% width         │ │
-│  │  - Key concept 1            │   │        Medium size       │ │
-│  │  - Key concept 2            │   │        Explaining        │ │
-│  │  - Formula: ∫f(x)dx         │   │                          │ │
-│  │                             │   │                          │ │
-│  └─────────────────────────────┘   └──────────────────────────┘ │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                     CONTENT LAYOUT (Text Mode)                       │
+│                        Avatar: RIGHT, 35%                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   ┌──────────────────────────────┐   ┌──────────────────────────┐   │
+│   │   TEXT AREA (Left 60%)       │   │     AVATAR (RIGHT)       │   │
+│   │                              │   │                          │   │
+│   │   CONTENT FROM SOURCE        │   │      Width: 35%          │   │
+│   │   (P7: Input file only!)     │   │      Small-Medium        │   │
+│   │                              │   │      Explaining          │   │
+│   │   - Key concept 1            │   │                          │   │
+│   │   - Key concept 2            │   │                          │   │
+│   │   - Formula: ∫f(x)dx         │   │                          │   │
+│   │                              │   │                          │   │
+│   └──────────────────────────────┘   └──────────────────────────┘   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
 
-                              ▼ SWAP TO VIDEO ▼
-
-┌─────────────────────────────────────────────────────────────────┐
-│                      CONTENT LAYOUT (VIDEO)                     │
-│                                                                 │
-│  ┌───────────────────────────────────────────────────────────┐  │
-│  │                                                           │  │
-│  │                    MANIM VIDEO                            │  │
-│  │                    (FULLSCREEN)                           │  │
-│  │                                                           │  │
-│  │     [Animated graph, equations, visual explanation]       │  │
-│  │                                                           │  │
-│  │                                                           │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                            ┌──────────────────┐ │
-│                                            │ AVATAR (small)   │ │
-│                                            │ gesture_only     │ │
-│                                            └──────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
+display_directives: { text_layer: "show", visual_layer: "hide", avatar_layer: "show" }
+avatar_layout: { position: "right", width_percent: 35 }
+renderer: manim (but video not playing yet)
 ```
-
-| Attribute | Current Value | Required Value |
-|-----------|---------------|----------------|
-| **Avatar Position** | right | right |
-| **Avatar Size** | 30% width | 30% (medium), reduce when video |
-| **Avatar Visibility** | optional/hidden (varies) | optional - show during text, gesture_only during video |
-| **Content** | Bullets from source (P7) | Bullets from source (P7 ONLY) |
-| **Video** | Manim animation | Manim animation (fullscreen when playing) |
-| **Renderer** | manim | manim |
-| **display_directives** | Varies per segment | text=show/hide, visual=show/hide (mutual exclusion) |
-
-**Narration Style**: Teaching, explains concept then shows visual
-
-**Critical Rule (P7)**: Content MUST come from input PDF/MD file only. NO fabricated content.
 
 ---
 
-### Section 7: EXAMPLE
+### Section 3-N: CONTENT (Video Mode - Manim/WAN)
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         EXAMPLE LAYOUT                          │
-│                                                                 │
-│  ┌─ WORKED EXAMPLE ─────────────────┐  ┌──────────────────────┐ │
-│  │                                  │  │                      │ │
-│  │  Problem:                        │  │       AVATAR         │ │
-│  │  Evaluate ∫₀² (3x² + 2x) dx      │  │       (RIGHT)        │ │
-│  │                                  │  │       30% width      │ │
-│  │  Step 1: Find antiderivative     │  │       Medium size    │ │
-│  │  Step 2: Apply bounds            │  │       Explaining     │ │
-│  │  Step 3: Calculate result        │  │                      │ │
-│  │                                  │  │                      │ │
-│  │  Answer: 16                      │  │                      │ │
-│  └──────────────────────────────────┘  └──────────────────────┘ │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                     CONTENT LAYOUT (Video Mode)                      │
+│                        Avatar: RIGHT, 35%                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   ┌───────────────────────────────────────────────────────────────┐ │
+│   │                                                               │ │
+│   │                    VIDEO AREA (Fullscreen)                    │ │
+│   │                    Manim Animation / WAN                      │ │
+│   │                                                               │ │
+│   │     [Animated graphs, equations, visual explanations]         │ │
+│   │                                                               │ │
+│   │                                                               │ │
+│   └───────────────────────────────────────────────────────────────┘ │
+│                                           ┌─────────────────────┐   │
+│                                           │   AVATAR (RIGHT)    │   │
+│                                           │    Width: 35%       │   │
+│                                           │    gesture_only*    │   │
+│                                           └─────────────────────┘   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+
+display_directives: { text_layer: "hide", visual_layer: "show", avatar_layer: "gesture_only" }
+avatar_layout: { position: "right", width_percent: 35 }
+renderer: manim or video
+
+* gesture_only = Avatar IS VISIBLE, but the avatar VIDEO was generated 
+  with gesturing only (no lip-sync). This is generation metadata, NOT display hiding.
 ```
-
-| Attribute | Current Value | Required Value |
-|-----------|---------------|----------------|
-| **Avatar Position** | hidden | right |
-| **Avatar Size** | 30% | 30% (medium) |
-| **Avatar Visibility** | hidden | optional |
-| **Content** | Step-by-step solution | Step-by-step from source |
-| **Video** | Manim (optional) | Manim showing solution steps |
-| **Renderer** | manim | manim |
-| **display_directives** | text=show | text=show, visual=show (for worked steps) |
-
-**Trigger**: Only appears if source content contains worked examples (Director flags it)
-
-**Narration Style**: "Let's work through an example together..."
 
 ---
 
-### Section 8: MEMORY (Flashcards)
+### Section: EXAMPLE
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         MEMORY LAYOUT                           │
-│                                                                 │
-│  ┌───────────────────────────────────────────────────────────┐  │
-│  │                                                           │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │  │
-│  │  │ FLASHCARD 1 │  │ FLASHCARD 2 │  │ FLASHCARD 3 │        │  │
-│  │  │             │  │             │  │             │        │  │
-│  │  │ Q: What is  │  │ Q: Formula? │  │ Q: When to  │        │  │
-│  │  │ a definite  │  │             │  │ use FTC?    │        │  │
-│  │  │ integral?   │  │ A: ∫ₐᵇf(x) │  │             │        │  │
-│  │  │             │  │             │  │ A: When...  │        │  │
-│  │  │ A: Area     │  │             │  │             │        │  │
-│  │  │ under curve │  │             │  │             │        │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────┘        │  │
-│  │                                                           │  │
-│  │  ┌─────────────┐  ┌─────────────┐                         │  │
-│  │  │ FLASHCARD 4 │  │ FLASHCARD 5 │                         │  │
-│  │  │             │  │             │                         │  │
-│  │  └─────────────┘  └─────────────┘                         │  │
-│  │                                                           │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                            ┌──────────────────┐ │
-│                                            │ AVATAR (hidden)  │ │
-│                                            └──────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                         EXAMPLE LAYOUT                               │
+│                        Avatar: RIGHT, 35%                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   ┌──────────────────────────────┐   ┌──────────────────────────┐   │
+│   │   WORKED EXAMPLE (Left 60%)  │   │     AVATAR (RIGHT)       │   │
+│   │                              │   │                          │   │
+│   │   Problem:                   │   │      Width: 35%          │   │
+│   │   Evaluate ∫₀² (3x²+2x) dx   │   │      Explaining          │   │
+│   │                              │   │                          │   │
+│   │   Step 1: Antiderivative     │   │                          │   │
+│   │   Step 2: Apply bounds       │   │                          │   │
+│   │   Step 3: Calculate          │   │                          │   │
+│   │                              │   │                          │   │
+│   │   Answer: 16                 │   │                          │   │
+│   └──────────────────────────────┘   └──────────────────────────┘   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+
+display_directives: { text_layer: "show", visual_layer: "show", avatar_layer: "show" }
+avatar_layout: { position: "right", width_percent: 35 }
+renderer: manim
 ```
-
-| Attribute | Current Value | Required Value |
-|-----------|---------------|----------------|
-| **Avatar Position** | hidden | right (medium) |
-| **Avatar Size** | 0% | 30% (medium) |
-| **Avatar Visibility** | hidden | optional/show |
-| **Content** | 5 Flashcards (LLM generated) | 3-5 Flashcards (LLM generated from source) |
-| **Video** | None | None |
-| **Renderer** | none | none |
-| **display_directives** | text=hide, visual=show | text=hide, visual=show, avatar=show |
-
-**Trigger**: Always generated (mandatory section)
-
-**Narration Style**: "Let's remember the key points..." (brief)
 
 ---
 
-### Section 9: RECAP
+### Section: QUIZ
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                          RECAP LAYOUT                           │
-│                                                                 │
-│  ┌───────────────────────────────────────────────────────────┐  │
-│  │                                                           │  │
-│  │                     WAN VIDEO                             │  │
-│  │                   (FULLSCREEN)                            │  │
-│  │                                                           │  │
-│  │   [AI-generated video summarizing key concepts]           │  │
-│  │                                                           │  │
-│  │   Scene 1: Introduction recap                             │  │
-│  │   Scene 2: Core concept animation                         │  │
-│  │   Scene 3: Formula visualization                          │  │
-│  │   Scene 4: Application example                            │  │
-│  │   Scene 5: Closing summary                                │  │
-│  │                                                           │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                            ┌──────────────────┐ │
-│                                            │ AVATAR (hidden)  │ │
-│                                            │ or small/gesture │ │
-│                                            └──────────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                           QUIZ LAYOUT                                │
+│                        Avatar: RIGHT, 35%                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   ┌──────────────────────────────┐   ┌──────────────────────────┐   │
+│   │   QUIZ CONTENT (Left 60%)    │   │     AVATAR (RIGHT)       │   │
+│   │                              │   │                          │   │
+│   │   Question:                  │   │      Width: 35%          │   │
+│   │   What is ∫x² dx?            │   │      Thinking pose       │   │
+│   │                              │   │                          │   │
+│   │   A) x³                      │   │                          │   │
+│   │   B) x³/3 + C                │   │                          │   │
+│   │   C) 2x                      │   │                          │   │
+│   │   D) x²/2                    │   │                          │   │
+│   │                              │   │                          │   │
+│   └──────────────────────────────┘   └──────────────────────────┘   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+
+display_directives: { text_layer: "show", visual_layer: "hide", avatar_layer: "show" }
+avatar_layout: { position: "right", width_percent: 35 }
+renderer: none
 ```
-
-| Attribute | Current Value | Required Value |
-|-----------|---------------|----------------|
-| **Avatar Position** | hidden | right (small) or hidden |
-| **Avatar Size** | 0% | 0-20% (small if shown) |
-| **Avatar Visibility** | hidden | hidden or gesture_only |
-| **Content** | None (video only) | None (video only) |
-| **Video** | WAN/Kie.ai generated | WAN/Kie.ai generated (5 scenes) |
-| **Renderer** | wan_video | wan_video |
-| **display_directives** | text=hide, visual=show | text=hide, visual=show, avatar=hide |
-
-**Trigger**: Always generated (mandatory section)
-
-**Narration Style**: Video has its own audio/narration
 
 ---
 
-## Avatar Behavior & Sizing
+### Section: MEMORY (Flashcards)
 
-### Avatar Positioning (from presentation.json)
-
-```json
-{
-  "avatar_global": {
-    "style": "teacher",
-    "default_position": "right",
-    "default_width_percent": 30,
-    "gesture_enabled": true
-  }
-}
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         MEMORY LAYOUT                                │
+│                        Avatar: RIGHT, 35%                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   ┌───────────────────────────────────────────┐  ┌───────────────┐  │
+│   │                                           │  │    AVATAR     │  │
+│   │   ┌─────────┐ ┌─────────┐ ┌─────────┐     │  │    (RIGHT)    │  │
+│   │   │ CARD 1  │ │ CARD 2  │ │ CARD 3  │     │  │               │  │
+│   │   │ Q: What │ │ Q: For- │ │ Q: When │     │  │  Width: 35%   │  │
+│   │   │ is...?  │ │ mula?   │ │ to use? │     │  │               │  │
+│   │   │         │ │         │ │         │     │  │               │  │
+│   │   │ A: ...  │ │ A: ∫    │ │ A: ...  │     │  │               │  │
+│   │   └─────────┘ └─────────┘ └─────────┘     │  │               │  │
+│   │                                           │  │               │  │
+│   │   ┌─────────┐ ┌─────────┐                 │  │               │  │
+│   │   │ CARD 4  │ │ CARD 5  │                 │  │               │  │
+│   │   └─────────┘ └─────────┘                 │  │               │  │
+│   │                                           │  │               │  │
+│   └───────────────────────────────────────────┘  └───────────────┘  │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
 
-### Section-Level Avatar Layout
-
-```json
-{
-  "avatar_layout": {
-    "visibility": "required|optional|hidden",
-    "mode": "floating|compact",
-    "position": "center|left|right|hidden",
-    "width_percent": 0-100
-  }
-}
+display_directives: { text_layer: "hide", visual_layer: "show", avatar_layer: "show" }
+avatar_layout: { position: "right", width_percent: 35 }
+renderer: none
 ```
-
-### Avatar Size Reference
-
-| Size | width_percent | Height | Use Case |
-|------|---------------|--------|----------|
-| Large | 50% | 85% | Intro (center stage) |
-| Medium | 30% | 85% | Content, Summary, Example |
-| Small | 20% | 60% | During video playback |
-| Hidden | 0% | 0% | Recap video, Memory flashcards |
-
-### Avatar Visibility States
-
-| State | Behavior |
-|-------|----------|
-| `required` | Always visible, prominent |
-| `optional` | Can be hidden during video |
-| `hidden` | Not displayed |
-| `gesture_only` | Small, gesturing but not speaking |
 
 ---
 
-## Display Directives System
-
-### Layer Control (from LayerController in player.js)
-
-```javascript
-class LayerController {
-  applyDirectives(segment, sectionType, segmentIndex) {
-    const textLayer = directives.text_layer;     // 'show' | 'hide' | 'swap'
-    const visualLayer = directives.visual_layer; // 'show' | 'hide' | 'replace'
-    const avatarLayer = directives.avatar_layer; // 'show' | 'hide' | 'gesture_only'
-  }
-}
-```
-
-### Mutual Exclusion Rule (Critical)
-
-> **text_layer='show' + visual_layer='show' is FORBIDDEN**
-
-Only ONE primary attention layer at a time:
-- Either text is prominent (text=show, visual=hide)
-- Or visuals are prominent (text=hide, visual=show)
-
-### Display Directive Flow
+### Section: RECAP
 
 ```
-Segment 1: text=show, visual=hide   → Text visible, video hidden
-Segment 2: text=show, visual=hide   → Text visible, video hidden
-Segment 3: text=hide, visual=show   → Text fades, video appears
-Segment 4: text=hide, visual=show   → Video continues
-Segment 5: text=show, visual=hide   → Video hides, text returns
+┌─────────────────────────────────────────────────────────────────────┐
+│                          RECAP LAYOUT                                │
+│                        Avatar: RIGHT, 35%                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   ┌───────────────────────────────────────────────────────────────┐ │
+│   │                                                               │ │
+│   │                    WAN VIDEO (Fullscreen)                     │ │
+│   │                                                               │ │
+│   │     [AI-generated cinematic video summarizing concepts]       │ │
+│   │                                                               │ │
+│   │                                                               │ │
+│   │                                                               │ │
+│   └───────────────────────────────────────────────────────────────┘ │
+│                                           ┌─────────────────────┐   │
+│                                           │   AVATAR (RIGHT)    │   │
+│                                           │    Width: 35%       │   │
+│                                           │    gesture_only     │   │
+│                                           └─────────────────────┘   │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+
+display_directives: { text_layer: "hide", visual_layer: "show", avatar_layer: "gesture_only" }
+avatar_layout: { position: "right", width_percent: 35 }
+renderer: video (WAN)
 ```
 
-### Segment-Level vs Section-Level
+---
+
+## LLM Agent Reference
+
+### Pipeline Overview
+
+```
+PDF/MD Input
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                         V1.5 AGENT PIPELINE                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  ┌──────────┐                                                        │
+│  │ CHUNKER  │ ──────────────────────────────────────────────────┐    │
+│  └──────────┘                                                   │    │
+│       │ topics[]                                                │    │
+│       ▼                                                         │    │
+│  ┌────────────────┐                                             │    │
+│  │ SECTION PLANNER│ ──────────────────────────────────────┐     │    │
+│  └────────────────┘                                       │     │    │
+│       │ sections[]                                        │     │    │
+│       ▼                                                   │     │    │
+│  ┌──────────────────┐                                     │     │    │
+│  │ NARRATION WRITER │ (per section)                       │     │    │
+│  └──────────────────┘                                     │     │    │
+│       │ narration + segments[]                            │     │    │
+│       ▼                                                   │     │    │
+│  ┌───────────────────┐                                    │     │    │
+│  │ VISUAL SPEC ARTIST│ (per section)                      │     │    │
+│  └───────────────────┘                                    │     │    │
+│       │ visual_beats[] + display_directives[]             │     │    │
+│       ▼                                                   │     │    │
+│  ┌─────────────────┐                                      │     │    │
+│  │ RENDERER SPEC   │ (manim/video sections only)          │     │    │
+│  └─────────────────┘                                      │     │    │
+│       │ manim_scene_spec / video_prompts                  │     │    │
+│       │                                                   │     │    │
+│       │  ┌──────────────┐  ┌──────────────┐               │     │    │
+│       └──│ MEMORY AGENT │  │ RECAP AGENT  │◄──────────────┴─────┘    │
+│          └──────────────┘  └──────────────┘                          │
+│                │ flashcards[]    │ video_prompts[]                   │
+│                └────────┬────────┘                                   │
+│                         ▼                                            │
+│                  ┌────────────┐                                      │
+│                  │ MERGE STEP │                                      │
+│                  └────────────┘                                      │
+│                         │                                            │
+│                         ▼                                            │
+│                  ┌────────────┐                                      │
+│                  │    TTS     │ (Edge TTS / Narakeet)                │
+│                  └────────────┘                                      │
+│                         │ actual audio durations                     │
+│                         ▼                                            │
+│                  ┌────────────────────┐                              │
+│                  │ presentation.json  │                              │
+│                  └────────────────────┘                              │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Agent 1: CHUNKER
+
+| Property | Value |
+|----------|-------|
+| **Purpose** | Extract logical topics from PDF/MD content |
+| **Prompt Files** | `core/prompts/smart_chunker_system_v1.4.txt`, `core/prompts/smart_chunker_user_v1.4.txt` |
+| **Python File** | (uses director pipeline in v1.4) |
+| **Input** | Raw markdown content with [BLOCK N] markers |
+| **Output Fields** | `source_topic`, `topics[]` (topic_id, title, concept_type, source_blocks, key_terms, has_formula, suggested_renderer) |
+| **Avatar Fields** | None (pre-section planning) |
+| **Changes Needed** | None |
+
+---
+
+### Agent 2: SECTION PLANNER
+
+| Property | Value |
+|----------|-------|
+| **Purpose** | Create section structure from topics |
+| **Prompt Files** | `core/prompts/section_planner_system_v1.5.txt`, `core/prompts/section_planner_user_v1.5.txt` |
+| **Python File** | `core/agents/section_planner.py` |
+| **Input** | Chunker output (topics[]) |
+| **Output Fields** | `sections[]` (section_id, section_type, title, source_topics, learning_goals, suggested_renderer, renderer_reasoning, avatar_visibility, avatar_position, estimated_duration_seconds) |
+
+#### Avatar Fields - CHANGES NEEDED
+
+| Current Field | Current Values | Required Change |
+|---------------|----------------|-----------------|
+| `avatar_visibility` | required, optional, hidden | Remove "hidden" - avatar always visible |
+| `avatar_position` | left, right, center, hidden | Remove "hidden" - always visible |
+| **NEW** `avatar_width_percent` | N/A | Add: 60 (intro), 45 (summary), 35 (others) |
+
+#### Output Schema Update
 
 ```json
 {
   "sections": [{
-    "display_directives": [           // Section-level array (one per segment)
-      {"text_layer": "show", "visual_layer": "hide", "avatar_layer": "show"},
-      {"text_layer": "hide", "visual_layer": "show", "avatar_layer": "gesture_only"}
-    ],
-    "narration": {
-      "segments": [{
-        "display_directives": {       // Segment-level (embedded)
-          "text_layer": "show",
-          "visual_layer": "hide",
-          "avatar_layer": "show"
-        }
-      }]
-    }
+    "section_id": "section_1",
+    "section_type": "intro",
+    "avatar_visibility": "required",
+    "avatar_position": "center",
+    "avatar_width_percent": 60
   }]
 }
 ```
 
 ---
 
-## Timing & Synchronization
+### Agent 3: NARRATION WRITER
 
-### Duration Source
-
-| Component | Source | File |
-|-----------|--------|------|
-| Segment duration | TTS actual audio length | `section_*.mp3` measured via mutagen |
-| Section duration | Sum of segment durations | Calculated in merge step |
-| Video duration | Manim/WAN render output | `topic_*.mp4` |
-
-### Sync Invariants
-
-```
-sum(segment.duration_seconds) = section.narration.total_duration_seconds
-visual_beat[i].sync_to_segment = segment_id
-display_directives[i] corresponds to segment[i]
-```
-
-### Audio Files
-
-| Pattern | Content |
-|---------|---------|
-| `section_{N}.mp3` | Consolidated section audio |
-| `{section}_{segment}.mp3` | Individual segment audio (backup) |
+| Property | Value |
+|----------|-------|
+| **Purpose** | Write TTS narration scripts per section |
+| **Prompt Files** | `core/prompts/narration_writer_system_v1.5.txt`, `core/prompts/narration_writer_user_v1.5.txt` |
+| **Python File** | `core/agents/narration_writer.py` |
+| **Input** | Section plan + source content |
+| **Output Fields** | `section_id`, `narration.full_text`, `narration.segments[]` (segment_id, text, duration_seconds, gesture_hint) |
+| **Avatar Fields** | `gesture_hint` (pointing, explaining, emphasizing, welcoming, thinking) - for avatar generation |
+| **Changes Needed** | None (gesture_hint is already avatar generation metadata) |
 
 ---
 
-## Current vs Required Behavior
+### Agent 4: VISUAL SPEC ARTIST
 
-### Summary Comparison
+| Property | Value |
+|----------|-------|
+| **Purpose** | Design visual elements synchronized with narration |
+| **Prompt Files** | `core/prompts/visual_spec_artist_system_v1.5.txt`, `core/prompts/visual_spec_artist_user_v1.5.txt` |
+| **Python File** | `core/agents/visual_spec_artist.py` |
+| **Input** | Section plan + narration segments |
+| **Output Fields** | `section_id`, `visual_beats[]`, `segment_enrichments[]` (visual_content, display_directives) |
 
-| Section | Current Avatar | Required Avatar | Gap |
-|---------|----------------|-----------------|-----|
-| Intro | center, 50% | center, 50% | OK |
-| Summary | left, 30% | right, 30% | POSITION WRONG |
-| Content | varies | right, 30% (medium) | INCONSISTENT |
-| Example | hidden | right, 30% | AVATAR MISSING |
-| Memory | hidden | right, 30% | AVATAR MISSING |
-| Recap | hidden | hidden or small | OK |
+#### Avatar Fields - CHANGES NEEDED
 
-### Display Directive Issues
+| Current Field | Current Values | Required Change |
+|---------------|----------------|-----------------|
+| `display_directives.avatar_layer` | show, hide, gesture_only | Remove "hide" option |
 
-| Issue | Description | Status |
-|-------|-------------|--------|
-| Content video swap | text=hide before video ready | FIXED (ISS-062) |
-| Mutual exclusion | text+visual both show | ENFORCED |
-| Avatar during video | Should be gesture_only | PARTIAL |
+#### Clarification
 
----
-
-## Gap Analysis
-
-### Critical Gaps (Must Fix)
-
-| ID | Gap | Impact | Solution |
-|----|-----|--------|----------|
-| GAP-001 | Summary avatar position is "left" | Inconsistent with requirement | Update SectionPlanner prompt to always use "right" for summary |
-| GAP-002 | Example section avatar is hidden | Missing teacher presence | Update SectionPlanner to set visibility="optional", position="right" |
-| GAP-003 | Memory section avatar is hidden | Inconsistent with requirement | Update MemoryAgent output to include avatar_layout |
-| GAP-004 | Content sections have inconsistent avatar | Some hidden, some optional | Standardize to visibility="optional", position="right" |
-
-### Minor Gaps (Nice to Have)
-
-| ID | Gap | Impact | Solution |
-|----|-----|--------|----------|
-| GAP-005 | Recap avatar could be small | User preference | Add avatar_layout with small size to RecapAgent |
-| GAP-006 | Memory flashcards fill screen | Avatar could accompany | CSS update for memory layout |
-
-### LLM Prompt Updates Needed
-
-| Agent | Current Behavior | Required Update |
-|-------|------------------|-----------------|
-| SectionPlanner | Inconsistent avatar_layout | Standardize: intro=center, all others=right |
-| VisualSpecArtist | Avatar hidden during video | Use gesture_only instead of hidden |
-| MemoryFlashcard | No avatar_layout | Add avatar_layout with right, 30% |
-| RecapScene | No avatar_layout | Add avatar_layout with hidden or small |
+- `avatar_layer: "show"` = Avatar visible, lip-sync video generated
+- `avatar_layer: "gesture_only"` = Avatar visible, gesture-only video generated (no lip-sync during heavy visuals)
+- ~~`avatar_layer: "hide"`~~ = REMOVE - avatar never hidden
 
 ---
 
-## Appendix: Key Files Quick Reference
+### Agent 5: RENDERER SPEC
 
-### player/index.html Structure
+| Property | Value |
+|----------|-------|
+| **Purpose** | Create Manim/Video rendering specifications |
+| **Prompt Files** | `core/prompts/manim_spec_system_v1.5.txt`, `core/prompts/video_prompt_system_v1.5.txt` |
+| **Python File** | `core/agents/renderer_spec_agent.py` |
+| **Input** | Section plan + visual beats |
+| **Output Fields** | `manim_scene_spec` OR `video_prompts[]` |
+| **Avatar Fields** | None (rendering only) |
+| **Changes Needed** | None |
 
-```html
-<div id="stage" class="mode-side">
-  <video id="scene-video"></video>           <!-- Full-screen video -->
-  <img id="bg-image-layer">                  <!-- Background image -->
-  <div id="scene-label"></div>               <!-- Scene title -->
-  <div id="image-display-layer"></div>       <!-- Image overlay -->
-  
-  <div id="content-wrapper">
-    <div id="content-box">
-      <h1 id="slide-title"></h1>             <!-- Section title -->
-      <div id="segments-list"></div>         <!-- Bullet points -->
-    </div>
-    <div id="video-box">
-      <video id="inline-video"></video>      <!-- Manim video -->
-    </div>
-  </div>
-  
-  <canvas id="avatar-canvas"></canvas>       <!-- Avatar display -->
-  <audio id="main-audio"></audio>            <!-- TTS audio -->
-</div>
+---
+
+### Agent 6: MEMORY AGENT
+
+| Property | Value |
+|----------|-------|
+| **Purpose** | Generate 5 flashcards for review |
+| **Prompt Files** | `core/prompts/memory_flashcard_system_v1.5.txt`, `core/prompts/memory_flashcard_user_v1.5.txt` |
+| **Python File** | `core/agents/memory_agent.py` |
+| **Input** | All section content |
+| **Output Fields** | `section_id`, `section_type`, `title`, `flashcards[]` (flashcard_id, front, back, category) |
+
+#### Avatar Fields - CHANGES NEEDED
+
+| Current Field | Required Addition |
+|---------------|-------------------|
+| None | Add `avatar_layout: { position: "right", width_percent: 35 }` |
+
+---
+
+### Agent 7: RECAP AGENT
+
+| Property | Value |
+|----------|-------|
+| **Purpose** | Generate 5 video prompts for WAN recap |
+| **Prompt Files** | `core/prompts/recap_scene_system_v1.5.txt`, `core/prompts/recap_scene_user_v1.5.txt` |
+| **Python File** | `core/agents/recap_agent.py` |
+| **Input** | All section content |
+| **Output Fields** | `section_id`, `section_type`, `title`, `video_prompts[]` (prompt_id, prompt, duration_seconds, style) |
+
+#### Avatar Fields - CHANGES NEEDED
+
+| Current Field | Required Addition |
+|---------------|-------------------|
+| None | Add `avatar_layout: { position: "right", width_percent: 35 }` |
+
+---
+
+## Implementation Checklist
+
+### Prompt File Changes
+
+| File | Change | Status |
+|------|--------|--------|
+| `core/prompts/section_planner_system_v1.5.txt` | Add `avatar_width_percent` field (60/45/35) | PENDING |
+| `core/prompts/section_planner_system_v1.5.txt` | Remove "hidden" from avatar_visibility and avatar_position | PENDING |
+| `core/prompts/visual_spec_artist_system_v1.5.txt` | Remove "hide" from avatar_layer options | PENDING |
+| `core/prompts/memory_flashcard_system_v1.5.txt` | Add `avatar_layout` output field | PENDING |
+| `core/prompts/recap_scene_system_v1.5.txt` | Add `avatar_layout` output field | PENDING |
+
+### Python Agent Changes
+
+| File | Function | Change | Status |
+|------|----------|--------|--------|
+| `core/agents/section_planner.py` | `validate_output()` | Validate avatar_width_percent (60/45/35 based on type) | PENDING |
+| `core/agents/visual_spec_artist.py` | `validate_output()` | Remove "hide" validation for avatar_layer | PENDING |
+| `core/agents/memory_agent.py` | `run()` | Output avatar_layout in response | PENDING |
+| `core/agents/recap_agent.py` | `run()` | Output avatar_layout in response | PENDING |
+
+### Player Changes
+
+| File | Function/Section | Change | Status |
+|------|------------------|--------|--------|
+| `player/player.js` | `LayerController.updateLayers()` | Remove logic that hides avatar on avatar_layer="hide" | PENDING |
+| `player/player.js` | `LayerController.updateLayers()` | Avatar ALWAYS visible, ignore "hide" value | PENDING |
+| `player/player.js` | `setAvatarWidth()` or similar | Read avatar_width_percent from section and apply CSS | PENDING |
+| `player/index.html` | CSS | Add width classes for 60%, 45%, 35% avatar sizes | PENDING |
+
+### Merge Step Changes
+
+| File | Function | Change | Status |
+|------|----------|--------|--------|
+| `core/merge_step_v15.py` | `merge_section()` | Include avatar_layout from agents into section output | PENDING |
+
+---
+
+## Narration Sync Architecture
+
+### Timing Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                      NARRATION SYNC FLOW                             │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  1. NARRATION WRITER                                                 │
+│     │                                                                │
+│     │  Outputs: segments[] with estimated duration                   │
+│     │  Formula: duration_seconds = word_count / 130 * 60             │
+│     │                                                                │
+│     ▼                                                                │
+│  2. VISUAL SPEC ARTIST                                               │
+│     │                                                                │
+│     │  References: segment_id in visual_beats[]                      │
+│     │  Outputs: display_directives per segment                       │
+│     │                                                                │
+│     ▼                                                                │
+│  3. MERGE STEP                                                       │
+│     │                                                                │
+│     │  Combines: segment + visual_content + display_directives       │
+│     │  Creates: unified section structure                            │
+│     │                                                                │
+│     ▼                                                                │
+│  4. TTS PASS (Edge TTS)                                              │
+│     │                                                                │
+│     │  Generates: audio file per segment                             │
+│     │  Measures: actual audio duration via mutagen                   │
+│     │  UPDATES: segment.duration_seconds = actual audio length       │
+│     │  Consolidates: segment audio → section_X.mp3 (ISS-115)         │
+│     │                                                                │
+│     ▼                                                                │
+│  5. PLAYER                                                           │
+│     │                                                                │
+│     │  Reads: segment.duration_seconds for playback timing           │
+│     │  Reads: display_directives to show/hide layers                 │
+│     │  Syncs: audio playback with visual transitions                 │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-### player/player.js Key Classes
+### Key Invariants
 
-| Class | Purpose |
-|-------|---------|
-| `SlideValidator` | Validates v1.3 presentation.json fields |
-| `LayerController` | Applies display_directives to show/hide layers |
-| `VideoBufferManager` | Preloads and manages video playback |
+1. `sum(segment.duration_seconds) = section total duration`
+2. `visual_beat[i].segment_id` maps to `segment[i]`
+3. `display_directives[i]` corresponds to `segment[i]`
+4. TTS audio duration is the AUTHORITATIVE timing source
+5. All visual transitions sync to audio timeline
 
-### presentation.json Schema (v1.5)
+### Audio File Structure
 
-```json
-{
-  "spec_version": "v1.5",
-  "title": "string",
-  "subject": "string",
-  "grade": "string",
-  "avatar_global": {
-    "style": "teacher",
-    "default_position": "right",
-    "default_width_percent": 30,
-    "gesture_enabled": true
-  },
-  "sections": [{
-    "section_type": "intro|summary|content|example|memory|recap",
-    "title": "string",
-    "renderer": "none|manim|wan_video",
-    "avatar_layout": {
-      "visibility": "required|optional|hidden",
-      "mode": "floating|compact",
-      "position": "center|left|right|hidden",
-      "width_percent": 0-100
-    },
-    "narration": {
-      "full_text": "string",
-      "segments": [{
-        "segment_id": 1,
-        "text": "string",
-        "duration_seconds": 12.5,
-        "gesture_hint": "welcoming|explaining|emphasizing",
-        "visual_content": {
-          "bullet_points": [{"level": 1, "text": "string"}],
-          "formula": "string|null"
-        },
-        "display_directives": {
-          "text_layer": "show|hide|swap",
-          "visual_layer": "show|hide|replace",
-          "avatar_layer": "show|hide|gesture_only"
-        },
-        "audio_file": "1_1.mp3"
-      }],
-      "total_duration_seconds": 34.78
-    },
-    "display_directives": [/* array matching segments */],
-    "video_path": "videos/topic_3.mp4",
-    "audio_path": "section_3.mp3"
-  }]
-}
+```
+player/jobs/{job_id}/
+├── section_1.mp3          # Consolidated audio for section 1
+├── section_2.mp3          # Consolidated audio for section 2
+├── ...
+├── videos/
+│   ├── topic_1.mp4        # Manim/WAN rendered video
+│   ├── topic_2.mp4
+│   └── ...
+└── presentation.json      # Master playback file
 ```
 
 ---
 
-*End of Document*
+## Requirement Tracking
+
+### Display Requirements
+
+| REQ-ID | Description | Status | Files Affected |
+|--------|-------------|--------|----------------|
+| REQ-001 | Intro section: Avatar CENTER, 60% width | PENDING | section_planner prompt, player.js, player CSS |
+| REQ-002 | Summary section: Avatar RIGHT, 45% width | PENDING | section_planner prompt, player.js |
+| REQ-003 | Content/Example/Quiz/Memory/Recap: Avatar RIGHT, 35% width | PENDING | section_planner prompt, player.js |
+| REQ-004 | Avatar ALWAYS VISIBLE (remove "hide" option) | PENDING | section_planner prompt, visual_spec_artist prompt, player.js |
+| REQ-005 | gesture_only = avatar generation metadata, not display hiding | PENDING | Documentation only (already correct) |
+| REQ-006 | Video fills screen when playing (Manim/WAN) | PENDING | player.js, player CSS |
+
+### Layer Requirements
+
+| REQ-ID | Description | Status | Files Affected |
+|--------|-------------|--------|----------------|
+| REQ-010 | Layer 0: Background always black | VERIFIED | player/index.html CSS |
+| REQ-011 | Layer 1: Content area (Text OR Video, mutual exclusion) | VERIFIED | player.js |
+| REQ-012 | Layer 2: Avatar always rendered on top | PENDING | player.js |
+
+### Prompt Changes
+
+| REQ-ID | Description | Status | Files Affected |
+|--------|-------------|--------|----------------|
+| REQ-020 | SectionPlanner: Add avatar_width_percent field | PENDING | core/prompts/section_planner_system_v1.5.txt |
+| REQ-021 | SectionPlanner: Remove "hidden" from avatar options | PENDING | core/prompts/section_planner_system_v1.5.txt |
+| REQ-022 | VisualSpecArtist: Remove "hide" from avatar_layer | PENDING | core/prompts/visual_spec_artist_system_v1.5.txt |
+| REQ-023 | MemoryAgent: Add avatar_layout output | PENDING | core/prompts/memory_flashcard_system_v1.5.txt |
+| REQ-024 | RecapAgent: Add avatar_layout output | PENDING | core/prompts/recap_scene_system_v1.5.txt |
+
+### Player Changes
+
+| REQ-ID | Description | Status | Files Affected |
+|--------|-------------|--------|----------------|
+| REQ-030 | Player: Avatar never hidden, always Layer 2 | PENDING | player/player.js |
+| REQ-031 | Player: Apply avatar_width_percent from section | PENDING | player/player.js |
+| REQ-032 | Player: Dev mode resize/move content box | FUTURE | player/player.js |
+| REQ-033 | Player: Dev mode resize/move video box | FUTURE | player/player.js |
+| REQ-034 | Player: Dev mode resize/move avatar | FUTURE | player/player.js |
+
+### Narration Sync
+
+| REQ-ID | Description | Status | Files Affected |
+|--------|-------------|--------|----------------|
+| REQ-040 | TTS duration updates segment.duration_seconds | VERIFIED | core/tts_generator.py |
+| REQ-041 | Audio consolidated into section_X.mp3 | VERIFIED (ISS-115) | core/tts_generator.py |
+| REQ-042 | Player syncs to segment.duration_seconds | VERIFIED | player/player.js |
+
+### Test Coverage
+
+| REQ-ID | Description | Status | Files Affected |
+|--------|-------------|--------|----------------|
+| REQ-050 | Test document with ALL section types | PENDING | test_docs/ or attached_assets/ |
+| REQ-051 | Test generates: intro, summary, content, example, quiz, memory, recap | PENDING | Test execution |
+| REQ-052 | Manim renders correctly for content sections | PENDING | Test execution |
+
+---
+
+## Test Input Document
+
+### Required Test Document Structure
+
+To ensure all section types are generated and tested, the input document must contain:
+
+1. **Clear introduction hook** → triggers INTRO section
+2. **Learning objectives list** → triggers SUMMARY section  
+3. **3-5 conceptual topics** → triggers CONTENT sections
+4. **At least one worked example** → triggers EXAMPLE section
+5. **Quiz-style questions** (optional) → triggers QUIZ section
+6. **Key terms and formulas** → triggers MEMORY flashcards
+7. **Summary concepts** → triggers RECAP video generation
+
+### Sample Test Document Location
+
+**File**: `test_docs/comprehensive_test.md` (to be created)
+
+### Sample Structure
+
+```markdown
+# [Topic Name]
+
+## Introduction
+Brief hook about why this topic matters...
+
+## Learning Objectives
+By the end of this lesson, you will be able to:
+- Objective 1
+- Objective 2
+- Objective 3
+
+## Core Concepts
+
+### Concept 1: [Name]
+Detailed explanation with formula: [LaTeX]
+Key terms: term1, term2
+
+### Concept 2: [Name]
+Detailed explanation...
+
+### Concept 3: [Name]
+Detailed explanation with formula...
+
+## Worked Example
+**Problem**: [Problem statement]
+**Solution**:
+Step 1: ...
+Step 2: ...
+Step 3: ...
+**Answer**: [Result]
+
+## Practice Quiz
+1. Question 1?
+   a) Option A
+   b) Option B
+   c) Option C
+   
+2. Question 2?
+   ...
+
+## Summary
+Key takeaways:
+- Point 1
+- Point 2
+- Point 3
+```
+
+---
+
+## Open Items
+
+| ID | Description | Owner | Status |
+|----|-------------|-------|--------|
+| OPEN-001 | Manim code update | USER TO PROVIDE | PENDING |
+| OPEN-002 | Dev mode implementation (resize/move boxes) | FUTURE | NOT STARTED |
+| OPEN-003 | Quiz section renderer (if needed) | TBD | NOT STARTED |
+
+---
+
+## File References
+
+| Component | File Location |
+|-----------|---------------|
+| **This Document** | `docs/display_requirements.md` |
+| **V1.5 Spec** | `docs/v1.5_requirements.json` |
+| **Player Logic** | `player/player.js` |
+| **Player UI** | `player/index.html` |
+| **Presentation Data** | `player/jobs/{job_id}/presentation.json` |
+| **SectionPlanner Prompt** | `core/prompts/section_planner_system_v1.5.txt` |
+| **VisualSpecArtist Prompt** | `core/prompts/visual_spec_artist_system_v1.5.txt` |
+| **MemoryAgent Prompt** | `core/prompts/memory_flashcard_system_v1.5.txt` |
+| **RecapAgent Prompt** | `core/prompts/recap_scene_system_v1.5.txt` |
+
+---
+
+*Last Updated: 2025-12-24*
+*Document Version: 2.0*
