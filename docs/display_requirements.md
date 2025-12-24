@@ -669,18 +669,18 @@ player/jobs/{job_id}/
 
 | REQ-ID | Description | Status | Files Affected |
 |--------|-------------|--------|----------------|
-| REQ-020 | SectionPlanner: Add avatar_width_percent field | PENDING | core/prompts/section_planner_system_v1.5.txt |
-| REQ-021 | SectionPlanner: Remove "hidden" from avatar options | PENDING | core/prompts/section_planner_system_v1.5.txt |
-| REQ-022 | VisualSpecArtist: Remove "hide" from avatar_layer | PENDING | core/prompts/visual_spec_artist_system_v1.5.txt |
-| REQ-023 | MemoryAgent: Add avatar_layout output | PENDING | core/prompts/memory_flashcard_system_v1.5.txt |
-| REQ-024 | RecapAgent: Add avatar_layout output | PENDING | core/prompts/recap_scene_system_v1.5.txt |
+| REQ-020 | SectionPlanner: Add avatar_width_percent field | COMPLETE | core/prompts/section_planner_system_v1.5.txt |
+| REQ-021 | SectionPlanner: Remove "hidden" from avatar options | COMPLETE | core/prompts/section_planner_system_v1.5.txt |
+| REQ-022 | VisualSpecArtist: Remove "hide" from avatar_layer | COMPLETE | core/prompts/visual_spec_artist_system_v1.5.txt |
+| REQ-023 | MemoryAgent: Add avatar_layout output | COMPLETE | core/prompts/memory_flashcard_system_v1.5.txt |
+| REQ-024 | RecapAgent: Add avatar_layout output | COMPLETE | core/prompts/recap_scene_system_v1.5.txt |
 
 ### Player Changes
 
 | REQ-ID | Description | Status | Files Affected |
 |--------|-------------|--------|----------------|
-| REQ-030 | Player: Avatar never hidden, always Layer 2 | PENDING | player/player.js |
-| REQ-031 | Player: Apply avatar_width_percent from section | PENDING | player/player.js |
+| REQ-030 | Player: Avatar never hidden, always Layer 2 | COMPLETE | player/player.js |
+| REQ-031 | Player: Apply avatar_width_percent from section | COMPLETE | player/player.js |
 | REQ-032 | Player: Dev mode resize/move content box | FUTURE | player/player.js |
 | REQ-033 | Player: Dev mode resize/move video box | FUTURE | player/player.js |
 | REQ-034 | Player: Dev mode resize/move avatar | FUTURE | player/player.js |
@@ -705,12 +705,12 @@ player/jobs/{job_id}/
 
 | REQ-ID | Description | Status | Files Affected |
 |--------|-------------|--------|----------------|
-| REQ-060 | RendererSpecAgent generates Python code directly (not JSON spec) | PENDING | core/agents/renderer_spec_agent.py |
-| REQ-061 | Use Claude Sonnet 4.5 via OpenRouter for Manim code generation | PENDING | core/agents/renderer_spec_agent.py |
-| REQ-062 | Use new prompts: manim_system_prompt.txt + manim_user_prompt_template.txt | PENDING | core/prompts/ |
-| REQ-063 | Manim code validation: syntax check, no Dot() placeholders | PENDING | core/agents/renderer_spec_agent.py |
-| REQ-064 | Manim code validation: timing matches segment durations | PENDING | core/agents/renderer_spec_agent.py |
-| REQ-065 | Auto-retry on validation failure with clearer prompt | PENDING | core/agents/renderer_spec_agent.py |
+| REQ-060 | ManimCodeGenerator generates Python code directly (not JSON spec) | COMPLETE | core/agents/manim_code_generator.py |
+| REQ-061 | Use Claude Sonnet 4.5 via OpenRouter for Manim code generation | COMPLETE | core/agents/manim_code_generator.py |
+| REQ-062 | Use new prompts: manim_system_prompt.txt + manim_user_prompt_template.txt | COMPLETE | core/prompts/ |
+| REQ-063 | Manim code validation: syntax check, no Dot() placeholders | COMPLETE | core/agents/manim_code_generator.py |
+| REQ-064 | Manim code validation: timing matches segment durations | COMPLETE | core/agents/manim_code_generator.py |
+| REQ-065 | Auto-retry on validation failure with clearer prompt | COMPLETE | core/agents/manim_code_generator.py |
 | REQ-066 | Wire TTS actual duration to Manim Code Generator input | PENDING | core/pipeline_v15.py |
 | REQ-067 | Connect VisualSpecArtist visual descriptions to Manim input | PENDING | core/pipeline_v15.py |
 | REQ-068 | Local Manim renderer accepts manim_code field directly | VERIFIED | Existing renderer works |

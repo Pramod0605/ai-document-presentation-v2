@@ -7,7 +7,7 @@ This project is a **Deterministic Educational Film Engine** that converts PDF ch
 
 ## SINGLE SOURCE OF TRUTH
 
-### Display & Agent Reference (v2.0)
+### Display & Agent Reference (v2.1)
 **Primary Reference**: `docs/display_requirements.md`
 
 This document contains:
@@ -15,9 +15,10 @@ This document contains:
 - Layer Architecture (Layer 0=Background, Layer 1=Content, Layer 2=Avatar always visible)
 - ASCII diagrams for ALL 7 section types (intro, summary, content, example, quiz, memory, recap)
 - LLM Agent Reference (all 7 agents with inputs/outputs/prompt files)
-- Implementation Checklist (specific file paths and changes needed)
+- **Manim Code Generation** section (Claude Sonnet 4.5, Python code output, validation)
+- **Test Plan** section (TEST-001 to TEST-003)
 - Narration Sync Architecture (timing flow from NarrationWriter → TTS → Player)
-- Requirement Tracking (REQ-001 through REQ-052)
+- Requirement Tracking (REQ-001 through REQ-068)
 - Test Input Document specification
 
 ### V1.5 Architecture (Implemented)
@@ -48,7 +49,7 @@ The user wants an iterative development process. The agent should prioritize cle
 4. When in doubt, ASK the user - do not proceed with assumptions.
 5. The LLM is the "brain" - timing, durations, and creative decisions come from LLM output, not from post-processing calculations.
 6. **Presentation Schema Immutable**: presentation.json (v1.3 schema) MUST NOT change. All agent outputs merge into this exact structure.
-7. **Player Code Freeze**: player.js and related frontend files MUST NOT change during V1.5 implementation.
+7. **Player Code Updated**: player.js updated with avatar always-visible and width_percent support (REQ-030/031 complete).
 8. Issue Tracking First - Any issue noticed MUST be logged to `issues.json` with full details BEFORE proposing any solution.
 9. Upstream/Downstream Impact Analysis - Before code changes, verify upstream and downstream components are not affected.
 10. No Deviation Without Approval - No deviations from the initial goal. Any code changes must be approved by the user first.

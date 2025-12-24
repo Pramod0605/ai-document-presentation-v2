@@ -253,6 +253,8 @@ class LayerController {
 
   /**
    * Apply avatar layer directives (extracted for reuse)
+   * NOTE: Avatar is ALWAYS visible per REQ-004. 'hide' is no longer valid.
+   * gesture_only = avatar visible with gestures (no lip-sync), still shown at reduced opacity
    */
   applyAvatarDirectives(avatarLayer, sectionType) {
     const avatarCanvas = document.getElementById('avatar-canvas');
@@ -262,25 +264,15 @@ class LayerController {
       avatarCanvas.style.transform = '';
     }
 
-    if (avatarLayer === 'hide') {
-      if (avatarCanvas) avatarCanvas.style.opacity = '0';
-    } else if (avatarLayer === 'show') {
+    if (avatarLayer === 'show') {
       if (avatarCanvas) avatarCanvas.style.opacity = '1';
     } else if (avatarLayer === 'gesture_only') {
       if (avatarCanvas) {
-        avatarCanvas.style.opacity = '0.7';
-        avatarCanvas.style.transform = 'scale(0.6)';
+        avatarCanvas.style.opacity = '0.85';
+        avatarCanvas.style.transform = 'scale(0.9)';
       }
-    }
-
-    if (sectionType === 'intro') {
-      if (avatarCanvas) {
-        avatarCanvas.style.opacity = '1';
-      }
-    } else if (sectionType === 'recap') {
-      if (avatarCanvas) {
-        avatarCanvas.style.opacity = '0';
-      }
+    } else {
+      if (avatarCanvas) avatarCanvas.style.opacity = '1';
     }
   }
 
@@ -302,35 +294,74 @@ class LayerController {
 
   /**
    * Apply section-level avatar rules (v1.3)
+   * NOTE: Avatar is ALWAYS visible per REQ-004 and REQ-012.
+   * The only variations are position and width_percent.
+   * 
+   * Avatar layout can be found in multiple locations:
+   * - section.avatar_layout (from MemoryAgent/RecapAgent)
+   * - section.layout?.avatar_layout (legacy)
+   * - section.avatar_width_percent / section.avatar_position (from SectionPlanner)
    */
-  applySectionAvatarRules(sectionType, layout) {
+  applySectionAvatarRules(sectionType, section) {
     const avatarCanvas = document.getElementById('avatar-canvas');
     if (!avatarCanvas) return;
 
-    const avatarZone = layout?.avatar_zone || {};
+    avatarCanvas.style.opacity = '1';
 
+    const avatarLayout = section?.avatar_layout || section?.layout?.avatar_layout || {};
+    const widthPercent = avatarLayout.width_percent || section?.avatar_width_percent || this.getDefaultAvatarWidth(sectionType);
+    const position = avatarLayout.position || section?.avatar_position || this.getDefaultAvatarPosition(sectionType);
+
+    this.applyAvatarLayout(avatarCanvas, position, widthPercent);
+  }
+
+  /**
+   * Get default avatar width by section type
+   */
+  getDefaultAvatarWidth(sectionType) {
     switch (sectionType) {
-      case 'intro':
-        avatarCanvas.style.opacity = '1';
-        break;
-      case 'recap':
-        avatarCanvas.style.opacity = '0';
-        break;
-      case 'content':
-      case 'example':
-        avatarCanvas.style.opacity = '1';
-        break;
-      case 'quiz':
-      case 'memory':
-        if (avatarZone.visibility === 'hidden') {
-          avatarCanvas.style.opacity = '0';
-        } else {
-          avatarCanvas.style.opacity = '0.8';
-        }
-        break;
-      default:
-        avatarCanvas.style.opacity = '1';
+      case 'intro': return 60;
+      case 'summary': return 45;
+      default: return 35;
     }
+  }
+
+  /**
+   * Get default avatar position by section type
+   */
+  getDefaultAvatarPosition(sectionType) {
+    switch (sectionType) {
+      case 'intro': return 'center';
+      default: return 'right';
+    }
+  }
+
+  /**
+   * Apply avatar layout (position and width) - REQ-030/031
+   */
+  applyAvatarLayout(avatarCanvas, position, widthPercent) {
+    avatarCanvas.style.position = 'absolute';
+    avatarCanvas.style.width = `${widthPercent}%`;
+    avatarCanvas.style.maxWidth = '600px';
+    avatarCanvas.style.height = 'auto';
+
+    avatarCanvas.style.left = '';
+    avatarCanvas.style.right = '';
+    avatarCanvas.style.transform = '';
+
+    if (position === 'center') {
+      avatarCanvas.style.left = '50%';
+      avatarCanvas.style.transform = 'translateX(-50%)';
+      avatarCanvas.style.bottom = '0';
+    } else if (position === 'right') {
+      avatarCanvas.style.right = '10px';
+      avatarCanvas.style.bottom = '0';
+    } else if (position === 'left') {
+      avatarCanvas.style.left = '10px';
+      avatarCanvas.style.bottom = '0';
+    }
+
+    console.log(`[LayerController] Avatar layout: position=${position}, width=${widthPercent}%`);
   }
 }
 
@@ -769,7 +800,7 @@ function loadSlide(index) {
   }
   
   const sectionType = slide.section_type || slide.slide_type || 'content';
-  layerController.applySectionAvatarRules(sectionType, slide.layout);
+  layerController.applySectionAvatarRules(sectionType, slide);
 
   document.querySelectorAll('.slide-thumb').forEach((el, i) => {
     el.classList.toggle('active', i === index);
