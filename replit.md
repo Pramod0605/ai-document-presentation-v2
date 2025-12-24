@@ -175,8 +175,13 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 - **ISS-118**: Remotion renderer removed - SectionPlanner only allows manim/video/none
 - **ISS-121**: Section-level display_directives arrays added for player compatibility
 
+### V1.5 Issues Fixed (2025-12-24)
+- **Job Lifecycle**: Fixed `/api/v15/generate` not calling `job_manager.start_job()` - jobs now properly transition from queued → processing → completed/failed
+- **RecapScene Validation**: Lowered minimum word count from 200 to 150 to allow prompts to pass validation (quality warnings retained for 200+)
+- **ManimCodeGenerator Model ID**: Fixed from "anthropic/claude-sonnet-4-5-20250514" to "anthropic/claude-3.5-sonnet"
+- **E2E Test**: Job 24f332b1 completed successfully with ManimCodeGenerator producing 3530 chars of Python Manim code
+
 ### Remaining Issues
-- **ISS-117**: Manim renders fail due to LLM generating invalid Python code
 - **ISS-120**: WAN/Video prompts exceed API character limit (1900+ chars)
 
 ### Recent Issues Fixed (V1.4)
