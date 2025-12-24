@@ -4,14 +4,17 @@ Pipeline v1.5 - Split Agent Architecture
 Orchestrates the complete V1.5 pipeline with focused agents:
 - Pass 0: Smart Chunker (topic extraction) - REUSED from V1.4
 - Pass 1: SectionPlanner (section blueprints)
-- Pass 2: Per-section loop: NarrationWriter → VisualSpecArtist → RendererSpecAgent
+- Pass 2: Per-section loop: NarrationWriter → VisualSpecArtist → RendererSpecAgent (video only)
 - Pass 3: MemoryFlashcardAgent + RecapSceneAgent
 - Merge Step: Combine all agent outputs into presentation.json
 - Pass 4: TTS Duration (generate audio, measure actual duration)
-- Pass 5: Renderers (Manim/WAN) - Remotion removed per user request
+- Pass 5: ManimCodeGenerator (post-TTS, uses actual audio duration for timing)
+- Pass 6: Renderers execution (Manim/WAN)
 
-Key improvement over V1.4: Each agent outputs 5-15 fields (vs 50+),
-enabling per-agent retries instead of full pipeline restarts.
+Key improvements:
+- Each agent outputs 5-15 fields (vs 50+), enabling per-agent retries
+- Manim code generated AFTER TTS with actual audio timing (not estimates)
+- Uses Claude Sonnet 4.5 for direct Python code generation with validation
 """
 
 import os
@@ -30,6 +33,11 @@ from core.agents import (
     MemoryFlashcardAgent,
     RecapSceneAgent,
     AgentError
+)
+from core.agents.manim_code_generator import (
+    ManimCodeGenerator,
+    build_manim_section_data,
+    integrate_manim_code_into_section
 )
 from core.merge_step_v15 import merge_agent_outputs
 from core.tts_duration import update_durations_from_tts, TTSProvider
@@ -184,7 +192,7 @@ def process_markdown_to_presentation_v15(
             render_spec = None
             renderer = blueprint.get("suggested_renderer", "none")
             
-            if renderer != "none":
+            if renderer == "video":
                 update_status("renderer_spec", f"Creating {renderer} spec for {section_id}...")
                 
                 visual_beats = visuals_output.get("visual_beats", [])
@@ -249,6 +257,41 @@ def process_markdown_to_presentation_v15(
                 generate_audio=True,
                 tts_provider=tts_provider
             )
+        
+        update_status("manim_code", "Generating Manim code with actual TTS timing...")
+        manim_generator = ManimCodeGenerator(tracker=tracker, log_func=log)
+        
+        for i, section in enumerate(presentation.get("sections", [])):
+            renderer = section.get("renderer", "none")
+            section_id = section.get("section_id", f"section_{i}")
+            
+            if renderer == "manim":
+                logger.info(f"[Pipeline v1.5] Generating Manim code for {section_id}")
+                
+                segments = section.get("segments", [])
+                visual_beats = section.get("visual_beats", [])
+                segment_enrichments = section.get("segment_enrichments", [])
+                
+                manim_input = build_manim_section_data(
+                    section=section,
+                    narration_segments=segments,
+                    visual_beats=visual_beats,
+                    segment_enrichments=segment_enrichments
+                )
+                
+                try:
+                    manim_code, validation_errors = manim_generator.generate(manim_input)
+                    
+                    if validation_errors:
+                        logger.warning(f"[Pipeline v1.5] Manim validation warnings for {section_id}: {validation_errors}")
+                    
+                    section = integrate_manim_code_into_section(section, manim_code)
+                    presentation["sections"][i] = section
+                    
+                    logger.info(f"[Pipeline v1.5] Manim code generated for {section_id} ({len(manim_code)} chars)")
+                    
+                except Exception as e:
+                    logger.error(f"[Pipeline v1.5] Manim code generation failed for {section_id}: {e}")
         
         tracker.end_pipeline(status="completed")
         logger.info(f"[Pipeline v1.5] Completed successfully for job {job_id}")

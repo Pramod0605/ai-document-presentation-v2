@@ -711,8 +711,8 @@ player/jobs/{job_id}/
 | REQ-063 | Manim code validation: syntax check, no Dot() placeholders | COMPLETE | core/agents/manim_code_generator.py |
 | REQ-064 | Manim code validation: timing matches segment durations | COMPLETE | core/agents/manim_code_generator.py |
 | REQ-065 | Auto-retry on validation failure with clearer prompt | COMPLETE | core/agents/manim_code_generator.py |
-| REQ-066 | Wire TTS actual duration to Manim Code Generator input | COMPLETE | core/agents/manim_code_generator.py (build_manim_section_data) |
-| REQ-067 | Connect VisualSpecArtist visual descriptions to Manim input | COMPLETE | core/agents/manim_code_generator.py (build_manim_section_data) |
+| REQ-066 | Wire TTS actual duration to Manim Code Generator input | COMPLETE | core/pipeline_v15.py (Pass 5 post-TTS) |
+| REQ-067 | Connect VisualSpecArtist visual descriptions to Manim input | COMPLETE | core/pipeline_v15.py (build_manim_section_data) |
 | REQ-068 | Local Manim renderer accepts manim_code field directly | VERIFIED | Existing renderer works |
 
 ---
