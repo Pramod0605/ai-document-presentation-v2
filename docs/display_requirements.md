@@ -1,8 +1,9 @@
 # Display Requirements Specification
 
-**Version**: 2.0  
+**Version**: 2.1  
 **Last Updated**: 2025-12-24  
 **Status**: SINGLE SOURCE OF TRUTH  
+**Includes**: Display Requirements, LLM Agents, Manim Implementation, Test Plan  
 
 ---
 
@@ -16,7 +17,9 @@
 6. [Implementation Checklist](#implementation-checklist)
 7. [Narration Sync Architecture](#narration-sync-architecture)
 8. [Requirement Tracking](#requirement-tracking)
-9. [Test Input Document](#test-input-document)
+9. [Manim Code Generation](#manim-code-generation)
+10. [Test Plan](#test-plan)
+11. [Test Input Document](#test-input-document)
 
 ---
 
@@ -694,9 +697,245 @@ player/jobs/{job_id}/
 
 | REQ-ID | Description | Status | Files Affected |
 |--------|-------------|--------|----------------|
-| REQ-050 | Test document with ALL section types | PENDING | test_docs/ or attached_assets/ |
+| REQ-050 | Test document with ALL section types | COMPLETE | test_docs/comprehensive_test.md |
 | REQ-051 | Test generates: intro, summary, content, example, quiz, memory, recap | PENDING | Test execution |
 | REQ-052 | Manim renders correctly for content sections | PENDING | Test execution |
+
+### Manim Code Generation
+
+| REQ-ID | Description | Status | Files Affected |
+|--------|-------------|--------|----------------|
+| REQ-060 | RendererSpecAgent generates Python code directly (not JSON spec) | PENDING | core/agents/renderer_spec_agent.py |
+| REQ-061 | Use Claude Sonnet 4.5 via OpenRouter for Manim code generation | PENDING | core/agents/renderer_spec_agent.py |
+| REQ-062 | Use new prompts: manim_system_prompt.txt + manim_user_prompt_template.txt | PENDING | core/prompts/ |
+| REQ-063 | Manim code validation: syntax check, no Dot() placeholders | PENDING | core/agents/renderer_spec_agent.py |
+| REQ-064 | Manim code validation: timing matches segment durations | PENDING | core/agents/renderer_spec_agent.py |
+| REQ-065 | Auto-retry on validation failure with clearer prompt | PENDING | core/agents/renderer_spec_agent.py |
+| REQ-066 | Wire TTS actual duration to Manim Code Generator input | PENDING | core/pipeline_v15.py |
+| REQ-067 | Connect VisualSpecArtist visual descriptions to Manim input | PENDING | core/pipeline_v15.py |
+| REQ-068 | Local Manim renderer accepts manim_code field directly | VERIFIED | Existing renderer works |
+
+---
+
+## Manim Code Generation
+
+### Overview
+
+The Manim Code Generator produces Python code for Manim Community animations, synchronized to narration timing from TTS.
+
+### Key Change from Previous Approach
+
+| Aspect | Previous (V1.5) | New Approach |
+|--------|-----------------|--------------|
+| **LLM Output** | JSON spec (objects, animations) | Raw Python code |
+| **Prompt** | manim_spec_system_v1.5.txt | manim_system_prompt.txt + manim_user_prompt_template.txt |
+| **LLM Model** | Gemini 2.5 / Claude Sonnet | **Claude Sonnet 4.5** via OpenRouter |
+| **Renderer Input** | Interprets JSON → generates code | Executes Python code directly |
+
+### Pipeline Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    MANIM CODE GENERATION FLOW                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  1. NARRATION WRITER                                                 │
+│     │  Output: segments[] with estimated duration                    │
+│     ▼                                                                │
+│  2. TTS PASS (Edge TTS)                                              │
+│     │  Output: ACTUAL duration per segment (source of truth)         │
+│     ▼                                                                │
+│  3. VISUAL SPEC ARTIST                                               │
+│     │  Output: visual_beats[].description per segment                │
+│     ▼                                                                │
+│  4. MANIM CODE GENERATOR (New)                                       │
+│     │                                                                │
+│     │  Input:                                                        │
+│     │  ┌─────────────────────────────────────────────────────────┐  │
+│     │  │ {                                                       │  │
+│     │  │   "section_title": "Definite Integral",                 │  │
+│     │  │   "narration_segments": [                               │  │
+│     │  │     {                                                   │  │
+│     │  │       "start": 0,                                       │  │
+│     │  │       "duration": 5.2,  // FROM TTS                     │  │
+│     │  │       "text": "The definite integral...",               │  │
+│     │  │       "visual": "Show axes, plot curve"  // FROM VSA    │  │
+│     │  │     }                                                   │  │
+│     │  │   ],                                                    │  │
+│     │  │   "total_duration": 20.0,                               │  │
+│     │  │   "formulas": ["∫ₐᵇ f(x)dx"],                           │  │
+│     │  │   "key_terms": ["integral", "limits"]                   │  │
+│     │  │ }                                                       │  │
+│     │  └─────────────────────────────────────────────────────────┘  │
+│     │                                                                │
+│     │  LLM: Claude Sonnet 4.5 (anthropic/claude-sonnet-4.5)          │
+│     │  System Prompt: core/prompts/manim_system_prompt.txt           │
+│     │  User Prompt: core/prompts/manim_user_prompt_template.txt      │
+│     │                                                                │
+│     │  Output: Python code for construct(self) method body           │
+│     ▼                                                                │
+│  5. VALIDATION                                                       │
+│     │  - Syntax check (compile test)                                 │
+│     │  - No Dot() placeholders                                       │
+│     │  - Timing: sum(run_time + wait) = segment duration             │
+│     │  - On failure: auto-retry with clearer prompt                  │
+│     ▼                                                                │
+│  6. LOCAL MANIM RENDERER                                             │
+│     │                                                                │
+│     │  JSON Input:                                                   │
+│     │  {                                                             │
+│     │    "sections": [{                                              │
+│     │      "section_id": "3",                                        │
+│     │      "prompts": [{                                             │
+│     │        "prompt": "...",                                        │
+│     │        "manim_code": "<Python code from LLM>"                  │
+│     │      }]                                                        │
+│     │    }],                                                         │
+│     │    "quality_preset": "preview|production",                     │
+│     │    "use_cache": true                                           │
+│     │  }                                                             │
+│     │                                                                │
+│     │  Output: MP4 video file                                        │
+│     ▼                                                                │
+│  7. videos/topic_X.mp4 → Player                                      │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Prompt Files
+
+| File | Location | Purpose |
+|------|----------|---------|
+| **System Prompt** | `core/prompts/manim_system_prompt.txt` | Rules for Manim code generation |
+| **User Template** | `core/prompts/manim_user_prompt_template.txt` | Template with timing placeholders |
+
+### System Prompt Key Rules
+
+1. Use ONLY Manim Community (manim) - NOT ManimGL
+2. Generate code for `construct(self)` method body ONLY - no imports, no class
+3. NEVER use `Dot()` as placeholder - use actual objects
+4. Match narration segment timing EXACTLY
+5. Each segment: `run_time + self.wait() = segment duration`
+
+### User Prompt Template Variables
+
+| Variable | Source |
+|----------|--------|
+| `{section_title}` | SectionPlanner output |
+| `{narration_segments}` | NarrationWriter + TTS + VisualSpecArtist |
+| `{visual_description}` | VisualSpecArtist visual_beats |
+| `{formulas}` | VisualSpecArtist segment_enrichments |
+| `{key_terms}` | VisualSpecArtist labels |
+| `{total_duration}` | Sum of TTS segment durations |
+| `{special_requirements}` | Optional styling notes |
+
+### Validation Rules
+
+| Check | Pass Criteria | On Failure |
+|-------|---------------|------------|
+| Syntax | `compile(code, '<string>', 'exec')` succeeds | Retry with error message |
+| No Placeholders | No `Dot()` in code | Retry with "use actual objects" |
+| Timing Match | `sum(run_time + wait)` ≈ segment duration (±0.5s) | Retry with timing breakdown |
+| Variable Names | No overwrites like `axes = axes.plot()` | Retry with warning |
+
+### Auto-Retry Logic
+
+```python
+MAX_RETRIES = 3
+
+for attempt in range(MAX_RETRIES):
+    code = generate_manim_code(section_data)
+    errors = validate_manim_code(code, section_data)
+    
+    if not errors:
+        return code
+    
+    # Add errors to prompt for clearer regeneration
+    section_data["previous_errors"] = errors
+    section_data["special_requirements"] += f"\n\nFix these issues: {errors}"
+
+raise ManimCodeGenerationError(f"Failed after {MAX_RETRIES} attempts")
+```
+
+---
+
+## Test Plan
+
+### Test Levels
+
+| Level | What We Test | Method | Status |
+|-------|--------------|--------|--------|
+| **TEST-001** | LLM Agents | Python unit tests for each agent | PENDING |
+| **TEST-002** | Display | Screenshot + visual inspection | PENDING |
+| **TEST-003** | End-to-End | curl API call to /api/v15/generate | PENDING |
+
+### TEST-001: LLM Agent Tests
+
+Test each agent in isolation with `test_docs/comprehensive_test.md`:
+
+| Agent | Test | Expected Output | Status |
+|-------|------|-----------------|--------|
+| Chunker | Parse test doc | 5+ topics extracted | PENDING |
+| SectionPlanner | Plan sections | intro, summary, 5 content, example, memory, recap | PENDING |
+| NarrationWriter | Write narration | Valid segments with timing | PENDING |
+| VisualSpecArtist | Create visuals | visual_beats + display_directives | PENDING |
+| ManimCodeGenerator | Generate code | Valid Python, correct timing | PENDING |
+| MemoryAgent | Create flashcards | 5 flashcards | PENDING |
+| RecapAgent | Create video prompts | 5 prompts, <1000 chars each | PENDING |
+
+**Test Script Location**: `tests/test_llm_agents.py` (to be created)
+
+### TEST-002: Display Tests
+
+Verify avatar sizing and layer behavior across all section types:
+
+| Section | Avatar Position | Avatar Width | Check |
+|---------|-----------------|--------------|-------|
+| Intro | Center | 60% | Visual |
+| Summary | Right | 45% | Visual |
+| Content | Right | 35% | Visual |
+| Example | Right | 35% | Visual |
+| Quiz | Right | 35% | Visual |
+| Memory | Right | 35% | Visual |
+| Recap | Right | 35% | Visual |
+
+**Test Method**: Run pipeline, take screenshots, verify avatar placement
+
+### TEST-003: End-to-End Test
+
+Full pipeline test via API:
+
+```bash
+# Start the server
+python api/app.py
+
+# Run E2E test
+curl -X POST http://localhost:5000/api/v15/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "input_file": "test_docs/comprehensive_test.md",
+    "pipeline_version": "v15"
+  }'
+
+# Check job status
+curl http://localhost:5000/api/v15/status/{job_id}
+
+# Verify output
+# - All sections generated (intro, summary, content, example, quiz, memory, recap)
+# - All Manim videos rendered
+# - TTS audio generated
+# - presentation.json valid
+# - Player can load and play
+```
+
+**Test Script Location**: `tests/test_e2e.sh` (to be created)
+
+### Test Execution Order
+
+1. **Unit Tests First** - Verify each agent works
+2. **Integration Tests** - Verify agents work together
+3. **Display Tests** - Verify player renders correctly
+4. **E2E Tests** - Verify full pipeline end-to-end
 
 ---
 
@@ -793,6 +1032,11 @@ Key takeaways:
 | **VisualSpecArtist Prompt** | `core/prompts/visual_spec_artist_system_v1.5.txt` |
 | **MemoryAgent Prompt** | `core/prompts/memory_flashcard_system_v1.5.txt` |
 | **RecapAgent Prompt** | `core/prompts/recap_scene_system_v1.5.txt` |
+| **Manim System Prompt** | `core/prompts/manim_system_prompt.txt` |
+| **Manim User Template** | `core/prompts/manim_user_prompt_template.txt` |
+| **Test Document** | `test_docs/comprehensive_test.md` |
+| **LLM Agent Tests** | `tests/test_llm_agents.py` (to be created) |
+| **E2E Test Script** | `tests/test_e2e.sh` (to be created) |
 
 ---
 
