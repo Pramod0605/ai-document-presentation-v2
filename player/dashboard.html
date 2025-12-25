@@ -263,21 +263,16 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="pipeline_version">Pipeline Version</label>
-                        <select id="pipeline_version" name="pipeline_version" style="width: 100%; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; background: rgba(0, 0, 0, 0.3); color: #fff; font-size: 1rem;">
-                            <option value="v14" selected>V1.4 (Current - Split Directors)</option>
-                            <option value="v15">V1.5 (New - Split Agents)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="tts_provider">TTS Provider <span style="color: #888; font-size: 0.8rem;">(keep pyttsx3 for testing)</span></label>
+                        <label for="tts_provider">TTS Voice Provider</label>
                         <select id="tts_provider" name="tts_provider" style="width: 100%; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; background: rgba(0, 0, 0, 0.3); color: #fff; font-size: 1rem;">
-                            <option value="pyttsx3" selected>pyttsx3 (Local - Always Use for Testing)</option>
-                            <option value="narakeet">Narakeet (Production - Costs Money)</option>
+                            <option value="pyttsx3" selected>pyttsx3 (Local - For Duration Testing)</option>
+                            <option value="edge_tts">Edge TTS (Indian Male Voice - Free)</option>
+                            <option value="narakeet">Narakeet (Premium - Costs Money)</option>
                             <option value="estimate">Estimate Only (Fastest - No Audio)</option>
                         </select>
                     </div>
                 </div>
+                <input type="hidden" id="pipeline_version" name="pipeline_version" value="v15">
 
                 <div class="checkbox-group">
                     <div class="checkbox-item">
