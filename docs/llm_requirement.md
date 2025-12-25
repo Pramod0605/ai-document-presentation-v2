@@ -41,7 +41,7 @@ This document serves as the comprehensive reference for all LLM agents in the V1
 
 ### 1. SmartChunker
 
-**Purpose**: First pass - extracts logical topics from markdown content
+**Purpose**: First pass - extracts logical topics AND quiz questions from markdown content
 
 **Prompt Files**:
 - System: `core/prompts/smart_chunker_system_v1.5.txt`
@@ -71,11 +71,25 @@ You MUST output valid JSON with this exact structure:
       "has_formula": false,
       "suggested_renderer": "manim|video|none"
     }
+  ],
+  "quiz_questions": [
+    {
+      "question_id": "q1",
+      "question": "What is the derivative of x²?",
+      "answer": "2x",
+      "source_block": 15
+    }
   ]
 }
 ```
 
-**Validation**: Structural (JSON parse) + Semantic (topic_id uniqueness)
+**Quiz Extraction (ISS-157)**:
+- `quiz_questions[]` is OPTIONAL - only populated if PDF contains quiz/exercise questions
+- Questions come DIRECTLY from PDF source (not LLM-generated)
+- Variable count based on what exists in PDF
+- If `quiz_questions.length > 0`, SectionPlanner creates a quiz section
+
+**Validation**: Structural (JSON parse) + Semantic (topic_id uniqueness, question_id uniqueness)
 
 **Storage**: `artifacts/01_chunker.json`, passed to SectionPlanner
 
@@ -573,7 +587,7 @@ This table shows which agent output populates which fields in the final `present
 | NarrationWriter | `segments[]` | `sections[recap].segments[]` | recap |
 | RecapScene | `video_prompts[]` | `sections[recap].video_prompts[]` | recap |
 | RecapScene | `title` | `sections[recap].title` | recap |
-| QuizFlashcard | `quiz_cards[]` | `sections[quiz].visual_content` (JSON string) | quiz (conditional) |
+| SmartChunker | `quiz_questions[]` | Passed to NarrationWriter for quiz section (ISS-157) | quiz (conditional) |
 | ManimCodeGenerator | Python code | `sections[].render_spec.manim_scene_spec.manim_code` | content (renderer=manim) |
 | TTS Pass | audio duration | `sections[].segments[].duration_seconds` (authoritative) | all |
 | TTS Pass | audio file | `sections[].audio_file` | all |
@@ -591,7 +605,7 @@ This table shows which agent output populates which fields in the final `present
 | summary | SectionPlanner, NarrationWriter | YES | Text-only, avatar narrates summary |
 | content | SectionPlanner, NarrationWriter, VisualSpecArtist, RendererSpecAgent, ManimCodeGenerator (if manim) | YES | Full pipeline with visuals |
 | example | SectionPlanner, NarrationWriter, VisualSpecArtist, RendererSpecAgent | YES | Worked examples with visuals |
-| quiz | SectionPlanner, NarrationWriter, QuizFlashcard | CONDITIONAL | Only if quiz exists in source PDF. Flashcard-style display synced with avatar |
+| quiz | SectionPlanner, NarrationWriter | CONDITIONAL | Only if SmartChunker extracts quiz_questions[]. Flashcard-style display synced with avatar. NO separate QuizFlashcard agent - NarrationWriter formats Q&A with [pause 3s] after questions (ISS-157) |
 | memory | SectionPlanner, NarrationWriter, MemoryFlashcard | YES (mandatory) | Avatar narrates while flashcards display. 5 flashcards always generated |
 | recap | SectionPlanner, NarrationWriter, RecapScene | YES (mandatory) | Avatar narrates while recap videos play. 5 video prompts always generated |
 
@@ -603,7 +617,7 @@ ALL SECTIONS: SectionPlanner → NarrationWriter → [Section-specific agents] �
 intro/summary:  NarrationWriter → TTS
 content:        NarrationWriter → VisualSpecArtist → RendererSpecAgent → [ManimCodeGenerator] → TTS
 example:        NarrationWriter → VisualSpecArtist → RendererSpecAgent → TTS
-quiz:           NarrationWriter → QuizFlashcard → TTS (conditional - only if source has quiz)
+quiz:           NarrationWriter (formats Q&A with pauses) → TTS (conditional - only if SmartChunker found quiz_questions[])
 memory:         NarrationWriter → MemoryFlashcard → TTS (mandatory)
 recap:          NarrationWriter → RecapScene → TTS (mandatory)
 ```

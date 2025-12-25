@@ -258,32 +258,53 @@ renderer: manim
 
 ---
 
-### Section: QUIZ
+### Section: QUIZ (Conditional - Flashcard Style)
+
+**Conditional**: Quiz section only generated if source PDF contains quiz questions.
+
+**Source**: Q&A pairs extracted directly from PDF by SmartChunker (not LLM-generated).
+
+**Flow**: SmartChunker → SectionPlanner (creates quiz section if quiz_questions exist) → NarrationWriter (formats Q&A with pauses) → TTS
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                           QUIZ LAYOUT                                │
+│                    QUIZ LAYOUT (Flashcard Style)                     │
 │                        Avatar: RIGHT, 52%                            │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│   ┌──────────────────────────────┐   ┌──────────────────────────┐   │
-│   │   QUIZ CONTENT (Left 60%)    │   │     AVATAR (RIGHT)       │   │
-│   │                              │   │                          │   │
-│   │   Question:                  │   │      Width: 52%          │   │
-│   │   What is ∫x² dx?            │   │      Thinking pose       │   │
-│   │                              │   │                          │   │
-│   │   A) x³                      │   │                          │   │
-│   │   B) x³/3 + C                │   │                          │   │
-│   │   C) 2x                      │   │                          │   │
-│   │   D) x²/2                    │   │                          │   │
-│   │                              │   │                          │   │
-│   └──────────────────────────────┘   └──────────────────────────┘   │
+│   ┌───────────────────────────────────────────┐  ┌───────────────┐  │
+│   │                                           │  │               │  │
+│   │   ┌───────────────────────────────────┐   │  │    AVATAR     │  │
+│   │   │        FLASHCARD (Front)          │   │  │    (RIGHT)    │  │
+│   │   │   ─────────────────────────────   │   │  │               │  │
+│   │   │   Question 1:                     │   │  │   Width: 52%  │  │
+│   │   │   What is the derivative of x²?   │   │  │               │  │
+│   │   │                                   │   │  │   Narrating:  │  │
+│   │   │   [3 second pause for thinking]   │   │  │   "Let's test │  │
+│   │   │                                   │   │  │    what you   │  │
+│   │   └───────────────────────────────────┘   │  │    learned"   │  │
+│   │                                           │  │               │  │
+│   │   After pause, card flips to show answer: │  │               │  │
+│   │   ┌───────────────────────────────────┐   │  │               │  │
+│   │   │        FLASHCARD (Back)           │   │  │               │  │
+│   │   │   ─────────────────────────────   │   │  │               │  │
+│   │   │   Answer: 2x                      │   │  │               │  │
+│   │   │                                   │   │  │               │  │
+│   │   └───────────────────────────────────┘   │  │               │  │
+│   │                                           │  │               │  │
+│   └───────────────────────────────────────────┘  └───────────────┘  │
+│                                                                      │
+│   Cycles through all Q&A pairs (variable count from PDF)            │
 │                                                                      │
 └─────────────────────────────────────────────────────────────────────┘
 
 display_directives: { text_layer: "show", visual_layer: "hide", avatar_layer: "show" }
 avatar_layout: { position: "right", width_percent: 52 }
 renderer: none
+
+Quiz vs Memory:
+- Quiz: CONDITIONAL (only if PDF has quiz), variable count, source from PDF
+- Memory: MANDATORY (always generated), fixed 5 flashcards, LLM-summarized
 ```
 
 ---

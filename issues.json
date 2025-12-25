@@ -368,8 +368,8 @@
       "description": "Quiz sections from source document should display in flashcard style (array of Q/A pairs) synced with avatar narration. Quiz is conditional - only generated if quiz content exists in source PDF.",
       "requirement_violated": "Quiz display requirements",
       "evidence": "User clarification: 'MemoryFlashcard for Quiz? Yes in Flashcard style... one section will display quiz and in sync with Narration - avatar'",
-      "fix_applied": "Documentation updated: Quiz section added to Section Type → Agent Usage table as CONDITIONAL with 'SectionPlanner, NarrationWriter, QuizFlashcard'. NOTE: QuizFlashcard agent needs to be created",
-      "code_fix_needed": "Create core/agents/quiz_flashcard.py or extend MemoryFlashcard to handle quiz extraction"
+      "fix_applied": "Documentation updated: Quiz section uses SmartChunker Q&A extraction → NarrationWriter formatting. NO separate QuizFlashcard agent needed.",
+      "superseded_by": "ISS-157 - SmartChunker Q&A extraction approach chosen as best solution"
     },
     {
       "id": "ISS-156",
@@ -382,6 +382,24 @@
       "requirement_violated": "Documentation accuracy",
       "evidence": "Storage Architecture section shows '{job_dir}/artifacts/' etc.",
       "fix_applied": "Updated Directory Structure section to use 'jobs/{job_id}/' instead of '{job_dir}/'"
+    },
+    {
+      "id": "ISS-157",
+      "title": "Quiz section handling - SmartChunker Q&A extraction approach",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "created": "2025-12-25",
+      "description": "Quiz sections need to extract Q&A pairs from PDF source (not LLM-generated) and display in flashcard style with avatar narration. SmartChunker extracts quiz_questions[] from PDF, SectionPlanner creates quiz section if quiz exists, NarrationWriter formats Q&A with pauses after questions.",
+      "requirement_violated": "Quiz section implementation",
+      "evidence": "User clarification: Quiz questions come from PDF source, variable count (not fixed 5 like Memory), displayed as flashcards with pause after each question",
+      "decision": "SmartChunker extracts Q&A → SectionPlanner creates quiz section (conditional) → NarrationWriter formats with [pause 3s] → display_directives shows flashcard per Q&A",
+      "why_best_approach": "1) No new agent needed, 2) Source integrity preserved, 3) Variable count natural, 4) NarrationWriter already handles formatting",
+      "code_fix_needed": [
+        "1) SmartChunker: Add quiz_questions[] extraction field",
+        "2) SectionPlanner: Recognize quiz section type when quiz_questions exist",
+        "3) NarrationWriter: Add quiz Q&A formatting with [pause 3s] after questions",
+        "4) pipeline_v15.py: Handle quiz section type in section loop"
+      ]
     }
   ],
   "regressions_from_previous_fixes": [
