@@ -171,6 +171,8 @@ class ManimCodeGenerator:
         2. No Dot() placeholders
         3. Timing matches segment durations (±0.5s tolerance)
         4. No variable overwrites (e.g., axes = axes.plot())
+        5. No common runtime error patterns
+        6. Code completeness
         """
         errors = []
         
@@ -181,6 +183,64 @@ class ManimCodeGenerator:
         errors.extend(self._check_timing(code, section_data))
         
         errors.extend(self._check_variable_overwrites(code))
+        
+        errors.extend(self._check_runtime_patterns(code))
+        
+        errors.extend(self._check_completeness(code))
+        
+        return errors
+    
+    def _check_runtime_patterns(self, code: str) -> List[str]:
+        """Check for patterns that cause runtime errors in Manim."""
+        errors = []
+        
+        # Check for animate on Axes range properties (these are lists, not animatable)
+        if re.search(r'axes\.x_range\[?\d*\]?\.animate', code):
+            errors.append("Cannot animate axes.x_range - use ValueTracker instead")
+        if re.search(r'axes\.y_range\[?\d*\]?\.animate', code):
+            errors.append("Cannot animate axes.y_range - use ValueTracker instead")
+        
+        # Note: VGroup[index].animate IS valid in Manim, so we don't block general list indexing
+        
+        # Check for always_redraw referencing undefined trackers
+        always_redraw_matches = re.findall(r'always_redraw\s*\([^)]*(\w+)\.get_value', code)
+        for tracker in always_redraw_matches:
+            if not re.search(rf'{tracker}\s*=\s*ValueTracker', code):
+                errors.append(f"always_redraw references '{tracker}' but no ValueTracker with that name found")
+        
+        return errors
+    
+    def _check_completeness(self, code: str) -> List[str]:
+        """Check if code is complete (not truncated mid-statement)."""
+        errors = []
+        
+        lines = code.strip().split('\n')
+        if not lines:
+            return ["Empty code"]
+        
+        last_line = lines[-1].strip()
+        
+        # Check for incomplete statements
+        if last_line.endswith(','):
+            errors.append("Code appears truncated - ends with comma")
+        if last_line.endswith('('):
+            errors.append("Code appears truncated - ends with open paren")
+        if last_line.endswith('='):
+            errors.append("Code appears truncated - ends with assignment")
+        if last_line.endswith('+') or last_line.endswith('-') or last_line.endswith('*'):
+            errors.append("Code appears truncated - ends with operator")
+        
+        # Check for unclosed brackets
+        open_parens = code.count('(') - code.count(')')
+        open_brackets = code.count('[') - code.count(']')
+        open_braces = code.count('{') - code.count('}')
+        
+        if open_parens > 0:
+            errors.append(f"Unclosed parentheses: {open_parens} unmatched '('")
+        if open_brackets > 0:
+            errors.append(f"Unclosed brackets: {open_brackets} unmatched '['")
+        if open_braces > 0:
+            errors.append(f"Unclosed braces: {open_braces} unmatched '{{'")
         
         return errors
     

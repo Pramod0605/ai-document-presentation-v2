@@ -43,8 +43,23 @@ You are an expert Manim Community animator creating educational mathematics visu
    - Logical animation sequence ✓
    - Timing matches narration ✓
    - Would execute without errors ✓
+   - All brackets/parens are closed ✓
+   - Code is COMPLETE (not truncated) ✓
 
-10. Educational quality:
+10. FORBIDDEN PATTERNS (cause runtime errors):
+   - axes.x_range[0].animate - WRONG, Axes x_range/y_range are config lists, not animatable
+   - axes.y_range[1].animate - WRONG, same issue
+   - For animating ranges, use ValueTracker:
+     val = ValueTracker(0)
+     def updater(): return axes.plot(lambda x: x**val.get_value())
+     curve = always_redraw(updater)
+     self.play(val.animate.set_value(5))
+   - Note: VGroup[index].animate IS valid (animating grouped objects is fine)
+
+11. IMPORTANT: Complete all code - never leave functions incomplete.
+    If animation is complex, simplify rather than truncate.
+
+12. Educational quality:
     - Build complexity gradually
     - Label all mathematical symbols
     - Use consistent color coding
