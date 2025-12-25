@@ -510,6 +510,44 @@
         "5) Metadata records: tts_method=two_pass, duration_provider=pyttsx3, audio_provider=edge_tts"
       ],
       "files_changed": ["core/tts_duration.py", "core/pipeline_v15.py"]
+    },
+    {
+      "id": "ISS-161",
+      "title": "WAN prompts: LLM must generate within 800 char limit, not be truncated afterward",
+      "severity": "HIGH",
+      "status": "RESOLVED",
+      "created": "2025-12-25",
+      "resolved": "2025-12-25",
+      "description": "User requirement: LLM should generate prompts within 800 char limit from the start. Truncating LLM responses post-generation is not approved - LLM must be instructed to generate appropriate length content.",
+      "requirement_violated": "User's 10 rules - LLM should generate within limits",
+      "evidence": "User: 'Make sure we update the WAN than chopping off this method is not approved'",
+      "root_cause": "video_prompt_system_v1.5.txt said 'MINIMUM 300 WORDS' which = ~1800 chars, far exceeding 800 char limit",
+      "fix_applied": [
+        "1) Updated video_prompt_system_v1.5.txt: Changed from 300+ words to 80-150 words / 800 chars max",
+        "2) Updated recap_scene_system_v1.5.txt: Added character_registry for consistency across 5 scenes",
+        "3) Updated recap_scene_user_v1.5.txt: Added character continuity requirements",
+        "4) pipeline_v15.py: Added per-prompt validation - each prompt individually checked for 800 char max",
+        "5) Truncation functions now LOG WARNING if triggered (indicates LLM didn't follow instructions)"
+      ],
+      "files_changed": ["core/prompts/video_prompt_system_v1.5.txt", "core/prompts/recap_scene_system_v1.5.txt", "core/prompts/recap_scene_user_v1.5.txt", "core/pipeline_v15.py", "core/wan_prompt_validator.py"]
+    },
+    {
+      "id": "ISS-162",
+      "title": "Character consistency across 5 recap video scenes",
+      "severity": "HIGH",
+      "status": "RESOLVED",
+      "created": "2025-12-25",
+      "resolved": "2025-12-25",
+      "description": "Characters appearing in recap video scenes must be consistent - same names, same appearance descriptions across all 5 scenes.",
+      "requirement_violated": "Visual continuity in educational videos",
+      "evidence": "User: 'we have 5 video scenes and each scene character if displayed should be consistent same name etc'",
+      "root_cause": "No character registry in recap prompts - LLM invented new characters per scene",
+      "fix_applied": [
+        "1) Added character_registry to recap_scene_system_v1.5.txt output schema",
+        "2) Added Character Continuity section requiring same names/descriptions across all scenes",
+        "3) Added explicit instructions: DO NOT change character appearance between scenes"
+      ],
+      "files_changed": ["core/prompts/recap_scene_system_v1.5.txt", "core/prompts/recap_scene_user_v1.5.txt"]
     }
   ],
   "regressions_from_previous_fixes": [
