@@ -202,7 +202,7 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 - **ISS-120**: WAN/Video prompts exceed API character limit (1900+ chars)
 - **ISS-132**: LaTeX/Math formulas not appearing in visual_content (extraction issue)
 - **ISS-133**: Narration/display desync (timing alignment)
-- **ISS-138**: LaTeX standalone.cls still not found (texliveFull path issue)
+- **ISS-138 (RESOLVED)**: LaTeX standalone.cls - removed conflicting texliveSmall/Medium packages
 - **ISS-139**: LLM-generated Manim code truncated (max_tokens or validation gap)
 - **ISS-140**: render_spec.renderer field missing
 - **Manim Render Execution**: LLM-generated Python code still has runtime errors (improved validation may help)

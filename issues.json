@@ -129,13 +129,15 @@
       "id": "ISS-138",
       "title": "LaTeX standalone.cls still not found despite texliveFull installation",
       "severity": "CRITICAL",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "created": "2025-12-25",
+      "resolved": "2025-12-25",
       "job_reference": "3ffaf8d2",
       "description": "Manim render fails with 'LaTeX Error: File standalone.cls not found' for sections using MathTex",
       "requirement_violated": "Manim math rendering",
       "evidence": "Sections 5, 6 fail with standalone.cls error in logs despite texliveFull being installed",
-      "root_cause": "texliveFull path not accessible to Manim's TeX search path"
+      "root_cause": "Multiple conflicting texlive packages (texliveSmall, texliveMedium, texliveFull) causing path conflicts",
+      "fix_applied": "Removed texliveSmall and texliveMedium from .replit nix packages, keeping only texliveFull"
     },
     {
       "id": "ISS-139",
