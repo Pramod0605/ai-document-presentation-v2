@@ -211,3 +211,15 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 - **ISS-111**: Renderer execution wired into V1.4 pipeline
 - **ISS-112/114**: Player BASE_PATH handles ?job= query parameter
 - **ISS-113**: Renderer policy enforcement for text-only sections
+
+### LLM Prompt Review & Fixes (2025-12-25)
+- **ISS-145**: SectionPlanner prompt avatar widths fixed (60/45/35 → 52% uniform)
+- **ISS-146**: MemoryFlashcard prompt avatar width fixed (35 → 52%)
+- **ISS-147**: RecapScene prompt avatar width fixed (35 → 52%)
+- **ISS-148**: SmartChunker migrated from v1.4 to v1.5, removed deprecated "remotion" renderer
+- **ISS-149**: Artifact persistence added to pipeline_v15.py (saves all agent outputs to {job_dir}/artifacts/)
+- **ISS-150**: RecapScene word count aligned (100-180 words matches code validation)
+- **ISS-151**: ManimCodeGenerator enhanced with AST-based validation, undefined name detection, graceful failure handling
+
+### New Documentation
+- **docs/llm_requirement.md**: Comprehensive LLM agent documentation (400+ lines) covering all 8 agents, prompts, JSON enforcement, storage flow, and gap analysis
