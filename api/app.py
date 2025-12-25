@@ -1109,7 +1109,10 @@ def generate_v15():
         subject = data.get("subject", "General Science")
         grade = data.get("grade", "9")
         skip_wan = data.get("skip_wan", False)
-        tts_provider = data.get("tts_provider", "edge")
+        # TTS_MODE env: "dev" = estimate (fast, no audio), "prod" = edge_tts (Indian male voice)
+        tts_mode = os.environ.get("TTS_MODE", "dev")
+        default_tts = "estimate" if tts_mode == "dev" else "edge_tts"
+        tts_provider = data.get("tts_provider", default_tts)
         
         if tts_provider not in ["narakeet", "estimate", "edge", "edge_tts"]:
             return jsonify({"error": f"Invalid tts_provider: {tts_provider}. Use 'edge', 'narakeet', or 'estimate'"}), 400
