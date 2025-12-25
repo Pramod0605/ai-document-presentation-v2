@@ -174,7 +174,11 @@ def _render_visual_beats(
     
     # ISS-158 FIX: Truncate prompts BEFORE validation (production mode only)
     if not dry_run and not skip_wan and use_precompiled:
+        original_lengths = [len(p.get("prompt", "")) for p in video_prompts]
+        print(f"[WAN] video_prompts BEFORE truncation: {original_lengths} chars")
         video_prompts = truncate_video_prompts(video_prompts)
+        truncated_lengths = [len(p.get("prompt", "")) for p in video_prompts]
+        print(f"[WAN] video_prompts AFTER truncation: {truncated_lengths} chars (max 800)")
         try:
             hard_fail_on_short_prompts(video_prompts, topic_id)
         except WanPromptHardFailError as e:
@@ -203,7 +207,9 @@ def _render_visual_beats(
             
             # ISS-158 FIX: Truncate and validate compiled prompt (production only)
             if not dry_run and not skip_wan:
+                original_len = len(wan_prompt)
                 wan_prompt = truncate_wan_prompt(wan_prompt)
+                print(f"[WAN] Beat {beat_idx} compiled prompt: {original_len} -> {len(wan_prompt)} chars")
                 word_count = len(wan_prompt.split()) if wan_prompt else 0
                 if word_count < 80:
                     raise WanRenderError(
@@ -293,9 +299,21 @@ def _render_recap_scenes(
     
     print(f"[WAN] Rendering {len(recap_scenes)} recap scenes for section {topic_id}")
     
-    # ISS-076 FIX: Validate recap prompts before API calls (production mode only)
+    # ISS-158 FIX: Truncate THEN validate recap prompts before API calls (production mode only)
     if not dry_run and not skip_wan:
         recap_prompts = [{"prompt": scene.get("wan_prompt", "")} for scene in recap_scenes]
+        # Log original lengths for debugging
+        original_lengths = [len(p.get("prompt", "")) for p in recap_prompts]
+        print(f"[WAN] Recap prompts BEFORE truncation: {original_lengths} chars")
+        # Truncate first - this was missing and caused 2901 char failures
+        recap_prompts = truncate_video_prompts(recap_prompts)
+        # Log truncated lengths
+        truncated_lengths = [len(p.get("prompt", "")) for p in recap_prompts]
+        print(f"[WAN] Recap prompts AFTER truncation: {truncated_lengths} chars (max 800)")
+        # Update original scenes with truncated prompts
+        for i, scene in enumerate(recap_scenes):
+            if i < len(recap_prompts):
+                scene["wan_prompt"] = recap_prompts[i].get("prompt", scene.get("wan_prompt", ""))
         try:
             hard_fail_on_short_prompts(recap_prompts, topic_id)
         except WanPromptHardFailError as e:

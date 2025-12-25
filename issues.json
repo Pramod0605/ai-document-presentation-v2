@@ -467,7 +467,8 @@
         "2) wan_runner.py: Import new truncation functions",
         "3) wan_runner.py L121-122: Call truncate_wan_prompt() BEFORE validation for section-level prompts",
         "4) wan_runner.py L178-180: Call truncate_video_prompts() BEFORE validation for video_prompts array",
-        "5) wan_runner.py L207-215: Updated from 300-word minimum to 80-word minimum per v1.5 spec"
+        "5) wan_runner.py L207-215: Updated from 300-word minimum to 80-word minimum per v1.5 spec",
+        "6) wan_runner.py L299-311: CRITICAL FIX - Added truncation for recap_scenes (was missing, caused 2901 char failure)"
       ],
       "files_changed": ["core/wan_prompt_validator.py", "render/wan/wan_runner.py"]
     },
