@@ -157,13 +157,15 @@
       "id": "ISS-140",
       "title": "render_spec.renderer field is MISSING",
       "severity": "HIGH",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "created": "2025-12-25",
+      "resolved": "2025-12-25",
       "job_reference": "3ffaf8d2",
       "description": "All sections have renderer=MISSING in render_spec even when manim_scene_spec is populated",
       "requirement_violated": "Renderer field population",
       "evidence": "Sections 3-7 have manim_code but renderer field is missing",
-      "root_cause": "MergeStep not setting renderer field from RendererSpecAgent output"
+      "root_cause": "MergeStep only used blueprint.suggested_renderer, not render_spec.renderer as fallback",
+      "fix_applied": "Updated _build_section_from_artifact to use render_spec.renderer as fallback when blueprint.suggested_renderer is missing"
     }
   ],
   "regressions_from_previous_fixes": [

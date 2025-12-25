@@ -103,10 +103,17 @@ def _build_section_from_artifact(artifact: Dict) -> Dict:
     
     section_type = blueprint.get("section_type", "content")
     
+    # ISS-140 FIX: Get renderer from blueprint, falling back to render_spec if available
+    renderer = blueprint.get("suggested_renderer")
+    if not renderer and render_spec:
+        renderer = render_spec.get("renderer")
+    if not renderer:
+        renderer = "none"
+    
     section = {
         "section_type": section_type,
         "title": blueprint.get("title", "Untitled"),
-        "renderer": blueprint.get("suggested_renderer", "none"),
+        "renderer": renderer,
         "avatar_layout": {
             "visibility": "always",
             "mode": "floating" if section_type in ["intro", "summary"] else "compact",

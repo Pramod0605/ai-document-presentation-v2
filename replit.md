@@ -204,7 +204,7 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 - **ISS-133**: Narration/display desync (timing alignment)
 - **ISS-138 (RESOLVED)**: LaTeX standalone.cls - removed conflicting texliveSmall/Medium packages
 - **ISS-139 (RESOLVED)**: Manim code truncation - increased max_tokens, added finish_reason detection
-- **ISS-140**: render_spec.renderer field missing
+- **ISS-140 (RESOLVED)**: renderer field - merge step now uses render_spec.renderer as fallback
 - **Manim Render Execution**: LLM-generated Python code still has runtime errors (improved validation may help)
 
 ### Recent Issues Fixed (V1.4)
