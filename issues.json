@@ -490,6 +490,26 @@
         "4) Updated section-type-specific display_directives logic"
       ],
       "files_changed": ["core/merge_step_v15.py"]
+    },
+    {
+      "id": "ISS-160",
+      "title": "TTS audio/video drift - single provider causes timing mismatch",
+      "severity": "CRITICAL",
+      "status": "RESOLVED",
+      "created": "2025-12-25",
+      "resolved": "2025-12-25",
+      "description": "Audio length doesn't match visual duration because pipeline used ONLY Edge TTS (or only pyttsx3). Spec requires: pyttsx3 measures duration FIRST, then Edge TTS generates production audio. Different speaking rates cause display_directives to fire at wrong times.",
+      "requirement_violated": "V1.5 Narration Sync Architecture - TTS timing authoritative using pyttsx3 for measurement, Edge TTS for production voice",
+      "evidence": "User: 'Audio/video mismatch - Audio length doesn't match visual duration'",
+      "root_cause": "update_durations_from_tts() uses single provider for both measurement AND audio. Edge TTS ~130 WPM, pyttsx3 ~150 WPM = drift.",
+      "fix_applied": [
+        "1) tts_duration.py: Added update_durations_two_pass() function",
+        "2) Pass 1: pyttsx3 measures duration_seconds (local, fast, 150 WPM)",
+        "3) Pass 2: Edge TTS generates production audio (but KEEPS pyttsx3 durations)",
+        "4) pipeline_v15.py: Changed to use update_durations_two_pass() instead of single-pass",
+        "5) Metadata records: tts_method=two_pass, duration_provider=pyttsx3, audio_provider=edge_tts"
+      ],
+      "files_changed": ["core/tts_duration.py", "core/pipeline_v15.py"]
     }
   ],
   "regressions_from_previous_fixes": [

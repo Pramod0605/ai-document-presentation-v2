@@ -40,7 +40,7 @@ from core.agents.manim_code_generator import (
     integrate_manim_code_into_section
 )
 from core.merge_step_v15 import merge_agent_outputs
-from core.tts_duration import update_durations_from_tts, TTSProvider
+from core.tts_duration import update_durations_from_tts, update_durations_two_pass, TTSProvider
 from core.analytics import AnalyticsTracker, create_tracker
 from core.renderer_executor import render_all_topics, enforce_renderer_policy
 
@@ -346,12 +346,11 @@ def process_markdown_to_presentation_v15(
         logger.info(f"[Pipeline v1.5] Merged {len(presentation.get('sections', []))} sections")
         
         if generate_tts:
-            update_status("tts_duration", f"Measuring audio durations ({tts_provider})...")
-            presentation = update_durations_from_tts(
+            update_status("tts_duration", f"ISS-160: Two-pass TTS (pyttsx3 measure -> {tts_provider} audio)...")
+            presentation = update_durations_two_pass(
                 presentation=presentation,
                 output_dir=output_dir,
-                generate_audio=True,
-                tts_provider=tts_provider
+                production_provider=tts_provider
             )
         
         update_status("manim_code", "Generating Manim code with actual TTS timing...")

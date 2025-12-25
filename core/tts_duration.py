@@ -69,6 +69,137 @@ TEMP_AUDIO_DIR = Path("/tmp/tts_audio")
 TTSProvider = Literal["edge_tts", "narakeet", "pyttsx3", "estimate"]
 
 
+def update_durations_two_pass(
+    presentation: Dict,
+    output_dir: Optional[Path] = None,
+    production_provider: TTSProvider = "edge_tts"
+) -> Dict:
+    """
+    ISS-160 FIX: Two-pass TTS system per V1.5 spec.
+    
+    Pass 1: Use pyttsx3 to measure accurate durations (local, fast)
+    Pass 2: Use Edge TTS to generate production audio (keeps pyttsx3 durations)
+    
+    This ensures display_directives timing matches actual audio because
+    pyttsx3 and Edge TTS have different speaking rates.
+    
+    Args:
+        presentation: Merged presentation.json
+        output_dir: Directory to save audio files
+        production_provider: Provider for final audio ("edge_tts" or "narakeet")
+        
+    Returns:
+        Updated presentation with measured durations AND production audio
+    """
+    if not PYTTSX3_AVAILABLE:
+        logger.warning("[TTS Two-Pass] pyttsx3 not available, falling back to single-pass")
+        return update_durations_from_tts(presentation, output_dir, True, production_provider)
+    
+    if output_dir:
+        audio_dir = Path(output_dir) / "audio"
+    else:
+        audio_dir = TEMP_AUDIO_DIR
+    audio_dir.mkdir(parents=True, exist_ok=True)
+    
+    logger.info("[TTS Two-Pass] PASS 1: Measuring durations with pyttsx3...")
+    
+    # Pass 1: Measure with pyttsx3
+    try:
+        pyttsx3_engine = pyttsx3.init()
+        pyttsx3_engine.setProperty('rate', 150)
+    except Exception as e:
+        logger.warning(f"[TTS Two-Pass] pyttsx3 init failed: {e}, falling back to single-pass")
+        return update_durations_from_tts(presentation, output_dir, True, production_provider)
+    
+    sections = presentation.get("sections", [])
+    measured_durations = {}  # Store measured durations
+    
+    for section_idx, section in enumerate(sections):
+        section_id = section.get("section_id", f"section_{section_idx}")
+        narration = section.get("narration", {})
+        segments = narration.get("segments", [])
+        section_duration = 0.0
+        
+        for seg_idx, segment in enumerate(segments):
+            segment_id = segment.get("segment_id", f"seg_{seg_idx}")
+            text = segment.get("text", "")
+            
+            if not text.strip():
+                segment["duration_seconds"] = 0.0
+                continue
+            
+            # Measure with pyttsx3 (temp file, discarded after)
+            temp_wav = audio_dir / f"temp_measure_{section_id}_{segment_id}.wav"
+            try:
+                actual_duration = _generate_pyttsx3(text, temp_wav, pyttsx3_engine)
+                segment["duration_seconds"] = round(actual_duration, 2)
+                measured_durations[f"{section_id}_{segment_id}"] = actual_duration
+                section_duration += actual_duration
+                # Delete temp file
+                if temp_wav.exists():
+                    temp_wav.unlink()
+            except Exception as e:
+                logger.warning(f"[TTS Two-Pass] Measure failed for {segment_id}: {e}")
+                estimate = _estimate_duration(text)
+                segment["duration_seconds"] = estimate
+                measured_durations[f"{section_id}_{segment_id}"] = estimate
+                section_duration += estimate
+        
+        narration["total_duration_seconds"] = round(section_duration, 2)
+    
+    logger.info(f"[TTS Two-Pass] PASS 1 complete: Measured {len(measured_durations)} segments")
+    
+    # Pass 2: Generate production audio (but keep measured durations)
+    logger.info(f"[TTS Two-Pass] PASS 2: Generating production audio with {production_provider}...")
+    
+    for section_idx, section in enumerate(sections):
+        section_id = section.get("section_id", f"section_{section_idx}")
+        narration = section.get("narration", {})
+        segments = narration.get("segments", [])
+        
+        for seg_idx, segment in enumerate(segments):
+            segment_id = segment.get("segment_id", f"seg_{seg_idx}")
+            text = segment.get("text", "")
+            
+            if not text.strip():
+                continue
+            
+            audio_filename = f"{section_id}_{segment_id}"
+            audio_path = audio_dir / f"{audio_filename}.mp3"
+            
+            try:
+                if production_provider == "edge_tts" and EDGE_TTS_AVAILABLE:
+                    _generate_edge_tts(text, audio_path)
+                elif NARAKEET_API_KEY:
+                    _generate_narakeet(text, audio_path)
+                else:
+                    # Fallback: keep pyttsx3 audio
+                    audio_path = audio_dir / f"{audio_filename}.wav"
+                    _generate_pyttsx3(text, audio_path, pyttsx3_engine)
+                
+                if audio_path.exists():
+                    segment["audio_file"] = str(audio_path.name)
+                    # IMPORTANT: Keep the pyttsx3-measured duration, don't overwrite!
+                    logger.debug(f"[TTS Two-Pass] {segment_id}: audio={audio_path.name}, duration={segment['duration_seconds']}s (measured)")
+                    
+            except Exception as e:
+                logger.warning(f"[TTS Two-Pass] Production audio failed for {segment_id}: {e}")
+    
+    logger.info(f"[TTS Two-Pass] PASS 2 complete: Production audio generated")
+    
+    if "metadata" not in presentation:
+        presentation["metadata"] = {}
+    presentation["metadata"]["tts_method"] = "two_pass"
+    presentation["metadata"]["duration_provider"] = "pyttsx3"
+    presentation["metadata"]["audio_provider"] = production_provider
+    
+    # Consolidate section audio
+    if output_dir:
+        presentation = consolidate_section_audio(presentation, audio_dir)
+    
+    return presentation
+
+
 def update_durations_from_tts(
     presentation: Dict,
     output_dir: Optional[Path] = None,
@@ -76,7 +207,10 @@ def update_durations_from_tts(
     tts_provider: TTSProvider = "edge_tts"
 ) -> Dict:
     """
-    Pass 1.5: Generate TTS audio and update durations in presentation.json.
+    LEGACY: Single-pass TTS - generates audio and measures from same provider.
+    
+    NOTE: For V1.5, use update_durations_two_pass() instead to avoid
+    audio/video drift caused by different speaking rates.
     
     For each narration segment:
     1. Generate TTS audio file (based on provider)
