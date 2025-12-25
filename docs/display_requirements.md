@@ -73,7 +73,7 @@ This document defines how the AI Animated Education player displays educational 
 │                                                                      │
 │   Layer 2 (Top):    AVATAR VIDEO (always rendered, never hidden)    │
 │                     - Position varies by section type               │
-│                     - Width: 60% / 45% / 35% per table              │
+│                     - Width: 52% for ALL section types              │
 │                     - gesture_only = generation metadata ONLY       │
 │                                                                      │
 │   Layer 1 (Middle): CONTENT AREA (Text OR Video - mutual exclusion) │
@@ -158,7 +158,7 @@ renderer: none
 └─────────────────────────────────────────────────────────────────────┘
 
 display_directives: { text_layer: "show", visual_layer: "hide", avatar_layer: "show" }
-avatar_layout: { position: "right", width_percent: 45 }
+avatar_layout: { position: "right", width_percent: 52 }
 renderer: none
 ```
 
@@ -169,13 +169,13 @@ renderer: none
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                     CONTENT LAYOUT (Text Mode)                       │
-│                        Avatar: RIGHT, 35%                            │
+│                        Avatar: RIGHT, 52%                            │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │   ┌──────────────────────────────┐   ┌──────────────────────────┐   │
 │   │   TEXT AREA (Left 60%)       │   │     AVATAR (RIGHT)       │   │
 │   │                              │   │                          │   │
-│   │   CONTENT FROM SOURCE        │   │      Width: 35%          │   │
+│   │   CONTENT FROM SOURCE        │   │      Width: 52%          │   │
 │   │   (P7: Input file only!)     │   │      Small-Medium        │   │
 │   │                              │   │      Explaining          │   │
 │   │   - Key concept 1            │   │                          │   │
@@ -187,7 +187,7 @@ renderer: none
 └─────────────────────────────────────────────────────────────────────┘
 
 display_directives: { text_layer: "show", visual_layer: "hide", avatar_layer: "show" }
-avatar_layout: { position: "right", width_percent: 35 }
+avatar_layout: { position: "right", width_percent: 52 }
 renderer: manim (but video not playing yet)
 ```
 
@@ -198,7 +198,7 @@ renderer: manim (but video not playing yet)
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                     CONTENT LAYOUT (Video Mode)                      │
-│                        Avatar: RIGHT, 35%                            │
+│                        Avatar: RIGHT, 52%                            │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │   ┌───────────────────────────────────────────────────────────────┐ │
@@ -212,14 +212,14 @@ renderer: manim (but video not playing yet)
 │   └───────────────────────────────────────────────────────────────┘ │
 │                                           ┌─────────────────────┐   │
 │                                           │   AVATAR (RIGHT)    │   │
-│                                           │    Width: 35%       │   │
+│                                           │    Width: 52%       │   │
 │                                           │    gesture_only*    │   │
 │                                           └─────────────────────┘   │
 │                                                                      │
 └─────────────────────────────────────────────────────────────────────┘
 
 display_directives: { text_layer: "hide", visual_layer: "show", avatar_layer: "gesture_only" }
-avatar_layout: { position: "right", width_percent: 35 }
+avatar_layout: { position: "right", width_percent: 52 }
 renderer: manim or video
 
 * gesture_only = Avatar IS VISIBLE, but the avatar VIDEO was generated 
@@ -233,13 +233,13 @@ renderer: manim or video
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         EXAMPLE LAYOUT                               │
-│                        Avatar: RIGHT, 35%                            │
+│                        Avatar: RIGHT, 52%                            │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │   ┌──────────────────────────────┐   ┌──────────────────────────┐   │
 │   │   WORKED EXAMPLE (Left 60%)  │   │     AVATAR (RIGHT)       │   │
 │   │                              │   │                          │   │
-│   │   Problem:                   │   │      Width: 35%          │   │
+│   │   Problem:                   │   │      Width: 52%          │   │
 │   │   Evaluate ∫₀² (3x²+2x) dx   │   │      Explaining          │   │
 │   │                              │   │                          │   │
 │   │   Step 1: Antiderivative     │   │                          │   │
@@ -252,7 +252,7 @@ renderer: manim or video
 └─────────────────────────────────────────────────────────────────────┘
 
 display_directives: { text_layer: "show", visual_layer: "show", avatar_layer: "show" }
-avatar_layout: { position: "right", width_percent: 35 }
+avatar_layout: { position: "right", width_percent: 52 }
 renderer: manim
 ```
 
@@ -263,13 +263,13 @@ renderer: manim
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                           QUIZ LAYOUT                                │
-│                        Avatar: RIGHT, 35%                            │
+│                        Avatar: RIGHT, 52%                            │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │   ┌──────────────────────────────┐   ┌──────────────────────────┐   │
 │   │   QUIZ CONTENT (Left 60%)    │   │     AVATAR (RIGHT)       │   │
 │   │                              │   │                          │   │
-│   │   Question:                  │   │      Width: 35%          │   │
+│   │   Question:                  │   │      Width: 52%          │   │
 │   │   What is ∫x² dx?            │   │      Thinking pose       │   │
 │   │                              │   │                          │   │
 │   │   A) x³                      │   │                          │   │
@@ -282,7 +282,7 @@ renderer: manim
 └─────────────────────────────────────────────────────────────────────┘
 
 display_directives: { text_layer: "show", visual_layer: "hide", avatar_layer: "show" }
-avatar_layout: { position: "right", width_percent: 35 }
+avatar_layout: { position: "right", width_percent: 52 }
 renderer: none
 ```
 
@@ -293,14 +293,14 @@ renderer: none
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         MEMORY LAYOUT                                │
-│                        Avatar: RIGHT, 35%                            │
+│                        Avatar: RIGHT, 52%                            │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │   ┌───────────────────────────────────────────┐  ┌───────────────┐  │
 │   │                                           │  │    AVATAR     │  │
 │   │   ┌─────────┐ ┌─────────┐ ┌─────────┐     │  │    (RIGHT)    │  │
 │   │   │ CARD 1  │ │ CARD 2  │ │ CARD 3  │     │  │               │  │
-│   │   │ Q: What │ │ Q: For- │ │ Q: When │     │  │  Width: 35%   │  │
+│   │   │ Q: What │ │ Q: For- │ │ Q: When │     │  │  Width: 52%   │  │
 │   │   │ is...?  │ │ mula?   │ │ to use? │     │  │               │  │
 │   │   │         │ │         │ │         │     │  │               │  │
 │   │   │ A: ...  │ │ A: ∫    │ │ A: ...  │     │  │               │  │
@@ -315,7 +315,7 @@ renderer: none
 └─────────────────────────────────────────────────────────────────────┘
 
 display_directives: { text_layer: "hide", visual_layer: "show", avatar_layer: "show" }
-avatar_layout: { position: "right", width_percent: 35 }
+avatar_layout: { position: "right", width_percent: 52 }
 renderer: none
 ```
 
@@ -326,7 +326,7 @@ renderer: none
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                          RECAP LAYOUT                                │
-│                        Avatar: RIGHT, 35%                            │
+│                        Avatar: RIGHT, 52%                            │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │   ┌───────────────────────────────────────────────────────────────┐ │
@@ -340,14 +340,14 @@ renderer: none
 │   └───────────────────────────────────────────────────────────────┘ │
 │                                           ┌─────────────────────┐   │
 │                                           │   AVATAR (RIGHT)    │   │
-│                                           │    Width: 35%       │   │
+│                                           │    Width: 52%       │   │
 │                                           │    gesture_only     │   │
 │                                           └─────────────────────┘   │
 │                                                                      │
 └─────────────────────────────────────────────────────────────────────┘
 
 display_directives: { text_layer: "hide", visual_layer: "show", avatar_layer: "gesture_only" }
-avatar_layout: { position: "right", width_percent: 35 }
+avatar_layout: { position: "right", width_percent: 52 }
 renderer: video (WAN)
 ```
 
@@ -529,7 +529,7 @@ PDF/MD Input
 
 | Current Field | Required Addition |
 |---------------|-------------------|
-| None | Add `avatar_layout: { position: "right", width_percent: 35 }` |
+| None | Add `avatar_layout: { position: "right", width_percent: 52 }` |
 
 ---
 
@@ -547,7 +547,7 @@ PDF/MD Input
 
 | Current Field | Required Addition |
 |---------------|-------------------|
-| None | Add `avatar_layout: { position: "right", width_percent: 35 }` |
+| None | Add `avatar_layout: { position: "right", width_percent: 52 }` |
 
 ---
 
@@ -557,7 +557,7 @@ PDF/MD Input
 
 | File | Change | Status |
 |------|--------|--------|
-| `core/prompts/section_planner_system_v1.5.txt` | Add `avatar_width_percent` field (60/45/35) | PENDING |
+| `core/prompts/section_planner_system_v1.5.txt` | Add `avatar_width_percent` field (52% for all) | COMPLETE |
 | `core/prompts/section_planner_system_v1.5.txt` | Remove "hidden" from avatar_visibility and avatar_position | PENDING |
 | `core/prompts/visual_spec_artist_system_v1.5.txt` | Remove "hide" from avatar_layer options | PENDING |
 | `core/prompts/memory_flashcard_system_v1.5.txt` | Add `avatar_layout` output field | PENDING |
@@ -567,7 +567,7 @@ PDF/MD Input
 
 | File | Function | Change | Status |
 |------|----------|--------|--------|
-| `core/agents/section_planner.py` | `validate_output()` | Validate avatar_width_percent (60/45/35 based on type) | PENDING |
+| `core/agents/section_planner.py` | `validate_output()` | Validate avatar_width_percent (52% for all types) | COMPLETE |
 | `core/agents/visual_spec_artist.py` | `validate_output()` | Remove "hide" validation for avatar_layer | PENDING |
 | `core/agents/memory_agent.py` | `run()` | Output avatar_layout in response | PENDING |
 | `core/agents/recap_agent.py` | `run()` | Output avatar_layout in response | PENDING |
@@ -576,16 +576,16 @@ PDF/MD Input
 
 | File | Function/Section | Change | Status |
 |------|------------------|--------|--------|
-| `player/player.js` | `LayerController.updateLayers()` | Remove logic that hides avatar on avatar_layer="hide" | PENDING |
-| `player/player.js` | `LayerController.updateLayers()` | Avatar ALWAYS visible, ignore "hide" value | PENDING |
-| `player/player.js` | `setAvatarWidth()` or similar | Read avatar_width_percent from section and apply CSS | PENDING |
-| `player/index.html` | CSS | Add width classes for 60%, 45%, 35% avatar sizes | PENDING |
+| `player/player.js` | `LayerController.updateLayers()` | Remove logic that hides avatar on avatar_layer="hide" | COMPLETE (ISS-136) |
+| `player/player.js` | `LayerController.updateLayers()` | Avatar ALWAYS visible, ignore "hide" value | COMPLETE (ISS-136) |
+| `player/player.js` | `getDefaultAvatarWidth()` | Return 52% for ALL section types | COMPLETE (ISS-141) |
+| `player/index.html` | CSS | Width classes not needed - uses inline width_percent | COMPLETE |
 
 ### Merge Step Changes
 
 | File | Function | Change | Status |
 |------|----------|--------|--------|
-| `core/merge_step_v15.py` | `merge_section()` | Include avatar_layout from agents into section output | PENDING |
+| `core/merge_step_v15.py` | `merge_section()` | Include avatar_layout from agents into section output | COMPLETE (ISS-131) |
 
 ---
 
@@ -663,12 +663,12 @@ player/jobs/{job_id}/
 
 | REQ-ID | Description | Status | Files Affected |
 |--------|-------------|--------|----------------|
-| REQ-001 | Intro section: Avatar CENTER, 60% width | PENDING | section_planner prompt, player.js, player CSS |
-| REQ-002 | Summary section: Avatar RIGHT, 45% width | PENDING | section_planner prompt, player.js |
-| REQ-003 | Content/Example/Quiz/Memory/Recap: Avatar RIGHT, 35% width | PENDING | section_planner prompt, player.js |
-| REQ-004 | Avatar ALWAYS VISIBLE (remove "hide" option) | PENDING | section_planner prompt, visual_spec_artist prompt, player.js |
-| REQ-005 | gesture_only = avatar generation metadata, not display hiding | PENDING | Documentation only (already correct) |
-| REQ-006 | Video fills screen when playing (Manim/WAN) | PENDING | player.js, player CSS |
+| REQ-001 | Intro section: Avatar CENTER, 52% width | COMPLETE (ISS-141) | section_planner prompt, player.js |
+| REQ-002 | Summary section: Avatar RIGHT, 52% width | COMPLETE (ISS-141) | section_planner prompt, player.js |
+| REQ-003 | Content/Example/Quiz/Memory/Recap: Avatar RIGHT, 52% width | COMPLETE (ISS-141) | section_planner prompt, player.js |
+| REQ-004 | Avatar ALWAYS VISIBLE (remove "hide" option) | COMPLETE (ISS-136) | section_planner prompt, visual_spec_artist prompt, player.js |
+| REQ-005 | gesture_only = avatar generation metadata, not display hiding | COMPLETE | Documentation only (already correct) |
+| REQ-006 | Video fills screen when playing (Manim/WAN) | COMPLETE | player.js, player CSS |
 
 ### Layer Requirements
 
@@ -676,7 +676,7 @@ player/jobs/{job_id}/
 |--------|-------------|--------|----------------|
 | REQ-010 | Layer 0: Background always black | VERIFIED | player/index.html CSS |
 | REQ-011 | Layer 1: Content area (Text OR Video, mutual exclusion) | VERIFIED | player.js |
-| REQ-012 | Layer 2: Avatar always rendered on top | PENDING | player.js |
+| REQ-012 | Layer 2: Avatar always rendered on top | COMPLETE (ISS-136) | player.js |
 
 ### Prompt Changes
 
@@ -904,13 +904,13 @@ Verify avatar sizing and layer behavior across all section types:
 
 | Section | Avatar Position | Avatar Width | Check |
 |---------|-----------------|--------------|-------|
-| Intro | Center | 60% | Visual |
-| Summary | Right | 45% | Visual |
-| Content | Right | 35% | Visual |
-| Example | Right | 35% | Visual |
-| Quiz | Right | 35% | Visual |
-| Memory | Right | 35% | Visual |
-| Recap | Right | 35% | Visual |
+| Intro | Center | 52% | Visual |
+| Summary | Right | 52% | Visual |
+| Content | Right | 52% | Visual |
+| Example | Right | 52% | Visual |
+| Quiz | Right | 52% | Visual |
+| Memory | Right | 52% | Visual |
+| Recap | Right | 52% | Visual |
 
 **Test Method**: Run pipeline, take screenshots, verify avatar placement
 

@@ -317,13 +317,11 @@ class LayerController {
 
   /**
    * Get default avatar width by section type
+   * ISS-141 FIX: All section types use 52% per display_requirements.md v2.1 Display Summary Table
    */
   getDefaultAvatarWidth(sectionType) {
-    switch (sectionType) {
-      case 'intro': return 60;
-      case 'summary': return 45;
-      default: return 35;
-    }
+    // REQ-001 through REQ-003: Avatar width is 52% for ALL section types
+    return 52;
   }
 
   /**

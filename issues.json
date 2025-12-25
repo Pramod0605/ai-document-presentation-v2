@@ -171,38 +171,43 @@
       "id": "ISS-141",
       "title": "Avatar width inconsistency between spec and code",
       "severity": "MEDIUM",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "created": "2025-12-25",
+      "resolved": "2025-12-25",
       "description": "display_requirements.md specifies 52% avatar width for ALL section types, but player.js defaults to 60/45/35% per type",
       "requirement_violated": "REQ-001 through REQ-003 in display_requirements.md",
       "evidence": "player.js getDefaultAvatarWidth returns 60/45/35, but Display Summary Table shows 52% for all",
       "root_cause": "Specification was updated to 52% uniform width but code still has legacy values",
-      "fix_location": "player/player.js lines 321-326, core/merge_step_v15.py"
+      "fix_location": "player/player.js lines 321-326, core/merge_step_v15.py",
+      "fix_applied": "1) Updated player.js getDefaultAvatarWidth() to return 52 for ALL section types, 2) Updated Layer Architecture docs to say 52% for all"
     },
     {
       "id": "ISS-142",
       "title": "V1.4 prompts still allow 'hidden' avatar option",
       "severity": "LOW",
-      "status": "OPEN",
+      "status": "WONTFIX",
       "created": "2025-12-25",
+      "closed": "2025-12-25",
       "description": "V1.4 prompts (content_director, recap_director) still contain avatar_position='hidden' and avatar_layer='hide' options",
       "requirement_violated": "REQ-004: Avatar ALWAYS visible",
       "evidence": "grep found 50+ instances of avatar hide/hidden in core/prompts/*.txt",
       "root_cause": "V1.4 prompts not updated when avatar-always-visible requirement was added",
       "fix_location": "core/prompts/content_director_system_v1.4.txt, core/prompts/recap_director_*.txt",
-      "note": "Player already handles this gracefully (defaults to show), but prompts should be updated for consistency"
+      "note": "WONTFIX: V1.4 prompts are legacy and will be deprecated. Player handles gracefully (defaults to show). V1.5 prompts are correct."
     },
     {
       "id": "ISS-143",
       "title": "display_requirements.md has inconsistent avatar widths in ASCII diagrams",
       "severity": "LOW",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "created": "2025-12-25",
+      "resolved": "2025-12-25",
       "description": "Display Summary Table says 52% for all, but ASCII diagrams show 60%/45%/35% for intro/summary/others",
       "requirement_violated": "Documentation consistency",
       "evidence": "Summary Table row shows 52% for all; ASCII diagrams show different values",
       "root_cause": "Document was partially updated - table updated but ASCII diagrams not synced",
-      "fix_location": "docs/display_requirements.md"
+      "fix_location": "docs/display_requirements.md",
+      "fix_applied": "Updated all ASCII diagrams and avatar_layout lines to use width_percent: 52 for all section types"
     },
     {
       "id": "ISS-144",
