@@ -195,13 +195,16 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 - **ISS-131 (RESOLVED)**: Avatar width now enforced at 52% for all sections via merge_step_v15.py
 - **ISS-134 (RESOLVED)**: Player now skips video detection for text-only sections (renderer=none)
 - **ISS-136 (RESOLVED)**: Avatar visibility now enforced as "always" for all sections including recap
+- **ISS-137 (RESOLVED)**: Audio generation fixed - edge_tts asyncio wrapper now handles Flask context, pyttsx3 raises proper exceptions, audio_file only set when file exists
 - **Manim Code Validation**: Added runtime pattern checks and completeness validation to manim_code_generator.py
 
 ### Remaining Issues
 - **ISS-120**: WAN/Video prompts exceed API character limit (1900+ chars)
 - **ISS-132**: LaTeX/Math formulas not appearing in visual_content (extraction issue)
 - **ISS-133**: Narration/display desync (timing alignment)
-- **ISS-135**: Audio .wav vs .mp3 format inconsistency
+- **ISS-138**: LaTeX standalone.cls still not found (texliveFull path issue)
+- **ISS-139**: LLM-generated Manim code truncated (max_tokens or validation gap)
+- **ISS-140**: render_spec.renderer field missing
 - **Manim Render Execution**: LLM-generated Python code still has runtime errors (improved validation may help)
 
 ### Recent Issues Fixed (V1.4)
