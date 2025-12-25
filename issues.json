@@ -77,13 +77,16 @@
       "id": "ISS-133",
       "title": "Narration/display desync - text remains after narration ends",
       "severity": "HIGH",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "created": "2025-12-25",
+      "resolved": "2025-12-25",
       "job_reference": "df45f8ae",
       "description": "Narration completes but text content remains displayed. display_directives timing not synchronized with TTS duration.",
       "requirement_violated": "Narration Sync Architecture (§7), TTS timing authoritative",
       "evidence": "User report: 'narration completes' but 'lot of text displayed'",
-      "root_cause": "segment.duration_seconds not updated with actual TTS duration, or display_directives not using correct timing"
+      "root_cause": "Player had no end-state handling - when t >= lastSeg.end_time, no display_directives were applied",
+      "fix_applied": "player.js: Added end-state handling in handleTimeUpdate() - when audio ends past last segment, applies textLayer='hide', avatarLayer='show' to fade out text while keeping avatar visible",
+      "files_changed": ["player/player.js"]
     },
     {
       "id": "ISS-134",

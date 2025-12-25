@@ -1428,6 +1428,20 @@ function handleTimeUpdate(e) {
   if (activeSegmentIndex >= 0 && activeNarrationSegs && activeNarrationSegs[activeSegmentIndex]) {
     const sType = slide.section_type || slide.slide_type || 'content';
     layerController.applyDirectives(activeNarrationSegs[activeSegmentIndex], sType, activeSegmentIndex);
+  } else if (!hasActiveSegment && slide.timed_segments && slide.timed_segments.length > 0) {
+    // ISS-133 FIX: When audio ends (past last segment), fade out text content
+    const lastSeg = slide.timed_segments[slide.timed_segments.length - 1];
+    if (t >= lastSeg.end_time) {
+      const sType = slide.section_type || slide.slide_type || 'content';
+      // Apply end-state directive: hide text, keep avatar visible
+      layerController.applyDirectivesImmediate({
+        textLayer: 'hide',
+        visualLayer: 'show',
+        avatarLayer: 'show',
+        sectionType: sType,
+        segmentIndex: -1  // Special index for end state
+      });
+    }
   }
   
   const sType = slide.section_type || slide.slide_type || 'content';
