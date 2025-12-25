@@ -1,7 +1,7 @@
 """
 V1.5 Recap Scene Agent (REQ-015)
 
-Specialized agent for recap section - outputs exactly 5 video prompts (300+ words each).
+Specialized agent for recap section - outputs exactly 5 video prompts (80-150 words, max 800 chars each).
 """
 import logging
 from typing import Dict, Any, List, Tuple
@@ -15,7 +15,7 @@ class RecapSceneAgent(BaseAgent):
     Recap Scene Agent - Creates video prompts for the recap section.
     
     Input: source_markdown, subject, key_concepts
-    Output: section_id, section_type, title, video_prompts (exactly 5, 300+ words each)
+    Output: section_id, section_type, title, video_prompts (exactly 5, 80-150 words each, max 800 chars)
     """
     
     name = "RecapScene"
@@ -64,7 +64,7 @@ class RecapSceneAgent(BaseAgent):
         return len(errors) == 0, errors
     
     def validate_semantic(self, output: Dict[str, Any], input_data: Dict[str, Any]) -> Tuple[bool, List[str]]:
-        """Validate video prompt quality - 300+ words, no banned phrases."""
+        """Validate video prompt quality - 80-150 words, max 800 chars, no banned phrases."""
         errors = []
         warnings = []
         
