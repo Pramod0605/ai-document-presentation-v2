@@ -208,12 +208,16 @@ def log_prompt_quality_summary(video_prompts: List[Dict], section_id: int = 0) -
 
 def truncate_wan_prompt(prompt: str, max_chars: int = MAX_PROMPT_LENGTH) -> str:
     """
-    Truncate WAN prompt to fit within character limit while preserving coherence.
+    SAFETY NET: Truncate WAN prompt if LLM exceeded character limit.
     
-    ISS-158 FIX: Truncates to max_chars, ending at last complete sentence.
+    ISS-158 FIX: LLM prompts now instruct 80-150 words / 800 chars.
+    This function is a fallback - if triggered, it means LLM didn't follow instructions.
     """
     if not prompt or len(prompt) <= max_chars:
         return prompt
+    
+    print(f"[WAN WARNING] LLM generated {len(prompt)} chars but limit is {max_chars}. "
+          f"LLM should generate within limits - applying safety truncation.")
     
     truncated = prompt[:max_chars]
     
@@ -233,9 +237,10 @@ def truncate_wan_prompt(prompt: str, max_chars: int = MAX_PROMPT_LENGTH) -> str:
 
 def truncate_video_prompts(video_prompts: List[Dict], max_chars: int = MAX_PROMPT_LENGTH) -> List[Dict]:
     """
-    Truncate all video prompts in list to fit within character limit.
+    SAFETY NET: Truncate video prompts if LLM exceeded character limit.
     
-    ISS-158 FIX: Auto-truncation before validation.
+    ISS-158 FIX: LLM prompts now instruct 80-150 words / 800 chars.
+    Truncation here is a fallback for when LLM doesn't follow instructions.
     """
     truncated = []
     for vp in video_prompts:
@@ -244,8 +249,6 @@ def truncate_video_prompts(video_prompts: List[Dict], max_chars: int = MAX_PROMP
             if "prompt" in new_vp:
                 original_len = len(new_vp["prompt"])
                 new_vp["prompt"] = truncate_wan_prompt(new_vp["prompt"], max_chars)
-                if len(new_vp["prompt"]) < original_len:
-                    print(f"[WAN Validator] Truncated prompt from {original_len} to {len(new_vp['prompt'])} chars")
             truncated.append(new_vp)
         else:
             truncated.append({"prompt": truncate_wan_prompt(str(vp), max_chars)})
