@@ -1,6 +1,6 @@
 {
-  "version": "1.1",
-  "description": "Status messages for job progress display. Fun messages for progress, precise error messages with impact for failures.",
+  "version": "1.2",
+  "description": "Status messages for job progress display. Fun messages for progress, precise error messages with impact for failures. V1.5 phases added.",
   
   "phases": {
     "queued": {
@@ -48,7 +48,118 @@
       ],
       "failure_message": "PARSE FAILED: Chunker could not segment content",
       "impact": "No chunks generated. Director phase cannot start.",
-      "dev_hint": "Check Gemini Flash API response. Verify markdown structure and content length."
+      "dev_hint": "Check Gemini Pro API response. Verify markdown structure and content length."
+    },
+    
+    "section_planner": {
+      "display_name": "Planning Lesson Structure",
+      "messages": [
+        "The Section Planner is designing your lesson...",
+        "Mapping out the perfect learning journey...",
+        "Creating a blueprint for understanding...",
+        "Organizing concepts for maximum clarity...",
+        "Crafting the educational architecture..."
+      ],
+      "failure_message": "SECTION PLANNER FAILED: Could not create section structure",
+      "impact": "No section blueprints generated. Narration cannot proceed.",
+      "dev_hint": "Check SectionPlannerAgent output. Verify section_type and renderer assignments."
+    },
+    
+    "narration": {
+      "display_name": "Writing Narration",
+      "messages": [
+        "Crafting the perfect explanation...",
+        "Writing words that teach and inspire...",
+        "The Narration Writer is finding the right voice...",
+        "Turning concepts into spoken wisdom...",
+        "Creating the script for understanding..."
+      ],
+      "failure_message": "NARRATION FAILED: Could not generate narration for section",
+      "impact": "Section has no narration text. Audio and timing will be missing.",
+      "dev_hint": "Check NarrationWriterAgent output. Verify segments have text and duration_seconds."
+    },
+    
+    "visuals": {
+      "display_name": "Designing Visuals",
+      "messages": [
+        "The Visual Artist is sketching ideas...",
+        "Designing the perfect visual accompaniment...",
+        "Creating visual beats that teach...",
+        "Mapping visuals to narration moments...",
+        "Painting knowledge in pixels..."
+      ],
+      "failure_message": "VISUALS FAILED: Could not design visual elements",
+      "impact": "Section has no visual_beats. Display directives may be incomplete.",
+      "dev_hint": "Check VisualSpecArtistAgent output. Verify visual_beats match segment_ids."
+    },
+    
+    "renderer_spec": {
+      "display_name": "Creating Render Specifications",
+      "messages": [
+        "Preparing render specifications...",
+        "Setting up the animation pipeline...",
+        "Configuring video generation parameters...",
+        "Fine-tuning the visual output..."
+      ],
+      "failure_message": "RENDERER SPEC FAILED: Could not create render specifications",
+      "impact": "Section video may not render correctly. Check manim or video specs.",
+      "dev_hint": "Check RendererSpecAgent output. Verify manim_scene_spec or video_prompts are valid."
+    },
+    
+    "memory": {
+      "display_name": "Creating Memory Flashcards",
+      "messages": [
+        "Building flashcards for retention...",
+        "The Memory Agent is reinforcing key concepts...",
+        "Creating quick-reference cards...",
+        "Distilling wisdom into bite-sized pieces...",
+        "Making knowledge stick..."
+      ],
+      "failure_message": "MEMORY FAILED: Could not generate memory flashcards",
+      "impact": "No memory section generated. Flashcards will be missing.",
+      "dev_hint": "Check MemoryFlashcardAgent output. Verify exactly 5 flashcards with front/back."
+    },
+    
+    "recap": {
+      "display_name": "Creating Recap Videos",
+      "messages": [
+        "The Recap Agent is summarizing the journey...",
+        "Creating visual summaries of key concepts...",
+        "Building the recap experience...",
+        "Designing memorable review scenes...",
+        "Wrapping up the learning adventure..."
+      ],
+      "failure_message": "RECAP FAILED: Could not generate recap video prompts",
+      "impact": "No recap section generated. Video summaries will be missing.",
+      "dev_hint": "Check RecapSceneAgent output. Verify 5 video_prompts with 80-150 words each."
+    },
+    
+    "manim_code": {
+      "display_name": "Generating Animation Code",
+      "messages": [
+        "Writing Manim animation code...",
+        "The code generator is crafting visual magic...",
+        "Translating math into motion...",
+        "Building animations from scratch...",
+        "Programming the dance of equations..."
+      ],
+      "failure_message": "MANIM CODE FAILED: Could not generate valid animation code",
+      "impact": "Section manim animation may not render. Fallback to text display.",
+      "dev_hint": "Check ManimCodeGenerator output. Verify Python code has no syntax errors."
+    },
+    
+    "render_execute": {
+      "display_name": "Rendering Videos",
+      "messages": [
+        "Rendering animations and videos...",
+        "The render engine is creating magic...",
+        "Turning code into visual art...",
+        "Processing video generation requests...",
+        "Almost there... final rendering..."
+      ],
+      "failure_message": "RENDER EXECUTE FAILED: Video rendering encountered errors",
+      "impact": "Some section videos may be missing. Check individual renderer logs.",
+      "dev_hint": "Check manim_runner.py and wan_client.py logs for specific errors."
     },
     
     "director": {

@@ -139,14 +139,16 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 | Dashboard | Pipeline selector dropdown added |
 
 ### V1.5 Agents Implemented (PHASE-1)
-| Agent | Files | Output Fields |
-|-------|-------|---------------|
-| SectionPlanner | `core/agents/section_planner.py` | ~10 fields per section |
-| NarrationWriter | `core/agents/narration_writer.py` | 5 fields (section_id, narration.full_text, segments) |
-| VisualSpecArtist | `core/agents/visual_spec_artist.py` | ~12 fields (visual_beats, segment_enrichments) |
-| RendererSpecAgent | `core/agents/renderer_spec_agent.py` | Variable (manim/video spec) - remotion removed |
-| MemoryFlashcard | `core/agents/memory_agent.py` | 5 flashcards |
-| RecapScene | `core/agents/recap_agent.py` | 5 video prompts (300+ words each) |
+| Agent | Files | max_tokens | Output Fields |
+|-------|-------|------------|---------------|
+| SmartChunker | `core/smart_chunker.py` | 8192 | topics[], quiz_questions[] |
+| SectionPlanner | `core/agents/section_planner.py` | 8000 | ~10 fields per section |
+| NarrationWriter | `core/agents/narration_writer.py` | 6000 | 5 fields (section_id, narration.full_text, segments) |
+| VisualSpecArtist | `core/agents/visual_spec_artist.py` | 8000 | ~12 fields (visual_beats, segment_enrichments) |
+| RendererSpecAgent | `core/agents/renderer_spec_agent.py` | 10000 | Variable (manim/video spec) |
+| MemoryFlashcard | `core/agents/memory_agent.py` | 4000 | 5 flashcards |
+| RecapScene | `core/agents/recap_agent.py` | 15000 | 5 video prompts (80-150 words each) |
+| ManimCodeGenerator | `core/agents/manim_code_generator.py` | 16000 | Python code for animations |
 
 ## V1.4 Test Status (2025-12-23)
 
@@ -210,6 +212,9 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
   - wan_prompt_validator.py: MIN_WAN_PROMPT_WORDS updated from 300 to 80, hard_fail validates both limits
 - **ISS-157 (RESOLVED)**: Quiz section handling via SmartChunker Q&A extraction
   - Fully wired: SmartChunker → SectionPlanner → NarrationWriter → merge_step → player.js
+- **Status Messages (v1.2)**: Added V1.5-specific phases to status_messages.json
+  - New phases: section_planner, narration, visuals, renderer_spec, memory, recap, manim_code, render_execute
+  - Dashboard now displays status_message from job status endpoint
 
 ### Remaining Issues
 - None critical - all HIGH priority issues resolved
