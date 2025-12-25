@@ -52,13 +52,26 @@
       "id": "ISS-132",
       "title": "LaTeX/Math formulas stripped from content",
       "severity": "HIGH",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "created": "2025-12-25",
+      "resolved": "2025-12-25",
       "job_reference": "df45f8ae",
       "description": "Math PDF content with formulas shows NO LATEX in visual_content. $...$ blocks removed during processing.",
       "requirement_violated": "P7 Content Integrity, REQ-045",
       "evidence": "All 10 sections report NO LATEX in visual_content despite math PDF source",
-      "root_cause": "NarrationWriter or VisualSpecArtist stripping LaTeX during text processing"
+      "root_cause": "LLM prompts did not emphasize preserving LaTeX verbatim",
+      "fix_applied": [
+        "1) VisualSpecArtist system prompt: Added LATEX FORMULA PRESERVATION rule with explicit copy instructions",
+        "2) VisualSpecArtist user prompt: Added CRITICAL - FORMULA PRESERVATION step with examples",
+        "3) VisualSpecArtist schema: Added 'formulas' array field for multiple formulas",
+        "4) NarrationWriter prompt: Added FORMULA NARRATION rule for spoken formula descriptions",
+        "5) Both prompts now emphasize: Nothing omitted, nothing modified"
+      ],
+      "files_changed": [
+        "core/prompts/visual_spec_artist_system_v1.5.txt",
+        "core/prompts/visual_spec_artist_user_v1.5.txt",
+        "core/prompts/narration_writer_system_v1.5.txt"
+      ]
     },
     {
       "id": "ISS-133",

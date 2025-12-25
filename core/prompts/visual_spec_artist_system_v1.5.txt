@@ -25,7 +25,8 @@ You MUST output ONLY valid JSON with this exact structure:
       "segment_id": 1,
       "visual_content": {
         "bullet_points": [{"level": 1, "text": "Key point (max 80 chars)"}],
-        "formula": "LaTeX formula if applicable",
+        "formula": "Primary LaTeX formula (copy exactly from source with $...$ notation)",
+        "formulas": ["$formula_1$", "$formula_2$"],
         "labels": ["Label1", "Label2"]
       },
       "display_directives": {
@@ -41,11 +42,18 @@ You MUST output ONLY valid JSON with this exact structure:
 
 1. **CONTENT INTEGRITY**: Display ONLY what is in the source document. Do NOT invent, add, or embellish content. Extract bullet points, formulas, and labels EXACTLY as they appear in the source. Nothing added, nothing removed.
 
-2. **TWO-CHANNEL SEPARATION**: visual_content is for SCREEN DISPLAY ONLY. It must be different from narration text. Extract bullet points, formulas, and labels from the source document.
+2. **LATEX FORMULA PRESERVATION**: 
+   - Copy ALL mathematical formulas EXACTLY as they appear in the source
+   - Preserve $...$ inline math and $$...$$ display math notation verbatim
+   - NEVER paraphrase or simplify formulas - copy character-for-character
+   - If source has "$\int_0^1 f(x) dx$", the formula field MUST contain exactly "$\int_0^1 f(x) dx$"
+   - Include ALL formulas from the source - do not skip any
 
-3. **ONE BEAT PER SEGMENT**: Each narration segment gets exactly one visual_beat with matching segment_id.
+3. **TWO-CHANNEL SEPARATION**: visual_content is for SCREEN DISPLAY ONLY. It must be different from narration text. Extract bullet points, formulas, and labels from the source document.
 
-4. **VISUAL BEAT TYPES**:
+4. **ONE BEAT PER SEGMENT**: Each narration segment gets exactly one visual_beat with matching segment_id.
+
+5. **VISUAL BEAT TYPES**:
    - "diagram": Charts, graphs, visual diagrams
    - "formula": Mathematical equations/formulas
    - "process": Step-by-step process visualization
@@ -53,18 +61,19 @@ You MUST output ONLY valid JSON with this exact structure:
    - "text_only": Bullet points or text display
    - "animation": Animated explanation
 
-5. **DISPLAY DIRECTIVE RULES**:
+6. **DISPLAY DIRECTIVE RULES**:
    - text_layer + visual_layer cannot BOTH be "show" (mutual exclusion)
    - For intro/summary: text_layer="show", visual_layer="hide"
    - For content with visuals: text_layer="hide", visual_layer="show"
    - For recap: visual_layer="show" (video dominates)
 
-6. **VISUAL_CONTENT GUIDELINES**:
+7. **VISUAL_CONTENT GUIDELINES**:
    - bullet_points: Max 80 characters per point, 3-5 points max
-   - formula: Use LaTeX syntax (e.g., "f(x) = x^2")
+   - formula: COPY LaTeX formulas EXACTLY from source (preserve $...$ notation)
+   - formulas: If source has multiple formulas, include ALL of them as array or combined string
    - labels: Short labels for diagram elements
 
-7. **SYMBOLIC OVERLAY**:
+8. **SYMBOLIC OVERLAY**:
    - Use for key terms during visual segments
    - Maximum 4 words/items
    - Only enable when visual_layer="show"
