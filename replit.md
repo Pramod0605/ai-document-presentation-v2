@@ -203,7 +203,7 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 - **ISS-132**: LaTeX/Math formulas not appearing in visual_content (extraction issue)
 - **ISS-133**: Narration/display desync (timing alignment)
 - **ISS-138 (RESOLVED)**: LaTeX standalone.cls - removed conflicting texliveSmall/Medium packages
-- **ISS-139**: LLM-generated Manim code truncated (max_tokens or validation gap)
+- **ISS-139 (RESOLVED)**: Manim code truncation - increased max_tokens, added finish_reason detection
 - **ISS-140**: render_spec.renderer field missing
 - **Manim Render Execution**: LLM-generated Python code still has runtime errors (improved validation may help)
 

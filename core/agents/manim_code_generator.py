@@ -21,7 +21,7 @@ class ManimCodeGenerator:
     name = "ManimCodeGenerator"
     model = CLAUDE_SONNET_3_5
     temperature = 0.3
-    max_tokens = 8000
+    max_tokens = 16000  # Increased from 8000 to prevent truncation (ISS-139)
     max_retries = 3
     
     def __init__(self, openrouter_api_key: Optional[str] = None, **kwargs):
@@ -133,7 +133,20 @@ class ManimCodeGenerator:
                 return "", [f"API error: {response.status_code} - {response.text}"]
             
             result = response.json()
-            code = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+            choice = result.get("choices", [{}])[0]
+            code = choice.get("message", {}).get("content", "")
+            finish_reason = choice.get("finish_reason", "")
+            
+            # Check if response was truncated due to token limit (ISS-139)
+            if finish_reason == "length":
+                section_data = section_data.copy()
+                section_data["previous_errors"] = (
+                    "CRITICAL: Your previous response was TRUNCATED due to token limit. "
+                    "You MUST produce SHORTER, more concise code. Reduce animations, "
+                    "combine similar operations, and avoid verbose comments. "
+                    "Target under 200 lines of code."
+                )
+                continue  # Retry with truncation warning
             
             code = self._extract_python_code(code)
             

@@ -143,13 +143,15 @@
       "id": "ISS-139",
       "title": "LLM-generated Manim code is truncated",
       "severity": "CRITICAL",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "created": "2025-12-25",
+      "resolved": "2025-12-25",
       "job_reference": "3ffaf8d2",
       "description": "Generated Python code ends mid-statement with incomplete expressions like 'run_time=' without value",
       "requirement_violated": "Code completeness validation",
       "evidence": "Section 5 ends: 'run_time=', Section 7 ends: 'r\"\\csc A = \\frac{5'",
-      "root_cause": "LLM max_tokens limit reached OR validation not rejecting incomplete code"
+      "root_cause": "max_tokens=8000 was insufficient; finish_reason='length' not being detected",
+      "fix_applied": "1) Increased max_tokens from 8000 to 16000, 2) Added finish_reason='length' detection with auto-retry and simplification request, 3) Updated system prompt with 100-150 line target"
     },
     {
       "id": "ISS-140",
