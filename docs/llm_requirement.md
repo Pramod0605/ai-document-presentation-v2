@@ -22,16 +22,18 @@ This document serves as the comprehensive reference for all LLM agents in the V1
 
 ## Agent Overview
 
-| # | Agent | Prompt File | Python File | JSON Enforced | Output Stored |
-|---|-------|-------------|-------------|---------------|---------------|
-| 1 | SmartChunker | `smart_chunker_system_v1.5.txt` | `core/llm_handler.py` | YES | In-memory → merge |
-| 2 | SectionPlanner | `section_planner_system_v1.5.txt` | `core/agents/section_planner.py` | YES | In-memory → merge |
-| 3 | NarrationWriter | `narration_writer_system_v1.5.txt` | `core/agents/narration_writer.py` | YES | In-memory → merge |
-| 4 | VisualSpecArtist | `visual_spec_artist_system_v1.5.txt` | `core/agents/visual_spec_artist.py` | YES | In-memory → merge |
-| 5 | RendererSpecAgent | `manim_spec_system_v1.5.txt`, `video_prompt_system_v1.5.txt` | `core/agents/renderer_spec_agent.py` | YES | In-memory → merge |
-| 6 | MemoryFlashcard | `memory_flashcard_system_v1.5.txt` | `core/agents/memory_agent.py` | YES | In-memory → merge |
-| 7 | RecapScene | `recap_scene_system_v1.5.txt` | `core/agents/recap_agent.py` | YES | In-memory → merge |
-| 8 | ManimCodeGenerator | (inline prompt) | `core/agents/manim_code_generator.py` | NO (Python code) | In section.render_spec |
+| # | Agent | System Prompt | User Prompt | Python File | JSON Enforced | Output Storage |
+|---|-------|---------------|-------------|-------------|---------------|----------------|
+| 1 | SmartChunker | `smart_chunker_system_v1.5.txt` | `smart_chunker_user_v1.5.txt` | `core/smart_chunker.py` | YES | `artifacts/01_chunker.json` |
+| 2 | SectionPlanner | `section_planner_system_v1.5.txt` | `section_planner_user_v1.5.txt` | `core/agents/section_planner.py` | YES | `artifacts/02_planner.json` |
+| 3 | NarrationWriter | `narration_writer_system_v1.5.txt` | `narration_writer_user_v1.5.txt` | `core/agents/narration_writer.py` | YES | `artifacts/0X_section_Y_narration.json` |
+| 4 | VisualSpecArtist | `visual_spec_artist_system_v1.5.txt` | `visual_spec_artist_user_v1.5.txt` | `core/agents/visual_spec_artist.py` | YES | `artifacts/0X_section_Y_visuals.json` |
+| 5 | RendererSpecAgent | `manim_spec_system_v1.5.txt` / `video_prompt_system_v1.5.txt` | `manim_spec_user_v1.5.txt` / `video_prompt_user_v1.5.txt` | `core/agents/renderer_spec_agent.py` | YES | `artifacts/0X_section_Y_render_spec.json` |
+| 6 | MemoryFlashcard | `memory_flashcard_system_v1.5.txt` | `memory_flashcard_user_v1.5.txt` | `core/agents/memory_agent.py` | YES | `artifacts/memory.json` |
+| 7 | RecapScene | `recap_scene_system_v1.5.txt` | `recap_scene_user_v1.5.txt` | `core/agents/recap_agent.py` | YES | `artifacts/recap.json` |
+| 8 | ManimCodeGenerator | `manim_system_prompt.txt` | `manim_user_prompt_template.txt` | `core/agents/manim_code_generator.py` | NO (Python code) | `section.render_spec.manim_scene_spec.manim_code` |
+
+**Note**: All prompts are in `core/prompts/` directory. Artifacts saved to `{job_dir}/artifacts/` per ISS-149.
 
 ---
 
@@ -41,7 +43,14 @@ This document serves as the comprehensive reference for all LLM agents in the V1
 
 **Purpose**: First pass - extracts logical topics from markdown content
 
-**Prompt File**: `core/prompts/smart_chunker_system_v1.5.txt`
+**Prompt Files**:
+- System: `core/prompts/smart_chunker_system_v1.5.txt`
+- User: `core/prompts/smart_chunker_user_v1.5.txt`
+
+**User Prompt Template Variables**:
+- `{markdown_content}` - The full markdown text from PDF conversion
+- `{subject}` - Subject area (e.g., "Math", "Science")
+- `{grade}` - Grade level (e.g., "Grade 10")
 
 **JSON Output Enforcement**:
 ```
@@ -68,7 +77,7 @@ You MUST output valid JSON with this exact structure:
 
 **Validation**: Structural (JSON parse) + Semantic (topic_id uniqueness)
 
-**Storage**: Returned in-memory, passed to SectionPlanner
+**Storage**: `artifacts/01_chunker.json`, passed to SectionPlanner
 
 ---
 
@@ -76,7 +85,14 @@ You MUST output valid JSON with this exact structure:
 
 **Purpose**: Plans section structure from topics
 
-**Prompt File**: `core/prompts/section_planner_system_v1.5.txt`
+**Prompt Files**:
+- System: `core/prompts/section_planner_system_v1.5.txt`
+- User: `core/prompts/section_planner_user_v1.5.txt`
+
+**User Prompt Template Variables**:
+- `{topic_summary}` - SmartChunker output (topics with key_terms, formulas)
+- `{subject}` - Subject area
+- `{grade}` - Grade level
 
 **JSON Output Enforcement**:
 ```
@@ -108,7 +124,7 @@ You MUST output ONLY valid JSON with this exact structure:
 - Structural: schema validation
 - Semantic: section order (intro→summary→content→memory→recap), section_id sequential
 
-**Storage**: In-memory as `blueprints[]`, passed to per-section agents
+**Storage**: `artifacts/02_planner.json`, passed to per-section agents
 
 ---
 
@@ -116,7 +132,16 @@ You MUST output ONLY valid JSON with this exact structure:
 
 **Purpose**: Creates TTS narration scripts for one section
 
-**Prompt File**: `core/prompts/narration_writer_system_v1.5.txt`
+**Prompt Files**:
+- System: `core/prompts/narration_writer_system_v1.5.txt`
+- User: `core/prompts/narration_writer_user_v1.5.txt`
+
+**User Prompt Template Variables**:
+- `{section_id}` - Section identifier (e.g., "section_1")
+- `{section_type}` - Type (intro, summary, content, example, quiz)
+- `{title}` - Section title
+- `{learning_goals}` - From SectionPlanner
+- `{content}` - Source topic content for this section
 
 **JSON Output Enforcement**:
 ```
@@ -149,7 +174,7 @@ You MUST output ONLY valid JSON with this exact structure:
 - Structural: section_id, narration.full_text, segments required
 - Semantic: segment_id sequential, word count within limits
 
-**Storage**: In-memory as `narration_output`, added to `section_artifacts[]`
+**Storage**: `artifacts/0X_section_Y_narration.json`, added to `section_artifacts[]`
 
 ---
 
@@ -157,7 +182,16 @@ You MUST output ONLY valid JSON with this exact structure:
 
 **Purpose**: Designs visual elements synchronized with narration segments
 
-**Prompt File**: `core/prompts/visual_spec_artist_system_v1.5.txt`
+**Prompt Files**:
+- System: `core/prompts/visual_spec_artist_system_v1.5.txt`
+- User: `core/prompts/visual_spec_artist_user_v1.5.txt`
+
+**User Prompt Template Variables**:
+- `{section_id}` - Section identifier
+- `{section_type}` - Type (content, example)
+- `{title}` - Section title
+- `{narration_segments}` - NarrationWriter segments (JSON)
+- `{renderer}` - Suggested renderer (manim, video, none)
 
 **JSON Output Enforcement**:
 ```
@@ -208,7 +242,7 @@ You MUST output ONLY valid JSON with this exact structure:
 - Structural: visual_beats array, segment_enrichments array
 - Semantic: beat/segment count match, display directive rules
 
-**Storage**: In-memory as `visuals_output`, added to `section_artifacts[]`
+**Storage**: `artifacts/0X_section_Y_visuals.json`, added to `section_artifacts[]`
 
 ---
 
@@ -217,8 +251,17 @@ You MUST output ONLY valid JSON with this exact structure:
 **Purpose**: Creates renderer-specific specs (Manim or Video prompts)
 
 **Prompt Files**: 
-- `core/prompts/manim_spec_system_v1.5.txt` (for manim)
-- `core/prompts/video_prompt_system_v1.5.txt` (for video)
+- System (manim): `core/prompts/manim_spec_system_v1.5.txt`
+- User (manim): `core/prompts/manim_spec_user_v1.5.txt`
+- System (video): `core/prompts/video_prompt_system_v1.5.txt`
+- User (video): `core/prompts/video_prompt_user_v1.5.txt`
+
+**User Prompt Template Variables**:
+- `{section_id}` - Section identifier
+- `{title}` - Section title
+- `{visual_beats}` - VisualSpecArtist output (JSON)
+- `{narration_segments}` - For timing reference
+- `{total_duration}` - Total section duration
 
 **JSON Output Enforcement**:
 ```
@@ -249,7 +292,7 @@ You MUST output ONLY valid JSON with this exact structure:
   "video_prompts": [
     {
       "beat_id": 1,
-      "prompt": "300+ word detailed prompt...",
+      "prompt": "100-180 word detailed prompt...",
       "duration_seconds": 5.0,
       "style": "cinematic|documentary|educational|animated"
     }
@@ -261,7 +304,7 @@ You MUST output ONLY valid JSON with this exact structure:
 - Structural: renderer field, corresponding spec present
 - Semantic: object_id references valid, no banned phrases
 
-**Storage**: In-memory as `render_spec`, added to `section_artifacts[]`
+**Storage**: `artifacts/0X_section_Y_render_spec.json`, added to `section_artifacts[]`
 
 ---
 
@@ -269,7 +312,14 @@ You MUST output ONLY valid JSON with this exact structure:
 
 **Purpose**: Creates exactly 5 flashcards for memory section
 
-**Prompt File**: `core/prompts/memory_flashcard_system_v1.5.txt`
+**Prompt Files**:
+- System: `core/prompts/memory_flashcard_system_v1.5.txt`
+- User: `core/prompts/memory_flashcard_user_v1.5.txt`
+
+**User Prompt Template Variables**:
+- `{source_content}` - All topics/content from the document
+- `{key_terms}` - Extracted key terms
+- `{formulas}` - Any formulas mentioned
 
 **JSON Output Enforcement**:
 ```
@@ -305,7 +355,7 @@ You MUST output ONLY valid JSON with this exact structure:
 - Structural: exactly 5 flashcards
 - Semantic: character limits, category values
 
-**Storage**: In-memory as `memory_output`, passed to merge step
+**Storage**: `artifacts/memory.json`, passed to merge step
 
 ---
 
@@ -313,7 +363,14 @@ You MUST output ONLY valid JSON with this exact structure:
 
 **Purpose**: Creates 5 video generation prompts for recap section
 
-**Prompt File**: `core/prompts/recap_scene_system_v1.5.txt`
+**Prompt Files**:
+- System: `core/prompts/recap_scene_system_v1.5.txt`
+- User: `core/prompts/recap_scene_user_v1.5.txt`
+
+**User Prompt Template Variables**:
+- `{source_content}` - All topics/content from the document
+- `{key_terms}` - Extracted key terms
+- `{subject}` - Subject area
 
 **JSON Output Enforcement**:
 ```
@@ -350,7 +407,7 @@ You must output valid JSON. Do not wrap the JSON in markdown blocks.
 - Structural: exactly 5 prompts
 - Semantic: word count, banned phrase check
 
-**Storage**: In-memory as `recap_output`, passed to merge step
+**Storage**: `artifacts/recap.json`, passed to merge step
 
 ---
 
@@ -358,7 +415,18 @@ You must output valid JSON. Do not wrap the JSON in markdown blocks.
 
 **Purpose**: Generates executable Python code for Manim animations
 
-**Prompt File**: Inline in `core/agents/manim_code_generator.py`
+**Prompt Files**:
+- System: `core/prompts/manim_system_prompt.txt`
+- User: `core/prompts/manim_user_prompt_template.txt`
+
+**User Prompt Template Variables**:
+- `{section_title}` - Section title
+- `{narration_segments}` - Formatted narration segments with timing
+- `{visual_description}` - Visual beats description
+- `{formulas}` - LaTeX formulas to animate
+- `{key_terms}` - Key terms to highlight
+- `{total_duration}` - Total animation duration
+- `{special_requirements}` - Any special requirements (retry errors, etc.)
 
 **Output Format**: RAW PYTHON CODE (not JSON)
 
@@ -378,92 +446,144 @@ self.play(Write(title))
 
 **Validation**:
 - Syntax check via `ast.parse()`
+- Undefined name detection with Manim builtins whitelist
 - Pattern check for required elements
-- Completeness check (not truncated)
+- Completeness check (not truncated, no partial code blocks)
 
-**Storage**: Stored in `section.render_spec.manim_scene_spec.manim_code`
+**Storage**: `sections[].render_spec.manim_scene_spec.manim_code` (failures: `artifacts/manim_failed_sections.json`)
 
 ---
 
 ## Storage Architecture
 
-### Current Flow (V1.5)
+### V1.5 Flow with Artifact Persistence (ISS-149)
 
 ```
 Pipeline Start
     │
     ▼
 ┌─────────────────┐
-│  SmartChunker   │ → topics[] (in-memory)
+│  SmartChunker   │ → topics[]
+│                 │   └── SAVE: artifacts/01_chunker.json
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ SectionPlanner  │ → blueprints[] (in-memory)
+│ SectionPlanner  │ → blueprints[]
+│                 │   └── SAVE: artifacts/02_planner.json
 └────────┬────────┘
          │
-         ▼ (per section)
+         ▼ (per section loop)
 ┌─────────────────┐
-│ NarrationWriter │ ─┐
-├─────────────────┤  │
-│ VisualSpecArtist│  ├→ section_artifacts[] (in-memory)
-├─────────────────┤  │
-│RendererSpecAgent│ ─┘
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│ MemoryFlashcard │ → memory_output (in-memory)
+│ NarrationWriter │ → narration_output
+│                 │   └── SAVE: artifacts/0X_section_Y_narration.json
 ├─────────────────┤
-│   RecapScene    │ → recap_output (in-memory)
+│ VisualSpecArtist│ → visuals_output
+│                 │   └── SAVE: artifacts/0X_section_Y_visuals.json
+├─────────────────┤
+│RendererSpecAgent│ → render_spec
+│                 │   └── SAVE: artifacts/0X_section_Y_render_spec.json
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│   Merge Step    │ → presentation{} (in-memory)
+│ MemoryFlashcard │ → memory_output
+│                 │   └── SAVE: artifacts/memory.json
+├─────────────────┤
+│   RecapScene    │ → recap_output
+│                 │   └── SAVE: artifacts/recap.json
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│   TTS Pass      │ → presentation + audio files
+│   Merge Step    │ → presentation{}
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│ManimCodeGenerator│ → presentation + manim_code
+│   TTS Pass      │ → presentation + audio/section_*.mp3
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ManimCodeGenerator│ → presentation.sections[].render_spec.manim_scene_spec.manim_code
+│                 │   (failures: SAVE artifacts/manim_failed_sections.json)
 └────────┬────────┘
          │
          ▼
 ┌─────────────────────────────────────────┐
-│  DISK STORAGE (only here)               │
+│  FINAL OUTPUT                           │
 │  {job_dir}/presentation.json            │
 │  {job_dir}/audio/*.mp3                  │
 │  {job_dir}/videos/*.mp4                 │
+│  {job_dir}/artifacts/*.json (debug)     │
 └─────────────────────────────────────────┘
 ```
 
-### Artifact Persistence (NEW - ISS-149)
-
-With ISS-149 implemented, intermediate artifacts will also be saved:
+### Directory Structure
 
 ```
 {job_dir}/
-├── presentation.json          (final merged output)
-├── artifacts/                  (NEW - debug artifacts)
-│   ├── 01_chunker.json        (SmartChunker output)
-│   ├── 02_planner.json        (SectionPlanner output)
+├── presentation.json              (final merged v1.3 schema)
+├── artifacts/                     (debug & retry artifacts)
+│   ├── 01_chunker.json           (SmartChunker output)
+│   ├── 02_planner.json           (SectionPlanner output)
 │   ├── 03_section_1_narration.json
 │   ├── 04_section_1_visuals.json
 │   ├── 05_section_1_render_spec.json
+│   ├── 06_section_2_narration.json
 │   ├── ...
-│   ├── memory.json
-│   ├── recap.json
-│   └── manim_failed_sections.json  (for retry)
+│   ├── memory.json               (MemoryFlashcard output)
+│   ├── recap.json                (RecapScene output)
+│   └── manim_failed_sections.json (retry queue)
 ├── audio/
-│   └── section_*.mp3
+│   └── section_*.mp3             (TTS output)
 └── videos/
-    └── *.mp4
+    └── *.mp4                     (Manim/WAN renders)
 ```
+
+---
+
+## LLM Output → presentation.json Field Mapping
+
+This table shows which agent output populates which fields in the final `presentation.json`:
+
+| Agent | Output Field | → presentation.json Location | Section Types |
+|-------|--------------|------------------------------|---------------|
+| SmartChunker | `source_topic` | `presentation.presentation_info.topic_title` | - |
+| SmartChunker | `topics[]` | Used by SectionPlanner (not in final JSON) | - |
+| SectionPlanner | `sections[].section_type` | `sections[].section_type` | all |
+| SectionPlanner | `sections[].title` | `sections[].title` | all |
+| SectionPlanner | `sections[].suggested_renderer` | `sections[].renderer` | all |
+| SectionPlanner | `sections[].avatar_width_percent` | `sections[].avatar_layout.width_percent` | all |
+| NarrationWriter | `narration.full_text` | (used for TTS, not stored) | intro, summary, content, example, quiz |
+| NarrationWriter | `segments[]` | `sections[].segments[]` | intro, summary, content, example, quiz |
+| NarrationWriter | `segments[].text` | `sections[].segments[].text` | intro, summary, content, example, quiz |
+| NarrationWriter | `segments[].duration` | `sections[].segments[].duration_seconds` (TTS overrides) | all |
+| VisualSpecArtist | `visual_beats[]` | `sections[].visual_beats[]` | content, example |
+| VisualSpecArtist | `segment_enrichments[]` | Merged into `sections[].segments[].visual_content` | content, example |
+| VisualSpecArtist | `display_directives[]` | `sections[].display_directives[]` | content, example |
+| RendererSpecAgent | `manim_scene_spec` | `sections[].manim_scene_spec` | content (renderer=manim) |
+| RendererSpecAgent | `video_prompts[]` | `sections[].video_prompts[]` | content (renderer=video) |
+| MemoryFlashcard | `flashcards[]` | `sections[memory].visual_content` (JSON string) | memory |
+| MemoryFlashcard | `title` | `sections[memory].title` | memory |
+| RecapScene | `video_prompts[]` | `sections[recap].video_prompts[]` | recap |
+| RecapScene | `title` | `sections[recap].title` | recap |
+| ManimCodeGenerator | Python code | `sections[].render_spec.manim_scene_spec.manim_code` | content (renderer=manim) |
+| TTS Pass | audio duration | `sections[].segments[].duration_seconds` (authoritative) | all |
+| TTS Pass | audio file | `sections[].audio_file` | all |
+
+### Section Type → Agent Usage
+
+| Section Type | Agents Used | Notes |
+|--------------|-------------|-------|
+| intro | SectionPlanner, NarrationWriter | Text-only, avatar explains |
+| summary | SectionPlanner, NarrationWriter | Text-only, avatar explains |
+| content | SectionPlanner, NarrationWriter, VisualSpecArtist, RendererSpecAgent, ManimCodeGenerator (if manim) | Full pipeline |
+| example | SectionPlanner, NarrationWriter, VisualSpecArtist, RendererSpecAgent | Like content but focused on worked examples |
+| quiz | SectionPlanner, NarrationWriter | Interactive quiz, no renderer |
+| memory | MemoryFlashcard | 5 flashcards, no NarrationWriter |
+| recap | RecapScene | 5 video prompts for WAN, no NarrationWriter |
 
 ---
 
