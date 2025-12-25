@@ -469,87 +469,89 @@ With ISS-149 implemented, intermediate artifacts will also be saved:
 
 ## Gap Analysis
 
-### GAP-1: SectionPlanner Avatar Width (ISS-145)
+### GAP-1: SectionPlanner Avatar Width (ISS-145) - **RESOLVED**
 
-| Aspect | Prompt Says | Code Enforces | Correct Value |
-|--------|-------------|---------------|---------------|
-| intro | 60% | 52% | 52% |
-| summary | 45% | 52% | 52% |
-| content | 35% | 52% | 52% |
-| example | 35% | 52% | 52% |
-| quiz | 35% | 52% | 52% |
-| memory | 35% | 52% | 52% |
-| recap | 35% | 52% | 52% |
+| Aspect | Before | After |
+|--------|--------|-------|
+| All section types | 60/45/35% | 52% |
 
-**Fix Location**: `core/prompts/section_planner_system_v1.5.txt` lines 20, 30-38, 47, 53, 59, 65, 71, 77
+**Fix Applied**: Updated all avatar_width_percent values to 52 in `section_planner_system_v1.5.txt`
 
 ---
 
-### GAP-2: MemoryFlashcard Avatar Width (ISS-146)
+### GAP-2: MemoryFlashcard Avatar Width (ISS-146) - **RESOLVED**
 
-| Aspect | Prompt Says | Code Enforces | Correct Value |
-|--------|-------------|---------------|---------------|
-| width_percent | 35 | 52 | 52 |
+| Aspect | Before | After |
+|--------|--------|-------|
+| width_percent | 35 | 52 |
 
-**Fix Location**: `core/prompts/memory_flashcard_system_v1.5.txt` line 14
-
----
-
-### GAP-3: RecapScene Avatar Width (ISS-147)
-
-| Aspect | Prompt Says | Code Enforces | Correct Value |
-|--------|-------------|---------------|---------------|
-| width_percent | 35 | 52 | 52 |
-
-**Fix Location**: `core/prompts/recap_scene_system_v1.5.txt` line 12
+**Fix Applied**: Updated width_percent from 35 to 52 in `memory_flashcard_system_v1.5.txt`
 
 ---
 
-### GAP-4: SmartChunker Deprecated Renderer (ISS-148)
+### GAP-3: RecapScene Avatar Width (ISS-147) - **RESOLVED**
 
-| Aspect | Prompt Says | Should Say |
-|--------|-------------|------------|
+| Aspect | Before | After |
+|--------|--------|-------|
+| width_percent | 35 | 52 |
+
+**Fix Applied**: Updated width_percent from 35 to 52 in `recap_scene_system_v1.5.txt`
+
+---
+
+### GAP-4: SmartChunker Deprecated Renderer (ISS-148) - **RESOLVED**
+
+| Aspect | Before | After |
+|--------|--------|-------|
+| Prompt version | v1.4 | v1.5 |
 | suggested_renderer | "remotion\|manim\|video" | "manim\|video\|none" |
 
-**Fix Location**: 
-- Rename `core/prompts/smart_chunker_system_v1.4.txt` → `smart_chunker_system_v1.5.txt`
-- Update renderer options in prompt
-- Update `core/llm_handler.py` to use v1.5 prompt
+**Fix Applied**: 
+- Created `smart_chunker_system_v1.5.txt` and `smart_chunker_user_v1.5.txt`
+- Updated `core/smart_chunker.py` to use v1.5 prompts
 
 ---
 
-### GAP-5: No Artifact Persistence (ISS-149)
+### GAP-5: No Artifact Persistence (ISS-149) - **RESOLVED**
 
-| Aspect | Current | Should Have |
-|--------|---------|-------------|
-| Agent outputs | In-memory only | Save to `{job_dir}/artifacts/` |
+| Aspect | Before | After |
+|--------|--------|-------|
+| Agent outputs | In-memory only | Saved to `{job_dir}/artifacts/` |
 | Debug capability | None | Full artifact trail |
-| Retry capability | None | Failed sections logged |
+| Retry capability | None | Failed sections logged to `manim_failed_sections.json` |
 
-**Fix Location**: `core/pipeline_v15.py` - add artifact save after each agent
-
----
-
-### GAP-6: RecapScene Word Count Mismatch (ISS-150)
-
-| Aspect | Prompt Says | Code Validates | Correct Value |
-|--------|-------------|----------------|---------------|
-| Word count | 150-180 | 100+ minimum | 100-180 |
-
-**Fix Location**: `core/prompts/recap_scene_system_v1.5.txt` lines 27, 45
+**Fix Applied**: 
+- Added `_save_artifact()` helper with safe JSON serialization
+- Saves: chunker, planner, per-section narration/visuals/render_spec, memory, recap
+- Saves `manim_failed_sections.json` for retry capability
 
 ---
 
-### GAP-7: ManimCodeGenerator Validation (ISS-151)
+### GAP-6: RecapScene Word Count Mismatch (ISS-150) - **RESOLVED**
 
-| Aspect | Current | Should Have |
-|--------|---------|-------------|
+| Aspect | Before | After |
+|--------|--------|-------|
+| Prompt word count | 150-180 | 100-180 |
+| Code validation | 100+ minimum | Matches prompt |
+
+**Fix Applied**: Updated prompt to say 100-180 words in `recap_scene_system_v1.5.txt`
+
+---
+
+### GAP-7: ManimCodeGenerator Validation (ISS-151) - **RESOLVED**
+
+| Aspect | Before | After |
+|--------|--------|-------|
 | Output validation | Basic pattern check | Full AST syntax validation |
-| Retry logic | Crashes on failure | Graceful retry with max attempts |
-| Error handling | Raises exception | Returns empty code + logs error |
-| Failed sections | Lost | Saved for later retry |
+| Undefined names | Not detected | AST-based detection with Manim builtins whitelist |
+| Retry logic | Yes (3 attempts) | Yes (3 attempts) - unchanged |
+| Error handling | Could crash | Graceful: returns (code, errors) tuple |
+| Failed sections | Lost | Saved to `artifacts/manim_failed_sections.json` |
 
-**Fix Location**: `core/agents/manim_code_generator.py`
+**Fix Applied**: 
+- Added `ast` module import and `_check_undefined_names()` method
+- Enhanced `_check_syntax()` to use AST parsing
+- Pipeline catches all exceptions and logs failed sections for retry
 
 ---
 

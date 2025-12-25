@@ -3,10 +3,16 @@ Manim Code Generator Agent (REQ-060 through REQ-068)
 
 Uses Claude Sonnet 3.5 via OpenRouter to generate Python code for Manim animations.
 Output is raw Python code for construct(self) method body, not JSON spec.
+
+ISS-151: Enhanced with proper AST validation, retry logic, and graceful failure handling.
 """
 import re
 import os
+import ast
+import logging
 from typing import Dict, Any, List, Tuple, Optional
+
+logger = logging.getLogger(__name__)
 
 CLAUDE_SONNET_3_5 = "anthropic/claude-3.5-sonnet"
 
@@ -258,12 +264,66 @@ class ManimCodeGenerator:
         return errors
     
     def _check_syntax(self, code: str) -> List[str]:
-        """Check Python syntax validity."""
+        """Check Python syntax validity using AST parsing (ISS-151)."""
+        errors = []
+        
         try:
             compile(code, "<string>", "exec")
-            return []
         except SyntaxError as e:
-            return [f"Syntax error at line {e.lineno}: {e.msg}"]
+            errors.append(f"Syntax error at line {e.lineno}: {e.msg}")
+            return errors
+        
+        try:
+            tree = ast.parse(code)
+            
+            undefined_names = self._check_undefined_names(tree, code)
+            if undefined_names:
+                for name in undefined_names[:3]:
+                    errors.append(f"Potentially undefined name: '{name}'")
+        except Exception as e:
+            logger.warning(f"AST analysis warning: {e}")
+        
+        return errors
+    
+    def _check_undefined_names(self, tree: ast.AST, code: str) -> List[str]:
+        """Check for potentially undefined variable names in the code."""
+        defined_names = set()
+        used_names = set()
+        
+        manim_builtins = {
+            'Text', 'MathTex', 'Tex', 'Circle', 'Rectangle', 'Arrow', 'Line',
+            'Dot', 'Square', 'Triangle', 'Polygon', 'Arc', 'Ellipse',
+            'NumberLine', 'Axes', 'NumberPlane', 'Graph', 'VGroup', 'Group',
+            'Write', 'FadeIn', 'FadeOut', 'Transform', 'ReplacementTransform',
+            'MoveToTarget', 'Indicate', 'Circumscribe', 'Create', 'Uncreate',
+            'GrowFromCenter', 'SpinInFromNothing', 'ShrinkToCenter',
+            'UP', 'DOWN', 'LEFT', 'RIGHT', 'ORIGIN', 'UL', 'UR', 'DL', 'DR',
+            'PI', 'TAU', 'DEGREES', 'WHITE', 'BLACK', 'RED', 'GREEN', 'BLUE',
+            'YELLOW', 'ORANGE', 'PURPLE', 'PINK', 'GRAY', 'GREY',
+            'self', 'range', 'len', 'str', 'int', 'float', 'list', 'dict', 'True', 'False', 'None',
+            'lambda', 'ValueTracker', 'always_redraw', 'Brace', 'BraceLabel',
+            'DecimalNumber', 'Integer', 'Variable', 'MathTable', 'Table',
+            'SurroundingRectangle', 'BackgroundRectangle', 'Cross',
+            'np', 'numpy', 'math', 'config'
+        }
+        
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name):
+                        defined_names.add(target.id)
+                    elif isinstance(target, ast.Tuple):
+                        for elt in target.elts:
+                            if isinstance(elt, ast.Name):
+                                defined_names.add(elt.id)
+            elif isinstance(node, ast.For):
+                if isinstance(node.target, ast.Name):
+                    defined_names.add(node.target.id)
+            elif isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load):
+                used_names.add(node.id)
+        
+        undefined = used_names - defined_names - manim_builtins
+        return list(undefined)
     
     def _check_placeholders(self, code: str) -> List[str]:
         """Check for Dot() placeholder usage."""

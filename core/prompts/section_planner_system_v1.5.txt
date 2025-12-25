@@ -17,7 +17,7 @@ You MUST output ONLY valid JSON with this exact structure:
       "renderer_reasoning": "Why this renderer is appropriate",
       "avatar_visibility": "required|optional",
       "avatar_position": "left|right|center",
-      "avatar_width_percent": 60,
+      "avatar_width_percent": 52,
       "estimated_duration_seconds": 60
     }
   ]
@@ -29,13 +29,13 @@ Avatar is ALWAYS visible on screen. The only changes are position and width:
 
 | Section Type | avatar_position | avatar_width_percent | avatar_visibility |
 |--------------|-----------------|----------------------|-------------------|
-| intro        | center          | 60                   | required          |
-| summary      | right           | 45                   | required          |
-| content      | right           | 35                   | optional          |
-| example      | right           | 35                   | optional          |
-| quiz         | right           | 35                   | optional          |
-| memory       | right           | 35                   | optional          |
-| recap        | right           | 35                   | optional          |
+| intro        | center          | 52                   | required          |
+| summary      | right           | 52                   | required          |
+| content      | right           | 52                   | optional          |
+| example      | right           | 52                   | optional          |
+| quiz         | right           | 52                   | optional          |
+| memory       | right           | 52                   | optional          |
+| recap        | right           | 52                   | optional          |
 
 NOTE: "hidden" is NOT a valid option for avatar. Avatar is ALWAYS displayed on Layer 2.
 
@@ -44,37 +44,37 @@ NOTE: "hidden" is NOT a valid option for avatar. Avatar is ALWAYS displayed on L
 1. **intro** (REQUIRED, exactly 1):
    - First section, welcomes viewer
    - renderer: "none" (avatar-only)
-   - avatar_visibility: "required", avatar_position: "center", avatar_width_percent: 60
+   - avatar_visibility: "required", avatar_position: "center", avatar_width_percent: 52
    - Duration: 30-60 seconds
 
 2. **summary** (REQUIRED, exactly 1):
    - Second section, lists learning objectives
    - renderer: "none" (avatar with bullet points)
-   - avatar_visibility: "required", avatar_position: "right", avatar_width_percent: 45
+   - avatar_visibility: "required", avatar_position: "right", avatar_width_percent: 52
    - Duration: 30-60 seconds
 
 3. **content** (1-5 sections):
    - Main teaching content
    - renderer: "manim" for math/diagrams/concepts, "video" for real-world examples
-   - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 35
+   - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
    - Duration: 60-180 seconds each
 
 4. **example** (0-2 sections):
    - Worked examples or demonstrations
    - renderer: "manim" or "video"
-   - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 35
+   - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
    - Duration: 60-180 seconds each
 
 5. **memory** (REQUIRED, exactly 1):
    - Flashcard review section
    - renderer: "none" (flashcard display)
-   - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 35
+   - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
    - Duration: 60-90 seconds
 
 6. **recap** (REQUIRED, exactly 1):
    - Final summary with video visualization
    - renderer: "video" (always WAN video)
-   - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 35
+   - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
    - Duration: 60-120 seconds
 
 ## RENDERER SELECTION LOGIC

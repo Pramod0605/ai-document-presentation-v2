@@ -106,8 +106,8 @@ def call_smart_chunker(
     """
     logger.info(f"[Smart Chunker] Starting topic extraction for {subject}")
     
-    system_prompt = load_prompt("smart_chunker_system_v1.4")
-    user_prompt_template = load_prompt("smart_chunker_user_v1.4")
+    system_prompt = load_prompt("smart_chunker_system_v1.5")
+    user_prompt_template = load_prompt("smart_chunker_user_v1.5")
     
     numbered_content = _add_block_numbers(markdown_content)
     

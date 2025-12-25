@@ -49,6 +49,36 @@ logger = logging.getLogger(__name__)
 PIPELINE_VERSION = "1.5"
 
 
+def _json_serializer(obj):
+    """Custom JSON serializer for non-serializable objects."""
+    if hasattr(obj, 'isoformat'):
+        return obj.isoformat()
+    elif hasattr(obj, '__dict__'):
+        return str(obj)
+    return str(obj)
+
+
+def _save_artifact(output_dir: Optional[Path], filename: str, data: Dict) -> None:
+    """Save agent output as artifact for debugging (ISS-149).
+    
+    Uses safe serialization with fallback to str() for non-serializable objects.
+    Failures are logged but do not crash the pipeline.
+    """
+    if not output_dir:
+        return
+    
+    try:
+        artifacts_dir = Path(output_dir) / "artifacts"
+        artifacts_dir.mkdir(parents=True, exist_ok=True)
+        
+        artifact_path = artifacts_dir / filename
+        with open(artifact_path, "w") as f:
+            json.dump(data, f, indent=2, default=_json_serializer)
+        logger.debug(f"[Artifacts] Saved {filename}")
+    except Exception as e:
+        logger.warning(f"[Artifacts] Failed to save {filename}: {e}")
+
+
 class PipelineError(Exception):
     """Error raised when pipeline fails."""
     def __init__(self, message: str, phase: str, details: Optional[Dict] = None):
@@ -150,6 +180,8 @@ def process_markdown_to_presentation_v15(
         topics = chunker_output.get("topics", [])
         logger.info(f"[Pipeline v1.5] Extracted {len(topics)} topics")
         
+        _save_artifact(output_dir, "01_chunker.json", chunker_output)
+        
         update_status("section_planner", "Planning section structure...")
         section_planner = SectionPlannerAgent(tracker=tracker, log_func=log)
         planner_output = section_planner.run(
@@ -160,7 +192,10 @@ def process_markdown_to_presentation_v15(
         blueprints = planner_output.get("sections", [])
         logger.info(f"[Pipeline v1.5] Planned {len(blueprints)} sections")
         
+        _save_artifact(output_dir, "02_planner.json", planner_output)
+        
         section_artifacts = []
+        manim_failed_sections = []
         
         for i, blueprint in enumerate(blueprints):
             section_type = blueprint.get("section_type")
@@ -217,12 +252,19 @@ def process_markdown_to_presentation_v15(
                     logger.warning(f"[Pipeline v1.5] RendererSpec failed for {section_id}: {e}")
                     render_spec = None
             
-            section_artifacts.append({
+            artifact = {
                 "blueprint": blueprint,
                 "narration": narration_output,
                 "visuals": visuals_output,
                 "render_spec": render_spec
-            })
+            }
+            section_artifacts.append(artifact)
+            
+            artifact_idx = len(section_artifacts) + 2
+            _save_artifact(output_dir, f"{artifact_idx:02d}_{section_id}_narration.json", narration_output)
+            _save_artifact(output_dir, f"{artifact_idx:02d}_{section_id}_visuals.json", visuals_output)
+            if render_spec:
+                _save_artifact(output_dir, f"{artifact_idx:02d}_{section_id}_render_spec.json", render_spec)
         
         update_status("memory", "Creating flashcards...")
         memory_agent = MemoryFlashcardAgent(tracker=tracker, log_func=log)
@@ -230,6 +272,8 @@ def process_markdown_to_presentation_v15(
             source_markdown=markdown_content,
             subject=subject
         )
+        
+        _save_artifact(output_dir, "memory.json", memory_output)
         
         key_concepts = [f.get("front", "") for f in memory_output.get("flashcards", [])]
         
@@ -240,6 +284,8 @@ def process_markdown_to_presentation_v15(
             subject=subject,
             key_concepts=key_concepts
         )
+        
+        _save_artifact(output_dir, "recap.json", recap_output)
         
         update_status("merge", "Combining all components...")
         presentation = merge_agent_outputs(
@@ -263,6 +309,8 @@ def process_markdown_to_presentation_v15(
         
         update_status("manim_code", "Generating Manim code with actual TTS timing...")
         manim_generator = ManimCodeGenerator()
+        manim_success_count = 0
+        manim_fail_count = 0
         
         for i, section in enumerate(presentation.get("sections", [])):
             renderer = section.get("renderer", "none")
@@ -286,16 +334,43 @@ def process_markdown_to_presentation_v15(
                 try:
                     manim_code, validation_errors = manim_generator.generate(manim_input)
                     
-                    if validation_errors:
-                        logger.warning(f"[Pipeline v1.5] Manim validation warnings for {section_id}: {validation_errors}")
-                    
-                    section = integrate_manim_code_into_section(section, manim_code)
-                    presentation["sections"][i] = section
-                    
-                    logger.info(f"[Pipeline v1.5] Manim code generated for {section_id} ({len(manim_code)} chars)")
+                    if manim_code and len(manim_code) > 50:
+                        if validation_errors:
+                            logger.warning(f"[Pipeline v1.5] Manim validation warnings for {section_id}: {validation_errors}")
+                        
+                        section = integrate_manim_code_into_section(section, manim_code)
+                        presentation["sections"][i] = section
+                        
+                        logger.info(f"[Pipeline v1.5] Manim code generated for {section_id} ({len(manim_code)} chars)")
+                        manim_success_count += 1
+                    else:
+                        manim_failed_sections.append({
+                            "section_id": section_id,
+                            "section_index": i,
+                            "error": "Empty or too short code returned",
+                            "validation_errors": validation_errors,
+                            "manim_input": manim_input
+                        })
+                        manim_fail_count += 1
+                        logger.warning(f"[Pipeline v1.5] Manim code empty/short for {section_id}")
                     
                 except Exception as e:
+                    manim_failed_sections.append({
+                        "section_id": section_id,
+                        "section_index": i,
+                        "error": str(e),
+                        "manim_input": manim_input
+                    })
+                    manim_fail_count += 1
                     logger.error(f"[Pipeline v1.5] Manim code generation failed for {section_id}: {e}")
+        
+        if manim_failed_sections:
+            _save_artifact(output_dir, "manim_failed_sections.json", {
+                "failed_count": len(manim_failed_sections),
+                "sections": manim_failed_sections,
+                "note": "These sections can be retried via /api/v15/retry-manim endpoint"
+            })
+            logger.info(f"[Pipeline v1.5] Manim generation: {manim_success_count} success, {manim_fail_count} failed (saved for retry)")
         
         if output_dir and not dry_run:
             update_status("render_execute", "Rendering videos...")
