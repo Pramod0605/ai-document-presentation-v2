@@ -200,12 +200,17 @@ def update_durations_from_tts(
                     actual_duration = _generate_pyttsx3(text, audio_path, pyttsx3_engine)
                 
                 segment["duration_seconds"] = round(actual_duration, 2)
-                segment["audio_file"] = str(audio_path.name)
+                
+                # ISS-137 FIX: Only set audio_file if file actually exists
+                if audio_path.exists():
+                    segment["audio_file"] = str(audio_path.name)
+                    logger.debug(f"[TTS Duration] {segment_id}: {actual_duration:.2f}s, file={audio_path.name}")
+                else:
+                    logger.warning(f"[TTS Duration] {segment_id}: Audio file not created, using estimate duration")
+                
                 section_duration += actual_duration
                 total_duration += actual_duration
                 total_segments += 1
-                
-                logger.debug(f"[TTS Duration] {segment_id}: {actual_duration:.2f}s")
                 
             except Exception as e:
                 logger.warning(f"[TTS Duration] Failed for {segment_id}: {e}, using estimate")
@@ -355,6 +360,20 @@ def _generate_edge_tts(text: str, output_path: Path) -> float:
         Audio duration in seconds
     """
     try:
+        # ISS-137 FIX: Handle existing event loops (Flask/threading context)
+        try:
+            loop = asyncio.get_running_loop()
+            # If there's already a running loop, we need to handle it differently
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(asyncio.run, _generate_edge_tts_async(text, output_path))
+                duration = future.result(timeout=60)
+                return duration
+        except RuntimeError:
+            # No running loop - safe to create new one
+            pass
+        
+        # Standard approach for no running loop
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         try:
@@ -363,6 +382,7 @@ def _generate_edge_tts(text: str, output_path: Path) -> float:
         finally:
             loop.close()
     except Exception as e:
+        logger.error(f"[TTS Duration] Edge TTS error: {e}")
         raise EdgeTTSError(f"Edge TTS failed: {e}")
 
 
@@ -430,6 +450,11 @@ def _generate_narakeet(text: str, output_path: Path) -> float:
     raise NarakeetError(f"Failed to generate TTS after {MAX_RETRIES} attempts")
 
 
+class Pyttsx3Error(Exception):
+    """Raised when pyttsx3 fails to generate audio."""
+    pass
+
+
 def _generate_pyttsx3(text: str, output_path: Path, engine) -> float:
     """
     Generate TTS audio using pyttsx3 (local/offline) and measure its duration.
@@ -441,6 +466,9 @@ def _generate_pyttsx3(text: str, output_path: Path, engine) -> float:
         
     Returns:
         Audio duration in seconds
+        
+    Raises:
+        Pyttsx3Error: If file generation fails (ISS-137 fix)
     """
     try:
         engine.save_to_file(text, str(output_path))
@@ -451,13 +479,18 @@ def _generate_pyttsx3(text: str, output_path: Path, engine) -> float:
             if audio is not None and hasattr(audio, 'info') and hasattr(audio.info, 'length'):
                 return audio.info.length
             else:
+                # File exists but can't read duration - use estimate but file is valid
+                logger.warning(f"[TTS Duration] pyttsx3: Cannot read duration from {output_path.name}, using estimate")
                 return _estimate_duration(text)
         else:
-            return _estimate_duration(text)
+            # ISS-137 FIX: Raise exception instead of silently returning estimate
+            raise Pyttsx3Error(f"pyttsx3 failed to create file: {output_path}")
             
+    except Pyttsx3Error:
+        raise
     except Exception as e:
-        logger.warning(f"[TTS Duration] pyttsx3 error: {e}")
-        return _estimate_duration(text)
+        logger.error(f"[TTS Duration] pyttsx3 error: {e}")
+        raise Pyttsx3Error(f"pyttsx3 failed: {e}")
 
 
 def _apply_estimates(presentation: Dict) -> Dict:

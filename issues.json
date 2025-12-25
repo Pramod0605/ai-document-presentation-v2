@@ -115,13 +115,15 @@
       "id": "ISS-137",
       "title": "No audio files generated - TTS step failure",
       "severity": "CRITICAL",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "created": "2025-12-25",
+      "resolved": "2025-12-25",
       "job_reference": "3ffaf8d2",
       "description": "Audio directory is empty. All segment audio_url fields are null. TTS step appears to have been skipped or failed silently.",
       "requirement_violated": "Audio generation requirement",
       "evidence": "Job 3ffaf8d2: audio/ directory empty, all segments have audio_url=null",
-      "root_cause": "TTS step skipped or failed without error"
+      "root_cause": "1) _generate_pyttsx3 silently returned estimates on failure instead of raising exception, 2) audio_file was set unconditionally before verifying file exists, 3) edge_tts asyncio wrapper had event loop conflicts in Flask context",
+      "fix_applied": "1) Added audio_path.exists() check before setting audio_file field, 2) Made _generate_pyttsx3 raise Pyttsx3Error on failure, 3) Improved edge_tts sync wrapper to handle existing event loops via ThreadPoolExecutor"
     },
     {
       "id": "ISS-138",
@@ -163,8 +165,8 @@
   "regressions_from_previous_fixes": [
     {
       "original": "ISS-122 (Audio generation)",
-      "status": "REGRESSED",
-      "note": "Job 3ffaf8d2: NO audio generated at all (empty audio folder)"
+      "status": "FIXED",
+      "note": "ISS-137 fix resolves audio generation - edge_tts works with proper asyncio handling"
     },
     {
       "original": "ISS-123 (Render execution)",
