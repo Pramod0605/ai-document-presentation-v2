@@ -65,7 +65,7 @@ QUALITY_INDICATORS = [
 ]
 
 MIN_PROMPT_LENGTH = 50
-MAX_PROMPT_LENGTH = 500
+MAX_PROMPT_LENGTH = 800  # ISS-120: Increased to match API limit
 
 
 class WanPromptValidationResult:

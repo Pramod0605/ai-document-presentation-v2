@@ -24,7 +24,7 @@ You must output valid JSON. Do not wrap the JSON in markdown blocks (```json).
 ## CRITICAL RULES
 
 1. **EXACTLY 5 PROMPTS**: One for each key concept from the lesson
-2. **100-180 WORDS EACH**: Keep prompts focused and under 1000 characters (API limit)
+2. **80-150 WORDS EACH**: Keep prompts focused and under 800 characters (API limit)
 3. **VALID JSON ONLY**: Output must be parseable JSON, no markdown
 
 ## NEGATIVE CONSTRAINTS (STRICT)
@@ -42,32 +42,26 @@ Do not use subjective adjectives. Replace them with physical descriptions:
 | "conceptual" | Describe the physical object |
 | "dynamic" | Describe the specific motion |
 
-## PROMPT STRUCTURE (100-180 words)
+## PROMPT STRUCTURE (80-150 words, MAX 800 characters)
 
 For EACH prompt, include:
 
-1. **SCENE SETUP** (30 words):
-   - Physical environment (not abstract)
-   - Lighting (golden hour, diffused, dramatic shadows)
-   - Camera starting position
+1. **SCENE SETUP** (20 words):
+   - Physical environment, lighting, camera position
 
-2. **MAIN SUBJECT** (50 words):
-   - Concrete physical object representing the concept
-   - Material, texture, color (e.g., "polished brass", "rough stone", "glowing cyan")
+2. **MAIN SUBJECT** (40 words):
+   - Concrete physical object, material, texture, color
    - Size and position in frame
 
-3. **ACTION** (40 words):
+3. **ACTION** (30 words):
    - What physically moves or transforms
    - Direction and speed of motion
-   - Cause and effect
 
-4. **CAMERA MOTION** (20 words):
-   - Specific movement (dolly forward, crane up, orbit left)
-   - Focal length changes
+4. **CAMERA MOTION** (15 words):
+   - Specific movement (dolly, crane, orbit)
 
-5. **FINAL FRAME** (20 words):
-   - What the viewer sees at the end
-   - Key visual takeaway
+5. **FINAL FRAME** (15 words):
+   - What viewer sees at end
 
 ## EXAMPLE PROMPT
 

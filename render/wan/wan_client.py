@@ -24,6 +24,8 @@ class WANClient:
         if not self.api_key:
             return self._generate_placeholder(prompt, duration, output_path)
         
+        prompt = self._truncate_prompt(prompt, max_chars=800)
+        
         try:
             create_response = requests.post(
                 f"{self.base_url}/generate",
@@ -133,3 +135,16 @@ class WANClient:
         ]
         subprocess.run(cmd, capture_output=True)
         return output_path
+    
+    def _truncate_prompt(self, prompt: str, max_chars: int = 800) -> str:
+        """Truncate prompt to max_chars at sentence boundary if possible."""
+        if len(prompt) <= max_chars:
+            return prompt
+        
+        truncated = prompt[:max_chars]
+        last_period = truncated.rfind('.')
+        if last_period > max_chars * 0.6:
+            truncated = truncated[:last_period + 1]
+        
+        print(f"[WAN] Prompt truncated from {len(prompt)} to {len(truncated)} chars")
+        return truncated

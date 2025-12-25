@@ -73,11 +73,15 @@ class RecapSceneAgent(BaseAgent):
         for i, p in enumerate(prompts):
             prompt_text = p.get("prompt", "")
             word_count = len(prompt_text.split())
+            char_count = len(prompt_text)
             
-            if word_count < 100:
-                errors.append(f"video_prompt {i}: only {word_count} words (min 100)")
-            elif word_count < 150:
-                warnings.append(f"video_prompt {i}: only {word_count} words (recommended 150+)")
+            if word_count < 80:
+                errors.append(f"video_prompt {i}: only {word_count} words (min 80)")
+            elif word_count < 100:
+                warnings.append(f"video_prompt {i}: only {word_count} words (recommended 100+)")
+            
+            if char_count > 800:
+                errors.append(f"video_prompt {i}: {char_count} chars exceeds API limit (max 800)")
             
             for phrase in self.BANNED_PHRASES:
                 if phrase.lower() in prompt_text.lower():
