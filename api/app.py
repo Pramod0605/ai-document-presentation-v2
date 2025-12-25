@@ -84,11 +84,6 @@ def submit_job():
             if filename.endswith(".pdf"):
                 job_type = "pdf"
                 suffix = ".pdf"
-                if pipeline_version == "v15":
-                    return jsonify({
-                        "error": "V1.5 pipeline does not support PDF files directly. Please convert to Markdown first.",
-                        "hint": "Upload a .md or .txt file, or use /api/v15/generate with markdown content."
-                    }), 400
             elif filename.endswith(".md") or filename.endswith(".markdown") or filename.endswith(".txt"):
                 job_type = "markdown_file"
                 suffix = ".md"
@@ -115,9 +110,10 @@ def submit_job():
             setup_job_folder(job_output_dir)
             
             if job_type == "pdf":
+                pdf_processor = process_pdf_job_v15 if pipeline_version == "v15" else process_pdf_job
                 run_job_async(
                     job_id,
-                    process_pdf_job,
+                    pdf_processor,
                     pdf_path=str(temp_file),
                     subject=subject,
                     grade=grade,
@@ -125,7 +121,8 @@ def submit_job():
                     dry_run=dry_run,
                     skip_wan=skip_wan,
                     skip_avatar=skip_avatar,
-                    source_file=original_filename
+                    source_file=original_filename,
+                    tts_provider=tts_provider
                 )
             else:
                 with open(temp_file, "r", encoding="utf-8") as f:
@@ -278,7 +275,7 @@ def list_all_jobs():
     })
 
 
-def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None) -> dict:
+def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "narakeet") -> dict:
     try:
         result = process_pdf_to_videos(
             pdf_path=pdf_path,
@@ -292,6 +289,71 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
             source_file=source_file
         )
         return result
+    finally:
+        if os.path.exists(pdf_path):
+            os.unlink(pdf_path)
+
+
+def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
+    """Process PDF using V1.5 Split Agent pipeline.
+    
+    1. Convert PDF to Markdown using Datalab API
+    2. Run V1.5 pipeline on the markdown
+    """
+    from core.datalab_client import pdf_to_markdown, DatalabConversionError
+    from pathlib import Path
+    
+    try:
+        job_manager.update_job(job_id, {
+            "current_phase_key": "pdf_conversion",
+            "status_message": "Converting PDF to Markdown..."
+        }, persist=True)
+        
+        markdown_content = pdf_to_markdown(pdf_path)
+        
+        content_preview = markdown_content[:300].replace('\n', ' ').strip()
+        if len(markdown_content) > 300:
+            content_preview += "..."
+        job_manager.update_job(job_id, {"content_preview": content_preview}, persist=True)
+        
+        def status_callback(jid, phase, message):
+            job_manager.update_job(jid, {
+                "current_phase_key": phase,
+                "status_message": message
+            }, persist=True)
+        
+        generate_tts = tts_provider != "estimate"
+        output_path = Path(output_dir)
+        
+        presentation, tracker = process_markdown_to_presentation_v15(
+            markdown_content=markdown_content,
+            subject=subject,
+            grade=grade,
+            job_id=job_id,
+            update_status_callback=status_callback,
+            generate_tts=generate_tts,
+            output_dir=output_path,
+            tts_provider=tts_provider,
+            dry_run=dry_run,
+            skip_wan=skip_wan
+        )
+        
+        pres_path = output_path / "presentation.json"
+        with open(pres_path, "w") as f:
+            json.dump(presentation, f, indent=2)
+        
+        analytics_summary = tracker.get_summary() if hasattr(tracker, 'get_summary') else {}
+        
+        return {
+            "status": "success",
+            "presentation": presentation,
+            "analytics": analytics_summary,
+            "output_path": str(pres_path),
+            "pipeline_version": "1.5",
+            "source_type": "pdf"
+        }
+    except DatalabConversionError as e:
+        raise RuntimeError(f"PDF conversion failed: {e}")
     finally:
         if os.path.exists(pdf_path):
             os.unlink(pdf_path)
