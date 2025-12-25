@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import List
 from .wan_client import WANClient
 from render.render_trace import log_render_prompt
-from core.wan_prompt_validator import hard_fail_on_short_prompts, WanPromptHardFailError
+from core.wan_prompt_validator import hard_fail_on_short_prompts, WanPromptHardFailError, truncate_video_prompts, truncate_wan_prompt
 
 
 class WanRenderError(Exception):
@@ -115,6 +115,9 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
         print(f"[SKIP WAN] Placeholder for section {topic_id}")
         return _create_placeholder_video(topic_id, topic_title, output_path, duration)
     
+    # ISS-158 FIX: Truncate section-level prompt BEFORE validation
+    prompt = truncate_wan_prompt(prompt)
+    
     # ISS-076 FIX: Validate section-level prompt before API call
     try:
         hard_fail_on_short_prompts([{"prompt": prompt}], topic_id)
@@ -169,8 +172,9 @@ def _render_visual_beats(
     else:
         print(f"[WAN] Rendering {len(visual_beats)} visual beats for section {topic_id}")
     
-    # ISS-076 FIX: Validate prompt lengths BEFORE making any API calls (production mode only)
+    # ISS-158 FIX: Truncate prompts BEFORE validation (production mode only)
     if not dry_run and not skip_wan and use_precompiled:
+        video_prompts = truncate_video_prompts(video_prompts)
         try:
             hard_fail_on_short_prompts(video_prompts, topic_id)
         except WanPromptHardFailError as e:
@@ -197,13 +201,14 @@ def _render_visual_beats(
                     f"Reason: {e.reason}"
                 )
             
-            # ISS-076 FIX: Validate compiled prompt before API call (production only)
+            # ISS-158 FIX: Truncate and validate compiled prompt (production only)
             if not dry_run and not skip_wan:
+                wan_prompt = truncate_wan_prompt(wan_prompt)
                 word_count = len(wan_prompt.split()) if wan_prompt else 0
-                if word_count < 300:
+                if word_count < 80:
                     raise WanRenderError(
                         f"Section {topic_id}, Beat {beat_idx}: Compiled WAN prompt has {word_count} words, "
-                        f"v1.3 REQUIRES 300+ words. Prompt preview: '{wan_prompt[:80]}...'"
+                        f"v1.5 REQUIRES 80+ words. Prompt preview: '{wan_prompt[:80]}...'"
                     )
         
         # Generate output path for this beat

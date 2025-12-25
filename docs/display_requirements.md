@@ -45,7 +45,7 @@ This document defines how the AI Animated Education player displays educational 
 
 | Section  | Avatar Position | Avatar Width | Text/Content Area | Video Area | Renderer |
 |----------|-----------------|--------------|-------------------|------------|----------|
-| **Intro**   | Center       | **52%**      | Top 80%           | None       | none     |
+| **Intro**   | Center       | **60%**      | NONE (avatar-only)| None       | none     |
 | **Summary** | Right        | **52%**      | Left 45%          | None       | none     |
 | **Content** | Right        | **52%**      | Left 45%          | Fullscreen when playing | manim/video |
 | **Example** | Right        | **52%**      | Left 45%          | Fullscreen when playing | manim |

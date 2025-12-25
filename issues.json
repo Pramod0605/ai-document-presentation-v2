@@ -450,6 +450,45 @@
         "4) wan_prompt_validator.py: hard_fail_on_short_prompts() now validates 80-150 words + 800 chars",
         "5) wan_client.py: Added _truncate_prompt() safety method before API call"
       ]
+    },
+    {
+      "id": "ISS-158",
+      "title": "WAN prompts not truncated before validation - validation fails instead of truncating",
+      "severity": "CRITICAL",
+      "status": "RESOLVED",
+      "created": "2025-12-25",
+      "resolved": "2025-12-25",
+      "description": "Error 'Section 11: Beat 0: Prompt has 2901 chars, maximum 800 allowed' proves no truncation occurred before validation. ISS-120 added validation but validation fails instead of auto-truncating first.",
+      "requirement_violated": "WAN API character limit (800 chars max)",
+      "evidence": "User reported: Error rendering topic 11: Section-level WAN prompt validation failed: Section 11: Beat 0: Prompt has 2901 chars, maximum 800 allowed.",
+      "root_cause": "hard_fail_on_short_prompts() raises exception but wan_runner.py never calls truncation before validation",
+      "fix_applied": [
+        "1) wan_prompt_validator.py: Added truncate_wan_prompt() and truncate_video_prompts() functions",
+        "2) wan_runner.py: Import new truncation functions",
+        "3) wan_runner.py L121-122: Call truncate_wan_prompt() BEFORE validation for section-level prompts",
+        "4) wan_runner.py L178-180: Call truncate_video_prompts() BEFORE validation for video_prompts array",
+        "5) wan_runner.py L207-215: Updated from 300-word minimum to 80-word minimum per v1.5 spec"
+      ],
+      "files_changed": ["core/wan_prompt_validator.py", "render/wan/wan_runner.py"]
+    },
+    {
+      "id": "ISS-159",
+      "title": "Intro section showing text bullets instead of avatar-only display",
+      "severity": "HIGH",
+      "status": "RESOLVED",
+      "created": "2025-12-25",
+      "resolved": "2025-12-25",
+      "description": "Intro section displays text bullets when it should only show centered avatar at 60-80%. Summary section has wrong avatar size and too many words displayed.",
+      "requirement_violated": "Display requirements for intro/summary sections",
+      "evidence": "User screenshot shows intro with 8+ bullet points and avatar on right instead of center. User: 'Intro should have been no Text but only Avatar 60 or even 80% centered'",
+      "root_cause": "merge_step_v15.py was setting text_layer='show' for intro and not enforcing avatar-only display",
+      "fix_applied": [
+        "1) merge_step_v15.py: Intro avatar_layout set to position='center', width_percent=60",
+        "2) merge_step_v15.py: Intro display_directives set to text_layer='hide', visual_layer='hide', avatar_layer='show'",
+        "3) merge_step_v15.py: Summary keeps text_layer='show' but avatar at 52% right",
+        "4) Updated section-type-specific display_directives logic"
+      ],
+      "files_changed": ["core/merge_step_v15.py"]
     }
   ],
   "regressions_from_previous_fixes": [

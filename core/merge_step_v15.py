@@ -110,16 +110,27 @@ def _build_section_from_artifact(artifact: Dict) -> Dict:
     if not renderer:
         renderer = "none"
     
+    # ISS-159 FIX: Intro = avatar-only centered at 60%, Summary = 52% right
+    if section_type == "intro":
+        avatar_layout = {
+            "visibility": "always",
+            "mode": "floating",
+            "position": "center",
+            "width_percent": 60
+        }
+    else:
+        avatar_layout = {
+            "visibility": "always",
+            "mode": "compact" if section_type not in ["summary"] else "floating",
+            "position": "right",
+            "width_percent": 52
+        }
+    
     section = {
         "section_type": section_type,
         "title": blueprint.get("title", "Untitled"),
         "renderer": renderer,
-        "avatar_layout": {
-            "visibility": "always",
-            "mode": "floating" if section_type in ["intro", "summary"] else "compact",
-            "position": "center" if section_type == "intro" else "right",
-            "width_percent": 52
-        }
+        "avatar_layout": avatar_layout
     }
     
     narration_data = narration.get("narration", {})
@@ -148,11 +159,25 @@ def _build_section_from_artifact(artifact: Dict) -> Dict:
             dd["avatar_layer"] = "show"
             merged_seg["display_directives"] = dd
         else:
-            merged_seg["display_directives"] = {
-                "text_layer": "show" if section_type in ["intro", "summary"] else "hide",
-                "visual_layer": "hide" if section_type in ["intro", "summary"] else "show",
-                "avatar_layer": "show"
-            }
+            # ISS-159 FIX: Intro = avatar-only (no text), Summary = limited text
+            if section_type == "intro":
+                merged_seg["display_directives"] = {
+                    "text_layer": "hide",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                }
+            elif section_type == "summary":
+                merged_seg["display_directives"] = {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                }
+            else:
+                merged_seg["display_directives"] = {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                }
         
         merged_segments.append(merged_seg)
     
