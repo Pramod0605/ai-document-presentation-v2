@@ -429,7 +429,7 @@
 
         function startPolling() {
             if (pollInterval) clearInterval(pollInterval);
-            pollInterval = setInterval(refreshStatus, 3000);
+            pollInterval = setInterval(refreshStatus, 180000); // 3 minutes
         }
 
         function stopPolling() {
@@ -452,6 +452,7 @@
                 }
             } catch (err) {
                 console.error('Error refreshing status:', err);
+                stopPolling(); // Stop polling on error
             }
         }
 
