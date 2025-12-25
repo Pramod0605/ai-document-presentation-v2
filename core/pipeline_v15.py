@@ -332,6 +332,25 @@ def process_markdown_to_presentation_v15(
         )
         recap_output["narration"] = recap_narration_output.get("narration", {})
         
+        video_prompts = recap_output.get("video_prompts", [])
+        for i, vp in enumerate(video_prompts):
+            prompt = vp.get("prompt", "") if isinstance(vp, dict) else str(vp)
+            char_count = len(prompt)
+            word_count = len(prompt.split()) if prompt else 0
+            if char_count > 800:
+                raise PipelineError(
+                    f"Recap prompt {i+1} exceeds 800 char limit ({char_count} chars). "
+                    f"LLM must generate within limits.",
+                    phase="recap_validation"
+                )
+            if word_count < 80:
+                raise PipelineError(
+                    f"Recap prompt {i+1} has only {word_count} words (minimum 80). "
+                    f"Preview: '{prompt[:100]}...'",
+                    phase="recap_validation"
+                )
+            logger.info(f"[Pipeline v1.5] Recap prompt {i+1}: {word_count} words, {char_count} chars - VALID")
+        
         _save_artifact(output_dir, "recap.json", recap_output)
         
         update_status("merge", "Combining all components...")
