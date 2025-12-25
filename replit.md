@@ -207,7 +207,9 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 
 ### V1.5 Issues Fixed (2025-12-25 - Session 2)
 - **ISS-120 (RESOLVED)**: WAN prompt limits reduced to 80-150 words, max 800 chars, auto-truncation added
+  - wan_prompt_validator.py: MIN_WAN_PROMPT_WORDS updated from 300 to 80, hard_fail validates both limits
 - **ISS-157 (RESOLVED)**: Quiz section handling via SmartChunker Q&A extraction
+  - Fully wired: SmartChunker → SectionPlanner → NarrationWriter → merge_step → player.js
 
 ### Remaining Issues
 - None critical - all HIGH priority issues resolved

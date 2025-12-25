@@ -446,8 +446,9 @@
       "fix_applied": [
         "1) recap_scene_system_v1.5.txt: Updated to 80-150 words, max 800 chars",
         "2) recap_agent.py: Validation updated to 80+ words min, 800 char max",
-        "3) wan_prompt_validator.py: MAX_PROMPT_LENGTH increased to 800",
-        "4) wan_client.py: Added _truncate_prompt() safety method before API call"
+        "3) wan_prompt_validator.py: MAX_PROMPT_LENGTH=800, MIN_WAN_PROMPT_WORDS=80 (was 300)",
+        "4) wan_prompt_validator.py: hard_fail_on_short_prompts() now validates 80-150 words + 800 chars",
+        "5) wan_client.py: Added _truncate_prompt() safety method before API call"
       ]
     }
   ],

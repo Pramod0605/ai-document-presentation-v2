@@ -16,7 +16,10 @@ import re
 from typing import List, Dict, Tuple
 
 
-MIN_WAN_PROMPT_WORDS_V13 = 300
+# ISS-120: Updated from 300 to 80 to match new 80-150 word prompt limits
+MIN_WAN_PROMPT_WORDS = 80
+MAX_WAN_PROMPT_WORDS = 150
+MIN_WAN_PROMPT_WORDS_V13 = 80  # Legacy alias for backwards compatibility
 
 
 class WanPromptHardFailError(Exception):
@@ -203,17 +206,19 @@ def log_prompt_quality_summary(video_prompts: List[Dict], section_id: int = 0) -
     }
 
 
-def hard_fail_on_short_prompts(video_prompts: List[Dict], section_id: int, min_words: int = MIN_WAN_PROMPT_WORDS_V13) -> None:
+def hard_fail_on_short_prompts(video_prompts: List[Dict], section_id: int, min_words: int = MIN_WAN_PROMPT_WORDS) -> None:
     """
     ISS-076 FIX: Hard fail validation for WAN prompts.
+    ISS-120 UPDATE: Now validates 80-150 words and max 800 chars.
     
-    Raises WanPromptHardFailError if any prompt is below minimum word count.
+    Raises WanPromptHardFailError if any prompt is below minimum word count
+    or exceeds maximum character limit.
     This should be called before production WAN API calls.
     
     Args:
         video_prompts: List of video prompt dicts
         section_id: Section identifier
-        min_words: Minimum words required per prompt
+        min_words: Minimum words required per prompt (default 80)
     
     Raises:
         WanPromptHardFailError: If any prompt fails validation
@@ -224,6 +229,7 @@ def hard_fail_on_short_prompts(video_prompts: List[Dict], section_id: int, min_w
     for i, vp in enumerate(video_prompts):
         prompt = vp.get("prompt", "") if isinstance(vp, dict) else str(vp)
         word_count = len(prompt.split()) if prompt else 0
+        char_count = len(prompt) if prompt else 0
         
         if word_count < min_words:
             raise WanPromptHardFailError(
@@ -231,5 +237,12 @@ def hard_fail_on_short_prompts(video_prompts: List[Dict], section_id: int, min_w
                 f"Beat {i}: Prompt has {word_count} words, minimum {min_words} required. "
                 f"Prompt preview: '{prompt[:100]}...'"
             )
+        
+        if char_count > MAX_PROMPT_LENGTH:
+            raise WanPromptHardFailError(
+                section_id,
+                f"Beat {i}: Prompt has {char_count} chars, maximum {MAX_PROMPT_LENGTH} allowed. "
+                f"Truncate or condense the prompt."
+            )
     
-    print(f"[WAN Validator] Section {section_id}: All {len(video_prompts)} prompts meet {min_words}+ word requirement")
+    print(f"[WAN Validator] Section {section_id}: All {len(video_prompts)} prompts meet {min_words}+ word / {MAX_PROMPT_LENGTH} char requirement")
