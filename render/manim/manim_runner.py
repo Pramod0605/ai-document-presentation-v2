@@ -925,6 +925,9 @@ class SpecGeneratedScene(Scene):
             )
             
             if result.returncode != 0:
+                print(f"[MANIM DEBUG] Section {topic_id} stdout: {result.stdout[:1000]}")
+                print(f"[MANIM DEBUG] Section {topic_id} stderr: {result.stderr[:1000]}")
+                print(f"[MANIM DEBUG] Generated code:\n{scene_wrapper[:2000]}")
                 raise ManimRenderError(
                     f"Section {topic_id}: Manim spec render failed. "
                     f"Return code: {result.returncode}. "
