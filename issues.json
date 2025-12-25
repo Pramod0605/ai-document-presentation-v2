@@ -349,27 +349,35 @@
       "id": "ISS-153",
       "title": "Memory section missing NarrationWriter - no audio sync",
       "severity": "HIGH",
-      "status": "RESOLVED-DOC",
+      "status": "RESOLVED",
       "created": "2025-12-25",
       "resolved": "2025-12-25",
       "description": "Memory section only uses MemoryFlashcard agent, no NarrationWriter. Without narration, avatar has nothing to speak. All sections must have narration for audio sync.",
       "requirement_violated": "ISS-152: Avatar + Narration mandatory for all sections",
       "evidence": "Section Type → Agent Usage table shows memory: 'MemoryFlashcard' only, no NarrationWriter",
-      "fix_applied": "Documentation updated: Memory section now shows 'SectionPlanner, NarrationWriter, MemoryFlashcard' in Section Type → Agent Usage table. Pipeline flow updated. NOTE: Code implementation needed in pipeline_v15.py",
-      "code_fix_needed": "core/pipeline_v15.py - add NarrationWriter call before MemoryFlashcard for memory sections"
+      "fix_applied": [
+        "1) pipeline_v15.py: Added NarrationWriter call before MemoryFlashcard",
+        "2) pipeline_v15.py: Created memory_blueprint with section_type='memory'",
+        "3) merge_step_v15.py: _build_memory_section now uses narration from NarrationWriter if available"
+      ],
+      "files_changed": ["core/pipeline_v15.py", "core/merge_step_v15.py"]
     },
     {
       "id": "ISS-154",
       "title": "Recap section missing NarrationWriter - video prompts have no narration",
       "severity": "HIGH",
-      "status": "RESOLVED-DOC",
+      "status": "RESOLVED",
       "created": "2025-12-25",
       "resolved": "2025-12-25",
       "description": "Recap section only uses RecapScene agent, no NarrationWriter. Videos play but avatar has no narration to speak. All sections must have narration.",
       "requirement_violated": "ISS-152: Avatar + Narration mandatory for all sections",
       "evidence": "Section Type → Agent Usage table shows recap: 'RecapScene' only, no NarrationWriter",
-      "fix_applied": "Documentation updated: Recap section now shows 'SectionPlanner, NarrationWriter, RecapScene' in Section Type → Agent Usage table. Pipeline flow updated. NOTE: Code implementation needed in pipeline_v15.py",
-      "code_fix_needed": "core/pipeline_v15.py - add NarrationWriter call before RecapScene for recap sections"
+      "fix_applied": [
+        "1) pipeline_v15.py: Added NarrationWriter call before RecapSceneAgent",
+        "2) pipeline_v15.py: Created recap_blueprint with section_type='recap'",
+        "3) merge_step_v15.py: _build_recap_section now uses narration from NarrationWriter if available"
+      ],
+      "files_changed": ["core/pipeline_v15.py", "core/merge_step_v15.py"]
     },
     {
       "id": "ISS-155",

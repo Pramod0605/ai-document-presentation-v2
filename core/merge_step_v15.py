@@ -185,24 +185,49 @@ def _build_section_from_artifact(artifact: Dict) -> Dict:
 
 
 def _build_memory_section(memory_output: Dict) -> Dict:
-    """Build memory section from MemoryFlashcardAgent output."""
+    """Build memory section from MemoryFlashcardAgent output.
+    
+    ISS-153 FIX: Uses NarrationWriter output if available, otherwise falls back to placeholder.
+    """
     flashcards = memory_output.get("flashcards", [])
     
-    intro_text = "Let's review what we've learned with some flashcards."
-    
-    segments = [
-        {
-            "segment_id": 1,
-            "text": intro_text,
-            "duration_seconds": 4.0,
-            "gesture_hint": "explaining",
-            "display_directives": {
-                "text_layer": "hide",
-                "visual_layer": "show",
-                "avatar_layer": "show"
+    narration_data = memory_output.get("narration", {})
+    if narration_data and narration_data.get("segments"):
+        segments = narration_data.get("segments", [])
+        full_text = narration_data.get("full_text", "")
+        
+        for seg in segments:
+            if "display_directives" not in seg:
+                seg["display_directives"] = {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                }
+    else:
+        intro_text = "Let's review what we've learned with some flashcards."
+        full_text = intro_text
+        segments = [
+            {
+                "segment_id": 1,
+                "text": intro_text,
+                "duration_seconds": 4.0,
+                "gesture_hint": "explaining",
+                "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                }
             }
-        }
-    ]
+        ]
+    
+    visual_beats = []
+    for i, seg in enumerate(segments, start=1):
+        visual_beats.append({
+            "beat_id": f"beat_{i}",
+            "segment_id": seg.get("segment_id", i),
+            "visual_beat_type": "text_only",
+            "description": f"Flashcard review segment {i}"
+        })
     
     return {
         "section_type": "memory",
@@ -215,53 +240,64 @@ def _build_memory_section(memory_output: Dict) -> Dict:
             "width_percent": 52
         },
         "narration": {
-            "full_text": intro_text,
+            "full_text": full_text,
             "segments": segments
         },
-        # ISS-121 FIX: Section-level display_directives for player
-        "display_directives": [seg["display_directives"] for seg in segments],
-        "visual_beats": [
-            {
-                "beat_id": "beat_1",
-                "segment_id": 1,
-                "visual_beat_type": "text_only",
-                "description": "Flashcard review section"
-            }
-        ],
+        "display_directives": [seg.get("display_directives", {
+            "text_layer": "hide", "visual_layer": "show", "avatar_layer": "show"
+        }) for seg in segments],
+        "visual_beats": visual_beats,
         "flashcards": flashcards
     }
 
 
 def _build_recap_section(recap_output: Dict) -> Dict:
-    """Build recap section from RecapSceneAgent output."""
+    """Build recap section from RecapSceneAgent output.
+    
+    ISS-154 FIX: Uses NarrationWriter output if available, otherwise falls back to placeholder.
+    """
     video_prompts = recap_output.get("video_prompts", [])
     
-    prompt_texts = []
-    segments = []
-    visual_beats = []
+    narration_data = recap_output.get("narration", {})
+    if narration_data and narration_data.get("segments"):
+        segments = narration_data.get("segments", [])
+        full_text = narration_data.get("full_text", "")
+        
+        for seg in segments:
+            if "display_directives" not in seg:
+                seg["display_directives"] = {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                }
+    else:
+        prompt_texts = []
+        segments = []
+        
+        for i, vp in enumerate(video_prompts, start=1):
+            duration = vp.get("duration_seconds", 10.0)
+            narration_text = f"Scene {i}: visualizing the concept."
+            prompt_texts.append(narration_text)
+            
+            segments.append({
+                "segment_id": i,
+                "text": narration_text,
+                "duration_seconds": duration,
+                "gesture_hint": "explaining",
+                "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                }
+            })
+        
+        full_text = " ".join(prompt_texts)
     
-    for i, vp in enumerate(video_prompts, start=1):
-        word_count = len(vp.get("prompt", "").split())
-        duration = vp.get("duration_seconds", 10.0)
-        
-        narration_text = f"Scene {i}: visualizing the concept."
-        prompt_texts.append(narration_text)
-        
-        segments.append({
-            "segment_id": i,
-            "text": narration_text,
-            "duration_seconds": duration,
-            "gesture_hint": "explaining",
-            "display_directives": {
-                "text_layer": "hide",
-                "visual_layer": "show",
-                "avatar_layer": "show"
-            }
-        })
-        
+    visual_beats = []
+    for i, seg in enumerate(segments, start=1):
         visual_beats.append({
             "beat_id": f"beat_{i}",
-            "segment_id": i,
+            "segment_id": seg.get("segment_id", i),
             "visual_beat_type": "video_clip",
             "description": f"Recap video scene {i}"
         })
@@ -286,11 +322,12 @@ def _build_recap_section(recap_output: Dict) -> Dict:
             "width_percent": 52
         },
         "narration": {
-            "full_text": " ".join(prompt_texts),
+            "full_text": full_text,
             "segments": segments
         },
-        # ISS-121 FIX: Section-level display_directives for player
-        "display_directives": [seg["display_directives"] for seg in segments],
+        "display_directives": [seg.get("display_directives", {
+            "text_layer": "hide", "visual_layer": "show", "avatar_layer": "show"
+        }) for seg in segments],
         "visual_beats": visual_beats,
         "video_prompts": formatted_prompts
     }

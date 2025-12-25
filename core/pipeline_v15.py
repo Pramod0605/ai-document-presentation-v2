@@ -266,24 +266,64 @@ def process_markdown_to_presentation_v15(
             if render_spec:
                 _save_artifact(output_dir, f"{artifact_idx:02d}_{section_id}_render_spec.json", render_spec)
         
-        update_status("memory", "Creating flashcards...")
+        update_status("memory", "Creating memory section with narration...")
+        
+        memory_blueprint = {
+            "section_id": "memory",
+            "section_type": "memory",
+            "title": f"{subject} - Key Flashcards",
+            "learning_goals": ["Review key concepts", "Test your understanding"],
+            "suggested_renderer": "none",
+            "avatar_visibility": "always",
+            "avatar_position": "right",
+            "avatar_width_percent": 52
+        }
+        
+        memory_narration_writer = NarrationWriterAgent(tracker=tracker, log_func=log)
+        memory_narration_output = memory_narration_writer.run(
+            section_blueprint=memory_blueprint,
+            source_markdown=markdown_content[:2000]
+        )
+        _save_artifact(output_dir, "memory_narration.json", memory_narration_output)
+        
         memory_agent = MemoryFlashcardAgent(tracker=tracker, log_func=log)
         memory_output = memory_agent.run(
             source_markdown=markdown_content,
             subject=subject
         )
+        memory_output["narration"] = memory_narration_output.get("narration", {})
         
         _save_artifact(output_dir, "memory.json", memory_output)
         
         key_concepts = [f.get("front", "") for f in memory_output.get("flashcards", [])]
         
-        update_status("recap", "Creating recap video prompts...")
+        update_status("recap", "Creating recap section with narration...")
+        
+        recap_blueprint = {
+            "section_id": "recap",
+            "section_type": "recap",
+            "title": f"{subject} - Chapter Recap",
+            "learning_goals": ["Review all major concepts", "Reinforce learning with video"],
+            "suggested_renderer": "video",
+            "avatar_visibility": "always",
+            "avatar_position": "right",
+            "avatar_width_percent": 52
+        }
+        
+        recap_narration_writer = NarrationWriterAgent(tracker=tracker, log_func=log)
+        recap_narration_output = recap_narration_writer.run(
+            section_blueprint=recap_blueprint,
+            source_markdown=markdown_content[:3000]
+        )
+        _save_artifact(output_dir, "recap_narration.json", recap_narration_output)
+        
         recap_agent = RecapSceneAgent(tracker=tracker, log_func=log)
         recap_output = recap_agent.run(
             source_markdown=markdown_content,
             subject=subject,
             key_concepts=key_concepts
         )
+        recap_output["narration"] = recap_narration_output.get("narration", {})
         
         _save_artifact(output_dir, "recap.json", recap_output)
         
