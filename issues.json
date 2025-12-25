@@ -110,24 +110,78 @@
       "evidence": "Job 5c5f4f3a shows visibility='always' for all sections including recap",
       "root_cause": "MergeStep was not enforcing avatar visibility for recap sections",
       "fix_applied": "Updated merge_step_v15.py to ensure avatar_layer='show' and visibility='always' for all section types"
+    },
+    {
+      "id": "ISS-137",
+      "title": "No audio files generated - TTS step failure",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "created": "2025-12-25",
+      "job_reference": "3ffaf8d2",
+      "description": "Audio directory is empty. All segment audio_url fields are null. TTS step appears to have been skipped or failed silently.",
+      "requirement_violated": "Audio generation requirement",
+      "evidence": "Job 3ffaf8d2: audio/ directory empty, all segments have audio_url=null",
+      "root_cause": "TTS step skipped or failed without error"
+    },
+    {
+      "id": "ISS-138",
+      "title": "LaTeX standalone.cls still not found despite texliveFull installation",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "created": "2025-12-25",
+      "job_reference": "3ffaf8d2",
+      "description": "Manim render fails with 'LaTeX Error: File standalone.cls not found' for sections using MathTex",
+      "requirement_violated": "Manim math rendering",
+      "evidence": "Sections 5, 6 fail with standalone.cls error in logs despite texliveFull being installed",
+      "root_cause": "texliveFull path not accessible to Manim's TeX search path"
+    },
+    {
+      "id": "ISS-139",
+      "title": "LLM-generated Manim code is truncated",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "created": "2025-12-25",
+      "job_reference": "3ffaf8d2",
+      "description": "Generated Python code ends mid-statement with incomplete expressions like 'run_time=' without value",
+      "requirement_violated": "Code completeness validation",
+      "evidence": "Section 5 ends: 'run_time=', Section 7 ends: 'r\"\\csc A = \\frac{5'",
+      "root_cause": "LLM max_tokens limit reached OR validation not rejecting incomplete code"
+    },
+    {
+      "id": "ISS-140",
+      "title": "render_spec.renderer field is MISSING",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "created": "2025-12-25",
+      "job_reference": "3ffaf8d2",
+      "description": "All sections have renderer=MISSING in render_spec even when manim_scene_spec is populated",
+      "requirement_violated": "Renderer field population",
+      "evidence": "Sections 3-7 have manim_code but renderer field is missing",
+      "root_cause": "MergeStep not setting renderer field from RendererSpecAgent output"
     }
   ],
   "regressions_from_previous_fixes": [
     {
       "original": "ISS-122 (Audio generation)",
       "status": "REGRESSED",
-      "note": "Generating .wav not .mp3"
+      "note": "Job 3ffaf8d2: NO audio generated at all (empty audio folder)"
     },
     {
       "original": "ISS-123 (Render execution)",
       "status": "STILL FAILING",
-      "note": "Manim returns code 1"
+      "note": "Manim returns code 1 due to: 1) truncated code, 2) standalone.cls missing"
+    },
+    {
+      "original": "ISS-130 (texliveFull)",
+      "status": "NOT WORKING",
+      "note": "Installed but standalone.cls still not found - path issue"
     },
     {
       "original": "Avatar always visible",
-      "status": "REGRESSED",
-      "note": "Recap has visibility=hidden"
+      "status": "FIXED",
+      "note": "Job 3ffaf8d2 shows visibility=always for all sections"
     }
   ],
+  "e2e_test_reference": "test_results_3ffaf8d2.json",
   "spec_reference": "docs/display_requirements.md v2.1"
 }
