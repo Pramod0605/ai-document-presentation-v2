@@ -78,7 +78,7 @@ def merge_agent_outputs(
         "avatar_global": {
             "style": "teacher",
             "default_position": "right",
-            "default_width_percent": 30,
+            "default_width_percent": 52,
             "gesture_enabled": True
         },
         "sections": sections,
@@ -108,10 +108,10 @@ def _build_section_from_artifact(artifact: Dict) -> Dict:
         "title": blueprint.get("title", "Untitled"),
         "renderer": blueprint.get("suggested_renderer", "none"),
         "avatar_layout": {
-            "visibility": blueprint.get("avatar_visibility", "optional"),
+            "visibility": "always",
             "mode": "floating" if section_type in ["intro", "summary"] else "compact",
-            "position": blueprint.get("avatar_position", "right"),
-            "width_percent": 50 if section_type == "intro" else 30
+            "position": "center" if section_type == "intro" else "right",
+            "width_percent": 52
         }
     }
     
@@ -137,12 +137,14 @@ def _build_section_from_artifact(artifact: Dict) -> Dict:
             merged_seg["visual_content"] = enrichment["visual_content"]
         
         if enrichment.get("display_directives"):
-            merged_seg["display_directives"] = enrichment["display_directives"]
+            dd = enrichment["display_directives"].copy()
+            dd["avatar_layer"] = "show"
+            merged_seg["display_directives"] = dd
         else:
             merged_seg["display_directives"] = {
                 "text_layer": "show" if section_type in ["intro", "summary"] else "hide",
                 "visual_layer": "hide" if section_type in ["intro", "summary"] else "show",
-                "avatar_layer": "show" if section_type in ["intro", "summary"] else "gesture_only"
+                "avatar_layer": "show"
             }
         
         merged_segments.append(merged_seg)
@@ -190,7 +192,7 @@ def _build_memory_section(memory_output: Dict) -> Dict:
             "display_directives": {
                 "text_layer": "hide",
                 "visual_layer": "show",
-                "avatar_layer": "hide"
+                "avatar_layer": "show"
             }
         }
     ]
@@ -200,10 +202,10 @@ def _build_memory_section(memory_output: Dict) -> Dict:
         "title": memory_output.get("title", "Remember This!"),
         "renderer": "none",
         "avatar_layout": {
-            "visibility": "hidden",
+            "visibility": "always",
             "mode": "compact",
-            "position": "hidden",
-            "width_percent": 0
+            "position": "right",
+            "width_percent": 52
         },
         "narration": {
             "full_text": intro_text,
@@ -246,7 +248,7 @@ def _build_recap_section(recap_output: Dict) -> Dict:
             "display_directives": {
                 "text_layer": "hide",
                 "visual_layer": "show",
-                "avatar_layer": "hide"
+                "avatar_layer": "show"
             }
         })
         
@@ -271,10 +273,10 @@ def _build_recap_section(recap_output: Dict) -> Dict:
         "title": recap_output.get("title", "Let's Review"),
         "renderer": "video",
         "avatar_layout": {
-            "visibility": "hidden",
+            "visibility": "always",
             "mode": "compact",
-            "position": "hidden",
-            "width_percent": 0
+            "position": "right",
+            "width_percent": 52
         },
         "narration": {
             "full_text": " ".join(prompt_texts),

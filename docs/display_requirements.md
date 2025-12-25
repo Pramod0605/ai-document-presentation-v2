@@ -45,13 +45,22 @@ This document defines how the AI Animated Education player displays educational 
 
 | Section  | Avatar Position | Avatar Width | Text/Content Area | Video Area | Renderer |
 |----------|-----------------|--------------|-------------------|------------|----------|
-| **Intro**   | Center       | **60%**      | Top 80%           | None       | none     |
-| **Summary** | Right        | **45%**      | Left 50%          | None       | none     |
-| **Content** | Right        | **35%**      | Left 60%          | Fullscreen when playing | manim/video |
-| **Example** | Right        | **35%**      | Left 60%          | Fullscreen when playing | manim |
-| **Quiz**    | Right        | **35%**      | Left 60%          | None       | none     |
-| **Memory**  | Right        | **35%**      | Flashcards        | None       | none     |
-| **Recap**   | Right        | **35%**      | None              | Fullscreen | video (WAN) |
+| **Intro**   | Center       | **52%**      | Top 80%           | None       | none     |
+| **Summary** | Right        | **52%**      | Left 45%          | None       | none     |
+| **Content** | Right        | **52%**      | Left 45%          | Fullscreen when playing | manim/video |
+| **Example** | Right        | **52%**      | Left 45%          | Fullscreen when playing | manim |
+| **Quiz**    | Right        | **52%**      | Left 45%          | None       | none     |
+| **Memory**  | Right        | **52%**      | Flashcards        | None       | none     |
+| **Recap**   | Right        | **52%**      | None              | Fullscreen | video (WAN) |
+
+### Pixel Specifications (Reference - 1920x1080 viewport)
+
+| Section | Avatar Size | Avatar Position | Content Size | Content Position |
+|---------|-------------|-----------------|--------------|------------------|
+| **Intro** | 990x557px | R:46px B:1px (center) | 914x502px | L:65px T:70px |
+| **Summary/Content/etc** | 1008x567px | R:-245px B:1px (right) | 850x777px | L:41px T:-20px |
+
+**Avatar Aspect Ratio**: 1.78 (16:9)
 
 ---
 
@@ -93,11 +102,13 @@ This document defines how the AI Animated Education player displays educational 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                           INTRO LAYOUT                               │
-│                        Avatar: CENTER, 60%                           │
+│                        Avatar: CENTER, 52%                           │
+│                    (990x557px at 1920x1080)                          │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │   ┌──────────────────────────────────────────────────────────────┐  │
-│   │                     TEXT AREA (Top 80%)                      │  │
+│   │                  TEXT AREA (914x502px)                       │  │
+│   │                  Position: L:65px T:70px                     │  │
 │   │                                                              │  │
 │   │   "Welcome to Definite Integrals!"                           │  │
 │   │   - Today we explore integration                             │  │
@@ -108,15 +119,16 @@ This document defines how the AI Animated Education player displays educational 
 │                    ┌─────────────────────────┐                       │
 │                    │                         │                       │
 │                    │     AVATAR (CENTER)     │                       │
-│                    │       Width: 60%        │                       │
-│                    │       Welcoming         │                       │
+│                    │     Size: 990x557px     │                       │
+│                    │     Width: 52%          │                       │
+│                    │     Pos: R:46px B:1px   │                       │
 │                    │                         │                       │
 │                    └─────────────────────────┘                       │
 │                                                                      │
 └─────────────────────────────────────────────────────────────────────┘
 
 display_directives: { text_layer: "show", visual_layer: "hide", avatar_layer: "show" }
-avatar_layout: { position: "center", width_percent: 60 }
+avatar_layout: { position: "center", width_percent: 52, size: "990x557" }
 renderer: none
 ```
 
@@ -127,15 +139,16 @@ renderer: none
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                          SUMMARY LAYOUT                              │
-│                        Avatar: RIGHT, 45%                            │
+│                        Avatar: RIGHT, 52%                            │
+│                    (1008x567px at 1920x1080)                         │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │   ┌───────────────────────────┐   ┌─────────────────────────────┐   │
-│   │   TEXT AREA (Left 50%)    │   │      AVATAR (RIGHT)         │   │
-│   │                           │   │                             │   │
-│   │   WHAT YOU'LL LEARN       │   │       Width: 45%            │   │
-│   │                           │   │       Medium-Large          │   │
-│   │   - Define integrals      │   │       Explaining            │   │
+│   │   TEXT AREA (Left 45%)    │   │      AVATAR (RIGHT)         │   │
+│   │   Size: 850x777px         │   │                             │   │
+│   │   WHAT YOU'LL LEARN       │   │     Size: 1008x567px        │   │
+│   │                           │   │     Width: 52%              │   │
+│   │   - Define integrals      │   │     Pos: R:-245px B:1px     │   │
 │   │   - Properties overview   │   │                             │   │
 │   │   - Fundamental theorem   │   │                             │   │
 │   │   - Worked examples       │   │                             │   │
