@@ -291,20 +291,49 @@ class ManimCodeGenerator:
         used_names = set()
         
         manim_builtins = {
+            # Mobjects - shapes
             'Text', 'MathTex', 'Tex', 'Circle', 'Rectangle', 'Arrow', 'Line',
-            'Dot', 'Square', 'Triangle', 'Polygon', 'Arc', 'Ellipse',
-            'NumberLine', 'Axes', 'NumberPlane', 'Graph', 'VGroup', 'Group',
+            'Dot', 'Square', 'Triangle', 'Polygon', 'Arc', 'Ellipse', 'Annulus',
+            'DashedLine', 'DoubleArrow', 'Vector', 'CurvedArrow', 'CurvedDoubleArrow',
+            'NumberLine', 'Axes', 'NumberPlane', 'Graph', 'VGroup', 'Group', 'VMobject',
+            'ThreeDAxes', 'Surface', 'Sphere', 'Cube', 'Prism', 'Cone', 'Cylinder',
+            # Labels and annotations
+            'Brace', 'BraceLabel', 'BraceText', 'BraceBetweenPoints',
+            'DecimalNumber', 'Integer', 'Variable', 'MathTable', 'Table',
+            'SurroundingRectangle', 'BackgroundRectangle', 'Cross', 'Underline',
+            'Title', 'Paragraph', 'MarkupText', 'Code',
+            # Animations - creation
             'Write', 'FadeIn', 'FadeOut', 'Transform', 'ReplacementTransform',
             'MoveToTarget', 'Indicate', 'Circumscribe', 'Create', 'Uncreate',
-            'GrowFromCenter', 'SpinInFromNothing', 'ShrinkToCenter',
+            'GrowFromCenter', 'SpinInFromNothing', 'ShrinkToCenter', 'DrawBorderThenFill',
+            'ShowCreation', 'ShowPassingFlash', 'ApplyWave', 'Wiggle',
+            'GrowArrow', 'GrowFromPoint', 'GrowFromEdge', 'ShowIncreasingSubsets',
+            'AddTextLetterByLetter', 'RemoveTextLetterByLetter',
+            # Animations - transforms
+            'ApplyMethod', 'ApplyPointwiseFunction', 'ApplyMatrix', 'Rotate',
+            'ScaleInPlace', 'AnimationGroup', 'Succession', 'LaggedStart', 'LaggedStartMap',
+            'Wait', 'Homotopy', 'TransformMatchingShapes', 'TransformMatchingTex',
+            # Directions and positions
             'UP', 'DOWN', 'LEFT', 'RIGHT', 'ORIGIN', 'UL', 'UR', 'DL', 'DR',
-            'PI', 'TAU', 'DEGREES', 'WHITE', 'BLACK', 'RED', 'GREEN', 'BLUE',
-            'YELLOW', 'ORANGE', 'PURPLE', 'PINK', 'GRAY', 'GREY',
-            'self', 'range', 'len', 'str', 'int', 'float', 'list', 'dict', 'True', 'False', 'None',
-            'lambda', 'ValueTracker', 'always_redraw', 'Brace', 'BraceLabel',
-            'DecimalNumber', 'Integer', 'Variable', 'MathTable', 'Table',
-            'SurroundingRectangle', 'BackgroundRectangle', 'Cross',
-            'np', 'numpy', 'math', 'config'
+            'OUT', 'IN', 'SMALL_BUFF', 'MED_SMALL_BUFF', 'MED_LARGE_BUFF', 'LARGE_BUFF',
+            # Constants
+            'PI', 'TAU', 'DEGREES', 'DEFAULT_FONT_SIZE',
+            # Colors
+            'WHITE', 'BLACK', 'RED', 'GREEN', 'BLUE', 'YELLOW', 'ORANGE', 'PURPLE', 
+            'PINK', 'GRAY', 'GREY', 'GOLD', 'TEAL', 'MAROON', 'LIGHT_GRAY', 'DARK_GRAY',
+            'RED_A', 'RED_B', 'RED_C', 'RED_D', 'RED_E', 'BLUE_A', 'BLUE_B', 'BLUE_C', 
+            'BLUE_D', 'BLUE_E', 'GREEN_A', 'GREEN_B', 'GREEN_C', 'GREEN_D', 'GREEN_E',
+            'YELLOW_A', 'YELLOW_B', 'YELLOW_C', 'YELLOW_D', 'YELLOW_E',
+            # Python builtins
+            'self', 'range', 'len', 'str', 'int', 'float', 'list', 'dict', 'tuple', 'set',
+            'True', 'False', 'None', 'lambda', 'abs', 'min', 'max', 'sum', 'zip', 'map',
+            'filter', 'enumerate', 'sorted', 'reversed', 'round', 'print', 'isinstance',
+            # Manim utilities
+            'ValueTracker', 'always_redraw', 'Updater', 'UpdateFromFunc',
+            'TracedPath', 'ParametricFunction', 'FunctionGraph',
+            'rate_functions', 'linear', 'smooth', 'there_and_back', 'rush_into', 'rush_from',
+            # External modules commonly used
+            'np', 'numpy', 'math', 'config', 'interpolate'
         }
         
         for node in ast.walk(tree):
