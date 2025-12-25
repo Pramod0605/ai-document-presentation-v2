@@ -21,62 +21,105 @@
       "resolved": "2025-12-19"
     },
     {
-      "id": "ISS-004",
-      "title": "Summary slide not displaying in player",
-      "status": "resolved",
-      "created": "2025-12-18"
+      "id": "ISS-130",
+      "title": "Manim videos not rendered - all topic videos return 404",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "created": "2025-12-25",
+      "job_reference": "df45f8ae",
+      "description": "Sections 3-8 have renderer=manim and manim_code generated (2779+ chars) but video_path=None. Render execution fails or videos not copied to job folder.",
+      "requirement_violated": "REQ-VID-001 (Video availability)",
+      "evidence": "topic_3.mp4 through topic_9.mp4 missing. Only topic_10.mp4 exists (recap).",
+      "root_cause": "Manim render execution returns code 1. Videos not generated."
     },
     {
-      "id": "ISS-005",
-      "title": "Player displayItems fallback to narration_segments",
-      "status": "resolved",
-      "created": "2025-12-19",
-      "resolved": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - no_fallbacks_allowed",
-      "solution": "Removed narration_segments fallback from displayItems in loadSlide()."
+      "id": "ISS-131",
+      "title": "Avatar width_percent violates Display Summary Table",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "created": "2025-12-25",
+      "job_reference": "df45f8ae",
+      "description": "Content sections showing width_percent=30 instead of 35%. Recap section has avatar='hidden' which violates 'Avatar ALWAYS VISIBLE' principle.",
+      "requirement_violated": "REQ-030, REQ-031, Display Summary Table (60%/45%/35%)",
+      "evidence": "Section 3 avatar_layout: width_percent=30, Section 10: visibility='hidden'",
+      "root_cause": "VisualSpecArtist or MergeStep not enforcing display_requirements avatar widths"
     },
     {
-      "id": "ISS-006",
-      "title": "Duration field naming mismatch: v1.1 uses duration_seconds, code uses duration",
-      "status": "resolved",
-      "created": "2025-12-19",
-      "resolved": "2025-12-19",
-      "solution": "Prompts use duration_seconds. Player and tts read duration_seconds with duration fallback."
+      "id": "ISS-132",
+      "title": "LaTeX/Math formulas stripped from content",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "created": "2025-12-25",
+      "job_reference": "df45f8ae",
+      "description": "Math PDF content with formulas shows NO LATEX in visual_content. $...$ blocks removed during processing.",
+      "requirement_violated": "P7 Content Integrity, REQ-045",
+      "evidence": "All 10 sections report NO LATEX in visual_content despite math PDF source",
+      "root_cause": "NarrationWriter or VisualSpecArtist stripping LaTeX during text processing"
     },
     {
-      "id": "ISS-007",
-      "title": "Section ID field mismatch: v1.1 uses section_id, code uses id",
-      "status": "resolved",
-      "created": "2025-12-19",
-      "resolved": "2025-12-19",
-      "solution": "Prompts use section_id. Player and tts read section_id with id fallback."
+      "id": "ISS-133",
+      "title": "Narration/display desync - text remains after narration ends",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "created": "2025-12-25",
+      "job_reference": "df45f8ae",
+      "description": "Narration completes but text content remains displayed. display_directives timing not synchronized with TTS duration.",
+      "requirement_violated": "Narration Sync Architecture (§7), TTS timing authoritative",
+      "evidence": "User report: 'narration completes' but 'lot of text displayed'",
+      "root_cause": "segment.duration_seconds not updated with actual TTS duration, or display_directives not using correct timing"
     },
     {
-      "id": "ISS-008",
-      "title": "renderer_reasoning field missing",
-      "status": "resolved",
-      "created": "2025-12-19",
-      "resolved": "2025-12-19",
-      "solution": "Added to prompts and passed through in player.js."
+      "id": "ISS-134",
+      "title": "Recap video exists but player attempts to load missing videos",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "created": "2025-12-25",
+      "job_reference": "df45f8ae",
+      "description": "Player tries to load topic_1_beat_0.mp4, topic_2_beat_0.mp4 etc which don't exist. Only topic_10.mp4 exists.",
+      "requirement_violated": "Player should gracefully handle missing videos",
+      "evidence": "Console shows 404 for all beat videos and section videos except topic_10",
+      "root_cause": "Player.js attempting to preload videos for sections without videos"
     },
     {
-      "id": "ISS-009",
-      "title": "Quiz section type not implemented",
-      "status": "resolved",
-      "created": "2025-12-19",
-      "resolved": "2025-12-19",
-      "spec_reference": "docs/llm_output_requirements.json v1.1 - quiz_handling_rules",
-      "solution": "Implemented quiz section with: 1) Quiz rules in user_prompt.txt with question/choices/reveal_steps structure, 2) Quiz rendering in player.js with timed reveal steps, 3) Quiz CSS in index.html, 4) Quiz validation in llm_client.py validate_section_v2()"
+      "id": "ISS-135",
+      "title": "Audio files generated as .wav instead of .mp3",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "created": "2025-12-25",
+      "job_reference": "df45f8ae",
+      "description": "Audio directory contains .wav files (1_2.wav, 2_1.wav) but pipeline should generate .mp3",
+      "evidence": "ls audio/ shows .wav files",
+      "root_cause": "Edge TTS generating .wav, consolidation step not converting to .mp3"
     },
     {
-      "id": "ISS-010",
-      "title": "Flashcard limit mismatch: v1.1 says 5, prompts say 3",
-      "status": "resolved",
-      "created": "2025-12-19",
-      "resolved": "2025-12-19",
-      "solution": "Updated prompts to require 5 acronym-based flashcards (A-B-C-D-E)."
+      "id": "ISS-136",
+      "title": "Recap section avatar visibility='hidden' violates core principle",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "created": "2025-12-25",
+      "job_reference": "df45f8ae",
+      "description": "Section 10 (recap) has avatar_layout.visibility='hidden' and width_percent=0. This violates 'Avatar ALWAYS VISIBLE' principle.",
+      "requirement_violated": "Core Principle #2: Avatar is ALWAYS VISIBLE",
+      "evidence": "Section 10 avatar_layout: {'visibility': 'hidden', 'mode': 'compact', 'position': 'hidden', 'width_percent': 0}",
+      "root_cause": "RecapAgent or MergeStep setting avatar to hidden for recap sections"
+    }
+  ],
+  "regressions_from_previous_fixes": [
+    {
+      "original": "ISS-122 (Audio generation)",
+      "status": "REGRESSED",
+      "note": "Generating .wav not .mp3"
     },
     {
-      "id": "ISS-011",
-      "title": "Visual beat purpose field naming: v1.1 uses 'purpose', code uses 'pedagogical_focus'",
-      "sta
+      "original": "ISS-123 (Render execution)",
+      "status": "STILL FAILING",
+      "note": "Manim returns code 1"
+    },
+    {
+      "original": "Avatar always visible",
+      "status": "REGRESSED",
+      "note": "Recap has visibility=hidden"
+    }
+  ],
+  "spec_reference": "docs/display_requirements.md v2.1"
+}
