@@ -11,7 +11,7 @@ This project is a **Deterministic Educational Film Engine** that converts PDF ch
 **Primary Reference**: `docs/display_requirements.md`
 
 This document contains:
-- Display Summary Table (avatar widths: 60%/45%/35% by section type)
+- Display Summary Table (avatar widths: 52% for all section types, based on actual pixel measurements)
 - Layer Architecture (Layer 0=Background, Layer 1=Content, Layer 2=Avatar always visible)
 - ASCII diagrams for ALL 7 section types (intro, summary, content, example, quiz, memory, recap)
 - LLM Agent Reference (all 7 agents with inputs/outputs/prompt files)
@@ -190,9 +190,19 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 - Recap video: topic_5.mp4 generated successfully via WAN placeholder
 - Manim: Code detected (3052 chars) but render execution still fails
 
+### V1.5 Issues Fixed (2025-12-25)
+- **ISS-130 (Partial)**: Manim LaTeX dependency - installed texliveFull package for standalone.cls
+- **ISS-131 (RESOLVED)**: Avatar width now enforced at 52% for all sections via merge_step_v15.py
+- **ISS-134 (RESOLVED)**: Player now skips video detection for text-only sections (renderer=none)
+- **ISS-136 (RESOLVED)**: Avatar visibility now enforced as "always" for all sections including recap
+- **Manim Code Validation**: Added runtime pattern checks and completeness validation to manim_code_generator.py
+
 ### Remaining Issues
 - **ISS-120**: WAN/Video prompts exceed API character limit (1900+ chars)
-- **Manim Render Execution**: LLM-generated Python code runs but Manim process exits with code 1
+- **ISS-132**: LaTeX/Math formulas not appearing in visual_content (extraction issue)
+- **ISS-133**: Narration/display desync (timing alignment)
+- **ISS-135**: Audio .wav vs .mp3 format inconsistency
+- **Manim Render Execution**: LLM-generated Python code still has runtime errors (improved validation may help)
 
 ### Recent Issues Fixed (V1.4)
 - **ISS-111**: Renderer execution wired into V1.4 pipeline
