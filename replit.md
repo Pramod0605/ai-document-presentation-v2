@@ -198,14 +198,15 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 - **ISS-137 (RESOLVED)**: Audio generation fixed - edge_tts asyncio wrapper now handles Flask context, pyttsx3 raises proper exceptions, audio_file only set when file exists
 - **Manim Code Validation**: Added runtime pattern checks and completeness validation to manim_code_generator.py
 
+### V1.5 Issues Fixed (2025-12-25 - Latest)
+- **ISS-132 (RESOLVED)**: LaTeX formula preservation - VisualSpecArtist copies formulas exactly, NarrationWriter describes in spoken English
+- **ISS-133 (RESOLVED)**: Narration/display desync - player.js now hides text when audio ends past last segment
+- **ISS-144 (RESOLVED)**: Manim code generation - expanded manim_builtins to 100+ classes reducing false positives
+- **ISS-153 (RESOLVED)**: Memory section now has NarrationWriter call for proper audio sync
+- **ISS-154 (RESOLVED)**: Recap section now has NarrationWriter call for proper audio sync
+
 ### Remaining Issues
 - **ISS-120**: WAN/Video prompts exceed API character limit (1900+ chars)
-- **ISS-132**: LaTeX/Math formulas not appearing in visual_content (extraction issue)
-- **ISS-133**: Narration/display desync (timing alignment)
-- **ISS-138 (RESOLVED)**: LaTeX standalone.cls - removed conflicting texliveSmall/Medium packages
-- **ISS-139 (RESOLVED)**: Manim code truncation - increased max_tokens, added finish_reason detection
-- **ISS-140 (RESOLVED)**: renderer field - merge step now uses render_spec.renderer as fallback
-- **Manim Render Execution**: LLM-generated Python code still has runtime errors (improved validation may help)
 
 ### Recent Issues Fixed (V1.4)
 - **ISS-111**: Renderer execution wired into V1.4 pipeline
