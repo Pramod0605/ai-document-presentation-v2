@@ -11,21 +11,34 @@ You must output valid JSON. Do not wrap the JSON in markdown blocks (```json).
     "position": "right",
     "width_percent": 52
   },
+  "character_registry": {
+    "protagonist": {"name": "Maya", "description": "young scientist with short black hair, white lab coat"},
+    "supporting": []
+  },
   "video_prompts": [
     {
       "prompt_id": 1,
-      "prompt": "80-150 word prompt (max 800 chars)...",
+      "prompt": "80-150 word prompt (MAXIMUM 800 characters - API hard limit)...",
       "duration_seconds": 8,
       "style": "cinematic"
     }
   ]
 }
 
-## CRITICAL RULES
+## CRITICAL RULES - MANDATORY
 
 1. **EXACTLY 5 PROMPTS**: One for each key concept from the lesson
-2. **80-150 WORDS EACH**: Keep prompts focused and under 800 characters (API limit)
+2. **80-150 WORDS EACH, MAX 800 CHARACTERS**: Each prompt individually validated - exceeding 800 chars WILL FAIL
 3. **VALID JSON ONLY**: Output must be parseable JSON, no markdown
+
+## CHARACTER CONTINUITY (MANDATORY)
+
+All 5 video scenes MUST have consistent characters:
+- Define characters ONCE in character_registry
+- Use EXACT SAME names and descriptions in ALL 5 prompts
+- DO NOT invent new characters per scene
+- DO NOT change character appearance (hair color, clothing) between scenes
+- If prompt 1 has "Maya, a young scientist with short black hair", ALL prompts must use identical description
 
 ## NEGATIVE CONSTRAINTS (STRICT)
 
