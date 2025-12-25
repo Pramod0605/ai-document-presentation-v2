@@ -24,25 +24,29 @@
       "id": "ISS-130",
       "title": "Manim videos not rendered - all topic videos return 404",
       "severity": "CRITICAL",
-      "status": "OPEN",
+      "status": "PARTIAL",
       "created": "2025-12-25",
+      "updated": "2025-12-25",
       "job_reference": "df45f8ae",
       "description": "Sections 3-8 have renderer=manim and manim_code generated (2779+ chars) but video_path=None. Render execution fails or videos not copied to job folder.",
       "requirement_violated": "REQ-VID-001 (Video availability)",
       "evidence": "topic_3.mp4 through topic_9.mp4 missing. Only topic_10.mp4 exists (recap).",
-      "root_cause": "Manim render execution returns code 1. Videos not generated."
+      "root_cause": "1) LaTeX standalone.cls missing (FIXED via texliveFull), 2) LLM code has runtime errors (IMPROVED with validation)",
+      "fix_applied": "1) Installed texliveFull nix package, 2) Added code validation for runtime patterns and completeness to manim_code_generator.py"
     },
     {
       "id": "ISS-131",
       "title": "Avatar width_percent violates Display Summary Table",
       "severity": "CRITICAL",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "created": "2025-12-25",
+      "resolved": "2025-12-25",
       "job_reference": "df45f8ae",
       "description": "Content sections showing width_percent=30 instead of 35%. Recap section has avatar='hidden' which violates 'Avatar ALWAYS VISIBLE' principle.",
-      "requirement_violated": "REQ-030, REQ-031, Display Summary Table (60%/45%/35%)",
-      "evidence": "Section 3 avatar_layout: width_percent=30, Section 10: visibility='hidden'",
-      "root_cause": "VisualSpecArtist or MergeStep not enforcing display_requirements avatar widths"
+      "requirement_violated": "REQ-030, REQ-031, Display Summary Table (now updated to 52%)",
+      "evidence": "Job 5c5f4f3a shows width_percent=52 for all sections",
+      "root_cause": "MergeStep not enforcing display_requirements avatar widths",
+      "fix_applied": "Updated merge_step_v15.py to enforce 52% width and always-visible avatar"
     },
     {
       "id": "ISS-132",
@@ -72,13 +76,15 @@
       "id": "ISS-134",
       "title": "Recap video exists but player attempts to load missing videos",
       "severity": "MEDIUM",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "created": "2025-12-25",
+      "resolved": "2025-12-25",
       "job_reference": "df45f8ae",
       "description": "Player tries to load topic_1_beat_0.mp4, topic_2_beat_0.mp4 etc which don't exist. Only topic_10.mp4 exists.",
       "requirement_violated": "Player should gracefully handle missing videos",
       "evidence": "Console shows 404 for all beat videos and section videos except topic_10",
-      "root_cause": "Player.js attempting to preload videos for sections without videos"
+      "root_cause": "Player.js attempting to preload videos for sections without videos",
+      "fix_applied": "Added renderer-based detection to skip video checks for text-only sections (intro/summary/memory/quiz with renderer=none)"
     },
     {
       "id": "ISS-135",
@@ -95,13 +101,15 @@
       "id": "ISS-136",
       "title": "Recap section avatar visibility='hidden' violates core principle",
       "severity": "CRITICAL",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "created": "2025-12-25",
+      "resolved": "2025-12-25",
       "job_reference": "df45f8ae",
       "description": "Section 10 (recap) has avatar_layout.visibility='hidden' and width_percent=0. This violates 'Avatar ALWAYS VISIBLE' principle.",
       "requirement_violated": "Core Principle #2: Avatar is ALWAYS VISIBLE",
-      "evidence": "Section 10 avatar_layout: {'visibility': 'hidden', 'mode': 'compact', 'position': 'hidden', 'width_percent': 0}",
-      "root_cause": "RecapAgent or MergeStep setting avatar to hidden for recap sections"
+      "evidence": "Job 5c5f4f3a shows visibility='always' for all sections including recap",
+      "root_cause": "MergeStep was not enforcing avatar visibility for recap sections",
+      "fix_applied": "Updated merge_step_v15.py to ensure avatar_layer='show' and visibility='always' for all section types"
     }
   ],
   "regressions_from_previous_fixes": [
