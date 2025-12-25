@@ -111,7 +111,7 @@ You MUST output ONLY valid JSON with this exact structure:
       "learning_goals": ["What viewer will learn"],
       "suggested_renderer": "manim|video|none",
       "renderer_reasoning": "Why this renderer",
-      "avatar_visibility": "required|optional",
+      "avatar_visibility": "always",
       "avatar_position": "left|right|center",
       "avatar_width_percent": 52,
       "estimated_duration_seconds": 60
@@ -523,7 +523,7 @@ Pipeline Start
 ### Directory Structure
 
 ```
-{job_dir}/
+jobs/{job_id}/
 ├── presentation.json              (final merged v1.3 schema)
 ├── artifacts/                     (debug & retry artifacts)
 │   ├── 01_chunker.json           (SmartChunker output)
@@ -533,11 +533,13 @@ Pipeline Start
 │   ├── 05_section_1_render_spec.json
 │   ├── 06_section_2_narration.json
 │   ├── ...
+│   ├── memory_narration.json     (NarrationWriter for memory)
 │   ├── memory.json               (MemoryFlashcard output)
+│   ├── recap_narration.json      (NarrationWriter for recap)
 │   ├── recap.json                (RecapScene output)
 │   └── manim_failed_sections.json (retry queue)
 ├── audio/
-│   └── section_*.mp3             (TTS output)
+│   └── section_*.mp3             (TTS output for ALL sections)
 └── videos/
     └── *.mp4                     (Manim/WAN renders)
 ```
@@ -565,25 +567,121 @@ This table shows which agent output populates which fields in the final `present
 | VisualSpecArtist | `display_directives[]` | `sections[].display_directives[]` | content, example |
 | RendererSpecAgent | `manim_scene_spec` | `sections[].manim_scene_spec` | content (renderer=manim) |
 | RendererSpecAgent | `video_prompts[]` | `sections[].video_prompts[]` | content (renderer=video) |
+| NarrationWriter | `segments[]` | `sections[memory].segments[]` | memory |
 | MemoryFlashcard | `flashcards[]` | `sections[memory].visual_content` (JSON string) | memory |
 | MemoryFlashcard | `title` | `sections[memory].title` | memory |
+| NarrationWriter | `segments[]` | `sections[recap].segments[]` | recap |
 | RecapScene | `video_prompts[]` | `sections[recap].video_prompts[]` | recap |
 | RecapScene | `title` | `sections[recap].title` | recap |
+| QuizFlashcard | `quiz_cards[]` | `sections[quiz].visual_content` (JSON string) | quiz (conditional) |
 | ManimCodeGenerator | Python code | `sections[].render_spec.manim_scene_spec.manim_code` | content (renderer=manim) |
 | TTS Pass | audio duration | `sections[].segments[].duration_seconds` (authoritative) | all |
 | TTS Pass | audio file | `sections[].audio_file` | all |
 
 ### Section Type → Agent Usage
 
-| Section Type | Agents Used | Notes |
-|--------------|-------------|-------|
-| intro | SectionPlanner, NarrationWriter | Text-only, avatar explains |
-| summary | SectionPlanner, NarrationWriter | Text-only, avatar explains |
-| content | SectionPlanner, NarrationWriter, VisualSpecArtist, RendererSpecAgent, ManimCodeGenerator (if manim) | Full pipeline |
-| example | SectionPlanner, NarrationWriter, VisualSpecArtist, RendererSpecAgent | Like content but focused on worked examples |
-| quiz | SectionPlanner, NarrationWriter | Interactive quiz, no renderer |
-| memory | MemoryFlashcard | 5 flashcards, no NarrationWriter |
-| recap | RecapScene | 5 video prompts for WAN, no NarrationWriter |
+**CRITICAL PRINCIPLE**: Avatar + Narration with audio is MANDATORY for ALL sections. Every section must have:
+1. Avatar always visible at 52% width with gesture
+2. Narration audio synchronized with display
+3. TTS-generated audio file
+
+| Section Type | Agents Used | Mandatory | Notes |
+|--------------|-------------|-----------|-------|
+| intro | SectionPlanner, NarrationWriter | YES | Text-only, avatar narrates introduction |
+| summary | SectionPlanner, NarrationWriter | YES | Text-only, avatar narrates summary |
+| content | SectionPlanner, NarrationWriter, VisualSpecArtist, RendererSpecAgent, ManimCodeGenerator (if manim) | YES | Full pipeline with visuals |
+| example | SectionPlanner, NarrationWriter, VisualSpecArtist, RendererSpecAgent | YES | Worked examples with visuals |
+| quiz | SectionPlanner, NarrationWriter, QuizFlashcard | CONDITIONAL | Only if quiz exists in source PDF. Flashcard-style display synced with avatar |
+| memory | SectionPlanner, NarrationWriter, MemoryFlashcard | YES (mandatory) | Avatar narrates while flashcards display. 5 flashcards always generated |
+| recap | SectionPlanner, NarrationWriter, RecapScene | YES (mandatory) | Avatar narrates while recap videos play. 5 video prompts always generated |
+
+### Pipeline Flow Per Section Type
+
+```
+ALL SECTIONS: SectionPlanner → NarrationWriter → [Section-specific agents] → TTS → Audio file
+
+intro/summary:  NarrationWriter → TTS
+content:        NarrationWriter → VisualSpecArtist → RendererSpecAgent → [ManimCodeGenerator] → TTS
+example:        NarrationWriter → VisualSpecArtist → RendererSpecAgent → TTS
+quiz:           NarrationWriter → QuizFlashcard → TTS (conditional - only if source has quiz)
+memory:         NarrationWriter → MemoryFlashcard → TTS (mandatory)
+recap:          NarrationWriter → RecapScene → TTS (mandatory)
+```
+
+---
+
+## Narration-Display Sync Mechanism
+
+### How Does Narration Know Which Line Is Displayed?
+
+The synchronization between narration audio and visual display works through **segment_id mapping**:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  NarrationWriter Output                                         │
+│  ────────────────────                                          │
+│  segments: [                                                    │
+│    { segment_id: 1, text: "First line...", duration: 5.0 },    │
+│    { segment_id: 2, text: "Second line...", duration: 4.5 },   │
+│    { segment_id: 3, text: "Third line...", duration: 6.0 }     │
+│  ]                                                              │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  VisualSpecArtist Output                                        │
+│  ──────────────────────                                        │
+│  segment_enrichments: [                                         │
+│    { segment_id: 1, visual_content: {...}, display_directives } │
+│    { segment_id: 2, visual_content: {...}, display_directives } │
+│    { segment_id: 3, visual_content: {...}, display_directives } │
+│  ]                                                              │
+│                                                                 │
+│  display_directives per segment tell player:                   │
+│  - text_layer: "show" or "hide" (what text to display)         │
+│  - visual_layer: "show" or "hide" (what visual to display)     │
+│  - avatar_layer: "show" (always visible with gesture)          │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  TTS Pass (Authoritative Timing)                                │
+│  ──────────────────────────────                                │
+│  For each segment:                                              │
+│  1. Generate audio from segment.text                           │
+│  2. Measure ACTUAL audio duration using mutagen                │
+│  3. Update segment.duration_seconds with real value            │
+│                                                                 │
+│  Result: Each segment now has EXACT audio length               │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Player Execution                                               │
+│  ────────────────                                              │
+│  For each segment in order:                                     │
+│  1. Apply display_directives[segment_id] - update visual layers │
+│  2. Play audio for segment.duration_seconds                    │
+│  3. Move to next segment                                        │
+│                                                                 │
+│  The segment.duration_seconds controls how long each            │
+│  visual state is displayed before transitioning.               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Key Sync Principles
+
+1. **segment_id is the key**: Every narration segment has a unique `segment_id` that maps to a `display_directive`
+2. **One-to-one mapping**: Each segment has exactly ONE display state (what's shown while that audio plays)
+3. **TTS is authoritative**: LLM estimates duration, but TTS Pass overwrites with actual audio length
+4. **Sequential playback**: Player plays segments in order, changing display at each segment boundary
+
+### Narration Word Count Requirement
+
+- **Target**: 150-200 words per segment (not sentences)
+- **TTS calculation**: Used only for LLM's initial estimate (`word_count / 130 * 60`)
+- **Final duration**: TTS Pass measures actual audio and overwrites the estimate
+- **No redundancy**: LLM estimate helps with pacing; TTS makes it accurate
 
 ---
 

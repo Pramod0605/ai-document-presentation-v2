@@ -318,6 +318,70 @@
       "fix_location": "core/agents/manim_code_generator.py, core/pipeline_v15.py",
       "fix_applied": "1) Added AST-based validation with _check_undefined_names(), 2) Enhanced error handling in pipeline to catch all exceptions, 3) Added manim_failed_sections tracking in pipeline, 4) Save failed sections to artifacts/manim_failed_sections.json for retry",
       "verification": "1) Run test with malformed manim section - should not crash, 2) Check {job_dir}/artifacts/manim_failed_sections.json created"
+    },
+    {
+      "id": "ISS-152",
+      "title": "Avatar + Narration MUST be mandatory for ALL sections",
+      "severity": "CRITICAL",
+      "status": "RESOLVED",
+      "created": "2025-12-25",
+      "resolved": "2025-12-25",
+      "description": "Documentation incorrectly shows avatar_visibility as optional. Avatar with gesture MUST ALWAYS be shown for ALL sections. Narration with audio is mandatory for ALL slides/sections. This is a core pedagogical principle.",
+      "requirement_violated": "Core principle: Avatar always visible, narration always present",
+      "evidence": "llm_requirement.md shows avatar_visibility: 'required|optional' and memory/recap without NarrationWriter",
+      "fix_location": "docs/llm_requirement.md, all agent prompts",
+      "fix_applied": "1) Changed avatar_visibility from 'required|optional' to 'always', 2) Added NarrationWriter to memory/recap in Section Type → Agent Usage table, 3) Added CRITICAL PRINCIPLE stating Avatar + Narration mandatory for ALL sections"
+    },
+    {
+      "id": "ISS-153",
+      "title": "Memory section missing NarrationWriter - no audio sync",
+      "severity": "HIGH",
+      "status": "RESOLVED-DOC",
+      "created": "2025-12-25",
+      "resolved": "2025-12-25",
+      "description": "Memory section only uses MemoryFlashcard agent, no NarrationWriter. Without narration, avatar has nothing to speak. All sections must have narration for audio sync.",
+      "requirement_violated": "ISS-152: Avatar + Narration mandatory for all sections",
+      "evidence": "Section Type → Agent Usage table shows memory: 'MemoryFlashcard' only, no NarrationWriter",
+      "fix_applied": "Documentation updated: Memory section now shows 'SectionPlanner, NarrationWriter, MemoryFlashcard' in Section Type → Agent Usage table. Pipeline flow updated. NOTE: Code implementation needed in pipeline_v15.py",
+      "code_fix_needed": "core/pipeline_v15.py - add NarrationWriter call before MemoryFlashcard for memory sections"
+    },
+    {
+      "id": "ISS-154",
+      "title": "Recap section missing NarrationWriter - video prompts have no narration",
+      "severity": "HIGH",
+      "status": "RESOLVED-DOC",
+      "created": "2025-12-25",
+      "resolved": "2025-12-25",
+      "description": "Recap section only uses RecapScene agent, no NarrationWriter. Videos play but avatar has no narration to speak. All sections must have narration.",
+      "requirement_violated": "ISS-152: Avatar + Narration mandatory for all sections",
+      "evidence": "Section Type → Agent Usage table shows recap: 'RecapScene' only, no NarrationWriter",
+      "fix_applied": "Documentation updated: Recap section now shows 'SectionPlanner, NarrationWriter, RecapScene' in Section Type → Agent Usage table. Pipeline flow updated. NOTE: Code implementation needed in pipeline_v15.py",
+      "code_fix_needed": "core/pipeline_v15.py - add NarrationWriter call before RecapScene for recap sections"
+    },
+    {
+      "id": "ISS-155",
+      "title": "Quiz section should use flashcard-style display (conditional)",
+      "severity": "MEDIUM",
+      "status": "RESOLVED-DOC",
+      "created": "2025-12-25",
+      "resolved": "2025-12-25",
+      "description": "Quiz sections from source document should display in flashcard style (array of Q/A pairs) synced with avatar narration. Quiz is conditional - only generated if quiz content exists in source PDF.",
+      "requirement_violated": "Quiz display requirements",
+      "evidence": "User clarification: 'MemoryFlashcard for Quiz? Yes in Flashcard style... one section will display quiz and in sync with Narration - avatar'",
+      "fix_applied": "Documentation updated: Quiz section added to Section Type → Agent Usage table as CONDITIONAL with 'SectionPlanner, NarrationWriter, QuizFlashcard'. NOTE: QuizFlashcard agent needs to be created",
+      "code_fix_needed": "Create core/agents/quiz_flashcard.py or extend MemoryFlashcard to handle quiz extraction"
+    },
+    {
+      "id": "ISS-156",
+      "title": "Directory structure documentation uses {job_dir} instead of jobs/{job_id}",
+      "severity": "LOW",
+      "status": "RESOLVED",
+      "created": "2025-12-25",
+      "resolved": "2025-12-25",
+      "description": "Documentation uses placeholder '{job_dir}' but actual path is 'jobs/{job_id}'. Should be explicit for clarity.",
+      "requirement_violated": "Documentation accuracy",
+      "evidence": "Storage Architecture section shows '{job_dir}/artifacts/' etc.",
+      "fix_applied": "Updated Directory Structure section to use 'jobs/{job_id}/' instead of '{job_dir}/'"
     }
   ],
   "regressions_from_previous_fixes": [
