@@ -205,8 +205,12 @@ See `docs/v1.5_requirements.json` for detailed status of each requirement.
 - **ISS-153 (RESOLVED)**: Memory section now has NarrationWriter call for proper audio sync
 - **ISS-154 (RESOLVED)**: Recap section now has NarrationWriter call for proper audio sync
 
+### V1.5 Issues Fixed (2025-12-25 - Session 2)
+- **ISS-120 (RESOLVED)**: WAN prompt limits reduced to 80-150 words, max 800 chars, auto-truncation added
+- **ISS-157 (RESOLVED)**: Quiz section handling via SmartChunker Q&A extraction
+
 ### Remaining Issues
-- **ISS-120**: WAN/Video prompts exceed API character limit (1900+ chars)
+- None critical - all HIGH priority issues resolved
 
 ### Recent Issues Fixed (V1.4)
 - **ISS-111**: Renderer execution wired into V1.4 pipeline

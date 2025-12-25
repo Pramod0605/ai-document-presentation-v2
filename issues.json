@@ -418,18 +418,36 @@
       "id": "ISS-157",
       "title": "Quiz section handling - SmartChunker Q&A extraction approach",
       "severity": "MEDIUM",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "created": "2025-12-25",
+      "resolved": "2025-12-25",
       "description": "Quiz sections need to extract Q&A pairs from PDF source (not LLM-generated) and display in flashcard style with avatar narration. SmartChunker extracts quiz_questions[] from PDF, SectionPlanner creates quiz section if quiz exists, NarrationWriter formats Q&A with pauses after questions.",
       "requirement_violated": "Quiz section implementation",
       "evidence": "User clarification: Quiz questions come from PDF source, variable count (not fixed 5 like Memory), displayed as flashcards with pause after each question",
       "decision": "SmartChunker extracts Q&A → SectionPlanner creates quiz section (conditional) → NarrationWriter formats with [pause 3s] → display_directives shows flashcard per Q&A",
       "why_best_approach": "1) No new agent needed, 2) Source integrity preserved, 3) Variable count natural, 4) NarrationWriter already handles formatting",
-      "code_fix_needed": [
-        "1) SmartChunker: Add quiz_questions[] extraction field",
-        "2) SectionPlanner: Recognize quiz section type when quiz_questions exist",
-        "3) NarrationWriter: Add quiz Q&A formatting with [pause 3s] after questions",
-        "4) pipeline_v15.py: Handle quiz section type in section loop"
+      "fix_applied": [
+        "1) SmartChunker: Added quiz_questions[] to output schema and prompt",
+        "2) SectionPlanner: Added quiz section type handling (conditional on quiz_questions.length > 0)",
+        "3) NarrationWriter: Added quiz word limits and Q&A formatting with [pause 3s] example",
+        "4) pipeline_v15.py: quiz_questions passed to SectionPlanner and NarrationWriter",
+        "5) merge_step_v15.py: quiz added to TEXT_ONLY_SECTION_TYPES"
+      ]
+    },
+    {
+      "id": "ISS-120",
+      "title": "WAN/Video prompts exceed API character limit",
+      "severity": "HIGH",
+      "status": "RESOLVED",
+      "created": "2025-12-23",
+      "resolved": "2025-12-25",
+      "description": "RecapScene prompts were 100-180 words which often exceeded 1000 characters, causing WAN API failures.",
+      "requirement_violated": "WAN API character limit",
+      "fix_applied": [
+        "1) recap_scene_system_v1.5.txt: Updated to 80-150 words, max 800 chars",
+        "2) recap_agent.py: Validation updated to 80+ words min, 800 char max",
+        "3) wan_prompt_validator.py: MAX_PROMPT_LENGTH increased to 800",
+        "4) wan_client.py: Added _truncate_prompt() safety method before API call"
       ]
     }
   ],

@@ -136,7 +136,12 @@ You MUST output ONLY valid JSON with this exact structure:
 
 **Validation**: 
 - Structural: schema validation
-- Semantic: section order (intro→summary→content→memory→recap), section_id sequential
+- Semantic: section order (intro→summary→content→[quiz if exists]→memory→recap), section_id sequential
+
+**Quiz Section (ISS-157)**:
+- ONLY created if `quiz_questions[]` from SmartChunker is non-empty
+- renderer: "none" (flashcard-style display)
+- avatar: 52% width, right position
 
 **Storage**: `artifacts/02_planner.json`, passed to per-section agents
 
@@ -151,11 +156,9 @@ You MUST output ONLY valid JSON with this exact structure:
 - User: `core/prompts/narration_writer_user_v1.5.txt`
 
 **User Prompt Template Variables**:
-- `{section_id}` - Section identifier (e.g., "section_1")
-- `{section_type}` - Type (intro, summary, content, example, quiz)
-- `{title}` - Section title
-- `{learning_goals}` - From SectionPlanner
-- `{content}` - Source topic content for this section
+- `{section_blueprint}` - Full section blueprint JSON from SectionPlanner
+- `{source_markdown}` - Source content for this section
+- `{quiz_questions}` - Quiz Q&A pairs (only populated for quiz sections)
 
 **JSON Output Enforcement**:
 ```
@@ -306,13 +309,18 @@ You MUST output ONLY valid JSON with this exact structure:
   "video_prompts": [
     {
       "beat_id": 1,
-      "prompt": "100-180 word detailed prompt...",
+      "prompt": "80-150 word detailed prompt (max 800 chars)...",
       "duration_seconds": 5.0,
       "style": "cinematic|documentary|educational|animated"
     }
   ]
 }
 ```
+
+**ISS-120 Video Prompt Limits**:
+- Word count: 80-150 words (was 100-180)
+- Character limit: 800 chars max (API limit)
+- WAN client auto-truncates if exceeded
 
 **Validation**: 
 - Structural: renderer field, corresponding spec present
@@ -404,7 +412,7 @@ You must output valid JSON. Do not wrap the JSON in markdown blocks.
   "video_prompts": [
     {
       "prompt_id": 1,
-      "prompt": "100-180 word video generation prompt...",
+      "prompt": "80-150 word video generation prompt (max 800 chars)...",
       "duration_seconds": 8,
       "style": "cinematic"
     }
@@ -412,10 +420,12 @@ You must output valid JSON. Do not wrap the JSON in markdown blocks.
 }
 ```
 
-**Key Rules**:
+**Key Rules (ISS-120 Updated)**:
 - EXACTLY 5 prompts
-- 100-180 words each (API character limit)
+- 80-150 words each (was 100-180)
+- MAX 800 characters per prompt (API limit)
 - NO banned words (beautiful, stunning, etc)
+- WAN client auto-truncates at sentence boundary if exceeded
 
 **Validation**: 
 - Structural: exactly 5 prompts
