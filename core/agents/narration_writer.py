@@ -29,6 +29,7 @@ class NarrationWriterAgent(BaseAgent):
         "summary": (50, 200),
         "content": (100, 300),
         "example": (100, 300),
+        "quiz": (50, 200),
         "memory": (30, 100),
         "recap": (300, 500)
     }

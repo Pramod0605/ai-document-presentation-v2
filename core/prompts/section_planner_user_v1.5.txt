@@ -6,12 +6,16 @@ Grade Level: {grade}
 ## SOURCE TOPICS FROM CHUNKER:
 {topics}
 
+## QUIZ QUESTIONS EXTRACTED FROM PDF:
+{quiz_questions}
+
 ## INSTRUCTIONS:
 
 1. Review all topics and their content
-2. Create a section plan following the required order: intro → summary → content sections → memory → recap
+2. Create a section plan following the required order: intro → summary → content sections → [quiz if questions exist] → memory → recap
 3. Assign appropriate renderers based on content type
 4. Ensure all topics are covered by at least one content/example section
 5. Keep total duration reasonable (5-10 minutes)
+6. ONLY create a quiz section if quiz_questions array is non-empty
 
 Output ONLY the JSON structure with your section plan.

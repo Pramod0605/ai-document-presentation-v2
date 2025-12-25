@@ -110,7 +110,7 @@ class SectionPlannerAgent(BaseAgent):
             st = section.get("section_type")
             renderer = section.get("suggested_renderer")
             
-            if st in ["intro", "summary", "memory"] and renderer != "none":
+            if st in ["intro", "summary", "quiz", "memory"] and renderer != "none":
                 errors.append(f"Section {i} ({st}): renderer must be 'none' for {st} sections")
             
             if st == "recap" and renderer != "video":

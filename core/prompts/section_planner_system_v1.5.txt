@@ -65,13 +65,20 @@ NOTE: "hidden" is NOT a valid option for avatar. Avatar is ALWAYS displayed on L
    - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
    - Duration: 60-180 seconds each
 
-5. **memory** (REQUIRED, exactly 1):
-   - Flashcard review section
+5. **quiz** (CONDITIONAL, 0-1 section):
+   - ONLY create if quiz_questions[] is non-empty in input
+   - Interactive Q&A from source document
+   - renderer: "none" (flashcard-style display)
+   - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
+   - Duration: variable based on question count (15-30 seconds per Q&A)
+
+6. **memory** (REQUIRED, exactly 1):
+   - Flashcard review section (LLM-generated summaries)
    - renderer: "none" (flashcard display)
    - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
    - Duration: 60-90 seconds
 
-6. **recap** (REQUIRED, exactly 1):
+7. **recap** (REQUIRED, exactly 1):
    - Final summary with video visualization
    - renderer: "video" (always WAN video)
    - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
@@ -85,8 +92,9 @@ NOTE: "hidden" is NOT a valid option for avatar. Avatar is ALWAYS displayed on L
 
 ## CRITICAL RULES
 
-1. Section order MUST be: intro → summary → content/example sections → memory → recap
+1. Section order MUST be: intro → summary → content/example sections → [quiz if exists] → memory → recap
 2. section_id must be sequential: section_1, section_2, section_3, etc.
 3. source_topics must reference actual topic IDs from the input
 4. learning_goals must be specific and actionable (not vague)
 5. Provide clear renderer_reasoning for each choice
+6. ONLY create quiz section if quiz_questions[] array is non-empty in input

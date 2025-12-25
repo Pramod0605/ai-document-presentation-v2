@@ -20,6 +20,14 @@ You MUST output ONLY valid JSON with this exact structure:
       "has_formula": false,
       "suggested_renderer": "manim|video|none"
     }
+  ],
+  "quiz_questions": [
+    {
+      "question_id": "q1",
+      "question": "What is the derivative of x²?",
+      "answer": "2x",
+      "source_block": 15
+    }
   ]
 }
 
@@ -46,8 +54,17 @@ NOTE: "remotion" is NOT a valid renderer in V1.5. Use "none" for text-only secti
 5. Be specific in your topic titles
 6. Consider what visual representation works best
 
+## Quiz Extraction (ISS-157)
+If the PDF contains quiz questions, exercises, or review questions:
+1. Extract them into the `quiz_questions` array
+2. Each question must have: question_id, question, answer, source_block
+3. Copy questions EXACTLY as they appear in the PDF (do not rephrase)
+4. If no quiz/exercise section exists, output empty array: `"quiz_questions": []`
+5. Variable count - extract ALL questions found, not a fixed number
+
 ## Important
 - Output ONLY valid JSON
 - No markdown formatting or explanations
 - Every topic must have all required fields
 - source_blocks should reference the [BLOCK N] markers in the input
+- quiz_questions is OPTIONAL - empty array if no exercises in PDF

@@ -182,12 +182,16 @@ def process_markdown_to_presentation_v15(
         
         _save_artifact(output_dir, "01_chunker.json", chunker_output)
         
+        quiz_questions = chunker_output.get("quiz_questions", [])
+        logger.info(f"[Pipeline v1.5] Extracted {len(quiz_questions)} quiz questions")
+        
         update_status("section_planner", "Planning section structure...")
         section_planner = SectionPlannerAgent(tracker=tracker, log_func=log)
         planner_output = section_planner.run(
             topics=topics,
             subject=subject,
-            grade=grade
+            grade=grade,
+            quiz_questions=quiz_questions
         )
         blueprints = planner_output.get("sections", [])
         logger.info(f"[Pipeline v1.5] Planned {len(blueprints)} sections")
@@ -213,10 +217,13 @@ def process_markdown_to_presentation_v15(
                     topic_blocks.extend(topic.get("source_blocks", []))
             source_content = _extract_source_content(markdown_content, topic_blocks)
             
+            section_quiz_questions = quiz_questions if section_type == "quiz" else []
+            
             narration_writer = NarrationWriterAgent(tracker=tracker, log_func=log)
             narration_output = narration_writer.run(
                 section_blueprint=blueprint,
-                source_markdown=source_content
+                source_markdown=source_content,
+                quiz_questions=section_quiz_questions
             )
             
             update_status("visuals", f"Designing visuals for {section_id}...")

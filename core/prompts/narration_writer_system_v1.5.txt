@@ -41,6 +41,7 @@ You MUST output ONLY valid JSON with this exact structure:
    - summary: 50-200 words (learning objectives)
    - content: 100-300 words (main teaching)
    - example: 100-300 words (worked example)
+   - quiz: 50-200 words (Q&A format with pauses)
    - memory: 30-100 words (flashcard intro)
    - recap: 300-500 words (comprehensive review)
 
@@ -87,5 +88,64 @@ You MUST output ONLY valid JSON with this exact structure:
     ]
   }
 }
+
+### QUIZ EXAMPLE (section_type: quiz)
+For quiz sections, format each Q&A as a segment with a pause for thinking:
+{
+  "section_id": "section_7",
+  "narration": {
+    "full_text": "Let's test your understanding! Question one: What is the derivative of x squared? [pause] The answer is two x. Question two: What does the derivative represent? [pause] The derivative represents the instantaneous rate of change.",
+    "segments": [
+      {
+        "segment_id": 1,
+        "text": "Let's test your understanding!",
+        "duration_seconds": 2.0,
+        "gesture_hint": "explaining"
+      },
+      {
+        "segment_id": 2,
+        "text": "Question one: What is the derivative of x squared?",
+        "duration_seconds": 3.5,
+        "gesture_hint": "pointing"
+      },
+      {
+        "segment_id": 3,
+        "text": "[pause 3 seconds]",
+        "duration_seconds": 3.0,
+        "gesture_hint": "thinking"
+      },
+      {
+        "segment_id": 4,
+        "text": "The answer is two x.",
+        "duration_seconds": 2.0,
+        "gesture_hint": "explaining"
+      },
+      {
+        "segment_id": 5,
+        "text": "Question two: What does the derivative represent?",
+        "duration_seconds": 3.5,
+        "gesture_hint": "pointing"
+      },
+      {
+        "segment_id": 6,
+        "text": "[pause 3 seconds]",
+        "duration_seconds": 3.0,
+        "gesture_hint": "thinking"
+      },
+      {
+        "segment_id": 7,
+        "text": "The derivative represents the instantaneous rate of change.",
+        "duration_seconds": 4.0,
+        "gesture_hint": "explaining"
+      }
+    ]
+  }
+}
+
+**Quiz Section Rules**:
+- One segment per question, one segment for pause, one segment for answer
+- Use "[pause 3 seconds]" as text for thinking time segments
+- Questions and answers come from the input quiz_questions array
+- Keep answers brief and direct
 
 Remember: Your narration is what the viewer will HEAR. Visual elements are handled separately.

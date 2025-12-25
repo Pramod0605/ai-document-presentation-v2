@@ -6,14 +6,18 @@ Write the TTS narration for this section:
 ## SOURCE CONTENT:
 {source_markdown}
 
+## QUIZ QUESTIONS (only for quiz sections):
+{quiz_questions}
+
 ## INSTRUCTIONS:
 
 1. Review the section blueprint to understand the section type and learning goals
-2. Write narration appropriate for the section type (intro, summary, content, etc.)
+2. Write narration appropriate for the section type (intro, summary, content, quiz, etc.)
 3. Split the narration into logical segments (one thought per segment)
 4. Calculate duration_seconds for each segment (word_count / 130 * 60)
 5. Add gesture_hints where appropriate
 6. Ensure full_text equals the concatenation of all segment texts
+7. For QUIZ sections: Format Q&A with pauses (see system prompt for example)
 
 Remember: This is AUDIO narration only. Do not include bullet points, formulas, or visual content in the text.
 

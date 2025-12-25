@@ -16,7 +16,7 @@ from typing import Dict, List, Optional, Any
 logger = logging.getLogger(__name__)
 
 
-TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory"]
+TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "quiz", "memory"]
 REQUIRED_RENDERERS = {"recap": "video"}
 
 

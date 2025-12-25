@@ -62,10 +62,24 @@ SMART_CHUNKER_SCHEMA = {
                     "has_formula": {"type": "boolean"},
                     "suggested_renderer": {
                         "type": "string",
-                        "enum": ["remotion", "manim", "video"]
+                        "enum": ["none", "manim", "video"]
                     }
                 },
                 "required": ["topic_id", "title", "concept_type", "source_blocks", "suggested_renderer"]
+            }
+        },
+        "quiz_questions": {
+            "type": "array",
+            "description": "Quiz questions extracted from PDF (optional, empty if none found)",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "question_id": {"type": "string"},
+                    "question": {"type": "string"},
+                    "answer": {"type": "string"},
+                    "source_block": {"type": "integer"}
+                },
+                "required": ["question_id", "question", "answer"]
             }
         }
     },
