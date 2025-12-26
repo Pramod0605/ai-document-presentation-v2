@@ -308,20 +308,25 @@ class LayerController {
 
     avatarCanvas.style.opacity = '1';
 
-    const avatarLayout = section?.avatar_layout || section?.layout?.avatar_layout || {};
-    const widthPercent = avatarLayout.width_percent || section?.avatar_width_percent || this.getDefaultAvatarWidth(sectionType);
-    const position = avatarLayout.position || section?.avatar_position || this.getDefaultAvatarPosition(sectionType);
+    // ISS-165 FIX: ALWAYS use hardcoded avatar matrix - IGNORE LLM-provided values
+    // This prevents LLM from overriding with small/medium/35%/52% etc.
+    const widthPercent = this.getDefaultAvatarWidth(sectionType);
+    const position = this.getDefaultAvatarPosition(sectionType);
 
     this.applyAvatarLayout(avatarCanvas, position, widthPercent);
   }
 
   /**
    * Get default avatar width by section type
-   * ISS-141 FIX: All section types use 52% per display_requirements.md v2.1 Display Summary Table
+   * ISS-165 FIX: FINAL AVATAR MATRIX - Player IGNORES LLM width values
+   * Intro = 80% center (large, full-focus)
+   * ALL others = 55% right (content sections have 45% left for text/video)
    */
   getDefaultAvatarWidth(sectionType) {
-    // REQ-001 through REQ-003: Avatar width is 52% for ALL section types
-    return 52;
+    if (sectionType === 'intro') {
+      return 80;
+    }
+    return 55;
   }
 
   /**
@@ -730,7 +735,7 @@ function updateDevStats() {
   const videoBox = document.getElementById('video-box');
   const stageEl = document.getElementById('stage');
   
-  const modeClasses = ['mode-center', 'mode-side', 'mode-khan', 'mode-content-video', 'mode-image'];
+  const modeClasses = ['mode-intro', 'mode-center', 'mode-side', 'mode-khan', 'mode-content-video', 'mode-image'];
   let currentMode = 'unknown';
   for (const mode of modeClasses) {
     if (stageEl.classList.contains(mode)) {
@@ -1140,8 +1145,7 @@ function loadSlide(index) {
   }
 
   if (sectionType === 'intro') {
-    stage.className = 'mode-center';
-    document.getElementById('content-box').style.width = '80%';
+    stage.className = 'mode-intro';
   } else if (sectionType === 'recap') {
     if (slide.has_content_video || slide.content_video_path) {
       stage.className = 'mode-side';

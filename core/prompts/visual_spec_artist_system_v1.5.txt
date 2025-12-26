@@ -53,7 +53,13 @@ You MUST output ONLY valid JSON with this exact structure:
 
 4. **ONE BEAT PER SEGMENT**: Each narration segment gets exactly one visual_beat with matching segment_id.
 
-5. **VISUAL BEAT TYPES**:
+5. **MAXIMUM 5 BEATS PER SECTION**: To ensure focused, digestible content:
+   - Limit visual_beats array to MAXIMUM 5 elements
+   - Combine related concepts into single beats if needed
+   - If narration has more than 5 segments, group them logically
+   - Quality over quantity - fewer, stronger beats are better
+
+6. **VISUAL BEAT TYPES**:
    - "diagram": Charts, graphs, visual diagrams
    - "formula": Mathematical equations/formulas
    - "process": Step-by-step process visualization

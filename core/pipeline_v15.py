@@ -23,6 +23,7 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from core.smart_chunker import call_smart_chunker, ChunkerError
 from core.agents import (
@@ -40,7 +41,7 @@ from core.agents.manim_code_generator import (
     integrate_manim_code_into_section
 )
 from core.merge_step_v15 import merge_agent_outputs
-from core.tts_duration import update_durations_from_tts, update_durations_two_pass, TTSProvider
+from core.tts_duration import update_durations_from_tts, update_durations_simplified, TTSProvider
 from core.analytics import AnalyticsTracker, create_tracker
 from core.renderer_executor import render_all_topics, enforce_renderer_policy
 
@@ -365,8 +366,8 @@ def process_markdown_to_presentation_v15(
         logger.info(f"[Pipeline v1.5] Merged {len(presentation.get('sections', []))} sections")
         
         if generate_tts:
-            update_status("tts_duration", f"ISS-160: Two-pass TTS (pyttsx3 measure -> {tts_provider} audio)...")
-            presentation = update_durations_two_pass(
+            update_status("tts_duration", f"ISS-164: Simplified TTS (word count estimate + {tts_provider} audio)...")
+            presentation = update_durations_simplified(
                 presentation=presentation,
                 output_dir=output_dir,
                 production_provider=tts_provider

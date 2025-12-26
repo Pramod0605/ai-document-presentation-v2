@@ -69,13 +69,115 @@ TEMP_AUDIO_DIR = Path("/tmp/tts_audio")
 TTSProvider = Literal["edge_tts", "narakeet", "pyttsx3", "estimate"]
 
 
+def update_durations_simplified(
+    presentation: Dict,
+    output_dir: Optional[Path] = None,
+    production_provider: TTSProvider = "edge_tts"
+) -> Dict:
+    """
+    ISS-164 FIX: Simplified TTS system - word count estimation + single Edge TTS pass.
+    
+    Step 1: Apply word-count based duration estimates (fast, no audio needed)
+    Step 2: Generate production audio using Edge TTS (async, concurrent)
+    
+    This is faster than two-pass because:
+    - No pyttsx3 dependency needed
+    - Duration estimation is instant (word count formula)
+    - Only one audio generation pass
+    
+    Args:
+        presentation: Merged presentation.json
+        output_dir: Directory to save audio files
+        production_provider: Provider for final audio ("edge_tts" or "narakeet")
+        
+    Returns:
+        Updated presentation with estimated durations AND production audio
+    """
+    # Step 1: Apply word-count estimates (instant)
+    logger.info("[TTS Simplified] Step 1: Applying word-count duration estimates...")
+    presentation = _apply_estimates(presentation)
+    
+    # Step 2: Generate production audio
+    if output_dir:
+        audio_dir = Path(output_dir) / "audio"
+    else:
+        audio_dir = TEMP_AUDIO_DIR
+    audio_dir.mkdir(parents=True, exist_ok=True)
+    
+    logger.info(f"[TTS Simplified] Step 2: Generating production audio with {production_provider}...")
+    
+    sections = presentation.get("sections", [])
+    audio_count = 0
+    
+    for section_idx, section in enumerate(sections):
+        section_id = section.get("section_id", f"section_{section_idx}")
+        narration = section.get("narration", {})
+        segments = narration.get("segments", [])
+        
+        for seg_idx, segment in enumerate(segments):
+            segment_id = segment.get("segment_id", f"seg_{seg_idx}")
+            text = segment.get("text", "")
+            
+            if not text.strip():
+                continue
+            
+            audio_filename = f"{section_id}_{segment_id}"
+            audio_path = audio_dir / f"{audio_filename}.mp3"
+            
+            try:
+                if production_provider == "edge_tts" and EDGE_TTS_AVAILABLE:
+                    _generate_edge_tts(text, audio_path)
+                elif NARAKEET_API_KEY:
+                    _generate_narakeet(text, audio_path)
+                else:
+                    logger.warning(f"[TTS Simplified] No TTS provider available for {segment_id}")
+                    continue
+                
+                if audio_path.exists():
+                    segment["audio_file"] = str(audio_path.name)
+                    audio_count += 1
+                    
+            except Exception as e:
+                logger.warning(f"[TTS Simplified] Audio generation failed for {segment_id}: {e}")
+    
+    logger.info(f"[TTS Simplified] Generated {audio_count} audio files")
+    
+    if "metadata" not in presentation:
+        presentation["metadata"] = {}
+    presentation["metadata"]["tts_method"] = "simplified"
+    presentation["metadata"]["duration_provider"] = "word_count_estimate"
+    presentation["metadata"]["audio_provider"] = production_provider
+    
+    # Consolidate section audio
+    if output_dir:
+        presentation = consolidate_section_audio(presentation, audio_dir)
+    
+    return presentation
+
+
 def update_durations_two_pass(
     presentation: Dict,
     output_dir: Optional[Path] = None,
     production_provider: TTSProvider = "edge_tts"
 ) -> Dict:
     """
-    ISS-160 FIX: Two-pass TTS system per V1.5 spec.
+    DEPRECATED: Two-pass TTS system - use update_durations_simplified() instead.
+    
+    ISS-164: This is kept for backwards compatibility but the simplified
+    approach is preferred for performance.
+    """
+    # Redirect to simplified approach
+    logger.info("[TTS Two-Pass] DEPRECATED - redirecting to simplified approach")
+    return update_durations_simplified(presentation, output_dir, production_provider)
+    
+    
+def _update_durations_two_pass_legacy(
+    presentation: Dict,
+    output_dir: Optional[Path] = None,
+    production_provider: TTSProvider = "edge_tts"
+) -> Dict:
+    """
+    LEGACY: Two-pass TTS system per V1.5 spec.
     
     Pass 1: Use pyttsx3 to measure accurate durations (local, fast)
     Pass 2: Use Edge TTS to generate production audio (keeps pyttsx3 durations)
