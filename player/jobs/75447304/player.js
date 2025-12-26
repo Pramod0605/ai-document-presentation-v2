@@ -785,16 +785,17 @@ function updateVisuals() {
   const aX = document.getElementById('av-x').value;
   const cScale = document.getElementById('con-scale').value;
 
-  // ISS-175/177 FIX: Use setProperty with !important to ensure override
+  // ISS-179 FIX: Do NOT use translateX for positioning!
+  // applyAvatarLayout() uses right/left CSS properties for positioning.
+  // Only apply scale here, let applyAvatarLayout() handle position.
   const stageEl = document.getElementById('stage');
   const isIntro = stageEl && stageEl.classList.contains('mode-intro');
   
-  if (isIntro) {
-    // For intro: keep center transform, only apply scale
-    avatarCanvas.style.setProperty('transform', `translateX(-50%) scale(${aScale})`, 'important');
+  // Only apply scale transform - no translateX (that breaks right/left positioning)
+  if (aScale && aScale != 1) {
+    avatarCanvas.style.setProperty('transform', `scale(${aScale})`, 'important');
   } else {
-    // For other sections: apply offset and scale
-    avatarCanvas.style.setProperty('transform', `translateX(${aX}px) scale(${aScale})`, 'important');
+    avatarCanvas.style.setProperty('transform', 'none', 'important');
   }
   
   contentBox.style.transform = `scale(${cScale})`;
