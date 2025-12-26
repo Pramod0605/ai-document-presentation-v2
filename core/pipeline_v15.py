@@ -499,7 +499,7 @@ def resume_from_recap(
     markdown_content: str,
     subject: str = "General",
     grade: str = "General",
-    tts_provider: str = "edge",
+    tts_provider: TTSProvider = "edge_tts",
     generate_tts: bool = True,
     run_renderers: bool = True,
     dry_run: bool = False,

@@ -173,6 +173,40 @@ class BaseAgent:
         """Validate semantic rules. Override in subclasses."""
         return True, []
     
+    def _build_semantic_retry_guidance(self, errors: List[str], output: Dict[str, Any], input_data: Dict[str, Any]) -> str:
+        """Build specific guidance for semantic retry based on error type."""
+        import re
+        guidance_parts = []
+        
+        for error in errors:
+            if "too short" in error.lower():
+                match = re.search(r'(\d+)\s*words.*min\s*(\d+)', error)
+                if match:
+                    current = int(match.group(1))
+                    minimum = int(match.group(2))
+                    delta = minimum - current + 20
+                    guidance_parts.append(
+                        f"EXPAND your narration by at least {delta} more words. "
+                        f"Add more detailed explanations, examples, or elaboration. "
+                        f"Keep the same structure but make it more comprehensive."
+                    )
+                else:
+                    guidance_parts.append(
+                        "EXPAND your content significantly - add more details and explanations."
+                    )
+            elif "too long" in error.lower():
+                guidance_parts.append(
+                    "SHORTEN your content - be more concise while keeping key information."
+                )
+            elif "doesn't match" in error.lower() and "segment" in error.lower():
+                guidance_parts.append(
+                    "Ensure segments combine to exactly match full_text word for word."
+                )
+            else:
+                guidance_parts.append(f"Fix: {error}")
+        
+        return "\n".join(guidance_parts) if guidance_parts else "Address the validation errors above."
+    
     def run(self, **input_data) -> Dict[str, Any]:
         """
         Execute the agent with retry logic.
@@ -221,7 +255,17 @@ class BaseAgent:
                 self.log(f"[{self.name}] Semantic validation failed: {errors[:3]}")
                 if semantic_retries_used < self.semantic_retries:
                     semantic_retries_used += 1
-                    user_prompt = f"Your response failed semantic validation:\n{json.dumps(errors[:5], indent=2)}\n\nFix these issues and return the corrected JSON."
+                    retry_guidance = self._build_semantic_retry_guidance(errors, output, input_data)
+                    original_prompt = self.build_user_prompt(**input_data)
+                    user_prompt = f"""{original_prompt}
+
+---
+RETRY REQUIRED - YOUR PREVIOUS OUTPUT HAD THESE ISSUES:
+{json.dumps(errors[:5], indent=2)}
+
+{retry_guidance}
+
+Return the COMPLETE corrected JSON with all required fields."""
                     continue
                 raise AgentError(self.name, "Semantic validation failed", errors, total_attempts)
             
