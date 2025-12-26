@@ -31,7 +31,7 @@ class NarrationWriterAgent(BaseAgent):
         "example": (100, 300),
         "quiz": (50, 200),
         "memory": (30, 100),
-        "recap": (200, 500)
+        "recap": (175, 500)  # ISS-165: Lowered from 200 to allow natural LLM variation
     }
     
     def validate_structural(self, output: Dict[str, Any]) -> Tuple[bool, List[str]]:
