@@ -310,8 +310,13 @@ class LayerController {
 
     // ISS-165 FIX: ALWAYS use hardcoded avatar matrix - IGNORE LLM-provided values
     // This prevents LLM from overriding with small/medium/35%/52% etc.
-    const widthPercent = this.getDefaultAvatarWidth(sectionType);
-    const position = this.getDefaultAvatarPosition(sectionType);
+    let widthPercent = 55;
+    let position = 'right';
+
+    if (sectionType === 'intro') {
+      widthPercent = 80;
+      position = 'center';
+    }
 
     this.applyAvatarLayout(avatarCanvas, position, widthPercent);
   }
