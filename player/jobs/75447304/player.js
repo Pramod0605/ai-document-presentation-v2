@@ -801,17 +801,28 @@ function updateVisuals() {
     avatarCanvas.style.setProperty('transform', 'none', 'important');
   }
 
-  // ISS-179d: Apply offset by adjusting the base position (not translateX)
+  // ISS-179e: Only apply offset if data attributes are set (applyAvatarLayout has run)
+  if (!avatarCanvas.dataset.isIntro) {
+    console.log('[updateVisuals] Skipping - no isIntro data attribute yet');
+    contentBox.style.transform = `scale(${cScale})`;
+    updateDevStats();
+    return;
+  }
+  
   const isIntro = avatarCanvas.dataset.isIntro === 'true';
   
   if (isIntro) {
     // Intro: offset adjusts left position (positive = move right)
     const baseLeft = parseInt(avatarCanvas.dataset.baseLeft, 10) || 128;
-    avatarCanvas.style.setProperty('left', `${baseLeft + aX}px`, 'important');
+    const newLeft = baseLeft + aX;
+    avatarCanvas.style.setProperty('left', `${newLeft}px`, 'important');
+    console.log(`[updateVisuals] INTRO: baseLeft=${baseLeft}, offset=${aX}, newLeft=${newLeft}`);
   } else {
     // Content: offset adjusts right position (positive slider = move left, so subtract)
     const baseRight = parseInt(avatarCanvas.dataset.baseRight, 10) || 182;
-    avatarCanvas.style.setProperty('right', `${baseRight - aX}px`, 'important');
+    const newRight = baseRight - aX;
+    avatarCanvas.style.setProperty('right', `${newRight}px`, 'important');
+    console.log(`[updateVisuals] CONTENT: baseRight=${baseRight}, offset=${aX}, newRight=${newRight}`);
   }
   
   contentBox.style.transform = `scale(${cScale})`;
