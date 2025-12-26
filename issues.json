@@ -548,6 +548,78 @@
         "3) Added explicit instructions: DO NOT change character appearance between scenes"
       ],
       "files_changed": ["core/prompts/recap_scene_system_v1.5.txt", "core/prompts/recap_scene_user_v1.5.txt"]
+    },
+    {
+      "id": "ISS-163",
+      "title": "Over-segmentation: 135 audio files for ~11 sections is excessive",
+      "severity": "HIGH",
+      "status": "IN_PROGRESS",
+      "created": "2025-12-26",
+      "description": "Job ac7de16d has 135 audio files for 11 sections (avg 12+ audio files per section). This indicates over-segmentation in NarrationWriter or VisualSpecArtist. Visual beats should be 3-5 per section max, not 10-20.",
+      "requirement_violated": "Performance and pipeline efficiency",
+      "evidence": "Section 6: 20 audio files, Section 7: 17, Section 11: 17. Each beat = 1 audio file = 1 TTS call",
+      "root_cause": "LLM generating too many visual_beats per section (10-20 instead of 3-5)",
+      "proposed_fix": "Add MAX_BEATS_PER_SECTION=5 constraint to VisualSpecArtist prompt and merge_step validation"
+    },
+    {
+      "id": "ISS-164",
+      "title": "Two-pass TTS is slow - use word count estimation + single Edge TTS pass",
+      "severity": "MEDIUM",
+      "status": "IN_PROGRESS",
+      "created": "2025-12-26",
+      "description": "Two-pass TTS with pyttsx3 for measurement is slow and complicated. User suggests: get word count from LLM narration, calculate duration using ~130 WPM formula, skip pyttsx3 entirely.",
+      "requirement_violated": "Pipeline efficiency",
+      "evidence": "User: 'can we not get words from LLM output for narration and calculate the time instead of using audio analysis'",
+      "root_cause": "Over-engineered TTS timing system",
+      "proposed_fix": "Use _estimate_duration() for timing, Edge TTS single-pass for production audio only"
+    },
+    {
+      "id": "ISS-165",
+      "title": "Avatar sizing inconsistency - LLM sending small/medium causes player to resize",
+      "severity": "HIGH",
+      "status": "IN_PROGRESS",
+      "created": "2025-12-26",
+      "description": "Avatar resizing back to small/medium unexpectedly. LLM outputs may contain size hints that player tries to apply.",
+      "requirement_violated": "REQ-030/031 (Consistent avatar sizing)",
+      "evidence": "User: 'reverify why Avatar is resizing back to small or something - may be LLM sending small/medium'",
+      "root_cause": "Player reads width_percent from LLM output instead of enforcing fixed matrix",
+      "proposed_fix": "FINAL AVATAR MATRIX: Intro=80% center, ALL others=55% right. Player ignores LLM width values."
+    },
+    {
+      "id": "ISS-166",
+      "title": "Text/LaTeX not visible - display issues persist",
+      "severity": "HIGH",
+      "status": "IN_PROGRESS",
+      "created": "2025-12-26",
+      "description": "Text and LaTeX formulas still not visible in content sections. Text layer visibility or styling issues.",
+      "requirement_violated": "REQ-045 (Content visibility)",
+      "evidence": "User: 'we were still not seeing text/latex earlier'",
+      "root_cause": "Possible CSS z-index issues or text_layer='hide' being applied incorrectly",
+      "proposed_fix": "Verify text layer CSS, ensure text_layer='show' is being applied correctly in content sections"
+    },
+    {
+      "id": "ISS-167",
+      "title": "Videos rendering in small area / in avatar area",
+      "severity": "HIGH",
+      "status": "IN_PROGRESS",
+      "created": "2025-12-26",
+      "description": "Videos render in wrong location - too small or overlapping with avatar area on right side.",
+      "requirement_violated": "REQ-VID-002 (Video placement - 45% left)",
+      "evidence": "User: 'videos were rendering in small area and also in video rendering in Avatar Area'",
+      "root_cause": "Video container sizing/positioning CSS issues",
+      "proposed_fix": "Video container must be 45% width on left, avatar 55% on right. Verify CSS layout."
+    },
+    {
+      "id": "ISS-168",
+      "title": "Pipeline parallelization - run rendering after all LLM work complete",
+      "severity": "MEDIUM",
+      "status": "IN_PROGRESS",
+      "created": "2025-12-26",
+      "description": "Opportunity to speed up pipeline: run TTS and video rendering concurrently after merge step completes.",
+      "requirement_violated": "Pipeline efficiency",
+      "evidence": "User: 'is there any opportunity to reduce time like run rendering later part after getting everything'",
+      "root_cause": "Sequential pipeline execution",
+      "proposed_fix": "After merge step: run TTS and WAN/Manim rendering in parallel using concurrent.futures"
     }
   ],
   "regressions_from_previous_fixes": [
