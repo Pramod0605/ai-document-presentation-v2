@@ -66,30 +66,27 @@ Segment 5 → source_block_ids: [3] → ordered_list data (same block!)
 - Layer Architecture: Layer 0 for Background, Layer 1 for Content, Layer 2 for Avatar (always visible).
 - `player.js` has been updated to support `avatar always-visible` and `width_percent`.
 
-### ISS-179: Avatar Positioning (IN PROGRESS - Dec 26, 2025)
+### ISS-179: Avatar Positioning (POSTPONED)
 **Target Specs:**
 - **Intro section**: 80% width, centered, bottom aligned - WORKING ✓
-- **All other sections**: 810x455px at R:182px B:1px - NOT WORKING
+- **All other sections**: 810x455px at R:182px B:1px - POSTPONED
 
-**What was tried:**
-1. Changed from percentage-based to pixel-based positioning
-2. Set transform-origin to bottom-right for non-intro sections
-3. Removed translateX from updateVisuals to avoid overriding right positioning
-4. Added data attributes to store base positions for Dev offset slider
+**Suspected root cause:** CSS layout constraints (60/40 split) conflicting with JavaScript positioning.
 
-**Suspected root cause:**
-- CSS layout constraints (60/40 or 45/55 split) may be limiting avatar area
-- Possible CSS rules in index.html overriding JavaScript styles
-- Need to investigate: `.mode-content-video #content-wrapper { max-width: 45%; margin-right: 55%; }` and similar rules
+### ISS-180: Enhanced Content Display (COMPLETED - Dec 26, 2025)
+**Implementation:**
+- New `renderFormattedContent()` function in player.js handles all display types:
+  - **Quiz cards**: Level 1 = question (styled card header), Level 2 = choices (A/B/C/D options)
+  - **Memory sections**: Narration text displayed as key concept flashcard
+  - **Bullet lists**: Proper indentation, styled bullet markers (●, ○, ◦, ◇)
+  - **Paragraphs**: Border-left styled blocks with proper typography
+  - **Mixed content**: Paragraph + bullets with divider
 
 **Key files modified:**
-- `player/jobs/75447304/player.js` - applyAvatarLayout() and updateVisuals()
-- `player/jobs/75447304/index.html` - cache busting versions
+- `player/jobs/75447304/player.js` - renderFormattedContent() function, loadSlide() integration
+- `player/jobs/75447304/index.html` - CSS classes: .formatted-content-block, .quiz-card, .memory-concept-card, .formatted-bullet-list
 
-**Next steps:**
-1. Remove legacy CSS layout constraints that divide stage into 60/40 or 45/55
-2. Ensure avatar-canvas CSS has no width/position constraints
-3. Verify JavaScript setProperty is actually applying styles (check Elements panel)
+**Critical fix:** Added `contentRendered` flag to prevent duplicate segment rendering when both ISS-180 and legacy blocks would create segments.
 
 ### Key System Specifications
 - **Display Requirements**: Detailed in `docs/display_requirements.md`, including display summary, layer architecture, and ASCII diagrams for 7 section types (intro, summary, content, example, quiz, memory, recap).
