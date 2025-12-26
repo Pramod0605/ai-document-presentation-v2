@@ -223,23 +223,19 @@ class LayerController {
     this.currentVisualState = visualLayer;
     this.currentAvatarState = avatarLayer;
 
-    stage.classList.remove('video-swap', 'video-focus');
-    if (segmentsList) segmentsList.style.opacity = '';
+    // Reset visibility classes
+    stage.classList.remove('video-swap', 'video-focus', 'text-visible');
+    if (segmentsList) segmentsList.style.opacity = '0';
 
     if (textLayer === 'show') {
       stage.classList.add('text-visible');
       if (segmentsList) segmentsList.style.opacity = '1';
-    } else if (textLayer === 'hide') {
-      stage.classList.remove('text-visible');
-      if (segmentsList) segmentsList.style.opacity = '0';
-      if (stage.classList.contains('mode-content-video')) {
-        stage.classList.add('video-focus');
-      }
     } else if (textLayer === 'swap') {
       stage.classList.add('video-swap');
       if (segmentsList) segmentsList.style.opacity = '0.3';
     }
 
+    // Mutual exclusion: if visual layer is shown, text must be hidden (already handled by remove 'text-visible' above)
     if (visualLayer === 'show' || visualLayer === 'replace') {
       if (videoBox) videoBox.classList.add('video-ready');
     } else if (visualLayer === 'hide') {
