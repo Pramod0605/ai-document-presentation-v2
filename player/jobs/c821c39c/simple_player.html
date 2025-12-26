@@ -321,28 +321,19 @@
                 div.className = 'segment' + (idx === currentSegmentIndex ? ' active' : '');
                 div.id = 'segment-' + idx;
                 
-                // Narration text
-                const narrationDiv = document.createElement('div');
-                narrationDiv.className = 'segment-narration';
-                narrationDiv.textContent = seg.text || '';
-                div.appendChild(narrationDiv);
-                
-                // Visual content
+                // ONLY show visual content (not narration - narration is for audio)
                 const vc = seg.visual_content;
                 if (vc) {
-                    const visualDiv = document.createElement('div');
-                    visualDiv.className = 'segment-visual';
-                    
-                    const title = document.createElement('h4');
-                    title.textContent = 'Visual: ' + (vc.content_type || 'content');
-                    visualDiv.appendChild(title);
-                    
                     const contentDiv = document.createElement('div');
                     contentDiv.className = 'visual-content';
                     contentDiv.innerHTML = formatVisualContent(vc);
-                    visualDiv.appendChild(contentDiv);
-                    
-                    div.appendChild(visualDiv);
+                    div.appendChild(contentDiv);
+                } else {
+                    // Fallback if no visual content
+                    const fallback = document.createElement('div');
+                    fallback.className = 'visual-content';
+                    fallback.textContent = '(No visual content for this segment)';
+                    div.appendChild(fallback);
                 }
                 
                 div.onclick = () => goToSegment(idx);
@@ -372,18 +363,26 @@
                 return `<div class="formula-block">\\[${escapeHtml(latex)}\\]</div>`;
             }
             
-            // Handle bullet lists
+            // Handle bullet lists - supports both {level, text} objects and plain strings
             if (type === 'bullet_list' || type === 'list') {
-                const items = vc.items || vc.bullets || [];
+                const items = vc.bullet_points || vc.items || vc.bullets || [];
                 if (items.length === 0) return formatText(vc.content || vc.text || '');
-                return '<ul>' + items.map(item => `<li>${formatText(item)}</li>`).join('') + '</ul>';
+                return '<ul>' + items.map(item => {
+                    const text = typeof item === 'object' ? item.text : item;
+                    const level = typeof item === 'object' ? (item.level || 1) : 1;
+                    const indent = level > 1 ? `style="margin-left: ${(level-1)*20}px;"` : '';
+                    return `<li ${indent}>${formatText(text)}</li>`;
+                }).join('') + '</ul>';
             }
             
-            // Handle ordered lists
+            // Handle ordered lists - supports both {level, text} objects and plain strings
             if (type === 'ordered_list' || type === 'numbered_list') {
-                const items = vc.items || vc.steps || [];
+                const items = vc.list_items || vc.items || vc.steps || [];
                 if (items.length === 0) return formatText(vc.content || vc.text || '');
-                return '<ol>' + items.map(item => `<li>${formatText(item)}</li>`).join('') + '</ol>';
+                return '<ol>' + items.map(item => {
+                    const text = typeof item === 'object' ? item.text : item;
+                    return `<li>${formatText(text)}</li>`;
+                }).join('') + '</ol>';
             }
             
             // Handle paragraphs
