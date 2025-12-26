@@ -68,6 +68,11 @@
             "minimum": 1,
             "description": "Must match a narration segment_id"
           },
+          "source_block_ids": {
+            "type": "array",
+            "items": {"type": "integer"},
+            "description": "ISS-160: References to source content block IDs this segment covers"
+          },
           "visual_content": {
             "type": "object",
             "properties": {

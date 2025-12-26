@@ -50,45 +50,26 @@ logger = logging.getLogger(__name__)
 PIPELINE_VERSION = "1.5"
 
 
-def _enhance_visual_content_types(visuals_output: Dict, source_markdown: str) -> Dict:
+def _enhance_visual_content_types(visuals_output: Dict, source_markdown: str, content_blocks: Optional[List[Dict]] = None) -> Dict:
     """
     ISS-160: Post-process VisualSpecArtist output to ensure content_type is set deterministically.
-    Uses Python-based block type detection on source_markdown.
+    Uses source_block_ids from LLM output to map segments to correct content blocks.
+    Multiple segments can reference the same block for multi-beat fidelity.
     """
-    content_blocks = parse_content_blocks(source_markdown) if source_markdown else []
+    if content_blocks is None:
+        content_blocks = parse_content_blocks(source_markdown) if source_markdown else []
     
-    # ISS-160: Even without content_blocks, ensure every segment has content_type
-    # This guarantees the player always knows how to render
-    
-    # Build a map of line ranges to block types
-    block_map = {}
-    for block in content_blocks:
-        line = block.get("source_line", 0)
-        block_map[line] = {
-            "block_type": block.get("block_type", "paragraph"),
-            "verbatim_content": block.get("verbatim_content", ""),
-            "has_inline_latex": block.get("has_inline_latex", False),
-            "items": block.get("items", [])
-        }
-    
-    # If there's a dominant block type, use it for enrichments without content_type
-    dominant_type = None
-    if content_blocks:
-        types = [b.get("block_type") for b in content_blocks if b.get("block_type") != "paragraph"]
-        if types:
-            dominant_type = max(set(types), key=types.count)
-    
-    # ISS-160: Sequential block mapping - each segment maps to a content block
-    # Used blocks track which blocks have been consumed to avoid repetition
-    used_block_indices = set()
+    # Build block lookup by block_id
+    block_lookup = {block.get("block_id"): block for block in content_blocks}
     
     # Enhance segment_enrichments with content_type if not set
     enrichments = visuals_output.get("segment_enrichments", [])
     for i, enrichment in enumerate(enrichments):
         vc = enrichment.get("visual_content", {})
         
-        # If content_type already set by LLM, skip
-        if vc.get("content_type"):
+        # If content_type already set by LLM with data, skip
+        if vc.get("content_type") and (vc.get("verbatim_text") or vc.get("bullet_points") or 
+                                        vc.get("ordered_list") or vc.get("formula")):
             continue
         
         # Determine content_type from available data in visual_content
@@ -98,41 +79,56 @@ def _enhance_visual_content_types(visuals_output: Dict, source_markdown: str) ->
             vc["content_type"] = "ordered_list"
         elif vc.get("formula") or vc.get("formulas"):
             vc["content_type"] = "formula"
-        elif not content_blocks:
-            # No source blocks - default to paragraph
-            vc["content_type"] = "paragraph"
         else:
-            # ISS-160: Find next unused block for this segment
-            block = None
-            block_idx = None
-            for idx, b in enumerate(content_blocks):
-                if idx not in used_block_indices:
-                    block = b
-                    block_idx = idx
-                    break
+            # ISS-160: Use source_block_ids to look up the correct block
+            source_block_ids = enrichment.get("source_block_ids", [])
             
-            if block:
-                used_block_indices.add(block_idx)
+            if source_block_ids and block_lookup:
+                # Use first referenced block to populate content
+                block_id = source_block_ids[0]
+                block = block_lookup.get(block_id)
+                
+                if block:
+                    block_type = block.get("block_type", "paragraph")
+                    
+                    if block_type == "unordered_list":
+                        vc["content_type"] = "bullet_list"
+                        if block.get("items") and not vc.get("bullet_points"):
+                            vc["bullet_points"] = [{"level": 1, "text": item} for item in block["items"]]
+                    elif block_type == "ordered_list":
+                        vc["content_type"] = "ordered_list"
+                        if block.get("items") and not vc.get("ordered_list"):
+                            vc["ordered_list"] = block["items"]
+                    elif block_type == "formula":
+                        vc["content_type"] = "formula"
+                        if not vc.get("formula"):
+                            vc["formula"] = block.get("verbatim_content", "")
+                    else:
+                        # Paragraph
+                        vc["content_type"] = "paragraph"
+                        if not vc.get("verbatim_text"):
+                            vc["verbatim_text"] = block.get("verbatim_content", "")
+                        vc["has_inline_latex"] = block.get("has_inline_latex", False)
+                else:
+                    # Block ID not found - default to paragraph
+                    vc["content_type"] = "paragraph"
+            elif content_blocks:
+                # Fallback: No source_block_ids provided - use sequential mapping
+                block_idx = i % len(content_blocks)
+                block = content_blocks[block_idx]
                 block_type = block.get("block_type", "paragraph")
                 
                 if block_type == "unordered_list":
                     vc["content_type"] = "bullet_list"
-                    if block.get("items"):
-                        vc["bullet_points"] = [{"level": 1, "text": item} for item in block["items"]]
                 elif block_type == "ordered_list":
                     vc["content_type"] = "ordered_list"
-                    if block.get("items"):
-                        vc["ordered_list"] = block["items"]
                 elif block_type == "formula":
                     vc["content_type"] = "formula"
-                    vc["formula"] = block.get("verbatim_content", "")
                 else:
-                    # Paragraph
                     vc["content_type"] = "paragraph"
-                    vc["verbatim_text"] = block.get("verbatim_content", "")
                     vc["has_inline_latex"] = block.get("has_inline_latex", False)
             else:
-                # All blocks used - default to paragraph (avatar-only segment)
+                # No blocks available - default to paragraph
                 vc["content_type"] = "paragraph"
         
         enrichment["visual_content"] = vc
@@ -319,15 +315,21 @@ def process_markdown_to_presentation_v15(
             )
             
             update_status("visuals", f"Designing visuals for {section_id}...")
+            
+            # ISS-160: Parse content blocks for source fidelity mapping
+            content_blocks = parse_content_blocks(source_content) if source_content else []
+            content_blocks_json = json.dumps(content_blocks, indent=2) if content_blocks else "[]"
+            
             visual_artist = VisualSpecArtistAgent(tracker=tracker, log_func=log)
             visuals_output = visual_artist.run(
                 section_blueprint=blueprint,
                 narration=narration_output.get("narration", {}),
-                source_markdown=source_content
+                source_markdown=source_content,
+                content_blocks=content_blocks_json
             )
             
-            # ISS-160: Post-process to ensure content_type is set deterministically
-            visuals_output = _enhance_visual_content_types(visuals_output, source_content)
+            # ISS-160: Post-process to ensure content_type is set deterministically using block IDs
+            visuals_output = _enhance_visual_content_types(visuals_output, source_content, content_blocks)
             
             render_spec = None
             renderer = blueprint.get("suggested_renderer", "none")
