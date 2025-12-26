@@ -1,0 +1,183 @@
+{
+  "section_id": "section_4",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to the Fundamental Theorem of Arithmetic",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "text_only",
+      "description": "Highlighting the uniqueness aspect of the theorem",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "diagram",
+      "description": "Definition of the Fundamental Theorem of Arithmetic",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Composite Number",
+          "Prime Factors",
+          "Unique Factorization"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "animation",
+      "description": "Example of prime factorization for the number 12",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "12",
+          "2 x 2 x 3",
+          "Prime Factors"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "diagram",
+      "description": "Emphasizing uniqueness and application to HCF/LCM",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Unique",
+          "Prime Fingerprint",
+          "HCF",
+          "LCM"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "##### **Key Fact:**",
+        "has_inline_latex": false
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Every whole number > 1 is unique"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Every composite number = product of prime numbers"
+          },
+          {
+            "level": 1,
+            "text": "Factorization is unique"
+          },
+          {
+            "level": 1,
+            "text": "Order of prime factors does not matter"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "ordered_list",
+        "verbatim_text": "Example: $12 = 2 \\times 2 \\times 3$",
+        "ordered_list": [
+          "Prime factorise each number.",
+          "Take all primes with highest powers.",
+          "Multiply them."
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [
+        1,
+        2
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Unique 'prime fingerprint' for each number"
+          },
+          {
+            "level": 1,
+            "text": "Key for HCF and LCM"
+          }
+        ],
+        "verbatim_text": "##### **Key Fact:**",
+        "has_inline_latex": false
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}
