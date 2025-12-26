@@ -385,46 +385,50 @@ class LayerController {
     const stageWidth = stage ? stage.clientWidth : 1280;
     const stageHeight = stage ? stage.clientHeight : 720;
     
-    // Calculate avatar width in pixels
-    const avatarWidthPx = Math.round(stageWidth * (widthPercent / 100));
-    // Maintain 16:9 aspect ratio (typical video aspect)
-    const avatarHeightPx = Math.round(avatarWidthPx * (9/16));
-    
     // Reset ALL styles first
     avatarCanvas.removeAttribute('style');
     
-    // Apply styles with pixel values (more predictable than %)
+    // Apply base styles
     const s = avatarCanvas.style;
     s.setProperty('position', 'absolute', 'important');
-    s.setProperty('width', `${avatarWidthPx}px`, 'important');
-    s.setProperty('height', `${avatarHeightPx}px`, 'important');
     s.setProperty('max-width', 'none', 'important');
-    s.setProperty('bottom', '0', 'important');
     s.setProperty('opacity', '1', 'important');
     s.setProperty('display', 'block', 'important');
     s.setProperty('z-index', '60', 'important');
     s.setProperty('pointer-events', 'none', 'important');
     s.setProperty('filter', 'drop-shadow(-20px 5px 25px rgba(0, 0, 0, 0.6))', 'important');
     s.setProperty('transform-origin', 'bottom center', 'important');
+    s.setProperty('transform', 'none', 'important');
 
     if (position === 'center') {
-      // Center: position at 50% of stage, then shift left by half avatar width
+      // INTRO: 80% width, centered, bottom aligned
+      const avatarWidthPx = Math.round(stageWidth * (widthPercent / 100));
+      const avatarHeightPx = Math.round(avatarWidthPx * (9/16));
       const leftPos = Math.round((stageWidth - avatarWidthPx) / 2);
+      
+      s.setProperty('width', `${avatarWidthPx}px`, 'important');
+      s.setProperty('height', `${avatarHeightPx}px`, 'important');
       s.setProperty('left', `${leftPos}px`, 'important');
       s.setProperty('right', 'auto', 'important');
-      s.setProperty('transform', 'none', 'important');
-    } else if (position === 'right') {
-      // Right: fixed 10px from right edge
-      s.setProperty('right', '10px', 'important');
+      s.setProperty('bottom', '0', 'important');
+      
+      console.log(`[LayerController] Avatar INTRO: center, ${widthPercent}% = ${avatarWidthPx}x${avatarHeightPx}px, L:${leftPos}px B:0`);
+    } else {
+      // ALL OTHER SECTIONS: Fixed 810x455px at R:182px B:1px
+      // These are the user's exact specifications for non-intro sections
+      const avatarWidthPx = 810;
+      const avatarHeightPx = 455;
+      const rightPos = 182;
+      const bottomPos = 1;
+      
+      s.setProperty('width', `${avatarWidthPx}px`, 'important');
+      s.setProperty('height', `${avatarHeightPx}px`, 'important');
+      s.setProperty('right', `${rightPos}px`, 'important');
       s.setProperty('left', 'auto', 'important');
-      s.setProperty('transform', 'none', 'important');
-    } else if (position === 'left') {
-      s.setProperty('left', '10px', 'important');
-      s.setProperty('right', 'auto', 'important');
-      s.setProperty('transform', 'none', 'important');
+      s.setProperty('bottom', `${bottomPos}px`, 'important');
+      
+      console.log(`[LayerController] Avatar CONTENT: right, ${avatarWidthPx}x${avatarHeightPx}px, R:${rightPos}px B:${bottomPos}px`);
     }
-
-    console.log(`[LayerController] Avatar: ${position}, ${widthPercent}% = ${avatarWidthPx}x${avatarHeightPx}px (stage: ${stageWidth}x${stageHeight})`);
   }
 }
 
