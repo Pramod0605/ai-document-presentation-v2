@@ -648,10 +648,21 @@ def resume_job_from_recap(job_id):
             if src.exists():
                 shutil.copy(str(src), str(dst))
         
+        # Update job_manager status so dashboard shows completed
+        sections_count = len(presentation.get("sections", []))
+        job_manager.update_job(job_id, {
+            "status": "completed",
+            "progress": 100,
+            "current_step_name": "Complete",
+            "status_message": f"Resumed from recap - {sections_count} sections rendered",
+            "completed_at": __import__('datetime').datetime.utcnow().isoformat(),
+            "error": None
+        }, persist=True)
+        
         return jsonify({
             "status": "success",
             "job_id": job_id,
-            "sections_count": len(presentation.get("sections", [])),
+            "sections_count": sections_count,
             "message": "Job resumed from recap stage successfully"
         })
         
