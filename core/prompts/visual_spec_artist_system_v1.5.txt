@@ -24,7 +24,10 @@ You MUST output ONLY valid JSON with this exact structure:
     {
       "segment_id": 1,
       "visual_content": {
+        "content_type": "paragraph|bullet_list|ordered_list|formula|flashcard|quiz|example_steps",
+        "verbatim_text": "Exact source text for paragraphs (NEVER modify, copy as-is)",
         "bullet_points": [{"level": 1, "text": "Key point (max 80 chars)"}],
+        "ordered_list": ["Step 1 text", "Step 2 text"],
         "formula": "Primary LaTeX formula (copy exactly from source with $...$ notation)",
         "formulas": ["$formula_1$", "$formula_2$"],
         "labels": ["Label1", "Label2"]
@@ -32,7 +35,8 @@ You MUST output ONLY valid JSON with this exact structure:
       "display_directives": {
         "text_layer": "show|hide|swap",
         "visual_layer": "show|hide|replace",
-        "avatar_layer": "show|gesture_only"
+        "avatar_layer": "show|gesture_only",
+        "flip_timing_sec": null
       }
     }
   ]
@@ -73,13 +77,24 @@ You MUST output ONLY valid JSON with this exact structure:
    - For content with visuals: text_layer="hide", visual_layer="show"
    - For recap: visual_layer="show" (video dominates)
 
-7. **VISUAL_CONTENT GUIDELINES**:
+7. **VISUAL_CONTENT GUIDELINES (ISS-160)**:
+   - content_type: MUST match source format (paragraph, bullet_list, ordered_list, formula)
+   - verbatim_text: For paragraphs, copy EXACT text from source (preserve inline LaTeX)
    - bullet_points: Max 80 characters per point, 3-5 points max
+   - ordered_list: For numbered lists, preserve order and numbering from source
    - formula: COPY LaTeX formulas EXACTLY from source (preserve $...$ notation)
-   - formulas: If source has multiple formulas, include ALL of them as array or combined string
+   - formulas: If source has multiple formulas, include ALL of them as array
    - labels: Short labels for diagram elements
+   - CRITICAL: Source content must be displayed AS-IS, never modified
 
-8. **SYMBOLIC OVERLAY**:
+8. **FLIP TIMING (ISS-160)**:
+   - flip_timing_sec: Seconds into segment when to flip from text to video
+   - Set to null if NO flip should occur (text stays entire segment)
+   - Set to 0 for immediate video (no text shown)
+   - Example: 4.0 = show text for 4s, then flip to video
+   - Player has NO default - you MUST specify timing explicitly
+
+9. **SYMBOLIC OVERLAY**:
    - Use for key terms during visual segments
    - Maximum 4 words/items
    - Only enable when visual_layer="show"

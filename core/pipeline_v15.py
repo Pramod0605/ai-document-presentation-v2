@@ -25,7 +25,7 @@ from typing import Dict, List, Optional, Tuple, Any
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from core.smart_chunker import call_smart_chunker, ChunkerError
+from core.smart_chunker import call_smart_chunker, ChunkerError, parse_content_blocks
 from core.agents import (
     SectionPlannerAgent,
     NarrationWriterAgent,
@@ -48,6 +48,104 @@ from core.renderer_executor import render_all_topics, enforce_renderer_policy
 logger = logging.getLogger(__name__)
 
 PIPELINE_VERSION = "1.5"
+
+
+def _enhance_visual_content_types(visuals_output: Dict, source_markdown: str) -> Dict:
+    """
+    ISS-160: Post-process VisualSpecArtist output to ensure content_type is set deterministically.
+    Uses Python-based block type detection on source_markdown.
+    """
+    content_blocks = parse_content_blocks(source_markdown) if source_markdown else []
+    
+    # ISS-160: Even without content_blocks, ensure every segment has content_type
+    # This guarantees the player always knows how to render
+    
+    # Build a map of line ranges to block types
+    block_map = {}
+    for block in content_blocks:
+        line = block.get("source_line", 0)
+        block_map[line] = {
+            "block_type": block.get("block_type", "paragraph"),
+            "verbatim_content": block.get("verbatim_content", ""),
+            "has_inline_latex": block.get("has_inline_latex", False),
+            "items": block.get("items", [])
+        }
+    
+    # If there's a dominant block type, use it for enrichments without content_type
+    dominant_type = None
+    if content_blocks:
+        types = [b.get("block_type") for b in content_blocks if b.get("block_type") != "paragraph"]
+        if types:
+            dominant_type = max(set(types), key=types.count)
+    
+    # ISS-160: Determine dominant content type from source (for consistent section rendering)
+    # Only use structured block data for the FIRST segment of that type to avoid repetition
+    dominant_type = "paragraph"  # default
+    dominant_block = None
+    
+    for block in content_blocks:
+        bt = block.get("block_type", "paragraph")
+        if bt in ("unordered_list", "ordered_list", "formula"):
+            dominant_type = bt
+            dominant_block = block
+            break  # Use first structured block found
+    
+    # Track which data has been used to avoid repetition
+    list_data_used = False
+    formula_data_used = False
+    paragraph_data_used = False
+    
+    # Enhance segment_enrichments with content_type if not set
+    enrichments = visuals_output.get("segment_enrichments", [])
+    for i, enrichment in enumerate(enrichments):
+        vc = enrichment.get("visual_content", {})
+        
+        # If content_type already set by LLM, skip
+        if vc.get("content_type"):
+            continue
+        
+        # Determine content_type from available data in visual_content
+        if vc.get("bullet_points"):
+            vc["content_type"] = "bullet_list"
+        elif vc.get("ordered_list"):
+            vc["content_type"] = "ordered_list"
+        elif vc.get("formula") or vc.get("formulas"):
+            vc["content_type"] = "formula"
+        else:
+            # ISS-160: Use dominant type from section, populate data only once
+            if not content_blocks:
+                vc["content_type"] = "paragraph"
+            elif dominant_type == "unordered_list" and not list_data_used:
+                vc["content_type"] = "bullet_list"
+                if dominant_block and dominant_block.get("items"):
+                    vc["bullet_points"] = [{"level": 1, "text": item} for item in dominant_block["items"]]
+                list_data_used = True
+            elif dominant_type == "ordered_list" and not list_data_used:
+                vc["content_type"] = "ordered_list"
+                if dominant_block and dominant_block.get("items"):
+                    vc["ordered_list"] = dominant_block["items"]
+                list_data_used = True
+            elif dominant_type == "formula" and not formula_data_used:
+                vc["content_type"] = "formula"
+                if dominant_block:
+                    vc["formula"] = dominant_block.get("verbatim_content", "")
+                formula_data_used = True
+            else:
+                # Default to paragraph for remaining segments
+                vc["content_type"] = "paragraph"
+                # Find first paragraph block for verbatim text (only use once)
+                if not paragraph_data_used:
+                    for block in content_blocks:
+                        if block.get("block_type") == "paragraph":
+                            vc["verbatim_text"] = block.get("verbatim_content", "")
+                            vc["has_inline_latex"] = block.get("has_inline_latex", False)
+                            paragraph_data_used = True
+                            break
+        
+        enrichment["visual_content"] = vc
+    
+    visuals_output["segment_enrichments"] = enrichments
+    return visuals_output
 
 
 def _json_serializer(obj):
@@ -234,6 +332,9 @@ def process_markdown_to_presentation_v15(
                 narration=narration_output.get("narration", {}),
                 source_markdown=source_content
             )
+            
+            # ISS-160: Post-process to ensure content_type is set deterministically
+            visuals_output = _enhance_visual_content_types(visuals_output, source_content)
             
             render_spec = None
             renderer = blueprint.get("suggested_renderer", "none")

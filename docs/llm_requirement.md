@@ -6,17 +6,58 @@ This document serves as the comprehensive reference for all LLM agents in the V1
 - Storage architecture and artifact persistence
 - Gap analysis between prompts and implementation
 - Validation requirements
+- Content fidelity and display synchronization (ISS-160)
 
-**Last Updated**: 2025-12-25
+**Last Updated**: 2025-12-26
 
 ---
 
 ## Table of Contents
-1. [Agent Overview](#agent-overview)
-2. [Detailed Agent Specifications](#detailed-agent-specifications)
-3. [Storage Architecture](#storage-architecture)
-4. [Gap Analysis](#gap-analysis)
-5. [Validation Flow](#validation-flow)
+1. [Content Fidelity Principles](#content-fidelity-principles)
+2. [Agent Overview](#agent-overview)
+3. [Detailed Agent Specifications](#detailed-agent-specifications)
+4. [Storage Architecture](#storage-architecture)
+5. [Gap Analysis](#gap-analysis)
+6. [Validation Flow](#validation-flow)
+
+---
+
+## Content Fidelity Principles (ISS-160)
+
+**CRITICAL**: These principles govern ALL LLM agents in the pipeline.
+
+### P1: Source Content Preservation
+- Display source content **AS-IS** - no LLM modification
+- Paragraphs stay as paragraphs (prose mode, NOT bullets)
+- Bullet lists stay as bullet lists
+- Numbered lists stay as numbered lists
+- If content is too long for one section → chunk into next section/slide **without losing context**
+
+### P2: Inline LaTeX Handling
+- **As-is in source = As-is in display**
+- Inline LaTeX `$\sin\theta$` stays inline within paragraph text
+- Block LaTeX `$$..$$` displayed as separate formula block
+- LLM must preserve exact LaTeX notation from source
+
+### P3: LLM-Driven Timing (No Default Flip)
+- If LLM doesn't specify `flip_timing_sec` → **NO automatic flip** by player
+- Everything is driven by LLM, player has NO defaults
+- Player executes exactly what LLM specifies, nothing more
+
+### P4: Block Type Detection
+- SmartChunker MUST detect and output `block_type` for each content block:
+  - `paragraph` - Flowing prose text
+  - `unordered_list` - Bullet points (-, *, +)
+  - `ordered_list` - Numbered items (1., 2., 3.)
+  - `formula` - Contains LaTeX ($...$ or $$...$$)
+  - `blockquote` - Quote blocks (>)
+- VisualSpecArtist MUST preserve `content_type` matching source `block_type`
+
+### P5: Downstream Propagation
+- Any new LLM output fields MUST propagate through:
+  1. MergeStep → presentation.json
+  2. Player.js → rendering logic
+- LLM changes → Downstream display MUST update accordingly
 
 ---
 
@@ -72,6 +113,16 @@ You MUST output valid JSON with this exact structure:
       "suggested_renderer": "manim|video|none"
     }
   ],
+  "content_blocks": [
+    {
+      "block_id": 1,
+      "block_type": "paragraph|unordered_list|ordered_list|formula|blockquote",
+      "verbatim_content": "Exact source text - NEVER modified by LLM",
+      "source_line": 5,
+      "items": ["item1", "item2"],
+      "has_inline_latex": true
+    }
+  ],
   "quiz_questions": [
     {
       "question_id": "q1",
@@ -82,6 +133,18 @@ You MUST output valid JSON with this exact structure:
   ]
 }
 ```
+
+**Content Block Detection (ISS-160)**:
+- `content_blocks[]` preserves exact source formatting
+- `block_type` detected from markdown syntax:
+  - `paragraph`: No list markers, flowing prose
+  - `unordered_list`: Lines starting with -, *, +
+  - `ordered_list`: Lines starting with 1., 2., 3.
+  - `formula`: Contains $...$ or $$...$$
+  - `blockquote`: Lines starting with >
+- `verbatim_content`: Exact byte-for-byte copy from source (no modifications)
+- `items[]`: Only populated for list types, contains individual list items
+- `has_inline_latex`: True if paragraph contains inline $...$ notation
 
 **Quiz Extraction (ISS-157)**:
 - `quiz_questions[]` is OPTIONAL - only populated if PDF contains quiz/exercise questions
@@ -236,24 +299,49 @@ You MUST output ONLY valid JSON with this exact structure:
     {
       "segment_id": 1,
       "visual_content": {
+        "content_type": "paragraph|bullet_list|ordered_list|formula|flashcard|quiz|example_steps",
+        "verbatim_text": "Exact source text for paragraphs (NEVER modify)",
         "bullet_points": [{"level": 1, "text": "Key point"}],
+        "ordered_list": ["1. Step one", "2. Step two"],
         "formula": "LaTeX formula",
+        "formulas": ["$formula1$", "$formula2$"],
         "labels": ["Label1"]
       },
       "display_directives": {
         "text_layer": "show|hide|swap",
         "visual_layer": "show|hide|replace",
-        "avatar_layer": "show|gesture_only"
+        "avatar_layer": "show|gesture_only",
+        "flip_timing_sec": null
       }
     }
   ]
 }
 ```
 
+**ISS-160 Visual Content Rules**:
+- `content_type`: MUST match source `block_type` from SmartChunker
+  - `paragraph`: Display as prose text (NOT bullets)
+  - `bullet_list`: Display with bullet markers
+  - `ordered_list`: Display with numbered markers
+  - `formula`: Display as centered LaTeX
+  - `flashcard`: Display with front/back flip animation
+  - `quiz`: Display with Q&A format
+  - `example_steps`: Display as step-by-step walkthrough
+- `verbatim_text`: Exact copy from source for paragraphs (preserves inline LaTeX)
+- `ordered_list[]`: Numbered items in order (new field for numbered lists)
+- `formulas[]`: Array of all LaTeX formulas from source
+
+**ISS-160 Display Directive Rules**:
+- `flip_timing_sec`: Seconds into segment when to flip from text to video
+  - `null` = NO flip (LLM must explicitly specify timing)
+  - Player does NOT default to any timing
+  - Example: 4.0 = flip at 4 seconds into segment
+
 **Key Rules**:
 - ONE BEAT PER SEGMENT
 - text_layer + visual_layer cannot BOTH be "show"
 - avatar_layer: "hide" is NOT valid (avatar always visible)
+- flip_timing_sec: null means NO automatic flip by player
 
 **Validation**: 
 - Structural: visual_beats array, segment_enrichments array

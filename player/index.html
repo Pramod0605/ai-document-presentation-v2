@@ -188,6 +188,42 @@
       opacity: 0.85;
     }
 
+    /* ISS-160: Paragraph content - prose display */
+    .segment-item.paragraph-content {
+      font-size: 1.4rem;
+      line-height: 1.7;
+      text-align: justify;
+      border-left: none;
+      padding: 16px 24px;
+      background: rgba(10, 10, 10, 0.85);
+      max-width: 100%;
+    }
+    
+    /* ISS-160: Ordered list items - numbered markers */
+    .segment-item.ordered-list-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border-left-color: #ff9800;
+    }
+    
+    .segment-item.ordered-list-item .list-number {
+      font-weight: 700;
+      color: #ff9800;
+      min-width: 28px;
+      text-align: right;
+    }
+    
+    /* ISS-160: Formula content - centered LaTeX */
+    .segment-item.formula-content {
+      font-size: 1.6rem;
+      text-align: center;
+      border-left: none;
+      padding: 20px;
+      background: rgba(0, 50, 100, 0.3);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+    }
+
     .flashcard-container {
       display: flex;
       gap: 15px;

@@ -71,6 +71,15 @@
           "visual_content": {
             "type": "object",
             "properties": {
+              "content_type": {
+                "type": "string",
+                "enum": ["paragraph", "bullet_list", "ordered_list", "formula", "flashcard", "quiz", "example_steps"],
+                "description": "ISS-160: Type of content display (must match source format)"
+              },
+              "verbatim_text": {
+                "type": "string",
+                "description": "ISS-160: Exact source text for paragraphs (never modified)"
+              },
               "bullet_points": {
                 "type": "array",
                 "items": {
@@ -82,9 +91,19 @@
                   "required": ["level", "text"]
                 }
               },
+              "ordered_list": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "ISS-160: Numbered list items in order"
+              },
               "formula": {
                 "type": "string",
                 "description": "LaTeX formula (optional)"
+              },
+              "formulas": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "ISS-160: Multiple LaTeX formulas from source"
               },
               "labels": {
                 "type": "array",
@@ -106,6 +125,10 @@
               "avatar_layer": {
                 "type": "string",
                 "enum": ["show", "hide", "gesture_only"]
+              },
+              "flip_timing_sec": {
+                "type": ["number", "null"],
+                "description": "ISS-160: Seconds into segment when to flip from text to video. null = no flip"
               }
             },
             "required": ["text_layer", "visual_layer", "avatar_layer"]

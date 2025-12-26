@@ -1017,7 +1017,42 @@ function loadSlide(index) {
     const legacyVersions = ['', 'v1.0', 'v1.1', 'v1.2'];
     const isLegacy = legacyVersions.includes(specVersion);
     
-    if (slide.visual_content && slide.visual_content.bullet_points && slide.visual_content.bullet_points.length > 0) {
+    // ISS-160: Handle content_type for source fidelity display
+    const contentType = slide.visual_content?.content_type;
+    
+    if (contentType === 'paragraph' && slide.visual_content?.verbatim_text) {
+      // ISS-160: Paragraph mode - display as prose text (not bullets)
+      const paragraphDiv = document.createElement('div');
+      paragraphDiv.className = 'segment-item paragraph-content';
+      paragraphDiv.id = 'seg-0';
+      paragraphDiv.innerHTML = slide.visual_content.verbatim_text;
+      list.appendChild(paragraphDiv);
+      displayItems = [slide.visual_content.verbatim_text];
+      console.log(`[ISS-160] Slide ${slide.slide_number}: Rendering paragraph mode`);
+    } else if (contentType === 'ordered_list' && slide.visual_content?.ordered_list?.length > 0) {
+      // ISS-160: Ordered list mode - display with numbered markers
+      slide.visual_content.ordered_list.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'segment-item ordered-list-item';
+        div.id = `seg-${i}`;
+        div.innerHTML = `<span class="list-number">${i + 1}.</span> ${item}`;
+        list.appendChild(div);
+      });
+      displayItems = slide.visual_content.ordered_list;
+      console.log(`[ISS-160] Slide ${slide.slide_number}: Rendering ordered_list mode (${displayItems.length} items)`);
+    } else if (contentType === 'formula' && (slide.visual_content?.formula || slide.visual_content?.formulas?.length > 0)) {
+      // ISS-160: Formula mode - centered LaTeX display
+      const formulas = slide.visual_content.formulas || [slide.visual_content.formula];
+      formulas.forEach((formula, i) => {
+        const div = document.createElement('div');
+        div.className = 'segment-item formula-content';
+        div.id = `seg-${i}`;
+        div.innerHTML = formula;
+        list.appendChild(div);
+      });
+      displayItems = formulas;
+      console.log(`[ISS-160] Slide ${slide.slide_number}: Rendering formula mode (${displayItems.length} formulas)`);
+    } else if (slide.visual_content && slide.visual_content.bullet_points && slide.visual_content.bullet_points.length > 0) {
       displayItems = slide.visual_content.bullet_points;
     } else if (isLegacy && narrationSegs && narrationSegs.length > 0) {
       displayItems = narrationSegs.map(seg => seg.text || '');
@@ -1426,6 +1461,34 @@ function handleTimeUpdate(e) {
         el.classList.remove('read');
       }
     });
+  }
+  
+  // ISS-160: Handle flip_timing_sec - flip from text to video mid-segment
+  const activeNarrSegs = slide.narration?.segments || slide.narration_segments;
+  if (activeSegmentIndex >= 0 && activeNarrSegs && activeNarrSegs[activeSegmentIndex]) {
+    const activeSeg = activeNarrSegs[activeSegmentIndex];
+    const flipTiming = activeSeg.display_directives?.flip_timing_sec;
+    
+    if (flipTiming !== null && flipTiming !== undefined && flipTiming >= 0) {
+      const segStartTime = slide.timed_segments?.[activeSegmentIndex]?.start_time || 0;
+      const elapsedInSeg = t - segStartTime;
+      
+      if (elapsedInSeg >= flipTiming && !slide._flippedSegments?.[activeSegmentIndex]) {
+        // Time to flip from text to video
+        slide._flippedSegments = slide._flippedSegments || {};
+        slide._flippedSegments[activeSegmentIndex] = true;
+        console.log(`[ISS-160] Segment ${activeSegmentIndex}: Flip triggered at ${flipTiming}s (elapsed: ${elapsedInSeg.toFixed(1)}s)`);
+        
+        // Apply flip: hide text, show video
+        layerController.applyDirectivesImmediate({
+          textLayer: 'hide',
+          visualLayer: 'show',
+          avatarLayer: activeSeg.display_directives?.avatar_layer || 'show',
+          sectionType: slide.section_type || 'content',
+          segmentIndex: activeSegmentIndex
+        });
+      }
+    }
   }
   
   const activeNarrationSegs = slide.narration?.segments || slide.narration_segments;

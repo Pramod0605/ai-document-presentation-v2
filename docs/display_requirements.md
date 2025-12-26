@@ -38,6 +38,8 @@ This document defines how the AI Animated Education player displays educational 
 2. **Avatar is ALWAYS VISIBLE** - Layer 2 always renders the avatar. `gesture_only` is metadata for avatar VIDEO GENERATION (lip-sync vs gesture-only), NOT a display hide directive.
 3. **P7 Content Integrity** - Display ONLY content from the input source file. No fabricated content.
 4. **Narration Sync** - All timing flows from TTS audio duration, which updates segment.duration_seconds.
+5. **Source Fidelity (ISS-160)** - Display source content AS-IS: paragraphs as prose, bullets as bullets, numbered lists as numbered.
+6. **LLM-Driven Timing (ISS-160)** - Player has NO default timing. If LLM doesn't specify `flip_timing_sec`, NO flip occurs.
 
 ---
 
@@ -77,9 +79,10 @@ This document defines how the AI Animated Education player displays educational 
 │                     - gesture_only = generation metadata ONLY       │
 │                                                                      │
 │   Layer 1 (Middle): CONTENT AREA (Text OR Video - mutual exclusion) │
-│                     - Text: bullet points, formulas, flashcards     │
+│                     - Text: paragraphs, bullets, numbered, formulas │
 │                     - Video: Manim animation OR WAN video           │
-│                     - Fills available space when video plays        │
+│                     - Fills FULLSCREEN when visual_layer="show"     │
+│                     - Content types: paragraph|bullet|ordered|formula│
 │                                                                      │
 │   Layer 0 (Bottom): BACKGROUND BLACK                                │
 │                     - Always black, no images                       │
@@ -92,6 +95,127 @@ This document defines how the AI Animated Education player displays educational 
 - Resize and move Video Box  
 - Resize and move Avatar position
 - All adjustments saved to presentation.json for replay
+
+---
+
+## Content Display Modes (ISS-160)
+
+The player MUST render content based on `content_type` from visual_content:
+
+### Paragraph Mode (content_type: "paragraph")
+```
+┌─────────────────────────────────────────┐
+│  Trigonometry is the study of           │
+│  relationships between angles and       │
+│  sides of triangles. The ratio          │
+│  $\sin\theta$ represents the opposite   │
+│  side divided by the hypotenuse.        │
+└─────────────────────────────────────────┘
+```
+- Displays as flowing prose text (NOT bullets)
+- Inline LaTeX renders within paragraph via MathJax
+- Uses `verbatim_text` field directly
+- Line breaks respected from source
+
+### Bullet List Mode (content_type: "bullet_list")
+```
+┌─────────────────────────────────────────┐
+│  • Sine (sin) - opposite/hypotenuse     │
+│  • Cosine (cos) - adjacent/hypotenuse   │
+│  • Tangent (tan) - opposite/adjacent    │
+└─────────────────────────────────────────┘
+```
+- Displays with bullet markers (•)
+- Uses `bullet_points[]` array
+- Nested levels supported via `level` field
+
+### Ordered List Mode (content_type: "ordered_list")
+```
+┌─────────────────────────────────────────┐
+│  1. Identify the angle θ                │
+│  2. Label opposite, adjacent, hypotenuse│
+│  3. Apply the correct ratio formula     │
+│  4. Calculate the final value           │
+└─────────────────────────────────────────┘
+```
+- Displays with numbered markers (1., 2., 3.)
+- Uses `ordered_list[]` array
+- Maintains source order exactly
+
+### Formula Mode (content_type: "formula")
+```
+┌─────────────────────────────────────────┐
+│                                         │
+│         sin θ = opposite                │
+│                 ─────────               │
+│                 hypotenuse              │
+│                                         │
+└─────────────────────────────────────────┘
+```
+- Centered block LaTeX rendering
+- Uses `formula` or `formulas[]` field
+- MathJax renders $$...$$ notation
+
+### Fullscreen Video Mode (visual_layer: "show")
+```
+┌───────────────────────────────────────────────────────────────────┐
+│                                                                   │
+│                    ┌─────────────────────────┐                    │
+│                    │                         │                    │
+│     VIDEO FILLS    │     MANIM/WAN VIDEO     │     ENTIRE        │
+│     CONTENT AREA   │     PLAYING             │     SCREEN        │
+│                    │                         │                    │
+│                    └─────────────────────────┘                    │
+│                                                   ┌───────────┐   │
+│                                                   │  AVATAR   │   │
+│                                                   │  52%      │   │
+│                                                   └───────────┘   │
+└───────────────────────────────────────────────────────────────────┘
+```
+- Video fills content area (text hidden)
+- Avatar remains visible at 52% right
+- Triggered when `visual_layer: "show"`
+
+---
+
+## Flip Timing (ISS-160)
+
+### LLM-Controlled Flip
+
+The `flip_timing_sec` field in display_directives controls when to transition:
+
+```
+Segment Duration: 10 seconds
+flip_timing_sec: 4.0
+
+Timeline:
+0s ──────── 4s ──────── 10s
+|── TEXT ──|── VIDEO ──|
+
+Narration: "Let me show you the formula..."
+           ↑ At 4s: text fades, video shows formula
+```
+
+### Player Logic
+
+```javascript
+// ONLY flip if LLM explicitly specifies timing
+const flipAt = segment.display_directives?.flip_timing_sec;
+if (flipAt !== null && flipAt !== undefined) {
+  if (elapsedInSegment >= flipAt) {
+    showVisualLayer();
+    hideTextLayer();
+  }
+}
+// If flipAt is null/undefined → NO flip, show text entire segment
+```
+
+### Key Rules
+
+1. `flip_timing_sec: null` → NO flip occurs (text stays)
+2. `flip_timing_sec: 0` → Immediate video (no text shown)
+3. `flip_timing_sec: 4.5` → Text for 4.5s, then video
+4. Player has NO default - LLM must specify or nothing happens
 
 ---
 

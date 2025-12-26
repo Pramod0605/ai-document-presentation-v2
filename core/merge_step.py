@@ -126,8 +126,13 @@ def _normalize_segment(segment: Dict, scene_idx: int, seg_idx: int) -> Dict:
         normalized["display_directives"] = {
             "text_layer": "hide",
             "visual_layer": "show",
-            "avatar_layer": "hide"
+            "avatar_layer": "hide",
+            "flip_timing_sec": None  # ISS-160: null = no flip
         }
+    
+    # ISS-160: Propagate visual_content fields if present
+    if "visual_content" in segment:
+        normalized["visual_content"] = segment["visual_content"]
     
     if "start" in segment:
         normalized["start"] = segment["start"]

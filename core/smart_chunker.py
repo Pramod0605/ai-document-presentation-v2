@@ -1,13 +1,17 @@
 """
-Smart Chunker v1.4 - Pass 0: Topic Extraction
+Smart Chunker v1.5 - Pass 0: Topic Extraction with Block Type Detection (ISS-160)
 
 Extracts logical topic blocks from markdown with metadata for downstream Directors.
 Uses Gemini 2.5 Pro with structured output (JSON schema enforcement).
+
+ISS-160: Now detects block_type (paragraph, unordered_list, ordered_list, formula, blockquote)
+and preserves verbatim_content from source for display fidelity.
 """
 
 import os
 import json
 import logging
+import re
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from openai import OpenAI
@@ -85,6 +89,125 @@ SMART_CHUNKER_SCHEMA = {
     },
     "required": ["source_topic", "topics"]
 }
+
+
+def detect_block_type(line: str) -> str:
+    """
+    Detect the block type from a markdown line.
+    ISS-160: Source fidelity - detect exact formatting.
+    
+    Returns:
+        One of: paragraph, unordered_list, ordered_list, formula, blockquote
+    """
+    stripped = line.strip()
+    
+    if not stripped:
+        return "paragraph"  # Empty lines treated as paragraph breaks
+    
+    # Ordered list: starts with digit + period + space
+    if re.match(r'^\d+\.\s', stripped):
+        return "ordered_list"
+    
+    # Unordered list: starts with -, *, + followed by space
+    if re.match(r'^[-*+]\s', stripped):
+        return "unordered_list"
+    
+    # Block formula: contains $$...$$ (display math) - standalone formula block
+    if '$$' in stripped:
+        return "formula"
+    
+    # ISS-160 FIX: Only return "formula" for PURE formula lines (single $...$, nothing else)
+    # Lines with inline math like "The ratio $\sin\theta$ is" are PARAGRAPHS
+    inline_math_match = re.match(r'^\$[^$]+\$\s*$', stripped)
+    if inline_math_match:
+        return "formula"  # Line is ONLY a formula
+    
+    # Blockquote: starts with >
+    if stripped.startswith('>'):
+        return "blockquote"
+    
+    # Heading is treated as paragraph for display
+    if stripped.startswith('#'):
+        return "paragraph"
+    
+    # ISS-160: Paragraphs with inline math stay as paragraphs - has_inline_latex tracks the math
+    return "paragraph"
+
+
+def has_inline_latex(text: str) -> bool:
+    """Check if text contains inline LaTeX notation."""
+    # Match $...$ but not $$...$$
+    inline_pattern = r'(?<!\$)\$(?!\$).+?(?<!\$)\$(?!\$)'
+    return bool(re.search(inline_pattern, text))
+
+
+def parse_content_blocks(markdown_content: str) -> List[Dict]:
+    """
+    Parse markdown content into content blocks with type detection.
+    ISS-160: Preserves verbatim content for source fidelity.
+    
+    Returns:
+        List of content blocks with block_id, block_type, verbatim_content, etc.
+    """
+    blocks = []
+    lines = markdown_content.split('\n')
+    
+    current_block = []
+    current_type = None
+    block_id = 1
+    start_line = 1
+    
+    def flush_block():
+        nonlocal block_id, current_block, current_type, start_line
+        if current_block:
+            content = '\n'.join(current_block)
+            block = {
+                "block_id": block_id,
+                "block_type": current_type or "paragraph",
+                "verbatim_content": content,
+                "source_line": start_line,
+                "has_inline_latex": has_inline_latex(content)
+            }
+            
+            # For list types, extract items
+            if current_type == "unordered_list":
+                items = [re.sub(r'^[-*+]\s*', '', line.strip()) 
+                        for line in current_block if re.match(r'^[-*+]\s', line.strip())]
+                block["items"] = items
+            elif current_type == "ordered_list":
+                items = [re.sub(r'^\d+\.\s*', '', line.strip())
+                        for line in current_block if re.match(r'^\d+\.\s', line.strip())]
+                block["items"] = items
+            
+            blocks.append(block)
+            block_id += 1
+        current_block = []
+        current_type = None
+    
+    for i, line in enumerate(lines, 1):
+        if not line.strip():
+            # Empty line - flush current block
+            flush_block()
+            start_line = i + 1
+            continue
+        
+        line_type = detect_block_type(line)
+        
+        # If type changes, flush and start new block
+        if current_type is not None and line_type != current_type:
+            flush_block()
+            start_line = i
+        
+        if current_type is None:
+            current_type = line_type
+            start_line = i
+        
+        current_block.append(line)
+    
+    # Flush final block
+    flush_block()
+    
+    return blocks
 
 
 def load_prompt(name: str) -> str:
@@ -165,7 +288,11 @@ def call_smart_chunker(
             if errors:
                 raise ChunkerValidationError(errors)
             
-            logger.info(f"[Smart Chunker] Successfully extracted {len(result.get('topics', []))} topics")
+            # ISS-160: Add content_blocks with block_type detection
+            content_blocks = parse_content_blocks(markdown_content)
+            result["content_blocks"] = content_blocks
+            
+            logger.info(f"[Smart Chunker] Successfully extracted {len(result.get('topics', []))} topics, {len(content_blocks)} content blocks")
             return result
             
         except (json.JSONDecodeError, ChunkerValidationError) as e:
