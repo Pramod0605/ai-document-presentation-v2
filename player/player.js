@@ -411,13 +411,15 @@ class LayerController {
       s.setProperty('left', `${leftPos}px`, 'important');
       s.setProperty('right', 'auto', 'important');
       s.setProperty('bottom', '0', 'important');
-      // ISS-179c: Use bottom center for intro (centered avatar)
       s.setProperty('transform-origin', 'bottom center', 'important');
+      
+      // ISS-179d: Store base position for Dev offset slider
+      avatarCanvas.dataset.baseLeft = leftPos;
+      avatarCanvas.dataset.isIntro = 'true';
       
       console.log(`[LayerController] Avatar INTRO: center, ${widthPercent}% = ${avatarWidthPx}x${avatarHeightPx}px, L:${leftPos}px B:0`);
     } else {
       // ALL OTHER SECTIONS: Fixed 810x455px at R:182px B:1px
-      // These are the user's exact specifications for non-intro sections
       const avatarWidthPx = 810;
       const avatarHeightPx = 455;
       const rightPos = 182;
@@ -428,8 +430,11 @@ class LayerController {
       s.setProperty('right', `${rightPos}px`, 'important');
       s.setProperty('left', 'auto', 'important');
       s.setProperty('bottom', `${bottomPos}px`, 'important');
-      // ISS-179c: Use bottom right so scaling keeps avatar anchored to right edge
       s.setProperty('transform-origin', 'bottom right', 'important');
+      
+      // ISS-179d: Store base position for Dev offset slider
+      avatarCanvas.dataset.baseRight = rightPos;
+      avatarCanvas.dataset.isIntro = 'false';
       
       console.log(`[LayerController] Avatar CONTENT: right, ${avatarWidthPx}x${avatarHeightPx}px, R:${rightPos}px B:${bottomPos}px`);
     }
@@ -785,21 +790,28 @@ if (AVATAR_URL) {
 }
 
 function updateVisuals() {
-  const aScale = document.getElementById('av-scale').value;
-  const aX = document.getElementById('av-x').value;
-  const cScale = document.getElementById('con-scale').value;
+  const aScale = parseFloat(document.getElementById('av-scale').value) || 1;
+  const aX = parseInt(document.getElementById('av-x').value, 10) || 0;
+  const cScale = parseFloat(document.getElementById('con-scale').value) || 1;
 
-  // ISS-179 FIX: Do NOT use translateX for positioning!
-  // applyAvatarLayout() uses right/left CSS properties for positioning.
-  // Only apply scale here, let applyAvatarLayout() handle position.
-  const stageEl = document.getElementById('stage');
-  const isIntro = stageEl && stageEl.classList.contains('mode-intro');
-  
-  // Only apply scale transform - no translateX (that breaks right/left positioning)
-  if (aScale && aScale != 1) {
+  // ISS-179d: Apply scale transform
+  if (aScale !== 1) {
     avatarCanvas.style.setProperty('transform', `scale(${aScale})`, 'important');
   } else {
     avatarCanvas.style.setProperty('transform', 'none', 'important');
+  }
+
+  // ISS-179d: Apply offset by adjusting the base position (not translateX)
+  const isIntro = avatarCanvas.dataset.isIntro === 'true';
+  
+  if (isIntro) {
+    // Intro: offset adjusts left position (positive = move right)
+    const baseLeft = parseInt(avatarCanvas.dataset.baseLeft, 10) || 128;
+    avatarCanvas.style.setProperty('left', `${baseLeft + aX}px`, 'important');
+  } else {
+    // Content: offset adjusts right position (positive slider = move left, so subtract)
+    const baseRight = parseInt(avatarCanvas.dataset.baseRight, 10) || 182;
+    avatarCanvas.style.setProperty('right', `${baseRight - aX}px`, 'important');
   }
   
   contentBox.style.transform = `scale(${cScale})`;
