@@ -58,5 +58,65 @@
       "duration": 30,
       "dry_run": false
     }
+  },
+  {
+    "timestamp": "2025-12-26T05:34:26.680139",
+    "section_id": 7,
+    "section_title": "Evaluating Trigonometric Identities",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-18.8s) - Introduction\ntitle = Text(\"Finding Trigonometric Ratios\", font_size=40).to_edge(UP)\ngiven = MathTex(r\"\\tan A = \\frac{4}{3}\").scale(1.2)\ngiven.next_to(title, DOWN, buff=1)\n\nself.play(Write(title), run_time=2)\nself.play(Write(given), run_time=2)\nself.wait(14.8)\n\n# Segment 2 (18.8-39.1s) - Drawing right triangle\ntriangle = Polygon(\n    ORIGIN, RIGHT*3, UP*4,\n    color=WHITE, fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).next_to(ORIGIN, UR, buff=0)\n\n# Labels for sides\nopp_label = MathTex(\"4\").next_to(triangle, RIGHT)\nadj_label = MathTex(\"3\").next_to(triangle, DOWN)\nangle_A = MathTex(\"A\").next_to(ORIGIN, DL, buff=0.3)\n\nself.play(\n    Create(triangle),\n    Create(right_angle),\n    run_time=3\n)\nself.play(\n    Write(opp_label),\n    Write(adj_label),\n    Write(angle_A),\n    run_time=2\n)\nself.wait(15.3)\n\n# Segment 3 (39.1-58.4s) - Pythagorean theorem\npyth = MathTex(\n    \"4^2 + 3^2\", \"=\", \"16 + 9\", \"=\", \"25\"\n).next_to(triangle, RIGHT*3)\nhyp = MathTex(r\"\\sqrt{25}\", \"=\", \"5\").next_to(pyth, DOWN)\nhyp_label = MathTex(\"5\").next_to(triangle, UL)\n\nself.play(Write(pyth), run_time=3)\nself.play(Write(hyp), run_time=2)\nself.play(Write(hyp_label), run_time=2)\nself.wait(12.3)\n\n# Segment 4 (58.4-76.2s) - Sine and cosine\nsine = MathTex(r\"\\sin A = \\frac{4}{5}\").next_to(pyth, UP*2)\ncosine = MathTex(r\"\\cos A = \\frac{3}{5}\").next_to(sine, DOWN)\n\nself.play(\n    Write(sine),\n    run_time=2.5\n)\nself.play(\n    Write(cosine),\n    run_time=2.5\n)\nself.wait(12.8)\n\n# Segment 5 (76.2-104.1s) - Reciprocal ratios\ncsc = MathTex(r\"\\csc A = \\frac{5}{4}\").next_to(cosine, DOWN*2)\nsec = MathTex(r\"\\sec A = \\frac{5}{3}\").next_to(csc, DOWN)\ncot = MathTex(r\"\\cot A = \\frac{3}{4}\").next_to(sec, DOWN)\n\nself.play(\n    Write(csc),\n    run_time=3\n)\nself.play(\n    Write(sec),\n    run_time=3\n)\nself.play(\n    Write(cot),\n    run_time=3\n)\n\n# Highlight final results\nbox = SurroundingRectangle(VGroup(sine, cosine, csc, sec, cot))\nself.play(\n    Create(box),\n    run_time=2\n)\nself.wait(16.9)",
+    "output_path": "/home/runner/workspace/player/jobs/36be3aba/videos/topic_7.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v15_llm_generated",
+      "code_length": 1995,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-26T05:35:00.133614",
+    "section_id": 8,
+    "section_title": "Verifying an Identity with a Given Ratio",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-15.2s) - Introduction\ntitle = Text(\"Verifying Trigonometric Identities\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Using Ratios & Pythagorean Theorem\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=2)\nself.play(FadeIn(subtitle), run_time=2) \nself.wait(11.2)\n\n# Segment 2 (15.2-27.4s) - Given tangent ratio\ngiven_eq = MathTex(r\"\\tan A = \\frac{4}{3}\", font_size=48)\ngiven_eq.move_to(ORIGIN)\n\nself.play(FadeOut(subtitle), run_time=1)\nself.play(Write(given_eq), run_time=2)\nself.wait(9.2)\n\n# Segment 3 (27.4-51.3s) - Right triangle visualization\ntriangle = Polygon(\n    ORIGIN, RIGHT*3, UP*4+RIGHT*3, \n    color=WHITE, fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).next_to(ORIGIN, UR, buff=0)\nangle_A = Arc(radius=0.5, angle=np.arctan(4/3), color=YELLOW)\n\nopp_label = MathTex(\"4\", color=BLUE).next_to(triangle, RIGHT)\nadj_label = MathTex(\"3\", color=GREEN).next_to(triangle, DOWN)\n\nself.play(FadeOut(given_eq), run_time=1)\nself.play(\n    Create(triangle),\n    Create(right_angle),\n    Create(angle_A),\n    run_time=3\n)\nself.play(\n    Write(opp_label),\n    Write(adj_label),\n    run_time=2\n)\nself.wait(17.9)\n\n# Segment 4 (51.3-70.6s) - Pythagorean theorem\npyth_eq = MathTex(\n    \"3^2 + 4^2\", \"=\", \"9 + 16\", \"=\", \"25\", \n    font_size=40\n).to_edge(UP)\nhyp_eq = MathTex(\n    r\"\\text{hypotenuse} = \\sqrt{25} = 5\",\n    font_size=40\n).next_to(pyth_eq, DOWN)\nhyp_label = MathTex(\"5\", color=RED).next_to(\n    triangle.get_center(), UL\n)\n\nself.play(Write(pyth_eq), run_time=3)\nself.play(Write(hyp_eq), run_time=2)\nself.play(Write(hyp_label), run_time=2)\nself.wait(12.3)\n\n# Segment 5 (70.6-117.8s) - All trig ratios\nratios = VGroup(\n    MathTex(r\"\\sin A = \\frac{4}{5}\", color=BLUE),\n    MathTex(r\"\\cos A = \\frac{3}{5}\", color=GREEN),\n    MathTex(r\"\\csc A = \\frac{5}{4}\", color=BLUE_E),\n    MathTex(r\"\\sec A = \\frac{5}{3}\", color=GREEN_E),\n    MathTex(r\"\\cot A = \\frac{3}{4}\", color=YELLOW)\n).arrange(DOWN, buff=0.5).to_edge(RIGHT)\n\nself.play(\n    FadeOut(pyth_eq),\n    FadeOut(hyp_eq),\n    run_time=1\n)\n\nfor ratio in ratios:\n    self.play(Write(ratio), run_time=2)\n    self.wait(7.44)  # (47.2s - 5*2s)/5 segments = 7.44s wait each",
+    "output_path": "/home/runner/workspace/player/jobs/36be3aba/videos/topic_8.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2165,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-26T05:35:27.588559",
+    "section_id": 9,
+    "section_title": "Finding Ratios from Side Relationships",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-9.7s) - Introduction\ntitle = Text(\"Finding Trigonometric Ratios\\nfrom Side Relationships\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Using relationships between sides to find trig ratios\", \n               font_size=32).next_to(title, DOWN)\nself.play(Write(title), run_time=4)\nself.play(FadeIn(subtitle), run_time=3)\nself.wait(2.7)\n\n# Segment 2 (9.7-25.4s) - Right triangle with hypotenuse\naxes = Axes(x_range=[0, 8], y_range=[0, 8])\ntriangle = Polygon(\n    [0, 0, 0], [4, 0, 0], [4, 3, 0],\n    color=WHITE, fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).move_to([4, 0, 0])\nhyp_label = MathTex(\"AC = 25\").next_to(triangle, RIGHT)\n\nself.play(FadeOut(subtitle), Create(axes), run_time=3)\nself.play(\n    Create(triangle),\n    Create(right_angle),\n    run_time=4\n)\nself.play(Write(hyp_label), run_time=3)\nself.wait(5.7)\n\n# Segment 3 (25.4-39.6s) - Showing leg relationship\nleg_relation = MathTex(\"BC = AB + 5\").next_to(triangle, UP)\nab_label = Text(\"AB\", font_size=24).next_to(triangle.get_bottom(), UP, buff=0.2)\nbc_label = Text(\"BC\", font_size=24).next_to(triangle.get_right(), LEFT, buff=0.2)\n\nself.play(Write(leg_relation), run_time=3)\nself.play(\n    Write(ab_label),\n    Write(bc_label),\n    run_time=4\n)\nself.wait(7.2)\n\n# Segment 4 (39.6-64.5s) - Pythagorean theorem\npythag = MathTex(\n    \"AC^2 = AB^2 + BC^2\",\n    \"\\\\\\\\25^2 = AB^2 + (AB+5)^2\"\n).next_to(leg_relation, DOWN)\n\nself.play(\n    Write(pythag[0]),\n    run_time=5\n)\nself.wait(5)\nself.play(\n    Write(pythag[1]),\n    run_time=5\n)\nself.wait(9.9)\n\n# Segment 5 (64.5-118.8s) - Solving steps\nsolution_steps = VGroup(\n    MathTex(\"625 = AB^2 + (AB^2 + 10AB + 25)\"),\n    MathTex(\"625 = 2AB^2 + 10AB + 25\"),\n    MathTex(\"2AB^2 + 10AB - 600 = 0\"),\n    MathTex(\"AB^2 + 5AB - 300 = 0\"),\n    MathTex(\"AB = 15\"),\n    MathTex(\"BC = 20\")\n).arrange(DOWN, aligned_edge=LEFT).next_to(pythag, DOWN, buff=0.5)\n\ntrig_ratios = VGroup(\n    MathTex(\"\\\\sin A = \\\\frac{15}{25} = 0.6\"),\n    MathTex(\"\\\\cos A = \\\\frac{20}{25} = 0.8\"),\n    MathTex(\"\\\\tan A = \\\\frac{15}{20} = 0.75\")\n).arrange(DOWN, aligned_edge=LEFT).next_to(solution_steps, DOWN, buff=0.5)\n\n# Show solution steps\nfor step in solution_steps:\n    self.play(Write(step), run_time=4)\n    self.wait(2)\n\n# Show trig ratios\nfor ratio in trig_ratios:\n    self.play(Write(ratio), run_time=4)\n    self.wait(2)\n\nself.wait(4.3)  # Adjust final wait to match total duration",
+    "output_path": "/home/runner/workspace/player/jobs/36be3aba/videos/topic_9.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2385,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-26T05:36:08.793152",
+    "section_id": 11,
+    "section_title": "Let's Review",
+    "renderer": "wan",
+    "prompt": "[Beat 1]: A low-angle shot in a dark, high-tech laboratory. A holographic projector casts a glowing cyan right-angled triangle in mid-air. The sides are labeled 'Opposite', 'Adjacent', and 'Hypotenuse'. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, gestures with her hand. The angle 'A' at the base of the triangle widens from 30 to 60 degrees. In response, the 'Opposite' side visibly lengthens and the 'Hypotenuse' extends to maintain the triangle shape. The camera performs a slow 180-degree orbit around the hologram. Final frame: A close-up on the widened angle 'A' with the proportionally longer sides, showing the direct relationship.\n\n[Beat 2]: Medium shot in the same dark laboratory. The holographic cyan triangle is displayed. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, points at the hologram. The 'Adjacent' side of the triangle fades to near-transparency. The 'Opposite' side glows a bright magenta, and the 'Hypotenuse' glows a solid gold. The magenta 'Opposite' side detaches and floats directly above the gold 'Hypotenuse', with a white division line appearing between them. The text 'Sin A =' materializes to the left. The camera executes a smooth dolly push-in towards the newly formed fraction. Final frame: A tight, clear shot of the formula 'Sin A = Opposite / Hypotenuse' constructed from the glowing, colored sides.\n\n[Beat 3]: Wide shot in the dark laboratory, the holographic triangle is reset. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, makes a swiping motion. The 'Hypotenuse' side of the triangle fades out. The 'Opposite' side glows magenta, while the 'Adjacent' side glows a vibrant green. The magenta bar floats upwards, positioning itself above the green bar. A solid white division line forms between them as the text 'Tan A =' appears beside the structure. The camera performs a crane shot, starting low and rising to an overhead position. Final frame: A top-down view of the completed formula 'Tan A = Opposite / Adjacent', built from the distinct, colored sides.\n\n[Beat 4]: A static medium shot in the laboratory. The holographic fraction for 'Sin A' (magenta 'Opposite' over gold 'Hypotenuse') hovers in the air. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, makes a deliberate twisting gesture with her wrist. The entire fraction, including the division line, performs a slow 180-degree flip along its horizontal axis. The gold 'Hypotenuse' bar is now on top. Simultaneously, the label 'Sin A' morphs letter by letter into 'Cosec A'. The camera remains steady, focusing entirely on the transformation. Final frame: A clear, centered view of the inverted fraction, now labeled 'Cosec A', demonstrating the reciprocal relationship.\n\n[Beat 5]: Eye-level shot in the dark lab. A holographic triangle is displayed with the text 'tan A = 1'. The triangle's 'Opposite' and 'Adjacent' sides adjust to become equal in length, both glowing green. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, watches as the expression '2 sin A cos A' appears. The 'sin A' and 'cos A' terms are replaced by their respective fractions (Green/Gold). These fractions multiply, resolving into a single fraction which simplifies to '1/2'. The expression becomes '2 * (1/2)'. The camera slowly zooms in as the numbers cancel out, leaving a single, large, glowing number '1'. Final frame: A tight close-up on the final result: the number '1' pulsing with white light.",
+    "output_path": "/home/runner/workspace/player/jobs/36be3aba/videos/topic_11.mp4",
+    "extra": {
+      "section_type": "recap",
+      "duration": 30,
+      "dry_run": false,
+      "skip_wan": false,
+      "source": "section_level"
+    }
   }
 ]
