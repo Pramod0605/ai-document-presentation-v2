@@ -380,16 +380,25 @@ class LayerController {
    * Avatar is LAYER 2 (z-index 60) - always visible above everything else
    */
   applyAvatarLayout(avatarCanvas, position, widthPercent) {
-    // ISS-177: Use setProperty for reliable !important application
+    // ISS-178: Get stage dimensions and calculate pixel values
+    const stage = document.getElementById('stage');
+    const stageWidth = stage ? stage.clientWidth : 1280;
+    const stageHeight = stage ? stage.clientHeight : 720;
+    
+    // Calculate avatar width in pixels
+    const avatarWidthPx = Math.round(stageWidth * (widthPercent / 100));
+    // Maintain 16:9 aspect ratio (typical video aspect)
+    const avatarHeightPx = Math.round(avatarWidthPx * (9/16));
+    
     // Reset ALL styles first
     avatarCanvas.removeAttribute('style');
     
-    // Apply base styles with setProperty (more reliable than cssText)
+    // Apply styles with pixel values (more predictable than %)
     const s = avatarCanvas.style;
     s.setProperty('position', 'absolute', 'important');
-    s.setProperty('width', `${widthPercent}%`, 'important');
+    s.setProperty('width', `${avatarWidthPx}px`, 'important');
+    s.setProperty('height', `${avatarHeightPx}px`, 'important');
     s.setProperty('max-width', 'none', 'important');
-    s.setProperty('height', 'auto', 'important');
     s.setProperty('bottom', '0', 'important');
     s.setProperty('opacity', '1', 'important');
     s.setProperty('display', 'block', 'important');
@@ -399,10 +408,13 @@ class LayerController {
     s.setProperty('transform-origin', 'bottom center', 'important');
 
     if (position === 'center') {
-      s.setProperty('left', '50%', 'important');
+      // Center: position at 50% of stage, then shift left by half avatar width
+      const leftPos = Math.round((stageWidth - avatarWidthPx) / 2);
+      s.setProperty('left', `${leftPos}px`, 'important');
       s.setProperty('right', 'auto', 'important');
-      s.setProperty('transform', 'translateX(-50%)', 'important');
+      s.setProperty('transform', 'none', 'important');
     } else if (position === 'right') {
+      // Right: fixed 10px from right edge
       s.setProperty('right', '10px', 'important');
       s.setProperty('left', 'auto', 'important');
       s.setProperty('transform', 'none', 'important');
@@ -412,7 +424,7 @@ class LayerController {
       s.setProperty('transform', 'none', 'important');
     }
 
-    console.log(`[LayerController] Avatar: ${position}, ${widthPercent}% - APPLIED WITH setProperty`);
+    console.log(`[LayerController] Avatar: ${position}, ${widthPercent}% = ${avatarWidthPx}x${avatarHeightPx}px (stage: ${stageWidth}x${stageHeight})`);
   }
 }
 
