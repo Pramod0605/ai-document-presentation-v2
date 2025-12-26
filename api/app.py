@@ -575,6 +575,101 @@ def resume_job(job_id):
         }), 500
 
 
+@app.route("/jobs/<job_id>/resume-recap", methods=["POST"])
+def resume_job_from_recap(job_id):
+    """Resume a V1.5 job from the recap stage.
+    
+    Use when the job failed at recap narration/scene generation.
+    Loads existing artifacts and continues from recap.
+    
+    POST body (optional):
+    - skip_wan: boolean (default: false)
+    - dry_run: boolean (default: false)
+    """
+    from core.pipeline_v15 import resume_from_recap, PipelineError
+    
+    data = request.get_json() or {}
+    skip_wan = data.get("skip_wan", False)
+    dry_run = data.get("dry_run", False)
+    
+    job_dir = JOBS_DIR / job_id
+    if not job_dir.exists():
+        return jsonify({"error": "Job not found", "job_id": job_id}), 404
+    
+    artifacts_dir = job_dir / "artifacts"
+    if not artifacts_dir.exists():
+        return jsonify({
+            "error": "Artifacts directory not found. Job must have completed section processing.",
+            "job_id": job_id
+        }), 400
+    
+    chunker_path = artifacts_dir / "01_chunker.json"
+    if not chunker_path.exists():
+        return jsonify({
+            "error": "01_chunker.json not found. Cannot resume without source content.",
+            "job_id": job_id
+        }), 400
+    
+    with open(chunker_path) as f:
+        chunker_data = json.load(f)
+    
+    chunks = chunker_data.get("chunks", [])
+    markdown_content = "\n\n".join([c.get("content", "") for c in chunks])
+    
+    subject = chunker_data.get("subject", "General")
+    grade = chunker_data.get("grade", "General")
+    
+    try:
+        print(f"[API] Resuming job {job_id} from recap stage")
+        
+        def status_callback(phase, message):
+            print(f"[Resume {job_id}] {phase}: {message}")
+        
+        presentation, tracker = resume_from_recap(
+            job_id=job_id,
+            output_dir=job_dir,
+            markdown_content=markdown_content,
+            subject=subject,
+            grade=grade,
+            generate_tts=True,
+            run_renderers=True,
+            dry_run=dry_run,
+            skip_wan=skip_wan,
+            status_callback=status_callback
+        )
+        
+        pres_path = job_dir / "presentation.json"
+        with open(pres_path, "w") as f:
+            json.dump(presentation, f, indent=2)
+        
+        for filename in ["index.html", "player.js"]:
+            src = PLAYER_DIR / filename
+            dst = job_dir / filename
+            if src.exists():
+                shutil.copy(str(src), str(dst))
+        
+        return jsonify({
+            "status": "success",
+            "job_id": job_id,
+            "sections_count": len(presentation.get("sections", [])),
+            "message": "Job resumed from recap stage successfully"
+        })
+        
+    except PipelineError as e:
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "phase": e.phase,
+            "job_id": job_id
+        }), 500
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "job_id": job_id
+        }), 500
+
+
 @app.route("/jobs/<job_id>/phases", methods=["GET"])
 def get_job_phases(job_id):
     """Get phase completion status for a job."""

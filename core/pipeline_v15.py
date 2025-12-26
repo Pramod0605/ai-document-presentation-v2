@@ -491,3 +491,231 @@ def process_markdown_to_presentation_v15(
         tracker.end_pipeline(status="failed", error=str(e))
         logger.exception(f"[Pipeline v1.5] Unexpected error: {e}")
         raise PipelineError(f"Pipeline error: {e}", phase="unknown")
+
+
+def resume_from_recap(
+    job_id: str,
+    output_dir: Path,
+    markdown_content: str,
+    subject: str = "General",
+    grade: str = "General",
+    tts_provider: str = "edge",
+    generate_tts: bool = True,
+    run_renderers: bool = True,
+    dry_run: bool = False,
+    skip_wan: bool = False,
+    status_callback=None,
+    log_callback=None
+) -> Tuple[Dict, AnalyticsTracker]:
+    """Resume pipeline from recap stage by loading existing artifacts.
+    
+    Use this when the pipeline failed at recap narration/scene generation.
+    Loads: chunker, planner, section_artifacts, memory from artifacts folder.
+    Runs: recap narration, recap agent, merge, TTS, renderers.
+    """
+    tracker = create_tracker(job_id)
+    tracker.start_pipeline()
+    
+    def update_status(phase: str, message: str):
+        logger.info(f"[Resume v1.5] {phase}: {message}")
+        if status_callback:
+            status_callback(phase, message)
+    
+    def log(message: str):
+        logger.info(f"[Resume v1.5] {message}")
+        if log_callback:
+            log_callback(message)
+    
+    artifacts_dir = output_dir / "artifacts"
+    if not artifacts_dir.exists():
+        raise PipelineError(f"Artifacts directory not found: {artifacts_dir}", phase="resume_init")
+    
+    update_status("resume_init", f"Loading artifacts from {artifacts_dir}...")
+    
+    planner_path = artifacts_dir / "02_planner.json"
+    if not planner_path.exists():
+        raise PipelineError("02_planner.json not found", phase="resume_init")
+    
+    with open(planner_path) as f:
+        planner_data = json.load(f)
+        section_blueprints = planner_data.get("sections", planner_data) if isinstance(planner_data, dict) else planner_data
+    
+    memory_path = artifacts_dir / "memory.json"
+    if not memory_path.exists():
+        raise PipelineError("memory.json not found", phase="resume_init")
+    
+    with open(memory_path) as f:
+        memory_output = json.load(f)
+    
+    section_artifacts = []
+    idx = 3
+    while True:
+        prefix = f"{idx:02d}_section_"
+        narration_files = list(artifacts_dir.glob(f"{prefix}*_narration.json"))
+        if not narration_files:
+            break
+        
+        narration_file = narration_files[0]
+        section_id = narration_file.stem.replace(f"{idx:02d}_", "").replace("_narration", "")
+        
+        visuals_file = artifacts_dir / f"{idx:02d}_{section_id}_visuals.json"
+        render_spec_file = artifacts_dir / f"{idx:02d}_{section_id}_render_spec.json"
+        
+        with open(narration_file) as f:
+            narration_output = json.load(f)
+        
+        visuals_output = {}
+        if visuals_file.exists():
+            with open(visuals_file) as f:
+                visuals_output = json.load(f)
+        
+        render_spec = None
+        if render_spec_file.exists():
+            with open(render_spec_file) as f:
+                render_spec = json.load(f)
+        
+        blueprint = next((b for b in section_blueprints if b.get("section_id") == section_id), {})
+        
+        section_artifacts.append({
+            "blueprint": blueprint,
+            "narration": narration_output,
+            "visuals": visuals_output,
+            "render_spec": render_spec
+        })
+        idx += 1
+    
+    log(f"Loaded {len(section_artifacts)} section artifacts, memory output")
+    
+    key_concepts = [f.get("front", "") for f in memory_output.get("flashcards", [])]
+    
+    update_status("recap", "Creating recap section with narration (resumed)...")
+    
+    recap_blueprint = {
+        "section_id": "recap",
+        "section_type": "recap",
+        "title": f"{subject} - Chapter Recap",
+        "learning_goals": ["Review all major concepts", "Reinforce learning with video"],
+        "suggested_renderer": "video",
+        "avatar_visibility": "always",
+        "avatar_position": "right",
+        "avatar_width_percent": 52
+    }
+    
+    recap_narration_writer = NarrationWriterAgent(tracker=tracker, log_func=log)
+    recap_narration_output = recap_narration_writer.run(
+        section_blueprint=recap_blueprint,
+        source_markdown=markdown_content[:3000]
+    )
+    _save_artifact(output_dir, "recap_narration.json", recap_narration_output)
+    
+    recap_agent = RecapSceneAgent(tracker=tracker, log_func=log)
+    recap_output = recap_agent.run(
+        source_markdown=markdown_content,
+        subject=subject,
+        key_concepts=key_concepts
+    )
+    recap_output["narration"] = recap_narration_output.get("narration", {})
+    
+    video_prompts = recap_output.get("video_prompts", [])
+    for i, vp in enumerate(video_prompts):
+        prompt = vp.get("prompt", "") if isinstance(vp, dict) else str(vp)
+        char_count = len(prompt)
+        word_count = len(prompt.split()) if prompt else 0
+        if char_count > 800:
+            raise PipelineError(
+                f"Recap prompt {i+1} exceeds 800 char limit ({char_count} chars).",
+                phase="recap_validation"
+            )
+        if word_count < 80:
+            raise PipelineError(
+                f"Recap prompt {i+1} has only {word_count} words (minimum 80).",
+                phase="recap_validation"
+            )
+        logger.info(f"[Resume v1.5] Recap prompt {i+1}: {word_count} words, {char_count} chars - VALID")
+    
+    _save_artifact(output_dir, "recap.json", recap_output)
+    
+    update_status("merge", "Combining all components...")
+    presentation = merge_agent_outputs(
+        section_artifacts=section_artifacts,
+        memory_output=memory_output,
+        recap_output=recap_output,
+        subject=subject,
+        grade=grade
+    )
+    
+    logger.info(f"[Resume v1.5] Merged {len(presentation.get('sections', []))} sections")
+    
+    if generate_tts:
+        update_status("tts_duration", f"Generating TTS audio with {tts_provider}...")
+        presentation = update_durations_simplified(
+            presentation=presentation,
+            output_dir=output_dir,
+            production_provider=tts_provider
+        )
+    
+    update_status("manim_code", "Generating Manim code...")
+    manim_generator = ManimCodeGenerator()
+    manim_failed_sections = []
+    
+    for i, section in enumerate(presentation.get("sections", [])):
+        renderer = section.get("renderer", "none")
+        section_id = section.get("section_id", f"section_{i}")
+        
+        if renderer == "manim":
+            narration = section.get("narration", {})
+            segments = narration.get("segments", []) or section.get("segments", [])
+            visual_beats = section.get("visual_beats", [])
+            segment_enrichments = section.get("segment_enrichments", [])
+            
+            manim_input = build_manim_section_data(
+                section=section,
+                narration_segments=segments,
+                visual_beats=visual_beats,
+                segment_enrichments=segment_enrichments
+            )
+            
+            try:
+                manim_code, validation_errors = manim_generator.generate(manim_input)
+                if manim_code and len(manim_code) > 50:
+                    section = integrate_manim_code_into_section(section, manim_code)
+                    presentation["sections"][i] = section
+            except Exception as e:
+                logger.warning(f"[Resume v1.5] Manim failed for {section_id}: {e}")
+    
+    if run_renderers and not dry_run:
+        update_status("render", "Executing renderers...")
+        videos_dir = output_dir / "videos"
+        videos_dir.mkdir(exist_ok=True)
+        
+        presentation = enforce_renderer_policy(presentation)
+        
+        rendered_videos = render_all_topics(
+            presentation=presentation,
+            output_dir=str(videos_dir),
+            dry_run=dry_run,
+            skip_wan=skip_wan,
+            output_dir_base=str(output_dir)
+        )
+        
+        for result in rendered_videos:
+            section_id_result = result.get("topic_id")
+            video_path = result.get("video_path")
+            beat_videos = result.get("beat_videos", [])
+            recap_video_paths = result.get("recap_video_paths", [])
+            
+            for section in presentation.get("sections", []):
+                if section.get("section_id") == section_id_result:
+                    if video_path:
+                        rel_path = Path(video_path).name if "/" in str(video_path) else video_path
+                        section["video_path"] = f"videos/{rel_path}"
+                    if beat_videos:
+                        section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
+                    if recap_video_paths:
+                        section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
+                    break
+    
+    tracker.end_pipeline(status="completed")
+    logger.info(f"[Resume v1.5] Completed successfully for job {job_id}")
+    
+    return presentation, tracker

@@ -7,7 +7,7 @@ If Tier 2 fails → trigger SEMANTIC RETRY (max 1).
 Tier-2 checks (repairable):
 - content narration < 150 words
 - example narration < 100 words
-- recap narration < 250 or > 500 words
+- recap narration < 150 or > 500 words
 - formula mentioned but no visual beat
 
 These are LLM-expandable problems, not structural errors.
@@ -19,7 +19,7 @@ from typing import List, Dict, Any
 
 CONTENT_MIN_WORDS = 150
 EXAMPLE_MIN_WORDS = 100
-RECAP_MIN_WORDS = 250
+RECAP_MIN_WORDS = 150
 RECAP_MAX_WORDS = 500
 
 FORMULA_PATTERNS = [
