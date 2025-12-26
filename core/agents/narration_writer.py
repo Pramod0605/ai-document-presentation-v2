@@ -31,7 +31,7 @@ class NarrationWriterAgent(BaseAgent):
         "example": (100, 300),
         "quiz": (50, 200),
         "memory": (30, 100),
-        "recap": (300, 500)
+        "recap": (250, 500)
     }
     
     def validate_structural(self, output: Dict[str, Any]) -> Tuple[bool, List[str]]:

@@ -1,0 +1,169 @@
+{
+  "section_id": "section_6",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to proving angle equality using trigonometric ratios, stating the goal.",
+      "symbolic_overlay": {
+        "enabled": false
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "diagram",
+      "description": "Displaying two right-angled triangles with angles B and Q, and the initial condition sin B = sin Q.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "sin B = sin Q",
+          "Triangles"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "formula",
+      "description": "Showing the ratio equality derived from sin B = sin Q and introducing the constant 'k'.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Ratios",
+          "Constant k"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "formula",
+      "description": "Applying the Pythagorean theorem to express sides BC and QR in terms of 'k' and other sides.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Pythagorean",
+          "Theorem",
+          "Sides BC, QR"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "formula",
+      "description": "Showing the ratio of BC to QR equals 'k', establishing similar triangles and proving angle equality.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Ratio k",
+          "Similar",
+          "Angles Equal"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "visual_content": {
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Prove angle equality using trigonometric ratios"
+          },
+          {
+            "level": 1,
+            "text": "Goal: If $\\sin B = \\sin Q$, then $\\angle B = \\angle Q$"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show"
+      }
+    },
+    {
+      "segment_id": 2,
+      "visual_content": {
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Consider two right-angled triangles"
+          },
+          {
+            "level": 1,
+            "text": "Given: $\\sin B = \\sin Q$"
+          },
+          {
+            "level": 1,
+            "text": "$\\sin = \\frac{\\text{Opposite}}{\\text{Hypotenuse}}$"
+          }
+        ],
+        "labels": [
+          "Triangle ABC (angle B)",
+          "Triangle PQR (angle Q)"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only"
+      }
+    },
+    {
+      "segment_id": 3,
+      "visual_content": {
+        "formula": "$$\\sin B = \\sin Q$$",
+        "formulas": [
+          "$$\\Rightarrow \\frac{AC}{AB} = \\frac{PR}{PQ}$$",
+          "$$\\Rightarrow \\frac{AC}{PR} = \\frac{AB}{PQ} = k \\quad \\text{--- (1)}$$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only"
+      }
+    },
+    {
+      "segment_id": 4,
+      "visual_content": {
+        "formula": "$$BC = \\sqrt{AB^2 - AC^2} \\text{ [By Pythagoras theorem]}$$",
+        "formulas": [
+          "$$\\Rightarrow \\sqrt{k^2 PQ^2 - k^2 PR^2}$$",
+          "$$\\Rightarrow k \\sqrt{PQ^2 - PR^2} \\text{ [from (1)]}$$",
+          "$$QR = \\sqrt{PQ^2 - PR^2}$$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only"
+      }
+    },
+    {
+      "segment_id": 5,
+      "visual_content": {
+        "formula": "$$\\Rightarrow \\frac{BC}{QR} = \\frac{k \\sqrt{PQ^2 - PR^2}}{\\sqrt{PQ^2 - PR^2}} = k \\quad \\text{--- (2)}$$",
+        "formulas": [
+          "From (1) and (2): $\\frac{AC}{PR} = \\frac{AB}{PQ} = \\frac{BC}{QR} = k$",
+          "Triangles are similar.",
+          "Therefore, $\\angle B = \\angle Q$."
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only"
+      }
+    }
+  ]
+}
