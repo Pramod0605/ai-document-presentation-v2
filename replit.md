@@ -63,9 +63,33 @@ Segment 5 → source_block_ids: [3] → ordered_list data (same block!)
 ```
 
 ### UI/UX Decisions
-- Avatar width is consistently 52% across all section types.
 - Layer Architecture: Layer 0 for Background, Layer 1 for Content, Layer 2 for Avatar (always visible).
 - `player.js` has been updated to support `avatar always-visible` and `width_percent`.
+
+### ISS-179: Avatar Positioning (IN PROGRESS - Dec 26, 2025)
+**Target Specs:**
+- **Intro section**: 80% width, centered, bottom aligned - WORKING ✓
+- **All other sections**: 810x455px at R:182px B:1px - NOT WORKING
+
+**What was tried:**
+1. Changed from percentage-based to pixel-based positioning
+2. Set transform-origin to bottom-right for non-intro sections
+3. Removed translateX from updateVisuals to avoid overriding right positioning
+4. Added data attributes to store base positions for Dev offset slider
+
+**Suspected root cause:**
+- CSS layout constraints (60/40 or 45/55 split) may be limiting avatar area
+- Possible CSS rules in index.html overriding JavaScript styles
+- Need to investigate: `.mode-content-video #content-wrapper { max-width: 45%; margin-right: 55%; }` and similar rules
+
+**Key files modified:**
+- `player/jobs/75447304/player.js` - applyAvatarLayout() and updateVisuals()
+- `player/jobs/75447304/index.html` - cache busting versions
+
+**Next steps:**
+1. Remove legacy CSS layout constraints that divide stage into 60/40 or 45/55
+2. Ensure avatar-canvas CSS has no width/position constraints
+3. Verify JavaScript setProperty is actually applying styles (check Elements panel)
 
 ### Key System Specifications
 - **Display Requirements**: Detailed in `docs/display_requirements.md`, including display summary, layer architecture, and ASCII diagrams for 7 section types (intro, summary, content, example, quiz, memory, recap).
