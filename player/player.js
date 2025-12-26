@@ -342,11 +342,12 @@ class LayerController {
 
   /**
    * Apply avatar layout (position and width) - REQ-030/031
+   * ISS-170 FIX: Removed 600px maxWidth cap that was breaking 80% intro width
    */
   applyAvatarLayout(avatarCanvas, position, widthPercent) {
     avatarCanvas.style.position = 'absolute';
     avatarCanvas.style.width = `${widthPercent}%`;
-    avatarCanvas.style.maxWidth = '600px';
+    avatarCanvas.style.maxWidth = '';
     avatarCanvas.style.height = 'auto';
 
     avatarCanvas.style.left = '';
@@ -364,6 +365,9 @@ class LayerController {
       avatarCanvas.style.left = '10px';
       avatarCanvas.style.bottom = '0';
     }
+
+    avatarCanvas.style.opacity = '1';
+    avatarCanvas.style.display = 'block';
 
     console.log(`[LayerController] Avatar layout: position=${position}, width=${widthPercent}%`);
   }
