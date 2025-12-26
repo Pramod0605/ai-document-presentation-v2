@@ -452,8 +452,9 @@
       image-rendering: crisp-edges;
     }
 
+    /* Avatar positioning controlled by JS applyAvatarLayout() - only z-index here */
     .mode-center #avatar-canvas {
-      z-index: 15;
+      z-index: 60;
     }
 
     .mode-intro #content-wrapper {
@@ -487,8 +488,9 @@
       opacity: 0;
     }
 
+    /* Avatar positioning controlled by JS applyAvatarLayout() - only z-index here */
     .mode-side #avatar-canvas {
-      z-index: 20;
+      z-index: 60;
     }
 
     .mode-side #content-wrapper {
@@ -500,8 +502,9 @@
       opacity: 0;
     }
 
+    /* Avatar positioning controlled by JS applyAvatarLayout() - only z-index here */
     .mode-image #avatar-canvas {
-      z-index: 20;
+      z-index: 60;
     }
 
     .mode-image #content-wrapper {
@@ -536,8 +539,9 @@
       opacity: 1 !important;
     }
 
+    /* Avatar positioning controlled by JS applyAvatarLayout() - only z-index here */
     .mode-khan #avatar-canvas {
-      z-index: 50;
+      z-index: 60;
     }
 
     .mode-content-video #content-wrapper {
@@ -588,14 +592,11 @@
       opacity: 1;
     }
 
+    /* Avatar positioning is controlled by JavaScript applyAvatarLayout() */
+    /* DO NOT add width/position rules here - they get overridden by JS */
     .mode-content-video #avatar-canvas {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      left: auto;
-      height: auto;
-      z-index: 50;
-      transform: translateX(0);
+      /* Only z-index here - position/width set by JS with !important */
+      z-index: 60;
     }
     
     .mode-content-video.text-visible #content-box {
@@ -1141,7 +1142,7 @@
     <div class="slider-row"><input type="range" id="av-green" min="0" max="200" step="1" value="60"></div>
   </div>
 
-  <script src="player.js?v=20251226-176"></script>
+  <script src="player.js?v=20251226-177"></script>
 </body>
 
 </html>

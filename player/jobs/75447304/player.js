@@ -315,6 +315,39 @@ class LayerController {
     }
 
     this.applyAvatarLayout(avatarCanvas, position, widthPercent);
+    
+    // ISS-176: Apply content-box positioning for non-intro sections
+    // Content: L:61px T:13px (from user specs)
+    this.applyContentLayout(sectionType);
+  }
+  
+  /**
+   * Apply content-box layout - fixed position for all non-intro sections
+   * ISS-176: User-specified defaults: L:61px T:13px, ~45% width
+   */
+  applyContentLayout(sectionType) {
+    const contentBox = document.getElementById('content-box');
+    const contentWrapper = document.getElementById('content-wrapper');
+    if (!contentWrapper) return;
+    
+    if (sectionType === 'intro') {
+      // Intro: content hidden
+      contentWrapper.style.opacity = '0';
+      return;
+    }
+    
+    // All other sections: content visible on left side
+    contentWrapper.style.cssText = `
+      position: absolute !important;
+      left: 61px !important;
+      top: 13px !important;
+      width: 45% !important;
+      max-width: 45% !important;
+      opacity: 1 !important;
+      z-index: 25 !important;
+    `;
+    
+    console.log(`[LayerController] Content layout: L:61px T:13px, width:45%`);
   }
 
   /**
