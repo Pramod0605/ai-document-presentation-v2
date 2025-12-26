@@ -1,0 +1,174 @@
+{
+  "section_id": "section_6",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to the example: finding trigonometric ratios given tangent A.",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "diagram",
+      "description": "Sketching a right-angled triangle and labeling sides based on tan A = 4/3.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Tangent A",
+          "Opposite",
+          "Adjacent"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "formula",
+      "description": "Applying the Pythagorean theorem to find the hypotenuse.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Pythagorean Theorem",
+          "AC^2",
+          "AB^2",
+          "BC^2"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "formula",
+      "description": "Calculating the hypotenuse and preparing to find other ratios.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Hypotenuse",
+          "AC = 5"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "formula",
+      "description": "Displaying all six trigonometric ratios for angle A.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Sine A",
+          "Cosine A",
+          "Tangent A",
+          "Cosecant A",
+          "Secant A",
+          "Cotangent A"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [
+        20,
+        21
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "**Example 1:**  $\\tan A = \\frac{4}{3}$  find the other trigonometric ratios\nof the angle A"
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [
+        22,
+        29,
+        30
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "In  $\\triangle ABC$ ,  $\\angle ABC = 90^\\circ$\n![Diagram of a right-angled triangle ABC, right-angled at B. Side AB = 3, BC = 4, and AC = 5.](df9ce5affceb4ff1e9e8fd8e3ff0c1bd_img.jpg)\nDiagram of a right-angled triangle ABC, right-angled at B. Side AB = 3, BC = 4, and AC = 5."
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [
+        23,
+        24,
+        25
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$\\therefore$  By Pythagoras theorem,",
+          "$$AC^2 = AB^2 + BC^2$$",
+          "$$\\Rightarrow AC^2 = 4^2 + 3^2 = 16 + 9 = 25$$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [
+        26
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formula": "$$\\Rightarrow AC = 5$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [
+        27,
+        28
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$$\\sin A = \\frac{BC}{AC} = \\frac{4}{5}, \\cos A = \\frac{AB}{AC} = \\frac{3}{5}, \\tan A = \\frac{BC}{AB} = \\frac{4}{3}$$",
+          "$$\\csc A = \\frac{AC}{BC} = \\frac{5}{4}, \\sec A = \\frac{AC}{AB} = \\frac{5}{3}, \\cot A = \\frac{AB}{BC} = \\frac{3}{4}$$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}

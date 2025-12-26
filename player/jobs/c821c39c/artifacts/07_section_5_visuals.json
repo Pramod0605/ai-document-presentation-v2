@@ -1,0 +1,222 @@
+{
+  "section_id": "section_5",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to proving angle relationships using trigonometric ratios.",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "text_only",
+      "description": "State the problem: prove angle B equals angle Q if sin B equals sin Q.",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "diagram",
+      "description": "Display two right-angled triangles with angles B and Q, and the initial condition sin B = sin Q.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Triangle B",
+          "Triangle Q",
+          "sin B = sin Q"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "formula",
+      "description": "Show the sine ratio definition and set up the proportional relationship between sides.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Sine Ratio",
+          "Proportionality"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "formula",
+      "description": "Introduce constant 'k' and use Pythagorean theorem to find the ratio of the third sides.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Constant k",
+          "Pythagorean Theorem",
+          "Third Side Ratio"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_6",
+      "segment_id": 6,
+      "visual_beat_type": "diagram",
+      "description": "Conclude that triangles are similar and angles are equal.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Similar Triangles",
+          "Equal Angles"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_7",
+      "segment_id": 7,
+      "visual_beat_type": "text_only",
+      "description": "Summary of the example, combining trigonometry and geometry.",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "Proving Angle Equality Using Sine Ratios"
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [
+        31
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "**Example 2:** If B and Q are acute angles such that $\\sin B = \\sin Q$ , then prove that $\\angle B = \\angle Q$ ."
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [
+        31
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "We start with two right-angled triangles, one containing angle B and the other containing angle Q. We are given that the sine of B is equal to the sine of Q."
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [
+        32,
+        33,
+        34
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$$\\sin B = \\sin Q$$",
+          "$$\\Rightarrow \\frac{AC}{AB} = \\frac{PR}{PQ}$$",
+          "$$\\Rightarrow \\frac{AC}{PR} = \\frac{AB}{PQ} = k \\quad \\text{--- (1)}$$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [
+        35,
+        36,
+        37,
+        38,
+        39
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$$BC = \\sqrt{AB^2 - AC^2} \\text{ [By Pythagoras theorem]}$$",
+          "$$\\Rightarrow \\sqrt{k^2 PQ^2 - k^2 PR^2}$$",
+          "$$\\Rightarrow k \\sqrt{PQ^2 - PR^2} \\text{ [from (1)]}$$",
+          "$$QR = \\sqrt{PQ^2 - PR^2}$$",
+          "$$\\Rightarrow \\frac{BC}{QR} = \\frac{k \\sqrt{PQ^2 - PR^2}}{\\sqrt{PQ^2 - PR^2}} = k \\quad \\text{--- (2)}$$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 6,
+      "source_block_ids": [
+        40
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "From (1) and (2), $\\frac{AC}{PR} = \\frac{AB}{PQ} = \\frac{BC}{QR} = k$. Since all three corresponding sides are in the same proportion, the two triangles are similar. Therefore, $\\angle B = \\angle Q$."
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 7,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "Combining trigonometric ratios with geometric principles like similar triangles allows us to establish fundamental angle relationships."
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}
