@@ -343,33 +343,51 @@ class LayerController {
   /**
    * Apply avatar layout (position and width) - REQ-030/031
    * ISS-170 FIX: Removed 600px maxWidth cap that was breaking 80% intro width
+   * ISS-173 FIX: Use cssText with !important to override CSS mode rules
+   * Avatar is LAYER 2 (z-index 60) - always visible above everything else
    */
   applyAvatarLayout(avatarCanvas, position, widthPercent) {
-    avatarCanvas.style.position = 'absolute';
-    avatarCanvas.style.width = `${widthPercent}%`;
-    avatarCanvas.style.maxWidth = '';
-    avatarCanvas.style.height = 'auto';
-
-    avatarCanvas.style.left = '';
-    avatarCanvas.style.right = '';
-    avatarCanvas.style.transform = '';
+    // Reset ALL positional CSS first to prevent inheritance from previous slide
+    avatarCanvas.style.cssText = '';
+    
+    // Build CSS with !important to override mode-specific CSS rules
+    let css = `
+      position: absolute !important;
+      width: ${widthPercent}% !important;
+      max-width: none !important;
+      height: auto !important;
+      bottom: 0 !important;
+      opacity: 1 !important;
+      display: block !important;
+      z-index: 60 !important;
+      pointer-events: none;
+      filter: drop-shadow(-20px 5px 25px rgba(0, 0, 0, 0.6));
+      transform-origin: bottom center;
+    `;
 
     if (position === 'center') {
-      avatarCanvas.style.left = '50%';
-      avatarCanvas.style.transform = 'translateX(-50%)';
-      avatarCanvas.style.bottom = '0';
+      css += `
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+      `;
     } else if (position === 'right') {
-      avatarCanvas.style.right = '10px';
-      avatarCanvas.style.bottom = '0';
+      css += `
+        right: 10px !important;
+        left: auto !important;
+        transform: none !important;
+      `;
     } else if (position === 'left') {
-      avatarCanvas.style.left = '10px';
-      avatarCanvas.style.bottom = '0';
+      css += `
+        left: 10px !important;
+        right: auto !important;
+        transform: none !important;
+      `;
     }
 
-    avatarCanvas.style.opacity = '1';
-    avatarCanvas.style.display = 'block';
+    avatarCanvas.style.cssText = css;
 
-    console.log(`[LayerController] Avatar layout: position=${position}, width=${widthPercent}%`);
+    console.log(`[LayerController] Avatar layout: position=${position}, width=${widthPercent}%, z-index=60`);
   }
 }
 
@@ -1292,8 +1310,11 @@ function loadSlide(index) {
       }
     }
     
+    // ISS-174 FIX: Fully hide and clear scene-video when using inline video
     bgVideo.pause();
-    bgVideo.style.opacity = 0;
+    bgVideo.style.opacity = '0';
+    bgVideo.src = '';
+    bgVideo.style.display = 'none';
   } else if (bgVidPath) {
     stage.classList.remove('mode-content-video');
     stage.classList.remove('video-swap');
@@ -1308,6 +1329,8 @@ function loadSlide(index) {
       inlineVideo.src = '';
     }
 
+    // Restore scene-video display
+    bgVideo.style.display = '';
     if (bgVideo.src.indexOf(bgVidPath) === -1) {
       bgVideo.src = bgVidPath;
       bgVideo.load();

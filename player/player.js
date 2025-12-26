@@ -1310,8 +1310,11 @@ function loadSlide(index) {
       }
     }
     
+    // ISS-174 FIX: Fully hide and clear scene-video when using inline video
     bgVideo.pause();
-    bgVideo.style.opacity = 0;
+    bgVideo.style.opacity = '0';
+    bgVideo.src = '';
+    bgVideo.style.display = 'none';
   } else if (bgVidPath) {
     stage.classList.remove('mode-content-video');
     stage.classList.remove('video-swap');
@@ -1326,6 +1329,8 @@ function loadSlide(index) {
       inlineVideo.src = '';
     }
 
+    // Restore scene-video display
+    bgVideo.style.display = '';
     if (bgVideo.src.indexOf(bgVidPath) === -1) {
       bgVideo.src = bgVidPath;
       bgVideo.load();
