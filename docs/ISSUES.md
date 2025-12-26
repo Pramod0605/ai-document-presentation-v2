@@ -73,6 +73,41 @@ Runway generation failed: internal error, please try again later.
 
 ---
 
+### ISS-164: Content Fidelity Loss - LLM Modifying Source Content
+**Status**: Fixed  
+**Discovered**: 2024-12-26  
+**Fixed**: 2024-12-26  
+**Severity**: Critical  
+
+**Problem**: The visual_content displayed to users contains LLM-generated summaries, NOT the verbatim PDF content.
+
+**Evidence**:
+| Stage | Content |
+|-------|---------|
+| Source PDF | `SinA = $\frac{BC}{AC}$` (with LaTeX, specific triangle values) |
+| Chunker | ✅ `$\frac{BC}{AC}$` (verbatim preserved) |
+| Presentation.json | ❌ `SinA = Opposite/Hypotenuse` (generic summary, no LaTeX) |
+
+**Root Cause**: VisualSpecArtist agent is generating summaries instead of using `verbatim_content` from chunker blocks.
+
+**Expected Behavior**: 
+- `visual_content` should contain EXACT text from PDF
+- LaTeX formulas like `$\frac{BC}{AC}$` should be preserved
+- No LLM interpretation or simplification
+
+**User Requirement**: "Display as-is" - show actual PDF content, not LLM-generated summaries
+
+**Files to Fix**:
+- `core/agents/visual_spec_artist.py` - needs to pass through verbatim_content
+- `core/prompts/visual_spec_artist_user_v1.5.txt` - prompt must instruct verbatim usage
+
+**Fix Strategy**:
+1. Block ID threading already implemented (ISS-160)
+2. Need to use `verbatim_content` from content_blocks instead of LLM summaries
+3. Post-processor `_enhance_visual_content_types()` should pull verbatim_content by block_id
+
+---
+
 ## Resolved Issues
 
 (None yet)

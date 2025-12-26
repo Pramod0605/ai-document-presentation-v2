@@ -53,6 +53,7 @@ PIPELINE_VERSION = "1.5"
 def _enhance_visual_content_types(visuals_output: Dict, source_markdown: str, content_blocks: Optional[List[Dict]] = None) -> Dict:
     """
     ISS-160: Post-process VisualSpecArtist output to ensure content_type is set deterministically.
+    ISS-164 FIX: ALWAYS use verbatim_content from source blocks when source_block_ids are provided.
     Uses source_block_ids from LLM output to map segments to correct content blocks.
     Multiple segments can reference the same block for multi-beat fidelity.
     """
@@ -67,69 +68,77 @@ def _enhance_visual_content_types(visuals_output: Dict, source_markdown: str, co
     for i, enrichment in enumerate(enrichments):
         vc = enrichment.get("visual_content", {})
         
-        # If content_type already set by LLM with data, skip
-        if vc.get("content_type") and (vc.get("verbatim_text") or vc.get("bullet_points") or 
-                                        vc.get("ordered_list") or vc.get("formula")):
-            continue
+        # ISS-164 FIX: Check if we have source_block_ids - if so, ALWAYS use verbatim content
+        source_block_ids = enrichment.get("source_block_ids", [])
         
-        # Determine content_type from available data in visual_content
+        if source_block_ids and block_lookup:
+            # ISS-164: Use verbatim_content from source blocks - override any LLM summaries
+            block_id = source_block_ids[0]
+            block = block_lookup.get(block_id)
+            
+            if block:
+                block_type = block.get("block_type", "paragraph")
+                verbatim = block.get("verbatim_content", "")
+                
+                if block_type == "unordered_list":
+                    vc["content_type"] = "bullet_list"
+                    # Use items from source, not LLM summaries
+                    if block.get("items"):
+                        vc["bullet_points"] = [{"level": 1, "text": item} for item in block["items"]]
+                    vc["verbatim_source"] = verbatim
+                elif block_type == "ordered_list":
+                    vc["content_type"] = "ordered_list"
+                    if block.get("items"):
+                        vc["ordered_list"] = block["items"]
+                    vc["verbatim_source"] = verbatim
+                elif block_type == "formula":
+                    vc["content_type"] = "formula"
+                    vc["formula"] = verbatim  # Use exact LaTeX from source
+                elif block_type == "table":
+                    vc["content_type"] = "table"
+                    vc["verbatim_text"] = verbatim  # Preserve table markdown
+                    vc["has_inline_latex"] = block.get("has_inline_latex", False)
+                else:
+                    # Paragraph - use verbatim text
+                    vc["content_type"] = "paragraph"
+                    vc["verbatim_text"] = verbatim
+                    vc["has_inline_latex"] = block.get("has_inline_latex", False)
+                
+                enrichment["visual_content"] = vc
+                continue
+        
+        # Fallback: No source_block_ids - use LLM output as-is but set content_type
         if vc.get("bullet_points"):
             vc["content_type"] = "bullet_list"
         elif vc.get("ordered_list"):
             vc["content_type"] = "ordered_list"
         elif vc.get("formula") or vc.get("formulas"):
             vc["content_type"] = "formula"
-        else:
-            # ISS-160: Use source_block_ids to look up the correct block
-            source_block_ids = enrichment.get("source_block_ids", [])
+        elif content_blocks:
+            # ISS-164: Sequential mapping fallback when no source_block_ids
+            block_idx = i % len(content_blocks)
+            block = content_blocks[block_idx]
+            block_type = block.get("block_type", "paragraph")
+            verbatim = block.get("verbatim_content", "")
             
-            if source_block_ids and block_lookup:
-                # Use first referenced block to populate content
-                block_id = source_block_ids[0]
-                block = block_lookup.get(block_id)
-                
-                if block:
-                    block_type = block.get("block_type", "paragraph")
-                    
-                    if block_type == "unordered_list":
-                        vc["content_type"] = "bullet_list"
-                        if block.get("items") and not vc.get("bullet_points"):
-                            vc["bullet_points"] = [{"level": 1, "text": item} for item in block["items"]]
-                    elif block_type == "ordered_list":
-                        vc["content_type"] = "ordered_list"
-                        if block.get("items") and not vc.get("ordered_list"):
-                            vc["ordered_list"] = block["items"]
-                    elif block_type == "formula":
-                        vc["content_type"] = "formula"
-                        if not vc.get("formula"):
-                            vc["formula"] = block.get("verbatim_content", "")
-                    else:
-                        # Paragraph
-                        vc["content_type"] = "paragraph"
-                        if not vc.get("verbatim_text"):
-                            vc["verbatim_text"] = block.get("verbatim_content", "")
-                        vc["has_inline_latex"] = block.get("has_inline_latex", False)
-                else:
-                    # Block ID not found - default to paragraph
-                    vc["content_type"] = "paragraph"
-            elif content_blocks:
-                # Fallback: No source_block_ids provided - use sequential mapping
-                block_idx = i % len(content_blocks)
-                block = content_blocks[block_idx]
-                block_type = block.get("block_type", "paragraph")
-                
-                if block_type == "unordered_list":
-                    vc["content_type"] = "bullet_list"
-                elif block_type == "ordered_list":
-                    vc["content_type"] = "ordered_list"
-                elif block_type == "formula":
-                    vc["content_type"] = "formula"
-                else:
-                    vc["content_type"] = "paragraph"
-                    vc["has_inline_latex"] = block.get("has_inline_latex", False)
+            if block_type == "unordered_list":
+                vc["content_type"] = "bullet_list"
+                if block.get("items"):
+                    vc["bullet_points"] = [{"level": 1, "text": item} for item in block["items"]]
+            elif block_type == "ordered_list":
+                vc["content_type"] = "ordered_list"
+                if block.get("items"):
+                    vc["ordered_list"] = block["items"]
+            elif block_type == "formula":
+                vc["content_type"] = "formula"
+                vc["formula"] = verbatim
             else:
-                # No blocks available - default to paragraph
                 vc["content_type"] = "paragraph"
+                vc["verbatim_text"] = verbatim
+                vc["has_inline_latex"] = block.get("has_inline_latex", False)
+        else:
+            # No blocks available - default to paragraph
+            vc["content_type"] = "paragraph"
         
         enrichment["visual_content"] = vc
     
