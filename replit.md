@@ -39,6 +39,29 @@ This architecture utilizes multiple smaller agents, each handling specific tasks
 5.  `segment.duration_seconds` is updated with actual audio length.
 6.  Player uses `segment.duration_seconds` for timing and `display_directives` for showing/hiding layers.
 
+### ISS-160: Block Identifier Threading (Content Display Fidelity)
+**Problem Solved**: "Blank slide" issue where narration segments exceeded source content blocks.
+
+**Solution**: Block ID threading through the pipeline:
+1. **SmartChunker** outputs `block_id` for each content block (paragraph, list, formula, etc.)
+2. **VisualSpecArtist** receives content_blocks with block_id in prompt, outputs `source_block_ids` array per segment
+3. **Post-processor** (`_enhance_visual_content_types`) uses block ID lookup instead of sequential mapping
+4. **Multi-beat fidelity**: Multiple segments can reference the SAME block_id
+
+**Key Files**:
+- Schema: `schemas/v1.5/section_visuals.schema.json` - added `source_block_ids` field
+- Prompts: `core/prompts/visual_spec_artist_user_v1.5.txt` - instructs LLM to output block IDs
+- Pipeline: `core/pipeline_v15.py` - `_enhance_visual_content_types()` uses block lookup
+
+**Example**: 5 narration segments explaining 3 content blocks:
+```
+Segment 1 → source_block_ids: [1] → paragraph data
+Segment 2 → source_block_ids: [2] → paragraph data  
+Segment 3 → source_block_ids: [3] → ordered_list data
+Segment 4 → source_block_ids: [3] → ordered_list data (same block!)
+Segment 5 → source_block_ids: [3] → ordered_list data (same block!)
+```
+
 ### UI/UX Decisions
 - Avatar width is consistently 52% across all section types.
 - Layer Architecture: Layer 0 for Background, Layer 1 for Content, Layer 2 for Avatar (always visible).
