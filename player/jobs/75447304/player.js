@@ -342,11 +342,12 @@ class LayerController {
 
   /**
    * Apply avatar layout (position and width) - REQ-030/031
+   * ISS-170 FIX: Removed 600px maxWidth cap that was breaking 80% intro width
    */
   applyAvatarLayout(avatarCanvas, position, widthPercent) {
     avatarCanvas.style.position = 'absolute';
     avatarCanvas.style.width = `${widthPercent}%`;
-    avatarCanvas.style.maxWidth = '600px';
+    avatarCanvas.style.maxWidth = '';
     avatarCanvas.style.height = 'auto';
 
     avatarCanvas.style.left = '';
@@ -364,6 +365,9 @@ class LayerController {
       avatarCanvas.style.left = '10px';
       avatarCanvas.style.bottom = '0';
     }
+
+    avatarCanvas.style.opacity = '1';
+    avatarCanvas.style.display = 'block';
 
     console.log(`[LayerController] Avatar layout: position=${position}, width=${widthPercent}%`);
   }
@@ -1293,8 +1297,16 @@ function loadSlide(index) {
   } else if (bgVidPath) {
     stage.classList.remove('mode-content-video');
     stage.classList.remove('video-swap');
+    stage.classList.remove('video-focus');
     stage.classList.add('mode-khan');
-    if (inlineVideo) inlineVideo.pause();
+    // ISS-172 FIX: Clear video-box state when not in content-video mode
+    if (videoBox) {
+      videoBox.classList.remove('video-ready');
+    }
+    if (inlineVideo) {
+      inlineVideo.pause();
+      inlineVideo.src = '';
+    }
 
     if (bgVideo.src.indexOf(bgVidPath) === -1) {
       bgVideo.src = bgVidPath;
@@ -1305,13 +1317,25 @@ function loadSlide(index) {
     stage.classList.remove('mode-khan');
     stage.classList.remove('mode-content-video');
     stage.classList.remove('video-swap');
+    stage.classList.remove('video-focus');
+    // ISS-172 FIX: Clear video-box state when not in content-video mode
+    if (videoBox) {
+      videoBox.classList.remove('video-ready');
+    }
     bgVideo.pause();
     bgVideo.style.opacity = 0;
-    if (inlineVideo) inlineVideo.pause();
+    if (inlineVideo) {
+      inlineVideo.pause();
+      inlineVideo.src = '';
+    }
   }
 
   adjustContentScale();
   renderAvatar();
+  
+  // ISS-171 FIX: Re-apply avatar rules AFTER all mode changes to ensure avatar is always visible
+  // This overrides any CSS mode-specific settings that might hide or reposition the avatar
+  layerController.applySectionAvatarRules(sectionType, slide);
   
   if (!slide._videoDetected) {
     detectVideosForSlide(slide).then(() => {
