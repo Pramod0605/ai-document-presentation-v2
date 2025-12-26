@@ -311,6 +311,12 @@ def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, ou
         
         markdown_content = pdf_to_markdown(pdf_path)
         
+        # Save raw markdown for comparison/debugging
+        source_md_path = Path(output_dir) / "source_markdown.md"
+        with open(source_md_path, "w", encoding="utf-8") as f:
+            f.write(markdown_content)
+        print(f"[V1.5] Saved source markdown to {source_md_path} ({len(markdown_content)} chars)")
+        
         content_preview = markdown_content[:300].replace('\n', ' ').strip()
         if len(markdown_content) > 300:
             content_preview += "..."
@@ -380,6 +386,13 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
     """Process markdown using V1.5 Split Agent pipeline."""
     from pathlib import Path
     
+    # Save raw markdown for comparison/debugging
+    output_path = Path(output_dir)
+    source_md_path = output_path / "source_markdown.md"
+    with open(source_md_path, "w", encoding="utf-8") as f:
+        f.write(markdown_content)
+    print(f"[V1.5] Saved source markdown to {source_md_path} ({len(markdown_content)} chars)")
+    
     def status_callback(jid, phase, message):
         job_manager.update_job(jid, {
             "current_phase_key": phase,
@@ -387,7 +400,6 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
         }, persist=True)
     
     generate_tts = tts_provider != "estimate"
-    output_path = Path(output_dir)
     
     presentation, tracker = process_markdown_to_presentation_v15(
         markdown_content=markdown_content,
