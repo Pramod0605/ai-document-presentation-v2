@@ -78,22 +78,9 @@ def _enhance_visual_content_types(visuals_output: Dict, source_markdown: str) ->
         if types:
             dominant_type = max(set(types), key=types.count)
     
-    # ISS-160: Determine dominant content type from source (for consistent section rendering)
-    # Only use structured block data for the FIRST segment of that type to avoid repetition
-    dominant_type = "paragraph"  # default
-    dominant_block = None
-    
-    for block in content_blocks:
-        bt = block.get("block_type", "paragraph")
-        if bt in ("unordered_list", "ordered_list", "formula"):
-            dominant_type = bt
-            dominant_block = block
-            break  # Use first structured block found
-    
-    # Track which data has been used to avoid repetition
-    list_data_used = False
-    formula_data_used = False
-    paragraph_data_used = False
+    # ISS-160: Sequential block mapping - each segment maps to a content block
+    # Used blocks track which blocks have been consumed to avoid repetition
+    used_block_indices = set()
     
     # Enhance segment_enrichments with content_type if not set
     enrichments = visuals_output.get("segment_enrichments", [])
@@ -111,36 +98,42 @@ def _enhance_visual_content_types(visuals_output: Dict, source_markdown: str) ->
             vc["content_type"] = "ordered_list"
         elif vc.get("formula") or vc.get("formulas"):
             vc["content_type"] = "formula"
+        elif not content_blocks:
+            # No source blocks - default to paragraph
+            vc["content_type"] = "paragraph"
         else:
-            # ISS-160: Use dominant type from section, populate data only once
-            if not content_blocks:
-                vc["content_type"] = "paragraph"
-            elif dominant_type == "unordered_list" and not list_data_used:
-                vc["content_type"] = "bullet_list"
-                if dominant_block and dominant_block.get("items"):
-                    vc["bullet_points"] = [{"level": 1, "text": item} for item in dominant_block["items"]]
-                list_data_used = True
-            elif dominant_type == "ordered_list" and not list_data_used:
-                vc["content_type"] = "ordered_list"
-                if dominant_block and dominant_block.get("items"):
-                    vc["ordered_list"] = dominant_block["items"]
-                list_data_used = True
-            elif dominant_type == "formula" and not formula_data_used:
-                vc["content_type"] = "formula"
-                if dominant_block:
-                    vc["formula"] = dominant_block.get("verbatim_content", "")
-                formula_data_used = True
+            # ISS-160: Find next unused block for this segment
+            block = None
+            block_idx = None
+            for idx, b in enumerate(content_blocks):
+                if idx not in used_block_indices:
+                    block = b
+                    block_idx = idx
+                    break
+            
+            if block:
+                used_block_indices.add(block_idx)
+                block_type = block.get("block_type", "paragraph")
+                
+                if block_type == "unordered_list":
+                    vc["content_type"] = "bullet_list"
+                    if block.get("items"):
+                        vc["bullet_points"] = [{"level": 1, "text": item} for item in block["items"]]
+                elif block_type == "ordered_list":
+                    vc["content_type"] = "ordered_list"
+                    if block.get("items"):
+                        vc["ordered_list"] = block["items"]
+                elif block_type == "formula":
+                    vc["content_type"] = "formula"
+                    vc["formula"] = block.get("verbatim_content", "")
+                else:
+                    # Paragraph
+                    vc["content_type"] = "paragraph"
+                    vc["verbatim_text"] = block.get("verbatim_content", "")
+                    vc["has_inline_latex"] = block.get("has_inline_latex", False)
             else:
-                # Default to paragraph for remaining segments
+                # All blocks used - default to paragraph (avatar-only segment)
                 vc["content_type"] = "paragraph"
-                # Find first paragraph block for verbatim text (only use once)
-                if not paragraph_data_used:
-                    for block in content_blocks:
-                        if block.get("block_type") == "paragraph":
-                            vc["verbatim_text"] = block.get("verbatim_content", "")
-                            vc["has_inline_latex"] = block.get("has_inline_latex", False)
-                            paragraph_data_used = True
-                            break
         
         enrichment["visual_content"] = vc
     
