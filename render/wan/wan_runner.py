@@ -76,6 +76,23 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
         topic["_recap_video_paths"] = recap_result.get("all_paths", [])
         return recap_result.get("first_path")
     
+    # ISS-161 FIX: Handle recap sections with video_prompts (not recap_scenes)
+    # RecapAgent outputs video_prompts as list of 5 beat dicts, each with ~700 char prompt
+    if section_type == "recap" and video_prompts and len(video_prompts) > 0:
+        print(f"[WAN] ISS-161: Recap section {topic_id} has {len(video_prompts)} video_prompts (no recap_scenes)")
+        return _render_visual_beats(
+            topic_id=topic_id,
+            topic_title=topic_title,
+            section_type=section_type,
+            visual_beats=[],  # No visual_beats for recap
+            output_dir=output_dir,
+            dry_run=dry_run,
+            skip_wan=skip_wan,
+            trace_output_dir=trace_output_dir,
+            duration=duration,
+            video_prompts=video_prompts
+        )
+    
     # For other section types, use section-level prompt
     wan_prompt = explanation_plan.get("wan_prompt")
     
