@@ -440,30 +440,20 @@
       color: #00ff88;
     }
 
+    /* ========================================
+       AVATAR: ALL positioning controlled by JavaScript applyAvatarLayout()
+       CSS only provides minimal base styles - NO position/width/left/right
+       ======================================== */
     #avatar-canvas {
-      position: absolute;
-      bottom: 0;
-      z-index: 20;
+      /* Base styles only - position/width set by JS with !important */
       pointer-events: none;
-      transition: left 0.8s ease-in-out, height 0.8s ease, opacity 0.5s ease, transform 0.5s ease;
-      filter: drop-shadow(-20px 5px 25px rgba(0, 0, 0, 0.6));
-      transform-origin: bottom center;
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
-    }
-
-    /* Avatar positioning controlled by JS applyAvatarLayout() - only z-index here */
-    .mode-center #avatar-canvas {
-      z-index: 60;
     }
 
     .mode-intro #content-wrapper {
       opacity: 0 !important;
       pointer-events: none;
-    }
-
-    .mode-intro #avatar-canvas {
-      z-index: 50;
     }
 
     .mode-center #content-wrapper {
@@ -488,10 +478,7 @@
       opacity: 0;
     }
 
-    /* Avatar positioning controlled by JS applyAvatarLayout() - only z-index here */
-    .mode-side #avatar-canvas {
-      z-index: 60;
-    }
+    /* Avatar positioning: ALL controlled by JavaScript - no CSS rules here */
 
     .mode-side #content-wrapper {
       opacity: 1;
@@ -502,10 +489,7 @@
       opacity: 0;
     }
 
-    /* Avatar positioning controlled by JS applyAvatarLayout() - only z-index here */
-    .mode-image #avatar-canvas {
-      z-index: 60;
-    }
+    /* Avatar positioning: ALL controlled by JavaScript - no CSS rules here */
 
     .mode-image #content-wrapper {
       opacity: 0;
@@ -539,10 +523,7 @@
       opacity: 1 !important;
     }
 
-    /* Avatar positioning controlled by JS applyAvatarLayout() - only z-index here */
-    .mode-khan #avatar-canvas {
-      z-index: 60;
-    }
+    /* Avatar positioning: ALL controlled by JavaScript - no CSS rules here */
 
     .mode-content-video #content-wrapper {
       opacity: 1;
@@ -592,12 +573,7 @@
       opacity: 1;
     }
 
-    /* Avatar positioning is controlled by JavaScript applyAvatarLayout() */
-    /* DO NOT add width/position rules here - they get overridden by JS */
-    .mode-content-video #avatar-canvas {
-      /* Only z-index here - position/width set by JS with !important */
-      z-index: 60;
-    }
+    /* Avatar positioning: ALL controlled by JavaScript - no CSS rules here */
     
     .mode-content-video.text-visible #content-box {
       min-width: 40%;
@@ -1142,7 +1118,7 @@
     <div class="slider-row"><input type="range" id="av-green" min="0" max="200" step="1" value="60"></div>
   </div>
 
-  <script src="player.js?v=20251226-177"></script>
+  <script src="player.js?v=20251226-CLEAN"></script>
 </body>
 
 </html>
