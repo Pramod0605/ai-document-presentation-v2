@@ -411,6 +411,8 @@ class LayerController {
       s.setProperty('left', `${leftPos}px`, 'important');
       s.setProperty('right', 'auto', 'important');
       s.setProperty('bottom', '0', 'important');
+      // ISS-179c: Use bottom center for intro (centered avatar)
+      s.setProperty('transform-origin', 'bottom center', 'important');
       
       console.log(`[LayerController] Avatar INTRO: center, ${widthPercent}% = ${avatarWidthPx}x${avatarHeightPx}px, L:${leftPos}px B:0`);
     } else {
@@ -426,6 +428,8 @@ class LayerController {
       s.setProperty('right', `${rightPos}px`, 'important');
       s.setProperty('left', 'auto', 'important');
       s.setProperty('bottom', `${bottomPos}px`, 'important');
+      // ISS-179c: Use bottom right so scaling keeps avatar anchored to right edge
+      s.setProperty('transform-origin', 'bottom right', 'important');
       
       console.log(`[LayerController] Avatar CONTENT: right, ${avatarWidthPx}x${avatarHeightPx}px, R:${rightPos}px B:${bottomPos}px`);
     }
