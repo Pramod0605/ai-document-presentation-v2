@@ -237,7 +237,14 @@ class BaseAgent:
                 self.log(f"[{self.name}] JSON parse failed: {e}")
                 if structural_retries_used < self.structural_retries:
                     structural_retries_used += 1
-                    user_prompt = f"Your previous response was not valid JSON. Error: {e}\n\nPlease fix and return ONLY valid JSON."
+                    original_prompt = self.build_user_prompt(**input_data)
+                    user_prompt = f"""{original_prompt}
+
+---
+RETRY REQUIRED - YOUR PREVIOUS RESPONSE WAS NOT VALID JSON.
+Error: {e}
+
+Please return ONLY valid JSON with no markdown formatting, no extra text, and no trailing commas."""
                     continue
                 raise AgentError(self.name, "Invalid JSON response", [str(e)], total_attempts)
             
@@ -246,7 +253,14 @@ class BaseAgent:
                 self.log(f"[{self.name}] Structural validation failed: {errors[:3]}")
                 if structural_retries_used < self.structural_retries:
                     structural_retries_used += 1
-                    user_prompt = f"Your response failed structural validation:\n{json.dumps(errors[:5], indent=2)}\n\nFix these issues and return the corrected JSON."
+                    original_prompt = self.build_user_prompt(**input_data)
+                    user_prompt = f"""{original_prompt}
+
+---
+RETRY REQUIRED - YOUR PREVIOUS OUTPUT HAD STRUCTURAL ERRORS:
+{json.dumps(errors[:5], indent=2)}
+
+Fix these specific issues while keeping all other content intact. Return the COMPLETE corrected JSON."""
                     continue
                 raise AgentError(self.name, "Structural validation failed", errors, total_attempts)
             
