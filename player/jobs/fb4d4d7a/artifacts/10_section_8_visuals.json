@@ -1,0 +1,207 @@
+{
+  "section_id": "section_8",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to finding sine and cosine from side relationships",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "diagram",
+      "description": "Illustrate a right-angled triangle with given side relationships",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Opposite",
+          "Adjacent",
+          "Hypotenuse",
+          "Q"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "diagram",
+      "description": "Assign variables to triangle sides and state the goal",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "y",
+          "x",
+          "Hypotenuse",
+          "5"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "formula",
+      "description": "Show the side relationship and Pythagorean theorem",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "y = 3x - 1",
+          "Pythagorean Theorem"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "process",
+      "description": "Steps to solve for x, y, and then sine Q and cosine Q",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Substitute",
+          "Solve",
+          "Sine Q",
+          "Cosine Q"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Find sine and cosine"
+          },
+          {
+            "level": 1,
+            "text": "Given side relationships"
+          },
+          {
+            "level": 1,
+            "text": "Right-angled triangle"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Opposite side = 3 * Adjacent side - 1"
+          },
+          {
+            "level": 1,
+            "text": "Hypotenuse = 5 units"
+          },
+          {
+            "level": 1,
+            "text": "Right-angled triangle with angle Q"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Goal: Find sin Q and cos Q"
+          },
+          {
+            "level": 1,
+            "text": "Opposite side = y"
+          },
+          {
+            "level": 1,
+            "text": "Adjacent side = x"
+          },
+          {
+            "level": 1,
+            "text": "Hypotenuse = 5"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [
+        24
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$y = 3x - 1$",
+          "$x^2 + y^2 = Hypotenuse^2$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [
+        27,
+        28
+      ],
+      "visual_content": {
+        "content_type": "ordered_list",
+        "ordered_list": [
+          "Substitute y into Pythagorean theorem",
+          "Solve quadratic equation for x",
+          "Find y using y = 3x - 1",
+          "Calculate $\\sin Q = \\frac{Opposite}{Hypotenuse}$",
+          "Calculate $\\cos Q = \\frac{Adjacent}{Hypotenuse}$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,199 @@
+{
+  "section_id": "section_7",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to the verification problem",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "diagram",
+      "description": "Constructing a right-angled triangle with tan A = 1",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "tan A = 1",
+          "Opposite",
+          "Adjacent",
+          "x"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "formula",
+      "description": "Calculating hypotenuse using Pythagorean theorem",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Pythagorean",
+          "Theorem",
+          "Hypotenuse"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "formula",
+      "description": "Calculating Sine A and Cosine A",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Sine A",
+          "Opposite",
+          "Hypotenuse"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "formula",
+      "description": "Substituting values to verify the identity",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Cosine A",
+          "Substitute",
+          "Verify"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Verify $2\\sin A \\cos A = 1$"
+          },
+          {
+            "level": 1,
+            "text": "Given $\\tan A = 1$"
+          },
+          {
+            "level": 1,
+            "text": "Use trigonometric identities"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [
+        16,
+        17,
+        18
+      ],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Construct right-angled triangle"
+          },
+          {
+            "level": 1,
+            "text": "$\\tan A = \\frac{\\text{Opposite}}{\\text{Adjacent}} = 1$"
+          },
+          {
+            "level": 1,
+            "text": "Label Opposite = x, Adjacent = x"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [
+        24,
+        25,
+        26
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$AC^2 = AB^2 + BC^2$",
+          "$AC^2 = x^2 + x^2 = 2x^2$",
+          "$AC = \\sqrt{2x^2} = x\\sqrt{2}$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [
+        18,
+        27
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$\\sin A = \\frac{\\text{Opposite}}{\\text{Hypotenuse}} = \\frac{x}{x\\sqrt{2}} = \\frac{1}{\\sqrt{2}}$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [
+        18,
+        27
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$\\cos A = \\frac{\\text{Adjacent}}{\\text{Hypotenuse}} = \\frac{x}{x\\sqrt{2}} = \\frac{1}{\\sqrt{2}}$",
+          "$2\\sin A \\cos A = 2 \\left(\\frac{1}{\\sqrt{2}}\\right) \\left(\\frac{1}{\\sqrt{2}}\\right)$",
+          "$ = 2 \\left(\\frac{1}{2}\\right) = 1$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "section_id": "section_4",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to the problem: given tangent A = 4/3",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Tangent A",
+          "4/3"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "diagram",
+      "description": "Goal: find all other trig ratios, visualize right triangle",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Find Ratios",
+          "Right Triangle"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "diagram",
+      "description": "Labeling triangle sides based on tangent A = 4/3",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Opposite: 4",
+          "Adjacent: 3"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "formula",
+      "description": "Applying Pythagorean theorem to find hypotenuse",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Pythagorean",
+          "Theorem"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "formula",
+      "description": "Calculating hypotenuse and all six trigonometric ratios",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Hypotenuse: 5",
+          "All Ratios"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [
+        20,
+        21
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "**Example 1:**  $\\tan A = \\frac{4}{3}$  find the other trigonometric ratios\nof the angle A"
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [
+        29,
+        30
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "Diagram of a right-angled triangle ABC, right-angled at B. Side AB = 3, BC = 4, and AC = 5."
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [
+        22,
+        29,
+        30
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "In  $\\triangle ABC$ ,  $\\angle ABC = 90^\\circ$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [
+        23,
+        24
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formula": "$$AC^2 = AB^2 + BC^2$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [
+        25,
+        26,
+        27,
+        28
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$$\\Rightarrow AC^2 = 4^2 + 3^2 = 16 + 9 = 25$$",
+          "$$\\Rightarrow AC = 5$$",
+          "$$\\sin A = \\frac{BC}{AC} = \\frac{4}{5}, \\cos A = \\frac{AB}{AC} = \\frac{3}{5}, \\tan A = \\frac{BC}{AB} = \\frac{4}{3}$$",
+          "$$\\csc A = \\frac{AC}{BC} = \\frac{5}{4}, \\sec A = \\frac{AC}{AB} = \\frac{5}{3}, \\cot A = \\frac{AB}{BC} = \\frac{3}{4}$$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}
