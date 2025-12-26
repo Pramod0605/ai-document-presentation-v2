@@ -71,8 +71,8 @@ def submit_job():
         dry_run = request.form.get("dry_run", "false").lower() == "true"
         skip_wan = request.form.get("skip_wan", "false").lower() == "true"
         skip_avatar = request.form.get("skip_avatar", "false").lower() == "true"
-        tts_provider = request.form.get("tts_provider", "narakeet")
-        pipeline_version = request.form.get("pipeline_version", "v14")
+        tts_provider = request.form.get("tts_provider", "edge")
+        pipeline_version = request.form.get("pipeline_version", "v15")
         
         if "file" in request.files:
             uploaded_file = request.files["file"]
@@ -158,8 +158,8 @@ def submit_job():
             dry_run = data.get("dry_run", False)
             skip_wan = data.get("skip_wan", False)
             skip_avatar = data.get("skip_avatar", False)
-            tts_provider = data.get("tts_provider", "narakeet")
-            pipeline_version = data.get("pipeline_version", "v14")
+            tts_provider = data.get("tts_provider", "edge")
+            pipeline_version = data.get("pipeline_version", "v15")
             
             if not markdown_content:
                 return jsonify({"error": "Markdown content is required"}), 400
@@ -275,7 +275,7 @@ def list_all_jobs():
     })
 
 
-def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "narakeet") -> dict:
+def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
     try:
         result = process_pdf_to_videos(
             pdf_path=pdf_path,
@@ -365,7 +365,7 @@ def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, ou
             os.unlink(pdf_path)
 
 
-def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "narakeet") -> dict:
+def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
     """Process markdown using V1.4 Hybrid pipeline (Split Directors + V1.3 infrastructure)."""
     result = process_markdown_to_videos(
         markdown_content=markdown_content,
@@ -382,7 +382,7 @@ def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade
     return result
 
 
-def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "narakeet") -> dict:
+def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
     """Process markdown using V1.5 Split Agent pipeline."""
     from pathlib import Path
     
