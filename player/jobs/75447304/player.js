@@ -744,7 +744,19 @@ function updateVisuals() {
   const aX = document.getElementById('av-x').value;
   const cScale = document.getElementById('con-scale').value;
 
-  avatarCanvas.style.transform = `translateX(${aX}px) scale(${aScale})`;
+  // ISS-175 FIX: Preserve centering transform for intro sections
+  // Check if we're in intro mode (avatar should be centered)
+  const stageEl = document.getElementById('stage');
+  const isIntro = stageEl && stageEl.classList.contains('mode-intro');
+  
+  if (isIntro) {
+    // For intro: keep center transform, only apply scale
+    avatarCanvas.style.transform = `translateX(-50%) scale(${aScale})`;
+  } else {
+    // For other sections: apply offset and scale
+    avatarCanvas.style.transform = `translateX(${aX}px) scale(${aScale})`;
+  }
+  
   contentBox.style.transform = `scale(${cScale})`;
   updateDevStats();
 }
