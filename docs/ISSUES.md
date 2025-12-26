@@ -26,32 +26,30 @@
 ---
 
 ### ISS-162: Content Sections Have segments:0
-**Status**: Open  
+**Status**: RESOLVED (False Positive)  
 **Discovered**: 2024-12-26  
-**Severity**: High  
+**Resolved**: 2024-12-26  
+**Severity**: N/A  
 
-**Problem**: Content sections in presentation.json have `visual_beats: 8` but `segments: 0`. The player expects segments for narration/visual timing.
+**Problem**: Initially appeared that content sections had `segments: 0`.
+
+**Resolution**: This was a FALSE POSITIVE. Segments ARE correctly populated:
+- `section.segments` = 0 (section-level field, DEPRECATED/unused)
+- `section.narration.segments` = 8 ✅ (CORRECT location per v1.3 schema)
 
 **Evidence**:
 ```json
 {
   "section_type": "content",
   "visual_beats": [8 beats],
-  "segments": []  // Empty!
+  "narration": {
+    "full_text": "...",
+    "segments": [8 segments with visual_content, display_directives] // CORRECT!
+  }
 }
 ```
 
-**Root Cause**: TBD - Need to trace where segments should be populated from narration output
-
-**Expected Behavior**: Each section should have segments array with:
-- narration text
-- duration_seconds
-- visual_content (from visual_beats)
-- display_directives
-
-**Files to Check**:
-- `core/pipeline_v15.py` - merge step
-- `core/agents/narration_writer.py`
+**Note**: Player must read from `section.narration.segments`, not `section.segments`.
 
 ---
 
