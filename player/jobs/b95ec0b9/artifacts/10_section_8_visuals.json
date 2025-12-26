@@ -1,0 +1,202 @@
+{
+  "section_id": "section_8",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to verifying identities",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "text_only",
+      "description": "Definition of verifying an identity",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "formula",
+      "description": "Introduce the identity sin^2 + cos^2 = 1 and right triangle",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "sin^2\u03b8 + cos^2\u03b8 = 1",
+          "Right Triangle"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "diagram",
+      "description": "Labeling sides of a right triangle for sine and cosine ratios",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Opposite",
+          "Adjacent",
+          "Hypotenuse"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "process",
+      "description": "Step-by-step verification of the identity using substitution and Pythagorean theorem",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Substitution",
+          "Pythagorean Theorem",
+          "Simplification"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Verifying Trigonometric Identities"
+          },
+          {
+            "level": 1,
+            "text": "Using known ratios and algebra"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Transform one side of equation"
+          },
+          {
+            "level": 1,
+            "text": "Use trigonometric relationships"
+          },
+          {
+            "level": 1,
+            "text": "Apply algebraic rules"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "formula",
+        "formula": "$\\sin^2 \\theta + \\cos^2 \\theta = 1$",
+        "labels": [
+          "Common Identity",
+          "Right-angled Triangle"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [
+        16,
+        17,
+        18
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Opposite = y"
+          },
+          {
+            "level": 1,
+            "text": "Adjacent = x"
+          },
+          {
+            "level": 1,
+            "text": "Hypotenuse = r"
+          },
+          {
+            "level": 1,
+            "text": "$\\sin \\theta = \\frac{y}{r}$"
+          },
+          {
+            "level": 1,
+            "text": "$\\cos \\theta = \\frac{x}{r}$"
+          }
+        ],
+        "verbatim_text": "![Diagram showing two right-angled triangles, labeled 1 and 2, illustrating the sides (Opposite, Adjacent, Hypotenuse) relative to an angle A.](8c378a184b5ae4d1605cb74d7b7a7e3f_img.jpg)",
+        "has_inline_latex": false
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "ordered_list",
+        "ordered_list": [
+          "Substitute: $(\\frac{y}{r})^2 + (\\frac{x}{r})^2$",
+          "Simplify: $\\frac{y^2}{r^2} + \\frac{x^2}{r^2} = \\frac{y^2 + x^2}{r^2}$",
+          "Pythagorean Theorem: $x^2 + y^2 = r^2$",
+          "Replace: $\\frac{r^2}{r^2} = 1$",
+          "Identity confirmed: $\\sin^2 \\theta + \\cos^2 \\theta = 1$"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}

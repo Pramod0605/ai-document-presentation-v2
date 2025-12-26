@@ -31,7 +31,11 @@ class NarrationWriterAgent(BaseAgent):
         "example": (100, 300),
         "quiz": (50, 200),
         "memory": (30, 100),
-        "recap": (175, 500)  # ISS-165: Lowered from 200 to allow natural LLM variation
+        "recap": (150, 350)  # ISS-166: Adjusted for 5 segments x 30-50 words each
+    }
+    
+    REQUIRED_SEGMENTS = {
+        "recap": 5  # ISS-166: Recap must have exactly 5 segments to match 5 videos
     }
     
     def validate_structural(self, output: Dict[str, Any]) -> Tuple[bool, List[str]]:
@@ -104,5 +108,10 @@ class NarrationWriterAgent(BaseAgent):
         
         if abs(total_segment_words - word_count) > 20:
             errors.append(f"Segment word count ({total_segment_words}) doesn't match full_text ({word_count})")
+        
+        # ISS-166: Validate segment count for section types that require specific counts
+        required_count = self.REQUIRED_SEGMENTS.get(section_type)
+        if required_count and len(segments) != required_count:
+            errors.append(f"{section_type} section must have exactly {required_count} segments (got {len(segments)}) to match video scenes")
         
         return len(errors) == 0, errors

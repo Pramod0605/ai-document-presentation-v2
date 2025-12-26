@@ -42713,5 +42713,3285 @@
     "impact": "No recap section generated. Video summaries will be missing.",
     "dev_hint": "Check RecapSceneAgent output. Verify 5 video_prompts with 80-150 words each.",
     "failed_phase": "recap"
+  },
+  "c839fb14": {
+    "id": "c839fb14",
+    "type": "v14_pipeline",
+    "params": {
+      "subject": "Math",
+      "grade": "11",
+      "file_path": "/tmp/ai_education_jobs/80bd6b368b033732.pdf",
+      "source_file": "3-Page-Maths_1766745502993.pdf",
+      "skip_wan": true,
+      "skip_avatar": false,
+      "tts_provider": "edge",
+      "pipeline_version": "v14"
+    },
+    "status": "processing",
+    "current_step": 1,
+    "current_step_name": "LLM generating presentation plan...",
+    "current_phase_key": "llm_generating_presentation_plan...",
+    "status_message": null,
+    "steps_completed": 1,
+    "total_steps": 3,
+    "progress": 33,
+    "created_at": "2025-12-26T12:10:01.195026",
+    "started_at": "2025-12-26T12:10:01.296312",
+    "completed_at": null,
+    "error": null,
+    "result": null
+  },
+  "b4e8243c": {
+    "id": "b4e8243c",
+    "type": "v14_pipeline",
+    "params": {
+      "subject": "Math",
+      "grade": "11",
+      "file_path": "/tmp/ai_education_jobs/09bfeef02bb26ebf.pdf",
+      "source_file": "3-Page-Maths_1766745502993.pdf",
+      "skip_wan": true,
+      "skip_avatar": false,
+      "tts_provider": "edge",
+      "pipeline_version": "v14"
+    },
+    "status": "failed",
+    "current_step": 1,
+    "current_step_name": "LLM generating presentation plan...",
+    "current_phase_key": "llm_generating_presentation_plan...",
+    "status_message": null,
+    "steps_completed": 1,
+    "total_steps": 3,
+    "progress": 33,
+    "created_at": "2025-12-26T12:15:51.146551",
+    "started_at": "2025-12-26T12:15:51.268715",
+    "completed_at": "2025-12-26T12:21:35.459623",
+    "error": "HARD FAIL: 162 validation failures - generation aborted. HARD FAIL [missing_display_directives] Section 1: Narration segment 0 (intro) is missing display_directives (v1.3 required); HARD FAIL [missing_display_directives] Section 1: Narration segment 1 (intro) is missing display_directives (v1.3 required); HARD FAIL [missing_display_directives] Section 1: Narration segment 2 (intro) is missing display_directives (v1.3 required)",
+    "result": null,
+    "failure_message": null,
+    "impact": null,
+    "dev_hint": null,
+    "failed_phase": "llm_generating_presentation_plan..."
+  },
+  "b95ec0b9": {
+    "id": "b95ec0b9",
+    "type": "v15_pipeline",
+    "params": {
+      "subject": "Math",
+      "grade": "11",
+      "file_path": "/tmp/ai_education_jobs/c9d415da9d83c08d.pdf",
+      "source_file": "3-Page-Maths_1766745502993.pdf",
+      "skip_wan": true,
+      "skip_avatar": false,
+      "tts_provider": "edge",
+      "pipeline_version": "v15"
+    },
+    "status": "completed",
+    "current_step": null,
+    "current_step_name": "Complete!",
+    "current_phase_key": "completed",
+    "status_message": "Your educational masterpiece is ready!",
+    "steps_completed": 0,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2025-12-26T12:23:09.171987",
+    "started_at": "2025-12-26T12:23:09.299241",
+    "completed_at": "2025-12-26T12:34:17.077194",
+    "error": null,
+    "result": {
+      "status": "success",
+      "presentation": {
+        "spec_version": "v1.5",
+        "title": "Math Lesson",
+        "subject": "Math",
+        "grade": "11",
+        "avatar_global": {
+          "style": "teacher",
+          "default_position": "right",
+          "default_width_percent": 52,
+          "gesture_enabled": true
+        },
+        "sections": [
+          {
+            "section_type": "intro",
+            "title": "Welcome to Trigonometric Ratios!",
+            "renderer": "none",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "center",
+              "width_percent": 60
+            },
+            "narration": {
+              "full_text": "Hello and welcome to our journey into the fascinating world of trigonometry! In this lesson, we'll lay the groundwork for understanding how angles and sides of triangles are connected. We'll explore the fundamental concept of trigonometric ratios, which are essential tools in mathematics and many real-world applications. Get ready to discover the power of right-angled triangles!",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Hello and welcome to our journey into the fascinating world of trigonometry!",
+                  "duration_seconds": 6.09,
+                  "gesture_hint": "welcoming",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "## INTRODUCTION TO TRIGONOMETRY",
+                    "has_inline_latex": false
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "In this lesson, we'll lay the groundwork for understanding how angles and sides of triangles are connected.",
+                  "duration_seconds": 8.63,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "Trigonometry is the study of relationships between the sides and angles of a triangle.",
+                    "has_inline_latex": false
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "We'll explore the fundamental concept of trigonometric ratios, which are essential tools in mathematics and many real-world applications.",
+                  "duration_seconds": 9.14,
+                  "gesture_hint": "emphasizing",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "Fundamental concept of trigonometric ratios"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Essential tools in mathematics"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Many real-world applications"
+                      }
+                    ],
+                    "verbatim_text": "### 11.2 Trigonometric Ratios",
+                    "has_inline_latex": false
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 4,
+                  "text": "Get ready to discover the power of right-angled triangles!",
+                  "duration_seconds": 4.57,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "To know the trigonometric ratio we have to consider right angle triangle.",
+                    "has_inline_latex": false
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                }
+              ],
+              "total_duration_seconds": 28.43
+            },
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Welcome to trigonometry introduction",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "text_only",
+                "description": "Connecting angles and sides of triangles",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "text_only",
+                "description": "Introduction to trigonometric ratios",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": 4,
+                "visual_beat_type": "text_only",
+                "description": "Focus on right-angled triangles",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              }
+            ],
+            "section_id": 1
+          },
+          {
+            "section_type": "summary",
+            "title": "What You'll Learn Today",
+            "renderer": "none",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Welcome to our lesson on trigonometry! Today, we'll cover some essential concepts that will form the foundation for your understanding of this crucial mathematical topic. First, we'll define the six fundamental trigonometric ratios, such as sine, cosine, and tangent, specifically for right-angled triangles. You'll learn how these ratios relate the angles and sides of a triangle. Next, we'll move on to applying these ratios. We'll work through various problems, showing you how to use trigonometry to find unknown side lengths or angles, and even how to verify trigonometric identities. Finally, we'll explore reciprocal trigonometric identities, understanding how they connect the primary ratios. By the end of this session, you'll have a solid grasp of these core trigonometric principles.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Welcome to our lesson on trigonometry! Today, we'll cover some essential concepts that will form the foundation for your understanding of this crucial mathematical topic.",
+                  "duration_seconds": 12.69,
+                  "gesture_hint": "welcoming",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "Welcome to Trigonometry"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Essential concepts"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Foundation for understanding"
+                      }
+                    ]
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "First, we'll define the six fundamental trigonometric ratios, such as sine, cosine, and tangent, specifically for right-angled triangles. You'll learn how these ratios relate the angles and sides of a triangle.",
+                  "duration_seconds": 15.74,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "Define six trigonometric ratios"
+                      },
+                      {
+                        "level": 2,
+                        "text": "Sine, Cosine, Tangent"
+                      },
+                      {
+                        "level": 1,
+                        "text": "For right-angled triangles"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Relate angles and sides"
+                      }
+                    ]
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "Next, we'll move on to applying these ratios. We'll work through various problems, showing you how to use trigonometry to find unknown side lengths or angles, and even how to verify trigonometric identities.",
+                  "duration_seconds": 16.75,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "Apply trigonometric ratios"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Solve problems"
+                      },
+                      {
+                        "level": 2,
+                        "text": "Find unknown side lengths/angles"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Verify trigonometric identities"
+                      }
+                    ]
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 4,
+                  "text": "Finally, we'll explore reciprocal trigonometric identities, understanding how they connect the primary ratios. By the end of this session, you'll have a solid grasp of these core trigonometric principles.",
+                  "duration_seconds": 14.72,
+                  "gesture_hint": "emphasizing",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "Explore reciprocal identities"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Connect primary ratios"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Grasp core principles"
+                      }
+                    ]
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                }
+              ],
+              "total_duration_seconds": 59.9
+            },
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Introduction to the lesson, setting the stage for trigonometry concepts.",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "text_only",
+                "description": "Learning objective: Define six trigonometric ratios for right-angled triangles.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Trigonometric",
+                    "Ratios",
+                    "Right-angled",
+                    "Triangle"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "text_only",
+                "description": "Learning objective: Apply trigonometric ratios to solve problems and verify identities.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Apply Ratios",
+                    "Solve Problems",
+                    "Verify Identities"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": 4,
+                "visual_beat_type": "text_only",
+                "description": "Learning objective: Understand reciprocal trigonometric identities.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Reciprocal",
+                    "Identities"
+                  ],
+                  "max_words": 4
+                }
+              }
+            ],
+            "section_id": 2
+          },
+          {
+            "section_type": "content",
+            "title": "The Six Trigonometric Ratios",
+            "renderer": "manim",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Trigonometry is fundamentally about the relationships between the sides and angles of a triangle. To understand these relationships, we primarily focus on right-angled triangles. Let's define the key terms: the hypotenuse is always the longest side, opposite the right angle. For any other angle, the 'opposite' side is directly across from it, and the 'adjacent' side is next to it, forming that angle. Now, let's explore the six trigonometric ratios. These ratios are simply fractions that compare the lengths of two sides of a right-angled triangle relative to a specific acute angle. The primary ratios are sine, cosine, and tangent. Sine of an angle is the ratio of the length of the opposite side to the hypotenuse. Cosine is the ratio of the adjacent side to the hypotenuse. And tangent is the ratio of the opposite side to the adjacent side. Beyond these three, we have their reciprocals: cosecant, secant, and cotangent. Cosecant is the reciprocal of sine, secant is the reciprocal of cosine, and cotangent is the reciprocal of tangent. Understanding these six ratios is crucial as they form the bedrock of trigonometry and are used extensively in various fields.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Trigonometry is fundamentally about the relationships between the sides and angles of a triangle. To understand these relationships, we primarily focus on right-angled triangles.",
+                  "duration_seconds": 12.18,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "Trigonometry is the study of relationships between the sides and angles of a triangle.",
+                    "has_inline_latex": false
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Let's define the key terms: the hypotenuse is always the longest side, opposite the right angle. For any other angle, the 'opposite' side is directly across from it, and the 'adjacent' side is next to it, forming that angle.",
+                  "duration_seconds": 19.8,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "labels": [
+                      "Hypotenuse",
+                      "Opposite",
+                      "Adjacent",
+                      "Angle A"
+                    ],
+                    "verbatim_text": "![Diagram showing two right-angled triangles, labeled 1 and 2, illustrating the sides (Opposite, Adjacent, Hypotenuse) relative to an angle A.](8c378a184b5ae4d1605cb74d7b7a7e3f_img.jpg)",
+                    "has_inline_latex": false
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "Now, let's explore the six trigonometric ratios. These ratios are simply fractions that compare the lengths of two sides of a right-angled triangle relative to a specific acute angle.",
+                  "duration_seconds": 14.72,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "**There are six trigonometric ratios:**",
+                    "has_inline_latex": false
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 4,
+                  "text": "The primary ratios are sine, cosine, and tangent. Sine of an angle is the ratio of the length of the opposite side to the hypotenuse. Cosine is the ratio of the adjacent side to the hypotenuse. And tangent is the ratio of the opposite side to the adjacent side.",
+                  "duration_seconds": 24.88,
+                  "gesture_hint": "emphasizing",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "SinA = Opposite/Hypotenuse"
+                      },
+                      {
+                        "level": 1,
+                        "text": "CosA = Adjacent/Hypotenuse"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Tan A = Opposite/Adjacent"
+                      }
+                    ],
+                    "verbatim_text": "| Trigonometric ratios |                        | 1               | 2               |\n|----------------------|------------------------|-----------------|-----------------|\n| SinA                 | Opposite<br>Hypotenuse | $\\frac{BC}{AC}$ | $\\frac{AB}{AC}$ |\n| CosA                 | Adjacent<br>Hypotenuse | $\\frac{AB}{AC}$ | $\\frac{BC}{AB}$ |\n| Tan A                | Opposite<br>Adjacent   | $\\frac{BC}{AB}$ | $\\frac{AB}{BC}$ |\n| CosecA               | Hypotenuse<br>Opposite | $\\frac{AC}{BC}$ | $\\frac{AC}{AB}$ |\n| SecA                 | Hypotenuse<br>Adjacent | $\\frac{AC}{AB}$ | $\\frac{AC}{BC}$ |\n| CotA                 | Adjacent<br>Opposite   | $\\frac{AB}{BC}$ | $\\frac{BC}{AB}$ |",
+                    "has_inline_latex": true
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 5,
+                  "text": "Beyond these three, we have their reciprocals: cosecant, secant, and cotangent. Cosecant is the reciprocal of sine, secant is the reciprocal of cosine, and cotangent is the reciprocal of tangent. Understanding these six ratios is crucial as they form the bedrock of trigonometry and are used extensively in various fields.",
+                  "duration_seconds": 25.38,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "CosecA = Hypotenuse/Opposite (Reciprocal of SinA)"
+                      },
+                      {
+                        "level": 1,
+                        "text": "SecA = Hypotenuse/Adjacent (Reciprocal of CosA)"
+                      },
+                      {
+                        "level": 1,
+                        "text": "CotA = Adjacent/Opposite (Reciprocal of TanA)"
+                      }
+                    ],
+                    "verbatim_text": "| Trigonometric ratios |                        | 1               | 2               |\n|----------------------|------------------------|-----------------|-----------------|\n| SinA                 | Opposite<br>Hypotenuse | $\\frac{BC}{AC}$ | $\\frac{AB}{AC}$ |\n| CosA                 | Adjacent<br>Hypotenuse | $\\frac{AB}{AC}$ | $\\frac{BC}{AB}$ |\n| Tan A                | Opposite<br>Adjacent   | $\\frac{BC}{AB}$ | $\\frac{AB}{BC}$ |\n| CosecA               | Hypotenuse<br>Opposite | $\\frac{AC}{BC}$ | $\\frac{AC}{AB}$ |\n| SecA                 | Hypotenuse<br>Adjacent | $\\frac{AC}{AB}$ | $\\frac{AC}{BC}$ |\n| CotA                 | Adjacent<br>Opposite   | $\\frac{AB}{BC}$ | $\\frac{BC}{AB}$ |",
+                    "has_inline_latex": true
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                }
+              ],
+              "total_duration_seconds": 96.96
+            },
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Introduction to trigonometry and right-angled triangles",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "diagram",
+                "description": "Diagram illustrating hypotenuse, opposite, and adjacent sides",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Hypotenuse",
+                    "Opposite",
+                    "Adjacent"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "text_only",
+                "description": "Introduction to trigonometric ratios as fractions",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": 4,
+                "visual_beat_type": "formula",
+                "description": "Displaying primary trigonometric ratios: sine, cosine, tangent",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Sine",
+                    "Cosine",
+                    "Tangent"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_5",
+                "segment_id": 5,
+                "visual_beat_type": "formula",
+                "description": "Displaying reciprocal trigonometric ratios: cosecant, secant, cotangent",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Cosecant",
+                    "Secant",
+                    "Cotangent"
+                  ],
+                  "max_words": 4
+                }
+              }
+            ],
+            "section_id": 3,
+            "explanation_plan": {
+              "visual_beats": [
+                {
+                  "beat_id": "beat_1",
+                  "segment_id": 1,
+                  "visual_beat_type": "text_only",
+                  "description": "Introduction to trigonometry and right-angled triangles",
+                  "symbolic_overlay": {
+                    "enabled": false,
+                    "content": [],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_2",
+                  "segment_id": 2,
+                  "visual_beat_type": "diagram",
+                  "description": "Diagram illustrating hypotenuse, opposite, and adjacent sides",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Hypotenuse",
+                      "Opposite",
+                      "Adjacent"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_3",
+                  "segment_id": 3,
+                  "visual_beat_type": "text_only",
+                  "description": "Introduction to trigonometric ratios as fractions",
+                  "symbolic_overlay": {
+                    "enabled": false,
+                    "content": [],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_4",
+                  "segment_id": 4,
+                  "visual_beat_type": "formula",
+                  "description": "Displaying primary trigonometric ratios: sine, cosine, tangent",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Sine",
+                      "Cosine",
+                      "Tangent"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_5",
+                  "segment_id": 5,
+                  "visual_beat_type": "formula",
+                  "description": "Displaying reciprocal trigonometric ratios: cosecant, secant, cotangent",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Cosecant",
+                      "Secant",
+                      "Cotangent"
+                    ],
+                    "max_words": 4
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "section_type": "content",
+            "title": "Reciprocal Trigonometric Identities",
+            "renderer": "manim",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "In this section, we'll dive into reciprocal trigonometric identities. These identities show the inverse relationships between our fundamental trigonometric ratios. Understanding them is key to simplifying complex expressions and solving trigonometric equations. Let's start by looking at the relationship between sine and cosecant. As you can see, cosecant of an angle is simply one divided by the sine of that same angle. This means if you know the sine, you automatically know the cosecant. Similarly, cosine and secant are reciprocals. Secant of an angle is one over the cosine of that angle. And finally, tangent and cotangent share a reciprocal relationship. Cotangent of an angle is one over the tangent of that angle. These identities are fundamental. They allow us to rewrite expressions in different forms, which is incredibly useful in various mathematical contexts. We'll explore how to apply these in examples soon.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "In this section, we'll dive into reciprocal trigonometric identities. These identities show the inverse relationships between our fundamental trigonometric ratios.",
+                  "duration_seconds": 10.15,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "Reciprocal Trigonometric Identities"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Inverse relationships between ratios"
+                      }
+                    ]
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Understanding them is key to simplifying complex expressions and solving trigonometric equations. Let's start by looking at the relationship between sine and cosecant.",
+                  "duration_seconds": 11.68,
+                  "gesture_hint": "emphasizing",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "Simplify expressions"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Solve equations"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Sine and Cosecant relationship"
+                      }
+                    ]
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "As you can see, cosecant of an angle is simply one divided by the sine of that same angle. This means if you know the sine, you automatically know the cosecant.",
+                  "duration_seconds": 15.74,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "formula": "$\\csc A = \\frac{1}{\\sin A}$",
+                    "verbatim_text": "| Trigonometric ratios |                        | 1               | 2               |\n|----------------------|------------------------|-----------------|-----------------|\n| SinA                 | Opposite<br>Hypotenuse | $\\frac{BC}{AC}$ | $\\frac{AB}{AC}$ |\n| CosA                 | Adjacent<br>Hypotenuse | $\\frac{AB}{AC}$ | $\\frac{BC}{AB}$ |\n| Tan A                | Opposite<br>Adjacent   | $\\frac{BC}{AB}$ | $\\frac{AB}{BC}$ |\n| CosecA               | Hypotenuse<br>Opposite | $\\frac{AC}{BC}$ | $\\frac{AC}{AB}$ |\n| SecA                 | Hypotenuse<br>Adjacent | $\\frac{AC}{AB}$ | $\\frac{AC}{BC}$ |\n| CotA                 | Adjacent<br>Opposite   | $\\frac{AB}{BC}$ | $\\frac{BC}{AB}$ |",
+                    "has_inline_latex": true
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 4,
+                  "text": "Similarly, cosine and secant are reciprocals. Secant of an angle is one over the cosine of that angle. And finally, tangent and cotangent share a reciprocal relationship.",
+                  "duration_seconds": 13.71,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "formulas": [
+                      "$\\sec A = \\frac{1}{\\cos A}$",
+                      "$\\cot A = \\frac{1}{\\tan A}$"
+                    ],
+                    "verbatim_text": "| Trigonometric ratios |                        | 1               | 2               |\n|----------------------|------------------------|-----------------|-----------------|\n| SinA                 | Opposite<br>Hypotenuse | $\\frac{BC}{AC}$ | $\\frac{AB}{AC}$ |\n| CosA                 | Adjacent<br>Hypotenuse | $\\frac{AB}{AC}$ | $\\frac{BC}{AB}$ |\n| Tan A                | Opposite<br>Adjacent   | $\\frac{BC}{AB}$ | $\\frac{AB}{BC}$ |\n| CosecA               | Hypotenuse<br>Opposite | $\\frac{AC}{BC}$ | $\\frac{AC}{AB}$ |\n| SecA                 | Hypotenuse<br>Adjacent | $\\frac{AC}{AB}$ | $\\frac{AC}{BC}$ |\n| CotA                 | Adjacent<br>Opposite   | $\\frac{AB}{BC}$ | $\\frac{BC}{AB}$ |",
+                    "has_inline_latex": true
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 5,
+                  "text": "Cotangent of an angle is one over the tangent of that angle. These identities are fundamental. They allow us to rewrite expressions in different forms, which is incredibly useful in various mathematical contexts. We'll explore how to apply these in examples soon.",
+                  "duration_seconds": 21.32,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "Fundamental identities"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Rewrite expressions"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Useful in various contexts"
+                      }
+                    ]
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                }
+              ],
+              "total_duration_seconds": 72.6
+            },
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Introduction to reciprocal trigonometric identities",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "text_only",
+                "description": "Importance of identities and introduction to sine and cosecant",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "formula",
+                "description": "Displaying the reciprocal identity for sine and cosecant",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Sine",
+                    "Cosecant",
+                    "Reciprocal"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": 4,
+                "visual_beat_type": "formula",
+                "description": "Displaying reciprocal identities for cosine/secant and tangent/cotangent",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Cosine",
+                    "Secant",
+                    "Tangent",
+                    "Cotangent"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_5",
+                "segment_id": 5,
+                "visual_beat_type": "text_only",
+                "description": "Summary of reciprocal identities and their utility",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              }
+            ],
+            "section_id": 4,
+            "render_spec": {
+              "manim_scene_spec": {
+                "manim_code": "# Segment 1 (0-10.2s) - Introduction\ntitle = Text(\"Reciprocal Trigonometric Identities\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Understanding inverse relationships\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(5.2)\n\n# Segment 2 (10.2-21.8s) - Importance and Sine/Cosecant intro\nsine_eq = MathTex(r\"\\sin \\theta\").shift(LEFT * 3)\ncsc_eq = MathTex(r\"\\csc \\theta\").shift(RIGHT * 3)\narrow = Arrow(sine_eq.get_right(), csc_eq.get_left(), color=YELLOW)\n\nself.play(\n    FadeOut(subtitle),\n    Write(sine_eq),\n    Write(csc_eq),\n    run_time=3\n)\nself.play(Create(arrow), run_time=2)\nself.wait(6.7)\n\n# Segment 3 (21.8-37.6s) - Sine and Cosecant relationship\nreciprocal1 = MathTex(r\"\\csc \\theta = \\frac{1}{\\sin \\theta}\").scale(1.5)\nbox1 = SurroundingRectangle(reciprocal1, color=BLUE)\n\nself.play(\n    FadeOut(sine_eq, csc_eq, arrow),\n    Write(reciprocal1),\n    run_time=3\n)\nself.play(Create(box1), run_time=2)\nself.wait(10.7)\n\n# Segment 4 (37.6-51.3s) - Cosine/Secant and Tangent/Cotangent\nreciprocal2 = MathTex(r\"\\sec \\theta = \\frac{1}{\\cos \\theta}\").next_to(reciprocal1, DOWN)\nreciprocal3 = MathTex(r\"\\cot \\theta = \\frac{1}{\\tan \\theta}\").next_to(reciprocal2, DOWN)\n\nself.play(\n    FadeOut(box1),\n    reciprocal1.animate.scale(0.67).to_edge(UP, buff=2),\n    run_time=2\n)\nself.play(Write(reciprocal2), run_time=2)\nself.play(Write(reciprocal3), run_time=2)\nself.wait(7.7)\n\n# Segment 5 (51.3-72.6s) - Summary and utility\nsummary_box = SurroundingRectangle(VGroup(reciprocal1, reciprocal2, reciprocal3), \n                                 color=GOLD, buff=0.4)\nsummary_text = Text(\"These identities are fundamental\\nfor trigonometric manipulation\",\n                   font_size=32).next_to(summary_box, DOWN)\n\nself.play(\n    Create(summary_box),\n    run_time=2\n)\nself.play(\n    Write(summary_text),\n    run_time=3\n)\nself.wait(16.3)",
+                "code_type": "construct_body"
+              }
+            },
+            "explanation_plan": {
+              "visual_beats": [
+                {
+                  "beat_id": "beat_1",
+                  "segment_id": 1,
+                  "visual_beat_type": "text_only",
+                  "description": "Introduction to reciprocal trigonometric identities",
+                  "symbolic_overlay": {
+                    "enabled": false,
+                    "content": [],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_2",
+                  "segment_id": 2,
+                  "visual_beat_type": "text_only",
+                  "description": "Importance of identities and introduction to sine and cosecant",
+                  "symbolic_overlay": {
+                    "enabled": false,
+                    "content": [],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_3",
+                  "segment_id": 3,
+                  "visual_beat_type": "formula",
+                  "description": "Displaying the reciprocal identity for sine and cosecant",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Sine",
+                      "Cosecant",
+                      "Reciprocal"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_4",
+                  "segment_id": 4,
+                  "visual_beat_type": "formula",
+                  "description": "Displaying reciprocal identities for cosine/secant and tangent/cotangent",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Cosine",
+                      "Secant",
+                      "Tangent",
+                      "Cotangent"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_5",
+                  "segment_id": 5,
+                  "visual_beat_type": "text_only",
+                  "description": "Summary of reciprocal identities and their utility",
+                  "symbolic_overlay": {
+                    "enabled": false,
+                    "content": [],
+                    "max_words": 4
+                  }
+                }
+              ],
+              "v15_manim_code": "# Segment 1 (0-10.2s) - Introduction\ntitle = Text(\"Reciprocal Trigonometric Identities\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Understanding inverse relationships\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(5.2)\n\n# Segment 2 (10.2-21.8s) - Importance and Sine/Cosecant intro\nsine_eq = MathTex(r\"\\sin \\theta\").shift(LEFT * 3)\ncsc_eq = MathTex(r\"\\csc \\theta\").shift(RIGHT * 3)\narrow = Arrow(sine_eq.get_right(), csc_eq.get_left(), color=YELLOW)\n\nself.play(\n    FadeOut(subtitle),\n    Write(sine_eq),\n    Write(csc_eq),\n    run_time=3\n)\nself.play(Create(arrow), run_time=2)\nself.wait(6.7)\n\n# Segment 3 (21.8-37.6s) - Sine and Cosecant relationship\nreciprocal1 = MathTex(r\"\\csc \\theta = \\frac{1}{\\sin \\theta}\").scale(1.5)\nbox1 = SurroundingRectangle(reciprocal1, color=BLUE)\n\nself.play(\n    FadeOut(sine_eq, csc_eq, arrow),\n    Write(reciprocal1),\n    run_time=3\n)\nself.play(Create(box1), run_time=2)\nself.wait(10.7)\n\n# Segment 4 (37.6-51.3s) - Cosine/Secant and Tangent/Cotangent\nreciprocal2 = MathTex(r\"\\sec \\theta = \\frac{1}{\\cos \\theta}\").next_to(reciprocal1, DOWN)\nreciprocal3 = MathTex(r\"\\cot \\theta = \\frac{1}{\\tan \\theta}\").next_to(reciprocal2, DOWN)\n\nself.play(\n    FadeOut(box1),\n    reciprocal1.animate.scale(0.67).to_edge(UP, buff=2),\n    run_time=2\n)\nself.play(Write(reciprocal2), run_time=2)\nself.play(Write(reciprocal3), run_time=2)\nself.wait(7.7)\n\n# Segment 5 (51.3-72.6s) - Summary and utility\nsummary_box = SurroundingRectangle(VGroup(reciprocal1, reciprocal2, reciprocal3), \n                                 color=GOLD, buff=0.4)\nsummary_text = Text(\"These identities are fundamental\\nfor trigonometric manipulation\",\n                   font_size=32).next_to(summary_box, DOWN)\n\nself.play(\n    Create(summary_box),\n    run_time=2\n)\nself.play(\n    Write(summary_text),\n    run_time=3\n)\nself.wait(16.3)"
+            },
+            "video_path": "videos/topic_4.mp4"
+          },
+          {
+            "section_type": "example",
+            "title": "Calculating All Ratios from a Given Ratio",
+            "renderer": "manim",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Let's work through an example to see how we can find all trigonometric ratios when only one is given. Suppose we are given that the tangent of angle A is four-thirds. Our goal is to find the sine, cosine, cosecant, secant, and cotangent of angle A. We start by drawing a right-angled triangle, labeling the angle A. Since tangent is defined as the ratio of the opposite side to the adjacent side, we can label the side opposite to A as four units and the side adjacent to A as three units. Now, we need to find the length of the hypotenuse. We can use the Pythagorean theorem, which states that the square of the hypotenuse is equal to the sum of the squares of the other two sides. Plugging in our values, we have the hypotenuse squared equals four squared plus three squared, which simplifies to sixteen plus nine, or twenty-five. Taking the square root of twenty-five, we find that the hypotenuse is five units. With all three sides of the right triangle known, we can now calculate the remaining trigonometric ratios. Sine A is opposite over hypotenuse, which is four-fifths. Cosine A is adjacent over hypotenuse, which is three-fifths. Cosecant A is the reciprocal of sine A, so it's five-fourths. Secant A is the reciprocal of cosine A, making it five-thirds. And finally, cotangent A is the reciprocal of tangent A, giving us three-fourths. So, by using the given ratio and the Pythagorean theorem, we successfully found all six trigonometric ratios for angle A.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Let's work through an example to see how we can find all trigonometric ratios when only one is given. Suppose we are given that the tangent of angle A is four-thirds.",
+                  "duration_seconds": 15.74,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "**Example 1:**  $\\tan A = \\frac{4}{3}$  find the other trigonometric ratios",
+                    "has_inline_latex": true
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Our goal is to find the sine, cosine, cosecant, secant, and cotangent of angle A. We start by drawing a right-angled triangle, labeling the angle A.",
+                  "duration_seconds": 13.2,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "![Diagram of a right-angled triangle ABC, right-angled at B. Side AB = 3, BC = 4, and AC = 5.](df9ce5affceb4ff1e9e8fd8e3ff0c1bd_img.jpg)",
+                    "has_inline_latex": false
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "Since tangent is defined as the ratio of the opposite side to the adjacent side, we can label the side opposite to A as four units and the side adjacent to A as three units.",
+                  "duration_seconds": 17.77,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "![Diagram of a right-angled triangle ABC, right-angled at B. Side AB = 3, BC = 4, and AC = 5.](df9ce5affceb4ff1e9e8fd8e3ff0c1bd_img.jpg)",
+                    "has_inline_latex": false
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 4,
+                  "text": "Now, we need to find the length of the hypotenuse. We can use the Pythagorean theorem, which states that the square of the hypotenuse is equal to the sum of the squares of the other two sides.",
+                  "duration_seconds": 18.78,
+                  "gesture_hint": "emphasizing",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "formula": "$$AC^2 = AB^2 + BC^2$$",
+                    "verbatim_text": "In  $\\triangle ABC$ ,  $\\angle ABC = 90^\\circ$",
+                    "has_inline_latex": true
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 5,
+                  "text": "Plugging in our values, we have the hypotenuse squared equals four squared plus three squared, which simplifies to sixteen plus nine, or twenty-five. Taking the square root of twenty-five, we find that the hypotenuse is five units.",
+                  "duration_seconds": 18.78,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formulas": [
+                      "$$\\Rightarrow AC^2 = 4^2 + 3^2 = 16 + 9 = 25$$",
+                      "$$\\Rightarrow AC = 5$$"
+                    ],
+                    "formula": "$$\\Rightarrow AC^2 = 4^2 + 3^2 = 16 + 9 = 25$$"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 6,
+                  "text": "With all three sides of the right triangle known, we can now calculate the remaining trigonometric ratios. Sine A is opposite over hypotenuse, which is four-fifths.",
+                  "duration_seconds": 13.2,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formula": "$$\\sin A = \\frac{BC}{AC} = \\frac{4}{5}, \\cos A = \\frac{AB}{AC} = \\frac{3}{5}, \\tan A = \\frac{BC}{AB} = \\frac{4}{3}$$"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 7,
+                  "text": "Cosine A is adjacent over hypotenuse, which is three-fifths. Cosecant A is the reciprocal of sine A, so it's five-fourths.",
+                  "duration_seconds": 10.15,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formula": "$$\\csc A = \\frac{AC}{BC} = \\frac{5}{4}, \\sec A = \\frac{AC}{AB} = \\frac{5}{3}, \\cot A = \\frac{AB}{BC} = \\frac{3}{4}$$"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 8,
+                  "text": "Secant A is the reciprocal of cosine A, making it five-thirds. And finally, cotangent A is the reciprocal of tangent A, giving us three-fourths.",
+                  "duration_seconds": 12.18,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formula": "$$\\csc A = \\frac{AC}{BC} = \\frac{5}{4}, \\sec A = \\frac{AC}{AB} = \\frac{5}{3}, \\cot A = \\frac{AB}{BC} = \\frac{3}{4}$$"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 9,
+                  "text": "So, by using the given ratio and the Pythagorean theorem, we successfully found all six trigonometric ratios for angle A.",
+                  "duration_seconds": 10.15,
+                  "gesture_hint": "welcoming",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "Copyright is preserved",
+                    "has_inline_latex": false
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                }
+              ],
+              "total_duration_seconds": 129.95
+            },
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Introduction to the example: given tangent A is 4/3.",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "diagram",
+                "description": "Goal to find all ratios, starting with drawing a right-angled triangle.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Right Triangle",
+                    "Angle A"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "diagram",
+                "description": "Labeling opposite and adjacent sides based on tangent definition.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Opposite: 4",
+                    "Adjacent: 3",
+                    "Tan A = 4/3"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": 4,
+                "visual_beat_type": "formula",
+                "description": "Introducing the Pythagorean theorem to find the hypotenuse.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Pythagorean Theorem"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_5",
+                "segment_id": 5,
+                "visual_beat_type": "formula",
+                "description": "Calculating the hypotenuse using the Pythagorean theorem.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Hypotenuse = 5"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_6",
+                "segment_id": 6,
+                "visual_beat_type": "formula",
+                "description": "Calculating Sine A and Cosine A.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Sine A",
+                    "Cosine A"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_7",
+                "segment_id": 7,
+                "visual_beat_type": "formula",
+                "description": "Calculating Cosecant A and Secant A.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Cosecant A",
+                    "Secant A"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_8",
+                "segment_id": 8,
+                "visual_beat_type": "formula",
+                "description": "Calculating Cotangent A.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Cotangent A"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_9",
+                "segment_id": 9,
+                "visual_beat_type": "text_only",
+                "description": "Summary of finding all six trigonometric ratios.",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              }
+            ],
+            "section_id": 5,
+            "render_spec": {
+              "manim_scene_spec": {
+                "manim_code": "# Segment 1 (0.0-15.7s) - Given tangent A is 4/3\ntitle = Text(\"Finding All Trigonometric Ratios\", font_size=40).to_edge(UP)\ngiven = MathTex(r\"\\tan A = \\frac{4}{3}\").scale(1.2)\nself.play(Write(title), run_time=2)\nself.play(FadeIn(given), run_time=2)\nself.wait(11.7)\n\n# Segment 2 (15.7-28.9s) - Drawing right triangle\ntriangle = Polygon(\n    ORIGIN, RIGHT*3, UP*4, \n    color=WHITE,\n    fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).next_to(ORIGIN, UR, buff=0)\nangle_A = Arc(radius=0.5, angle=math.atan(4/3), color=YELLOW)\nangle_label = MathTex(\"A\").next_to(angle_A, RIGHT, buff=0.1)\n\nself.play(\n    FadeOut(given),\n    Create(triangle),\n    Create(right_angle),\n    Create(angle_A),\n    Write(angle_label),\n    run_time=4\n)\nself.wait(9.2)\n\n# Segment 3 (28.9-46.7s) - Labeling sides\nopp_label = MathTex(\"4\").next_to(triangle, RIGHT)\nadj_label = MathTex(\"3\").next_to(triangle, DOWN)\nopp_line = Line(ORIGIN, UP*4, color=YELLOW)\nadj_line = Line(ORIGIN, RIGHT*3, color=BLUE)\n\nself.play(\n    Create(opp_line),\n    Write(opp_label),\n    run_time=3\n)\nself.play(\n    Create(adj_line),\n    Write(adj_label),\n    run_time=3\n)\nself.wait(11.8)\n\n# Segment 4 (46.7-65.5s) - Pythagorean theorem\npyth = MathTex(r\"c^2 = a^2 + b^2\").to_edge(RIGHT)\nself.play(Write(pyth), run_time=3)\nhyp_line = Line(RIGHT*3, UP*4, color=RED)\nself.play(Create(hyp_line), run_time=2)\nself.wait(13.8)\n\n# Segment 5 (65.5-84.3s) - Calculate hypotenuse\ncalc = VGroup(\n    MathTex(r\"c^2 = 4^2 + 3^2\"),\n    MathTex(r\"c^2 = 16 + 9\"),\n    MathTex(r\"c^2 = 25\"),\n    MathTex(r\"c = 5\")\n).arrange(DOWN).to_edge(RIGHT)\n\nself.play(ReplacementTransform(pyth, calc[0]), run_time=2)\nself.play(Write(calc[1]), run_time=2)\nself.play(Write(calc[2]), run_time=2)\nself.play(Write(calc[3]), run_time=2)\nhyp_label = MathTex(\"5\").next_to(hyp_line, UR, buff=0.1)\nself.play(Write(hyp_label), run_time=2)\nself.wait(8.8)\n\n# Segment 6 (84.3-97.5s) - Sine and Cosine\nsine = MathTex(r\"\\sin A = \\frac{4}{5}\").to_edge(LEFT)\ncosine = MathTex(r\"\\cos A = \\frac{3}{5}\").next_to(sine, DOWN)\nself.play(Write(sine), run_time=3)\nself.play(Write(cosine), run_time=3)\nself.wait(7.2)\n\n# Segment 7 (97.5-107.6s) - Cosecant and Secant\ncsc = MathTex(r\"\\csc A = \\frac{5}{4}\").next_to(cosine, DOWN)\nsec = MathTex(r\"\\sec A = \\frac{5}{3}\").next_to(csc, DOWN)\nself.play(Write(csc), Write(sec), run_time=4)\nself.wait(6.2)\n\n# Segment 8 (107.6-119.8s) - Cotangent\ncot = MathTex(r\"\\cot A = \\frac{3}{4}\").next_to(sec, DOWN)\nself.play(Write(cot), run_time=3)\nself.wait(9.2)\n\n# Segment 9 (119.8-130.0s) - Summary\nsummary_box = SurroundingRectangle(VGroup(sine, cosine, csc, sec, cot))\nself.play(Create(summary_box), run_time=2)\nself.wait(8.2)",
+                "code_type": "construct_body"
+              }
+            },
+            "explanation_plan": {
+              "visual_beats": [
+                {
+                  "beat_id": "beat_1",
+                  "segment_id": 1,
+                  "visual_beat_type": "text_only",
+                  "description": "Introduction to the example: given tangent A is 4/3.",
+                  "symbolic_overlay": {
+                    "enabled": false,
+                    "content": [],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_2",
+                  "segment_id": 2,
+                  "visual_beat_type": "diagram",
+                  "description": "Goal to find all ratios, starting with drawing a right-angled triangle.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Right Triangle",
+                      "Angle A"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_3",
+                  "segment_id": 3,
+                  "visual_beat_type": "diagram",
+                  "description": "Labeling opposite and adjacent sides based on tangent definition.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Opposite: 4",
+                      "Adjacent: 3",
+                      "Tan A = 4/3"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_4",
+                  "segment_id": 4,
+                  "visual_beat_type": "formula",
+                  "description": "Introducing the Pythagorean theorem to find the hypotenuse.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Pythagorean Theorem"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_5",
+                  "segment_id": 5,
+                  "visual_beat_type": "formula",
+                  "description": "Calculating the hypotenuse using the Pythagorean theorem.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Hypotenuse = 5"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_6",
+                  "segment_id": 6,
+                  "visual_beat_type": "formula",
+                  "description": "Calculating Sine A and Cosine A.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Sine A",
+                      "Cosine A"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_7",
+                  "segment_id": 7,
+                  "visual_beat_type": "formula",
+                  "description": "Calculating Cosecant A and Secant A.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Cosecant A",
+                      "Secant A"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_8",
+                  "segment_id": 8,
+                  "visual_beat_type": "formula",
+                  "description": "Calculating Cotangent A.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Cotangent A"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_9",
+                  "segment_id": 9,
+                  "visual_beat_type": "text_only",
+                  "description": "Summary of finding all six trigonometric ratios.",
+                  "symbolic_overlay": {
+                    "enabled": false,
+                    "content": [],
+                    "max_words": 4
+                  }
+                }
+              ],
+              "v15_manim_code": "# Segment 1 (0.0-15.7s) - Given tangent A is 4/3\ntitle = Text(\"Finding All Trigonometric Ratios\", font_size=40).to_edge(UP)\ngiven = MathTex(r\"\\tan A = \\frac{4}{3}\").scale(1.2)\nself.play(Write(title), run_time=2)\nself.play(FadeIn(given), run_time=2)\nself.wait(11.7)\n\n# Segment 2 (15.7-28.9s) - Drawing right triangle\ntriangle = Polygon(\n    ORIGIN, RIGHT*3, UP*4, \n    color=WHITE,\n    fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).next_to(ORIGIN, UR, buff=0)\nangle_A = Arc(radius=0.5, angle=math.atan(4/3), color=YELLOW)\nangle_label = MathTex(\"A\").next_to(angle_A, RIGHT, buff=0.1)\n\nself.play(\n    FadeOut(given),\n    Create(triangle),\n    Create(right_angle),\n    Create(angle_A),\n    Write(angle_label),\n    run_time=4\n)\nself.wait(9.2)\n\n# Segment 3 (28.9-46.7s) - Labeling sides\nopp_label = MathTex(\"4\").next_to(triangle, RIGHT)\nadj_label = MathTex(\"3\").next_to(triangle, DOWN)\nopp_line = Line(ORIGIN, UP*4, color=YELLOW)\nadj_line = Line(ORIGIN, RIGHT*3, color=BLUE)\n\nself.play(\n    Create(opp_line),\n    Write(opp_label),\n    run_time=3\n)\nself.play(\n    Create(adj_line),\n    Write(adj_label),\n    run_time=3\n)\nself.wait(11.8)\n\n# Segment 4 (46.7-65.5s) - Pythagorean theorem\npyth = MathTex(r\"c^2 = a^2 + b^2\").to_edge(RIGHT)\nself.play(Write(pyth), run_time=3)\nhyp_line = Line(RIGHT*3, UP*4, color=RED)\nself.play(Create(hyp_line), run_time=2)\nself.wait(13.8)\n\n# Segment 5 (65.5-84.3s) - Calculate hypotenuse\ncalc = VGroup(\n    MathTex(r\"c^2 = 4^2 + 3^2\"),\n    MathTex(r\"c^2 = 16 + 9\"),\n    MathTex(r\"c^2 = 25\"),\n    MathTex(r\"c = 5\")\n).arrange(DOWN).to_edge(RIGHT)\n\nself.play(ReplacementTransform(pyth, calc[0]), run_time=2)\nself.play(Write(calc[1]), run_time=2)\nself.play(Write(calc[2]), run_time=2)\nself.play(Write(calc[3]), run_time=2)\nhyp_label = MathTex(\"5\").next_to(hyp_line, UR, buff=0.1)\nself.play(Write(hyp_label), run_time=2)\nself.wait(8.8)\n\n# Segment 6 (84.3-97.5s) - Sine and Cosine\nsine = MathTex(r\"\\sin A = \\frac{4}{5}\").to_edge(LEFT)\ncosine = MathTex(r\"\\cos A = \\frac{3}{5}\").next_to(sine, DOWN)\nself.play(Write(sine), run_time=3)\nself.play(Write(cosine), run_time=3)\nself.wait(7.2)\n\n# Segment 7 (97.5-107.6s) - Cosecant and Secant\ncsc = MathTex(r\"\\csc A = \\frac{5}{4}\").next_to(cosine, DOWN)\nsec = MathTex(r\"\\sec A = \\frac{5}{3}\").next_to(csc, DOWN)\nself.play(Write(csc), Write(sec), run_time=4)\nself.wait(6.2)\n\n# Segment 8 (107.6-119.8s) - Cotangent\ncot = MathTex(r\"\\cot A = \\frac{3}{4}\").next_to(sec, DOWN)\nself.play(Write(cot), run_time=3)\nself.wait(9.2)\n\n# Segment 9 (119.8-130.0s) - Summary\nsummary_box = SurroundingRectangle(VGroup(sine, cosine, csc, sec, cot))\nself.play(Create(summary_box), run_time=2)\nself.wait(8.2)"
+            }
+          },
+          {
+            "section_type": "example",
+            "title": "Proving Angle Equality from Sine Equality",
+            "renderer": "manim",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Let's work through an example to prove angle equality from sine equality. We'll start with two right-angled triangles, triangle ABC and triangle PQR. Our goal is to prove that if the sine of angle B equals the sine of angle Q, then angle B must be equal to angle Q. We are given that sine B equals sine Q. From our definition of the sine ratio, this means the opposite side over the hypotenuse for angle B is equal to the opposite side over the hypotenuse for angle Q. So, AC over AB equals PR over PQ. We can rearrange this proportion to show that AC over PR equals AB over PQ, and let's call this common ratio 'k'. This means that AC equals k times PR, and AB equals k times PQ. Now, let's use the Pythagorean theorem to find the remaining sides, BC and QR. For triangle ABC, BC squared equals AB squared minus AC squared. Substituting our expressions in terms of 'k', we get BC equals k times the square root of PQ squared minus PR squared. Similarly, for triangle PQR, QR equals the square root of PQ squared minus PR squared. If we take the ratio of BC to QR, we find that it also equals 'k'. So, we have established that the ratio of corresponding sides AC to PR, AB to PQ, and BC to QR are all equal to 'k'. This means that triangle ABC is similar to triangle PQR. And as you know, in similar triangles, corresponding angles are equal. Therefore, angle B must be equal to angle Q. This demonstrates how the equality of sine ratios directly implies the equality of the angles themselves in a right-angled triangle context.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Let's work through an example to prove angle equality from sine equality. We'll start with two right-angled triangles, triangle ABC and triangle PQR.",
+                  "duration_seconds": 11.68,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "**Example 2:** If B and Q are acute angles such that  $\\sin B = \\sin Q$ , then prove that  $\\angle B = \\angle Q$ .",
+                    "has_inline_latex": true
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Our goal is to prove that if the sine of angle B equals the sine of angle Q, then angle B must be equal to angle Q. We are given that sine B equals sine Q.",
+                  "duration_seconds": 18.28,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formula": "$$\\sin B = \\sin Q$$"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "From our definition of the sine ratio, this means the opposite side over the hypotenuse for angle B is equal to the opposite side over the hypotenuse for angle Q. So, AC over AB equals PR over PQ.",
+                  "duration_seconds": 19.29,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formula": "$$\\Rightarrow \\frac{AC}{AB} = \\frac{PR}{PQ}$$"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 4,
+                  "text": "We can rearrange this proportion to show that AC over PR equals AB over PQ, and let's call this common ratio 'k'. This means that AC equals k times PR, and AB equals k times PQ.",
+                  "duration_seconds": 18.28,
+                  "gesture_hint": "emphasizing",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formula": "$$\\Rightarrow \\frac{AC}{PR} = \\frac{AB}{PQ} = k \\quad \\text{--- (1)}$$"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 5,
+                  "text": "Now, let's use the Pythagorean theorem to find the remaining sides, BC and QR. For triangle ABC, BC squared equals AB squared minus AC squared. Substituting our expressions in terms of 'k', we get BC equals k times the square root of PQ squared minus PR squared. Similarly, for triangle PQR, QR equals the square root of PQ squared minus PR squared. If we take the ratio of BC to QR, we find that it also equals 'k'. So, we have established that the ratio of corresponding sides AC to PR, AB to PQ, and BC to QR are all equal to 'k'. This means that triangle ABC is similar to triangle PQR. And as you know, in similar triangles, corresponding angles are equal. Therefore, angle B must be equal to angle Q. This demonstrates how the equality of sine ratios directly implies the equality of the angles themselves in a right-angled triangle context.",
+                  "duration_seconds": 78.18,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formulas": [
+                      "$$BC = \\sqrt{AB^2 - AC^2} \\text{ [By Pythagoras theorem]}$$",
+                      "$$\\Rightarrow \\sqrt{k^2 PQ^2 - k^2 PR^2}$$",
+                      "$$\\Rightarrow k \\sqrt{PQ^2 - PR^2} \\text{ [from (1)]}$$",
+                      "$$QR = \\sqrt{PQ^2 - PR^2}$$",
+                      "$$\\Rightarrow \\frac{BC}{QR} = \\frac{k \\sqrt{PQ^2 - PR^2}}{\\sqrt{PQ^2 - PR^2}} = k \\quad \\text{--- (2)}$$",
+                      "From (1) and (2),",
+                      "$$\\frac{AC}{PR} = \\frac{AB}{PQ} = \\frac{BC}{QR} = k$$",
+                      "$$\\triangle ABC \\sim \\triangle PQR$$",
+                      "$$\\therefore \\angle B = \\angle Q$$"
+                    ],
+                    "formula": "$$BC = \\sqrt{AB^2 - AC^2} \\text{ [By Pythagoras theorem]}$$"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                }
+              ],
+              "total_duration_seconds": 145.71
+            },
+            "display_directives": [
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "diagram",
+                "description": "Introduction of two right-angled triangles, ABC and PQR.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Triangle ABC",
+                    "Triangle PQR"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "formula",
+                "description": "Stating the goal: if sin B = sin Q, then angle B = angle Q.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "sin B = sin Q",
+                    "\u2220B = \u2220Q"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "formula",
+                "description": "Applying sine ratio definition to the triangles.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Opposite/Hypotenuse",
+                    "AC/AB = PR/PQ"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": 4,
+                "visual_beat_type": "formula",
+                "description": "Rearranging the proportion and introducing constant 'k'.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "AC/PR = AB/PQ = k",
+                    "AC = k PR",
+                    "AB = k PQ"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_5",
+                "segment_id": 5,
+                "visual_beat_type": "process",
+                "description": "Using Pythagorean theorem to find remaining sides and proving similarity.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Pythagorean Theorem",
+                    "BC = k QR",
+                    "Similar Triangles",
+                    "\u2220B = \u2220Q"
+                  ],
+                  "max_words": 4
+                }
+              }
+            ],
+            "section_id": 6,
+            "render_spec": {
+              "manim_scene_spec": {
+                "manim_code": "# Segment 1 (0-11.7s) - Introducing triangles\n# Create first triangle ABC\ntriangle_abc = Polygon(\n    np.array([-3, -2, 0]), \n    np.array([-3, 1, 0]),\n    np.array([-1, -2, 0]),\n    color=BLUE\n)\nabc_labels = VGroup(\n    Text(\"A\").next_to(triangle_abc.get_vertices()[0], LEFT),\n    Text(\"B\").next_to(triangle_abc.get_vertices()[1], LEFT),\n    Text(\"C\").next_to(triangle_abc.get_vertices()[2], RIGHT)\n)\n\n# Create second triangle PQR\ntriangle_pqr = Polygon(\n    np.array([1, -2, 0]),\n    np.array([1, 1, 0]), \n    np.array([3, -2, 0]),\n    color=RED\n)\npqr_labels = VGroup(\n    Text(\"P\").next_to(triangle_pqr.get_vertices()[0], LEFT),\n    Text(\"Q\").next_to(triangle_pqr.get_vertices()[1], LEFT),\n    Text(\"R\").next_to(triangle_pqr.get_vertices()[2], RIGHT)\n)\n\nself.play(Create(triangle_abc), Create(triangle_pqr), run_time=5)\nself.play(Write(abc_labels), Write(pqr_labels), run_time=4)\nself.wait(2.7)\n\n# Segment 2 (11.7-30.0s) - Stating the goal\ngoal_text = MathTex(\n    r\"\\text{If }\\sin B = \\sin Q\",\n    r\"\\text{ then }B = Q\"\n).to_edge(UP)\n\nself.play(Write(goal_text[0]), run_time=3)\nself.wait(2)\nself.play(Write(goal_text[1]), run_time=3)\nself.wait(10.3)\n\n# Segment 3 (30.0-49.2s) - Applying sine ratio\nsine_ratio = MathTex(\n    r\"\\sin B = \\frac{AC}{AB} = \\frac{PR}{PQ} = \\sin Q\"\n).next_to(goal_text, DOWN)\n\nself.play(Write(sine_ratio), run_time=4)\nself.wait(15.3)\n\n# Segment 4 (49.2-67.5s) - Introducing k ratio\nk_ratio = VGroup(\n    MathTex(r\"\\frac{AC}{PR} = \\frac{AB}{PQ} = k\"),\n    MathTex(r\"AC = k \\cdot PR\"),\n    MathTex(r\"AB = k \\cdot PQ\")\n).arrange(DOWN).next_to(sine_ratio, DOWN)\n\nself.play(Write(k_ratio[0]), run_time=3)\nself.wait(2)\nself.play(Write(k_ratio[1]), Write(k_ratio[2]), run_time=3)\nself.wait(10.3)\n\n# Segment 5 (67.5-145.7s) - Pythagorean theorem and similarity\npyth_steps = VGroup(\n    MathTex(r\"BC^2 = AB^2 - AC^2\"),\n    MathTex(r\"BC = k\\sqrt{PQ^2 - PR^2}\"),\n    MathTex(r\"QR = \\sqrt{PQ^2 - PR^2}\"),\n    MathTex(r\"\\frac{BC}{QR} = k\")\n).arrange(DOWN).next_to(k_ratio, DOWN)\n\nself.play(Write(pyth_steps[0]), run_time=5)\nself.wait(10)\nself.play(Write(pyth_steps[1]), run_time=5)\nself.wait(10)\nself.play(Write(pyth_steps[2]), run_time=5)\nself.wait(10)\nself.play(Write(pyth_steps[3]), run_time=5)\n\nconclusion = Text(\n    \"Therefore, triangles ABC and PQR are similar\\nand angle B = angle Q\",\n    font_size=36\n).next_to(pyth_steps, DOWN)\n\nself.play(Write(conclusion), run_time=5)\nself.wait(23.2)",
+                "code_type": "construct_body"
+              }
+            },
+            "explanation_plan": {
+              "visual_beats": [
+                {
+                  "beat_id": "beat_1",
+                  "segment_id": 1,
+                  "visual_beat_type": "diagram",
+                  "description": "Introduction of two right-angled triangles, ABC and PQR.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Triangle ABC",
+                      "Triangle PQR"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_2",
+                  "segment_id": 2,
+                  "visual_beat_type": "formula",
+                  "description": "Stating the goal: if sin B = sin Q, then angle B = angle Q.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "sin B = sin Q",
+                      "\u2220B = \u2220Q"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_3",
+                  "segment_id": 3,
+                  "visual_beat_type": "formula",
+                  "description": "Applying sine ratio definition to the triangles.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Opposite/Hypotenuse",
+                      "AC/AB = PR/PQ"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_4",
+                  "segment_id": 4,
+                  "visual_beat_type": "formula",
+                  "description": "Rearranging the proportion and introducing constant 'k'.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "AC/PR = AB/PQ = k",
+                      "AC = k PR",
+                      "AB = k PQ"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_5",
+                  "segment_id": 5,
+                  "visual_beat_type": "process",
+                  "description": "Using Pythagorean theorem to find remaining sides and proving similarity.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Pythagorean Theorem",
+                      "BC = k QR",
+                      "Similar Triangles",
+                      "\u2220B = \u2220Q"
+                    ],
+                    "max_words": 4
+                  }
+                }
+              ],
+              "v15_manim_code": "# Segment 1 (0-11.7s) - Introducing triangles\n# Create first triangle ABC\ntriangle_abc = Polygon(\n    np.array([-3, -2, 0]), \n    np.array([-3, 1, 0]),\n    np.array([-1, -2, 0]),\n    color=BLUE\n)\nabc_labels = VGroup(\n    Text(\"A\").next_to(triangle_abc.get_vertices()[0], LEFT),\n    Text(\"B\").next_to(triangle_abc.get_vertices()[1], LEFT),\n    Text(\"C\").next_to(triangle_abc.get_vertices()[2], RIGHT)\n)\n\n# Create second triangle PQR\ntriangle_pqr = Polygon(\n    np.array([1, -2, 0]),\n    np.array([1, 1, 0]), \n    np.array([3, -2, 0]),\n    color=RED\n)\npqr_labels = VGroup(\n    Text(\"P\").next_to(triangle_pqr.get_vertices()[0], LEFT),\n    Text(\"Q\").next_to(triangle_pqr.get_vertices()[1], LEFT),\n    Text(\"R\").next_to(triangle_pqr.get_vertices()[2], RIGHT)\n)\n\nself.play(Create(triangle_abc), Create(triangle_pqr), run_time=5)\nself.play(Write(abc_labels), Write(pqr_labels), run_time=4)\nself.wait(2.7)\n\n# Segment 2 (11.7-30.0s) - Stating the goal\ngoal_text = MathTex(\n    r\"\\text{If }\\sin B = \\sin Q\",\n    r\"\\text{ then }B = Q\"\n).to_edge(UP)\n\nself.play(Write(goal_text[0]), run_time=3)\nself.wait(2)\nself.play(Write(goal_text[1]), run_time=3)\nself.wait(10.3)\n\n# Segment 3 (30.0-49.2s) - Applying sine ratio\nsine_ratio = MathTex(\n    r\"\\sin B = \\frac{AC}{AB} = \\frac{PR}{PQ} = \\sin Q\"\n).next_to(goal_text, DOWN)\n\nself.play(Write(sine_ratio), run_time=4)\nself.wait(15.3)\n\n# Segment 4 (49.2-67.5s) - Introducing k ratio\nk_ratio = VGroup(\n    MathTex(r\"\\frac{AC}{PR} = \\frac{AB}{PQ} = k\"),\n    MathTex(r\"AC = k \\cdot PR\"),\n    MathTex(r\"AB = k \\cdot PQ\")\n).arrange(DOWN).next_to(sine_ratio, DOWN)\n\nself.play(Write(k_ratio[0]), run_time=3)\nself.wait(2)\nself.play(Write(k_ratio[1]), Write(k_ratio[2]), run_time=3)\nself.wait(10.3)\n\n# Segment 5 (67.5-145.7s) - Pythagorean theorem and similarity\npyth_steps = VGroup(\n    MathTex(r\"BC^2 = AB^2 - AC^2\"),\n    MathTex(r\"BC = k\\sqrt{PQ^2 - PR^2}\"),\n    MathTex(r\"QR = \\sqrt{PQ^2 - PR^2}\"),\n    MathTex(r\"\\frac{BC}{QR} = k\")\n).arrange(DOWN).next_to(k_ratio, DOWN)\n\nself.play(Write(pyth_steps[0]), run_time=5)\nself.wait(10)\nself.play(Write(pyth_steps[1]), run_time=5)\nself.wait(10)\nself.play(Write(pyth_steps[2]), run_time=5)\nself.wait(10)\nself.play(Write(pyth_steps[3]), run_time=5)\n\nconclusion = Text(\n    \"Therefore, triangles ABC and PQR are similar\\nand angle B = angle Q\",\n    font_size=36\n).next_to(pyth_steps, DOWN)\n\nself.play(Write(conclusion), run_time=5)\nself.wait(23.2)"
+            },
+            "video_path": "videos/topic_6.mp4"
+          },
+          {
+            "section_type": "example",
+            "title": "Evaluating Trigonometric Expressions",
+            "renderer": "manim",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Let's work through an example to evaluate trigonometric expressions. We'll focus on expressions involving squares of trigonometric ratios. Our goal is to simplify these expressions using the Pythagorean identity. Consider the expression: cosine squared theta plus sine squared theta. This is a fundamental identity in trigonometry. As you can see, the Pythagorean identity states that cosine squared theta plus sine squared theta is always equal to one. This identity is incredibly useful for simplifying complex trigonometric expressions. Let's look at another example. If we have sine squared theta plus cosine squared theta, it still equals one. The order of addition doesn't change the result. This identity is a direct consequence of the Pythagorean theorem applied to a right-angled triangle. Understanding and applying this identity will be key to solving many problems in trigonometry.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Let's work through an example to evaluate trigonometric expressions. We'll focus on expressions involving squares of trigonometric ratios.",
+                  "duration_seconds": 9.14,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "Evaluate trigonometric expressions"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Focus on squares of ratios"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Use Pythagorean identity"
+                      }
+                    ]
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Our goal is to simplify these expressions using the Pythagorean identity. Consider the expression: cosine squared theta plus sine squared theta.",
+                  "duration_seconds": 10.66,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formula": "$$\\cos^2 \\theta + \\sin^2 \\theta$$"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "This is a fundamental identity in trigonometry. As you can see, the Pythagorean identity states that cosine squared theta plus sine squared theta is always equal to one.",
+                  "duration_seconds": 14.22,
+                  "gesture_hint": "emphasizing",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formula": "$$\\cos^2 \\theta + \\sin^2 \\theta = 1$$"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 4,
+                  "text": "This identity is incredibly useful for simplifying complex trigonometric expressions. Let's look at another example. If we have sine squared theta plus cosine squared theta, it still equals one.",
+                  "duration_seconds": 14.72,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formula": "$$\\sin^2 \\theta + \\cos^2 \\theta = 1$$"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 5,
+                  "text": "The order of addition doesn't change the result. This identity is a direct consequence of the Pythagorean theorem applied to a right-angled triangle. Understanding and applying this identity will be key to solving many problems in trigonometry.",
+                  "duration_seconds": 18.78,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "![Diagram of a right-angled triangle ABC, right-angled at B. Side AB = 3, BC = 4, and AC = 5.](df9ce5affceb4ff1e9e8fd8e3ff0c1bd_img.jpg)",
+                    "has_inline_latex": false
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                }
+              ],
+              "total_duration_seconds": 67.52
+            },
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Introduction to evaluating trigonometric expressions with squares.",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "formula",
+                "description": "Introduce the Pythagorean identity: cos^2(theta) + sin^2(theta).",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Pythagorean",
+                    "Identity"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "formula",
+                "description": "Display the complete Pythagorean identity: cos^2(theta) + sin^2(theta) = 1.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "cos\u00b2\u03b8",
+                    "+",
+                    "sin\u00b2\u03b8",
+                    "= 1"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": 4,
+                "visual_beat_type": "formula",
+                "description": "Show another example of the Pythagorean identity with terms swapped.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "sin\u00b2\u03b8",
+                    "+",
+                    "cos\u00b2\u03b8",
+                    "= 1"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_5",
+                "segment_id": 5,
+                "visual_beat_type": "diagram",
+                "description": "Explain the origin of the identity from the Pythagorean theorem with a right triangle.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Pythagorean",
+                    "Theorem",
+                    "Right Triangle"
+                  ],
+                  "max_words": 4
+                }
+              }
+            ],
+            "section_id": 7,
+            "render_spec": {
+              "manim_scene_spec": {
+                "manim_code": "# Segment 1 (0-9.1s) - Introduction\ntitle = Text(\"Evaluating Trigonometric Expressions\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Working with Squared Terms\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=3)\nself.wait(3.1)\n\n# Segment 2 (9.1-19.8s) - Introducing Pythagorean identity\nexpression = MathTex(r\"\\cos^2(\\theta) + \\sin^2(\\theta)\").scale(1.5)\nexpression.move_to(ORIGIN)\n\nself.play(\n    FadeOut(subtitle),\n    ReplacementTransform(title, expression),\n    run_time=3\n)\nself.wait(7.7)\n\n# Segment 3 (19.8-34.0s) - Complete identity\ncomplete_identity = MathTex(\n    r\"\\cos^2(\\theta) + \\sin^2(\\theta) = 1\"\n).scale(1.5)\ncomplete_identity.move_to(ORIGIN)\n\nself.play(\n    ReplacementTransform(expression, complete_identity),\n    run_time=2\n)\nself.play(\n    Indicate(complete_identity.get_part_by_tex(\"1\"), color=YELLOW),\n    run_time=2\n)\nself.wait(10.2)\n\n# Segment 4 (34.0-48.7s) - Swapped terms example\nswapped_identity = MathTex(\n    r\"\\sin^2(\\theta) + \\cos^2(\\theta) = 1\"\n).scale(1.5)\nswapped_identity.move_to(ORIGIN)\n\nself.play(\n    ReplacementTransform(complete_identity, swapped_identity),\n    run_time=2\n)\nself.play(\n    Indicate(swapped_identity, color=BLUE),\n    run_time=2\n)\nself.wait(10.7)\n\n# Segment 5 (48.7-67.5s) - Right triangle explanation\n# Create right triangle\ntriangle = Polygon(\n    ORIGIN, RIGHT * 3, UP * 2,\n    color=WHITE,\n    fill_opacity=0.2\n)\ntriangle.move_to(ORIGIN)\n\n# Labels for triangle\nhyp_label = MathTex(\"1\").next_to(triangle.get_center(), UP + RIGHT, buff=0.3)\nsin_label = MathTex(r\"\\sin(\\theta)\").next_to(triangle.get_right(), RIGHT)\ncos_label = MathTex(r\"\\cos(\\theta)\").next_to(triangle.get_bottom(), DOWN)\nright_angle = Square(side_length=0.3).next_to(triangle.get_vertices()[0], UP + RIGHT, buff=0)\n\nself.play(\n    FadeOut(swapped_identity),\n    Create(triangle),\n    run_time=3\n)\nself.play(\n    Create(right_angle),\n    Write(hyp_label),\n    Write(sin_label),\n    Write(cos_label),\n    run_time=3\n)\n\n# Final identity below triangle\nfinal_identity = MathTex(\n    r\"\\cos^2(\\theta) + \\sin^2(\\theta) = 1\"\n).scale(1.2)\nfinal_identity.next_to(triangle, DOWN, buff=1)\n\nself.play(\n    Write(final_identity),\n    run_time=2\n)\nself.wait(10.8)",
+                "code_type": "construct_body"
+              }
+            },
+            "explanation_plan": {
+              "visual_beats": [
+                {
+                  "beat_id": "beat_1",
+                  "segment_id": 1,
+                  "visual_beat_type": "text_only",
+                  "description": "Introduction to evaluating trigonometric expressions with squares.",
+                  "symbolic_overlay": {
+                    "enabled": false,
+                    "content": [],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_2",
+                  "segment_id": 2,
+                  "visual_beat_type": "formula",
+                  "description": "Introduce the Pythagorean identity: cos^2(theta) + sin^2(theta).",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Pythagorean",
+                      "Identity"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_3",
+                  "segment_id": 3,
+                  "visual_beat_type": "formula",
+                  "description": "Display the complete Pythagorean identity: cos^2(theta) + sin^2(theta) = 1.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "cos\u00b2\u03b8",
+                      "+",
+                      "sin\u00b2\u03b8",
+                      "= 1"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_4",
+                  "segment_id": 4,
+                  "visual_beat_type": "formula",
+                  "description": "Show another example of the Pythagorean identity with terms swapped.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "sin\u00b2\u03b8",
+                      "+",
+                      "cos\u00b2\u03b8",
+                      "= 1"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_5",
+                  "segment_id": 5,
+                  "visual_beat_type": "diagram",
+                  "description": "Explain the origin of the identity from the Pythagorean theorem with a right triangle.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Pythagorean",
+                      "Theorem",
+                      "Right Triangle"
+                    ],
+                    "max_words": 4
+                  }
+                }
+              ],
+              "v15_manim_code": "# Segment 1 (0-9.1s) - Introduction\ntitle = Text(\"Evaluating Trigonometric Expressions\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Working with Squared Terms\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=3)\nself.wait(3.1)\n\n# Segment 2 (9.1-19.8s) - Introducing Pythagorean identity\nexpression = MathTex(r\"\\cos^2(\\theta) + \\sin^2(\\theta)\").scale(1.5)\nexpression.move_to(ORIGIN)\n\nself.play(\n    FadeOut(subtitle),\n    ReplacementTransform(title, expression),\n    run_time=3\n)\nself.wait(7.7)\n\n# Segment 3 (19.8-34.0s) - Complete identity\ncomplete_identity = MathTex(\n    r\"\\cos^2(\\theta) + \\sin^2(\\theta) = 1\"\n).scale(1.5)\ncomplete_identity.move_to(ORIGIN)\n\nself.play(\n    ReplacementTransform(expression, complete_identity),\n    run_time=2\n)\nself.play(\n    Indicate(complete_identity.get_part_by_tex(\"1\"), color=YELLOW),\n    run_time=2\n)\nself.wait(10.2)\n\n# Segment 4 (34.0-48.7s) - Swapped terms example\nswapped_identity = MathTex(\n    r\"\\sin^2(\\theta) + \\cos^2(\\theta) = 1\"\n).scale(1.5)\nswapped_identity.move_to(ORIGIN)\n\nself.play(\n    ReplacementTransform(complete_identity, swapped_identity),\n    run_time=2\n)\nself.play(\n    Indicate(swapped_identity, color=BLUE),\n    run_time=2\n)\nself.wait(10.7)\n\n# Segment 5 (48.7-67.5s) - Right triangle explanation\n# Create right triangle\ntriangle = Polygon(\n    ORIGIN, RIGHT * 3, UP * 2,\n    color=WHITE,\n    fill_opacity=0.2\n)\ntriangle.move_to(ORIGIN)\n\n# Labels for triangle\nhyp_label = MathTex(\"1\").next_to(triangle.get_center(), UP + RIGHT, buff=0.3)\nsin_label = MathTex(r\"\\sin(\\theta)\").next_to(triangle.get_right(), RIGHT)\ncos_label = MathTex(r\"\\cos(\\theta)\").next_to(triangle.get_bottom(), DOWN)\nright_angle = Square(side_length=0.3).next_to(triangle.get_vertices()[0], UP + RIGHT, buff=0)\n\nself.play(\n    FadeOut(swapped_identity),\n    Create(triangle),\n    run_time=3\n)\nself.play(\n    Create(right_angle),\n    Write(hyp_label),\n    Write(sin_label),\n    Write(cos_label),\n    run_time=3\n)\n\n# Final identity below triangle\nfinal_identity = MathTex(\n    r\"\\cos^2(\\theta) + \\sin^2(\\theta) = 1\"\n).scale(1.2)\nfinal_identity.next_to(triangle, DOWN, buff=1)\n\nself.play(\n    Write(final_identity),\n    run_time=2\n)\nself.wait(10.8)"
+            },
+            "video_path": "videos/topic_7.mp4"
+          },
+          {
+            "section_type": "example",
+            "title": "Verifying Trigonometric Identities",
+            "renderer": "manim",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Now, let's put our knowledge of trigonometric ratios to use by verifying some identities. Verifying an identity means showing that one side of an equation can be transformed into the other side using known trigonometric relationships and algebraic rules. We'll start with a common identity: sine squared plus cosine squared equals one. We can demonstrate this by considering a right-angled triangle. If we let the opposite side be 'y', the adjacent side be 'x', and the hypotenuse be 'r', then sine of the angle is y over r, and cosine is x over r. Substituting these into our identity, we get y over r squared plus x over r squared. This simplifies to y squared over r squared plus x squared over r squared, which combines to y squared plus x squared all over r squared. By the Pythagorean theorem, we know that x squared plus y squared equals r squared. So, we can replace the numerator with r squared, giving us r squared over r squared, which equals one. This confirms our identity. This process of substitution and algebraic manipulation is key to verifying trigonometric identities.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Now, let's put our knowledge of trigonometric ratios to use by verifying some identities.",
+                  "duration_seconds": 7.11,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "Verifying Trigonometric Identities"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Using known ratios and algebra"
+                      }
+                    ]
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Verifying an identity means showing that one side of an equation can be transformed into the other side using known trigonometric relationships and algebraic rules.",
+                  "duration_seconds": 12.69,
+                  "gesture_hint": "emphasizing",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "Transform one side of equation"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Use trigonometric relationships"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Apply algebraic rules"
+                      }
+                    ]
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "We'll start with a common identity: sine squared plus cosine squared equals one. We can demonstrate this by considering a right-angled triangle.",
+                  "duration_seconds": 11.17,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formula": "$\\sin^2 \\theta + \\cos^2 \\theta = 1$",
+                    "labels": [
+                      "Common Identity",
+                      "Right-angled Triangle"
+                    ]
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 4,
+                  "text": "If we let the opposite side be 'y', the adjacent side be 'x', and the hypotenuse be 'r', then sine of the angle is y over r, and cosine is x over r.",
+                  "duration_seconds": 16.75,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "bullet_points": [
+                      {
+                        "level": 1,
+                        "text": "Opposite = y"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Adjacent = x"
+                      },
+                      {
+                        "level": 1,
+                        "text": "Hypotenuse = r"
+                      },
+                      {
+                        "level": 1,
+                        "text": "$\\sin \\theta = \\frac{y}{r}$"
+                      },
+                      {
+                        "level": 1,
+                        "text": "$\\cos \\theta = \\frac{x}{r}$"
+                      }
+                    ],
+                    "verbatim_text": "![Diagram showing two right-angled triangles, labeled 1 and 2, illustrating the sides (Opposite, Adjacent, Hypotenuse) relative to an angle A.](8c378a184b5ae4d1605cb74d7b7a7e3f_img.jpg)",
+                    "has_inline_latex": false
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 5,
+                  "text": "Substituting these into our identity, we get y over r squared plus x over r squared. This simplifies to y squared over r squared plus x squared over r squared, which combines to y squared plus x squared all over r squared. By the Pythagorean theorem, we know that x squared plus y squared equals r squared. So, we can replace the numerator with r squared, giving us r squared over r squared, which equals one. This confirms our identity. This process of substitution and algebraic manipulation is key to verifying trigonometric identities.",
+                  "duration_seconds": 47.22,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "ordered_list",
+                    "ordered_list": [
+                      "Substitute: $(\\frac{y}{r})^2 + (\\frac{x}{r})^2$",
+                      "Simplify: $\\frac{y^2}{r^2} + \\frac{x^2}{r^2} = \\frac{y^2 + x^2}{r^2}$",
+                      "Pythagorean Theorem: $x^2 + y^2 = r^2$",
+                      "Replace: $\\frac{r^2}{r^2} = 1$",
+                      "Identity confirmed: $\\sin^2 \\theta + \\cos^2 \\theta = 1$"
+                    ]
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                }
+              ],
+              "total_duration_seconds": 94.94
+            },
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Introduction to verifying identities",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "text_only",
+                "description": "Definition of verifying an identity",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "formula",
+                "description": "Introduce the identity sin^2 + cos^2 = 1 and right triangle",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "sin^2\u03b8 + cos^2\u03b8 = 1",
+                    "Right Triangle"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": 4,
+                "visual_beat_type": "diagram",
+                "description": "Labeling sides of a right triangle for sine and cosine ratios",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Opposite",
+                    "Adjacent",
+                    "Hypotenuse"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_5",
+                "segment_id": 5,
+                "visual_beat_type": "process",
+                "description": "Step-by-step verification of the identity using substitution and Pythagorean theorem",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Substitution",
+                    "Pythagorean Theorem",
+                    "Simplification"
+                  ],
+                  "max_words": 4
+                }
+              }
+            ],
+            "section_id": 8,
+            "render_spec": {
+              "manim_scene_spec": {
+                "manim_code": "# Segment 1 (0-7.1s) - Intro to verifying identities\ntitle = Text(\"Verifying Trigonometric Identities\", font_size=40).to_edge(UP)\nsubtitle = Text(\"A systematic approach\", font_size=32).next_to(title, DOWN)\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(2.1)\n\n# Segment 2 (7.1-19.8s) - Definition\ndefinition = Text(\"Verifying an identity means showing that\\none side equals the other through\\ntrigonometric relationships and algebra\", \n                 font_size=32).shift(DOWN)\nself.play(FadeIn(definition), run_time=3)\nself.wait(9.7)\n\n# Segment 3 (19.8-31.0s) - Introduce identity and triangle\nself.play(FadeOut(subtitle, definition), run_time=1)\n\nidentity = MathTex(r\"\\sin^2 \\theta + \\cos^2 \\theta = 1\").shift(UP)\ntriangle = Polygon(\n    np.array([-2, -2, 0]),\n    np.array([1, -2, 0]), \n    np.array([-2, 1, 0]),\n    color=WHITE\n)\nself.play(Write(identity), Create(triangle), run_time=3)\nself.wait(7.2)\n\n# Segment 4 (31.0-47.7s) - Label triangle\nx_label = MathTex(\"x\").next_to(triangle, DOWN)\ny_label = MathTex(\"y\").next_to(triangle, LEFT)\nr_label = MathTex(\"r\").next_to(triangle.get_center(), UP+RIGHT)\ntheta = Arc(radius=0.5, start_angle=0, angle=PI/3, \n           arc_center=triangle.get_vertices()[0])\ntheta_label = MathTex(r\"\\theta\").next_to(theta, RIGHT)\n\nlabels = VGroup(x_label, y_label, r_label, theta, theta_label)\nratios = MathTex(\n    r\"\\sin \\theta = \\frac{y}{r}\",\n    r\"\\cos \\theta = \\frac{x}{r}\"\n).arrange(DOWN).next_to(triangle, RIGHT, buff=1)\n\nself.play(\n    Create(theta),\n    Write(theta_label),\n    Write(x_label),\n    Write(y_label), \n    Write(r_label),\n    run_time=3\n)\nself.play(Write(ratios), run_time=3)\nself.wait(10.8)\n\n# Segment 5 (47.7-94.9s) - Verification steps\nsteps = VGroup(\n    MathTex(r\"\\sin^2 \\theta + \\cos^2 \\theta = \\left(\\frac{y}{r}\\right)^2 + \\left(\\frac{x}{r}\\right)^2\"),\n    MathTex(r\"= \\frac{y^2}{r^2} + \\frac{x^2}{r^2}\"),\n    MathTex(r\"= \\frac{y^2 + x^2}{r^2}\"),\n    MathTex(r\"= \\frac{r^2}{r^2} = 1\")\n).arrange(DOWN, buff=0.5).next_to(identity, DOWN, buff=1)\n\n# Show steps one at a time with appropriate pauses\nself.play(FadeOut(ratios), run_time=2)\nself.play(Write(steps[0]), run_time=3)\nself.wait(10)\nself.play(Write(steps[1]), run_time=3)\nself.wait(10)\nself.play(Write(steps[2]), run_time=3)\nself.wait(8)\nself.play(Write(steps[3]), run_time=3)\nself.wait(5.2)",
+                "code_type": "construct_body"
+              }
+            },
+            "explanation_plan": {
+              "visual_beats": [
+                {
+                  "beat_id": "beat_1",
+                  "segment_id": 1,
+                  "visual_beat_type": "text_only",
+                  "description": "Introduction to verifying identities",
+                  "symbolic_overlay": {
+                    "enabled": false,
+                    "content": [],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_2",
+                  "segment_id": 2,
+                  "visual_beat_type": "text_only",
+                  "description": "Definition of verifying an identity",
+                  "symbolic_overlay": {
+                    "enabled": false,
+                    "content": [],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_3",
+                  "segment_id": 3,
+                  "visual_beat_type": "formula",
+                  "description": "Introduce the identity sin^2 + cos^2 = 1 and right triangle",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "sin^2\u03b8 + cos^2\u03b8 = 1",
+                      "Right Triangle"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_4",
+                  "segment_id": 4,
+                  "visual_beat_type": "diagram",
+                  "description": "Labeling sides of a right triangle for sine and cosine ratios",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Opposite",
+                      "Adjacent",
+                      "Hypotenuse"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_5",
+                  "segment_id": 5,
+                  "visual_beat_type": "process",
+                  "description": "Step-by-step verification of the identity using substitution and Pythagorean theorem",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Substitution",
+                      "Pythagorean Theorem",
+                      "Simplification"
+                    ],
+                    "max_words": 4
+                  }
+                }
+              ],
+              "v15_manim_code": "# Segment 1 (0-7.1s) - Intro to verifying identities\ntitle = Text(\"Verifying Trigonometric Identities\", font_size=40).to_edge(UP)\nsubtitle = Text(\"A systematic approach\", font_size=32).next_to(title, DOWN)\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(2.1)\n\n# Segment 2 (7.1-19.8s) - Definition\ndefinition = Text(\"Verifying an identity means showing that\\none side equals the other through\\ntrigonometric relationships and algebra\", \n                 font_size=32).shift(DOWN)\nself.play(FadeIn(definition), run_time=3)\nself.wait(9.7)\n\n# Segment 3 (19.8-31.0s) - Introduce identity and triangle\nself.play(FadeOut(subtitle, definition), run_time=1)\n\nidentity = MathTex(r\"\\sin^2 \\theta + \\cos^2 \\theta = 1\").shift(UP)\ntriangle = Polygon(\n    np.array([-2, -2, 0]),\n    np.array([1, -2, 0]), \n    np.array([-2, 1, 0]),\n    color=WHITE\n)\nself.play(Write(identity), Create(triangle), run_time=3)\nself.wait(7.2)\n\n# Segment 4 (31.0-47.7s) - Label triangle\nx_label = MathTex(\"x\").next_to(triangle, DOWN)\ny_label = MathTex(\"y\").next_to(triangle, LEFT)\nr_label = MathTex(\"r\").next_to(triangle.get_center(), UP+RIGHT)\ntheta = Arc(radius=0.5, start_angle=0, angle=PI/3, \n           arc_center=triangle.get_vertices()[0])\ntheta_label = MathTex(r\"\\theta\").next_to(theta, RIGHT)\n\nlabels = VGroup(x_label, y_label, r_label, theta, theta_label)\nratios = MathTex(\n    r\"\\sin \\theta = \\frac{y}{r}\",\n    r\"\\cos \\theta = \\frac{x}{r}\"\n).arrange(DOWN).next_to(triangle, RIGHT, buff=1)\n\nself.play(\n    Create(theta),\n    Write(theta_label),\n    Write(x_label),\n    Write(y_label), \n    Write(r_label),\n    run_time=3\n)\nself.play(Write(ratios), run_time=3)\nself.wait(10.8)\n\n# Segment 5 (47.7-94.9s) - Verification steps\nsteps = VGroup(\n    MathTex(r\"\\sin^2 \\theta + \\cos^2 \\theta = \\left(\\frac{y}{r}\\right)^2 + \\left(\\frac{x}{r}\\right)^2\"),\n    MathTex(r\"= \\frac{y^2}{r^2} + \\frac{x^2}{r^2}\"),\n    MathTex(r\"= \\frac{y^2 + x^2}{r^2}\"),\n    MathTex(r\"= \\frac{r^2}{r^2} = 1\")\n).arrange(DOWN, buff=0.5).next_to(identity, DOWN, buff=1)\n\n# Show steps one at a time with appropriate pauses\nself.play(FadeOut(ratios), run_time=2)\nself.play(Write(steps[0]), run_time=3)\nself.wait(10)\nself.play(Write(steps[1]), run_time=3)\nself.wait(10)\nself.play(Write(steps[2]), run_time=3)\nself.wait(8)\nself.play(Write(steps[3]), run_time=3)\nself.wait(5.2)"
+            },
+            "video_path": "videos/topic_8.mp4"
+          },
+          {
+            "section_type": "example",
+            "title": "Finding Ratios from Side Relationships",
+            "renderer": "manim",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "In this example, we'll determine trigonometric ratios when side lengths are given in terms of variables. We'll also see how to solve for unknown values using trigonometric relationships and the Pythagorean theorem. Let's consider a right-angled triangle where the tangent of angle A is given as four-thirds. Our goal is to find all the other trigonometric ratios for angle A. First, we'll use the given tangent ratio to assign proportional lengths to the opposite and adjacent sides. So, if tangent A is opposite over adjacent, we can say the opposite side, BC, is four units, and the adjacent side, AB, is three units. Now, to find the hypotenuse, AC, we apply the Pythagorean theorem. AC squared equals AB squared plus BC squared. Plugging in our values, AC squared equals three squared plus four squared, which is nine plus sixteen, giving us twenty-five. Taking the square root, we find that the hypotenuse AC is five units. With all three side lengths known, we can now easily determine the remaining trigonometric ratios. Sine A is opposite over hypotenuse, so four-fifths. Cosine A is adjacent over hypotenuse, which is three-fifths. Cosecant A, the reciprocal of sine, is five-fourths. Secant A, the reciprocal of cosine, is five-thirds. And finally, cotangent A, the reciprocal of tangent, is three-fourths. This example demonstrates how to systematically find all trigonometric ratios when one ratio is provided, by first determining the side lengths using the Pythagorean theorem.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "In this example, we'll determine trigonometric ratios when side lengths are given in terms of variables. We'll also see how to solve for unknown values using trigonometric relationships and the Pythagorean theorem.",
+                  "duration_seconds": 16.25,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "**Example 1:**  $\\tan A = \\frac{4}{3}$  find the other trigonometric ratios",
+                    "has_inline_latex": true
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Let's consider a right-angled triangle where the tangent of angle A is given as four-thirds. Our goal is to find all the other trigonometric ratios for angle A.",
+                  "duration_seconds": 14.22,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "**Example 1:**  $\\tan A = \\frac{4}{3}$  find the other trigonometric ratios",
+                    "has_inline_latex": true
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "First, we'll use the given tangent ratio to assign proportional lengths to the opposite and adjacent sides. So, if tangent A is opposite over adjacent, we can say the opposite side, BC, is four units, and the adjacent side, AB, is three units.",
+                  "duration_seconds": 21.83,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "verbatim_text": "**Example 1:**  $\\tan A = \\frac{4}{3}$  find the other trigonometric ratios",
+                    "has_inline_latex": true
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 4,
+                  "text": "Now, to find the hypotenuse, AC, we apply the Pythagorean theorem. AC squared equals AB squared plus BC squared. Plugging in our values, AC squared equals three squared plus four squared, which is nine plus sixteen, giving us twenty-five. Taking the square root, we find that the hypotenuse AC is five units.",
+                  "duration_seconds": 26.4,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "paragraph",
+                    "formulas": [
+                      "$$AC^2 = AB^2 + BC^2$$",
+                      "$$\\Rightarrow AC^2 = 4^2 + 3^2 = 16 + 9 = 25$$",
+                      "$$\\Rightarrow AC = 5$$"
+                    ],
+                    "verbatim_text": "In  $\\triangle ABC$ ,  $\\angle ABC = 90^\\circ$",
+                    "has_inline_latex": true
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                },
+                {
+                  "segment_id": 5,
+                  "text": "With all three side lengths known, we can now easily determine the remaining trigonometric ratios. Sine A is opposite over hypotenuse, so four-fifths. Cosine A is adjacent over hypotenuse, which is three-fifths. Cosecant A, the reciprocal of sine, is five-fourths. Secant A, the reciprocal of cosine, is five-thirds. And finally, cotangent A, the reciprocal of tangent, is three-fourths. This example demonstrates how to systematically find all trigonometric ratios when one ratio is provided, by first determining the side lengths using the Pythagorean theorem.",
+                  "duration_seconds": 42.14,
+                  "gesture_hint": "emphasizing",
+                  "visual_content": {
+                    "content_type": "formula",
+                    "formulas": [
+                      "$$\\sin A = \\frac{BC}{AC} = \\frac{4}{5}, \\cos A = \\frac{AB}{AC} = \\frac{3}{5}, \\tan A = \\frac{BC}{AB} = \\frac{4}{3}$$",
+                      "$$\\csc A = \\frac{AC}{BC} = \\frac{5}{4}, \\sec A = \\frac{AC}{AB} = \\frac{5}{3}, \\cot A = \\frac{AB}{BC} = \\frac{3}{4}$$"
+                    ],
+                    "formula": "$$\\sin A = \\frac{BC}{AC} = \\frac{4}{5}, \\cos A = \\frac{AB}{AC} = \\frac{3}{5}, \\tan A = \\frac{BC}{AB} = \\frac{4}{3}$$"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show",
+                    "flip_timing_sec": null
+                  }
+                }
+              ],
+              "total_duration_seconds": 120.84
+            },
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show",
+                "flip_timing_sec": null
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Introduction to finding trigonometric ratios with variables and Pythagorean theorem.",
+                "symbolic_overlay": {
+                  "enabled": false,
+                  "content": [],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "diagram",
+                "description": "Right-angled triangle with given tangent ratio.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Right Triangle",
+                    "Tangent A",
+                    "4/3"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "diagram",
+                "description": "Assigning proportional lengths to opposite and adjacent sides.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Opposite",
+                    "Adjacent",
+                    "BC=4",
+                    "AB=3"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": 4,
+                "visual_beat_type": "formula",
+                "description": "Applying Pythagorean theorem to find hypotenuse.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Pythagorean Theorem",
+                    "Hypotenuse",
+                    "AC=5"
+                  ],
+                  "max_words": 4
+                }
+              },
+              {
+                "beat_id": "beat_5",
+                "segment_id": 5,
+                "visual_beat_type": "formula",
+                "description": "Calculating all remaining trigonometric ratios.",
+                "symbolic_overlay": {
+                  "enabled": true,
+                  "content": [
+                    "Sine A",
+                    "Cosine A",
+                    "Cosecant A",
+                    "Secant A"
+                  ],
+                  "max_words": 4
+                }
+              }
+            ],
+            "section_id": 9,
+            "render_spec": {
+              "manim_scene_spec": {
+                "manim_code": "# Segment 1 (0-16.2s) - Introduction\ntitle = Text(\"Finding Trigonometric Ratios\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Using Side Relationships\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=2)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(12.2)\n\n# Segment 2 (16.2-30.5s) - Setting up triangle with tan A = 4/3\ntriangle = Polygon(\n    ORIGIN, RIGHT*3, UP*4+RIGHT*3,\n    color=WHITE, fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).next_to(ORIGIN, UR, buff=0)\nangle_A = Arc(radius=0.5, angle=math.atan(4/3), color=YELLOW)\nangle_label = MathTex(\"A\").next_to(angle_A, RIGHT, buff=0.1)\n\ntan_eq = MathTex(r\"\\tan A = \\frac{4}{3}\").to_edge(RIGHT)\n\nself.play(\n    FadeOut(title),\n    FadeOut(subtitle),\n    Create(triangle),\n    Create(right_angle),\n    run_time=3\n)\nself.play(\n    Create(angle_A),\n    Write(angle_label),\n    Write(tan_eq),\n    run_time=3\n)\nself.wait(8.2)\n\n# Segment 3 (30.5-52.3s) - Labeling sides\nopp_label = MathTex(\"BC = 4\").next_to(triangle, RIGHT)\nadj_label = MathTex(\"AB = 3\").next_to(triangle, DOWN)\nopp_line = Line(triangle.get_vertices()[0], triangle.get_vertices()[2], color=BLUE)\nadj_line = Line(triangle.get_vertices()[0], triangle.get_vertices()[1], color=RED)\n\nself.play(\n    Create(opp_line),\n    Write(opp_label),\n    run_time=3\n)\nself.play(\n    Create(adj_line), \n    Write(adj_label),\n    run_time=3\n)\nself.wait(15.8)\n\n# Segment 4 (52.3-78.7s) - Pythagorean theorem\npyth_eq = MathTex(r\"AC^2 = AB^2 + BC^2\").shift(UP*2)\ncalc_1 = MathTex(r\"AC^2 = 3^2 + 4^2\").next_to(pyth_eq, DOWN)\ncalc_2 = MathTex(r\"AC^2 = 9 + 16 = 25\").next_to(calc_1, DOWN)\ncalc_3 = MathTex(r\"AC = 5\").next_to(calc_2, DOWN)\nhyp_line = Line(triangle.get_vertices()[1], triangle.get_vertices()[2], color=GREEN)\nhyp_label = MathTex(\"AC = 5\").next_to(hyp_line, LEFT)\n\nself.play(Write(pyth_eq), run_time=3)\nself.play(Write(calc_1), run_time=3)\nself.play(Write(calc_2), run_time=3)\nself.play(\n    Write(calc_3),\n    Create(hyp_line),\n    Write(hyp_label),\n    run_time=3\n)\nself.wait(14.4)\n\n# Segment 5 (78.7-120.8s) - All trig ratios\nratios = VGroup(\n    MathTex(r\"\\sin A = \\frac{4}{5}\"),\n    MathTex(r\"\\cos A = \\frac{3}{5}\"),\n    MathTex(r\"\\csc A = \\frac{5}{4}\"),\n    MathTex(r\"\\sec A = \\frac{5}{3}\"),\n    MathTex(r\"\\cot A = \\frac{3}{4}\")\n).arrange(DOWN, buff=0.5).to_edge(RIGHT)\n\nself.play(\n    FadeOut(pyth_eq),\n    FadeOut(calc_1),\n    FadeOut(calc_2),\n    FadeOut(calc_3),\n    run_time=2\n)\n\nfor ratio in ratios:\n    self.play(Write(ratio), run_time=3)\n    self.wait(5.42)  # (42.1 - 2 - 5*3) / 5 = 5.42s wait per ratio",
+                "code_type": "construct_body"
+              }
+            },
+            "explanation_plan": {
+              "visual_beats": [
+                {
+                  "beat_id": "beat_1",
+                  "segment_id": 1,
+                  "visual_beat_type": "text_only",
+                  "description": "Introduction to finding trigonometric ratios with variables and Pythagorean theorem.",
+                  "symbolic_overlay": {
+                    "enabled": false,
+                    "content": [],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_2",
+                  "segment_id": 2,
+                  "visual_beat_type": "diagram",
+                  "description": "Right-angled triangle with given tangent ratio.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Right Triangle",
+                      "Tangent A",
+                      "4/3"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_3",
+                  "segment_id": 3,
+                  "visual_beat_type": "diagram",
+                  "description": "Assigning proportional lengths to opposite and adjacent sides.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Opposite",
+                      "Adjacent",
+                      "BC=4",
+                      "AB=3"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_4",
+                  "segment_id": 4,
+                  "visual_beat_type": "formula",
+                  "description": "Applying Pythagorean theorem to find hypotenuse.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Pythagorean Theorem",
+                      "Hypotenuse",
+                      "AC=5"
+                    ],
+                    "max_words": 4
+                  }
+                },
+                {
+                  "beat_id": "beat_5",
+                  "segment_id": 5,
+                  "visual_beat_type": "formula",
+                  "description": "Calculating all remaining trigonometric ratios.",
+                  "symbolic_overlay": {
+                    "enabled": true,
+                    "content": [
+                      "Sine A",
+                      "Cosine A",
+                      "Cosecant A",
+                      "Secant A"
+                    ],
+                    "max_words": 4
+                  }
+                }
+              ],
+              "v15_manim_code": "# Segment 1 (0-16.2s) - Introduction\ntitle = Text(\"Finding Trigonometric Ratios\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Using Side Relationships\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=2)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(12.2)\n\n# Segment 2 (16.2-30.5s) - Setting up triangle with tan A = 4/3\ntriangle = Polygon(\n    ORIGIN, RIGHT*3, UP*4+RIGHT*3,\n    color=WHITE, fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).next_to(ORIGIN, UR, buff=0)\nangle_A = Arc(radius=0.5, angle=math.atan(4/3), color=YELLOW)\nangle_label = MathTex(\"A\").next_to(angle_A, RIGHT, buff=0.1)\n\ntan_eq = MathTex(r\"\\tan A = \\frac{4}{3}\").to_edge(RIGHT)\n\nself.play(\n    FadeOut(title),\n    FadeOut(subtitle),\n    Create(triangle),\n    Create(right_angle),\n    run_time=3\n)\nself.play(\n    Create(angle_A),\n    Write(angle_label),\n    Write(tan_eq),\n    run_time=3\n)\nself.wait(8.2)\n\n# Segment 3 (30.5-52.3s) - Labeling sides\nopp_label = MathTex(\"BC = 4\").next_to(triangle, RIGHT)\nadj_label = MathTex(\"AB = 3\").next_to(triangle, DOWN)\nopp_line = Line(triangle.get_vertices()[0], triangle.get_vertices()[2], color=BLUE)\nadj_line = Line(triangle.get_vertices()[0], triangle.get_vertices()[1], color=RED)\n\nself.play(\n    Create(opp_line),\n    Write(opp_label),\n    run_time=3\n)\nself.play(\n    Create(adj_line), \n    Write(adj_label),\n    run_time=3\n)\nself.wait(15.8)\n\n# Segment 4 (52.3-78.7s) - Pythagorean theorem\npyth_eq = MathTex(r\"AC^2 = AB^2 + BC^2\").shift(UP*2)\ncalc_1 = MathTex(r\"AC^2 = 3^2 + 4^2\").next_to(pyth_eq, DOWN)\ncalc_2 = MathTex(r\"AC^2 = 9 + 16 = 25\").next_to(calc_1, DOWN)\ncalc_3 = MathTex(r\"AC = 5\").next_to(calc_2, DOWN)\nhyp_line = Line(triangle.get_vertices()[1], triangle.get_vertices()[2], color=GREEN)\nhyp_label = MathTex(\"AC = 5\").next_to(hyp_line, LEFT)\n\nself.play(Write(pyth_eq), run_time=3)\nself.play(Write(calc_1), run_time=3)\nself.play(Write(calc_2), run_time=3)\nself.play(\n    Write(calc_3),\n    Create(hyp_line),\n    Write(hyp_label),\n    run_time=3\n)\nself.wait(14.4)\n\n# Segment 5 (78.7-120.8s) - All trig ratios\nratios = VGroup(\n    MathTex(r\"\\sin A = \\frac{4}{5}\"),\n    MathTex(r\"\\cos A = \\frac{3}{5}\"),\n    MathTex(r\"\\csc A = \\frac{5}{4}\"),\n    MathTex(r\"\\sec A = \\frac{5}{3}\"),\n    MathTex(r\"\\cot A = \\frac{3}{4}\")\n).arrange(DOWN, buff=0.5).to_edge(RIGHT)\n\nself.play(\n    FadeOut(pyth_eq),\n    FadeOut(calc_1),\n    FadeOut(calc_2),\n    FadeOut(calc_3),\n    run_time=2\n)\n\nfor ratio in ratios:\n    self.play(Write(ratio), run_time=3)\n    self.wait(5.42)  # (42.1 - 2 - 5*3) / 5 = 5.42s wait per ratio"
+            }
+          },
+          {
+            "section_type": "memory",
+            "title": "Remember This!",
+            "renderer": "none",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Let's quickly review some key concepts about trigonometric ratios. We'll go through flashcards to reinforce your understanding. Remember, trigonometry studies the relationships between the sides and angles of a right-angled triangle. We define six main trigonometric ratios based on these relationships. These ratios are sine, cosine, tangent, cosecant, secant, and cotangent, each connecting a specific pair of sides to an angle. Understanding these fundamental definitions is crucial for solving trigonometric problems.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Let's quickly review some key concepts about trigonometric ratios. We'll go through flashcards to reinforce your understanding.",
+                  "duration_seconds": 8.63,
+                  "gesture_hint": "explaining",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Remember, trigonometry studies the relationships between the sides and angles of a right-angled triangle.",
+                  "duration_seconds": 7.11,
+                  "gesture_hint": "pointing",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "We define six main trigonometric ratios based on these relationships. These ratios are sine, cosine, tangent, cosecant, secant, and cotangent, each connecting a specific pair of sides to an angle.",
+                  "duration_seconds": 15.23,
+                  "gesture_hint": "explaining",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 4,
+                  "text": "Understanding these fundamental definitions is crucial for solving trigonometric problems.",
+                  "duration_seconds": 5.08,
+                  "gesture_hint": "emphasizing",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                }
+              ],
+              "total_duration_seconds": 36.05
+            },
+            "display_directives": [
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Flashcard review segment 1"
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "text_only",
+                "description": "Flashcard review segment 2"
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "text_only",
+                "description": "Flashcard review segment 3"
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": 4,
+                "visual_beat_type": "text_only",
+                "description": "Flashcard review segment 4"
+              }
+            ],
+            "flashcards": [
+              {
+                "flashcard_id": 1,
+                "front": "What is Trigonometry?",
+                "back": "Trigonometry is the study of relationships between the sides and angles of a triangle, primarily focusing on right-angled triangles.",
+                "category": "Definition"
+              },
+              {
+                "flashcard_id": 2,
+                "front": "What are the six basic trigonometric ratios for an angle A in a right triangle?",
+                "back": "Sin A = Opposite/Hypotenuse, Cos A = Adjacent/Hypotenuse, Tan A = Opposite/Adjacent, Cosec A = Hypotenuse/Opposite, Sec A = Hypotenuse/Adjacent, Cot A = Adjacent/Opposite.",
+                "category": "Formula"
+              },
+              {
+                "flashcard_id": 3,
+                "front": "How is the Pythagorean theorem used in trigonometry?",
+                "back": "It helps find the length of an unknown side in a right-angled triangle (a\u00b2 + b\u00b2 = c\u00b2), which is essential for calculating trigonometric ratios.",
+                "category": "Application"
+              },
+              {
+                "flashcard_id": 4,
+                "front": "If tan A = 1 in a right triangle, what does this imply about the sides?",
+                "back": "If tan A = Opposite/Adjacent = 1, it implies that the opposite side is equal to the adjacent side (e.g., AB = BC).",
+                "category": "Example"
+              },
+              {
+                "flashcard_id": 5,
+                "front": "What is the relationship between sin A and cosec A?",
+                "back": "Cosec A is the reciprocal of sin A (Cosec A = 1/sin A), meaning Cosec A = Hypotenuse/Opposite.",
+                "category": "Definition"
+              }
+            ],
+            "section_id": 10
+          },
+          {
+            "section_type": "recap",
+            "title": "Let's Review",
+            "renderer": "wan_video",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Let's recap the fundamental concepts of trigonometry we've covered. We began by understanding that trigonometry is essentially the study of the relationships between the sides and angles of a right-angled triangle. This foundational idea is crucial for all further trigonometric explorations.\nNext, we delved into the six primary trigonometric ratios: sine, cosine, tangent, cosecant, secant, and cotangent. Remember, these ratios are defined based on the lengths of the sides relative to a specific acute angle in a right triangle, such as the opposite, adjacent, and hypotenuse sides.\nWe then practiced applying these ratios to solve problems. For instance, if you know one trigonometric ratio and the type of triangle, you can use the Pythagorean theorem to find the lengths of the other sides and subsequently determine all other trigonometric ratios for that angle.\nWe also explored the tangent ratio, which is defined as the length of the opposite side divided by the length of the adjacent side. This ratio is incredibly useful for finding unknown side lengths or angles when you have certain information about the triangle.\nFinally, we saw how these ratios are interconnected and how understanding one can lead to understanding others. Mastering these trigonometric ratios is key to solving a wide array of problems in mathematics and various scientific fields. Keep practicing!",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Let's recap the fundamental concepts of trigonometry we've covered. We began by understanding that trigonometry is essentially the study of the relationships between the sides and angles of a right-angled triangle. This foundational idea is crucial for all further trigonometric explorations.",
+                  "duration_seconds": 20.82,
+                  "gesture_hint": "explaining",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Next, we delved into the six primary trigonometric ratios: sine, cosine, tangent, cosecant, secant, and cotangent. Remember, these ratios are defined based on the lengths of the sides relative to a specific acute angle in a right triangle, such as the opposite, adjacent, and hypotenuse sides.",
+                  "duration_seconds": 23.35,
+                  "gesture_hint": "pointing",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "We then practiced applying these ratios to solve problems. For instance, if you know one trigonometric ratio and the type of triangle, you can use the Pythagorean theorem to find the lengths of the other sides and subsequently determine all other trigonometric ratios for that angle.",
+                  "duration_seconds": 23.35,
+                  "gesture_hint": "emphasizing",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 4,
+                  "text": "We also explored the tangent ratio, which is defined as the length of the opposite side divided by the length of the adjacent side. This ratio is incredibly useful for finding unknown side lengths or angles when you have certain information about the triangle.",
+                  "duration_seconds": 22.34,
+                  "gesture_hint": "explaining",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 5,
+                  "text": "Finally, we saw how these ratios are interconnected and how understanding one can lead to understanding others. Mastering these trigonometric ratios is key to solving a wide array of problems in mathematics and various scientific fields. Keep practicing!",
+                  "duration_seconds": 19.29,
+                  "gesture_hint": "welcoming",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                }
+              ],
+              "total_duration_seconds": 109.15
+            },
+            "display_directives": [
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "video_clip",
+                "description": "Recap video scene 1"
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "video_clip",
+                "description": "Recap video scene 2"
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "video_clip",
+                "description": "Recap video scene 3"
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": 4,
+                "visual_beat_type": "video_clip",
+                "description": "Recap video scene 4"
+              },
+              {
+                "beat_id": "beat_5",
+                "segment_id": 5,
+                "visual_beat_type": "video_clip",
+                "description": "Recap video scene 5"
+              }
+            ],
+            "video_prompts": [
+              {
+                "beat_id": 1,
+                "prompt": "Scene in a large, sunlit observatory with a high-contrast view of space. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands before a large, holographic star chart. A glowing right-angled triangle connects three celestial bodies. Professor Anya gestures, and the triangle\u2019s sides and angles highlight in sequence, showing their direct relationship. As she adjusts the position of one star, the side lengths and angle measures update in real-time. The camera performs a slow dolly zoom, moving closer to the holographic triangle. Final frame is a close-up on the triangle, with the labels 'Sides' and 'Angles' glowing brightly, illustrating the core concept of trigonometry.",
+                "duration_seconds": 8,
+                "style": "cinematic"
+              },
+              {
+                "beat_id": 2,
+                "prompt": "A minimalist white room with a precise grid on the floor. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands beside a large right-angled triangle made of polished, dark wood. As she points to angle A, six floating glass panels materialize around the triangle. Each panel illuminates to show one of the six trigonometric ratios\u2014sin, cos, tan, csc, sec, cot\u2014displaying the specific fraction like 'Opposite/Hypotenuse'. The corresponding sides of the wooden triangle glow with colored light as each ratio is displayed. The camera orbits the triangle, capturing each panel as it appears. The final frame shows all six glowing panels arranged neatly around the central triangle.",
+                "duration_seconds": 8,
+                "style": "cinematic"
+              },
+              {
+                "beat_id": 3,
+                "prompt": "A dark chamber with a floor made of stone tiles. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, observes a right triangle drawn on the floor in glowing blue lines. She taps the adjacent side, and a square of glowing red tiles forms against it. She taps the opposite side, and a square of yellow tiles forms. With a final tap on the hypotenuse, the red and yellow tiles flow like liquid light and perfectly reassemble into a single, larger purple square along the hypotenuse. A camera cranes up from a low angle to a direct overhead view. The final frame is a top-down shot showing the combined area of the two smaller squares equals the larger one.",
+                "duration_seconds": 8,
+                "style": "cinematic"
+              },
+              {
+                "beat_id": 4,
+                "prompt": "A serene, minimalist digital space with a white floor. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands beside a holographic right triangle. A digital panel floats nearby, displaying 'tan A = Opposite / Adjacent'. Professor Anya manipulates the hologram, stretching the opposite side until its length exactly matches the adjacent side. As they become equal, both sides flash with a bright white light, and the panel's text updates to 'tan A = 1'. The camera slowly zooms in, focusing on the two identical, glowing sides of the triangle. The final frame is a close-up showing the two equal sides, with the equation 'tan A = 1' hovering above them.",
+                "duration_seconds": 8,
+                "style": "cinematic"
+              },
+              {
+                "beat_id": 5,
+                "prompt": "A futuristic laboratory setting with a large, transparent screen. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands on one side. On the screen, the formula for 'sin A' appears next to a right triangle, showing 'Opposite / Hypotenuse'. With a swiping gesture, Professor Anya causes the fraction to animate: the numerator and denominator flip positions on screen. As the fraction settles into its new state, 'Hypotenuse / Opposite', the label beside it morphs from 'sin A' to 'cosec A'. The camera remains in a steady, medium shot, focusing on the screen's transformation. The final frame shows both sin A and cosec A with their respective fractions, linked by the identity 'cosec A = 1 / sin A'.",
+                "duration_seconds": 8,
+                "style": "cinematic"
+              }
+            ],
+            "section_id": 11,
+            "renderer_override_reason": "Recap sections use WAN for storyboard visualization",
+            "explanation_plan": {
+              "visual_beats": [
+                {
+                  "beat_id": "beat_1",
+                  "segment_id": 1,
+                  "visual_beat_type": "video_clip",
+                  "description": "Recap video scene 1"
+                },
+                {
+                  "beat_id": "beat_2",
+                  "segment_id": 2,
+                  "visual_beat_type": "video_clip",
+                  "description": "Recap video scene 2"
+                },
+                {
+                  "beat_id": "beat_3",
+                  "segment_id": 3,
+                  "visual_beat_type": "video_clip",
+                  "description": "Recap video scene 3"
+                },
+                {
+                  "beat_id": "beat_4",
+                  "segment_id": 4,
+                  "visual_beat_type": "video_clip",
+                  "description": "Recap video scene 4"
+                },
+                {
+                  "beat_id": "beat_5",
+                  "segment_id": 5,
+                  "visual_beat_type": "video_clip",
+                  "description": "Recap video scene 5"
+                }
+              ],
+              "compiled_wan_prompt": "[Beat 1]: Scene in a large, sunlit observatory with a high-contrast view of space. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands before a large, holographic star chart. A glowing right-angled triangle connects three celestial bodies. Professor Anya gestures, and the triangle\u2019s sides and angles highlight in sequence, showing their direct relationship. As she adjusts the position of one star, the side lengths and angle measures update in real-time. The camera performs a slow dolly zoom, moving closer to the holographic triangle. Final frame is a close-up on the triangle, with the labels 'Sides' and 'Angles' glowing brightly, illustrating the core concept of trigonometry.\n\n[Beat 2]: A minimalist white room with a precise grid on the floor. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands beside a large right-angled triangle made of polished, dark wood. As she points to angle A, six floating glass panels materialize around the triangle. Each panel illuminates to show one of the six trigonometric ratios\u2014sin, cos, tan, csc, sec, cot\u2014displaying the specific fraction like 'Opposite/Hypotenuse'. The corresponding sides of the wooden triangle glow with colored light as each ratio is displayed. The camera orbits the triangle, capturing each panel as it appears. The final frame shows all six glowing panels arranged neatly around the central triangle.\n\n[Beat 3]: A dark chamber with a floor made of stone tiles. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, observes a right triangle drawn on the floor in glowing blue lines. She taps the adjacent side, and a square of glowing red tiles forms against it. She taps the opposite side, and a square of yellow tiles forms. With a final tap on the hypotenuse, the red and yellow tiles flow like liquid light and perfectly reassemble into a single, larger purple square along the hypotenuse. A camera cranes up from a low angle to a direct overhead view. The final frame is a top-down shot showing the combined area of the two smaller squares equals the larger one.\n\n[Beat 4]: A serene, minimalist digital space with a white floor. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands beside a holographic right triangle. A digital panel floats nearby, displaying 'tan A = Opposite / Adjacent'. Professor Anya manipulates the hologram, stretching the opposite side until its length exactly matches the adjacent side. As they become equal, both sides flash with a bright white light, and the panel's text updates to 'tan A = 1'. The camera slowly zooms in, focusing on the two identical, glowing sides of the triangle. The final frame is a close-up showing the two equal sides, with the equation 'tan A = 1' hovering above them.\n\n[Beat 5]: A futuristic laboratory setting with a large, transparent screen. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands on one side. On the screen, the formula for 'sin A' appears next to a right triangle, showing 'Opposite / Hypotenuse'. With a swiping gesture, Professor Anya causes the fraction to animate: the numerator and denominator flip positions on screen. As the fraction settles into its new state, 'Hypotenuse / Opposite', the label beside it morphs from 'sin A' to 'cosec A'. The camera remains in a steady, medium shot, focusing on the screen's transformation. The final frame shows both sin A and cosec A with their respective fractions, linked by the identity 'cosec A = 1 / sin A'.",
+              "video_prompts": [
+                {
+                  "beat_id": 1,
+                  "prompt": "Scene in a large, sunlit observatory with a high-contrast view of space. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands before a large, holographic star chart. A glowing right-angled triangle connects three celestial bodies. Professor Anya gestures, and the triangle\u2019s sides and angles highlight in sequence, showing their direct relationship. As she adjusts the position of one star, the side lengths and angle measures update in real-time. The camera performs a slow dolly zoom, moving closer to the holographic triangle. Final frame is a close-up on the triangle, with the labels 'Sides' and 'Angles' glowing brightly, illustrating the core concept of trigonometry.",
+                  "duration_seconds": 8,
+                  "style": "cinematic"
+                },
+                {
+                  "beat_id": 2,
+                  "prompt": "A minimalist white room with a precise grid on the floor. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands beside a large right-angled triangle made of polished, dark wood. As she points to angle A, six floating glass panels materialize around the triangle. Each panel illuminates to show one of the six trigonometric ratios\u2014sin, cos, tan, csc, sec, cot\u2014displaying the specific fraction like 'Opposite/Hypotenuse'. The corresponding sides of the wooden triangle glow with colored light as each ratio is displayed. The camera orbits the triangle, capturing each panel as it appears. The final frame shows all six glowing panels arranged neatly around the central triangle.",
+                  "duration_seconds": 8,
+                  "style": "cinematic"
+                },
+                {
+                  "beat_id": 3,
+                  "prompt": "A dark chamber with a floor made of stone tiles. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, observes a right triangle drawn on the floor in glowing blue lines. She taps the adjacent side, and a square of glowing red tiles forms against it. She taps the opposite side, and a square of yellow tiles forms. With a final tap on the hypotenuse, the red and yellow tiles flow like liquid light and perfectly reassemble into a single, larger purple square along the hypotenuse. A camera cranes up from a low angle to a direct overhead view. The final frame is a top-down shot showing the combined area of the two smaller squares equals the larger one.",
+                  "duration_seconds": 8,
+                  "style": "cinematic"
+                },
+                {
+                  "beat_id": 4,
+                  "prompt": "A serene, minimalist digital space with a white floor. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands beside a holographic right triangle. A digital panel floats nearby, displaying 'tan A = Opposite / Adjacent'. Professor Anya manipulates the hologram, stretching the opposite side until its length exactly matches the adjacent side. As they become equal, both sides flash with a bright white light, and the panel's text updates to 'tan A = 1'. The camera slowly zooms in, focusing on the two identical, glowing sides of the triangle. The final frame is a close-up showing the two equal sides, with the equation 'tan A = 1' hovering above them.",
+                  "duration_seconds": 8,
+                  "style": "cinematic"
+                },
+                {
+                  "beat_id": 5,
+                  "prompt": "A futuristic laboratory setting with a large, transparent screen. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands on one side. On the screen, the formula for 'sin A' appears next to a right triangle, showing 'Opposite / Hypotenuse'. With a swiping gesture, Professor Anya causes the fraction to animate: the numerator and denominator flip positions on screen. As the fraction settles into its new state, 'Hypotenuse / Opposite', the label beside it morphs from 'sin A' to 'cosec A'. The camera remains in a steady, medium shot, focusing on the screen's transformation. The final frame shows both sin A and cosec A with their respective fractions, linked by the identity 'cosec A = 1 / sin A'.",
+                  "duration_seconds": 8,
+                  "style": "cinematic"
+                }
+              ]
+            },
+            "video_path": "videos/topic_11_beat_0.mp4"
+          }
+        ],
+        "metadata": {
+          "generated_at": "2025-12-26T12:25:54.994390Z",
+          "pipeline_version": "v1.5",
+          "section_count": 11,
+          "section_types": [
+            "intro",
+            "summary",
+            "content",
+            "content",
+            "example",
+            "example",
+            "example",
+            "example",
+            "example",
+            "memory",
+            "recap"
+          ],
+          "total_duration_seconds": 962.05,
+          "tts_segments_processed": 56,
+          "tts_provider": "estimate",
+          "tts_method": "simplified",
+          "duration_provider": "word_count_estimate",
+          "audio_provider": "edge"
+        }
+      },
+      "analytics": {
+        "job_id": "b95ec0b9",
+        "status": "completed",
+        "total_duration_seconds": 661.2,
+        "total_cost_usd": 0.1636,
+        "total_tokens": 154778,
+        "phases_completed": 25,
+        "phases_failed": 0,
+        "cost_breakdown": {
+          "smart_chunker": {
+            "cost_usd": 0.0357,
+            "duration_seconds": 24.38,
+            "tokens": 7108
+          },
+          "v15_SectionPlanner": {
+            "cost_usd": 0.0059,
+            "duration_seconds": 0.0,
+            "tokens": 4686
+          },
+          "v15_NarrationWriter": {
+            "cost_usd": 0.0032,
+            "duration_seconds": 0.0,
+            "tokens": 4762
+          },
+          "v15_VisualSpecArtist": {
+            "cost_usd": 0.0063,
+            "duration_seconds": 0.0,
+            "tokens": 9229
+          },
+          "v15_MemoryFlashcard": {
+            "cost_usd": 0.0023,
+            "duration_seconds": 0.0,
+            "tokens": 4046
+          },
+          "v15_RecapScene": {
+            "cost_usd": 0.0319,
+            "duration_seconds": 0.0,
+            "tokens": 6595
+          }
+        }
+      },
+      "output_path": "/home/runner/workspace/player/jobs/b95ec0b9/presentation.json",
+      "pipeline_version": "1.5",
+      "source_type": "pdf"
+    },
+    "content_preview": "![YK logo in a light blue circle](2dfa6ac3edfe874f68aa0cbccaa42322_img.jpg)  YK logo in a light blue circle  Revised 2024\u201325  # Mathematics  ENGLISH  10 Standard  Part \u20132  Version 1.1  Copyright is preserved  Yakub S Koyyur, GHS Kayarthadka, Belthangady Taluk, D.K.-   574216  ## 8  ## INTRODUCTION..."
   }
 }

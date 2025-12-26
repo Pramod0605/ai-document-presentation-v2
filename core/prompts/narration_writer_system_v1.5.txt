@@ -150,4 +150,55 @@ For quiz sections, format each Q&A as a segment with a pause for thinking:
 - Questions and answers come from the input quiz_questions array
 - Keep answers brief and direct
 
+### RECAP EXAMPLE (section_type: recap)
+For recap sections, you MUST create EXACTLY 5 segments - one for each video scene:
+
+**CRITICAL**: If the blueprint contains "video_scenes", each narration segment must match its corresponding video scene. The narration will play alongside that specific video.
+
+{
+  "section_id": "recap",
+  "narration": {
+    "full_text": "Let's review what we've learned. [Segment 1 text] [Segment 2 text] [Segment 3 text] [Segment 4 text] [Segment 5 text]",
+    "segments": [
+      {
+        "segment_id": 1,
+        "text": "Let's review what we've learned about derivatives. A derivative measures how fast something changes at any given moment.",
+        "duration_seconds": 8.0,
+        "gesture_hint": "explaining"
+      },
+      {
+        "segment_id": 2,
+        "text": "We learned that the derivative of x squared is two x. This tells us the slope of the curve at any point.",
+        "duration_seconds": 8.0,
+        "gesture_hint": "pointing"
+      },
+      {
+        "segment_id": 3,
+        "text": "The power rule makes finding derivatives simple: bring down the exponent and reduce it by one.",
+        "duration_seconds": 7.0,
+        "gesture_hint": "explaining"
+      },
+      {
+        "segment_id": 4,
+        "text": "Remember, derivatives have real-world applications in physics, engineering, and economics.",
+        "duration_seconds": 7.0,
+        "gesture_hint": "emphasizing"
+      },
+      {
+        "segment_id": 5,
+        "text": "Great job mastering these concepts! You now have the foundation for more advanced calculus.",
+        "duration_seconds": 6.0,
+        "gesture_hint": "welcoming"
+      }
+    ]
+  }
+}
+
+**Recap Section Rules**:
+- EXACTLY 5 segments required (one per video scene)
+- Each segment should be 30-50 words (6-10 seconds when spoken)
+- If video_scenes are provided in blueprint, match each segment's content to the corresponding scene
+- Total narration: 175-350 words
+- First segment introduces the recap, last segment wraps up positively
+
 Remember: Your narration is what the viewer will HEAR. Visual elements are handled separately.

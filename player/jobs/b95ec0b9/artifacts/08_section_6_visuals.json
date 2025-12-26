@@ -1,0 +1,178 @@
+{
+  "section_id": "section_6",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "diagram",
+      "description": "Introduction of two right-angled triangles, ABC and PQR.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Triangle ABC",
+          "Triangle PQR"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "formula",
+      "description": "Stating the goal: if sin B = sin Q, then angle B = angle Q.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "sin B = sin Q",
+          "\u2220B = \u2220Q"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "formula",
+      "description": "Applying sine ratio definition to the triangles.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Opposite/Hypotenuse",
+          "AC/AB = PR/PQ"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "formula",
+      "description": "Rearranging the proportion and introducing constant 'k'.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "AC/PR = AB/PQ = k",
+          "AC = k PR",
+          "AB = k PQ"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "process",
+      "description": "Using Pythagorean theorem to find remaining sides and proving similarity.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Pythagorean Theorem",
+          "BC = k QR",
+          "Similar Triangles",
+          "\u2220B = \u2220Q"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [
+        31
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "**Example 2:** If B and Q are acute angles such that  $\\sin B = \\sin Q$ , then prove that  $\\angle B = \\angle Q$ .",
+        "has_inline_latex": true
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [
+        32
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formula": "$$\\sin B = \\sin Q$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [
+        33
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formula": "$$\\Rightarrow \\frac{AC}{AB} = \\frac{PR}{PQ}$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [
+        34
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formula": "$$\\Rightarrow \\frac{AC}{PR} = \\frac{AB}{PQ} = k \\quad \\text{--- (1)}$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$$BC = \\sqrt{AB^2 - AC^2} \\text{ [By Pythagoras theorem]}$$",
+          "$$\\Rightarrow \\sqrt{k^2 PQ^2 - k^2 PR^2}$$",
+          "$$\\Rightarrow k \\sqrt{PQ^2 - PR^2} \\text{ [from (1)]}$$",
+          "$$QR = \\sqrt{PQ^2 - PR^2}$$",
+          "$$\\Rightarrow \\frac{BC}{QR} = \\frac{k \\sqrt{PQ^2 - PR^2}}{\\sqrt{PQ^2 - PR^2}} = k \\quad \\text{--- (2)}$$",
+          "From (1) and (2),",
+          "$$\\frac{AC}{PR} = \\frac{AB}{PQ} = \\frac{BC}{QR} = k$$",
+          "$$\\triangle ABC \\sim \\triangle PQR$$",
+          "$$\\therefore \\angle B = \\angle Q$$"
+        ],
+        "formula": "$$BC = \\sqrt{AB^2 - AC^2} \\text{ [By Pythagoras theorem]}$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}

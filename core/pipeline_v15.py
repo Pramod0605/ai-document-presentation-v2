@@ -423,6 +423,28 @@ def process_markdown_to_presentation_v15(
             "avatar_width_percent": 52
         }
         
+        # ISS-166 FIX: Generate video prompts FIRST, then narration that matches them
+        recap_agent = RecapSceneAgent(tracker=tracker, log_func=log)
+        recap_output = recap_agent.run(
+            source_markdown=markdown_content,
+            subject=subject,
+            key_concepts=key_concepts
+        )
+        _save_artifact(output_dir, "recap.json", recap_output)
+        
+        # Extract video prompt summaries for narration alignment
+        video_prompts = recap_output.get("video_prompts", [])
+        video_summaries = []
+        for i, vp in enumerate(video_prompts):
+            prompt = vp.get("prompt", "") if isinstance(vp, dict) else str(vp)
+            # Extract first 50 words as summary for narration context
+            words = prompt.split()[:50]
+            video_summaries.append(f"Scene {i+1}: {' '.join(words)}...")
+        
+        # Add video summaries to blueprint for narration alignment
+        recap_blueprint["video_scenes"] = video_summaries
+        recap_blueprint["segment_count"] = 5  # Must match 5 videos
+        
         recap_narration_writer = NarrationWriterAgent(tracker=tracker, log_func=log)
         recap_narration_output = recap_narration_writer.run(
             section_blueprint=recap_blueprint,
@@ -430,12 +452,6 @@ def process_markdown_to_presentation_v15(
         )
         _save_artifact(output_dir, "recap_narration.json", recap_narration_output)
         
-        recap_agent = RecapSceneAgent(tracker=tracker, log_func=log)
-        recap_output = recap_agent.run(
-            source_markdown=markdown_content,
-            subject=subject,
-            key_concepts=key_concepts
-        )
         recap_output["narration"] = recap_narration_output.get("narration", {})
         
         video_prompts = recap_output.get("video_prompts", [])
@@ -706,22 +722,18 @@ def resume_from_recap(
         "avatar_width_percent": 52
     }
     
-    recap_narration_writer = NarrationWriterAgent(tracker=tracker, log_func=log)
-    recap_narration_output = recap_narration_writer.run(
-        section_blueprint=recap_blueprint,
-        source_markdown=markdown_content[:3000]
-    )
-    _save_artifact(output_dir, "recap_narration.json", recap_narration_output)
-    
+    # ISS-166 FIX: Generate video prompts FIRST, then narration that matches them (resumed flow)
     recap_agent = RecapSceneAgent(tracker=tracker, log_func=log)
     recap_output = recap_agent.run(
         source_markdown=markdown_content,
         subject=subject,
         key_concepts=key_concepts
     )
-    recap_output["narration"] = recap_narration_output.get("narration", {})
+    _save_artifact(output_dir, "recap.json", recap_output)
     
+    # Extract video prompt summaries for narration alignment
     video_prompts = recap_output.get("video_prompts", [])
+    video_summaries = []
     for i, vp in enumerate(video_prompts):
         prompt = vp.get("prompt", "") if isinstance(vp, dict) else str(vp)
         char_count = len(prompt)
@@ -737,8 +749,22 @@ def resume_from_recap(
                 phase="recap_validation"
             )
         logger.info(f"[Resume v1.5] Recap prompt {i+1}: {word_count} words, {char_count} chars - VALID")
+        # Extract first 50 words as summary for narration context
+        words = prompt.split()[:50]
+        video_summaries.append(f"Scene {i+1}: {' '.join(words)}...")
     
-    _save_artifact(output_dir, "recap.json", recap_output)
+    # Add video summaries to blueprint for narration alignment
+    recap_blueprint["video_scenes"] = video_summaries
+    recap_blueprint["segment_count"] = 5  # Must match 5 videos
+    
+    recap_narration_writer = NarrationWriterAgent(tracker=tracker, log_func=log)
+    recap_narration_output = recap_narration_writer.run(
+        section_blueprint=recap_blueprint,
+        source_markdown=markdown_content[:3000]
+    )
+    _save_artifact(output_dir, "recap_narration.json", recap_narration_output)
+    
+    recap_output["narration"] = recap_narration_output.get("narration", {})
     
     update_status("merge", "Combining all components...")
     presentation = merge_agent_outputs(

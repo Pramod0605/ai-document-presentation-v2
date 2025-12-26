@@ -1,0 +1,3542 @@
+{
+  "job_id": "b4e8243c",
+  "started_at": "2025-12-26T12:15:51.427107",
+  "completed_at": "2025-12-26T12:21:35.447799",
+  "duration_seconds": 344.02,
+  "status": "failed",
+  "generation_events": [
+    {
+      "timestamp": "2025-12-26T12:15:51.427123",
+      "elapsed_seconds": 0.0,
+      "event_type": "pipeline_start",
+      "details": {
+        "pipeline_type": "pdf",
+        "source_file": "3-Page-Maths_1766745502993.pdf",
+        "subject": "Math",
+        "grade": "11",
+        "dry_run": false,
+        "skip_wan": true
+      }
+    }
+  ],
+  "render_prompts": [
+    {
+      "timestamp": "2025-12-26T12:32:27.060262",
+      "section_id": 4,
+      "beat_index": 0,
+      "renderer": "manim",
+      "prompt_type": "manim_scene_spec",
+      "prompt_preview": "# Segment 1 (0-10.2s) - Introduction\ntitle = Text(\"Reciprocal Trigonometric Identities\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Understanding inverse relationships\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(5.2)\n\n# Segment 2 (10.2-21.8s) - Importance and Sine/Cosecant intro\nsine_eq = MathTex(r\"\\sin \\theta\").shift(LEFT * 3)\ncsc_eq = MathTex(r\"\\csc \\theta\").shift(RIGHT * 3)\narrow = Arrow(sine_eq.get_right(), csc_e",
+      "prompt_length": 500,
+      "full_prompt": "# Segment 1 (0-10.2s) - Introduction\ntitle = Text(\"Reciprocal Trigonometric Identities\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Understanding inverse relationships\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(5.2)\n\n# Segment 2 (10.2-21.8s) - Importance and Sine/Cosecant intro\nsine_eq = MathTex(r\"\\sin \\theta\").shift(LEFT * 3)\ncsc_eq = MathTex(r\"\\csc \\theta\").shift(RIGHT * 3)\narrow = Arrow(sine_eq.get_right(), csc_e"
+    },
+    {
+      "timestamp": "2025-12-26T12:32:43.962516",
+      "section_id": 5,
+      "beat_index": 0,
+      "renderer": "manim",
+      "prompt_type": "manim_scene_spec",
+      "prompt_preview": "# Segment 1 (0.0-15.7s) - Given tangent A is 4/3\ntitle = Text(\"Finding All Trigonometric Ratios\", font_size=40).to_edge(UP)\ngiven = MathTex(r\"\\tan A = \\frac{4}{3}\").scale(1.2)\nself.play(Write(title), run_time=2)\nself.play(FadeIn(given), run_time=2)\nself.wait(11.7)\n\n# Segment 2 (15.7-28.9s) - Drawing right triangle\ntriangle = Polygon(\n    ORIGIN, RIGHT*3, UP*4, \n    color=WHITE,\n    fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).next_to(ORIGIN, UR, buff=0)\nangle_A = Arc(radius=0.5, angl",
+      "prompt_length": 500,
+      "full_prompt": "# Segment 1 (0.0-15.7s) - Given tangent A is 4/3\ntitle = Text(\"Finding All Trigonometric Ratios\", font_size=40).to_edge(UP)\ngiven = MathTex(r\"\\tan A = \\frac{4}{3}\").scale(1.2)\nself.play(Write(title), run_time=2)\nself.play(FadeIn(given), run_time=2)\nself.wait(11.7)\n\n# Segment 2 (15.7-28.9s) - Drawing right triangle\ntriangle = Polygon(\n    ORIGIN, RIGHT*3, UP*4, \n    color=WHITE,\n    fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).next_to(ORIGIN, UR, buff=0)\nangle_A = Arc(radius=0.5, angl"
+    },
+    {
+      "timestamp": "2025-12-26T12:32:48.478652",
+      "section_id": 6,
+      "beat_index": 0,
+      "renderer": "manim",
+      "prompt_type": "manim_scene_spec",
+      "prompt_preview": "# Segment 1 (0-11.7s) - Introducing triangles\n# Create first triangle ABC\ntriangle_abc = Polygon(\n    np.array([-3, -2, 0]), \n    np.array([-3, 1, 0]),\n    np.array([-1, -2, 0]),\n    color=BLUE\n)\nabc_labels = VGroup(\n    Text(\"A\").next_to(triangle_abc.get_vertices()[0], LEFT),\n    Text(\"B\").next_to(triangle_abc.get_vertices()[1], LEFT),\n    Text(\"C\").next_to(triangle_abc.get_vertices()[2], RIGHT)\n)\n\n# Create second triangle PQR\ntriangle_pqr = Polygon(\n    np.array([1, -2, 0]),\n    np.array([1, 1",
+      "prompt_length": 500,
+      "full_prompt": "# Segment 1 (0-11.7s) - Introducing triangles\n# Create first triangle ABC\ntriangle_abc = Polygon(\n    np.array([-3, -2, 0]), \n    np.array([-3, 1, 0]),\n    np.array([-1, -2, 0]),\n    color=BLUE\n)\nabc_labels = VGroup(\n    Text(\"A\").next_to(triangle_abc.get_vertices()[0], LEFT),\n    Text(\"B\").next_to(triangle_abc.get_vertices()[1], LEFT),\n    Text(\"C\").next_to(triangle_abc.get_vertices()[2], RIGHT)\n)\n\n# Create second triangle PQR\ntriangle_pqr = Polygon(\n    np.array([1, -2, 0]),\n    np.array([1, 1"
+    },
+    {
+      "timestamp": "2025-12-26T12:33:20.344571",
+      "section_id": 7,
+      "beat_index": 0,
+      "renderer": "manim",
+      "prompt_type": "manim_scene_spec",
+      "prompt_preview": "# Segment 1 (0-9.1s) - Introduction\ntitle = Text(\"Evaluating Trigonometric Expressions\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Working with Squared Terms\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=3)\nself.wait(3.1)\n\n# Segment 2 (9.1-19.8s) - Introducing Pythagorean identity\nexpression = MathTex(r\"\\cos^2(\\theta) + \\sin^2(\\theta)\").scale(1.5)\nexpression.move_to(ORIGIN)\n\nself.play(\n    FadeOut(subtitle),\n    ReplacementTransfo",
+      "prompt_length": 500,
+      "full_prompt": "# Segment 1 (0-9.1s) - Introduction\ntitle = Text(\"Evaluating Trigonometric Expressions\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Working with Squared Terms\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=3)\nself.wait(3.1)\n\n# Segment 2 (9.1-19.8s) - Introducing Pythagorean identity\nexpression = MathTex(r\"\\cos^2(\\theta) + \\sin^2(\\theta)\").scale(1.5)\nexpression.move_to(ORIGIN)\n\nself.play(\n    FadeOut(subtitle),\n    ReplacementTransfo"
+    },
+    {
+      "timestamp": "2025-12-26T12:33:44.149824",
+      "section_id": 8,
+      "beat_index": 0,
+      "renderer": "manim",
+      "prompt_type": "manim_scene_spec",
+      "prompt_preview": "# Segment 1 (0-7.1s) - Intro to verifying identities\ntitle = Text(\"Verifying Trigonometric Identities\", font_size=40).to_edge(UP)\nsubtitle = Text(\"A systematic approach\", font_size=32).next_to(title, DOWN)\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(2.1)\n\n# Segment 2 (7.1-19.8s) - Definition\ndefinition = Text(\"Verifying an identity means showing that\\none side equals the other through\\ntrigonometric relationships and algebra\", \n                 font_size",
+      "prompt_length": 500,
+      "full_prompt": "# Segment 1 (0-7.1s) - Intro to verifying identities\ntitle = Text(\"Verifying Trigonometric Identities\", font_size=40).to_edge(UP)\nsubtitle = Text(\"A systematic approach\", font_size=32).next_to(title, DOWN)\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(2.1)\n\n# Segment 2 (7.1-19.8s) - Definition\ndefinition = Text(\"Verifying an identity means showing that\\none side equals the other through\\ntrigonometric relationships and algebra\", \n                 font_size"
+    },
+    {
+      "timestamp": "2025-12-26T12:34:10.494161",
+      "section_id": 9,
+      "beat_index": 0,
+      "renderer": "manim",
+      "prompt_type": "manim_scene_spec",
+      "prompt_preview": "# Segment 1 (0-16.2s) - Introduction\ntitle = Text(\"Finding Trigonometric Ratios\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Using Side Relationships\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=2)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(12.2)\n\n# Segment 2 (16.2-30.5s) - Setting up triangle with tan A = 4/3\ntriangle = Polygon(\n    ORIGIN, RIGHT*3, UP*4+RIGHT*3,\n    color=WHITE, fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).next_to(ORIGIN, UR, buff=0",
+      "prompt_length": 500,
+      "full_prompt": "# Segment 1 (0-16.2s) - Introduction\ntitle = Text(\"Finding Trigonometric Ratios\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Using Side Relationships\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=2)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(12.2)\n\n# Segment 2 (16.2-30.5s) - Setting up triangle with tan A = 4/3\ntriangle = Polygon(\n    ORIGIN, RIGHT*3, UP*4+RIGHT*3,\n    color=WHITE, fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).next_to(ORIGIN, UR, buff=0"
+    },
+    {
+      "timestamp": "2025-12-26T12:34:13.780060",
+      "section_id": 11,
+      "beat_index": 0,
+      "renderer": "video",
+      "prompt_type": "wan_video_prompt",
+      "prompt_preview": "Scene in a large, sunlit observatory with a high-contrast view of space. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands before a large, holographic star chart. A glowing right-angled triangle connects three celestial bodies. Professor Anya gestures, and the triangle\u2019s sides and angles highlight in sequence, showing their direct relationship. As she adjusts the position of one star, the side lengths and angle measures update in real-time. Th",
+      "prompt_length": 724,
+      "full_prompt": "Scene in a large, sunlit observatory with a high-contrast view of space. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands before a large, holographic star chart. A glowing right-angled triangle connects three celestial bodies. Professor Anya gestures, and the triangle\u2019s sides and angles highlight in sequence, showing their direct relationship. As she adjusts the position of one star, the side lengths and angle measures update in real-time. The camera performs a slow dolly zoom, moving closer to the holographic triangle. Final frame is a close-up on the triangle, with the labels 'Sides' and 'Angles' glowing brightly, illustrating the core concept of trigonometry."
+    },
+    {
+      "timestamp": "2025-12-26T12:34:13.789382",
+      "section_id": 11,
+      "beat_index": 1,
+      "renderer": "video",
+      "prompt_type": "wan_video_prompt",
+      "prompt_preview": "A minimalist white room with a precise grid on the floor. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands beside a large right-angled triangle made of polished, dark wood. As she points to angle A, six floating glass panels materialize around the triangle. Each panel illuminates to show one of the six trigonometric ratios\u2014sin, cos, tan, csc, sec, cot\u2014displaying the specific fraction like 'Opposite/Hypotenuse'. The corresponding sides of the ",
+      "prompt_length": 725,
+      "full_prompt": "A minimalist white room with a precise grid on the floor. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands beside a large right-angled triangle made of polished, dark wood. As she points to angle A, six floating glass panels materialize around the triangle. Each panel illuminates to show one of the six trigonometric ratios\u2014sin, cos, tan, csc, sec, cot\u2014displaying the specific fraction like 'Opposite/Hypotenuse'. The corresponding sides of the wooden triangle glow with colored light as each ratio is displayed. The camera orbits the triangle, capturing each panel as it appears. The final frame shows all six glowing panels arranged neatly around the central triangle."
+    },
+    {
+      "timestamp": "2025-12-26T12:34:13.798177",
+      "section_id": 11,
+      "beat_index": 2,
+      "renderer": "video",
+      "prompt_type": "wan_video_prompt",
+      "prompt_preview": "A dark chamber with a floor made of stone tiles. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, observes a right triangle drawn on the floor in glowing blue lines. She taps the adjacent side, and a square of glowing red tiles forms against it. She taps the opposite side, and a square of yellow tiles forms. With a final tap on the hypotenuse, the red and yellow tiles flow like liquid light and perfectly reassemble into a single, larger purple squar",
+      "prompt_length": 697,
+      "full_prompt": "A dark chamber with a floor made of stone tiles. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, observes a right triangle drawn on the floor in glowing blue lines. She taps the adjacent side, and a square of glowing red tiles forms against it. She taps the opposite side, and a square of yellow tiles forms. With a final tap on the hypotenuse, the red and yellow tiles flow like liquid light and perfectly reassemble into a single, larger purple square along the hypotenuse. A camera cranes up from a low angle to a direct overhead view. The final frame is a top-down shot showing the combined area of the two smaller squares equals the larger one."
+    },
+    {
+      "timestamp": "2025-12-26T12:34:13.814789",
+      "section_id": 11,
+      "beat_index": 3,
+      "renderer": "video",
+      "prompt_type": "wan_video_prompt",
+      "prompt_preview": "A serene, minimalist digital space with a white floor. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands beside a holographic right triangle. A digital panel floats nearby, displaying 'tan A = Opposite / Adjacent'. Professor Anya manipulates the hologram, stretching the opposite side until its length exactly matches the adjacent side. As they become equal, both sides flash with a bright white light, and the panel's text updates to 'tan A = 1'.",
+      "prompt_length": 700,
+      "full_prompt": "A serene, minimalist digital space with a white floor. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands beside a holographic right triangle. A digital panel floats nearby, displaying 'tan A = Opposite / Adjacent'. Professor Anya manipulates the hologram, stretching the opposite side until its length exactly matches the adjacent side. As they become equal, both sides flash with a bright white light, and the panel's text updates to 'tan A = 1'. The camera slowly zooms in, focusing on the two identical, glowing sides of the triangle. The final frame is a close-up showing the two equal sides, with the equation 'tan A = 1' hovering above them."
+    },
+    {
+      "timestamp": "2025-12-26T12:34:13.827213",
+      "section_id": 11,
+      "beat_index": 4,
+      "renderer": "video",
+      "prompt_type": "wan_video_prompt",
+      "prompt_preview": "A futuristic laboratory setting with a large, transparent screen. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands on one side. On the screen, the formula for 'sin A' appears next to a right triangle, showing 'Opposite / Hypotenuse'. With a swiping gesture, Professor Anya causes the fraction to animate: the numerator and denominator flip positions on screen. As the fraction settles into its new state, 'Hypotenuse / Opposite', the label beside",
+      "prompt_length": 747,
+      "full_prompt": "A futuristic laboratory setting with a large, transparent screen. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands on one side. On the screen, the formula for 'sin A' appears next to a right triangle, showing 'Opposite / Hypotenuse'. With a swiping gesture, Professor Anya causes the fraction to animate: the numerator and denominator flip positions on screen. As the fraction settles into its new state, 'Hypotenuse / Opposite', the label beside it morphs from 'sin A' to 'cosec A'. The camera remains in a steady, medium shot, focusing on the screen's transformation. The final frame shows both sin A and cosec A with their respective fractions, linked by the identity 'cosec A = 1 / sin A'."
+    }
+  ],
+  "renderer_decisions": [],
+  "validation_results": [
+    {
+      "timestamp": "2025-12-26T12:21:33.803307",
+      "validation_type": "hard_fail_check",
+      "section_id": 1,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 1: Narration segment 0 (intro) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.803764",
+      "validation_type": "hard_fail_check",
+      "section_id": 1,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 1: Narration segment 1 (intro) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.804311",
+      "validation_type": "hard_fail_check",
+      "section_id": 1,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 1: Narration segment 2 (intro) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.811144",
+      "validation_type": "hard_fail_check",
+      "section_id": 1,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 1: Narration segment 3 (intro) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.816323",
+      "validation_type": "hard_fail_check",
+      "section_id": 1,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 1: Narration segment 4 (intro) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.819007",
+      "validation_type": "hard_fail_check",
+      "section_id": 1,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 1: Narration segment 5 (intro) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.824345",
+      "validation_type": "hard_fail_check",
+      "section_id": 2,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 2: Narration segment 0 (summary) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.832060",
+      "validation_type": "hard_fail_check",
+      "section_id": 2,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 2: Narration segment 1 (summary) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.834747",
+      "validation_type": "hard_fail_check",
+      "section_id": 2,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 2: Narration segment 2 (summary) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.837719",
+      "validation_type": "hard_fail_check",
+      "section_id": 2,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 2: Narration segment 3 (summary) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.840115",
+      "validation_type": "hard_fail_check",
+      "section_id": 2,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 2: Narration segment 4 (summary) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.854686",
+      "validation_type": "hard_fail_check",
+      "section_id": 2,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 2: Narration segment 5 (summary) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.859321",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 3: Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.866699",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 3: Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.875192",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 3: Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.880573",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 3: Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.887141",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 3: Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.893453",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 3: Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.900570",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 3: Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.904780",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 3: Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.907655",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [manim_section_without_scene_spec] Section 3: Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.914933",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 3: Narration segment 0 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.919061",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 3: Narration segment 1 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.922645",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 3: Narration segment 2 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.929829",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 3: Narration segment 3 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.934463",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 3: Narration segment 4 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.940519",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 3: Narration segment 5 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.949491",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 3: Narration segment 6 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.954738",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 3: Narration segment 7 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.960872",
+      "validation_type": "hard_fail_check",
+      "section_id": 3,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [visuals_never_displayed] Section 3: Section 3: Has 8 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.969426",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 4: Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.978426",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 4: Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.984179",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 4: Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.989838",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 4: Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:33.997867",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 4: Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.002558",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 4: Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.010675",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 4: Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.019285",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 4: Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.024616",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 4: Visual beat 8 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.038049",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [manim_section_without_scene_spec] Section 4: Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.043391",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 4: Narration segment 0 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.049473",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 4: Narration segment 1 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.057329",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 4: Narration segment 2 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.064585",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 4: Narration segment 3 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.070698",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 4: Narration segment 4 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.077056",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 4: Narration segment 5 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.082178",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 4: Narration segment 6 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.089911",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 4: Narration segment 7 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.094687",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 4: Narration segment 8 (content) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.102345",
+      "validation_type": "hard_fail_check",
+      "section_id": 4,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [visuals_never_displayed] Section 4: Section 4: Has 9 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.107417",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 5: Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.116420",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 5: Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.122453",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 5: Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.126757",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 5: Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.130952",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 5: Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.135864",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 5: Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.139357",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 5: Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.144340",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 5: Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.150860",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [manim_section_without_scene_spec] Section 5: Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.160138",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 5: Narration segment 0 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.167376",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 5: Narration segment 1 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.174808",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 5: Narration segment 2 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.181351",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 5: Narration segment 3 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.188821",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 5: Narration segment 4 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.195966",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 5: Narration segment 5 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.203621",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 5: Narration segment 6 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.212696",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 5: Narration segment 7 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.224670",
+      "validation_type": "hard_fail_check",
+      "section_id": 5,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [visuals_never_displayed] Section 5: Section 5: Has 8 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.232254",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [formula_mentioned_but_not_visualized] Section 6: Narration mentions formulas/equations but no visual beat shows them"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.238515",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 6: Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.245875",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 6: Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.256002",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 6: Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.267611",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 6: Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.283152",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 6: Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.293017",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 6: Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.300866",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 6: Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.307929",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 6: Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.314539",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 6: Visual beat 8 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.320746",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 6: Visual beat 9 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.326597",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 6: Visual beat 10 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.332227",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [manim_section_without_scene_spec] Section 6: Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.337654",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 6: Narration segment 0 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.343101",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 6: Narration segment 1 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.351650",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 6: Narration segment 2 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.359788",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 6: Narration segment 3 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.370062",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 6: Narration segment 4 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.381971",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 6: Narration segment 5 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.395897",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 6: Narration segment 6 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.413206",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 6: Narration segment 7 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.426040",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 6: Narration segment 8 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.439642",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 6: Narration segment 9 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.458834",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 6: Narration segment 10 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.485976",
+      "validation_type": "hard_fail_check",
+      "section_id": 6,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [visuals_never_displayed] Section 6: Section 6: Has 11 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.520621",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [formula_mentioned_but_not_visualized] Section 7: Narration mentions formulas/equations but no visual beat shows them"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.542642",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 7: Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.566849",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 7: Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.580401",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 7: Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.588864",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 7: Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.599585",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 7: Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.608264",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 7: Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.619685",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 7: Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.633431",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 7: Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.641741",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 7: Visual beat 8 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.652135",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [manim_section_without_scene_spec] Section 7: Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.660704",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 7: Narration segment 0 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.674231",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 7: Narration segment 1 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.683560",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 7: Narration segment 2 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.694277",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 7: Narration segment 3 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.701848",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 7: Narration segment 4 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.709288",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 7: Narration segment 5 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.715876",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 7: Narration segment 6 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.724088",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 7: Narration segment 7 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.734555",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 7: Narration segment 8 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.754809",
+      "validation_type": "hard_fail_check",
+      "section_id": 7,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [visuals_never_displayed] Section 7: Section 7: Has 9 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.770726",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [formula_mentioned_but_not_visualized] Section 8: Narration mentions formulas/equations but no visual beat shows them"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.785250",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 8: Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.812227",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 8: Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.838103",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 8: Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.863200",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 8: Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.876791",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 8: Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.884689",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 8: Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.893016",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 8: Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.900369",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 8: Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.909193",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 8: Visual beat 8 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.916431",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [manim_section_without_scene_spec] Section 8: Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.923617",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 8: Narration segment 0 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.933061",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 8: Narration segment 1 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.941022",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 8: Narration segment 2 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.950308",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 8: Narration segment 3 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.962281",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 8: Narration segment 4 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:34.981417",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 8: Narration segment 5 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.001075",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 8: Narration segment 6 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.033998",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 8: Narration segment 7 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.055143",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 8: Narration segment 8 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.077975",
+      "validation_type": "hard_fail_check",
+      "section_id": 8,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [visuals_never_displayed] Section 8: Section 8: Has 9 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.097585",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [formula_mentioned_but_not_visualized] Section 9: Narration mentions formulas/equations but no visual beat shows them"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.107425",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 9: Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.118697",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 9: Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.130213",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 9: Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.145184",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 9: Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.172133",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 9: Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.185546",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 9: Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.197548",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 9: Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.208847",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 9: Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.219338",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 9: Visual beat 8 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.230501",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 9: Visual beat 9 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.240878",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [vague_visual_language_detected] Section 9: Visual beat 10 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.252105",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [manim_section_without_scene_spec] Section 9: Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.263772",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 9: Narration segment 0 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.274526",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 9: Narration segment 1 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.284723",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 9: Narration segment 2 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.294724",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 9: Narration segment 3 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.309066",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 9: Narration segment 4 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.332016",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 9: Narration segment 5 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.342995",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 9: Narration segment 6 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.355835",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 9: Narration segment 7 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.375486",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 9: Narration segment 8 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.391292",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 9: Narration segment 9 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.401263",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 9: Narration segment 10 (example) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.410422",
+      "validation_type": "hard_fail_check",
+      "section_id": 9,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [visuals_never_displayed] Section 9: Section 9: Has 11 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.422687",
+      "validation_type": "hard_fail_check",
+      "section_id": 10,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [missing_display_directives] Section 10: Narration segment 0 (memory) is missing display_directives (v1.3 required)"
+      ],
+      "warnings": []
+    },
+    {
+      "timestamp": "2025-12-26T12:21:35.437396",
+      "validation_type": "hard_fail_check",
+      "section_id": 11,
+      "passed": false,
+      "error_count": 1,
+      "warning_count": 0,
+      "errors": [
+        "HARD FAIL [recap_avatar_visible] Section 11: Recap section layout.avatar_zone must have hidden avatar (video only)"
+      ],
+      "warnings": []
+    }
+  ],
+  "errors": [
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.802865",
+        "condition": "missing_display_directives",
+        "section_id": 1,
+        "details": "Narration segment 0 (intro) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.803546",
+        "condition": "missing_display_directives",
+        "section_id": 1,
+        "details": "Narration segment 1 (intro) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.804011",
+        "condition": "missing_display_directives",
+        "section_id": 1,
+        "details": "Narration segment 2 (intro) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.807293",
+        "condition": "missing_display_directives",
+        "section_id": 1,
+        "details": "Narration segment 3 (intro) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.812581",
+        "condition": "missing_display_directives",
+        "section_id": 1,
+        "details": "Narration segment 4 (intro) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.817654",
+        "condition": "missing_display_directives",
+        "section_id": 1,
+        "details": "Narration segment 5 (intro) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.820321",
+        "condition": "missing_display_directives",
+        "section_id": 2,
+        "details": "Narration segment 0 (summary) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.827895",
+        "condition": "missing_display_directives",
+        "section_id": 2,
+        "details": "Narration segment 1 (summary) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.833397",
+        "condition": "missing_display_directives",
+        "section_id": 2,
+        "details": "Narration segment 2 (summary) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.835616",
+        "condition": "missing_display_directives",
+        "section_id": 2,
+        "details": "Narration segment 3 (summary) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.839149",
+        "condition": "missing_display_directives",
+        "section_id": 2,
+        "details": "Narration segment 4 (summary) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.851438",
+        "condition": "missing_display_directives",
+        "section_id": 2,
+        "details": "Narration segment 5 (summary) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.856728",
+        "condition": "vague_visual_language_detected",
+        "section_id": 3,
+        "details": "Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.863711",
+        "condition": "vague_visual_language_detected",
+        "section_id": 3,
+        "details": "Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.872335",
+        "condition": "vague_visual_language_detected",
+        "section_id": 3,
+        "details": "Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.877491",
+        "condition": "vague_visual_language_detected",
+        "section_id": 3,
+        "details": "Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.885803",
+        "condition": "vague_visual_language_detected",
+        "section_id": 3,
+        "details": "Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.890105",
+        "condition": "vague_visual_language_detected",
+        "section_id": 3,
+        "details": "Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.897335",
+        "condition": "vague_visual_language_detected",
+        "section_id": 3,
+        "details": "Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.902412",
+        "condition": "vague_visual_language_detected",
+        "section_id": 3,
+        "details": "Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.906277",
+        "condition": "manim_section_without_scene_spec",
+        "section_id": 3,
+        "details": "Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.913167",
+        "condition": "missing_display_directives",
+        "section_id": 3,
+        "details": "Narration segment 0 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.917594",
+        "condition": "missing_display_directives",
+        "section_id": 3,
+        "details": "Narration segment 1 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.920986",
+        "condition": "missing_display_directives",
+        "section_id": 3,
+        "details": "Narration segment 2 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.926857",
+        "condition": "missing_display_directives",
+        "section_id": 3,
+        "details": "Narration segment 3 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.931760",
+        "condition": "missing_display_directives",
+        "section_id": 3,
+        "details": "Narration segment 4 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.937466",
+        "condition": "missing_display_directives",
+        "section_id": 3,
+        "details": "Narration segment 5 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.942227",
+        "condition": "missing_display_directives",
+        "section_id": 3,
+        "details": "Narration segment 6 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.952217",
+        "condition": "missing_display_directives",
+        "section_id": 3,
+        "details": "Narration segment 7 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.956730",
+        "condition": "visuals_never_displayed",
+        "section_id": 3,
+        "details": "Section 3: Has 8 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.963882",
+        "condition": "vague_visual_language_detected",
+        "section_id": 4,
+        "details": "Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.972506",
+        "condition": "vague_visual_language_detected",
+        "section_id": 4,
+        "details": "Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.981209",
+        "condition": "vague_visual_language_detected",
+        "section_id": 4,
+        "details": "Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.988171",
+        "condition": "vague_visual_language_detected",
+        "section_id": 4,
+        "details": "Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.992749",
+        "condition": "vague_visual_language_detected",
+        "section_id": 4,
+        "details": "Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:33.999508",
+        "condition": "vague_visual_language_detected",
+        "section_id": 4,
+        "details": "Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.005317",
+        "condition": "vague_visual_language_detected",
+        "section_id": 4,
+        "details": "Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.014099",
+        "condition": "vague_visual_language_detected",
+        "section_id": 4,
+        "details": "Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.021440",
+        "condition": "vague_visual_language_detected",
+        "section_id": 4,
+        "details": "Visual beat 8 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.030801",
+        "condition": "manim_section_without_scene_spec",
+        "section_id": 4,
+        "details": "Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.040341",
+        "condition": "missing_display_directives",
+        "section_id": 4,
+        "details": "Narration segment 0 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.046311",
+        "condition": "missing_display_directives",
+        "section_id": 4,
+        "details": "Narration segment 1 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.053888",
+        "condition": "missing_display_directives",
+        "section_id": 4,
+        "details": "Narration segment 2 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.061502",
+        "condition": "missing_display_directives",
+        "section_id": 4,
+        "details": "Narration segment 3 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.067413",
+        "condition": "missing_display_directives",
+        "section_id": 4,
+        "details": "Narration segment 4 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.073681",
+        "condition": "missing_display_directives",
+        "section_id": 4,
+        "details": "Narration segment 5 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.079375",
+        "condition": "missing_display_directives",
+        "section_id": 4,
+        "details": "Narration segment 6 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.084375",
+        "condition": "missing_display_directives",
+        "section_id": 4,
+        "details": "Narration segment 7 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.092259",
+        "condition": "missing_display_directives",
+        "section_id": 4,
+        "details": "Narration segment 8 (content) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.099298",
+        "condition": "visuals_never_displayed",
+        "section_id": 4,
+        "details": "Section 4: Has 9 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.104930",
+        "condition": "vague_visual_language_detected",
+        "section_id": 5,
+        "details": "Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.113838",
+        "condition": "vague_visual_language_detected",
+        "section_id": 5,
+        "details": "Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.119482",
+        "condition": "vague_visual_language_detected",
+        "section_id": 5,
+        "details": "Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.124500",
+        "condition": "vague_visual_language_detected",
+        "section_id": 5,
+        "details": "Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.128832",
+        "condition": "vague_visual_language_detected",
+        "section_id": 5,
+        "details": "Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.133586",
+        "condition": "vague_visual_language_detected",
+        "section_id": 5,
+        "details": "Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.137630",
+        "condition": "vague_visual_language_detected",
+        "section_id": 5,
+        "details": "Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.141973",
+        "condition": "vague_visual_language_detected",
+        "section_id": 5,
+        "details": "Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.146819",
+        "condition": "manim_section_without_scene_spec",
+        "section_id": 5,
+        "details": "Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.155747",
+        "condition": "missing_display_directives",
+        "section_id": 5,
+        "details": "Narration segment 0 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.164253",
+        "condition": "missing_display_directives",
+        "section_id": 5,
+        "details": "Narration segment 1 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.171135",
+        "condition": "missing_display_directives",
+        "section_id": 5,
+        "details": "Narration segment 2 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.177859",
+        "condition": "missing_display_directives",
+        "section_id": 5,
+        "details": "Narration segment 3 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.184784",
+        "condition": "missing_display_directives",
+        "section_id": 5,
+        "details": "Narration segment 4 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.192543",
+        "condition": "missing_display_directives",
+        "section_id": 5,
+        "details": "Narration segment 5 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.200377",
+        "condition": "missing_display_directives",
+        "section_id": 5,
+        "details": "Narration segment 6 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.208212",
+        "condition": "missing_display_directives",
+        "section_id": 5,
+        "details": "Narration segment 7 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.217811",
+        "condition": "visuals_never_displayed",
+        "section_id": 5,
+        "details": "Section 5: Has 8 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.228730",
+        "condition": "formula_mentioned_but_not_visualized",
+        "section_id": 6,
+        "details": "Narration mentions formulas/equations but no visual beat shows them"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.235521",
+        "condition": "vague_visual_language_detected",
+        "section_id": 6,
+        "details": "Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.241439",
+        "condition": "vague_visual_language_detected",
+        "section_id": 6,
+        "details": "Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.250871",
+        "condition": "vague_visual_language_detected",
+        "section_id": 6,
+        "details": "Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.259729",
+        "condition": "vague_visual_language_detected",
+        "section_id": 6,
+        "details": "Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.271460",
+        "condition": "vague_visual_language_detected",
+        "section_id": 6,
+        "details": "Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.288819",
+        "condition": "vague_visual_language_detected",
+        "section_id": 6,
+        "details": "Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.295642",
+        "condition": "vague_visual_language_detected",
+        "section_id": 6,
+        "details": "Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.304447",
+        "condition": "vague_visual_language_detected",
+        "section_id": 6,
+        "details": "Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.310833",
+        "condition": "vague_visual_language_detected",
+        "section_id": 6,
+        "details": "Visual beat 8 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.317025",
+        "condition": "vague_visual_language_detected",
+        "section_id": 6,
+        "details": "Visual beat 9 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.324150",
+        "condition": "vague_visual_language_detected",
+        "section_id": 6,
+        "details": "Visual beat 10 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.329420",
+        "condition": "manim_section_without_scene_spec",
+        "section_id": 6,
+        "details": "Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.335210",
+        "condition": "missing_display_directives",
+        "section_id": 6,
+        "details": "Narration segment 0 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.339861",
+        "condition": "missing_display_directives",
+        "section_id": 6,
+        "details": "Narration segment 1 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.347021",
+        "condition": "missing_display_directives",
+        "section_id": 6,
+        "details": "Narration segment 2 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.355035",
+        "condition": "missing_display_directives",
+        "section_id": 6,
+        "details": "Narration segment 3 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.365529",
+        "condition": "missing_display_directives",
+        "section_id": 6,
+        "details": "Narration segment 4 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.375232",
+        "condition": "missing_display_directives",
+        "section_id": 6,
+        "details": "Narration segment 5 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.389022",
+        "condition": "missing_display_directives",
+        "section_id": 6,
+        "details": "Narration segment 6 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.402519",
+        "condition": "missing_display_directives",
+        "section_id": 6,
+        "details": "Narration segment 7 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.421820",
+        "condition": "missing_display_directives",
+        "section_id": 6,
+        "details": "Narration segment 8 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.430827",
+        "condition": "missing_display_directives",
+        "section_id": 6,
+        "details": "Narration segment 9 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.448229",
+        "condition": "missing_display_directives",
+        "section_id": 6,
+        "details": "Narration segment 10 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.468864",
+        "condition": "visuals_never_displayed",
+        "section_id": 6,
+        "details": "Section 6: Has 11 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.504480",
+        "condition": "formula_mentioned_but_not_visualized",
+        "section_id": 7,
+        "details": "Narration mentions formulas/equations but no visual beat shows them"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.530309",
+        "condition": "vague_visual_language_detected",
+        "section_id": 7,
+        "details": "Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.553562",
+        "condition": "vague_visual_language_detected",
+        "section_id": 7,
+        "details": "Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.577269",
+        "condition": "vague_visual_language_detected",
+        "section_id": 7,
+        "details": "Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.584616",
+        "condition": "vague_visual_language_detected",
+        "section_id": 7,
+        "details": "Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.594816",
+        "condition": "vague_visual_language_detected",
+        "section_id": 7,
+        "details": "Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.604155",
+        "condition": "vague_visual_language_detected",
+        "section_id": 7,
+        "details": "Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.612742",
+        "condition": "vague_visual_language_detected",
+        "section_id": 7,
+        "details": "Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.625677",
+        "condition": "vague_visual_language_detected",
+        "section_id": 7,
+        "details": "Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.637748",
+        "condition": "vague_visual_language_detected",
+        "section_id": 7,
+        "details": "Visual beat 8 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.646472",
+        "condition": "manim_section_without_scene_spec",
+        "section_id": 7,
+        "details": "Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.656353",
+        "condition": "missing_display_directives",
+        "section_id": 7,
+        "details": "Narration segment 0 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.668304",
+        "condition": "missing_display_directives",
+        "section_id": 7,
+        "details": "Narration segment 1 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.678348",
+        "condition": "missing_display_directives",
+        "section_id": 7,
+        "details": "Narration segment 2 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.689982",
+        "condition": "missing_display_directives",
+        "section_id": 7,
+        "details": "Narration segment 3 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.698441",
+        "condition": "missing_display_directives",
+        "section_id": 7,
+        "details": "Narration segment 4 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.705667",
+        "condition": "missing_display_directives",
+        "section_id": 7,
+        "details": "Narration segment 5 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.712288",
+        "condition": "missing_display_directives",
+        "section_id": 7,
+        "details": "Narration segment 6 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.720054",
+        "condition": "missing_display_directives",
+        "section_id": 7,
+        "details": "Narration segment 7 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.728397",
+        "condition": "missing_display_directives",
+        "section_id": 7,
+        "details": "Narration segment 8 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.743565",
+        "condition": "visuals_never_displayed",
+        "section_id": 7,
+        "details": "Section 7: Has 9 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.761444",
+        "condition": "formula_mentioned_but_not_visualized",
+        "section_id": 8,
+        "details": "Narration mentions formulas/equations but no visual beat shows them"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.777142",
+        "condition": "vague_visual_language_detected",
+        "section_id": 8,
+        "details": "Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.796190",
+        "condition": "vague_visual_language_detected",
+        "section_id": 8,
+        "details": "Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.824138",
+        "condition": "vague_visual_language_detected",
+        "section_id": 8,
+        "details": "Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.850107",
+        "condition": "vague_visual_language_detected",
+        "section_id": 8,
+        "details": "Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.871405",
+        "condition": "vague_visual_language_detected",
+        "section_id": 8,
+        "details": "Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.880488",
+        "condition": "vague_visual_language_detected",
+        "section_id": 8,
+        "details": "Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.888888",
+        "condition": "vague_visual_language_detected",
+        "section_id": 8,
+        "details": "Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.896498",
+        "condition": "vague_visual_language_detected",
+        "section_id": 8,
+        "details": "Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.905073",
+        "condition": "vague_visual_language_detected",
+        "section_id": 8,
+        "details": "Visual beat 8 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.912891",
+        "condition": "manim_section_without_scene_spec",
+        "section_id": 8,
+        "details": "Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.920021",
+        "condition": "missing_display_directives",
+        "section_id": 8,
+        "details": "Narration segment 0 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.928492",
+        "condition": "missing_display_directives",
+        "section_id": 8,
+        "details": "Narration segment 1 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.936591",
+        "condition": "missing_display_directives",
+        "section_id": 8,
+        "details": "Narration segment 2 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.945524",
+        "condition": "missing_display_directives",
+        "section_id": 8,
+        "details": "Narration segment 3 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.955383",
+        "condition": "missing_display_directives",
+        "section_id": 8,
+        "details": "Narration segment 4 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.971009",
+        "condition": "missing_display_directives",
+        "section_id": 8,
+        "details": "Narration segment 5 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:34.990886",
+        "condition": "missing_display_directives",
+        "section_id": 8,
+        "details": "Narration segment 6 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.017464",
+        "condition": "missing_display_directives",
+        "section_id": 8,
+        "details": "Narration segment 7 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.047530",
+        "condition": "missing_display_directives",
+        "section_id": 8,
+        "details": "Narration segment 8 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.067765",
+        "condition": "visuals_never_displayed",
+        "section_id": 8,
+        "details": "Section 8: Has 9 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.088565",
+        "condition": "formula_mentioned_but_not_visualized",
+        "section_id": 9,
+        "details": "Narration mentions formulas/equations but no visual beat shows them"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.102650",
+        "condition": "vague_visual_language_detected",
+        "section_id": 9,
+        "details": "Visual beat 0 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.113690",
+        "condition": "vague_visual_language_detected",
+        "section_id": 9,
+        "details": "Visual beat 1 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.124277",
+        "condition": "vague_visual_language_detected",
+        "section_id": 9,
+        "details": "Visual beat 2 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.136445",
+        "condition": "vague_visual_language_detected",
+        "section_id": 9,
+        "details": "Visual beat 3 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.158849",
+        "condition": "vague_visual_language_detected",
+        "section_id": 9,
+        "details": "Visual beat 4 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.178618",
+        "condition": "vague_visual_language_detected",
+        "section_id": 9,
+        "details": "Visual beat 5 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.192247",
+        "condition": "vague_visual_language_detected",
+        "section_id": 9,
+        "details": "Visual beat 6 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.203186",
+        "condition": "vague_visual_language_detected",
+        "section_id": 9,
+        "details": "Visual beat 7 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.214208",
+        "condition": "vague_visual_language_detected",
+        "section_id": 9,
+        "details": "Visual beat 8 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.224683",
+        "condition": "vague_visual_language_detected",
+        "section_id": 9,
+        "details": "Visual beat 9 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.235618",
+        "condition": "vague_visual_language_detected",
+        "section_id": 9,
+        "details": "Visual beat 10 field 'objects_and_properties' contains vague phrases: ['clear diagram']"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.246375",
+        "condition": "manim_section_without_scene_spec",
+        "section_id": 9,
+        "details": "Manim section has no manim_scene_spec (neither section-level nor beat-level)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.257651",
+        "condition": "missing_display_directives",
+        "section_id": 9,
+        "details": "Narration segment 0 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.267989",
+        "condition": "missing_display_directives",
+        "section_id": 9,
+        "details": "Narration segment 1 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.278680",
+        "condition": "missing_display_directives",
+        "section_id": 9,
+        "details": "Narration segment 2 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.290275",
+        "condition": "missing_display_directives",
+        "section_id": 9,
+        "details": "Narration segment 3 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.301590",
+        "condition": "missing_display_directives",
+        "section_id": 9,
+        "details": "Narration segment 4 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.323635",
+        "condition": "missing_display_directives",
+        "section_id": 9,
+        "details": "Narration segment 5 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.337848",
+        "condition": "missing_display_directives",
+        "section_id": 9,
+        "details": "Narration segment 6 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.348563",
+        "condition": "missing_display_directives",
+        "section_id": 9,
+        "details": "Narration segment 7 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.366887",
+        "condition": "missing_display_directives",
+        "section_id": 9,
+        "details": "Narration segment 8 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.385085",
+        "condition": "missing_display_directives",
+        "section_id": 9,
+        "details": "Narration segment 9 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.396210",
+        "condition": "missing_display_directives",
+        "section_id": 9,
+        "details": "Narration segment 10 (example) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.405753",
+        "condition": "visuals_never_displayed",
+        "section_id": 9,
+        "details": "Section 9: Has 11 visual_beats but ALL segments have visual_layer='hide'. At least one segment must show visuals."
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.416294",
+        "condition": "missing_display_directives",
+        "section_id": 10,
+        "details": "Narration segment 0 (memory) is missing display_directives (v1.3 required)"
+      }
+    },
+    {
+      "type": "hard_fail",
+      "data": {
+        "timestamp": "2025-12-26T12:21:35.429097",
+        "condition": "recap_avatar_visible",
+        "section_id": 11,
+        "details": "Recap section layout.avatar_zone must have hidden avatar (video only)"
+      }
+    }
+  ],
+  "warnings": []
+}

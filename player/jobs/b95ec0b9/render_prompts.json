@@ -1,0 +1,177 @@
+[
+  {
+    "timestamp": "2025-12-26T12:32:27.080523",
+    "section_id": 4,
+    "section_title": "Reciprocal Trigonometric Identities",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-10.2s) - Introduction\ntitle = Text(\"Reciprocal Trigonometric Identities\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Understanding inverse relationships\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(5.2)\n\n# Segment 2 (10.2-21.8s) - Importance and Sine/Cosecant intro\nsine_eq = MathTex(r\"\\sin \\theta\").shift(LEFT * 3)\ncsc_eq = MathTex(r\"\\csc \\theta\").shift(RIGHT * 3)\narrow = Arrow(sine_eq.get_right(), csc_eq.get_left(), color=YELLOW)\n\nself.play(\n    FadeOut(subtitle),\n    Write(sine_eq),\n    Write(csc_eq),\n    run_time=3\n)\nself.play(Create(arrow), run_time=2)\nself.wait(6.7)\n\n# Segment 3 (21.8-37.6s) - Sine and Cosecant relationship\nreciprocal1 = MathTex(r\"\\csc \\theta = \\frac{1}{\\sin \\theta}\").scale(1.5)\nbox1 = SurroundingRectangle(reciprocal1, color=BLUE)\n\nself.play(\n    FadeOut(sine_eq, csc_eq, arrow),\n    Write(reciprocal1),\n    run_time=3\n)\nself.play(Create(box1), run_time=2)\nself.wait(10.7)\n\n# Segment 4 (37.6-51.3s) - Cosine/Secant and Tangent/Cotangent\nreciprocal2 = MathTex(r\"\\sec \\theta = \\frac{1}{\\cos \\theta}\").next_to(reciprocal1, DOWN)\nreciprocal3 = MathTex(r\"\\cot \\theta = \\frac{1}{\\tan \\theta}\").next_to(reciprocal2, DOWN)\n\nself.play(\n    FadeOut(box1),\n    reciprocal1.animate.scale(0.67).to_edge(UP, buff=2),\n    run_time=2\n)\nself.play(Write(reciprocal2), run_time=2)\nself.play(Write(reciprocal3), run_time=2)\nself.wait(7.7)\n\n# Segment 5 (51.3-72.6s) - Summary and utility\nsummary_box = SurroundingRectangle(VGroup(reciprocal1, reciprocal2, reciprocal3), \n                                 color=GOLD, buff=0.4)\nsummary_text = Text(\"These identities are fundamental\\nfor trigonometric manipulation\",\n                   font_size=32).next_to(summary_box, DOWN)\n\nself.play(\n    Create(summary_box),\n    run_time=2\n)\nself.play(\n    Write(summary_text),\n    run_time=3\n)\nself.wait(16.3)",
+    "output_path": "/home/runner/workspace/player/jobs/b95ec0b9/videos/topic_4.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v15_llm_generated",
+      "code_length": 1900,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-26T12:32:43.971295",
+    "section_id": 5,
+    "section_title": "Calculating All Ratios from a Given Ratio",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0.0-15.7s) - Given tangent A is 4/3\ntitle = Text(\"Finding All Trigonometric Ratios\", font_size=40).to_edge(UP)\ngiven = MathTex(r\"\\tan A = \\frac{4}{3}\").scale(1.2)\nself.play(Write(title), run_time=2)\nself.play(FadeIn(given), run_time=2)\nself.wait(11.7)\n\n# Segment 2 (15.7-28.9s) - Drawing right triangle\ntriangle = Polygon(\n    ORIGIN, RIGHT*3, UP*4, \n    color=WHITE,\n    fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).next_to(ORIGIN, UR, buff=0)\nangle_A = Arc(radius=0.5, angle=math.atan(4/3), color=YELLOW)\nangle_label = MathTex(\"A\").next_to(angle_A, RIGHT, buff=0.1)\n\nself.play(\n    FadeOut(given),\n    Create(triangle),\n    Create(right_angle),\n    Create(angle_A),\n    Write(angle_label),\n    run_time=4\n)\nself.wait(9.2)\n\n# Segment 3 (28.9-46.7s) - Labeling sides\nopp_label = MathTex(\"4\").next_to(triangle, RIGHT)\nadj_label = MathTex(\"3\").next_to(triangle, DOWN)\nopp_line = Line(ORIGIN, UP*4, color=YELLOW)\nadj_line = Line(ORIGIN, RIGHT*3, color=BLUE)\n\nself.play(\n    Create(opp_line),\n    Write(opp_label),\n    run_time=3\n)\nself.play(\n    Create(adj_line),\n    Write(adj_label),\n    run_time=3\n)\nself.wait(11.8)\n\n# Segment 4 (46.7-65.5s) - Pythagorean theorem\npyth = MathTex(r\"c^2 = a^2 + b^2\").to_edge(RIGHT)\nself.play(Write(pyth), run_time=3)\nhyp_line = Line(RIGHT*3, UP*4, color=RED)\nself.play(Create(hyp_line), run_time=2)\nself.wait(13.8)\n\n# Segment 5 (65.5-84.3s) - Calculate hypotenuse\ncalc = VGroup(\n    MathTex(r\"c^2 = 4^2 + 3^2\"),\n    MathTex(r\"c^2 = 16 + 9\"),\n    MathTex(r\"c^2 = 25\"),\n    MathTex(r\"c = 5\")\n).arrange(DOWN).to_edge(RIGHT)\n\nself.play(ReplacementTransform(pyth, calc[0]), run_time=2)\nself.play(Write(calc[1]), run_time=2)\nself.play(Write(calc[2]), run_time=2)\nself.play(Write(calc[3]), run_time=2)\nhyp_label = MathTex(\"5\").next_to(hyp_line, UR, buff=0.1)\nself.play(Write(hyp_label), run_time=2)\nself.wait(8.8)\n\n# Segment 6 (84.3-97.5s) - Sine and Cosine\nsine = MathTex(r\"\\sin A = \\frac{4}{5}\").to_edge(LEFT)\ncosine = MathTex(r\"\\cos A = \\frac{3}{5}\").next_to(sine, DOWN)\nself.play(Write(sine), run_time=3)\nself.play(Write(cosine), run_time=3)\nself.wait(7.2)\n\n# Segment 7 (97.5-107.6s) - Cosecant and Secant\ncsc = MathTex(r\"\\csc A = \\frac{5}{4}\").next_to(cosine, DOWN)\nsec = MathTex(r\"\\sec A = \\frac{5}{3}\").next_to(csc, DOWN)\nself.play(Write(csc), Write(sec), run_time=4)\nself.wait(6.2)\n\n# Segment 8 (107.6-119.8s) - Cotangent\ncot = MathTex(r\"\\cot A = \\frac{3}{4}\").next_to(sec, DOWN)\nself.play(Write(cot), run_time=3)\nself.wait(9.2)\n\n# Segment 9 (119.8-130.0s) - Summary\nsummary_box = SurroundingRectangle(VGroup(sine, cosine, csc, sec, cot))\nself.play(Create(summary_box), run_time=2)\nself.wait(8.2)",
+    "output_path": "/home/runner/workspace/player/jobs/b95ec0b9/videos/topic_5.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2654,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-26T12:32:48.485032",
+    "section_id": 6,
+    "section_title": "Proving Angle Equality from Sine Equality",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-11.7s) - Introducing triangles\n# Create first triangle ABC\ntriangle_abc = Polygon(\n    np.array([-3, -2, 0]), \n    np.array([-3, 1, 0]),\n    np.array([-1, -2, 0]),\n    color=BLUE\n)\nabc_labels = VGroup(\n    Text(\"A\").next_to(triangle_abc.get_vertices()[0], LEFT),\n    Text(\"B\").next_to(triangle_abc.get_vertices()[1], LEFT),\n    Text(\"C\").next_to(triangle_abc.get_vertices()[2], RIGHT)\n)\n\n# Create second triangle PQR\ntriangle_pqr = Polygon(\n    np.array([1, -2, 0]),\n    np.array([1, 1, 0]), \n    np.array([3, -2, 0]),\n    color=RED\n)\npqr_labels = VGroup(\n    Text(\"P\").next_to(triangle_pqr.get_vertices()[0], LEFT),\n    Text(\"Q\").next_to(triangle_pqr.get_vertices()[1], LEFT),\n    Text(\"R\").next_to(triangle_pqr.get_vertices()[2], RIGHT)\n)\n\nself.play(Create(triangle_abc), Create(triangle_pqr), run_time=5)\nself.play(Write(abc_labels), Write(pqr_labels), run_time=4)\nself.wait(2.7)\n\n# Segment 2 (11.7-30.0s) - Stating the goal\ngoal_text = MathTex(\n    r\"\\text{If }\\sin B = \\sin Q\",\n    r\"\\text{ then }B = Q\"\n).to_edge(UP)\n\nself.play(Write(goal_text[0]), run_time=3)\nself.wait(2)\nself.play(Write(goal_text[1]), run_time=3)\nself.wait(10.3)\n\n# Segment 3 (30.0-49.2s) - Applying sine ratio\nsine_ratio = MathTex(\n    r\"\\sin B = \\frac{AC}{AB} = \\frac{PR}{PQ} = \\sin Q\"\n).next_to(goal_text, DOWN)\n\nself.play(Write(sine_ratio), run_time=4)\nself.wait(15.3)\n\n# Segment 4 (49.2-67.5s) - Introducing k ratio\nk_ratio = VGroup(\n    MathTex(r\"\\frac{AC}{PR} = \\frac{AB}{PQ} = k\"),\n    MathTex(r\"AC = k \\cdot PR\"),\n    MathTex(r\"AB = k \\cdot PQ\")\n).arrange(DOWN).next_to(sine_ratio, DOWN)\n\nself.play(Write(k_ratio[0]), run_time=3)\nself.wait(2)\nself.play(Write(k_ratio[1]), Write(k_ratio[2]), run_time=3)\nself.wait(10.3)\n\n# Segment 5 (67.5-145.7s) - Pythagorean theorem and similarity\npyth_steps = VGroup(\n    MathTex(r\"BC^2 = AB^2 - AC^2\"),\n    MathTex(r\"BC = k\\sqrt{PQ^2 - PR^2}\"),\n    MathTex(r\"QR = \\sqrt{PQ^2 - PR^2}\"),\n    MathTex(r\"\\frac{BC}{QR} = k\")\n).arrange(DOWN).next_to(k_ratio, DOWN)\n\nself.play(Write(pyth_steps[0]), run_time=5)\nself.wait(10)\nself.play(Write(pyth_steps[1]), run_time=5)\nself.wait(10)\nself.play(Write(pyth_steps[2]), run_time=5)\nself.wait(10)\nself.play(Write(pyth_steps[3]), run_time=5)\n\nconclusion = Text(\n    \"Therefore, triangles ABC and PQR are similar\\nand angle B = angle Q\",\n    font_size=36\n).next_to(pyth_steps, DOWN)\n\nself.play(Write(conclusion), run_time=5)\nself.wait(23.2)",
+    "output_path": "/home/runner/workspace/player/jobs/b95ec0b9/videos/topic_6.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2412,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-26T12:33:20.351296",
+    "section_id": 7,
+    "section_title": "Evaluating Trigonometric Expressions",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-9.1s) - Introduction\ntitle = Text(\"Evaluating Trigonometric Expressions\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Working with Squared Terms\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=3)\nself.wait(3.1)\n\n# Segment 2 (9.1-19.8s) - Introducing Pythagorean identity\nexpression = MathTex(r\"\\cos^2(\\theta) + \\sin^2(\\theta)\").scale(1.5)\nexpression.move_to(ORIGIN)\n\nself.play(\n    FadeOut(subtitle),\n    ReplacementTransform(title, expression),\n    run_time=3\n)\nself.wait(7.7)\n\n# Segment 3 (19.8-34.0s) - Complete identity\ncomplete_identity = MathTex(\n    r\"\\cos^2(\\theta) + \\sin^2(\\theta) = 1\"\n).scale(1.5)\ncomplete_identity.move_to(ORIGIN)\n\nself.play(\n    ReplacementTransform(expression, complete_identity),\n    run_time=2\n)\nself.play(\n    Indicate(complete_identity.get_part_by_tex(\"1\"), color=YELLOW),\n    run_time=2\n)\nself.wait(10.2)\n\n# Segment 4 (34.0-48.7s) - Swapped terms example\nswapped_identity = MathTex(\n    r\"\\sin^2(\\theta) + \\cos^2(\\theta) = 1\"\n).scale(1.5)\nswapped_identity.move_to(ORIGIN)\n\nself.play(\n    ReplacementTransform(complete_identity, swapped_identity),\n    run_time=2\n)\nself.play(\n    Indicate(swapped_identity, color=BLUE),\n    run_time=2\n)\nself.wait(10.7)\n\n# Segment 5 (48.7-67.5s) - Right triangle explanation\n# Create right triangle\ntriangle = Polygon(\n    ORIGIN, RIGHT * 3, UP * 2,\n    color=WHITE,\n    fill_opacity=0.2\n)\ntriangle.move_to(ORIGIN)\n\n# Labels for triangle\nhyp_label = MathTex(\"1\").next_to(triangle.get_center(), UP + RIGHT, buff=0.3)\nsin_label = MathTex(r\"\\sin(\\theta)\").next_to(triangle.get_right(), RIGHT)\ncos_label = MathTex(r\"\\cos(\\theta)\").next_to(triangle.get_bottom(), DOWN)\nright_angle = Square(side_length=0.3).next_to(triangle.get_vertices()[0], UP + RIGHT, buff=0)\n\nself.play(\n    FadeOut(swapped_identity),\n    Create(triangle),\n    run_time=3\n)\nself.play(\n    Create(right_angle),\n    Write(hyp_label),\n    Write(sin_label),\n    Write(cos_label),\n    run_time=3\n)\n\n# Final identity below triangle\nfinal_identity = MathTex(\n    r\"\\cos^2(\\theta) + \\sin^2(\\theta) = 1\"\n).scale(1.2)\nfinal_identity.next_to(triangle, DOWN, buff=1)\n\nself.play(\n    Write(final_identity),\n    run_time=2\n)\nself.wait(10.8)",
+    "output_path": "/home/runner/workspace/player/jobs/b95ec0b9/videos/topic_7.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2237,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-26T12:33:44.154889",
+    "section_id": 8,
+    "section_title": "Verifying Trigonometric Identities",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-7.1s) - Intro to verifying identities\ntitle = Text(\"Verifying Trigonometric Identities\", font_size=40).to_edge(UP)\nsubtitle = Text(\"A systematic approach\", font_size=32).next_to(title, DOWN)\nself.play(Write(title), run_time=3)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(2.1)\n\n# Segment 2 (7.1-19.8s) - Definition\ndefinition = Text(\"Verifying an identity means showing that\\none side equals the other through\\ntrigonometric relationships and algebra\", \n                 font_size=32).shift(DOWN)\nself.play(FadeIn(definition), run_time=3)\nself.wait(9.7)\n\n# Segment 3 (19.8-31.0s) - Introduce identity and triangle\nself.play(FadeOut(subtitle, definition), run_time=1)\n\nidentity = MathTex(r\"\\sin^2 \\theta + \\cos^2 \\theta = 1\").shift(UP)\ntriangle = Polygon(\n    np.array([-2, -2, 0]),\n    np.array([1, -2, 0]), \n    np.array([-2, 1, 0]),\n    color=WHITE\n)\nself.play(Write(identity), Create(triangle), run_time=3)\nself.wait(7.2)\n\n# Segment 4 (31.0-47.7s) - Label triangle\nx_label = MathTex(\"x\").next_to(triangle, DOWN)\ny_label = MathTex(\"y\").next_to(triangle, LEFT)\nr_label = MathTex(\"r\").next_to(triangle.get_center(), UP+RIGHT)\ntheta = Arc(radius=0.5, start_angle=0, angle=PI/3, \n           arc_center=triangle.get_vertices()[0])\ntheta_label = MathTex(r\"\\theta\").next_to(theta, RIGHT)\n\nlabels = VGroup(x_label, y_label, r_label, theta, theta_label)\nratios = MathTex(\n    r\"\\sin \\theta = \\frac{y}{r}\",\n    r\"\\cos \\theta = \\frac{x}{r}\"\n).arrange(DOWN).next_to(triangle, RIGHT, buff=1)\n\nself.play(\n    Create(theta),\n    Write(theta_label),\n    Write(x_label),\n    Write(y_label), \n    Write(r_label),\n    run_time=3\n)\nself.play(Write(ratios), run_time=3)\nself.wait(10.8)\n\n# Segment 5 (47.7-94.9s) - Verification steps\nsteps = VGroup(\n    MathTex(r\"\\sin^2 \\theta + \\cos^2 \\theta = \\left(\\frac{y}{r}\\right)^2 + \\left(\\frac{x}{r}\\right)^2\"),\n    MathTex(r\"= \\frac{y^2}{r^2} + \\frac{x^2}{r^2}\"),\n    MathTex(r\"= \\frac{y^2 + x^2}{r^2}\"),\n    MathTex(r\"= \\frac{r^2}{r^2} = 1\")\n).arrange(DOWN, buff=0.5).next_to(identity, DOWN, buff=1)\n\n# Show steps one at a time with appropriate pauses\nself.play(FadeOut(ratios), run_time=2)\nself.play(Write(steps[0]), run_time=3)\nself.wait(10)\nself.play(Write(steps[1]), run_time=3)\nself.wait(10)\nself.play(Write(steps[2]), run_time=3)\nself.wait(8)\nself.play(Write(steps[3]), run_time=3)\nself.wait(5.2)",
+    "output_path": "/home/runner/workspace/player/jobs/b95ec0b9/videos/topic_8.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2347,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-26T12:34:10.499686",
+    "section_id": 9,
+    "section_title": "Finding Ratios from Side Relationships",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-16.2s) - Introduction\ntitle = Text(\"Finding Trigonometric Ratios\", font_size=40).to_edge(UP)\nsubtitle = Text(\"Using Side Relationships\", font_size=32).next_to(title, DOWN)\n\nself.play(Write(title), run_time=2)\nself.play(FadeIn(subtitle), run_time=2)\nself.wait(12.2)\n\n# Segment 2 (16.2-30.5s) - Setting up triangle with tan A = 4/3\ntriangle = Polygon(\n    ORIGIN, RIGHT*3, UP*4+RIGHT*3,\n    color=WHITE, fill_opacity=0.2\n)\nright_angle = Square(side_length=0.3).next_to(ORIGIN, UR, buff=0)\nangle_A = Arc(radius=0.5, angle=math.atan(4/3), color=YELLOW)\nangle_label = MathTex(\"A\").next_to(angle_A, RIGHT, buff=0.1)\n\ntan_eq = MathTex(r\"\\tan A = \\frac{4}{3}\").to_edge(RIGHT)\n\nself.play(\n    FadeOut(title),\n    FadeOut(subtitle),\n    Create(triangle),\n    Create(right_angle),\n    run_time=3\n)\nself.play(\n    Create(angle_A),\n    Write(angle_label),\n    Write(tan_eq),\n    run_time=3\n)\nself.wait(8.2)\n\n# Segment 3 (30.5-52.3s) - Labeling sides\nopp_label = MathTex(\"BC = 4\").next_to(triangle, RIGHT)\nadj_label = MathTex(\"AB = 3\").next_to(triangle, DOWN)\nopp_line = Line(triangle.get_vertices()[0], triangle.get_vertices()[2], color=BLUE)\nadj_line = Line(triangle.get_vertices()[0], triangle.get_vertices()[1], color=RED)\n\nself.play(\n    Create(opp_line),\n    Write(opp_label),\n    run_time=3\n)\nself.play(\n    Create(adj_line), \n    Write(adj_label),\n    run_time=3\n)\nself.wait(15.8)\n\n# Segment 4 (52.3-78.7s) - Pythagorean theorem\npyth_eq = MathTex(r\"AC^2 = AB^2 + BC^2\").shift(UP*2)\ncalc_1 = MathTex(r\"AC^2 = 3^2 + 4^2\").next_to(pyth_eq, DOWN)\ncalc_2 = MathTex(r\"AC^2 = 9 + 16 = 25\").next_to(calc_1, DOWN)\ncalc_3 = MathTex(r\"AC = 5\").next_to(calc_2, DOWN)\nhyp_line = Line(triangle.get_vertices()[1], triangle.get_vertices()[2], color=GREEN)\nhyp_label = MathTex(\"AC = 5\").next_to(hyp_line, LEFT)\n\nself.play(Write(pyth_eq), run_time=3)\nself.play(Write(calc_1), run_time=3)\nself.play(Write(calc_2), run_time=3)\nself.play(\n    Write(calc_3),\n    Create(hyp_line),\n    Write(hyp_label),\n    run_time=3\n)\nself.wait(14.4)\n\n# Segment 5 (78.7-120.8s) - All trig ratios\nratios = VGroup(\n    MathTex(r\"\\sin A = \\frac{4}{5}\"),\n    MathTex(r\"\\cos A = \\frac{3}{5}\"),\n    MathTex(r\"\\csc A = \\frac{5}{4}\"),\n    MathTex(r\"\\sec A = \\frac{5}{3}\"),\n    MathTex(r\"\\cot A = \\frac{3}{4}\")\n).arrange(DOWN, buff=0.5).to_edge(RIGHT)\n\nself.play(\n    FadeOut(pyth_eq),\n    FadeOut(calc_1),\n    FadeOut(calc_2),\n    FadeOut(calc_3),\n    run_time=2\n)\n\nfor ratio in ratios:\n    self.play(Write(ratio), run_time=3)\n    self.wait(5.42)  # (42.1 - 2 - 5*3) / 5 = 5.42s wait per ratio",
+    "output_path": "/home/runner/workspace/player/jobs/b95ec0b9/videos/topic_9.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2557,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-26T12:34:13.840400",
+    "section_id": 11,
+    "section_title": "Let's Review - Beat 0",
+    "renderer": "wan_beat",
+    "prompt": "Scene in a large, sunlit observatory with a high-contrast view of space. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands before a large, holographic star chart. A glowing right-angled triangle connects three celestial bodies. Professor Anya gestures, and the triangle\u2019s sides and angles highlight in sequence, showing their direct relationship. As she adjusts the position of one star, the side lengths and angle measures update in real-time. The camera performs a slow dolly zoom, moving closer to the holographic triangle. Final frame is a close-up on the triangle, with the labels 'Sides' and 'Angles' glowing brightly, illustrating the core concept of trigonometry.",
+    "output_path": "/home/runner/workspace/player/jobs/b95ec0b9/videos/topic_11_beat_0.mp4",
+    "extra": {
+      "section_type": "recap",
+      "beat_index": 0,
+      "beat_total": 0,
+      "duration": 6,
+      "dry_run": false,
+      "skip_wan": true,
+      "visual_beat_fields": []
+    }
+  },
+  {
+    "timestamp": "2025-12-26T12:34:14.957184",
+    "section_id": 11,
+    "section_title": "Let's Review - Beat 1",
+    "renderer": "wan_beat",
+    "prompt": "A minimalist white room with a precise grid on the floor. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands beside a large right-angled triangle made of polished, dark wood. As she points to angle A, six floating glass panels materialize around the triangle. Each panel illuminates to show one of the six trigonometric ratios\u2014sin, cos, tan, csc, sec, cot\u2014displaying the specific fraction like 'Opposite/Hypotenuse'. The corresponding sides of the wooden triangle glow with colored light as each ratio is displayed. The camera orbits the triangle, capturing each panel as it appears. The final frame shows all six glowing panels arranged neatly around the central triangle.",
+    "output_path": "/home/runner/workspace/player/jobs/b95ec0b9/videos/topic_11_beat_1.mp4",
+    "extra": {
+      "section_type": "recap",
+      "beat_index": 1,
+      "beat_total": 0,
+      "duration": 6,
+      "dry_run": false,
+      "skip_wan": true,
+      "visual_beat_fields": []
+    }
+  },
+  {
+    "timestamp": "2025-12-26T12:34:15.460055",
+    "section_id": 11,
+    "section_title": "Let's Review - Beat 2",
+    "renderer": "wan_beat",
+    "prompt": "A dark chamber with a floor made of stone tiles. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, observes a right triangle drawn on the floor in glowing blue lines. She taps the adjacent side, and a square of glowing red tiles forms against it. She taps the opposite side, and a square of yellow tiles forms. With a final tap on the hypotenuse, the red and yellow tiles flow like liquid light and perfectly reassemble into a single, larger purple square along the hypotenuse. A camera cranes up from a low angle to a direct overhead view. The final frame is a top-down shot showing the combined area of the two smaller squares equals the larger one.",
+    "output_path": "/home/runner/workspace/player/jobs/b95ec0b9/videos/topic_11_beat_2.mp4",
+    "extra": {
+      "section_type": "recap",
+      "beat_index": 2,
+      "beat_total": 0,
+      "duration": 6,
+      "dry_run": false,
+      "skip_wan": true,
+      "visual_beat_fields": []
+    }
+  },
+  {
+    "timestamp": "2025-12-26T12:34:16.038253",
+    "section_id": 11,
+    "section_title": "Let's Review - Beat 3",
+    "renderer": "wan_beat",
+    "prompt": "A serene, minimalist digital space with a white floor. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands beside a holographic right triangle. A digital panel floats nearby, displaying 'tan A = Opposite / Adjacent'. Professor Anya manipulates the hologram, stretching the opposite side until its length exactly matches the adjacent side. As they become equal, both sides flash with a bright white light, and the panel's text updates to 'tan A = 1'. The camera slowly zooms in, focusing on the two identical, glowing sides of the triangle. The final frame is a close-up showing the two equal sides, with the equation 'tan A = 1' hovering above them.",
+    "output_path": "/home/runner/workspace/player/jobs/b95ec0b9/videos/topic_11_beat_3.mp4",
+    "extra": {
+      "section_type": "recap",
+      "beat_index": 3,
+      "beat_total": 0,
+      "duration": 6,
+      "dry_run": false,
+      "skip_wan": true,
+      "visual_beat_fields": []
+    }
+  },
+  {
+    "timestamp": "2025-12-26T12:34:16.524590",
+    "section_id": 11,
+    "section_title": "Let's Review - Beat 4",
+    "renderer": "wan_beat",
+    "prompt": "A futuristic laboratory setting with a large, transparent screen. Professor Anya, a woman with silver hair in a neat bun, wearing a dark blue blazer and glasses, stands on one side. On the screen, the formula for 'sin A' appears next to a right triangle, showing 'Opposite / Hypotenuse'. With a swiping gesture, Professor Anya causes the fraction to animate: the numerator and denominator flip positions on screen. As the fraction settles into its new state, 'Hypotenuse / Opposite', the label beside it morphs from 'sin A' to 'cosec A'. The camera remains in a steady, medium shot, focusing on the screen's transformation. The final frame shows both sin A and cosec A with their respective fractions, linked by the identity 'cosec A = 1 / sin A'.",
+    "output_path": "/home/runner/workspace/player/jobs/b95ec0b9/videos/topic_11_beat_4.mp4",
+    "extra": {
+      "section_type": "recap",
+      "beat_index": 4,
+      "beat_total": 0,
+      "duration": 6,
+      "dry_run": false,
+      "skip_wan": true,
+      "visual_beat_fields": []
+    }
+  }
+]
