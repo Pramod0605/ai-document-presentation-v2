@@ -224,6 +224,213 @@
       border: 1px solid rgba(0, 212, 255, 0.3);
     }
 
+    /* ========================================
+       ISS-180: Enhanced Content Display Styles
+       ======================================== */
+    
+    /* Formatted Content Block - wraps all visual content */
+    .formatted-content-block {
+      background: rgba(15, 15, 20, 0.9);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 10px 0;
+      backdrop-filter: blur(8px);
+    }
+    
+    /* Paragraph Block */
+    .formatted-paragraph {
+      font-size: 1.3rem;
+      line-height: 1.8;
+      color: #e8e8e0;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    
+    .formatted-paragraph:last-child {
+      margin-bottom: 0;
+    }
+    
+    /* Bullet List Styling */
+    .formatted-bullet-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .formatted-bullet-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      font-size: 1.25rem;
+      line-height: 1.6;
+      color: #e8e8e0;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+    }
+    
+    .formatted-bullet-item:last-child {
+      border-bottom: none;
+    }
+    
+    .formatted-bullet-item .bullet-marker {
+      color: #00ff88;
+      font-size: 1.4rem;
+      font-weight: bold;
+      min-width: 20px;
+      text-align: center;
+    }
+    
+    .formatted-bullet-item.level-2 {
+      margin-left: 30px;
+      font-size: 1.15rem;
+    }
+    
+    .formatted-bullet-item.level-2 .bullet-marker {
+      color: #00d4ff;
+      font-size: 1.2rem;
+    }
+    
+    /* Divider between paragraph and bullets */
+    .content-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.4), transparent);
+      margin: 16px 0;
+    }
+    
+    /* ========================================
+       Quiz Card Styling
+       ======================================== */
+    .quiz-card {
+      background: rgba(15, 15, 25, 0.95);
+      border: 2px solid rgba(0, 212, 255, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 10px 0;
+    }
+    
+    .quiz-question-text {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #00d4ff;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+    }
+    
+    .quiz-question-text::before {
+      content: "❓ ";
+    }
+    
+    .quiz-choices-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .quiz-choice-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: rgba(30, 30, 40, 0.8);
+      border: 1px solid rgba(100, 100, 120, 0.3);
+      border-radius: 10px;
+      font-size: 1.2rem;
+      color: #e8e8e0;
+      transition: all 0.3s ease;
+    }
+    
+    .quiz-choice-item:hover {
+      background: rgba(0, 212, 255, 0.1);
+      border-color: rgba(0, 212, 255, 0.4);
+    }
+    
+    .quiz-choice-item.correct {
+      background: rgba(0, 255, 136, 0.15);
+      border-color: #00ff88;
+    }
+    
+    .quiz-choice-item.correct .choice-letter {
+      background: #00ff88;
+      color: #000;
+    }
+    
+    .quiz-choice-item .choice-letter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: rgba(0, 212, 255, 0.2);
+      border: 1px solid #00d4ff;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #00d4ff;
+      flex-shrink: 0;
+    }
+    
+    .quiz-choice-item .choice-text {
+      flex: 1;
+    }
+    
+    /* ========================================
+       Memory/Flashcard Key Concept Styling
+       ======================================== */
+    .memory-concept-card {
+      background: linear-gradient(135deg, rgba(0, 100, 80, 0.3) 0%, rgba(0, 60, 100, 0.3) 100%);
+      border: 2px solid rgba(0, 255, 136, 0.4);
+      border-radius: 16px;
+      padding: 28px;
+      margin: 10px 0;
+      text-align: center;
+      position: relative;
+    }
+    
+    .memory-concept-card::before {
+      content: "💡 KEY CONCEPT";
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #00ff88;
+      color: #000;
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    
+    .memory-concept-text {
+      font-size: 1.5rem;
+      line-height: 1.7;
+      color: #f0f0e8;
+      font-style: italic;
+      padding-top: 10px;
+    }
+    
+    .memory-concept-text::before {
+      content: """;
+      font-size: 2.5rem;
+      color: #00ff88;
+      opacity: 0.5;
+      position: relative;
+      top: 8px;
+      margin-right: 5px;
+    }
+    
+    .memory-concept-text::after {
+      content: """;
+      font-size: 2.5rem;
+      color: #00ff88;
+      opacity: 0.5;
+      position: relative;
+      top: 8px;
+      margin-left: 5px;
+    }
+
     .flashcard-container {
       display: flex;
       gap: 15px;
@@ -440,29 +647,20 @@
       color: #00ff88;
     }
 
+    /* ========================================
+       AVATAR: ALL positioning controlled by JavaScript applyAvatarLayout()
+       CSS only provides minimal base styles - NO position/width/left/right
+       ======================================== */
     #avatar-canvas {
-      position: absolute;
-      bottom: 0;
-      z-index: 20;
+      /* Base styles only - position/width set by JS with !important */
       pointer-events: none;
-      transition: left 0.8s ease-in-out, height 0.8s ease, opacity 0.5s ease, transform 0.5s ease;
-      filter: drop-shadow(-20px 5px 25px rgba(0, 0, 0, 0.6));
-      transform-origin: bottom center;
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
-    }
-
-    .mode-center #avatar-canvas {
-      z-index: 15;
     }
 
     .mode-intro #content-wrapper {
       opacity: 0 !important;
       pointer-events: none;
-    }
-
-    .mode-intro #avatar-canvas {
-      z-index: 50;
     }
 
     .mode-center #content-wrapper {
@@ -487,9 +685,7 @@
       opacity: 0;
     }
 
-    .mode-side #avatar-canvas {
-      z-index: 20;
-    }
+    /* Avatar positioning: ALL controlled by JavaScript - no CSS rules here */
 
     .mode-side #content-wrapper {
       opacity: 1;
@@ -500,9 +696,7 @@
       opacity: 0;
     }
 
-    .mode-image #avatar-canvas {
-      z-index: 20;
-    }
+    /* Avatar positioning: ALL controlled by JavaScript - no CSS rules here */
 
     .mode-image #content-wrapper {
       opacity: 0;
@@ -536,9 +730,7 @@
       opacity: 1 !important;
     }
 
-    .mode-khan #avatar-canvas {
-      z-index: 50;
-    }
+    /* Avatar positioning: ALL controlled by JavaScript - no CSS rules here */
 
     .mode-content-video #content-wrapper {
       opacity: 1;
@@ -588,15 +780,7 @@
       opacity: 1;
     }
 
-    .mode-content-video #avatar-canvas {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      left: auto;
-      height: auto;
-      z-index: 50;
-      transform: translateX(0);
-    }
+    /* Avatar positioning: ALL controlled by JavaScript - no CSS rules here */
     
     .mode-content-video.text-visible #content-box {
       min-width: 40%;
@@ -1141,7 +1325,7 @@
     <div class="slider-row"><input type="range" id="av-green" min="0" max="200" step="1" value="60"></div>
   </div>
 
-  <script src="/player/player.js"></script>
+  <script src="player.js?v=20251226-ISS180b"></script>
 </body>
 
 </html>

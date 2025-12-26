@@ -444,6 +444,138 @@ class LayerController {
 const layerController = new LayerController();
 
 /**
+ * ISS-180: Enhanced Content Rendering
+ * Renders visual_content with proper formatting based on content_type and section_type
+ */
+function renderFormattedContent(visualContent, sectionType, narrationText) {
+  const container = document.createElement('div');
+  
+  // Handle Memory section - show narration as key concept card
+  if (sectionType === 'memory' && narrationText) {
+    const card = document.createElement('div');
+    card.className = 'memory-concept-card';
+    const textDiv = document.createElement('div');
+    textDiv.className = 'memory-concept-text';
+    textDiv.textContent = narrationText;
+    card.appendChild(textDiv);
+    container.appendChild(card);
+    return container;
+  }
+  
+  // No visual content - return empty
+  if (!visualContent) return container;
+  
+  const contentType = visualContent.content_type;
+  const bulletPoints = visualContent.bullet_points || [];
+  const verbatimText = visualContent.verbatim_text || '';
+  
+  // Check if this is a quiz question (level 1 = question, level 2 = choices)
+  const isQuizQuestion = bulletPoints.length > 0 && 
+    bulletPoints.some(bp => bp.level === 1) && 
+    bulletPoints.some(bp => bp.level === 2);
+  
+  if (isQuizQuestion) {
+    // Render as quiz card
+    const quizCard = document.createElement('div');
+    quizCard.className = 'quiz-card';
+    
+    // Extract question (level 1) and choices (level 2)
+    const question = bulletPoints.find(bp => bp.level === 1);
+    const choices = bulletPoints.filter(bp => bp.level === 2);
+    
+    if (question) {
+      const questionDiv = document.createElement('div');
+      questionDiv.className = 'quiz-question-text';
+      questionDiv.innerHTML = question.text.replace(/^Question\s*\d+:\s*/i, '');
+      quizCard.appendChild(questionDiv);
+    }
+    
+    if (choices.length > 0) {
+      const choicesList = document.createElement('div');
+      choicesList.className = 'quiz-choices-list';
+      
+      choices.forEach((choice) => {
+        const choiceItem = document.createElement('div');
+        choiceItem.className = 'quiz-choice-item';
+        
+        // Extract letter from text (e.g., "A) $1/2$" -> letter: "A", text: "$1/2$")
+        const match = choice.text.match(/^([A-D])\)\s*(.+)$/i);
+        if (match) {
+          choiceItem.innerHTML = `
+            <span class="choice-letter">${match[1]}</span>
+            <span class="choice-text">${match[2]}</span>
+          `;
+        } else {
+          choiceItem.innerHTML = `<span class="choice-text">${choice.text}</span>`;
+        }
+        
+        choicesList.appendChild(choiceItem);
+      });
+      
+      quizCard.appendChild(choicesList);
+    }
+    
+    container.appendChild(quizCard);
+    return container;
+  }
+  
+  // Create formatted content block for regular content
+  const block = document.createElement('div');
+  block.className = 'formatted-content-block';
+  
+  // Has both paragraph and bullets - show both
+  const hasParagraph = verbatimText && verbatimText.length > 0;
+  const hasBullets = bulletPoints.length > 0;
+  
+  if (hasParagraph) {
+    const para = document.createElement('div');
+    para.className = 'formatted-paragraph';
+    para.innerHTML = verbatimText;
+    block.appendChild(para);
+  }
+  
+  if (hasParagraph && hasBullets) {
+    const divider = document.createElement('div');
+    divider.className = 'content-divider';
+    block.appendChild(divider);
+  }
+  
+  if (hasBullets) {
+    const bulletList = document.createElement('div');
+    bulletList.className = 'formatted-bullet-list';
+    
+    bulletPoints.forEach((bp) => {
+      const item = document.createElement('div');
+      item.className = 'formatted-bullet-item';
+      if (bp.level && bp.level > 1) {
+        item.classList.add(`level-${bp.level}`);
+      }
+      
+      const marker = document.createElement('span');
+      marker.className = 'bullet-marker';
+      marker.textContent = '•';
+      
+      const text = document.createElement('span');
+      text.className = 'bullet-text';
+      text.innerHTML = bp.text || bp;
+      
+      item.appendChild(marker);
+      item.appendChild(text);
+      bulletList.appendChild(item);
+    });
+    
+    block.appendChild(bulletList);
+  }
+  
+  // If we have content, add it
+  if (hasParagraph || hasBullets) {
+    container.appendChild(block);
+  }
+  
+  return container;
+}
+
+/**
  * VideoBufferManager - Preload-based smooth video transitions (ISS-070)
  * Preloads next video in hidden element, copies to primary when ready
  * Does NOT swap DOM elements - keeps inlineVideo reference stable
@@ -1120,10 +1252,56 @@ function loadSlide(index) {
     const legacyVersions = ['', 'v1.0', 'v1.1', 'v1.2'];
     const isLegacy = legacyVersions.includes(specVersion);
     
-    // ISS-160: Handle content_type for source fidelity display
+    // ISS-180: Enhanced content rendering with formatted blocks
+    const sectionType = slide.section_type || slide.slide_type || 'content';
     const contentType = slide.visual_content?.content_type;
+    let contentRendered = false; // Flag to prevent duplicate rendering
     
-    if (contentType === 'paragraph' && slide.visual_content?.verbatim_text) {
+    // ISS-180: V1.5 per-segment visual_content rendering
+    if (!isLegacy && narrationSegs && narrationSegs.length > 0 && narrationSegs[0]?.visual_content) {
+      console.log(`[ISS-180] Slide ${slide.slide_number}: Rendering ${narrationSegs.length} segments with formatted content`);
+      
+      narrationSegs.forEach((seg, i) => {
+        const segDiv = document.createElement('div');
+        segDiv.className = 'segment-item';
+        segDiv.id = `seg-${i}`;
+        
+        // Use enhanced rendering for this segment
+        const formattedContent = renderFormattedContent(
+          seg.visual_content, 
+          sectionType, 
+          seg.text // narration text for memory sections
+        );
+        
+        if (formattedContent.children.length > 0) {
+          segDiv.appendChild(formattedContent);
+        } else {
+          // Fallback to simple text
+          segDiv.innerHTML = seg.visual_content?.verbatim_text || seg.text || '';
+        }
+        
+        list.appendChild(segDiv);
+      });
+      
+      // Build timed_segments from narration
+      let cumulativeTime = 0;
+      slide.timed_segments = narrationSegs.map((seg, i) => {
+        const duration = seg.duration_seconds || seg.duration || 5;
+        const start = cumulativeTime;
+        cumulativeTime += duration;
+        return {
+          visual: seg.visual_content || seg.text,
+          start_time: start,
+          end_time: cumulativeTime
+        };
+      });
+      
+      const firstSeg = document.getElementById('seg-0');
+      if (firstSeg) firstSeg.classList.add('active');
+      
+      contentRendered = true; // Mark as rendered to skip legacy block
+      
+    } else if (contentType === 'paragraph' && slide.visual_content?.verbatim_text) {
       // ISS-160: Paragraph mode - display as prose text (not bullets)
       const paragraphDiv = document.createElement('div');
       paragraphDiv.className = 'segment-item paragraph-content';
@@ -1181,7 +1359,8 @@ function loadSlide(index) {
       displayItems = slide.segments.map(s => s.visual || s.text || '');
     }
 
-    if (Array.isArray(displayItems) && displayItems.length > 0) {
+    // ISS-180 FIX: Only render legacy block if content not already rendered
+    if (!contentRendered && Array.isArray(displayItems) && displayItems.length > 0) {
       displayItems.forEach((item, i) => {
         const div = document.createElement('div');
         div.className = 'segment-item';
