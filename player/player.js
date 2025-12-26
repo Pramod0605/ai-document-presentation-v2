@@ -380,47 +380,39 @@ class LayerController {
    * Avatar is LAYER 2 (z-index 60) - always visible above everything else
    */
   applyAvatarLayout(avatarCanvas, position, widthPercent) {
-    // Reset ALL positional CSS first to prevent inheritance from previous slide
-    avatarCanvas.style.cssText = '';
+    // ISS-177: Use setProperty for reliable !important application
+    // Reset ALL styles first
+    avatarCanvas.removeAttribute('style');
     
-    // Build CSS with !important to override mode-specific CSS rules
-    let css = `
-      position: absolute !important;
-      width: ${widthPercent}% !important;
-      max-width: none !important;
-      height: auto !important;
-      bottom: 0 !important;
-      opacity: 1 !important;
-      display: block !important;
-      z-index: 60 !important;
-      pointer-events: none;
-      filter: drop-shadow(-20px 5px 25px rgba(0, 0, 0, 0.6));
-      transform-origin: bottom center;
-    `;
+    // Apply base styles with setProperty (more reliable than cssText)
+    const s = avatarCanvas.style;
+    s.setProperty('position', 'absolute', 'important');
+    s.setProperty('width', `${widthPercent}%`, 'important');
+    s.setProperty('max-width', 'none', 'important');
+    s.setProperty('height', 'auto', 'important');
+    s.setProperty('bottom', '0', 'important');
+    s.setProperty('opacity', '1', 'important');
+    s.setProperty('display', 'block', 'important');
+    s.setProperty('z-index', '60', 'important');
+    s.setProperty('pointer-events', 'none', 'important');
+    s.setProperty('filter', 'drop-shadow(-20px 5px 25px rgba(0, 0, 0, 0.6))', 'important');
+    s.setProperty('transform-origin', 'bottom center', 'important');
 
     if (position === 'center') {
-      css += `
-        left: 50% !important;
-        right: auto !important;
-        transform: translateX(-50%) !important;
-      `;
+      s.setProperty('left', '50%', 'important');
+      s.setProperty('right', 'auto', 'important');
+      s.setProperty('transform', 'translateX(-50%)', 'important');
     } else if (position === 'right') {
-      css += `
-        right: 10px !important;
-        left: auto !important;
-        transform: none !important;
-      `;
+      s.setProperty('right', '10px', 'important');
+      s.setProperty('left', 'auto', 'important');
+      s.setProperty('transform', 'none', 'important');
     } else if (position === 'left') {
-      css += `
-        left: 10px !important;
-        right: auto !important;
-        transform: none !important;
-      `;
+      s.setProperty('left', '10px', 'important');
+      s.setProperty('right', 'auto', 'important');
+      s.setProperty('transform', 'none', 'important');
     }
 
-    avatarCanvas.style.cssText = css;
-
-    console.log(`[LayerController] Avatar layout: position=${position}, width=${widthPercent}%, z-index=60`);
+    console.log(`[LayerController] Avatar: ${position}, ${widthPercent}% - APPLIED WITH setProperty`);
   }
 }
 
@@ -777,17 +769,16 @@ function updateVisuals() {
   const aX = document.getElementById('av-x').value;
   const cScale = document.getElementById('con-scale').value;
 
-  // ISS-175 FIX: Preserve centering transform for intro sections
-  // Check if we're in intro mode (avatar should be centered)
+  // ISS-175/177 FIX: Use setProperty with !important to ensure override
   const stageEl = document.getElementById('stage');
   const isIntro = stageEl && stageEl.classList.contains('mode-intro');
   
   if (isIntro) {
     // For intro: keep center transform, only apply scale
-    avatarCanvas.style.transform = `translateX(-50%) scale(${aScale})`;
+    avatarCanvas.style.setProperty('transform', `translateX(-50%) scale(${aScale})`, 'important');
   } else {
     // For other sections: apply offset and scale
-    avatarCanvas.style.transform = `translateX(${aX}px) scale(${aScale})`;
+    avatarCanvas.style.setProperty('transform', `translateX(${aX}px) scale(${aScale})`, 'important');
   }
   
   contentBox.style.transform = `scale(${cScale})`;
