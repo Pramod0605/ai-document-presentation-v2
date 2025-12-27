@@ -11,6 +11,13 @@
   <!-- LAYER 0: Black Background (body background) -->
   
   <div id="player-container">
+    <!-- Header Bar -->
+    <div id="header-bar">
+      <div id="header-logo">Simply Learn</div>
+      <div id="header-title"></div>
+      <div id="header-spacer"></div>
+    </div>
+    
     <!-- Stage Area: Contains content and avatar layers -->
     <div id="stage">
       
@@ -60,6 +67,38 @@
       </select>
       
       <button id="btn-fullscreen" class="control-btn" title="Fullscreen">⛶</button>
+      <button id="btn-dev" class="control-btn" title="Toggle Dev Panel (D)">Dev</button>
+    </div>
+    
+    <!-- Dev Panel -->
+    <div id="dev-panel">
+      <div class="dev-header">DEV CONTROLS</div>
+      
+      <div class="dev-section">
+        <label>Avatar Scale</label>
+        <input type="range" id="dev-avatar-scale" min="0.5" max="1.5" step="0.05" value="1.0">
+      </div>
+      
+      <div class="dev-section">
+        <label>Chroma Threshold</label>
+        <input type="range" id="dev-chroma-threshold" min="50" max="200" step="5" value="100">
+      </div>
+      
+      <div class="dev-section">
+        <label>Content Width %</label>
+        <input type="range" id="dev-content-width" min="50" max="90" step="5" value="70">
+      </div>
+      
+      <div class="dev-info">
+        <div class="info-row"><span>Slide:</span><span id="dev-slide-info">-</span></div>
+        <div class="info-row"><span>Section:</span><span id="dev-section-info">-</span></div>
+        <div class="info-row"><span>Audio:</span><span id="dev-audio-info">-</span></div>
+        <div class="info-row"><span>Video:</span><span id="dev-video-info">-</span></div>
+      </div>
+      
+      <div class="dev-segment-list" id="dev-segments">
+        <!-- Populated with current slide segments -->
+      </div>
     </div>
   </div>
   

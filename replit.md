@@ -161,6 +161,21 @@ Segment 5 → source_block_ids: [3] → ordered_list data (same block!)
 - Removed visible division between content and avatar areas
 - Added video-mode class management to reset layer states between slides
 
+### ISS-188 to ISS-193: Player V2 Enhancements (Dec 27, 2025)
+**Issues Fixed:**
+1. **ISS-188**: Added header bar with "Simply Learn" logo (left) and presentation title from JSON (center)
+2. **ISS-189**: Ported dev mode panel with avatar scale, chroma threshold, content width sliders + segment list
+3. **ISS-190**: Added filter for "Thinking..." and gesture-only segments (hidden placeholders maintain ID alignment)
+4. **ISS-191**: Added [pause X seconds] detection - pauses are filtered from visual display (already in audio)
+5. **ISS-192**: Verified Manim/narration sync - both generated from same segment durations, playbackRate=1.0
+6. **ISS-193**: Reviewed WAN video prompts - detailed cinematic prompts with proper durations
+
+**Key Changes:**
+- New `#header-bar`, `#dev-panel` DOM elements and CSS
+- `isThinkingSegment()` function filters unwanted visual content while preserving segment ID alignment
+- Dev panel toggle with 'D' key, sliders for real-time adjustments
+- `updateDevInfo()` shows current slide info and clickable segment list
+
 ### Key System Specifications
 - **Display Requirements**: Detailed in `docs/display_requirements.md`, including display summary, layer architecture, and ASCII diagrams for 7 section types (intro, summary, content, example, quiz, memory, recap).
 - **V1.5 Requirements**: Defined in `docs/v1.5_requirements.json`, covering phases, requirements, agent contracts, JSON schemas, and guardrails.

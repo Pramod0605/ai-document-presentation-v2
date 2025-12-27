@@ -54,14 +54,16 @@ let currentSegmentIndex = 0;
 
 // DOM Elements
 let stage, contentLayer, contentBox, avatarLayer, avatarVideo, avatarCanvas, avatarCtx;
-let sectionTitle;
+let sectionTitle, headerTitle;
 let videoLayer, contentVideo, narrationAudio;
 let btnPlay, btnPrev, btnNext, slidePicker;
 let timelineFill, timelineHandle, timeDisplay;
+let devPanel, btnDev;
 
 // Reveal state
 let revealItems = [];
 let chromaThreshold = 100;
+let devModeEnabled = false;
 
 // ============================================
 // INITIALIZATION
@@ -89,6 +91,7 @@ function cacheDOMElements() {
   contentLayer = document.getElementById('content-layer');
   contentBox = document.getElementById('content-box');
   sectionTitle = document.getElementById('section-title');
+  headerTitle = document.getElementById('header-title');
   avatarLayer = document.getElementById('avatar-layer');
   avatarVideo = document.getElementById('avatar-video');
   avatarCanvas = document.getElementById('avatar-canvas');
@@ -103,6 +106,8 @@ function cacheDOMElements() {
   timelineFill = document.getElementById('timeline-fill');
   timelineHandle = document.getElementById('timeline-handle');
   timeDisplay = document.getElementById('time-display');
+  devPanel = document.getElementById('dev-panel');
+  btnDev = document.getElementById('btn-dev');
 }
 
 function setupEventListeners() {
@@ -127,6 +132,10 @@ function setupEventListeners() {
   
   document.getElementById('timeline-track').addEventListener('click', seekTimeline);
   document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
+  
+  // Dev panel controls
+  if (btnDev) btnDev.addEventListener('click', toggleDevPanel);
+  setupDevControls();
   
   document.addEventListener('keydown', handleKeyboard);
   
@@ -243,6 +252,11 @@ async function loadPresentation() {
     lessonData = await response.json();
     slides = lessonData.sections || [];
     
+    // Set header title from presentation
+    if (headerTitle && lessonData.title) {
+      headerTitle.textContent = lessonData.title;
+    }
+    
     populateSlidePicker();
     
     if (slides.length > 0) {
@@ -337,6 +351,8 @@ function loadSlide(index) {
     setupContentSplitting(slide);
     // Setup progressive reveal for rendered items
     setupProgressiveReveal(slide);
+    // Update dev panel info
+    updateDevInfo();
   });
 }
 
@@ -369,8 +385,13 @@ function renderSummary(slide) {
     const vc = seg.visual_content;
     if (vc?.bullet_points) {
       vc.bullet_points.forEach(bp => {
+        const text = (typeof bp === 'string' ? bp : (bp.text || '')).trim();
+        // Skip "Thinking..." bullets
+        if (text.toLowerCase() === 'thinking...' || text.toLowerCase() === 'thinking') {
+          return;
+        }
         if (!bp.level || bp.level === 1) {
-          allBullets.push(sanitizeMarkdown(bp.text || bp));
+          allBullets.push(sanitizeMarkdown(text));
         }
       });
     }
@@ -427,7 +448,19 @@ function renderContent(slide) {
     return;
   }
   
+  // Render all segments but skip "Thinking..." and gesture-only segments visually
+  // Keep original indices for DOM IDs to maintain alignment with playback
   segments.forEach((seg, i) => {
+    // Skip thinking/pause segments but create placeholder to maintain ID alignment
+    if (isThinkingSegment(seg)) {
+      // Create hidden placeholder to maintain segment index alignment
+      const placeholder = document.createElement('div');
+      placeholder.id = `seg-${i}`;
+      placeholder.style.display = 'none';
+      contentBox.appendChild(placeholder);
+      return;
+    }
+    
     const segDiv = document.createElement('div');
     segDiv.className = 'segment-block';
     segDiv.id = `seg-${i}`;
@@ -465,7 +498,13 @@ function renderVisualContent(vc, container) {
     const list = document.createElement('ul');
     list.className = 'bullet-list';
     
-    vc.bullet_points.forEach(bp => {
+    // Filter out "Thinking..." bullets
+    const filteredBullets = vc.bullet_points.filter(bp => {
+      const text = (typeof bp === 'string' ? bp : (bp.text || '')).trim().toLowerCase();
+      return text !== 'thinking...' && text !== 'thinking';
+    });
+    
+    filteredBullets.forEach(bp => {
       const item = document.createElement('li');
       item.className = 'bullet-item';
       if (bp.level && bp.level > 1) {
@@ -483,7 +522,9 @@ function renderVisualContent(vc, container) {
       list.appendChild(item);
     });
     
-    container.appendChild(list);
+    if (filteredBullets.length > 0) {
+      container.appendChild(list);
+    }
   }
   
   if (vc.ordered_list && vc.ordered_list.length > 0) {
@@ -887,6 +928,10 @@ function handleKeyboard(e) {
     case 'ArrowRight':
       nextSlide();
       break;
+    case 'd':
+    case 'D':
+      toggleDevPanel();
+      break;
   }
 }
 
@@ -1131,4 +1176,127 @@ function fitContentToContainer(element, options = {}) {
   }
   
   console.log(`[V2] Content scaled to ${(scale * 100).toFixed(0)}%`);
+}
+
+// Check if a segment is a "thinking", gesture-only, or pause segment that should be filtered
+function isThinkingSegment(seg) {
+  const vc = seg.visual_content;
+  
+  // Check if this is a pause segment (narration only, no display content)
+  if (seg.text && /^\[pause\s+\d+\s*seconds?\]$/i.test(seg.text.trim())) {
+    return true;
+  }
+  
+  if (!vc) return false;
+  
+  // Check bullet_points for "Thinking..." text
+  if (vc.bullet_points) {
+    const bps = Array.isArray(vc.bullet_points) ? vc.bullet_points : [vc.bullet_points];
+    for (const bp of bps) {
+      const text = typeof bp === 'string' ? bp : (bp.text || '');
+      if (text.trim().toLowerCase() === 'thinking...' || text.trim().toLowerCase() === 'thinking') {
+        return true;
+      }
+    }
+  }
+  
+  // Check if gesture_hint is "thinking" with no real content
+  if (seg.gesture_hint === 'thinking') {
+    const hasContent = vc.paragraph || vc.ordered_list || vc.formula || 
+                       (vc.bullet_points && vc.bullet_points.length > 0 && 
+                        !vc.bullet_points.every(bp => {
+                          const t = typeof bp === 'string' ? bp : (bp.text || '');
+                          return t.trim().toLowerCase().startsWith('thinking');
+                        }));
+    if (!hasContent) return true;
+  }
+  
+  return false;
+}
+
+// ============================================
+// DEV PANEL FUNCTIONS
+// ============================================
+function setupDevControls() {
+  const avatarScaleSlider = document.getElementById('dev-avatar-scale');
+  const chromaSlider = document.getElementById('dev-chroma-threshold');
+  const contentWidthSlider = document.getElementById('dev-content-width');
+  
+  if (avatarScaleSlider) {
+    avatarScaleSlider.addEventListener('input', (e) => {
+      const scale = parseFloat(e.target.value);
+      avatarCanvas.style.transform = `scale(${scale})`;
+    });
+  }
+  
+  if (chromaSlider) {
+    chromaSlider.addEventListener('input', (e) => {
+      chromaThreshold = parseInt(e.target.value);
+      console.log(`[V2] Chroma threshold set to ${chromaThreshold}`);
+    });
+  }
+  
+  if (contentWidthSlider) {
+    contentWidthSlider.addEventListener('input', (e) => {
+      const width = parseInt(e.target.value);
+      contentLayer.style.width = `${width}%`;
+    });
+  }
+}
+
+function toggleDevPanel() {
+  if (devPanel) {
+    devPanel.classList.toggle('show');
+    devModeEnabled = devPanel.classList.contains('show');
+    if (devModeEnabled) {
+      updateDevInfo();
+    }
+  }
+}
+
+function updateDevInfo() {
+  if (!devModeEnabled || !devPanel) return;
+  
+  const slide = slides[currentSlideIndex];
+  if (!slide) return;
+  
+  const slideInfo = document.getElementById('dev-slide-info');
+  const sectionInfo = document.getElementById('dev-section-info');
+  const audioInfo = document.getElementById('dev-audio-info');
+  const videoInfo = document.getElementById('dev-video-info');
+  const segmentsList = document.getElementById('dev-segments');
+  
+  if (slideInfo) slideInfo.textContent = `${currentSlideIndex + 1}/${slides.length}`;
+  if (sectionInfo) sectionInfo.textContent = slide.section_type || 'unknown';
+  if (audioInfo) audioInfo.textContent = slide.audio_path || 'none';
+  if (videoInfo) videoInfo.textContent = slide.video_path || 'none';
+  
+  // Populate segment list
+  if (segmentsList) {
+    segmentsList.innerHTML = '';
+    const segments = slide.narration?.segments || [];
+    segments.forEach((seg, i) => {
+      const item = document.createElement('div');
+      item.className = 'dev-segment-item' + (i === currentSegmentIndex ? ' active' : '');
+      const text = (seg.text || '').substring(0, 40) + (seg.text?.length > 40 ? '...' : '');
+      const duration = seg.duration_seconds?.toFixed(1) || '?';
+      item.innerHTML = `<strong>Seg ${i + 1}</strong> (${duration}s): ${text}`;
+      item.onclick = () => seekToSegment(i);
+      segmentsList.appendChild(item);
+    });
+  }
+}
+
+function seekToSegment(segmentIndex) {
+  const slide = slides[currentSlideIndex];
+  const segments = slide.narration?.segments || [];
+  
+  let cumTime = 0;
+  for (let i = 0; i < segmentIndex && i < segments.length; i++) {
+    cumTime += segments[i].duration_seconds || 5;
+  }
+  
+  if (narrationAudio.duration) {
+    narrationAudio.currentTime = cumTime;
+  }
 }
