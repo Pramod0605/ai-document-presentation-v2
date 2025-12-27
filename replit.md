@@ -112,6 +112,48 @@ Segment 5 → source_block_ids: [3] → ordered_list data (same block!)
 - Summary rendering: `bulletPoints.filter(bp => !bp.level || bp.level === 1)`
 - `contentRendered = true` set in all direct-rendering blocks to prevent duplicate DOM elements
 
+### Player V2 Architecture (COMPLETED - Dec 27, 2025)
+**Complete rewrite** of the player with clean architecture and enhanced features.
+
+**Key Files:**
+- `player/player_v2.html` - Clean HTML structure with canvas-based avatar
+- `player/player_v2.css` - Responsive layout with visual borders
+- `player/player_v2.js` - Unified renderer with progressive reveal
+
+**Features Implemented:**
+1. **Chroma Keying** - Canvas-based green screen removal for avatar video
+   - `renderChromaFrame()` processes video frames in real-time
+   - Pixel-by-pixel green detection with configurable threshold
+   - Falls back to placeholder if video unavailable
+
+2. **Section Title Display** - Prominent title at top of each section
+   - Gradient background with accent border
+   - Hidden for intro sections
+
+3. **Progressive Text Reveal** - Content reveals in sync with narration
+   - Elements reveal one-by-one as audio plays
+   - First item always visible immediately
+   - Falls back to show-all if no audio
+
+4. **Content Splitting** - Large content auto-paginates
+   - Detects overflow and splits into timed pages
+   - Pages transition as narration progresses
+   - Skips splitting if no audio timing available
+
+5. **Visual Borders** - Content and video layers have styled borders
+   - Subtle glow effect with rounded corners
+
+6. **Media Path Resolution** - `resolveMediaPath()` helper
+   - Handles audio/ and videos/ subfolders
+   - Works with job-specific paths
+
+**7 Section Types Supported:**
+- intro, summary, content, example, quiz, memory, recap
+
+**Avatar Positioning:**
+- Intro: 80% width, centered
+- Other sections: 45% width, right side
+
 ### Key System Specifications
 - **Display Requirements**: Detailed in `docs/display_requirements.md`, including display summary, layer architecture, and ASCII diagrams for 7 section types (intro, summary, content, example, quiz, memory, recap).
 - **V1.5 Requirements**: Defined in `docs/v1.5_requirements.json`, covering phases, requirements, agent contracts, JSON schemas, and guardrails.
