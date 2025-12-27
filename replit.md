@@ -176,6 +176,26 @@ Segment 5 → source_block_ids: [3] → ordered_list data (same block!)
 - Dev panel toggle with 'D' key, sliders for real-time adjustments
 - `updateDevInfo()` shows current slide info and clickable segment list
 
+### Analytics Tracking (Dec 27, 2025)
+**Feature**: Per-job analytics tracking and dashboard display.
+
+**What's Tracked:**
+- Pipeline status, duration, and timestamps
+- LLM phase breakdown: model, tokens, cost, duration per agent call
+- Content metrics: sections, segments, slides, section types
+- Renderer metrics: Manim videos, WAN videos, static slides
+- TTS metrics: provider, voice, duration, character count
+
+**Implementation:**
+- `core/analytics.py`: Enhanced AnalyticsTracker with TTSMetrics, RendererMetrics, ContentMetrics
+- `core/pipeline_v15.py`: `_save_analytics()` writes analytics.json on job completion/failure
+- `api/app.py`: `/job/<job_id>/analytics` endpoint fetches stored data
+- `player/dashboard.html`: "Analytics" button opens modal with metrics display
+
+**Usage:**
+- Click "Analytics" button on any completed/failed job in dashboard
+- Modal shows: status, duration, LLM cost, token counts, content summary, TTS info, phase breakdown table
+
 ### Key System Specifications
 - **Display Requirements**: Detailed in `docs/display_requirements.md`, including display summary, layer architecture, and ASCII diagrams for 7 section types (intro, summary, content, example, quiz, memory, recap).
 - **V1.5 Requirements**: Defined in `docs/v1.5_requirements.json`, covering phases, requirements, agent contracts, JSON schemas, and guardrails.
