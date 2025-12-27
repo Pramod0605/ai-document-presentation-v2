@@ -344,6 +344,15 @@
         </div>
     </div>
 
+    <div id="analyticsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; padding: 25px; position: relative; border: 1px solid rgba(255,255,255,0.2);">
+            <button onclick="closeAnalyticsModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <div id="analyticsContent">
+                <div style="text-align: center; padding: 40px; color: #888;">Loading analytics...</div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentJobId = null;
         let pollInterval = null;
@@ -529,9 +538,15 @@
                     
                     let actions = '';
                     if (job.status === 'completed') {
-                        actions = `<button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="window.open('/player_v2/?job=${job.job_id}', '_blank')">Play</button>`;
+                        actions = `
+                            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showAnalytics('${job.job_id}')">Analytics</button>
+                            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="window.open('/player_v2/?job=${job.job_id}', '_blank')">Play</button>
+                        `;
                     } else if (job.status === 'failed') {
-                        actions = `<button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="showJobError('${job.job_id}')">View Error</button>`;
+                        actions = `
+                            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showAnalytics('${job.job_id}')">Analytics</button>
+                            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="showJobError('${job.job_id}')">View Error</button>
+                        `;
                     }
                     
                     const errorPreview = job.error ? `<div style="color: #ff5252; font-size: 0.8rem; margin-top: 5px; max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${job.error.substring(0, 100)}...</div>` : '';
@@ -561,6 +576,138 @@
                     alert(`Job ${jobId} Error:\n\n${data.error || 'Unknown error'}`);
                 })
                 .catch(err => alert('Error fetching job details: ' + err.message));
+        }
+
+        function showAnalytics(jobId) {
+            fetch(`/job/${jobId}/analytics`)
+                .then(r => r.json())
+                .then(data => {
+                    const modal = document.getElementById('analyticsModal');
+                    const content = document.getElementById('analyticsContent');
+                    
+                    if (data.has_analytics && data.analytics) {
+                        const a = data.analytics;
+                        const phases = a.phases || [];
+                        
+                        // Format duration nicely
+                        const formatDuration = (secs) => {
+                            if (!secs) return 'N/A';
+                            if (secs < 60) return `${secs.toFixed(1)}s`;
+                            const mins = Math.floor(secs / 60);
+                            const remainingSecs = (secs % 60).toFixed(0);
+                            return `${mins}m ${remainingSecs}s`;
+                        };
+                        
+                        // Format cost nicely
+                        const formatCost = (cost) => cost ? `$${cost.toFixed(4)}` : '$0.00';
+                        
+                        // Calculate totals from phases
+                        let totalCost = 0;
+                        let totalTokens = 0;
+                        phases.forEach(p => {
+                            totalCost += p.cost_usd || 0;
+                            totalTokens += p.total_tokens || 0;
+                        });
+                        
+                        // TTS info
+                        const tts = a.tts || {};
+                        const renderer = a.renderer || {};
+                        const content_info = a.content || {};
+                        
+                        let html = `
+                            <div style="margin-bottom: 20px;">
+                                <h3 style="color: #00d4ff; margin-bottom: 10px;">Pipeline Analytics</h3>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
+                                        <div style="color: #888; font-size: 0.8rem;">Status</div>
+                                        <div style="font-size: 1.2rem; color: ${a.status === 'completed' ? '#4caf50' : '#ff5252'};">${a.status || 'Unknown'}</div>
+                                    </div>
+                                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
+                                        <div style="color: #888; font-size: 0.8rem;">Total Duration</div>
+                                        <div style="font-size: 1.2rem;">${formatDuration(a.total_duration_seconds)}</div>
+                                    </div>
+                                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
+                                        <div style="color: #888; font-size: 0.8rem;">LLM Cost</div>
+                                        <div style="font-size: 1.2rem; color: #ff9800;">${formatCost(totalCost)}</div>
+                                    </div>
+                                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
+                                        <div style="color: #888; font-size: 0.8rem;">Total Tokens</div>
+                                        <div style="font-size: 1.2rem;">${totalTokens.toLocaleString()}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <h4 style="color: #00d4ff; margin-bottom: 10px;">Content Summary</h4>
+                                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                                    <div><span style="color: #888;">Sections:</span> ${content_info.total_sections || phases.length || 'N/A'}</div>
+                                    <div><span style="color: #888;">Segments:</span> ${content_info.total_segments || 'N/A'}</div>
+                                    <div><span style="color: #888;">Manim:</span> ${renderer.manim_videos || 0}</div>
+                                    <div><span style="color: #888;">WAN:</span> ${renderer.wan_videos || 0}</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <h4 style="color: #00d4ff; margin-bottom: 10px;">TTS</h4>
+                                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                                    <div><span style="color: #888;">Provider:</span> ${tts.provider || 'N/A'}</div>
+                                    <div><span style="color: #888;">Voice:</span> ${tts.voice || 'N/A'}</div>
+                                    <div><span style="color: #888;">Duration:</span> ${formatDuration(tts.total_duration_seconds)}</div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 style="color: #00d4ff; margin-bottom: 10px;">Phase Breakdown</h4>
+                                <div style="max-height: 200px; overflow-y: auto;">
+                                    <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse;">
+                                        <thead>
+                                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                                                <th style="text-align: left; padding: 8px; color: #888;">Phase</th>
+                                                <th style="text-align: right; padding: 8px; color: #888;">Duration</th>
+                                                <th style="text-align: right; padding: 8px; color: #888;">Tokens</th>
+                                                <th style="text-align: right; padding: 8px; color: #888;">Cost</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${phases.map(p => `
+                                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                                    <td style="padding: 8px;">${p.phase_name || 'Unknown'}</td>
+                                                    <td style="text-align: right; padding: 8px;">${formatDuration(p.duration_seconds)}</td>
+                                                    <td style="text-align: right; padding: 8px;">${(p.total_tokens || 0).toLocaleString()}</td>
+                                                    <td style="text-align: right; padding: 8px; color: #ff9800;">${formatCost(p.cost_usd)}</td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+                        content.innerHTML = html;
+                    } else {
+                        content.innerHTML = `
+                            <div style="text-align: center; padding: 40px; color: #888;">
+                                <div style="font-size: 1.2rem; margin-bottom: 10px;">No Analytics Available</div>
+                                <div style="font-size: 0.9rem;">${data.message || 'Analytics data not found for this job.'}</div>
+                                ${data.basic_info ? `
+                                    <div style="margin-top: 20px; text-align: left;">
+                                        <div><span style="color: #888;">Status:</span> ${data.basic_info.status}</div>
+                                        <div><span style="color: #888;">Created:</span> ${new Date(data.basic_info.created_at).toLocaleString()}</div>
+                                        ${data.basic_info.error ? `<div style="color: #ff5252; margin-top: 10px;">${data.basic_info.error}</div>` : ''}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }
+                    
+                    modal.style.display = 'flex';
+                })
+                .catch(err => {
+                    alert('Error loading analytics: ' + err.message);
+                });
+        }
+
+        function closeAnalyticsModal() {
+            document.getElementById('analyticsModal').style.display = 'none';
         }
 
         loadJobHistory();

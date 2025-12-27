@@ -39,10 +39,37 @@ class PhaseMetrics:
 
 
 @dataclass
+class TTSMetrics:
+    """Metrics for TTS generation."""
+    provider: str = "unknown"
+    voice: str = "unknown"
+    total_segments: int = 0
+    total_duration_seconds: float = 0.0
+    total_characters: int = 0
+    estimated_cost_usd: float = 0.0
+
+@dataclass
+class RendererMetrics:
+    """Metrics for visual rendering."""
+    manim_videos: int = 0
+    wan_videos: int = 0
+    static_slides: int = 0
+    total_render_time_seconds: float = 0.0
+    failed_renders: int = 0
+
+@dataclass
+class ContentMetrics:
+    """Metrics about the generated content."""
+    total_sections: int = 0
+    total_segments: int = 0
+    total_slides: int = 0
+    section_types: Dict[str, int] = field(default_factory=dict)
+
+@dataclass
 class PipelineAnalytics:
     """Complete analytics for a pipeline run."""
     job_id: str
-    pipeline_version: str = "1.2"
+    pipeline_version: str = "1.5"
     started_at: Optional[str] = None
     completed_at: Optional[str] = None
     total_duration_seconds: float = 0.0
@@ -50,6 +77,9 @@ class PipelineAnalytics:
     total_input_tokens: int = 0
     total_output_tokens: int = 0
     phases: List[PhaseMetrics] = field(default_factory=list)
+    tts: TTSMetrics = field(default_factory=TTSMetrics)
+    renderer: RendererMetrics = field(default_factory=RendererMetrics)
+    content: ContentMetrics = field(default_factory=ContentMetrics)
     status: str = "pending"  # pending, running, completed, failed
     error: Optional[str] = None
 
@@ -157,6 +187,57 @@ class AnalyticsTracker:
         self.analytics.phases.append(phase_obj)
         return phase_obj
 
+    def set_tts_metrics(
+        self,
+        provider: str,
+        voice: str,
+        total_segments: int,
+        total_duration: float,
+        total_characters: int,
+        estimated_cost: float = 0.0
+    ) -> None:
+        """Set TTS generation metrics."""
+        self.analytics.tts = TTSMetrics(
+            provider=provider,
+            voice=voice,
+            total_segments=total_segments,
+            total_duration_seconds=total_duration,
+            total_characters=total_characters,
+            estimated_cost_usd=estimated_cost
+        )
+
+    def set_renderer_metrics(
+        self,
+        manim_videos: int = 0,
+        wan_videos: int = 0,
+        static_slides: int = 0,
+        render_time: float = 0.0,
+        failed_renders: int = 0
+    ) -> None:
+        """Set visual rendering metrics."""
+        self.analytics.renderer = RendererMetrics(
+            manim_videos=manim_videos,
+            wan_videos=wan_videos,
+            static_slides=static_slides,
+            total_render_time_seconds=render_time,
+            failed_renders=failed_renders
+        )
+
+    def set_content_metrics(
+        self,
+        total_sections: int,
+        total_segments: int,
+        total_slides: int,
+        section_types: Optional[Dict[str, int]] = None
+    ) -> None:
+        """Set content generation metrics."""
+        self.analytics.content = ContentMetrics(
+            total_sections=total_sections,
+            total_segments=total_segments,
+            total_slides=total_slides,
+            section_types=section_types if section_types else {}
+        )
+
     def _find_phase(self, phase_name: str) -> Optional[PhaseMetrics]:
         """Find a phase by name."""
         for phase in self.analytics.phases:
@@ -183,19 +264,53 @@ class AnalyticsTracker:
 
     def get_summary(self) -> Dict[str, Any]:
         """Get a summary of the pipeline analytics."""
+        # Calculate total estimated cost including TTS
+        tts_cost = self.analytics.tts.estimated_cost_usd if self.analytics.tts else 0.0
+        total_cost = self.analytics.total_cost_usd + tts_cost
+        
         return {
             "job_id": self.analytics.job_id,
+            "pipeline_version": self.analytics.pipeline_version,
             "status": self.analytics.status,
+            "error": self.analytics.error,
+            "started_at": self.analytics.started_at,
+            "completed_at": self.analytics.completed_at,
             "total_duration_seconds": round(self.analytics.total_duration_seconds, 2),
-            "total_cost_usd": round(self.analytics.total_cost_usd, 4),
+            "total_cost_usd": round(total_cost, 4),
+            "llm_cost_usd": round(self.analytics.total_cost_usd, 4),
             "total_tokens": self.analytics.total_input_tokens + self.analytics.total_output_tokens,
+            "input_tokens": self.analytics.total_input_tokens,
+            "output_tokens": self.analytics.total_output_tokens,
             "phases_completed": len([p for p in self.analytics.phases if p.status == "completed"]),
             "phases_failed": len([p for p in self.analytics.phases if p.status == "failed"]),
-            "cost_breakdown": {
+            "tts": {
+                "provider": self.analytics.tts.provider,
+                "voice": self.analytics.tts.voice,
+                "segments": self.analytics.tts.total_segments,
+                "duration_seconds": round(self.analytics.tts.total_duration_seconds, 2),
+                "characters": self.analytics.tts.total_characters,
+                "cost_usd": round(self.analytics.tts.estimated_cost_usd, 4)
+            } if self.analytics.tts else {},
+            "renderer": {
+                "manim_videos": self.analytics.renderer.manim_videos,
+                "wan_videos": self.analytics.renderer.wan_videos,
+                "static_slides": self.analytics.renderer.static_slides,
+                "render_time_seconds": round(self.analytics.renderer.total_render_time_seconds, 2),
+                "failed_renders": self.analytics.renderer.failed_renders
+            } if self.analytics.renderer else {},
+            "content": {
+                "sections": self.analytics.content.total_sections,
+                "segments": self.analytics.content.total_segments,
+                "slides": self.analytics.content.total_slides,
+                "section_types": self.analytics.content.section_types
+            } if self.analytics.content else {},
+            "phase_breakdown": {
                 p.phase_name: {
                     "cost_usd": round(p.cost_usd, 4),
                     "duration_seconds": round(p.duration_seconds, 2),
-                    "tokens": p.total_tokens
+                    "tokens": p.total_tokens,
+                    "model": p.model,
+                    "status": p.status
                 }
                 for p in self.analytics.phases
             }

@@ -184,6 +184,61 @@ class PipelineError(Exception):
         self.details = details or {}
 
 
+def _save_analytics(tracker: AnalyticsTracker, presentation: Optional[Dict], output_dir: Optional[Path]) -> None:
+    """Save analytics data to analytics.json in the job folder."""
+    if not output_dir:
+        logger.warning("[Analytics] No output directory provided, skipping analytics save")
+        return
+        
+    try:
+        # Collect content metrics from presentation if available
+        if presentation:
+            sections = presentation.get("sections", [])
+            total_sections = len(sections)
+            total_segments = 0
+            section_types: Dict[str, int] = {}
+            manim_count = 0
+            wan_count = 0
+            static_count = 0
+            
+            for section in sections:
+                section_type = section.get("section_type", "content")
+                section_types[section_type] = section_types.get(section_type, 0) + 1
+                
+                narration = section.get("narration", {})
+                segments = narration.get("segments", [])
+                total_segments += len(segments)
+                
+                renderer = section.get("renderer", "none")
+                if renderer == "manim":
+                    manim_count += 1
+                elif renderer == "wan":
+                    wan_count += 1
+                else:
+                    static_count += 1
+            
+            tracker.set_content_metrics(
+                total_sections=total_sections,
+                total_segments=total_segments,
+                total_slides=total_sections,
+                section_types=section_types
+            )
+            
+            tracker.set_renderer_metrics(
+                manim_videos=manim_count,
+                wan_videos=wan_count,
+                static_slides=static_count
+            )
+        
+        # Save analytics to file
+        analytics_path = output_dir / "analytics.json"
+        tracker.save_to_file(str(analytics_path))
+        logger.info(f"[Analytics] Saved to {analytics_path}")
+        
+    except Exception as e:
+        logger.warning(f"[Analytics] Failed to save analytics: {e}")
+
+
 def _extract_source_content(markdown_content: str, source_blocks: List[int]) -> str:
     """Extract relevant markdown content for a section based on source blocks."""
     lines = markdown_content.split('\n')
@@ -596,20 +651,27 @@ def process_markdown_to_presentation_v15(
             logger.info(f"[Pipeline v1.5] Rendering complete: {success_count} success, {fail_count} failed")
         
         tracker.end_pipeline(status="completed")
+        
+        # Collect and save content metrics
+        _save_analytics(tracker, presentation, output_dir)
+        
         logger.info(f"[Pipeline v1.5] Completed successfully for job {job_id}")
         
         return presentation, tracker
         
     except ChunkerError as e:
         tracker.end_pipeline(status="failed", error=str(e))
+        _save_analytics(tracker, None, output_dir)
         raise PipelineError(f"Chunker failed: {e}", phase="chunker")
         
     except AgentError as e:
         tracker.end_pipeline(status="failed", error=str(e))
+        _save_analytics(tracker, None, output_dir)
         raise PipelineError(f"Agent failed: {e}", phase=e.agent_name)
         
     except Exception as e:
         tracker.end_pipeline(status="failed", error=str(e))
+        _save_analytics(tracker, None, output_dir)
         logger.exception(f"[Pipeline v1.5] Unexpected error: {e}")
         raise PipelineError(f"Pipeline error: {e}", phase="unknown")
 

@@ -275,6 +275,48 @@ def list_all_jobs():
     })
 
 
+@app.route("/job/<job_id>/analytics", methods=["GET"])
+def get_job_analytics(job_id):
+    """Get analytics data for a completed job."""
+    job = job_manager.get_job(job_id)
+    
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    
+    # Try to load analytics.json from job folder
+    job_folder = Path(JOBS_DIR) / job_id
+    analytics_path = job_folder / "analytics.json"
+    
+    if analytics_path.exists():
+        try:
+            with open(analytics_path, 'r') as f:
+                analytics_data = json.load(f)
+            return jsonify({
+                "job_id": job_id,
+                "has_analytics": True,
+                "analytics": analytics_data
+            })
+        except Exception as e:
+            return jsonify({
+                "job_id": job_id,
+                "has_analytics": False,
+                "error": f"Failed to load analytics: {str(e)}"
+            }), 500
+    else:
+        # No analytics file - return basic job info
+        return jsonify({
+            "job_id": job_id,
+            "has_analytics": False,
+            "message": "Analytics not available for this job (pre-analytics feature or failed early)",
+            "basic_info": {
+                "status": job["status"],
+                "created_at": job["created_at"],
+                "completed_at": job.get("completed_at"),
+                "error": job.get("error")
+            }
+        })
+
+
 def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
     try:
         result = process_pdf_to_videos(
