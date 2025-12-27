@@ -33,6 +33,16 @@ async function init() {
   cacheDOMElements();
   setupEventListeners();
   await loadPresentation();
+  
+  // Check URL hash for starting slide (#slide=N)
+  const hash = window.location.hash;
+  const match = hash.match(/slide=(\d+)/);
+  if (match) {
+    const startSlide = parseInt(match[1]);
+    if (startSlide > 0 && startSlide <= slides.length) {
+      loadSlide(startSlide - 1);
+    }
+  }
 }
 
 function cacheDOMElements() {
@@ -68,19 +78,44 @@ function setupEventListeners() {
   
   document.addEventListener('keydown', handleKeyboard);
   
-  // Avatar video setup with error handling
+  // Avatar video setup with error handling and fallback
   avatarVideo.onerror = (e) => {
     console.error('Avatar video error:', e, avatarVideo.error);
+    // Show fallback placeholder when video fails
+    showAvatarPlaceholder();
   };
   avatarVideo.onloadeddata = () => {
     console.log('Avatar video loaded successfully');
-    avatarVideo.play().catch(e => console.log('Avatar autoplay blocked:', e));
+    avatarVideo.style.opacity = '1';
+    avatarVideo.play().catch(e => {
+      console.log('Avatar autoplay blocked:', e);
+      showAvatarPlaceholder();
+    });
   };
   
   avatarVideo.src = AVATAR_URL;
   avatarVideo.muted = true;
   avatarVideo.loop = true;
+  avatarVideo.playsInline = true;
   avatarVideo.load();
+}
+
+function showAvatarPlaceholder() {
+  // Show a placeholder when avatar video fails
+  const placeholder = document.createElement('div');
+  placeholder.id = 'avatar-placeholder';
+  placeholder.innerHTML = `
+    <div style="width: 200px; height: 200px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px rgba(99, 102, 241, 0.5);">
+      <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>
+      </svg>
+    </div>
+    <p style="color: #a5b4fc; margin-top: 16px; font-size: 14px;">AI Instructor</p>
+  `;
+  placeholder.style.cssText = 'display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;';
+  avatarVideo.style.display = 'none';
+  avatarLayer.appendChild(placeholder);
 }
 
 async function loadPresentation() {
