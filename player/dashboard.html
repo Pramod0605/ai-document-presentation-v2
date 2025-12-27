@@ -562,6 +562,7 @@
                         `;
                     } else if (job.status === 'failed') {
                         actions = `
+                            <button class="btn" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px; background: #ff9800; color: #000;" onclick="retryJob('${job.job_id}')">Retry</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showLlmOutputs('${job.job_id}')">LLM Outputs</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showAnalytics('${job.job_id}')">Analytics</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="showJobError('${job.job_id}')">View Error</button>
@@ -595,6 +596,25 @@
                     alert(`Job ${jobId} Error:\n\n${data.error || 'Unknown error'}`);
                 })
                 .catch(err => alert('Error fetching job details: ' + err.message));
+        }
+
+        function retryJob(jobId) {
+            if (!confirm(`Retry failed job ${jobId}?\n\nThis will resume the pipeline from the point of failure.`)) {
+                return;
+            }
+            
+            fetch(`/job/${jobId}/retry`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Retry failed: ' + data.error);
+                    } else {
+                        alert(`Retry started!\n\nResuming from section ${data.resume_from_section}`);
+                        loadJobHistory();
+                        startPolling();
+                    }
+                })
+                .catch(err => alert('Error starting retry: ' + err.message));
         }
 
         function showAnalytics(jobId) {

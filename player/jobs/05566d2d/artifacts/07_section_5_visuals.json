@@ -1,0 +1,160 @@
+{
+  "section_id": "section_5",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to HCF and LCM using prime factorization",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "formula",
+      "description": "Introduce numbers for example: 72 and 108",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "72",
+          "108"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "formula",
+      "description": "Display prime factorization for 72 and 108",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Prime Factors"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "formula",
+      "description": "Calculate HCF using prime factors",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "HCF",
+          "Lowest Power"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "formula",
+      "description": "Calculate LCM using prime factors",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "LCM",
+          "Highest Power"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [
+        13
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "### HCF and LCM of 72 and 108",
+        "has_inline_latex": false
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [
+        13
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "### HCF and LCM of 72 and 108",
+        "has_inline_latex": false
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": 0
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [
+        14,
+        15
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$$72 = 2^3 \\times 3^2$$",
+          "$$108 = 2^2 \\times 3^3$$"
+        ],
+        "formula": "$$72 = 2^3 \\times 3^2$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": 0
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [
+        16
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formula": "$$\\text{HCF} = 36$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": 0
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [
+        17
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formula": "$$\\text{LCM} = 216$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": 0
+      }
+    }
+  ]
+}

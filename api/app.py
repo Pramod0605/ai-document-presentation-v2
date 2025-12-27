@@ -14,7 +14,7 @@ from flask_cors import CORS
 from core.pipeline import process_pdf_to_videos
 from core.pipeline_v12 import process_markdown_to_videos_v12 as process_markdown_to_videos
 from core.pipeline_v14 import get_pipeline_info, process_markdown_to_presentation_v14, process_with_renderers_v14, validate_presentation_v14
-from core.pipeline_v15 import process_markdown_to_presentation_v15, PipelineError as PipelineV15Error
+from core.pipeline_v15 import process_markdown_to_presentation_v15, resume_from_section, PipelineError as PipelineV15Error
 from core.job_manager import job_manager, run_job_async, is_job_running, get_current_job_id
 
 app = Flask(__name__)
@@ -315,6 +315,149 @@ def get_job_analytics(job_id):
                 "error": job.get("error")
             }
         })
+
+
+@app.route("/job/<job_id>/retry", methods=["POST"])
+def retry_failed_job(job_id):
+    """Retry a failed job from the point of failure."""
+    try:
+        if is_job_running():
+            current_id = get_current_job_id()
+            return jsonify({
+                "status": "busy",
+                "message": "A job is already running. Please wait for it to complete.",
+                "current_job_id": current_id
+            }), 409
+        
+        job = job_manager.get_job(job_id)
+        if not job:
+            return jsonify({"error": "Job not found"}), 404
+        
+        if job["status"] != "failed":
+            return jsonify({"error": "Can only retry failed jobs"}), 400
+        
+        job_folder = Path(JOBS_DIR) / job_id
+        if not job_folder.exists():
+            return jsonify({"error": "Job folder not found"}), 404
+        
+        analytics_path = job_folder / "analytics.json"
+        if not analytics_path.exists():
+            return jsonify({"error": "No analytics data - cannot determine failure point"}), 400
+        
+        with open(analytics_path, 'r') as f:
+            analytics = json.load(f)
+        
+        error_msg = analytics.get("error", "")
+        failed_section_idx = _determine_failed_section_idx(job_folder, error_msg)
+        
+        source_markdown_path = job_folder / "source_markdown.md"
+        if not source_markdown_path.exists():
+            return jsonify({"error": "Source markdown not found"}), 400
+        
+        with open(source_markdown_path, 'r') as f:
+            markdown_content = f.read()
+        
+        params = job.get("params", {})
+        subject = params.get("subject", "General")
+        grade = params.get("grade", "General")
+        tts_provider = params.get("tts_provider", "edge_tts")
+        dry_run = params.get("dry_run", False)
+        skip_wan = params.get("skip_wan", False)
+        
+        job_manager.update_job(job_id, {"status": "running", "progress": 5, "message": "Retrying from failed section..."})
+        
+        import threading
+        def run_retry():
+            try:
+                presentation, tracker = resume_from_section(
+                    job_id=job_id,
+                    output_dir=job_folder,
+                    markdown_content=markdown_content,
+                    resume_from_section_idx=failed_section_idx,
+                    subject=subject,
+                    grade=grade,
+                    tts_provider=tts_provider,
+                    generate_tts=True,
+                    run_renderers=True,
+                    dry_run=dry_run,
+                    skip_wan=skip_wan,
+                    status_callback=lambda phase, msg: job_manager.update_job(job_id, {"message": f"{phase}: {msg}"})
+                )
+                
+                presentation_path = job_folder / "presentation.json"
+                with open(presentation_path, 'w') as f:
+                    json.dump(presentation, f, indent=2)
+                
+                job_manager.update_job(job_id, {
+                    "status": "completed", 
+                    "progress": 100, 
+                    "message": "Retry completed successfully"
+                }, persist=True)
+            except Exception as e:
+                job_manager.update_job(job_id, {
+                    "status": "failed", 
+                    "error": str(e), 
+                    "message": f"Retry failed: {str(e)}"
+                }, persist=True)
+        
+        thread = threading.Thread(target=run_retry, daemon=True)
+        thread.start()
+        
+        return jsonify({
+            "status": "started",
+            "job_id": job_id,
+            "message": f"Retry started from section {failed_section_idx}",
+            "resume_from_section": failed_section_idx
+        })
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+def _determine_failed_section_idx(job_folder: Path, error_msg: str) -> int:
+    """Determine which section index to resume from based on existing artifacts."""
+    artifacts_dir = job_folder / "artifacts"
+    if not artifacts_dir.exists():
+        return 0
+    
+    planner_path = artifacts_dir / "02_planner.json"
+    if not planner_path.exists():
+        return 0
+    
+    with open(planner_path, 'r') as f:
+        planner_data = json.load(f)
+        blueprints = planner_data.get("sections", [])
+    
+    content_section_count = 0
+    for i, bp in enumerate(blueprints):
+        section_type = bp.get("section_type", "")
+        section_id = bp.get("section_id", "")
+        
+        if section_type in ["memory", "recap"]:
+            continue
+        
+        artifact_idx = content_section_count + 3
+        narration_file = artifacts_dir / f"{artifact_idx:02d}_{section_id}_narration.json"
+        visuals_file = artifacts_dir / f"{artifact_idx:02d}_{section_id}_visuals.json"
+        
+        if not narration_file.exists() or not visuals_file.exists():
+            return i
+        
+        content_section_count += 1
+    
+    memory_file = artifacts_dir / "memory.json"
+    if not memory_file.exists():
+        for i, bp in enumerate(blueprints):
+            if bp.get("section_type") == "memory":
+                return i
+    
+    recap_file = artifacts_dir / "recap.json"
+    if not recap_file.exists():
+        for i, bp in enumerate(blueprints):
+            if bp.get("section_type") == "recap":
+                return i
+    
+    return 0
 
 
 @app.route("/job/<job_id>/llm-outputs", methods=["GET"])
