@@ -474,6 +474,45 @@ function sanitizeMarkdown(text) {
 }
 
 /**
+ * ISS-185: Dynamic Font Scaler
+ * Scales down font size to fit content within container bounds
+ * @param {HTMLElement} element - The element to fit
+ * @param {Object} options - Configuration options
+ */
+function fitContentToContainer(element, options = {}) {
+  const { minScale = 0.65, maxScale = 1.0, step = 0.05 } = options;
+  
+  if (!element || !element.parentElement) return;
+  
+  const container = element.parentElement;
+  let scale = maxScale;
+  
+  // Reset to base size
+  element.style.fontSize = '';
+  element.style.lineHeight = '';
+  
+  // Check if content overflows
+  const checkOverflow = () => {
+    return element.scrollHeight > container.clientHeight || 
+           element.scrollWidth > container.clientWidth;
+  };
+  
+  // Progressively reduce scale until content fits
+  while (checkOverflow() && scale > minScale) {
+    scale -= step;
+    element.style.fontSize = `${scale}em`;
+    element.style.lineHeight = `${1.3 + (1 - scale) * 0.3}`;  // Adjust line-height proportionally
+  }
+  
+  // If still overflowing at minimum scale, enable scroll as fallback
+  if (checkOverflow()) {
+    element.style.overflowY = 'auto';
+  }
+  
+  console.log(`[ISS-185] Font scaled to ${(scale * 100).toFixed(0)}% for element`);
+}
+
+/**
  * ISS-180: Enhanced Content Rendering
  * Renders visual_content with proper formatting based on content_type and section_type
  */
@@ -500,7 +539,7 @@ function renderFormattedContent(visualContent, sectionType, narrationText) {
   // ISS-181: Sanitize markdown from verbatim_text
   const verbatimText = sanitizeMarkdown(visualContent.verbatim_text || '');
   
-  // ISS-182: For Summary sections, ONLY show bullet_points (skip verbatim_text which contains chapter headers)
+  // ISS-182 + ISS-186: For Summary sections, ONLY show level 1 bullet_points (no sub-bullets)
   if (sectionType === 'summary' && bulletPoints.length > 0) {
     const block = document.createElement('div');
     block.className = 'formatted-content-block summary-block';
@@ -508,12 +547,12 @@ function renderFormattedContent(visualContent, sectionType, narrationText) {
     const bulletList = document.createElement('div');
     bulletList.className = 'formatted-bullet-list';
     
-    bulletPoints.forEach((bp) => {
+    // ISS-186: Filter to level 1 only (main bullets, no sub-bullets)
+    const mainBullets = bulletPoints.filter(bp => !bp.level || bp.level === 1);
+    
+    mainBullets.forEach((bp) => {
       const item = document.createElement('div');
       item.className = 'formatted-bullet-item';
-      if (bp.level && bp.level > 1) {
-        item.classList.add(`level-${bp.level}`);
-      }
       
       const marker = document.createElement('span');
       marker.className = 'bullet-marker';
@@ -521,7 +560,7 @@ function renderFormattedContent(visualContent, sectionType, narrationText) {
       
       const text = document.createElement('span');
       text.className = 'bullet-text';
-      text.innerHTML = bp.text || bp;
+      text.innerHTML = sanitizeMarkdown(bp.text || bp);
       
       item.appendChild(marker);
       item.appendChild(text);
@@ -1370,9 +1409,9 @@ function loadSlide(index) {
       const paragraphDiv = document.createElement('div');
       paragraphDiv.className = 'segment-item paragraph-content';
       paragraphDiv.id = 'seg-0';
-      paragraphDiv.innerHTML = slide.visual_content.verbatim_text;
+      paragraphDiv.innerHTML = sanitizeMarkdown(slide.visual_content.verbatim_text);
       list.appendChild(paragraphDiv);
-      displayItems = [slide.visual_content.verbatim_text];
+      contentRendered = true; // ISS-187: Prevent duplicate rendering
       console.log(`[ISS-160] Slide ${slide.slide_number}: Rendering paragraph mode`);
     } else if (contentType === 'ordered_list' && slide.visual_content?.ordered_list?.length > 0) {
       // ISS-160: Ordered list mode - display with numbered markers
@@ -1380,11 +1419,11 @@ function loadSlide(index) {
         const div = document.createElement('div');
         div.className = 'segment-item ordered-list-item';
         div.id = `seg-${i}`;
-        div.innerHTML = `<span class="list-number">${i + 1}.</span> ${item}`;
+        div.innerHTML = `<span class="list-number">${i + 1}.</span> ${sanitizeMarkdown(item)}`;
         list.appendChild(div);
       });
-      displayItems = slide.visual_content.ordered_list;
-      console.log(`[ISS-160] Slide ${slide.slide_number}: Rendering ordered_list mode (${displayItems.length} items)`);
+      contentRendered = true; // ISS-187: Prevent duplicate rendering
+      console.log(`[ISS-160] Slide ${slide.slide_number}: Rendering ordered_list mode`);
     } else if (contentType === 'formula' && (slide.visual_content?.formula || slide.visual_content?.formulas?.length > 0)) {
       // ISS-160: Formula mode - centered LaTeX display
       const formulas = slide.visual_content.formulas || [slide.visual_content.formula];
@@ -1395,8 +1434,8 @@ function loadSlide(index) {
         div.innerHTML = formula;
         list.appendChild(div);
       });
-      displayItems = formulas;
-      console.log(`[ISS-160] Slide ${slide.slide_number}: Rendering formula mode (${displayItems.length} formulas)`);
+      contentRendered = true; // ISS-187: Prevent duplicate rendering
+      console.log(`[ISS-160] Slide ${slide.slide_number}: Rendering formula mode`);
     } else if (slide.visual_content && slide.visual_content.bullet_points && slide.visual_content.bullet_points.length > 0) {
       displayItems = slide.visual_content.bullet_points;
     } else if (isLegacy && narrationSegs && narrationSegs.length > 0) {
@@ -1477,6 +1516,15 @@ function loadSlide(index) {
   }
 
   if (window.MathJax) MathJax.typesetPromise();
+  
+  // ISS-185: Apply dynamic font scaling to prevent text overflow
+  const contentBox = document.getElementById('content-box');
+  if (contentBox && segmentsList && segmentsList.children.length > 0) {
+    // Use requestAnimationFrame to ensure DOM is fully rendered
+    requestAnimationFrame(() => {
+      fitContentToContainer(segmentsList, { minScale: 0.65, maxScale: 1.0 });
+    });
+  }
 
   let isHeyGen = slide.use_heygen_audio || slide.video_path;
 
