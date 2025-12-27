@@ -16,6 +16,33 @@ const JOB_ID = urlParams.get('job');
 const BASE_PATH = JOB_ID ? `/jobs/${JOB_ID}/` : '/player_v2/';
 const PRESENTATION_PATH = JOB_ID ? `/jobs/${JOB_ID}/presentation.json` : 'presentation.json';
 
+// Media path resolver - handles audio and video paths
+function resolveMediaPath(path, type = 'audio') {
+  if (!path) return '';
+  
+  // Already absolute path
+  if (path.startsWith('/') || path.startsWith('http')) {
+    return path;
+  }
+  
+  // Already has subfolder path
+  if (path.includes('/')) {
+    return BASE_PATH + path;
+  }
+  
+  // For audio files, they're in audio/ subfolder
+  if (type === 'audio') {
+    return BASE_PATH + 'audio/' + path;
+  }
+  
+  // For videos, they're in videos/ subfolder
+  if (type === 'video') {
+    return BASE_PATH + 'videos/' + path;
+  }
+  
+  return BASE_PATH + path;
+}
+
 // ============================================
 // STATE
 // ============================================
@@ -26,10 +53,15 @@ let isPlaying = false;
 let currentSegmentIndex = 0;
 
 // DOM Elements
-let stage, contentLayer, contentBox, avatarLayer, avatarVideo;
+let stage, contentLayer, contentBox, avatarLayer, avatarVideo, avatarCanvas, avatarCtx;
+let sectionTitle;
 let videoLayer, contentVideo, narrationAudio;
 let btnPlay, btnPrev, btnNext, slidePicker;
 let timelineFill, timelineHandle, timeDisplay;
+
+// Reveal state
+let revealItems = [];
+let chromaThreshold = 100;
 
 // ============================================
 // INITIALIZATION
@@ -56,8 +88,11 @@ function cacheDOMElements() {
   stage = document.getElementById('stage');
   contentLayer = document.getElementById('content-layer');
   contentBox = document.getElementById('content-box');
+  sectionTitle = document.getElementById('section-title');
   avatarLayer = document.getElementById('avatar-layer');
   avatarVideo = document.getElementById('avatar-video');
+  avatarCanvas = document.getElementById('avatar-canvas');
+  avatarCtx = avatarCanvas.getContext('2d', { willReadFrequently: true });
   videoLayer = document.getElementById('video-layer');
   contentVideo = document.getElementById('content-video');
   narrationAudio = document.getElementById('narration-audio');
@@ -77,28 +112,40 @@ function setupEventListeners() {
   slidePicker.addEventListener('change', (e) => loadSlide(parseInt(e.target.value)));
   
   narrationAudio.addEventListener('timeupdate', updateTimeline);
+  narrationAudio.addEventListener('timeupdate', updateProgressiveReveal);
+  narrationAudio.addEventListener('timeupdate', updateContentPages);
   narrationAudio.addEventListener('ended', onSlideEnd);
+  
+  narrationAudio.onerror = (e) => {
+    console.error('[V2] Audio error:', narrationAudio.error);
+  };
+  
   contentVideo.addEventListener('ended', onContentVideoEnd);
+  contentVideo.onerror = (e) => {
+    console.error('[V2] Content video error:', contentVideo.error);
+  };
   
   document.getElementById('timeline-track').addEventListener('click', seekTimeline);
   document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
   
   document.addEventListener('keydown', handleKeyboard);
   
-  // Avatar video setup with error handling and fallback
+  // Avatar video setup with chroma keying
   avatarVideo.onerror = (e) => {
-    console.error('Avatar video error:', e, avatarVideo.error);
-    // Show fallback placeholder when video fails
+    console.error('[V2] Avatar video error:', avatarVideo.error);
     showAvatarPlaceholder();
   };
+  
   avatarVideo.onloadeddata = () => {
-    console.log('Avatar video loaded successfully');
-    avatarVideo.style.opacity = '1';
+    console.log('[V2] Avatar video loaded, starting chroma key');
+    syncCanvasSize();
     avatarVideo.play().catch(e => {
-      console.log('Avatar autoplay blocked:', e);
+      console.log('[V2] Avatar autoplay blocked:', e);
       showAvatarPlaceholder();
     });
   };
+  
+  avatarVideo.addEventListener('play', startChromaKeyLoop);
   
   avatarVideo.src = AVATAR_URL;
   avatarVideo.muted = true;
@@ -109,6 +156,10 @@ function setupEventListeners() {
 
 function showAvatarPlaceholder() {
   // Show a placeholder when avatar video fails
+  avatarCanvas.style.display = 'none';
+  const existing = document.getElementById('avatar-placeholder');
+  if (existing) return;
+  
   const placeholder = document.createElement('div');
   placeholder.id = 'avatar-placeholder';
   placeholder.innerHTML = `
@@ -121,8 +172,69 @@ function showAvatarPlaceholder() {
     <p style="color: #a5b4fc; margin-top: 16px; font-size: 14px;">AI Instructor</p>
   `;
   placeholder.style.cssText = 'display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;';
-  avatarVideo.style.display = 'none';
   avatarLayer.appendChild(placeholder);
+}
+
+// ============================================
+// CHROMA KEYING (Green Screen Removal)
+// ============================================
+function syncCanvasSize() {
+  if (avatarVideo.videoWidth > 0 && avatarVideo.videoHeight > 0) {
+    avatarCanvas.width = avatarVideo.videoWidth;
+    avatarCanvas.height = avatarVideo.videoHeight;
+  }
+}
+
+function startChromaKeyLoop() {
+  requestAnimationFrame(renderChromaFrame);
+}
+
+function renderChromaFrame() {
+  // Continue rendering regardless of video state to keep canvas updated
+  if (avatarVideo.readyState < 2) {
+    // Video not ready yet, retry next frame
+    requestAnimationFrame(renderChromaFrame);
+    return;
+  }
+  
+  // Sync canvas size if video size changed
+  if (avatarCanvas.width !== avatarVideo.videoWidth && avatarVideo.videoWidth > 0) {
+    syncCanvasSize();
+  }
+  
+  // Skip if canvas not ready
+  if (avatarCanvas.width === 0 || avatarCanvas.height === 0) {
+    requestAnimationFrame(renderChromaFrame);
+    return;
+  }
+  
+  try {
+    // Draw current video frame
+    avatarCtx.drawImage(avatarVideo, 0, 0, avatarCanvas.width, avatarCanvas.height);
+    
+    // Get pixel data
+    const frame = avatarCtx.getImageData(0, 0, avatarCanvas.width, avatarCanvas.height);
+    const data = frame.data;
+    
+    // Chroma key: Make green pixels transparent
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      
+      // Green screen detection: green > threshold AND green > red*1.3 AND green > blue*1.3
+      if (g > chromaThreshold && g > r * 1.3 && g > b * 1.3) {
+        data[i + 3] = 0; // Set alpha to 0 (transparent)
+      }
+    }
+    
+    avatarCtx.putImageData(frame, 0, 0);
+  } catch (e) {
+    // Security error or other issue - show placeholder
+    console.error('[V2] Chroma key error:', e);
+  }
+  
+  requestAnimationFrame(renderChromaFrame);
 }
 
 async function loadPresentation() {
@@ -161,6 +273,7 @@ function loadSlide(index) {
   currentSlideIndex = index;
   currentSegmentIndex = 0;
   slidePicker.value = index;
+  revealItems = []; // Reset reveal state
   
   const slide = slides[index];
   const sectionType = slide.section_type || 'content';
@@ -169,6 +282,15 @@ function loadSlide(index) {
   
   contentBox.innerHTML = '';
   videoLayer.classList.add('hidden');
+  
+  // Set section title
+  if (sectionType !== 'intro' && slide.title) {
+    sectionTitle.textContent = slide.title;
+    sectionTitle.style.display = 'flex';
+  } else {
+    sectionTitle.textContent = '';
+    sectionTitle.style.display = 'none';
+  }
   
   setStageMode(sectionType);
   
@@ -203,6 +325,10 @@ function loadSlide(index) {
   
   requestAnimationFrame(() => {
     fitContentToContainer(contentBox);
+    // Setup content splitting after layout is calculated
+    setupContentSplitting(slide);
+    // Setup progressive reveal for rendered items
+    setupProgressiveReveal(slide);
   });
 }
 
@@ -465,12 +591,13 @@ function renderRecap(slide) {
   const videoPath = slide.content_video_path || slide.video_path;
   
   if (videoPath) {
-    // Prepend BASE_PATH if video path is relative
-    const fullPath = videoPath.startsWith('/') ? videoPath : BASE_PATH + videoPath;
+    const fullPath = resolveMediaPath(videoPath, 'video');
+    console.log(`[V2] Loading video: ${fullPath}`);
     videoLayer.classList.remove('hidden');
     contentVideo.src = fullPath;
     contentVideo.load();
   } else {
+    // No video, render as content
     renderContent(slide);
   }
 }
@@ -482,8 +609,8 @@ function setupAudio(slide) {
   const audioPath = slide.audio_path || '';
   
   if (audioPath) {
-    // Prepend BASE_PATH if audio path is relative
-    const fullPath = audioPath.startsWith('/') ? audioPath : BASE_PATH + audioPath;
+    const fullPath = resolveMediaPath(audioPath, 'audio');
+    console.log(`[V2] Loading audio: ${fullPath}`);
     narrationAudio.src = fullPath;
     narrationAudio.load();
   } else {
@@ -587,6 +714,14 @@ function seekTimeline(e) {
   
   if (narrationAudio.duration) {
     narrationAudio.currentTime = percent * narrationAudio.duration;
+    // Reveal all items up to current time when seeking
+    revealItems.forEach(item => {
+      if (narrationAudio.currentTime >= item.revealAt && !item.revealed) {
+        item.element.classList.remove('reveal-hidden');
+        item.element.classList.add('reveal-visible');
+        item.revealed = true;
+      }
+    });
   }
 }
 
@@ -643,6 +778,195 @@ function toggleFullscreen() {
   } else {
     document.exitFullscreen();
   }
+}
+
+// ============================================
+// PROGRESSIVE REVEAL SYSTEM
+// ============================================
+function setupProgressiveReveal(slide) {
+  // Find all revealable elements (only visible ones, not hidden by content splitting)
+  const revealableElements = Array.from(contentBox.querySelectorAll(
+    '.summary-item, .bullet-item, .ordered-item, .paragraph-block, .quiz-choice, .flashcard, .segment-block'
+  )).filter(el => el.style.display !== 'none');
+  
+  if (revealableElements.length === 0) {
+    console.log('[V2] No revealable elements found');
+    return;
+  }
+  
+  const totalDuration = getTotalDuration(slide);
+  
+  // If no audio or very short duration, reveal all immediately
+  if (totalDuration <= 1 || !slide.audio_path) {
+    console.log('[V2] Progressive reveal: No audio, showing all items');
+    revealableElements.forEach(el => {
+      el.classList.remove('reveal-hidden');
+      el.classList.add('reveal-visible');
+    });
+    return;
+  }
+  
+  const timePerItem = Math.max(0.5, totalDuration / revealableElements.length); // Min 0.5s per item
+  
+  revealItems = [];
+  
+  revealableElements.forEach((el, index) => {
+    el.classList.add('reveal-hidden');
+    revealItems.push({
+      element: el,
+      revealAt: index * timePerItem,
+      revealed: false
+    });
+  });
+  
+  console.log(`[V2] Progressive reveal setup: ${revealItems.length} items, ${timePerItem.toFixed(2)}s each`);
+  
+  // Reveal first item immediately (so there's always something on screen)
+  if (revealItems.length > 0) {
+    revealItems[0].element.classList.remove('reveal-hidden');
+    revealItems[0].element.classList.add('reveal-visible');
+    revealItems[0].revealed = true;
+  }
+}
+
+function updateProgressiveReveal() {
+  if (revealItems.length === 0) return;
+  
+  const currentTime = narrationAudio.currentTime;
+  
+  revealItems.forEach(item => {
+    if (!item.revealed && currentTime >= item.revealAt) {
+      item.element.classList.remove('reveal-hidden');
+      item.element.classList.add('reveal-visible');
+      item.revealed = true;
+    }
+  });
+}
+
+function revealAllItems() {
+  // Reveal all items immediately (for seeking or when audio ends)
+  revealItems.forEach(item => {
+    item.element.classList.remove('reveal-hidden');
+    item.element.classList.add('reveal-visible');
+    item.revealed = true;
+  });
+}
+
+// ============================================
+// CONTENT SPLITTING (For Large Content)
+// ============================================
+let contentPages = [];
+let currentPageIndex = 0;
+
+function setupContentSplitting(slide) {
+  contentPages = [];
+  currentPageIndex = 0;
+  
+  // Get all direct children of content box that are content blocks
+  const contentElements = Array.from(contentBox.querySelectorAll('.segment-block, .summary-item, .bullet-item, .paragraph-block'));
+  
+  if (contentElements.length <= 1) {
+    console.log('[V2] Content splitting: Single element, no splitting needed');
+    return;
+  }
+  
+  // Check if content overflows
+  if (contentBox.scrollHeight <= contentBox.clientHeight) {
+    console.log('[V2] Content splitting: No overflow, no splitting needed');
+    return;
+  }
+  
+  // If no audio, show all content (no splitting without timing)
+  if (!slide.audio_path) {
+    console.log('[V2] Content splitting: No audio, showing all content');
+    return;
+  }
+  
+  console.log('[V2] Content splitting: Overflow detected, splitting content');
+  
+  // Split content into pages based on what fits
+  const totalDuration = getTotalDuration(slide);
+  const pageBreakpoints = [];
+  let currentHeight = 0;
+  const maxHeight = contentBox.clientHeight * 0.9; // 90% of container
+  let pageStartIndex = 0;
+  
+  contentElements.forEach((el, index) => {
+    const elHeight = el.offsetHeight + 12; // Include margin
+    
+    if (currentHeight + elHeight > maxHeight && index > pageStartIndex) {
+      // Start new page
+      pageBreakpoints.push({
+        startIndex: pageStartIndex,
+        endIndex: index - 1
+      });
+      pageStartIndex = index;
+      currentHeight = elHeight;
+    } else {
+      currentHeight += elHeight;
+    }
+  });
+  
+  // Add final page
+  pageBreakpoints.push({
+    startIndex: pageStartIndex,
+    endIndex: contentElements.length - 1
+  });
+  
+  if (pageBreakpoints.length <= 1) {
+    console.log('[V2] Content splitting: Fits in one page');
+    return;
+  }
+  
+  // Calculate timing for each page
+  const timePerPage = totalDuration / pageBreakpoints.length;
+  
+  contentPages = pageBreakpoints.map((bp, i) => ({
+    elements: contentElements.slice(bp.startIndex, bp.endIndex + 1),
+    showAt: i * timePerPage,
+    hideAt: (i + 1) * timePerPage,
+    active: false
+  }));
+  
+  console.log(`[V2] Content splitting: ${contentPages.length} pages, ${timePerPage.toFixed(2)}s each`);
+  
+  // Initially show only first page
+  contentElements.forEach(el => el.style.display = 'none');
+  if (contentPages.length > 0) {
+    contentPages[0].elements.forEach(el => el.style.display = '');
+    contentPages[0].active = true;
+    currentPageIndex = 0;
+  }
+}
+
+function updateContentPages() {
+  if (contentPages.length <= 1) return;
+  
+  const currentTime = narrationAudio.currentTime;
+  
+  contentPages.forEach((page, index) => {
+    const shouldBeVisible = currentTime >= page.showAt && currentTime < page.hideAt;
+    
+    if (shouldBeVisible && !page.active) {
+      // Show this page
+      page.elements.forEach(el => {
+        el.style.display = '';
+        el.classList.add('fade-in');
+      });
+      page.active = true;
+      currentPageIndex = index;
+      console.log(`[V2] Showing content page ${index + 1}/${contentPages.length}`);
+    } else if (!shouldBeVisible && page.active && index < contentPages.length - 1) {
+      // Hide this page (but keep last page visible)
+      page.elements.forEach(el => el.style.display = 'none');
+      page.active = false;
+    }
+  });
+}
+
+// Add to timeupdate listener
+function handleTimeUpdate() {
+  updateContentPages();
 }
 
 // ============================================

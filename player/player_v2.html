@@ -16,6 +16,7 @@
       
       <!-- LAYER 1: Content Display Area -->
       <div id="content-layer">
+        <div id="section-title"></div>
         <div id="content-box">
           <!-- Dynamic content rendered here by section renderers -->
         </div>
@@ -23,7 +24,10 @@
       
       <!-- LAYER 2: Avatar Area (floating, repositions based on section) -->
       <div id="avatar-layer">
-        <video id="avatar-video" muted loop playsinline></video>
+        <!-- Hidden video source for chroma keying -->
+        <video id="avatar-video" muted loop playsinline style="display: none;"></video>
+        <!-- Canvas for chroma-keyed output -->
+        <canvas id="avatar-canvas"></canvas>
       </div>
       
       <!-- Content Video Overlay (for Manim/WAN videos) -->

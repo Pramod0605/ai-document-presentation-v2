@@ -68,11 +68,44 @@ body {
 
 #content-box {
   width: 100%;
-  max-height: 100%;
+  max-height: calc(100% - 60px); /* Account for title */
   overflow: hidden; /* No scrolling - content must fit */
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+/* Section Title */
+#section-title {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #e5e7eb;
+  padding: 12px 0;
+  margin-bottom: 12px;
+  border-bottom: 2px solid rgba(99, 102, 241, 0.5);
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.1), transparent);
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+#section-title:empty {
+  display: none;
+}
+
+/* Content & Video Layer Borders */
+#content-layer {
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+}
+
+#video-layer {
+  border: 2px solid rgba(139, 92, 246, 0.4);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.2);
 }
 
 /* ============================================
@@ -110,13 +143,17 @@ body {
   pointer-events: none;
 }
 
-#avatar-video {
+/* Avatar canvas (chroma keyed) */
+#avatar-canvas {
   width: 100%;
   height: auto;
   max-height: 100%;
   object-fit: contain;
-  background: transparent;
   display: block;
+}
+
+#avatar-video {
+  display: none; /* Hidden - used as source for canvas */
 }
 
 /* ============================================
@@ -549,4 +586,27 @@ body {
 .segment-active {
   background: rgba(59, 130, 246, 0.2) !important;
   border-color: #3b82f6 !important;
+}
+
+/* Progressive Reveal Animation */
+.reveal-hidden {
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Quiz choice reveal animation */
+.quiz-choice.reveal-hidden {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.quiz-choice.reveal-visible {
+  opacity: 1;
+  transform: translateX(0);
 }
