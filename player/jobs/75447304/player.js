@@ -444,6 +444,36 @@ class LayerController {
 const layerController = new LayerController();
 
 /**
+ * ISS-181: Markdown Sanitizer
+ * Strips markdown header markers (# ## ###) from text for clean display
+ * Handles all common markdown header variants
+ */
+function sanitizeMarkdown(text) {
+  if (!text || typeof text !== 'string') return text;
+  
+  // Remove ALL markdown header variations
+  let cleaned = text
+    // Standard headers: # Title, ## Title, ### Title (with or without space)
+    .replace(/^#{1,6}\s*/gm, '')
+    // Trailing hash decorations: ## Title ##
+    .replace(/\s*#{1,6}\s*$/gm, '')
+    // Underline-style headers: Title followed by === or ---
+    .replace(/^(.+)\n[=]{2,}\s*$/gm, '$1')
+    .replace(/^(.+)\n[-]{2,}\s*$/gm, '$1')
+    // Remove bold/italic markers
+    .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
+    .replace(/_{1,2}([^_]+)_{1,2}/g, '$1')
+    // Remove blockquotes
+    .replace(/^>\s*/gm, '')
+    // Remove inline code backticks
+    .replace(/`([^`]+)`/g, '$1')
+    // Clean up extra whitespace
+    .trim();
+  
+  return cleaned;
+}
+
+/**
  * ISS-180: Enhanced Content Rendering
  * Renders visual_content with proper formatting based on content_type and section_type
  */
@@ -467,7 +497,41 @@ function renderFormattedContent(visualContent, sectionType, narrationText) {
   
   const contentType = visualContent.content_type;
   const bulletPoints = visualContent.bullet_points || [];
-  const verbatimText = visualContent.verbatim_text || '';
+  // ISS-181: Sanitize markdown from verbatim_text
+  const verbatimText = sanitizeMarkdown(visualContent.verbatim_text || '');
+  
+  // ISS-182: For Summary sections, ONLY show bullet_points (skip verbatim_text which contains chapter headers)
+  if (sectionType === 'summary' && bulletPoints.length > 0) {
+    const block = document.createElement('div');
+    block.className = 'formatted-content-block summary-block';
+    
+    const bulletList = document.createElement('div');
+    bulletList.className = 'formatted-bullet-list';
+    
+    bulletPoints.forEach((bp) => {
+      const item = document.createElement('div');
+      item.className = 'formatted-bullet-item';
+      if (bp.level && bp.level > 1) {
+        item.classList.add(`level-${bp.level}`);
+      }
+      
+      const marker = document.createElement('span');
+      marker.className = 'bullet-marker';
+      marker.textContent = '✓';  // Use checkmark for summary learning objectives
+      
+      const text = document.createElement('span');
+      text.className = 'bullet-text';
+      text.innerHTML = bp.text || bp;
+      
+      item.appendChild(marker);
+      item.appendChild(text);
+      bulletList.appendChild(item);
+    });
+    
+    block.appendChild(bulletList);
+    container.appendChild(block);
+    return container;
+  }
   
   // Check if this is a quiz question (level 1 = question, level 2 = choices)
   const isQuizQuestion = bulletPoints.length > 0 && 
@@ -1547,8 +1611,13 @@ function loadSlide(index) {
       inlineVideo.load();
     }
     if (inlineVideo) {
+      // ISS-183: Always keep inline video muted - audio comes from narration MP3
       inlineVideo.muted = true;
-      inlineVideo.playbackRate = 0.7;
+      // ISS-184: Use 1.0 playback rate for Manim videos to sync with audio narration
+      const renderer = slide.renderer || 'none';
+      const isManim = renderer === 'manim';
+      inlineVideo.playbackRate = isManim ? 1.0 : 0.7;
+      
       inlineVideo.oncanplay = () => {
         if (videoBox) videoBox.classList.add('video-ready');
         inlineVideo.oncanplay = null;
@@ -1559,6 +1628,10 @@ function loadSlide(index) {
       setTimeout(() => {
         if (inlineVideo.paused) {
           inlineVideo.play().catch(e => {});
+        }
+        // ISS-184: Ensure audio is playing when video starts
+        if (audio.src && audio.paused && isPlaying) {
+          audio.play().catch(e => console.log("[ISS-184] Audio play fail", e));
         }
       }, 100);
       

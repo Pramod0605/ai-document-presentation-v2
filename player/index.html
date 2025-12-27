@@ -238,6 +238,17 @@
       backdrop-filter: blur(8px);
     }
     
+    /* ISS-182: Summary block with learning objectives styling */
+    .formatted-content-block.summary-block {
+      background: linear-gradient(135deg, rgba(0, 50, 80, 0.9) 0%, rgba(0, 30, 50, 0.95) 100%);
+      border-left: 4px solid #00d4ff;
+    }
+    
+    .summary-block .bullet-marker {
+      color: #00ff88 !important;
+      font-weight: bold;
+    }
+    
     /* Paragraph Block */
     .formatted-paragraph {
       font-size: 1.3rem;
@@ -845,6 +856,16 @@
       max-width: 85%;
       min-width: 80%;
     }
+    
+    /* ISS-183: Ensure avatar ALWAYS visible during video mode (Manim, etc) */
+    .mode-content-video #avatar-canvas,
+    .mode-content-video.video-focus #avatar-canvas,
+    .mode-content-video.video-swap #avatar-canvas {
+      opacity: 1 !important;
+      visibility: visible !important;
+      display: block !important;
+      z-index: 60 !important;
+    }
 
     
     .mode-content-video #content-wrapper {
@@ -1325,7 +1346,7 @@
     <div class="slider-row"><input type="range" id="av-green" min="0" max="200" step="1" value="60"></div>
   </div>
 
-  <script src="player.js?v=20251226-ISS180b"></script>
+  <script src="player.js?v=20251227-ISS184b"></script>
 </body>
 
 </html>
