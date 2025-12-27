@@ -280,6 +280,12 @@ function loadSlide(index) {
   
   console.log(`[V2] Loading slide ${index + 1}: ${sectionType} - ${slide.title || 'Untitled'}`);
   
+  // Stop any playing media first
+  narrationAudio.pause();
+  narrationAudio.currentTime = 0;
+  contentVideo.pause();
+  contentVideo.src = '';
+  
   // Reset all layer states for new slide
   contentBox.innerHTML = '';
   videoLayer.classList.add('hidden');
@@ -512,24 +518,101 @@ function renderQuiz(slide) {
   console.log('[V2] QuizRenderer: Question + choices');
   
   const segments = slide.narration?.segments || [];
-  let question = '';
-  const choices = [];
+  const quizQuestions = [];
   
-  segments.forEach(seg => {
+  segments.forEach((seg, segIdx) => {
     const vc = seg.visual_content;
-    if (vc?.bullet_points) {
+    if (vc?.bullet_points && vc.bullet_points.length > 0) {
+      let question = '';
+      const choices = [];
+      
       vc.bullet_points.forEach(bp => {
-        if (bp.level === 1) {
-          question = bp.text.replace(/^Question\s*\d+:\s*/i, '');
-        } else if (bp.level === 2) {
-          const match = bp.text.match(/^([A-D])\)\s*(.+)$/i);
-          if (match) {
-            choices.push({ letter: match[1].toUpperCase(), text: match[2] });
+        // Handle both object format {level, text} and plain string format
+        const text = typeof bp === 'string' ? bp : (bp.text || '');
+        const level = typeof bp === 'object' ? bp.level : null;
+        
+        // Detect question (starts with number or "Question")
+        const isQuestion = /^(\d+\.|Question\s*\d*:?)/i.test(text.trim());
+        // Detect choice (starts with A), B), C), D) or A., B., C., D.)
+        const choiceMatch = text.trim().match(/^([A-D])[\)\.]\s*(.+)$/i);
+        
+        if (level === 1 || isQuestion) {
+          // This is a question
+          question = text.replace(/^(\d+\.\s*|Question\s*\d*:\s*)/i, '');
+        } else if (level === 2 || choiceMatch) {
+          // This is a choice
+          if (choiceMatch) {
+            choices.push({ letter: choiceMatch[1].toUpperCase(), text: choiceMatch[2] });
           } else {
-            choices.push({ letter: String.fromCharCode(65 + choices.length), text: bp.text });
+            choices.push({ letter: String.fromCharCode(65 + choices.length), text: text });
           }
         }
       });
+      
+      if (question || choices.length > 0) {
+        quizQuestions.push({ question, choices, segIdx });
+      }
+    }
+  });
+  
+  // Render all questions
+  quizQuestions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.id = `seg-${q.segIdx}`;
+    
+    if (q.question) {
+      const qDiv = document.createElement('div');
+      qDiv.className = 'quiz-question';
+      qDiv.innerHTML = sanitizeMarkdown(q.question);
+      card.appendChild(qDiv);
+    }
+    
+    if (q.choices.length > 0) {
+      const choicesDiv = document.createElement('div');
+      choicesDiv.className = 'quiz-choices';
+      
+      q.choices.forEach(c => {
+        const choice = document.createElement('div');
+        choice.className = 'quiz-choice';
+        // Check for [Correct] marker
+        let choiceText = c.text;
+        let isCorrect = false;
+        if (choiceText.includes('[Correct]')) {
+          choiceText = choiceText.replace(/\s*\[Correct\]\s*/i, '');
+          isCorrect = true;
+        }
+        choice.innerHTML = `
+          <span class="choice-letter${isCorrect ? ' correct' : ''}">${c.letter}</span>
+          <span class="choice-text">${sanitizeMarkdown(choiceText)}</span>
+        `;
+        choicesDiv.appendChild(choice);
+      });
+      
+      card.appendChild(choicesDiv);
+    }
+    
+    contentBox.appendChild(card);
+  });
+  
+  // If no quiz questions found from segments, try slide-level visual_content
+  if (quizQuestions.length === 0 && slide.visual_content?.bullet_points) {
+    renderQuizFromBullets(slide.visual_content.bullet_points);
+  }
+}
+
+function renderQuizFromBullets(bullets) {
+  let question = '';
+  const choices = [];
+  
+  bullets.forEach(bp => {
+    const text = typeof bp === 'string' ? bp : (bp.text || '');
+    const choiceMatch = text.trim().match(/^([A-D])[\)\.]\s*(.+)$/i);
+    
+    if (/^(\d+\.|Question)/i.test(text.trim())) {
+      question = text.replace(/^(\d+\.\s*|Question\s*\d*:\s*)/i, '');
+    } else if (choiceMatch) {
+      choices.push({ letter: choiceMatch[1].toUpperCase(), text: choiceMatch[2] });
     }
   });
   
@@ -546,7 +629,6 @@ function renderQuiz(slide) {
   if (choices.length > 0) {
     const choicesDiv = document.createElement('div');
     choicesDiv.className = 'quiz-choices';
-    
     choices.forEach(c => {
       const choice = document.createElement('div');
       choice.className = 'quiz-choice';
@@ -556,7 +638,6 @@ function renderQuiz(slide) {
       `;
       choicesDiv.appendChild(choice);
     });
-    
     card.appendChild(choicesDiv);
   }
   
@@ -745,11 +826,28 @@ function seekTimeline(e) {
 
 function onSlideEnd() {
   if (currentSlideIndex < slides.length - 1) {
-    setTimeout(() => loadSlide(currentSlideIndex + 1), 500);
+    setTimeout(() => {
+      loadSlide(currentSlideIndex + 1);
+      // Auto-play if we were playing
+      if (isPlaying) {
+        startPlayback();
+      }
+    }, 500);
   } else {
     isPlaying = false;
     btnPlay.querySelector('.icon-play').classList.remove('hidden');
     btnPlay.querySelector('.icon-pause').classList.add('hidden');
+  }
+}
+
+function startPlayback() {
+  if (narrationAudio.src) {
+    narrationAudio.play().catch(() => {});
+  }
+  avatarVideo.play().catch(() => {});
+  
+  if (!videoLayer.classList.contains('hidden')) {
+    contentVideo.play().catch(() => {});
   }
 }
 
@@ -766,12 +864,14 @@ function onContentVideoEnd() {
 function prevSlide() {
   if (currentSlideIndex > 0) {
     loadSlide(currentSlideIndex - 1);
+    if (isPlaying) startPlayback();
   }
 }
 
 function nextSlide() {
   if (currentSlideIndex < slides.length - 1) {
     loadSlide(currentSlideIndex + 1);
+    if (isPlaying) startPlayback();
   }
 }
 
