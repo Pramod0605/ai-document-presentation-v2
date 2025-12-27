@@ -151,8 +151,15 @@ Segment 5 → source_block_ids: [3] → ordered_list data (same block!)
 - intro, summary, content, example, quiz, memory, recap
 
 **Avatar Positioning:**
-- Intro: 80% width, centered
-- Other sections: 45% width, right side
+- Intro: 85% width, centered
+- Other sections: 55% width, right side (overlapping content)
+
+**Layout Updates (Dec 27, 2025):**
+- Content layer: 70% width, no borders (seamless look)
+- Avatar layer: 55% width, 85% height, floats over content
+- Video layer: 65% width, hides content layer during Manim playback
+- Removed visible division between content and avatar areas
+- Added video-mode class management to reset layer states between slides
 
 ### Key System Specifications
 - **Display Requirements**: Detailed in `docs/display_requirements.md`, including display summary, layer architecture, and ASCII diagrams for 7 section types (intro, summary, content, example, quiz, memory, recap).
