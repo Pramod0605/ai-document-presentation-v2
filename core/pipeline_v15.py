@@ -212,7 +212,7 @@ def _save_analytics(tracker: AnalyticsTracker, presentation: Optional[Dict], out
                 renderer = section.get("renderer", "none")
                 if renderer == "manim":
                     manim_count += 1
-                elif renderer == "wan":
+                elif renderer in ("wan", "wan_video"):
                     wan_count += 1
                 else:
                     static_count += 1
