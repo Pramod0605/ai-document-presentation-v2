@@ -101,6 +101,17 @@ Segment 5 → source_block_ids: [3] → ordered_list data (same block!)
 - Avatar CSS: `opacity: 1 !important; visibility: visible !important;` during video modes
 - Manim videos sync properly with narration audio at 1.0x playback rate
 
+### ISS-185/186/187: Content Display Fixes (COMPLETED - Dec 27, 2025)
+**Issues Fixed:**
+1. **ISS-185**: Text overflow - Added `fitContentToContainer()` dynamic font scaler (65%-100% range with line-height adjustment)
+2. **ISS-186**: Summary sub-bullets - Filtered to level 1 only (main bullets, no sub-bullets in summary sections)
+3. **ISS-187**: Duplicate content boxes - Fixed `contentRendered` flag to gate legacy renderer after paragraph/ordered_list/formula rendering
+
+**Key changes:**
+- `fitContentToContainer()` scales font progressively until content fits, falls back to scroll
+- Summary rendering: `bulletPoints.filter(bp => !bp.level || bp.level === 1)`
+- `contentRendered = true` set in all direct-rendering blocks to prevent duplicate DOM elements
+
 ### Key System Specifications
 - **Display Requirements**: Detailed in `docs/display_requirements.md`, including display summary, layer architecture, and ASCII diagrams for 7 section types (intro, summary, content, example, quiz, memory, recap).
 - **V1.5 Requirements**: Defined in `docs/v1.5_requirements.json`, covering phases, requirements, agent contracts, JSON schemas, and guardrails.
