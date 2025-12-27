@@ -353,6 +353,23 @@
         </div>
     </div>
 
+    <div id="llmOutputsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; max-width: 1000px; width: 95%; height: 85vh; display: flex; flex-direction: column; position: relative; border: 1px solid rgba(255,255,255,0.2);">
+            <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="color: #00d4ff; margin: 0;">LLM Outputs - <span id="llmOutputsJobId"></span></h3>
+                <button onclick="closeLlmOutputsModal()" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <div style="display: flex; flex: 1; overflow: hidden;">
+                <div id="llmFileList" style="width: 280px; border-right: 1px solid rgba(255,255,255,0.1); overflow-y: auto; padding: 15px;">
+                    <div style="color: #888; text-align: center; padding: 20px;">Loading files...</div>
+                </div>
+                <div id="llmFileContent" style="flex: 1; overflow: auto; padding: 20px; background: rgba(0,0,0,0.2);">
+                    <div style="color: #888; text-align: center; padding: 40px;">Select a file to view its contents</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentJobId = null;
         let pollInterval = null;
@@ -539,11 +556,13 @@
                     let actions = '';
                     if (job.status === 'completed') {
                         actions = `
+                            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showLlmOutputs('${job.job_id}')">LLM Outputs</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showAnalytics('${job.job_id}')">Analytics</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="window.open('/player_v2/?job=${job.job_id}', '_blank')">Play</button>
                         `;
                     } else if (job.status === 'failed') {
                         actions = `
+                            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showLlmOutputs('${job.job_id}')">LLM Outputs</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showAnalytics('${job.job_id}')">Analytics</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="showJobError('${job.job_id}')">View Error</button>
                         `;
@@ -708,6 +727,243 @@
 
         function closeAnalyticsModal() {
             document.getElementById('analyticsModal').style.display = 'none';
+        }
+
+        let currentLlmJobId = null;
+
+        function showLlmOutputs(jobId) {
+            currentLlmJobId = jobId;
+            document.getElementById('llmOutputsJobId').textContent = jobId;
+            document.getElementById('llmOutputsModal').style.display = 'flex';
+            document.getElementById('llmFileList').innerHTML = '<div style="color: #888; text-align: center; padding: 20px;">Loading files...</div>';
+            document.getElementById('llmFileContent').innerHTML = '<div style="color: #888; text-align: center; padding: 40px;">Select a file to view its contents</div>';
+            
+            fetch(`/job/${jobId}/llm-outputs`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.outputs && data.outputs.length > 0) {
+                        renderLlmFileList(data.outputs, data.categories);
+                    } else {
+                        document.getElementById('llmFileList').innerHTML = '<div style="color: #888; text-align: center; padding: 20px;">No LLM outputs found for this job</div>';
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('llmFileList').innerHTML = `<div style="color: #ff5252; padding: 20px;">Error: ${err.message}</div>`;
+                });
+        }
+
+        function renderLlmFileList(outputs, categories) {
+            const grouped = {};
+            outputs.forEach(o => {
+                if (!grouped[o.category]) grouped[o.category] = [];
+                grouped[o.category].push(o);
+            });
+            
+            const categoryNames = {
+                'agent_output': 'Agent Outputs',
+                'raw_llm': 'Raw LLM Responses',
+                'renderer': 'Renderer Prompts',
+                'trace': 'Pipeline Trace',
+                'source': 'Source Content'
+            };
+            
+            const categoryColors = {
+                'agent_output': '#4caf50',
+                'raw_llm': '#ff9800',
+                'renderer': '#9c27b0',
+                'trace': '#2196f3',
+                'source': '#00bcd4'
+            };
+            
+            let html = '';
+            const order = ['source', 'agent_output', 'renderer', 'raw_llm', 'trace'];
+            order.forEach(cat => {
+                if (!grouped[cat]) return;
+                const color = categoryColors[cat] || '#888';
+                html += `<div style="margin-bottom: 15px;">
+                    <div style="color: ${color}; font-weight: 600; font-size: 0.85rem; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;">
+                        ${categoryNames[cat] || cat}
+                    </div>`;
+                grouped[cat].forEach(file => {
+                    const sizeKb = (file.size_bytes / 1024).toFixed(1);
+                    const encodedPath = encodeURIComponent(file.path);
+                    html += `<div class="llm-file-item" onclick="loadLlmFile('${encodedPath}')" style="cursor: pointer; padding: 8px; margin: 4px 0; background: rgba(255,255,255,0.05); border-radius: 6px; transition: background 0.2s;">
+                        <div style="font-size: 0.85rem; color: #fff;">${escapeHtml(file.name)}</div>
+                        <div style="font-size: 0.7rem; color: #888; margin-top: 2px;">${escapeHtml(file.description)} (${sizeKb} KB)</div>
+                    </div>`;
+                });
+                html += '</div>';
+            });
+            
+            document.getElementById('llmFileList').innerHTML = html;
+            
+            // Add hover styles
+            document.querySelectorAll('.llm-file-item').forEach(el => {
+                el.addEventListener('mouseenter', () => el.style.background = 'rgba(0,212,255,0.2)');
+                el.addEventListener('mouseleave', () => el.style.background = 'rgba(255,255,255,0.05)');
+            });
+        }
+
+        function loadLlmFile(encodedFilePath) {
+            const decodedPath = decodeURIComponent(encodedFilePath);
+            document.getElementById('llmFileContent').innerHTML = '<div style="color: #888; text-align: center; padding: 40px;">Loading...</div>';
+            
+            fetch(`/job/${currentLlmJobId}/llm-outputs/${encodedFilePath}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('llmFileContent').innerHTML = `<div style="color: #ff5252; padding: 20px;">${data.error}</div>`;
+                        return;
+                    }
+                    
+                    let html = `<div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: #00d4ff; font-weight: 600;">${escapeHtml(decodedPath)}</div>
+                        <div style="color: #888; font-size: 0.8rem;">Type: ${data.file_type} | Size: ${(data.size_bytes / 1024).toFixed(1)} KB</div>
+                    </div>`;
+                    
+                    if (data.file_type === 'json') {
+                        html += renderJsonContent(data.content, decodedPath);
+                    } else {
+                        html += `<pre style="font-family: 'Monaco', 'Menlo', monospace; font-size: 0.8rem; white-space: pre-wrap; word-break: break-word; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; max-height: 60vh; overflow: auto;">${escapeHtml(data.content)}</pre>`;
+                    }
+                    
+                    document.getElementById('llmFileContent').innerHTML = html;
+                })
+                .catch(err => {
+                    document.getElementById('llmFileContent').innerHTML = `<div style="color: #ff5252; padding: 20px;">Error: ${err.message}</div>`;
+                });
+        }
+
+        function renderJsonContent(content, filePath) {
+            let html = '';
+            
+            // Special handling for different file types
+            if (filePath.includes('narration')) {
+                html += renderNarrationArtifact(content);
+            } else if (filePath.includes('visuals')) {
+                html += renderVisualsArtifact(content);
+            } else if (filePath.includes('chunker')) {
+                html += renderChunkerArtifact(content);
+            } else if (filePath.includes('planner')) {
+                html += renderPlannerArtifact(content);
+            } else if (filePath === 'render_prompts.json') {
+                html += renderRenderPrompts(content);
+            } else {
+                // Generic JSON display
+                html += `<pre style="font-family: 'Monaco', 'Menlo', monospace; font-size: 0.75rem; white-space: pre-wrap; word-break: break-word; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; max-height: 60vh; overflow: auto;">${escapeHtml(JSON.stringify(content, null, 2))}</pre>`;
+            }
+            
+            return html;
+        }
+
+        function renderNarrationArtifact(content) {
+            let html = '';
+            const segments = content.segments || content;
+            if (Array.isArray(segments)) {
+                html += `<div style="margin-bottom: 10px; color: #4caf50;">Found ${segments.length} narration segments</div>`;
+                segments.forEach((seg, i) => {
+                    html += `<div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #4caf50;">
+                        <div style="color: #888; font-size: 0.75rem; margin-bottom: 5px;">Segment ${i + 1}${seg.duration_seconds ? ` | ${seg.duration_seconds}s` : ''}</div>
+                        <div style="font-size: 0.9rem;">${escapeHtml(seg.text || seg.narration_text || JSON.stringify(seg))}</div>
+                    </div>`;
+                });
+            } else {
+                html += `<pre style="font-family: monospace; font-size: 0.75rem; white-space: pre-wrap;">${escapeHtml(JSON.stringify(content, null, 2))}</pre>`;
+            }
+            return html;
+        }
+
+        function renderVisualsArtifact(content) {
+            let html = '';
+            const beats = content.visual_beats || content.beats || content;
+            if (Array.isArray(beats)) {
+                html += `<div style="margin-bottom: 10px; color: #9c27b0;">Found ${beats.length} visual beats</div>`;
+                beats.forEach((beat, i) => {
+                    const renderer = beat.renderer || 'none';
+                    const rendererColor = renderer === 'manim' ? '#ff9800' : renderer === 'wan' ? '#e91e63' : '#888';
+                    html += `<div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid ${rendererColor};">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: #888; font-size: 0.75rem;">Beat ${i + 1}</span>
+                            <span style="color: ${rendererColor}; font-size: 0.75rem; font-weight: 600;">${renderer.toUpperCase()}</span>
+                        </div>
+                        ${beat.visual_description ? `<div style="font-size: 0.85rem; margin-bottom: 5px;"><span style="color: #888;">Description:</span> ${escapeHtml(beat.visual_description)}</div>` : ''}
+                        ${beat.manim_scene_spec ? `<div style="font-size: 0.8rem; background: rgba(255,152,0,0.1); padding: 8px; border-radius: 4px; margin-top: 5px;"><span style="color: #ff9800;">Manim Spec:</span><pre style="margin: 5px 0 0 0; font-size: 0.75rem; white-space: pre-wrap;">${escapeHtml(typeof beat.manim_scene_spec === 'string' ? beat.manim_scene_spec : JSON.stringify(beat.manim_scene_spec, null, 2))}</pre></div>` : ''}
+                        ${beat.wan_video_prompt ? `<div style="font-size: 0.8rem; background: rgba(233,30,99,0.1); padding: 8px; border-radius: 4px; margin-top: 5px;"><span style="color: #e91e63;">WAN Prompt:</span> ${escapeHtml(beat.wan_video_prompt)}</div>` : ''}
+                    </div>`;
+                });
+            } else {
+                html += `<pre style="font-family: monospace; font-size: 0.75rem; white-space: pre-wrap;">${escapeHtml(JSON.stringify(content, null, 2))}</pre>`;
+            }
+            return html;
+        }
+
+        function renderChunkerArtifact(content) {
+            let html = '';
+            const blocks = content.content_blocks || content.blocks || content;
+            if (Array.isArray(blocks)) {
+                html += `<div style="margin-bottom: 10px; color: #2196f3;">Found ${blocks.length} content blocks</div>`;
+                blocks.forEach((block, i) => {
+                    html += `<div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #2196f3;">
+                        <div style="color: #888; font-size: 0.75rem; margin-bottom: 5px;">Block ${block.block_id || i + 1} | ${block.type || 'unknown'}</div>
+                        <div style="font-size: 0.85rem;">${escapeHtml(typeof block.content === 'string' ? block.content : JSON.stringify(block.content || block))}</div>
+                    </div>`;
+                });
+            } else {
+                html += `<pre style="font-family: monospace; font-size: 0.75rem; white-space: pre-wrap;">${escapeHtml(JSON.stringify(content, null, 2))}</pre>`;
+            }
+            return html;
+        }
+
+        function renderPlannerArtifact(content) {
+            let html = '';
+            const sections = content.sections || content;
+            if (Array.isArray(sections)) {
+                html += `<div style="margin-bottom: 10px; color: #00bcd4;">Found ${sections.length} planned sections</div>`;
+                sections.forEach((sec, i) => {
+                    html += `<div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #00bcd4;">
+                        <div style="color: #00bcd4; font-weight: 600; margin-bottom: 5px;">${sec.type || sec.section_type || 'Section'} ${i + 1}</div>
+                        ${sec.title ? `<div style="font-size: 0.9rem; margin-bottom: 5px;">${escapeHtml(sec.title)}</div>` : ''}
+                        ${sec.goal ? `<div style="color: #888; font-size: 0.8rem;">Goal: ${escapeHtml(sec.goal)}</div>` : ''}
+                    </div>`;
+                });
+            } else {
+                html += `<pre style="font-family: monospace; font-size: 0.75rem; white-space: pre-wrap;">${escapeHtml(JSON.stringify(content, null, 2))}</pre>`;
+            }
+            return html;
+        }
+
+        function renderRenderPrompts(content) {
+            let html = '';
+            const prompts = content.prompts || content;
+            if (Array.isArray(prompts)) {
+                html += `<div style="margin-bottom: 10px; color: #9c27b0;">Found ${prompts.length} render prompts</div>`;
+                prompts.forEach((p, i) => {
+                    const renderer = p.renderer || 'unknown';
+                    const rendererColor = renderer === 'manim' ? '#ff9800' : renderer === 'wan' || renderer === 'video' ? '#e91e63' : '#888';
+                    html += `<div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid ${rendererColor};">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: #888; font-size: 0.75rem;">Section ${p.section_id || '?'} Beat ${p.beat_index ?? '?'}</span>
+                            <span style="color: ${rendererColor}; font-size: 0.75rem; font-weight: 600;">${renderer.toUpperCase()}</span>
+                        </div>
+                        <pre style="font-size: 0.8rem; white-space: pre-wrap; margin: 0;">${escapeHtml(p.prompt || JSON.stringify(p, null, 2))}</pre>
+                    </div>`;
+                });
+            } else {
+                html += `<pre style="font-family: monospace; font-size: 0.75rem; white-space: pre-wrap;">${escapeHtml(JSON.stringify(content, null, 2))}</pre>`;
+            }
+            return html;
+        }
+
+        function escapeHtml(text) {
+            if (typeof text !== 'string') text = String(text);
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function closeLlmOutputsModal() {
+            document.getElementById('llmOutputsModal').style.display = 'none';
+            currentLlmJobId = null;
         }
 
         loadJobHistory();

@@ -176,6 +176,25 @@ Segment 5 → source_block_ids: [3] → ordered_list data (same block!)
 - Dev panel toggle with 'D' key, sliders for real-time adjustments
 - `updateDevInfo()` shows current slide info and clickable segment list
 
+### LLM Outputs Browser (Dec 27, 2025)
+**Feature**: Browse and inspect all LLM outputs per job for prompt quality assessment.
+
+**What's Available:**
+- **Agent Outputs** (artifacts/): SmartChunker, SectionPlanner, NarrationWriter, VisualSpecArtist outputs
+- **Renderer Prompts** (render_prompts.json): All Manim/WAN video generation prompts
+- **Source Content** (source_markdown.md): Original input from PDF conversion
+- **Pipeline Trace** (generation_trace.json): Full execution trace with LLM calls
+
+**Implementation:**
+- `api/app.py`: `/job/<id>/llm-outputs` lists available files, `/job/<id>/llm-outputs/<path>` fetches content
+- `player/dashboard.html`: "LLM Outputs" button opens split-pane modal with file tree + content viewer
+- Custom renderers for each artifact type (narration segments, visual beats, content blocks, planner sections)
+
+**Usage:**
+- Click "LLM Outputs" button on any job in dashboard
+- Browse file tree on left, click to view formatted content on right
+- Color-coded by type: green=narration, purple=visuals, blue=chunker, cyan=planner, orange=renderer
+
 ### Analytics Tracking (Dec 27, 2025)
 **Feature**: Per-job analytics tracking and dashboard display.
 

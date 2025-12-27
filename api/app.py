@@ -317,6 +317,160 @@ def get_job_analytics(job_id):
         })
 
 
+@app.route("/job/<job_id>/llm-outputs", methods=["GET"])
+def get_job_llm_outputs(job_id):
+    """List all available LLM output artifacts for a job."""
+    job = job_manager.get_job(job_id)
+    
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    
+    job_folder = Path(JOBS_DIR) / job_id
+    if not job_folder.exists():
+        return jsonify({"error": "Job folder not found"}), 404
+    
+    outputs = []
+    
+    # Check for artifacts directory (structured agent outputs)
+    artifacts_dir = job_folder / "artifacts"
+    if artifacts_dir.exists():
+        for f in sorted(artifacts_dir.iterdir()):
+            if f.is_file() and f.suffix == ".json":
+                stat = f.stat()
+                outputs.append({
+                    "name": f.name,
+                    "path": f"artifacts/{f.name}",
+                    "category": "agent_output",
+                    "size_bytes": stat.st_size,
+                    "description": _get_artifact_description(f.name)
+                })
+    
+    # Check for llm_responses directory (raw LLM outputs)
+    llm_responses_dir = job_folder / "llm_responses"
+    if llm_responses_dir.exists():
+        for f in sorted(llm_responses_dir.iterdir()):
+            if f.is_file():
+                stat = f.stat()
+                outputs.append({
+                    "name": f.name,
+                    "path": f"llm_responses/{f.name}",
+                    "category": "raw_llm",
+                    "size_bytes": stat.st_size,
+                    "description": "Raw LLM response with prompt"
+                })
+    
+    # Check for render_prompts.json
+    render_prompts = job_folder / "render_prompts.json"
+    if render_prompts.exists():
+        stat = render_prompts.stat()
+        outputs.append({
+            "name": "render_prompts.json",
+            "path": "render_prompts.json",
+            "category": "renderer",
+            "size_bytes": stat.st_size,
+            "description": "All Manim/WAN video generation prompts"
+        })
+    
+    # Check for generation_trace.json
+    trace_file = job_folder / "generation_trace.json"
+    if trace_file.exists():
+        stat = trace_file.stat()
+        outputs.append({
+            "name": "generation_trace.json",
+            "path": "generation_trace.json",
+            "category": "trace",
+            "size_bytes": stat.st_size,
+            "description": "Full pipeline execution trace"
+        })
+    
+    # Check for source markdown
+    source_md = job_folder / "source_markdown.md"
+    if source_md.exists():
+        stat = source_md.stat()
+        outputs.append({
+            "name": "source_markdown.md",
+            "path": "source_markdown.md",
+            "category": "source",
+            "size_bytes": stat.st_size,
+            "description": "Input markdown from PDF/file"
+        })
+    
+    return jsonify({
+        "job_id": job_id,
+        "total_outputs": len(outputs),
+        "outputs": outputs,
+        "categories": {
+            "agent_output": "Structured outputs from pipeline agents (Chunker, Planner, NarrationWriter, VisualSpecArtist)",
+            "raw_llm": "Raw LLM API responses with full prompts",
+            "renderer": "Prompts sent to visual renderers (Manim, WAN)",
+            "trace": "Pipeline execution trace with all events",
+            "source": "Original input content"
+        }
+    })
+
+
+def _get_artifact_description(filename: str) -> str:
+    """Get human-readable description for artifact files."""
+    name_lower = filename.lower()
+    if "chunker" in name_lower:
+        return "SmartChunker output - content blocks with metadata"
+    elif "planner" in name_lower:
+        return "SectionPlanner output - section structure and goals"
+    elif "narration" in name_lower:
+        return "NarrationWriter output - narration segments with timing"
+    elif "visuals" in name_lower:
+        return "VisualSpecArtist output - visual beats and display directives"
+    elif "memory" in name_lower:
+        return "MemoryAgent output - key concepts for retention"
+    elif "recap" in name_lower:
+        return "RecapAgent output - chapter summary"
+    return "Pipeline artifact"
+
+
+@app.route("/job/<job_id>/llm-outputs/<path:file_path>", methods=["GET"])
+def get_job_llm_output_file(job_id, file_path):
+    """Get content of a specific LLM output file."""
+    job = job_manager.get_job(job_id)
+    
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    
+    job_folder = Path(JOBS_DIR) / job_id
+    target_file = job_folder / file_path
+    
+    # Security: ensure path stays within job folder
+    try:
+        target_file.resolve().relative_to(job_folder.resolve())
+    except ValueError:
+        return jsonify({"error": "Invalid file path"}), 400
+    
+    if not target_file.exists():
+        return jsonify({"error": "File not found"}), 404
+    
+    try:
+        content = target_file.read_text(encoding="utf-8")
+        
+        # Try to parse as JSON for structured response
+        file_type = "text"
+        parsed_content = None
+        if target_file.suffix == ".json":
+            try:
+                parsed_content = json.loads(content)
+                file_type = "json"
+            except json.JSONDecodeError:
+                pass
+        
+        return jsonify({
+            "job_id": job_id,
+            "file_path": file_path,
+            "file_type": file_type,
+            "size_bytes": len(content),
+            "content": parsed_content if file_type == "json" else content
+        })
+    except Exception as e:
+        return jsonify({"error": f"Failed to read file: {str(e)}"}), 500
+
+
 def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
     try:
         result = process_pdf_to_videos(
