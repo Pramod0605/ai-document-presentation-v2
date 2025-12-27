@@ -262,6 +262,7 @@ def list_all_jobs():
             "type": j.get("type", "unknown"),
             "status": j["status"],
             "progress": j["progress"],
+            "status_message": j.get("status_message") or j.get("message", ""),
             "created_at": j["created_at"],
             "completed_at": j["completed_at"],
             "error": j.get("error"),
