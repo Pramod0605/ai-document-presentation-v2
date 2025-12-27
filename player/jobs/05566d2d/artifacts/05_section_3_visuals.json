@@ -5,7 +5,7 @@
       "beat_id": "beat_1",
       "segment_id": 1,
       "visual_beat_type": "text_only",
-      "description": "Introduction to real numbers as continuous quantities.",
+      "description": "Introduction to real numbers and their continuous nature.",
       "symbolic_overlay": {
         "enabled": false,
         "content": [],
@@ -16,13 +16,12 @@
       "beat_id": "beat_2",
       "segment_id": 2,
       "visual_beat_type": "diagram",
-      "description": "Number line illustrating the completeness of real numbers.",
+      "description": "Visualizing real numbers filling the number line.",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
-          "Real Numbers",
-          "No Gaps",
-          "Continuous"
+          "Number Line",
+          "No Gaps"
         ],
         "max_words": 4
       }
@@ -30,37 +29,40 @@
     {
       "beat_id": "beat_3",
       "segment_id": 3,
-      "visual_beat_type": "diagram",
-      "description": "Venn diagram showing classification of real numbers.",
+      "visual_beat_type": "text_only",
+      "description": "Properties of real numbers including rational and irrational.",
       "symbolic_overlay": {
-        "enabled": true,
-        "content": [
-          "Real Numbers",
-          "Rational",
-          "Irrational"
-        ],
+        "enabled": false,
+        "content": [],
         "max_words": 4
       }
     },
     {
       "beat_id": "beat_4",
       "segment_id": 4,
-      "visual_beat_type": "text_only",
-      "description": "Definition and examples of whole numbers.",
+      "visual_beat_type": "diagram",
+      "description": "Classification of whole numbers with definition and example.",
       "symbolic_overlay": {
-        "enabled": false,
-        "content": [],
+        "enabled": true,
+        "content": [
+          "Whole Numbers",
+          "Natural + Zero"
+        ],
         "max_words": 4
       }
     },
     {
       "beat_id": "beat_5",
       "segment_id": 5,
-      "visual_beat_type": "text_only",
-      "description": "Definition and properties of rational numbers with examples.",
+      "visual_beat_type": "formula",
+      "description": "Definition and examples of rational numbers.",
       "symbolic_overlay": {
-        "enabled": false,
-        "content": [],
+        "enabled": true,
+        "content": [
+          "Rational Numbers",
+          "p/q",
+          "Terminating/Repeating"
+        ],
         "max_words": 4
       }
     }
@@ -98,7 +100,7 @@
         "text_layer": "hide",
         "visual_layer": "show",
         "avatar_layer": "gesture_only",
-        "flip_timing_sec": null
+        "flip_timing_sec": 0
       }
     },
     {
@@ -117,21 +119,27 @@
           {
             "level": 1,
             "text": "Real numbers can be positive, negative, or zero."
+          },
+          {
+            "level": 1,
+            "text": "Infinitely many rational and irrational numbers between any two distinct real numbers."
           }
         ],
         "verbatim_text": "#### Important Properties to Remember for Exams",
         "has_inline_latex": false
       },
       "display_directives": {
-        "text_layer": "hide",
-        "visual_layer": "show",
-        "avatar_layer": "gesture_only",
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
         "flip_timing_sec": null
       }
     },
     {
       "segment_id": 4,
       "source_block_ids": [
+        5,
+        6,
         7,
         8
       ],
@@ -151,14 +159,14 @@
             "text": "Property: All whole numbers are integers and hence real."
           }
         ],
-        "verbatim_text": "### 2.2 Whole Numbers (W)",
+        "verbatim_text": "## 2. CLASSIFICATION OF REAL NUMBERS",
         "has_inline_latex": false
       },
       "display_directives": {
-        "text_layer": "show",
-        "visual_layer": "hide",
-        "avatar_layer": "show",
-        "flip_timing_sec": null
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": 0
       }
     },
     {
@@ -172,7 +180,7 @@
         "bullet_points": [
           {
             "level": 1,
-            "text": "Definition: Numbers expressible as $p/q$, where $p, q$ are integers and $q \\neq 0$."
+            "text": "Definition: Numbers expressible as $p/q$, where $p$ and $q$ are integers and $q \\neq 0$."
           },
           {
             "level": 1,
@@ -187,10 +195,10 @@
         "has_inline_latex": false
       },
       "display_directives": {
-        "text_layer": "show",
-        "visual_layer": "hide",
-        "avatar_layer": "show",
-        "flip_timing_sec": null
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": 0
       }
     }
   ]

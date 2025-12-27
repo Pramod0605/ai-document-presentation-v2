@@ -15,14 +15,14 @@
     {
       "beat_id": "beat_2",
       "segment_id": 2,
-      "visual_beat_type": "diagram",
-      "description": "Visualizing prime factorization concept",
+      "visual_beat_type": "text_only",
+      "description": "Definition of the Fundamental Theorem of Arithmetic",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
           "Prime",
-          "Numbers",
-          "Product"
+          "Factorization",
+          "Unique"
         ],
         "max_words": 4
       }
@@ -31,13 +31,12 @@
       "beat_id": "beat_3",
       "segment_id": 3,
       "visual_beat_type": "animation",
-      "description": "Demonstrating unique prime factorization",
+      "description": "Example of prime factorization for the number 12",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
-          "Unique",
-          "Factorization",
-          "Prime Factors"
+          "Prime Factors",
+          "Building Blocks"
         ],
         "max_words": 4
       }
@@ -45,14 +44,13 @@
     {
       "beat_id": "beat_4",
       "segment_id": 4,
-      "visual_beat_type": "process",
-      "description": "Example of prime factorization for the number twelve",
+      "visual_beat_type": "animation",
+      "description": "Demonstrating the uniqueness of prime factorization for 12",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
-          "Example",
-          "Twelve",
-          "Factors"
+          "Uniqueness",
+          "Prime Factors"
         ],
         "max_words": 4
       }
@@ -61,7 +59,7 @@
       "beat_id": "beat_5",
       "segment_id": 5,
       "visual_beat_type": "text_only",
-      "description": "Importance of unique prime factorization",
+      "description": "Importance and applications of the Fundamental Theorem",
       "symbolic_overlay": {
         "enabled": false,
         "content": [],
@@ -78,15 +76,11 @@
         "bullet_points": [
           {
             "level": 1,
-            "text": "Fundamental Theorem of Arithmetic"
+            "text": "Cornerstone of Number Theory"
           },
           {
             "level": 1,
-            "text": "Core concept in number theory"
-          },
-          {
-            "level": 1,
-            "text": "Understanding how numbers are built"
+            "text": "How numbers are built"
           }
         ]
       },
@@ -109,36 +103,41 @@
           },
           {
             "level": 1,
-            "text": "OR product of prime numbers"
+            "text": "OR uniquely expressed as product of primes"
           }
         ]
       },
       "display_directives": {
-        "text_layer": "hide",
-        "visual_layer": "show",
-        "avatar_layer": "gesture_only",
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
         "flip_timing_sec": null
       }
     },
     {
       "segment_id": 3,
-      "source_block_ids": [],
+      "source_block_ids": [
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
       "visual_content": {
-        "content_type": "bullet_list",
-        "bullet_points": [
-          {
-            "level": 1,
-            "text": "Prime factorization is UNIQUE"
-          },
-          {
-            "level": 1,
-            "text": "Same set of prime factors"
-          },
-          {
-            "level": 1,
-            "text": "Order may vary"
-          }
-        ]
+        "content_type": "paragraph",
+        "ordered_list": [
+          "Express 252 as a product of prime factors.",
+          "$252 \\div 2 = 126$",
+          "$126 \\div 2 = 63$",
+          "$63 \\div 3 = 21$",
+          "$21 \\div 3 = 7$",
+          "$252 = 2^2 \\times 3^2 \\times 7$"
+        ],
+        "verbatim_text": "Example: Express 252 as a product of prime factors.",
+        "has_inline_latex": false
       },
       "display_directives": {
         "text_layer": "hide",
@@ -162,12 +161,12 @@
       "visual_content": {
         "content_type": "paragraph",
         "ordered_list": [
-          "Example: Express 252 as a product of prime factors.",
+          "Express 252 as a product of prime factors.",
           "$252 \\div 2 = 126$",
           "$126 \\div 2 = 63$",
           "$63 \\div 3 = 21$",
           "$21 \\div 3 = 7$",
-          "So, $252 = 2^2 \\times 3^2 \\times 7$"
+          "$252 = 2^2 \\times 3^2 \\times 7$"
         ],
         "verbatim_text": "Example: Express 252 as a product of prime factors.",
         "has_inline_latex": false
@@ -181,23 +180,22 @@
     },
     {
       "segment_id": 5,
-      "source_block_ids": [],
+      "source_block_ids": [
+        6
+      ],
       "visual_content": {
         "content_type": "bullet_list",
         "bullet_points": [
           {
             "level": 1,
-            "text": "Basis for many mathematical concepts"
+            "text": "Smallest divisible number  $\\to$  LCM"
           },
           {
             "level": 1,
-            "text": "Cryptography"
-          },
-          {
-            "level": 1,
-            "text": "Understanding number properties"
+            "text": "Largest equal division  $\\to$  HCF"
           }
-        ]
+        ],
+        "verbatim_source": "- Smallest divisible number  $\\to$  LCM\n- Largest equal division  $\\to$  HCF"
       },
       "display_directives": {
         "text_layer": "show",

@@ -18,22 +18,25 @@
       "visual_beat_type": "text_only",
       "description": "Introduce proof by contradiction technique",
       "symbolic_overlay": {
-        "enabled": false,
-        "content": [],
+        "enabled": true,
+        "content": [
+          "Proof",
+          "Contradiction"
+        ],
         "max_words": 4
       }
     },
     {
       "beat_id": "beat_3",
       "segment_id": 3,
-      "visual_beat_type": "text_only",
-      "description": "Definition of irrational numbers",
+      "visual_beat_type": "process",
+      "description": "Explain the core idea of proof by contradiction",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
-          "Irrational",
-          "Not p/q",
-          "q \u2260 0"
+          "Assume",
+          "Opposite",
+          "Contradiction"
         ],
         "max_words": 4
       }
@@ -41,13 +44,15 @@
     {
       "beat_id": "beat_4",
       "segment_id": 4,
-      "visual_beat_type": "text_only",
-      "description": "Decimal representation of irrational numbers",
+      "visual_beat_type": "process",
+      "description": "Conclude the logic of proof by contradiction",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
-          "Non-terminating",
-          "Non-repeating"
+          "Assumption",
+          "False",
+          "Statement",
+          "True"
         ],
         "max_words": 4
       }
@@ -56,13 +61,13 @@
       "beat_id": "beat_5",
       "segment_id": 5,
       "visual_beat_type": "formula",
-      "description": "Initial assumption for proof by contradiction",
+      "description": "Setting up the initial assumption for root 2 irrationality proof",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
-          "Assume Rational",
-          "p/q",
-          "Simplest Form"
+          "Assume",
+          "Rational",
+          "p/q"
         ],
         "max_words": 4
       }
@@ -100,7 +105,7 @@
         "bullet_points": [
           {
             "level": 1,
-            "text": "Understanding proof technique"
+            "text": "Powerful logical technique"
           },
           {
             "level": 1,
@@ -117,79 +122,66 @@
     },
     {
       "segment_id": 3,
-      "source_block_ids": [
-        30
-      ],
+      "source_block_ids": [],
       "visual_content": {
-        "content_type": "bullet_list",
-        "bullet_points": [
-          {
-            "level": 1,
-            "text": "**Definition:** Real numbers that are not rational; cannot be written as  $p/q$ ."
-          },
-          {
-            "level": 1,
-            "text": "**Decimal Nature:** Non-terminating, non-repeating decimals."
-          }
-        ],
-        "verbatim_source": "- **Definition:** Real numbers that are not rational; cannot be written as  $p/q$ .\n- **Decimal Nature:** Non-terminating, non-repeating decimals."
+        "content_type": "ordered_list",
+        "ordered_list": [
+          "Assume opposite of what to prove",
+          "Show assumption leads to impossibility"
+        ]
       },
       "display_directives": {
-        "text_layer": "show",
-        "visual_layer": "hide",
-        "avatar_layer": "show",
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
         "flip_timing_sec": null
       }
     },
     {
       "segment_id": 4,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "ordered_list",
+        "ordered_list": [
+          "Contradiction means assumption is false",
+          "Original statement must be true"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
       "source_block_ids": [
-        30
+        28,
+        30,
+        31
       ],
       "visual_content": {
         "content_type": "bullet_list",
         "bullet_points": [
           {
             "level": 1,
-            "text": "**Definition:** Real numbers that are not rational; cannot be written as  $p/q$ ."
+            "text": "**Definition:** Numbers expressible as  $p/q$ , where  $p$  and  $q$  are integers and  $q \\neq 0$ ."
           },
           {
             "level": 1,
-            "text": "**Decimal Nature:** Non-terminating, non-repeating decimals."
+            "text": "**Decimal Nature:** Terminating or non-terminating repeating."
+          },
+          {
+            "level": 1,
+            "text": "**Examples:**  $-2/5$ , 0.2,  $7/3$ ."
+          },
+          {
+            "level": 1,
+            "text": "**Important Property:** Rational numbers have eventually repeating decimal expansions."
           }
         ],
-        "verbatim_source": "- **Definition:** Real numbers that are not rational; cannot be written as  $p/q$ .\n- **Decimal Nature:** Non-terminating, non-repeating decimals."
-      },
-      "display_directives": {
-        "text_layer": "show",
-        "visual_layer": "hide",
-        "avatar_layer": "show",
-        "flip_timing_sec": null
-      }
-    },
-    {
-      "segment_id": 5,
-      "source_block_ids": [],
-      "visual_content": {
-        "content_type": "bullet_list",
-        "bullet_points": [
-          {
-            "level": 1,
-            "text": "Assume $\\sqrt{2}$ is rational"
-          },
-          {
-            "level": 1,
-            "text": "Then $\\sqrt{2} = p/q$"
-          },
-          {
-            "level": 1,
-            "text": "$p, q$ are integers, $q \\neq 0$"
-          },
-          {
-            "level": 1,
-            "text": "Fraction is in simplest form (no common factors)"
-          }
-        ]
+        "verbatim_source": "- **Definition:** Numbers expressible as  $p/q$ , where  $p$  and  $q$  are integers and  $q \\neq 0$ .\n- **Decimal Nature:** Terminating or non-terminating repeating.\n- **Examples:**  $-2/5$ , 0.2,  $7/3$ .\n- **Important Property:** Rational numbers have eventually repeating decimal expansions."
       },
       "display_directives": {
         "text_layer": "hide",

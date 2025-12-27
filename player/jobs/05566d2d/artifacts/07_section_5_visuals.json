@@ -5,7 +5,7 @@
       "beat_id": "beat_1",
       "segment_id": 1,
       "visual_beat_type": "text_only",
-      "description": "Introduction to HCF and LCM using prime factorization",
+      "description": "Introduction to finding HCF and LCM using prime factorization.",
       "symbolic_overlay": {
         "enabled": false,
         "content": [],
@@ -15,13 +15,13 @@
     {
       "beat_id": "beat_2",
       "segment_id": 2,
-      "visual_beat_type": "formula",
-      "description": "Introduce numbers for example: 72 and 108",
+      "visual_beat_type": "process",
+      "description": "Introduce numbers 72 and 120 for prime factorization.",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
           "72",
-          "108"
+          "120"
         ],
         "max_words": 4
       }
@@ -30,11 +30,12 @@
       "beat_id": "beat_3",
       "segment_id": 3,
       "visual_beat_type": "formula",
-      "description": "Display prime factorization for 72 and 108",
+      "description": "Display prime factorizations of 72 and 120.",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
-          "Prime Factors"
+          "Prime",
+          "Factorization"
         ],
         "max_words": 4
       }
@@ -43,12 +44,12 @@
       "beat_id": "beat_4",
       "segment_id": 4,
       "visual_beat_type": "formula",
-      "description": "Calculate HCF using prime factors",
+      "description": "Calculate and display HCF using common prime factors with lowest powers.",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
           "HCF",
-          "Lowest Power"
+          "Lowest Powers"
         ],
         "max_words": 4
       }
@@ -57,12 +58,12 @@
       "beat_id": "beat_5",
       "segment_id": 5,
       "visual_beat_type": "formula",
-      "description": "Calculate LCM using prime factors",
+      "description": "Calculate and display LCM using all prime factors with highest powers.",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
           "LCM",
-          "Highest Power"
+          "Highest Powers"
         ],
         "max_words": 4
       }
@@ -71,13 +72,23 @@
   "segment_enrichments": [
     {
       "segment_id": 1,
-      "source_block_ids": [
-        13
-      ],
+      "source_block_ids": [],
       "visual_content": {
-        "content_type": "paragraph",
-        "verbatim_text": "### HCF and LCM of 72 and 108",
-        "has_inline_latex": false
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Apply Prime Factorization"
+          },
+          {
+            "level": 1,
+            "text": "Find HCF (Highest Common Factor)"
+          },
+          {
+            "level": 1,
+            "text": "Find LCM (Least Common Multiple)"
+          }
+        ]
       },
       "display_directives": {
         "text_layer": "show",
@@ -89,31 +100,31 @@
     {
       "segment_id": 2,
       "source_block_ids": [
-        13
+        49
       ],
       "visual_content": {
         "content_type": "paragraph",
-        "verbatim_text": "### HCF and LCM of 72 and 108",
+        "verbatim_text": "##### Q14. Find HCF and LCM of 72 and 120.",
         "has_inline_latex": false
       },
       "display_directives": {
         "text_layer": "hide",
         "visual_layer": "show",
         "avatar_layer": "gesture_only",
-        "flip_timing_sec": 0
+        "flip_timing_sec": null
       }
     },
     {
       "segment_id": 3,
       "source_block_ids": [
-        14,
-        15
+        51,
+        52
       ],
       "visual_content": {
         "content_type": "formula",
         "formulas": [
-          "$$72 = 2^3 \\times 3^2$$",
-          "$$108 = 2^2 \\times 3^3$$"
+          "$72 = 2^3 \\times 3^2$",
+          "$120 = 2^3 \\times 3 \\times 5$"
         ],
         "formula": "$$72 = 2^3 \\times 3^2$$"
       },
@@ -121,39 +132,44 @@
         "text_layer": "hide",
         "visual_layer": "show",
         "avatar_layer": "gesture_only",
-        "flip_timing_sec": 0
+        "flip_timing_sec": null
       }
     },
     {
       "segment_id": 4,
       "source_block_ids": [
-        16
+        53
       ],
       "visual_content": {
         "content_type": "formula",
-        "formula": "$$\\text{HCF} = 36$$"
+        "formula": "$$\\text{HCF} = \\text{common primes with lowest powers} = 2^3 \\times 3 = 24$$"
       },
       "display_directives": {
         "text_layer": "hide",
         "visual_layer": "show",
         "avatar_layer": "gesture_only",
-        "flip_timing_sec": 0
+        "flip_timing_sec": null
       }
     },
     {
       "segment_id": 5,
       "source_block_ids": [
-        17
+        54,
+        55
       ],
       "visual_content": {
         "content_type": "formula",
-        "formula": "$$\\text{LCM} = 216$$"
+        "formulas": [
+          "$$\\text{LCM} = \\text{all primes with highest powers} = 2^3 \\times 3^2 \\times 5 = 360$$",
+          "Answer: HCF = 24, LCM = 360"
+        ],
+        "formula": "$$\\text{LCM} = \\text{all primes with highest powers} = 2^3 \\times 3^2 \\times 5 = 360$$"
       },
       "display_directives": {
         "text_layer": "hide",
         "visual_layer": "show",
         "avatar_layer": "gesture_only",
-        "flip_timing_sec": 0
+        "flip_timing_sec": null
       }
     }
   ]
