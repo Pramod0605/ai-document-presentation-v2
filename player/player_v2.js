@@ -280,8 +280,10 @@ function loadSlide(index) {
   
   console.log(`[V2] Loading slide ${index + 1}: ${sectionType} - ${slide.title || 'Untitled'}`);
   
+  // Reset all layer states for new slide
   contentBox.innerHTML = '';
   videoLayer.classList.add('hidden');
+  contentLayer.classList.remove('video-mode');
   
   // Set section title
   if (sectionType !== 'intro' && slide.title) {
@@ -392,6 +394,22 @@ function renderSummary(slide) {
 
 function renderContent(slide) {
   console.log('[V2] ContentRenderer: Paragraphs, bullets, formulas');
+  
+  // Check if this slide has a Manim/WAN video to display
+  const videoPath = slide.video_path || slide.content_video_path;
+  const renderer = slide.renderer || 'none';
+  
+  if (videoPath && (renderer === 'manim' || renderer === 'wan_video' || renderer === 'wan')) {
+    console.log(`[V2] ContentRenderer: Manim/Video mode - ${videoPath}`);
+    const fullPath = resolveMediaPath(videoPath, 'video');
+    console.log(`[V2] Loading content video: ${fullPath}`);
+    videoLayer.classList.remove('hidden');
+    contentLayer.classList.add('video-mode');
+    contentVideo.src = fullPath;
+    contentVideo.load();
+    contentVideo.playbackRate = 1.0;
+    return;
+  }
   
   const segments = slide.narration?.segments || [];
   
