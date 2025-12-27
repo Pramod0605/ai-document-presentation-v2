@@ -1,0 +1,552 @@
+/* ============================================
+   PLAYER V2 - Clean Responsive Layout
+   ============================================ */
+
+/* CSS Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* LAYER 0: Black Background */
+body {
+  background: #000;
+  color: #fff;
+}
+
+/* ============================================
+   MAIN CONTAINER
+   ============================================ */
+#player-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* ============================================
+   STAGE AREA (Contains content + avatar)
+   ============================================ */
+#stage {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================
+   LAYER 1: CONTENT AREA
+   ============================================ */
+#content-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 55%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+#content-layer.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#content-box {
+  width: 100%;
+  max-height: 100%;
+  overflow: hidden; /* No scrolling - content must fit */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ============================================
+   LAYER 2: AVATAR AREA (Floating)
+   ============================================ */
+#avatar-layer {
+  position: absolute;
+  z-index: 20;
+  transition: all 0.4s ease;
+}
+
+/* Default position: Right side, 45% width */
+#avatar-layer {
+  right: 2%;
+  bottom: 5%;
+  width: 45%;
+  height: 80%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* Intro mode: Centered, 80% width */
+#stage.mode-intro #avatar-layer {
+  right: auto;
+  left: 50%;
+  bottom: 5%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 90%;
+}
+
+#stage.mode-intro #content-layer {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#avatar-video {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  background: transparent;
+  display: block;
+}
+
+/* ============================================
+   VIDEO LAYER (for Manim/WAN content)
+   ============================================ */
+#video-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 55%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+  padding: 20px;
+}
+
+#video-layer.hidden {
+  display: none;
+}
+
+#content-video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* ============================================
+   CONTENT STYLING
+   ============================================ */
+
+/* Summary Bullets */
+.summary-list {
+  list-style: none;
+  padding: 0;
+}
+
+.summary-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05));
+  border-left: 4px solid #3b82f6;
+  border-radius: 0 8px 8px 0;
+}
+
+.summary-marker {
+  color: #22c55e;
+  font-size: 1.2em;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.summary-text {
+  font-size: 1.1em;
+  line-height: 1.5;
+}
+
+/* Bullet Lists */
+.bullet-list {
+  list-style: none;
+  padding: 0;
+}
+
+.bullet-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+}
+
+.bullet-marker {
+  color: #60a5fa;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.bullet-text {
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+.bullet-item.level-2 {
+  margin-left: 24px;
+}
+
+.bullet-item.level-3 {
+  margin-left: 48px;
+}
+
+/* Paragraphs */
+.paragraph-block {
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 4px solid #8b5cf6;
+  border-radius: 0 8px 8px 0;
+  font-size: 1.1em;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+/* Ordered Lists */
+.ordered-list {
+  list-style: none;
+  padding: 0;
+  counter-reset: list-counter;
+}
+
+.ordered-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  counter-increment: list-counter;
+}
+
+.ordered-number {
+  color: #f59e0b;
+  font-weight: bold;
+  margin-right: 12px;
+  flex-shrink: 0;
+  min-width: 24px;
+}
+
+/* Formulas */
+.formula-block {
+  text-align: center;
+  padding: 24px;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 12px;
+  margin: 16px 0;
+  font-size: 1.3em;
+}
+
+/* Quiz Card */
+.quiz-card {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quiz-question {
+  font-size: 1.2em;
+  font-weight: 500;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quiz-choices {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.quiz-choice {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.quiz-choice:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.choice-letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 50%;
+  font-weight: bold;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.choice-text {
+  font-size: 1em;
+  line-height: 1.4;
+}
+
+/* Flashcards (Memory) */
+.flashcard-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.flashcard {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 20px;
+  min-width: 120px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.flashcard.active {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  border-color: #3b82f6;
+}
+
+.flashcard-letter {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #60a5fa;
+  margin-bottom: 8px;
+}
+
+.flashcard-title {
+  font-size: 1em;
+  color: #e5e7eb;
+  margin-bottom: 4px;
+}
+
+.flashcard-mnemonic {
+  font-size: 0.9em;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* ============================================
+   CONTROLS BAR
+   ============================================ */
+#controls-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.control-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.control-btn .hidden {
+  display: none;
+}
+
+#timeline-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#timeline-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  position: relative;
+  cursor: pointer;
+}
+
+#timeline-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 3px;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+#timeline-handle {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+}
+
+#time-display {
+  font-size: 0.85em;
+  color: #9ca3af;
+  min-width: 80px;
+  text-align: center;
+}
+
+#slide-picker {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  max-width: 180px;
+}
+
+#slide-picker option {
+  background: #1f2937;
+  color: #fff;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE (< 768px)
+   ============================================ */
+@media (max-width: 768px) {
+  #stage {
+    flex-direction: column;
+  }
+  
+  /* Mobile: Stack vertically */
+  #content-layer {
+    position: relative;
+    width: 100%;
+    height: 60%;
+    order: 2;
+  }
+  
+  #avatar-layer {
+    position: relative;
+    width: 100% !important;
+    height: 40%;
+    right: auto !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    order: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #stage.mode-intro #avatar-layer {
+    height: 80%;
+  }
+  
+  #stage.mode-intro #content-layer {
+    height: 20%;
+  }
+  
+  #avatar-video {
+    max-height: 100%;
+    width: auto;
+  }
+  
+  #video-layer {
+    width: 100%;
+    height: 60%;
+    order: 2;
+  }
+  
+  /* Smaller controls on mobile */
+  #controls-bar {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  
+  .control-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1em;
+  }
+  
+  #slide-picker {
+    max-width: 120px;
+    font-size: 0.8em;
+  }
+  
+  #time-display {
+    font-size: 0.75em;
+    min-width: 60px;
+  }
+  
+  /* Adjust content sizing for mobile */
+  .summary-item, .bullet-item, .paragraph-block {
+    padding: 8px 12px;
+    font-size: 0.95em;
+  }
+  
+  .quiz-choices {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.hidden {
+  display: none !important;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Segment highlighting during playback */
+.segment-active {
+  background: rgba(59, 130, 246, 0.2) !important;
+  border-color: #3b82f6 !important;
+}

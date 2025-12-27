@@ -1464,6 +1464,11 @@ def serve_dashboard():
 def serve_player(filename="index.html"):
     return send_from_directory(PLAYER_DIR, filename)
 
+@app.route("/player_v2/")
+@app.route("/player_v2/<path:filename>")
+def serve_player_v2(filename="player_v2.html"):
+    return send_from_directory(PLAYER_DIR, filename)
+
 @app.route("/player/assets/<path:filename>")
 def serve_assets(filename):
     return send_from_directory(ASSETS_DIR, filename)
