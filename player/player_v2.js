@@ -7,7 +7,14 @@
 // CONFIGURATION
 // ============================================
 const AVATAR_URL = "/player/assets/avatar_placeholder.mp4";
-const PRESENTATION_PATH = "presentation.json";
+
+// Determine job ID from URL parameter
+const urlParams = new URLSearchParams(window.location.search);
+const JOB_ID = urlParams.get('job');
+
+// Set paths based on whether we have a job ID
+const BASE_PATH = JOB_ID ? `/jobs/${JOB_ID}/` : '/player_v2/';
+const PRESENTATION_PATH = JOB_ID ? `/jobs/${JOB_ID}/presentation.json` : 'presentation.json';
 
 // ============================================
 // STATE
@@ -458,8 +465,10 @@ function renderRecap(slide) {
   const videoPath = slide.content_video_path || slide.video_path;
   
   if (videoPath) {
+    // Prepend BASE_PATH if video path is relative
+    const fullPath = videoPath.startsWith('/') ? videoPath : BASE_PATH + videoPath;
     videoLayer.classList.remove('hidden');
-    contentVideo.src = videoPath;
+    contentVideo.src = fullPath;
     contentVideo.load();
   } else {
     renderContent(slide);
@@ -473,7 +482,9 @@ function setupAudio(slide) {
   const audioPath = slide.audio_path || '';
   
   if (audioPath) {
-    narrationAudio.src = audioPath;
+    // Prepend BASE_PATH if audio path is relative
+    const fullPath = audioPath.startsWith('/') ? audioPath : BASE_PATH + audioPath;
+    narrationAudio.src = fullPath;
     narrationAudio.load();
   } else {
     narrationAudio.src = '';

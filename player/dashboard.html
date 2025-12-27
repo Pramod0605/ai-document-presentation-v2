@@ -505,7 +505,7 @@
 
         function openPlayer() {
             if (currentJobId) {
-                window.open(`/player/jobs/${currentJobId}/`, '_blank');
+                window.open(`/player_v2/?job=${currentJobId}`, '_blank');
             }
         }
 
@@ -529,7 +529,7 @@
                     
                     let actions = '';
                     if (job.status === 'completed') {
-                        actions = `<button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="window.open('/player/jobs/${job.job_id}/', '_blank')">Play</button>`;
+                        actions = `<button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="window.open('/player_v2/?job=${job.job_id}', '_blank')">Play</button>`;
                     } else if (job.status === 'failed') {
                         actions = `<button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="showJobError('${job.job_id}')">View Error</button>`;
                     }
