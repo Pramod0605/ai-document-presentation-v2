@@ -364,7 +364,14 @@ def retry_failed_job(job_id):
         dry_run = params.get("dry_run", False)
         skip_wan = params.get("skip_wan", False)
         
-        job_manager.update_job(job_id, {"status": "running", "progress": 5, "message": "Retrying from failed section..."})
+        job_manager.update_job(job_id, {
+            "status": "running", 
+            "progress": 5, 
+            "message": "Retrying from failed section...",
+            "error": None,
+            "failure_message": None,
+            "failed_phase": None
+        })
         
         import threading
         def run_retry():
