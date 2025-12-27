@@ -88,6 +88,19 @@ Segment 5 → source_block_ids: [3] → ordered_list data (same block!)
 
 **Critical fix:** Added `contentRendered` flag to prevent duplicate segment rendering when both ISS-180 and legacy blocks would create segments.
 
+### ISS-181/182/183/184: Display & Playback Fixes (COMPLETED - Dec 27, 2025)
+**Issues Fixed:**
+1. **ISS-181**: Markdown sanitizer - Strips # headers and markdown syntax from verbatim_text before display
+2. **ISS-182**: Summary section prioritization - Shows bullet_points (LLM-generated learning objectives) instead of verbatim_text (chapter headers with markdown)
+3. **ISS-183**: Avatar visibility during video - Added CSS to ensure avatar stays visible during Manim/video playback
+4. **ISS-184**: Manim audio sync - Set playback rate to 1.0 for Manim videos, added explicit audio.play() call
+
+**Key changes:**
+- `sanitizeMarkdown()` function handles all header variants (with/without space, trailing ###, underline-style)
+- Summary sections use checkmark (✓) markers with blue gradient styling
+- Avatar CSS: `opacity: 1 !important; visibility: visible !important;` during video modes
+- Manim videos sync properly with narration audio at 1.0x playback rate
+
 ### Key System Specifications
 - **Display Requirements**: Detailed in `docs/display_requirements.md`, including display summary, layer architecture, and ASCII diagrams for 7 section types (intro, summary, content, example, quiz, memory, recap).
 - **V1.5 Requirements**: Defined in `docs/v1.5_requirements.json`, covering phases, requirements, agent contracts, JSON schemas, and guardrails.
