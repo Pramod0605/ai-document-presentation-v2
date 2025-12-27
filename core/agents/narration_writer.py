@@ -29,7 +29,7 @@ class NarrationWriterAgent(BaseAgent):
         "summary": (50, 200),
         "content": (100, 300),
         "example": (100, 300),
-        "quiz": (50, 200),
+        "quiz": (50, 250),  # Increased from 200 - quiz sections with multiple questions need more words
         "memory": (30, 100),
         "recap": (150, 350)  # ISS-166: Adjusted for 5 segments x 30-50 words each
     }
