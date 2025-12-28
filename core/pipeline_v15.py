@@ -642,6 +642,17 @@ def process_markdown_to_presentation_v15(
                             section["video_path"] = f"videos/{rel_path}"
                         if beat_videos:
                             section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
+                            # Also populate visual_beats[].video_asset for player sync
+                            visual_beats = section.get("visual_beats", [])
+                            for idx, beat_path in enumerate(beat_videos):
+                                if idx < len(visual_beats):
+                                    visual_beats[idx]["video_asset"] = f"videos/{Path(beat_path).name}"
+                                else:
+                                    visual_beats.append({
+                                        "segment_id": idx + 1,
+                                        "video_asset": f"videos/{Path(beat_path).name}"
+                                    })
+                            section["visual_beats"] = visual_beats
                         if recap_video_paths:
                             section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
                         break
@@ -904,6 +915,17 @@ def resume_from_recap(
                         section["video_path"] = f"videos/{rel_path}"
                     if beat_videos:
                         section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
+                        # Also populate visual_beats[].video_asset for player sync
+                        visual_beats = section.get("visual_beats", [])
+                        for idx, beat_path in enumerate(beat_videos):
+                            if idx < len(visual_beats):
+                                visual_beats[idx]["video_asset"] = f"videos/{Path(beat_path).name}"
+                            else:
+                                visual_beats.append({
+                                    "segment_id": idx + 1,
+                                    "video_asset": f"videos/{Path(beat_path).name}"
+                                })
+                        section["visual_beats"] = visual_beats
                     if recap_video_paths:
                         section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
                     break
@@ -1248,6 +1270,17 @@ def resume_from_section(
                         section["video_path"] = f"videos/{rel_path}"
                     if beat_videos:
                         section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
+                        # Also populate visual_beats[].video_asset for player sync
+                        visual_beats = section.get("visual_beats", [])
+                        for idx, beat_path in enumerate(beat_videos):
+                            if idx < len(visual_beats):
+                                visual_beats[idx]["video_asset"] = f"videos/{Path(beat_path).name}"
+                            else:
+                                visual_beats.append({
+                                    "segment_id": idx + 1,
+                                    "video_asset": f"videos/{Path(beat_path).name}"
+                                })
+                        section["visual_beats"] = visual_beats
                     if recap_video_paths:
                         section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
                     break

@@ -16,7 +16,7 @@ const JOB_ID = urlParams.get('job');
 const BASE_PATH = JOB_ID ? `/jobs/${JOB_ID}/` : '/player_v2/';
 const PRESENTATION_PATH = JOB_ID ? `/jobs/${JOB_ID}/presentation.json` : 'presentation.json';
 
-// Media path resolver - handles audio and video paths
+// Media path resolver - handles audio, video, and image paths
 function resolveMediaPath(path, type = 'audio') {
   if (!path) return '';
   
@@ -38,6 +38,11 @@ function resolveMediaPath(path, type = 'audio') {
   // For videos, they're in videos/ subfolder
   if (type === 'video') {
     return BASE_PATH + 'videos/' + path;
+  }
+  
+  // For images, they're in images/ subfolder
+  if (type === 'image') {
+    return BASE_PATH + 'images/' + path;
   }
   
   return BASE_PATH + path;
@@ -341,11 +346,16 @@ function loadSlide(index) {
   
   setupAudio(slide);
   
-  if (window.MathJax) {
-    MathJax.typesetPromise().catch(() => {});
+  // Update header title to show current section title
+  if (headerTitle) {
+    if (sectionType === 'intro') {
+      headerTitle.textContent = lessonData?.lesson_title || 'Lesson';
+    } else {
+      headerTitle.textContent = slide.title || lessonData?.lesson_title || 'Lesson';
+    }
   }
   
-  requestAnimationFrame(() => {
+  requestAnimationFrame(async () => {
     fitContentToContainer(contentBox);
     // Setup content splitting after layout is calculated
     setupContentSplitting(slide);
@@ -353,6 +363,9 @@ function loadSlide(index) {
     setupProgressiveReveal(slide);
     // Update dev panel info
     updateDevInfo();
+    
+    // Typeset LaTeX after content is rendered
+    await typesetMath(contentBox);
   });
 }
 
@@ -553,6 +566,34 @@ function renderVisualContent(vc, container) {
       container.appendChild(block);
     });
   }
+  
+  // Handle image display
+  const imagePath = vc.image || vc.image_path || vc.img || vc.figure || vc.diagram;
+  if (imagePath) {
+    const imgContainer = document.createElement('div');
+    imgContainer.className = 'image-container';
+    
+    const img = document.createElement('img');
+    img.className = 'content-image';
+    img.src = resolveMediaPath(imagePath, 'image');
+    img.alt = vc.image_caption || vc.caption || 'Content image';
+    img.onerror = () => {
+      console.warn(`[V2] Image failed to load: ${imagePath}`);
+      imgContainer.style.display = 'none';
+    };
+    
+    imgContainer.appendChild(img);
+    
+    // Add caption if provided
+    if (vc.image_caption || vc.caption) {
+      const caption = document.createElement('div');
+      caption.className = 'image-caption';
+      caption.textContent = vc.image_caption || vc.caption;
+      imgContainer.appendChild(caption);
+    }
+    
+    container.appendChild(imgContainer);
+  }
 }
 
 function renderQuiz(slide) {
@@ -725,20 +766,103 @@ function renderMemory(slide) {
   if (firstCard) firstCard.classList.add('active');
 }
 
+// Beat video playlist state for recap sections
+let beatVideoPlaylist = [];
+let currentBeatIndex = 0;
+
 function renderRecap(slide) {
-  console.log('[V2] RecapRenderer: Video focus');
+  console.log('[V2] RecapRenderer: Video focus with beat playlist');
   
-  const videoPath = slide.content_video_path || slide.video_path;
+  // Build beat video playlist from visual_beats or segments
+  beatVideoPlaylist = [];
+  currentBeatIndex = 0;
   
-  if (videoPath) {
-    const fullPath = resolveMediaPath(videoPath, 'video');
-    console.log(`[V2] Loading video: ${fullPath}`);
+  const visualBeats = slide.visual_beats || [];
+  const segments = slide.narration?.segments || [];
+  
+  // Try to build playlist from visual_beats with video_asset
+  if (visualBeats.length > 0) {
+    visualBeats.forEach((beat, i) => {
+      if (beat.video_asset) {
+        beatVideoPlaylist.push({
+          videoPath: beat.video_asset,
+          segmentId: beat.segment_id || i + 1,
+          startTime: getSegmentStartTime(segments, beat.segment_id || i + 1)
+        });
+      }
+    });
+  }
+  
+  // If visual_beats don't have video_asset, check for numbered beat files
+  if (beatVideoPlaylist.length === 0 && slide.video_path) {
+    // Extract base pattern from video_path (e.g., "videos/topic_10_beat_0.mp4")
+    const baseMatch = slide.video_path.match(/(.+_beat_)(\d+)(\.mp4)$/);
+    if (baseMatch) {
+      const basePath = baseMatch[1];
+      const ext = baseMatch[3];
+      // Try to find how many beat videos exist (assume up to 10)
+      for (let i = 0; i < Math.min(segments.length, 10); i++) {
+        const beatPath = `${basePath}${i}${ext}`;
+        beatVideoPlaylist.push({
+          videoPath: beatPath,
+          segmentId: i + 1,
+          startTime: getSegmentStartTime(segments, i + 1)
+        });
+      }
+      console.log(`[V2] Built beat playlist with ${beatVideoPlaylist.length} videos from pattern`);
+    }
+  }
+  
+  // Fallback: single video
+  if (beatVideoPlaylist.length === 0) {
+    const videoPath = slide.content_video_path || slide.video_path;
+    if (videoPath) {
+      beatVideoPlaylist.push({
+        videoPath: videoPath,
+        segmentId: 1,
+        startTime: 0
+      });
+    }
+  }
+  
+  if (beatVideoPlaylist.length > 0) {
+    console.log(`[V2] Recap beat playlist: ${beatVideoPlaylist.length} videos`);
     videoLayer.classList.remove('hidden');
-    contentVideo.src = fullPath;
-    contentVideo.load();
+    contentLayer.classList.add('video-mode');
+    loadBeatVideo(0);
   } else {
     // No video, render as content
     renderContent(slide);
+  }
+}
+
+function getSegmentStartTime(segments, segmentId) {
+  let startTime = 0;
+  for (let i = 0; i < segmentId - 1 && i < segments.length; i++) {
+    startTime += segments[i].duration_seconds || 5;
+  }
+  return startTime;
+}
+
+function loadBeatVideo(index) {
+  if (index >= beatVideoPlaylist.length) {
+    console.log('[V2] All beat videos completed');
+    videoLayer.classList.add('hidden');
+    contentLayer.classList.remove('video-mode');
+    return;
+  }
+  
+  currentBeatIndex = index;
+  const beat = beatVideoPlaylist[index];
+  const fullPath = resolveMediaPath(beat.videoPath, 'video');
+  console.log(`[V2] Loading beat video ${index + 1}/${beatVideoPlaylist.length}: ${fullPath}`);
+  
+  contentVideo.src = fullPath;
+  contentVideo.load();
+  contentVideo.playbackRate = 1.0;
+  
+  if (isPlaying) {
+    contentVideo.play().catch(() => {});
   }
 }
 
@@ -893,7 +1017,23 @@ function startPlayback() {
 }
 
 function onContentVideoEnd() {
+  const slide = slides[currentSlideIndex];
+  const sectionType = slide?.section_type || 'content';
+  
+  // For recap sections with beat playlists, advance to next beat
+  if (sectionType === 'recap' && beatVideoPlaylist.length > 1) {
+    currentBeatIndex++;
+    if (currentBeatIndex < beatVideoPlaylist.length) {
+      console.log(`[V2] Advancing to beat video ${currentBeatIndex + 1}/${beatVideoPlaylist.length}`);
+      loadBeatVideo(currentBeatIndex);
+      return;
+    }
+  }
+  
+  // Video ended, hide video layer and restore content layer
   videoLayer.classList.add('hidden');
+  contentLayer.classList.remove('video-mode');
+  
   if (narrationAudio.src && !narrationAudio.ended) {
     narrationAudio.play().catch(() => {});
   }
@@ -1135,19 +1275,84 @@ function handleTimeUpdate() {
 // ============================================
 // UTILITIES
 // ============================================
+
+/**
+ * Typeset LaTeX in an element using MathJax
+ * Waits for MathJax to be ready, then processes the element
+ */
+async function typesetMath(element) {
+  if (!element) return;
+  
+  try {
+    if (window.MathJax) {
+      // Wait for MathJax to be ready if startup promise exists
+      if (MathJax.startup && MathJax.startup.promise) {
+        await MathJax.startup.promise;
+      }
+      // Typeset the specific element
+      await MathJax.typesetPromise([element]);
+      console.log('[V2] MathJax typeset complete');
+    }
+  } catch (err) {
+    console.warn('[V2] MathJax typeset error:', err);
+  }
+}
+
+/**
+ * Sanitize markdown while PRESERVING LaTeX expressions
+ * LaTeX delimiters: $...$, $$...$$, \(...\), \[...\]
+ */
 function sanitizeMarkdown(text) {
   if (!text || typeof text !== 'string') return text;
   
-  return text
-    .replace(/^#{1,6}\s*/gm, '')
-    .replace(/\s*#{1,6}\s*$/gm, '')
-    .replace(/^(.+)\n[=]{2,}\s*$/gm, '$1')
-    .replace(/^(.+)\n[-]{2,}\s*$/gm, '$1')
-    .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
-    .replace(/_{1,2}([^_]+)_{1,2}/g, '$1')
-    .replace(/^>\s*/gm, '')
-    .replace(/`([^`]+)`/g, '$1')
+  // First, protect LaTeX expressions by replacing them with placeholders
+  const latexPatterns = [];
+  let placeholderIndex = 0;
+  
+  // Match $$...$$ (block LaTeX)
+  text = text.replace(/\$\$([^$]+)\$\$/g, (match) => {
+    latexPatterns.push(match);
+    return `__LATEX_BLOCK_${placeholderIndex++}__`;
+  });
+  
+  // Match $...$ (inline LaTeX) - careful not to match $$ or empty $
+  text = text.replace(/\$([^$\n]+?)\$/g, (match) => {
+    latexPatterns.push(match);
+    return `__LATEX_INLINE_${placeholderIndex++}__`;
+  });
+  
+  // Match \(...\) (inline LaTeX)
+  text = text.replace(/\\\((.+?)\\\)/g, (match) => {
+    latexPatterns.push(match);
+    return `__LATEX_PAREN_${placeholderIndex++}__`;
+  });
+  
+  // Match \[...\] (block LaTeX)
+  text = text.replace(/\\\[(.+?)\\\]/g, (match) => {
+    latexPatterns.push(match);
+    return `__LATEX_BRACKET_${placeholderIndex++}__`;
+  });
+  
+  // Now apply markdown sanitization
+  text = text
+    .replace(/^#{1,6}\s*/gm, '')           // Remove heading markers at start
+    .replace(/\s*#{1,6}\s*$/gm, '')        // Remove heading markers at end
+    .replace(/^(.+)\n[=]{2,}\s*$/gm, '$1') // Setext h1
+    .replace(/^(.+)\n[-]{2,}\s*$/gm, '$1') // Setext h2
+    .replace(/\*\*([^*]+)\*\*/g, '$1')     // Bold **text**
+    .replace(/__([^_]+)__/g, '$1')         // Bold __text__
+    .replace(/\*([^*]+)\*/g, '$1')         // Italic *text*
+    .replace(/_([^_]+)_/g, '$1')           // Italic _text_ (careful with underscores in words)
+    .replace(/^>\s*/gm, '')                // Blockquotes
+    .replace(/`([^`]+)`/g, '$1')           // Inline code
     .trim();
+  
+  // Restore LaTeX expressions
+  text = text.replace(/__LATEX_(BLOCK|INLINE|PAREN|BRACKET)_(\d+)__/g, (match, type, idx) => {
+    return latexPatterns[parseInt(idx)] || match;
+  });
+  
+  return text;
 }
 
 function fitContentToContainer(element, options = {}) {
