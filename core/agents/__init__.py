@@ -6,6 +6,8 @@ from .visual_spec_artist import VisualSpecArtistAgent
 from .renderer_spec_agent import RendererSpecAgent
 from .memory_agent import MemoryFlashcardAgent
 from .recap_agent import RecapSceneAgent
+from .content_creator import ContentCreatorAgent
+from .special_sections import SpecialSectionsAgent
 
 __all__ = [
     "BaseAgent",
@@ -15,5 +17,7 @@ __all__ = [
     "VisualSpecArtistAgent",
     "RendererSpecAgent",
     "MemoryFlashcardAgent",
-    "RecapSceneAgent"
+    "RecapSceneAgent",
+    "ContentCreatorAgent",
+    "SpecialSectionsAgent"
 ]
