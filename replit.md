@@ -1,5 +1,44 @@
 # AI Animated Education
 
+---
+## VERSION LOCK - V1.5 BASELINE
+**Locked Date**: December 28, 2025  
+**Commit**: 74eff4688a15535e0082c2f80afceb9124dd7bb1  
+**Status**: STABLE - Ready for optimization phase
+
+### Locked Components (Do Not Modify Without Approval)
+
+**Pipeline Architecture:**
+- V1.5 pipeline flow: Chunker → SectionPlanner → NarrationWriter → VisualSpecArtist → RendererSpec → MemoryAgent → RecapAgent → MergeStep → TTS → RendererExecutor → Player
+- Schema validation: v1.3
+- All LLM agent prompts in `core/prompts/`
+
+**Player V2 System:**
+- 7 section types: intro, summary, content, example, quiz, memory, recap
+- Layer architecture: Background (L0), Content (L1), Avatar (L2)
+- LaTeX/MathJax rendering with placeholder preservation
+- Progressive text reveal synced to narration
+- Beat video playlist with segment-based transitions
+- Video looping when narration > video length
+
+**Renderers:**
+- Manim: Claude Sonnet 4.5 for code generation
+- WAN 2.6: 15-sec max, narration-duration based (capped at 15s)
+- Image display: .image-container, .content-image, .image-caption
+
+**Audio/Video Sync:**
+- TTS-measured durations drive all timing
+- Recap beats use narration segment durations
+- Player loops videos during long narration segments
+
+**Visual Display:**
+- Header: "Simple Lecture" logo + dynamic section title
+- Content layer: 70% width, no borders
+- Avatar layer: 55% width, 85% height, floating right
+- Video layer: 65% width, hides content during playback
+
+---
+
 ## Overview
 This project is a **Deterministic Educational Film Engine** designed to convert PDF chapters into pedagogically structured, animated explanation videos with synchronized narration. Its core purpose is to automate the creation of high-quality, engaging educational content by leveraging AI-driven animation and narration to enhance learning.
 
