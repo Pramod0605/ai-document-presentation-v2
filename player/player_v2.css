@@ -540,26 +540,39 @@ body {
     order: 2;
   }
   
-  /* Smaller controls on mobile */
+  /* Mobile controls: 2-row layout for better visibility */
   #controls-bar {
+    flex-wrap: wrap;
     padding: 8px 12px;
-    gap: 8px;
+    padding-bottom: env(safe-area-inset-bottom, 8px);
+    gap: 6px;
+    justify-content: center;
   }
   
   .control-btn {
-    width: 36px;
-    height: 36px;
-    font-size: 1em;
+    width: 44px;
+    height: 44px;
+    font-size: 1.2em;
+    flex-shrink: 0;
   }
   
+  /* Hide dev button and slide picker on mobile */
+  #btn-dev,
   #slide-picker {
-    max-width: 120px;
-    font-size: 0.8em;
+    display: none !important;
+  }
+  
+  /* Timeline takes full width on second row */
+  #timeline-container {
+    order: 10;
+    width: 100%;
+    flex-basis: 100%;
+    margin-top: 4px;
   }
   
   #time-display {
-    font-size: 0.75em;
-    min-width: 60px;
+    font-size: 0.8em;
+    min-width: 70px;
   }
   
   /* Adjust content sizing for mobile */
