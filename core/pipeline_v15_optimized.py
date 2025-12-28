@@ -231,16 +231,77 @@ def _enhance_content_creator_output(output: Dict, source_markdown: str, content_
 
 
 def _convert_content_creator_to_artifacts(output: Dict, blueprint: Dict) -> Dict:
-    """Convert ContentCreator output to the artifact format expected by MergeStep."""
+    """Convert ContentCreator output to the artifact format expected by MergeStep.
+    
+    MergeStep expects:
+    - artifact["narration"]["narration"]["segments"] with integer segment_ids
+    - artifact["visuals"]["segment_enrichments"] with integer segment_ids and display_directives
+    - artifact["visuals"]["visual_beats"] with beat_id strings and integer segment_ids
+    """
+    narration_data = output.get("narration", {})
+    segments = narration_data.get("segments", [])
+    for i, seg in enumerate(segments):
+        seg_id = seg.get("segment_id")
+        if isinstance(seg_id, str):
+            if not seg_id.isdigit():
+                raise PipelineError(
+                    f"Invalid segment_id '{seg_id}' in segment {i} - must be integer",
+                    phase="content_creator_conversion"
+                )
+            seg["segment_id"] = int(seg_id)
+        elif not isinstance(seg_id, int):
+            seg["segment_id"] = i + 1
+        if "gesture_hint" not in seg:
+            seg["gesture_hint"] = "explaining"
+    
     narration_output = {
         "section_id": output.get("section_id"),
-        "narration": output.get("narration", {})
+        "narration": narration_data
     }
+    
+    enrichments = output.get("segment_enrichments", [])
+    for i, enrich in enumerate(enrichments):
+        seg_id = enrich.get("segment_id")
+        if isinstance(seg_id, str):
+            if not seg_id.isdigit():
+                raise PipelineError(
+                    f"Invalid segment_id '{seg_id}' in enrichment {i} - must be integer",
+                    phase="content_creator_conversion"
+                )
+            enrich["segment_id"] = int(seg_id)
+        elif not isinstance(seg_id, int):
+            enrich["segment_id"] = i + 1
+        
+        if "display_directives" not in enrich:
+            enrich["display_directives"] = {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+            }
+        else:
+            dd = enrich["display_directives"]
+            if dd.get("avatar_layer") == "hide":
+                dd["avatar_layer"] = "show"
+    
+    visual_beats = output.get("visual_beats", [])
+    for i, beat in enumerate(visual_beats):
+        if "beat_id" not in beat:
+            beat["beat_id"] = f"beat_{i+1}"
+        seg_id = beat.get("segment_id")
+        if isinstance(seg_id, str):
+            if not seg_id.isdigit():
+                raise PipelineError(
+                    f"Invalid segment_id '{seg_id}' in visual_beat {i} - must be integer",
+                    phase="content_creator_conversion"
+                )
+            beat["segment_id"] = int(seg_id)
+        elif not isinstance(seg_id, int):
+            beat["segment_id"] = i + 1
     
     visuals_output = {
         "section_id": output.get("section_id"),
-        "visual_beats": output.get("visual_beats", []),
-        "segment_enrichments": output.get("segment_enrichments", [])
+        "visual_beats": visual_beats,
+        "segment_enrichments": enrichments
     }
     
     return {
@@ -252,41 +313,148 @@ def _convert_content_creator_to_artifacts(output: Dict, blueprint: Dict) -> Dict
 
 
 def _convert_special_sections_output(output: Dict) -> Tuple[Dict, Dict]:
-    """Convert SpecialSectionsAgent output to memory_output and recap_output format."""
+    """Convert SpecialSectionsAgent output to memory_output and recap_output format.
+    
+    Ensures:
+    - Memory narration segments have display_directives with avatar_layer="show"
+    - Recap narration segments have display_directives with avatar_layer="show"
+    - All segment_ids are integers
+    """
     memory_section = output.get("memory_section", {})
+    memory_narration = memory_section.get("narration", {})
+    
+    memory_segments = memory_narration.get("segments", [])
+    for i, seg in enumerate(memory_segments):
+        seg_id = seg.get("segment_id")
+        if isinstance(seg_id, str):
+            if not seg_id.isdigit():
+                raise PipelineError(
+                    f"Invalid segment_id '{seg_id}' in memory segment {i} - must be integer",
+                    phase="special_sections_conversion"
+                )
+            seg["segment_id"] = int(seg_id)
+        elif not isinstance(seg_id, int):
+            seg["segment_id"] = i + 1
+        if "gesture_hint" not in seg:
+            seg["gesture_hint"] = "explaining"
+        if "display_directives" not in seg:
+            seg["display_directives"] = {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+            }
+        else:
+            dd = seg["display_directives"]
+            if dd.get("avatar_layer") == "hide":
+                dd["avatar_layer"] = "show"
+    
+    memory_narration["segments"] = memory_segments
+    
     memory_output = {
         "section_id": memory_section.get("section_id", "memory"),
         "section_type": "memory",
         "title": memory_section.get("title", "3 Keys to Remember"),
         "flashcards": memory_section.get("flashcards", []),
-        "narration": memory_section.get("narration", {})
+        "narration": memory_narration
     }
     
     recap_section = output.get("recap_section", {})
+    recap_narration = recap_section.get("narration", {})
+    
+    recap_segments = recap_narration.get("segments", [])
+    for i, seg in enumerate(recap_segments):
+        seg_id = seg.get("segment_id")
+        if isinstance(seg_id, str):
+            if not seg_id.isdigit():
+                raise PipelineError(
+                    f"Invalid segment_id '{seg_id}' in recap segment {i} - must be integer",
+                    phase="special_sections_conversion"
+                )
+            seg["segment_id"] = int(seg_id)
+        elif not isinstance(seg_id, int):
+            seg["segment_id"] = i + 1
+        if "gesture_hint" not in seg:
+            seg["gesture_hint"] = "explaining"
+        if "display_directives" not in seg:
+            seg["display_directives"] = {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+            }
+        else:
+            dd = seg["display_directives"]
+            if dd.get("avatar_layer") == "hide":
+                dd["avatar_layer"] = "show"
+    
+    recap_narration["segments"] = recap_segments
+    
     recap_output = {
         "section_id": recap_section.get("section_id", "recap"),
         "section_type": "recap",
         "title": recap_section.get("title", "Mental Movie"),
         "video_prompts": recap_section.get("video_prompts", []),
-        "narration": recap_section.get("narration", {})
+        "narration": recap_narration
     }
     
     return memory_output, recap_output
 
 
 def _validate_section_order(blueprints: List[Dict]) -> Tuple[bool, List[str]]:
-    """Validate section order: intro → summary → content → memory → recap."""
+    """Validate section order: intro → summary → content(s) → memory → recap.
+    
+    Returns (is_valid, errors) tuple.
+    """
     errors = []
     
     section_types = [b.get("section_type") for b in blueprints]
     
-    if section_types and section_types[0] != "intro":
-        errors.append(f"First section should be 'intro', got '{section_types[0]}'")
+    if not section_types:
+        errors.append("No sections found in blueprints")
+        return False, errors
+    
+    if section_types[0] != "intro":
+        errors.append(f"First section must be 'intro', got '{section_types[0]}'")
     
     if len(section_types) > 1 and section_types[1] != "summary":
-        errors.append(f"Second section should be 'summary', got '{section_types[1]}'")
+        errors.append(f"Second section must be 'summary', got '{section_types[1]}'")
+    
+    memory_idx = None
+    recap_idx = None
+    
+    for i, st in enumerate(section_types):
+        if st == "memory":
+            memory_idx = i
+        elif st == "recap":
+            recap_idx = i
+    
+    if memory_idx is not None and recap_idx is not None:
+        if recap_idx < memory_idx:
+            errors.append("'recap' section must come after 'memory' section")
     
     return len(errors) == 0, errors
+
+
+def _enforce_avatar_visibility(presentation: Dict) -> Dict:
+    """Ensure avatar is always visible (never 'hide') in all segments.
+    
+    Fixes any avatar_layer='hide' to 'show'.
+    """
+    for section in presentation.get("sections", []):
+        narration = section.get("narration", {})
+        segments = narration.get("segments", [])
+        
+        for seg in segments:
+            dd = seg.get("display_directives", {})
+            if dd.get("avatar_layer") == "hide":
+                dd["avatar_layer"] = "show"
+                seg["display_directives"] = dd
+        
+        display_directives = section.get("display_directives", [])
+        for dd in display_directives:
+            if dd.get("avatar_layer") == "hide":
+                dd["avatar_layer"] = "show"
+    
+    return presentation
 
 
 def process_markdown_optimized(
@@ -369,6 +537,12 @@ def process_markdown_optimized(
         valid, order_errors = _validate_section_order(blueprints)
         if not valid:
             logger.warning(f"[Pipeline v1.5-opt] Section order issues: {order_errors}")
+            critical_errors = [e for e in order_errors if "must be" in e]
+            if critical_errors:
+                raise PipelineError(
+                    f"Section order validation failed: {critical_errors}",
+                    phase="section_planner"
+                )
         
         _save_artifact(output_dir, "02_planner.json", planner_output)
         
@@ -489,6 +663,9 @@ def process_markdown_optimized(
         )
         
         logger.info(f"[Pipeline v1.5-opt] Merged {len(presentation.get('sections', []))} sections")
+        
+        presentation = _enforce_avatar_visibility(presentation)
+        logger.info("[Pipeline v1.5-opt] Avatar visibility enforced (no 'hide' values)")
         
         if parallel_execution and generate_tts:
             update_status("parallel_tts_manim", "Generating TTS and Manim code in parallel...")

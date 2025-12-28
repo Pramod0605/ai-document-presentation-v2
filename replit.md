@@ -62,6 +62,34 @@ The process is orchestrated through a series of specialized agents:
 
 This architecture uses multiple smaller agents to reduce LLM output size and isolate failures.
 
+### V1.5 Optimized Pipeline (December 2025)
+Cost optimization variant reducing LLM calls by ~50%:
+`Chunker` → `SectionPlanner` → `[per-section: ContentCreator → RendererSpec]` → `SpecialSectionsAgent` → `MergeStep` → `TTS||ManimCodeGen` → `Renderers`
+
+**Combined Agents:**
+- **ContentCreator**: Combines NarrationWriter + VisualSpecArtist (2→1 call per section)
+  - Outputs coupled narration + visual_beats + segment_enrichments
+  - V3 persona styles: "Namaste students" intro, quizmaster for quiz
+  - Detects Q&A pairs, marks display_format: "flashcard"
+- **SpecialSectionsAgent**: Combines MemoryAgent + RecapAgent (2→1 call)
+  - Memory: 3 flashcards with mnemonic ("3 Keys to Remember")
+  - Recap: 5 video prompts with storyteller persona, Indian context
+
+**Parallel Execution:**
+- TTS generation runs in parallel with Manim code generation
+- ThreadPoolExecutor with max_workers=2
+
+**Enforcements:**
+- Section order validation: intro → summary → content(s) → memory → recap (hard fail on intro/summary)
+- Avatar visibility: Never "hide", always "show" or "gesture_only"
+
+**Files:**
+- `core/pipeline_v15_optimized.py`: Optimized pipeline function
+- `core/agents/content_creator.py`: Combined content agent
+- `core/agents/special_sections.py`: Combined memory+recap agent
+- `core/prompts/content_creator_system_v1.5.txt`: ContentCreator prompt
+- `core/prompts/special_sections_system_v1.5.txt`: SpecialSections prompt
+
 ### Guardrails
 - **Presentation Schema Immutability**: Validation against v1.3 schema.
 - **Player Code Freeze**: No changes to the `player/` directory.
