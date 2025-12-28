@@ -1,0 +1,200 @@
+{
+  "section_id": "section_4",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to reciprocal trigonometric ratios",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "text_only",
+      "description": "Listing the reciprocal ratios: cosecant, secant, cotangent",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "formula",
+      "description": "Definition of cosecant as reciprocal of sine",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Cosecant",
+          "Sine",
+          "Reciprocal"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "formula",
+      "description": "Definition of secant as reciprocal of cosine",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Secant",
+          "Cosine",
+          "Reciprocal"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "formula",
+      "description": "Definition of cotangent as reciprocal of tangent and importance",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Cotangent",
+          "Tangent",
+          "Reciprocal"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [
+        19
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "**There are six trigonometric ratios:**",
+        "has_inline_latex": false
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [
+        18
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Cosecant (csc)"
+          },
+          {
+            "level": 1,
+            "text": "Secant (sec)"
+          },
+          {
+            "level": 1,
+            "text": "Cotangent (cot)"
+          }
+        ],
+        "verbatim_text": "| Trigonometric ratios |                        | 1               | 2               |\n|----------------------|------------------------|-----------------|-----------------|\n| SinA                 | Opposite<br>Hypotenuse | $\\frac{BC}{AC}$ | $\\frac{AB}{AC}$ |\n| CosA                 | Adjacent<br>Hypotenuse | $\\frac{AB}{AC}$ | $\\frac{BC}{AB}$ |\n| Tan A                | Opposite<br>Adjacent   | $\\frac{BC}{AB}$ | $\\frac{AB}{BC}$ |\n| CosecA               | Hypotenuse<br>Opposite | $\\frac{AC}{BC}$ | $\\frac{AC}{AB}$ |\n| SecA                 | Hypotenuse<br>Adjacent | $\\frac{AC}{AB}$ | $\\frac{AC}{BC}$ |\n| CotA                 | Adjacent<br>Opposite   | $\\frac{AB}{BC}$ | $\\frac{BC}{AB}$ |",
+        "has_inline_latex": true
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [
+        18,
+        28
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "formulas": [
+          "$\\csc A = \\frac{1}{\\sin A}$",
+          "$\\csc A = \\frac{\\text{Hypotenuse}}{\\text{Opposite}}$"
+        ],
+        "labels": [
+          "Cosecant (csc)",
+          "Sine (sin)"
+        ],
+        "verbatim_text": "| Trigonometric ratios |                        | 1               | 2               |\n|----------------------|------------------------|-----------------|-----------------|\n| SinA                 | Opposite<br>Hypotenuse | $\\frac{BC}{AC}$ | $\\frac{AB}{AC}$ |\n| CosA                 | Adjacent<br>Hypotenuse | $\\frac{AB}{AC}$ | $\\frac{BC}{AB}$ |\n| Tan A                | Opposite<br>Adjacent   | $\\frac{BC}{AB}$ | $\\frac{AB}{BC}$ |\n| CosecA               | Hypotenuse<br>Opposite | $\\frac{AC}{BC}$ | $\\frac{AC}{AB}$ |\n| SecA                 | Hypotenuse<br>Adjacent | $\\frac{AC}{AB}$ | $\\frac{AC}{BC}$ |\n| CotA                 | Adjacent<br>Opposite   | $\\frac{AB}{BC}$ | $\\frac{BC}{AB}$ |",
+        "has_inline_latex": true
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [
+        18,
+        28
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "formulas": [
+          "$\\sec A = \\frac{1}{\\cos A}$",
+          "$\\sec A = \\frac{\\text{Hypotenuse}}{\\text{Adjacent}}$"
+        ],
+        "labels": [
+          "Secant (sec)",
+          "Cosine (cos)"
+        ],
+        "verbatim_text": "| Trigonometric ratios |                        | 1               | 2               |\n|----------------------|------------------------|-----------------|-----------------|\n| SinA                 | Opposite<br>Hypotenuse | $\\frac{BC}{AC}$ | $\\frac{AB}{AC}$ |\n| CosA                 | Adjacent<br>Hypotenuse | $\\frac{AB}{AC}$ | $\\frac{BC}{AB}$ |\n| Tan A                | Opposite<br>Adjacent   | $\\frac{BC}{AB}$ | $\\frac{AB}{BC}$ |\n| CosecA               | Hypotenuse<br>Opposite | $\\frac{AC}{BC}$ | $\\frac{AC}{AB}$ |\n| SecA                 | Hypotenuse<br>Adjacent | $\\frac{AC}{AB}$ | $\\frac{AC}{BC}$ |\n| CotA                 | Adjacent<br>Opposite   | $\\frac{AB}{BC}$ | $\\frac{BC}{AB}$ |",
+        "has_inline_latex": true
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [
+        18,
+        28
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "formulas": [
+          "$\\cot A = \\frac{1}{\\tan A}$",
+          "$\\cot A = \\frac{\\text{Adjacent}}{\\text{Opposite}}$"
+        ],
+        "labels": [
+          "Cotangent (cot)",
+          "Tangent (tan)"
+        ],
+        "verbatim_text": "| Trigonometric ratios |                        | 1               | 2               |\n|----------------------|------------------------|-----------------|-----------------|\n| SinA                 | Opposite<br>Hypotenuse | $\\frac{BC}{AC}$ | $\\frac{AB}{AC}$ |\n| CosA                 | Adjacent<br>Hypotenuse | $\\frac{AB}{AC}$ | $\\frac{BC}{AB}$ |\n| Tan A                | Opposite<br>Adjacent   | $\\frac{BC}{AB}$ | $\\frac{AB}{BC}$ |\n| CosecA               | Hypotenuse<br>Opposite | $\\frac{AC}{BC}$ | $\\frac{AC}{AB}$ |\n| SecA                 | Hypotenuse<br>Adjacent | $\\frac{AC}{AB}$ | $\\frac{AC}{BC}$ |\n| CotA                 | Adjacent<br>Opposite   | $\\frac{AB}{BC}$ | $\\frac{BC}{AB}$ |",
+        "has_inline_latex": true
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}

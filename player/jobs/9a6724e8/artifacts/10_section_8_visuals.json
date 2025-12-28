@@ -1,0 +1,175 @@
+{
+  "section_id": "section_8",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to verifying a trigonometric identity with a specific example.",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "diagram",
+      "description": "Constructing a right-angled triangle from tan A = 4/3.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "tan A = 4/3",
+          "Opposite",
+          "Adjacent"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "formula",
+      "description": "Calculating hypotenuse and then sin A and cos A.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Pythagorean Theorem",
+          "sin A",
+          "cos A"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "formula",
+      "description": "Substituting values into the identity and performing multiplication.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Substitute",
+          "Multiply"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "text_only",
+      "description": "Conclusion that the identity is not universally true and summary of the process.",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [
+        20,
+        21
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "**Example 1:**  $\\tan A = \\frac{4}{3}$  find the other trigonometric ratios",
+        "has_inline_latex": true
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [
+        29,
+        30
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "![Diagram of a right-angled triangle ABC, right-angled at B. Side AB = 3, BC = 4, and AC = 5.](df9ce5affceb4ff1e9e8fd8e3ff0c1bd_img.jpg)",
+        "has_inline_latex": false
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [
+        24,
+        25,
+        26,
+        27
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$$AC^2 = AB^2 + BC^2$$",
+          "$$\\Rightarrow AC^2 = 4^2 + 3^2 = 16 + 9 = 25$$",
+          "$$\\Rightarrow AC = 5$$",
+          "$$\\sin A = \\frac{BC}{AC} = \\frac{4}{5}, \\cos A = \\frac{AB}{AC} = \\frac{3}{5}$$"
+        ],
+        "formula": "$$AC^2 = AB^2 + BC^2$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "formula",
+        "formula": "$$2 \\sin A \\cos A = 2 \\left(\\frac{4}{5}\\right) \\left(\\frac{3}{5}\\right) = \\frac{24}{25}$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "24/25 \u2260 1"
+          },
+          {
+            "level": 1,
+            "text": "Identity 2sinAcosA = 1 is not universally true"
+          },
+          {
+            "level": 1,
+            "text": "Reinforces sin and cos definitions"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}

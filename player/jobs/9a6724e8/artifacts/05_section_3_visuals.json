@@ -1,0 +1,200 @@
+{
+  "section_id": "section_3",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "diagram",
+      "description": "Introduction to trigonometry and right-angled triangles",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Trigonometry",
+          "Right-angled",
+          "Triangle"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "formula",
+      "description": "Definition of Sine ratio with diagram",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Sine",
+          "Opposite",
+          "Hypotenuse"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "formula",
+      "description": "Definition of Cosine and Tangent ratios",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Cosine",
+          "Tangent",
+          "Adjacent"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "formula",
+      "description": "Introduction of reciprocal trigonometric ratios",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Reciprocal",
+          "Cosecant",
+          "Secant",
+          "Cotangent"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "text_only",
+      "description": "Summary of the six trigonometric ratios and their application",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [
+        13,
+        15,
+        16,
+        17
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "Trigonometry is the study of relationships between the sides and angles of a triangle.",
+        "has_inline_latex": false
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [
+        18
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "formulas": [
+          "$\\text{SinA} = \\frac{\\text{Opposite}}{\\text{Hypotenuse}}$"
+        ],
+        "labels": [
+          "Opposite",
+          "Hypotenuse",
+          "Angle A"
+        ],
+        "verbatim_text": "| Trigonometric ratios |                        | 1               | 2               |\n|----------------------|------------------------|-----------------|-----------------|\n| SinA                 | Opposite<br>Hypotenuse | $\\frac{BC}{AC}$ | $\\frac{AB}{AC}$ |\n| CosA                 | Adjacent<br>Hypotenuse | $\\frac{AB}{AC}$ | $\\frac{BC}{AB}$ |\n| Tan A                | Opposite<br>Adjacent   | $\\frac{BC}{AB}$ | $\\frac{AB}{BC}$ |\n| CosecA               | Hypotenuse<br>Opposite | $\\frac{AC}{BC}$ | $\\frac{AC}{AB}$ |\n| SecA                 | Hypotenuse<br>Adjacent | $\\frac{AC}{AB}$ | $\\frac{AC}{BC}$ |\n| CotA                 | Adjacent<br>Opposite   | $\\frac{AB}{BC}$ | $\\frac{BC}{AB}$ |",
+        "has_inline_latex": true
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [
+        18
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "formulas": [
+          "$\\text{CosA} = \\frac{\\text{Adjacent}}{\\text{Hypotenuse}}$",
+          "$\\text{Tan A} = \\frac{\\text{Opposite}}{\\text{Adjacent}}$"
+        ],
+        "labels": [
+          "Adjacent",
+          "Opposite",
+          "Hypotenuse",
+          "Angle A"
+        ],
+        "verbatim_text": "| Trigonometric ratios |                        | 1               | 2               |\n|----------------------|------------------------|-----------------|-----------------|\n| SinA                 | Opposite<br>Hypotenuse | $\\frac{BC}{AC}$ | $\\frac{AB}{AC}$ |\n| CosA                 | Adjacent<br>Hypotenuse | $\\frac{AB}{AC}$ | $\\frac{BC}{AB}$ |\n| Tan A                | Opposite<br>Adjacent   | $\\frac{BC}{AB}$ | $\\frac{AB}{BC}$ |\n| CosecA               | Hypotenuse<br>Opposite | $\\frac{AC}{BC}$ | $\\frac{AC}{AB}$ |\n| SecA                 | Hypotenuse<br>Adjacent | $\\frac{AC}{AB}$ | $\\frac{AC}{BC}$ |\n| CotA                 | Adjacent<br>Opposite   | $\\frac{AB}{BC}$ | $\\frac{BC}{AB}$ |",
+        "has_inline_latex": true
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [
+        18,
+        19
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "CosecA = Hypotenuse/Opposite (Reciprocal of Sine)"
+          },
+          {
+            "level": 1,
+            "text": "SecA = Hypotenuse/Adjacent (Reciprocal of Cosine)"
+          },
+          {
+            "level": 1,
+            "text": "CotA = Adjacent/Opposite (Reciprocal of Tangent)"
+          }
+        ],
+        "verbatim_text": "| Trigonometric ratios |                        | 1               | 2               |\n|----------------------|------------------------|-----------------|-----------------|\n| SinA                 | Opposite<br>Hypotenuse | $\\frac{BC}{AC}$ | $\\frac{AB}{AC}$ |\n| CosA                 | Adjacent<br>Hypotenuse | $\\frac{AB}{AC}$ | $\\frac{BC}{AB}$ |\n| Tan A                | Opposite<br>Adjacent   | $\\frac{BC}{AB}$ | $\\frac{AB}{BC}$ |\n| CosecA               | Hypotenuse<br>Opposite | $\\frac{AC}{BC}$ | $\\frac{AC}{AB}$ |\n| SecA                 | Hypotenuse<br>Adjacent | $\\frac{AC}{AB}$ | $\\frac{AC}{BC}$ |\n| CotA                 | Adjacent<br>Opposite   | $\\frac{AB}{BC}$ | $\\frac{BC}{AB}$ |",
+        "has_inline_latex": true
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [
+        19
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "**There are six trigonometric ratios:**",
+        "has_inline_latex": false
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}
