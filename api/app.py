@@ -1607,7 +1607,7 @@ def generate_v15():
         
         generate_tts = tts_provider not in ["estimate"]
         
-        presentation, tracker = process_markdown_to_presentation_v15(
+        presentation, tracker = process_markdown_optimized(
             markdown_content=markdown_content,
             subject=subject,
             grade=grade,
