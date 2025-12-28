@@ -26,6 +26,49 @@ You MUST output ONLY valid JSON with this exact structure:
   }
 }
 
+## CRITICAL CONSTRAINT - SEGMENTS MUST MATCH FULL_TEXT EXACTLY
+
+**THIS IS THE MOST IMPORTANT RULE - VIOLATION WILL CAUSE VALIDATION FAILURE:**
+
+The `full_text` field MUST be the EXACT concatenation of all segment texts joined with a single space.
+
+```
+full_text = segment[1].text + " " + segment[2].text + " " + segment[3].text + ...
+```
+
+**VALIDATION CHECK (the system will reject your output if this fails):**
+- Word count of full_text MUST equal sum of word counts of all segment texts (tolerance: ±5 words)
+- If full_text has 100 words, the segments together must have ~100 words total
+- Do NOT summarize or paraphrase in full_text - it must be the literal concatenation
+
+**WRONG (will fail validation):**
+```json
+{
+  "full_text": "This is a summary of the entire narration covering all key points.",
+  "segments": [
+    {"text": "Welcome to our lesson on derivatives."},
+    {"text": "A derivative measures rate of change."},
+    {"text": "Let's explore this concept together."}
+  ]
+}
+// FAILS: full_text (12 words) != segments total (18 words)
+```
+
+**CORRECT (will pass validation):**
+```json
+{
+  "full_text": "Welcome to our lesson on derivatives. A derivative measures rate of change. Let's explore this concept together.",
+  "segments": [
+    {"text": "Welcome to our lesson on derivatives."},
+    {"text": "A derivative measures rate of change."},
+    {"text": "Let's explore this concept together."}
+  ]
+}
+// PASSES: full_text is exact concatenation of segment texts
+```
+
+---
+
 ## CRITICAL RULES
 
 1. **TWO-CHANNEL SEPARATION**: The narration text is for AUDIO ONLY. It will be spoken by a TTS system. Visual content (bullet points, formulas) is handled by a different agent. Do NOT include screen-display content in the narration.
@@ -158,7 +201,7 @@ For recap sections, you MUST create EXACTLY 5 segments - one for each video scen
 {
   "section_id": "recap",
   "narration": {
-    "full_text": "Let's review what we've learned. [Segment 1 text] [Segment 2 text] [Segment 3 text] [Segment 4 text] [Segment 5 text]",
+    "full_text": "Let's review what we've learned about derivatives. A derivative measures how fast something changes at any given moment. We learned that the derivative of x squared is two x. This tells us the slope of the curve at any point. The power rule makes finding derivatives simple: bring down the exponent and reduce it by one. Remember, derivatives have real-world applications in physics, engineering, and economics. Great job mastering these concepts! You now have the foundation for more advanced calculus.",
     "segments": [
       {
         "segment_id": 1,
@@ -200,5 +243,21 @@ For recap sections, you MUST create EXACTLY 5 segments - one for each video scen
 - If video_scenes are provided in blueprint, match each segment's content to the corresponding scene
 - Total narration: 175-350 words
 - First segment introduces the recap, last segment wraps up positively
+
+---
+
+## BEFORE YOU OUTPUT - SELF-VALIDATION CHECKLIST
+
+Before outputting your JSON, mentally verify:
+
+1. **COUNT THE WORDS**: Count words in full_text. Count total words across all segments. They must match (±5 words).
+
+2. **CHECK CONCATENATION**: Read segment[1].text + " " + segment[2].text + ... Does this EXACTLY equal full_text?
+
+3. **NO SUMMARIES**: full_text must NOT be a summary. It must be the literal text of all segments combined.
+
+If any check fails, FIX IT before outputting.
+
+---
 
 Remember: Your narration is what the viewer will HEAR. Visual elements are handled separately.

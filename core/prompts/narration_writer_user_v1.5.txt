@@ -9,15 +9,30 @@ Write the TTS narration for this section:
 ## QUIZ QUESTIONS (only for quiz sections):
 {quiz_questions}
 
-## INSTRUCTIONS:
+## STEP-BY-STEP INSTRUCTIONS:
 
-1. Review the section blueprint to understand the section type and learning goals
-2. Write narration appropriate for the section type (intro, summary, content, quiz, etc.)
-3. Split the narration into logical segments (one thought per segment)
-4. Calculate duration_seconds for each segment (word_count / 130 * 60)
-5. Add gesture_hints where appropriate
-6. Ensure full_text equals the concatenation of all segment texts
-7. For QUIZ sections: Format Q&A with pauses (see system prompt for example)
+**Step 1: Plan Your Segments**
+- Review the section blueprint to understand the section type and learning goals
+- Decide how many segments you need (max 5 for most sections, exactly 5 for recap)
+- Plan what each segment will say
+
+**Step 2: Write Each Segment**
+- Write the text for each segment (one coherent thought per segment)
+- Calculate duration_seconds: (word_count / 130) * 60
+
+**Step 3: Build full_text BY CONCATENATION (CRITICAL)**
+- Take segment[1].text + " " + segment[2].text + " " + ... 
+- This concatenation IS your full_text - copy it exactly
+- DO NOT write a separate summary for full_text
+
+**Step 4: Validate Before Output**
+- Count words in full_text
+- Count total words across all segment texts
+- These MUST match (within 5 words) or your output will be REJECTED
+
+**Step 5: Output JSON**
+- For QUIZ sections: Include [pause X seconds] segments between Q&A
+- Add gesture_hints where appropriate
 
 Remember: This is AUDIO narration only. Do not include bullet points, formulas, or visual content in the text.
 
