@@ -15,6 +15,7 @@ from core.pipeline import process_pdf_to_videos
 from core.pipeline_v12 import process_markdown_to_videos_v12 as process_markdown_to_videos
 from core.pipeline_v14 import get_pipeline_info, process_markdown_to_presentation_v14, process_with_renderers_v14, validate_presentation_v14
 from core.pipeline_v15 import process_markdown_to_presentation_v15, resume_from_section, PipelineError as PipelineV15Error
+from core.pipeline_v15_optimized import process_markdown_optimized
 from core.job_manager import job_manager, run_job_async, is_job_running, get_current_job_id
 
 app = Flask(__name__)
@@ -642,10 +643,10 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
 
 
 def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
-    """Process PDF using V1.5 Split Agent pipeline.
+    """Process PDF using V1.5 Optimized pipeline (combined agents, ~50% fewer LLM calls).
     
     1. Convert PDF to Markdown using Datalab API
-    2. Run V1.5 pipeline on the markdown
+    2. Run V1.5 optimized pipeline on the markdown
     """
     from core.datalab_client import pdf_to_markdown, DatalabConversionError
     from pathlib import Path
@@ -662,7 +663,7 @@ def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, ou
         source_md_path = Path(output_dir) / "source_markdown.md"
         with open(source_md_path, "w", encoding="utf-8") as f:
             f.write(markdown_content)
-        print(f"[V1.5] Saved source markdown to {source_md_path} ({len(markdown_content)} chars)")
+        print(f"[V1.5 Optimized] Saved source markdown to {source_md_path} ({len(markdown_content)} chars)")
         
         content_preview = markdown_content[:300].replace('\n', ' ').strip()
         if len(markdown_content) > 300:
@@ -678,7 +679,8 @@ def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, ou
         generate_tts = tts_provider != "estimate"
         output_path = Path(output_dir)
         
-        presentation, tracker = process_markdown_to_presentation_v15(
+        # Use optimized pipeline with combined agents
+        presentation, tracker = process_markdown_optimized(
             markdown_content=markdown_content,
             subject=subject,
             grade=grade,
@@ -730,7 +732,7 @@ def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade
 
 
 def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
-    """Process markdown using V1.5 Split Agent pipeline."""
+    """Process markdown using V1.5 Optimized pipeline (combined agents, ~50% fewer LLM calls)."""
     from pathlib import Path
     
     # Save raw markdown for comparison/debugging
@@ -738,7 +740,7 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
     source_md_path = output_path / "source_markdown.md"
     with open(source_md_path, "w", encoding="utf-8") as f:
         f.write(markdown_content)
-    print(f"[V1.5] Saved source markdown to {source_md_path} ({len(markdown_content)} chars)")
+    print(f"[V1.5 Optimized] Saved source markdown to {source_md_path} ({len(markdown_content)} chars)")
     
     def status_callback(jid, phase, message):
         job_manager.update_job(jid, {
@@ -748,7 +750,8 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
     
     generate_tts = tts_provider != "estimate"
     
-    presentation, tracker = process_markdown_to_presentation_v15(
+    # Use optimized pipeline with combined agents
+    presentation, tracker = process_markdown_optimized(
         markdown_content=markdown_content,
         subject=subject,
         grade=grade,

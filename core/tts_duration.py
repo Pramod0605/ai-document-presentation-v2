@@ -106,6 +106,17 @@ def update_durations_simplified(
     
     logger.info(f"[TTS Simplified] Step 2: Generating production audio with {production_provider}...")
     
+    # Initialize pyttsx3 engine if needed as fallback
+    pyttsx3_engine = None
+    if not (production_provider == "edge_tts" and EDGE_TTS_AVAILABLE):
+        if PYTTSX3_AVAILABLE:
+            try:
+                pyttsx3_engine = pyttsx3.init()
+                pyttsx3_engine.setProperty('rate', 150)
+                logger.info("[TTS Simplified] Using pyttsx3 as fallback audio provider")
+            except Exception as e:
+                logger.warning(f"[TTS Simplified] pyttsx3 init failed: {e}")
+    
     sections = presentation.get("sections", [])
     audio_count = 0
     
@@ -127,8 +138,13 @@ def update_durations_simplified(
             try:
                 if production_provider == "edge_tts" and EDGE_TTS_AVAILABLE:
                     _generate_edge_tts(text, audio_path)
-                elif NARAKEET_API_KEY:
-                    _generate_narakeet(text, audio_path)
+                elif pyttsx3_engine:
+                    # Fallback to pyttsx3 (skip Narakeet)
+                    wav_path = audio_dir / f"{audio_filename}.wav"
+                    _generate_pyttsx3(text, wav_path, pyttsx3_engine)
+                    # pyttsx3 generates wav, update path
+                    if wav_path.exists():
+                        audio_path = wav_path
                 else:
                     logger.warning(f"[TTS Simplified] No TTS provider available for {segment_id}")
                     continue
@@ -272,10 +288,8 @@ def _update_durations_two_pass_legacy(
             try:
                 if production_provider == "edge_tts" and EDGE_TTS_AVAILABLE:
                     _generate_edge_tts(text, audio_path)
-                elif NARAKEET_API_KEY:
-                    _generate_narakeet(text, audio_path)
                 else:
-                    # Fallback: keep pyttsx3 audio
+                    # Fallback: use pyttsx3 audio (skip Narakeet)
                     audio_path = audio_dir / f"{audio_filename}.wav"
                     _generate_pyttsx3(text, audio_path, pyttsx3_engine)
                 
