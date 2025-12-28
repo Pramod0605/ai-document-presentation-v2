@@ -78,8 +78,24 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     
     # ISS-161 FIX: Handle recap sections with video_prompts (not recap_scenes)
     # RecapAgent outputs video_prompts as list of 5 beat dicts, each with ~700 char prompt
+    # ISS-199 FIX: Use narration segment durations for WAN videos (capped at 15 sec for WAN 2.6)
     if section_type == "recap" and video_prompts and len(video_prompts) > 0:
         print(f"[WAN] ISS-161: Recap section {topic_id} has {len(video_prompts)} video_prompts (no recap_scenes)")
+        
+        # Get narration segment durations to sync video length with narration
+        narration = topic.get("narration", {})
+        segments = narration.get("segments", [])
+        
+        # Override video_prompt durations with narration durations (capped at 15 for WAN 2.6)
+        for i, vp in enumerate(video_prompts):
+            if i < len(segments):
+                narration_duration = segments[i].get("duration_seconds", 8)
+                # Cap at 15 seconds (WAN 2.6 max), minimum 5 seconds
+                capped_duration = max(5, min(15, int(narration_duration)))
+                original = vp.get("duration_seconds", 8)
+                vp["duration_seconds"] = capped_duration
+                print(f"  [Beat {i}] Narration: {narration_duration:.1f}s -> Video: {capped_duration}s (was {original}s)")
+        
         return _render_visual_beats(
             topic_id=topic_id,
             topic_title=topic_title,
@@ -201,7 +217,7 @@ def _render_visual_beats(
         except WanPromptHardFailError as e:
             raise WanRenderError(f"WAN prompt validation failed: {e}")
     
-    beat_duration = max(5, duration // num_beats)
+    default_beat_duration = max(5, duration // num_beats)
     video_paths = []
     client = WANClient() if not skip_wan and not dry_run else None
     
@@ -210,9 +226,12 @@ def _render_visual_beats(
         if use_precompiled:
             prompt_obj = video_prompts[beat_idx]
             wan_prompt = prompt_obj.get("prompt") or prompt_obj.get("wan_prompt") or str(prompt_obj)
+            # ISS-199: Use per-prompt duration if available (set by narration sync)
+            beat_duration = prompt_obj.get("duration_seconds", default_beat_duration)
             beat = visual_beats[beat_idx] if beat_idx < len(visual_beats) else {}
         else:
             beat = visual_beats[beat_idx]
+            beat_duration = default_beat_duration  # Use default for compiled prompts
             # Compile the visual beat into a WAN prompt
             try:
                 wan_prompt = compile_wan_prompt(beat, topic_id, beat_idx)

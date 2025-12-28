@@ -1020,8 +1020,30 @@ function onContentVideoEnd() {
   const slide = slides[currentSlideIndex];
   const sectionType = slide?.section_type || 'content';
   
-  // For recap sections with beat playlists, advance to next beat
-  if (sectionType === 'recap' && beatVideoPlaylist.length > 1) {
+  // For recap sections with beat playlists
+  if (sectionType === 'recap' && beatVideoPlaylist.length > 0) {
+    const segments = slide.narration?.segments || [];
+    const currentBeat = beatVideoPlaylist[currentBeatIndex];
+    
+    // ISS-199: Check if narration for this beat is still playing
+    // If so, loop the video instead of advancing
+    if (currentBeat && segments.length > currentBeatIndex) {
+      const segment = segments[currentBeatIndex];
+      const segmentDuration = segment?.duration_seconds || 0;
+      const segmentStartTime = currentBeat.startTime || 0;
+      const segmentEndTime = segmentStartTime + segmentDuration;
+      const currentAudioTime = narrationAudio.currentTime || 0;
+      
+      // If narration for this segment is still playing, loop the video
+      if (currentAudioTime < segmentEndTime - 0.5 && !narrationAudio.ended && isPlaying) {
+        console.log(`[V2] Looping beat video ${currentBeatIndex + 1} (audio at ${currentAudioTime.toFixed(1)}s, segment ends at ${segmentEndTime.toFixed(1)}s)`);
+        contentVideo.currentTime = 0;
+        contentVideo.play().catch(() => {});
+        return;
+      }
+    }
+    
+    // Narration for this beat is done, advance to next beat
     currentBeatIndex++;
     if (currentBeatIndex < beatVideoPlaylist.length) {
       console.log(`[V2] Advancing to beat video ${currentBeatIndex + 1}/${beatVideoPlaylist.length}`);

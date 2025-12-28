@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 KIE_API_KEY = os.environ.get("KIE_API_KEY", "")
-KIE_API_URL = "https://api.kie.ai/api/v1/runway"
+KIE_API_URL = "https://api.kie.ai/api/v1/wan"
 
 class WANClient:
     def __init__(self, api_key: Optional[str] = None):
@@ -17,9 +17,9 @@ class WANClient:
         }
     
     def generate_video(self, prompt: str, duration: int = 5, output_path: Optional[str] = None) -> str:
-        valid_durations = [5, 8, 10]
+        valid_durations = [5, 10, 15]
         if duration not in valid_durations:
-            duration = 5 if duration <= 6 else (8 if duration <= 9 else 10)
+            duration = 5 if duration <= 7 else (10 if duration <= 12 else 15)
         
         if not self.api_key:
             return self._generate_placeholder(prompt, duration, output_path)
@@ -31,28 +31,28 @@ class WANClient:
                 f"{self.base_url}/generate",
                 headers=self.headers,
                 json={
+                    "model": "wan2.6-t2v",
                     "prompt": prompt,
                     "duration": duration,
-                    "quality": "720p",
-                    "aspectRatio": "16:9",
-                    "waterMark": ""
+                    "resolution": "720p",
+                    "aspect_ratio": "16:9"
                 },
                 timeout=30
             )
             
             if create_response.status_code != 200:
-                print(f"Runway API creation failed: {create_response.status_code}")
+                print(f"[WAN 2.6] API creation failed: {create_response.status_code}")
                 return self._generate_placeholder(prompt, duration, output_path)
             
             result = create_response.json()
             if result.get("code") != 200:
-                print(f"Runway API error: {result.get('msg', 'Unknown error')}")
+                print(f"[WAN 2.6] API error: {result.get('msg', 'Unknown error')}")
                 return self._generate_placeholder(prompt, duration, output_path)
             
             task_id = result.get("data", {}).get("taskId")
             
             if not task_id:
-                print("No task ID returned from Runway API")
+                print("[WAN 2.6] No task ID returned from API")
                 return self._generate_placeholder(prompt, duration, output_path)
             
             max_attempts = 60
@@ -76,18 +76,18 @@ class WANClient:
                                 return self._download_video(video_url, output_path)
                         elif state == "fail":
                             fail_msg = status_data.get("failMsg", "Unknown error")
-                            print(f"Runway generation failed: {fail_msg}")
+                            print(f"[WAN 2.6] Generation failed: {fail_msg}")
                             return self._generate_placeholder(prompt, duration, output_path)
                         elif state in ["wait", "queueing", "generating"]:
-                            print(f"Runway status: {state}")
+                            print(f"[WAN 2.6] Status: {state}")
                 
                 time.sleep(5)
             
-            print("Runway generation timed out")
+            print("[WAN 2.6] Generation timed out")
             return self._generate_placeholder(prompt, duration, output_path)
             
         except Exception as e:
-            print(f"Runway API error: {e}")
+            print(f"[WAN 2.6] API error: {e}")
             return self._generate_placeholder(prompt, duration, output_path)
     
     def _download_video(self, video_url: str, output_path: Optional[str]) -> str:
