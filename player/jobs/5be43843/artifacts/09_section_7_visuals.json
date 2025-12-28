@@ -1,0 +1,176 @@
+{
+  "section_id": "section_7",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to conditions for solutions",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "diagram",
+      "description": "General form of linear equations",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Unique",
+          "No",
+          "Infinitely Many"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "formula",
+      "description": "Condition for unique solution",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Unique Solution",
+          "Intersecting Lines"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "formula",
+      "description": "Condition for no solution",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "No Solution",
+          "Parallel Lines"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "formula",
+      "description": "Condition for infinitely many solutions",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Infinitely Many",
+          "Overlapping Lines"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Conditions for Solutions"
+          },
+          {
+            "level": 1,
+            "text": "Unique, No, Infinitely Many"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [
+        8,
+        9
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$a1x + b1y + c1 = 0$",
+          "$a2x + b2y + c2 = 0$"
+        ],
+        "labels": [
+          "General Form"
+        ],
+        "formula": "$$a1x + b1y + c1 = 0$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "formula",
+        "formula": "$\\frac{a1}{a2} \\neq \\frac{b1}{b2}$",
+        "labels": [
+          "Unique Solution",
+          "Intersecting Lines"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "formula",
+        "formula": "$\\frac{a1}{a2} = \\frac{b1}{b2} \\neq \\frac{c1}{c2}$",
+        "labels": [
+          "No Solution",
+          "Parallel Lines"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "formula",
+        "formula": "$\\frac{a1}{a2} = \\frac{b1}{b2} = \\frac{c1}{c2}$",
+        "labels": [
+          "Infinitely Many Solutions",
+          "Coincident Lines"
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}
