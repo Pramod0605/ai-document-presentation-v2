@@ -122,13 +122,14 @@ The `renderFormattedContent()` function in `player.js` handles various display t
 - **ISS-186**: Summary sections are filtered to display only level 1 bullet points.
 - **ISS-187**: A `contentRendered` flag prevents duplicate content boxes by gating the legacy renderer.
 
-### LaTeX & Media Fixes (ISS-194 to ISS-199)
+### LaTeX & Media Fixes (ISS-194 to ISS-200)
 - **ISS-194**: LaTeX rendering preserved in `sanitizeMarkdown()` via placeholder extraction/restoration.
 - **ISS-195**: `typesetMath()` properly waits for MathJax startup and targets contentBox element.
 - **ISS-196**: Beat video playlist in `renderRecap()` sequences WAN videos with narration segments.
 - **ISS-197**: Pipeline populates `visual_beats[].video_asset` after WAN video generation (3 locations).
 - **ISS-198**: Image display support with CSS styling (.image-container, .content-image, .image-caption).
 - **ISS-199**: WAN video sync with narration - upgraded to WAN 2.6 (15-sec max), pipeline uses narration segment durations (capped at 15s), player loops videos when narration exceeds video length.
+- **ISS-200**: Recap video path population fix - `_render_visual_beats()` now supports `return_all_paths=True` to return all generated video paths (handles dry-run, skip-wan, and production modes). Recap sections using `video_prompts` now correctly set `topic["_recap_video_paths"]` for player sequencing.
 
 ### Player V2 Architecture
 A complete rewrite of the player with a clean architecture and enhanced features.
