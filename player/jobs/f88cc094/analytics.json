@@ -1,0 +1,77 @@
+{
+  "job_id": "f88cc094",
+  "pipeline_version": "1.5",
+  "started_at": "2025-12-29T09:43:51.970183",
+  "completed_at": "2025-12-29T09:46:31.806298",
+  "total_duration_seconds": 159.836115,
+  "total_cost_usd": 0.105794,
+  "total_input_tokens": 19227,
+  "total_output_tokens": 8176,
+  "phases": [
+    {
+      "phase_name": "smart_chunker",
+      "model": "google/gemini-2.5-pro",
+      "started_at": "2025-12-29T09:43:52.293111",
+      "completed_at": "2025-12-29T09:46:31.803017",
+      "duration_seconds": 61.7362904548645,
+      "input_tokens": 19227,
+      "output_tokens": 8176,
+      "total_tokens": 27403,
+      "cost_usd": 0.105794,
+      "status": "completed",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "phase_name": "smart_chunker",
+      "model": "google/gemini-2.5-pro",
+      "started_at": "2025-12-29T09:44:44.852019",
+      "completed_at": null,
+      "duration_seconds": 0.0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "cost_usd": 0.0,
+      "status": "running",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "phase_name": "smart_chunker",
+      "model": "google/gemini-2.5-pro",
+      "started_at": "2025-12-29T09:45:30.066740",
+      "completed_at": null,
+      "duration_seconds": 0.0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "cost_usd": 0.0,
+      "status": "running",
+      "error": null,
+      "metadata": {}
+    }
+  ],
+  "tts": {
+    "provider": "unknown",
+    "voice": "unknown",
+    "total_segments": 0,
+    "total_duration_seconds": 0.0,
+    "total_characters": 0,
+    "estimated_cost_usd": 0.0
+  },
+  "renderer": {
+    "manim_videos": 0,
+    "wan_videos": 0,
+    "static_slides": 0,
+    "total_render_time_seconds": 0.0,
+    "failed_renders": 0
+  },
+  "content": {
+    "total_sections": 0,
+    "total_segments": 0,
+    "total_slides": 0,
+    "section_types": {}
+  },
+  "status": "failed",
+  "error": "Smart Chunker failed after 2 retries: Validation errors: topics[9]: invalid suggested_renderer 'none'"
+}
