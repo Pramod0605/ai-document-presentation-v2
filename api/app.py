@@ -321,7 +321,7 @@ def get_job_analytics(job_id):
 
 @app.route("/job/<job_id>/retry", methods=["POST"])
 def retry_failed_job(job_id):
-    """Retry a failed job from the point of failure."""
+    """Retry a failed job - from point of failure if artifacts exist, or fresh if they don't."""
     try:
         if is_job_running():
             current_id = get_current_job_id()
@@ -342,16 +342,6 @@ def retry_failed_job(job_id):
         if not job_folder.exists():
             return jsonify({"error": "Job folder not found"}), 404
         
-        analytics_path = job_folder / "analytics.json"
-        if not analytics_path.exists():
-            return jsonify({"error": "No analytics data - cannot determine failure point"}), 400
-        
-        with open(analytics_path, 'r') as f:
-            analytics = json.load(f)
-        
-        error_msg = analytics.get("error", "")
-        failed_section_idx = _determine_failed_section_idx(job_folder, error_msg)
-        
         source_markdown_path = job_folder / "source_markdown.md"
         if not source_markdown_path.exists():
             return jsonify({"error": "Source markdown not found"}), 400
@@ -365,59 +355,124 @@ def retry_failed_job(job_id):
         tts_provider = params.get("tts_provider", "edge_tts")
         dry_run = params.get("dry_run", False)
         skip_wan = params.get("skip_wan", False)
+        skip_avatar = params.get("skip_avatar", False)
         
-        job_manager.update_job(job_id, {
-            "status": "running", 
-            "progress": 5, 
-            "message": "Retrying from failed section...",
-            "error": None,
-            "failure_message": None,
-            "failed_phase": None
-        })
+        # ISS-202 FIX: Check if artifacts exist to determine retry mode
+        artifacts_dir = job_folder / "artifacts"
+        chunker_exists = (artifacts_dir / "01_chunker.json").exists() if artifacts_dir.exists() else False
+        planner_exists = (artifacts_dir / "02_planner.json").exists() if artifacts_dir.exists() else False
         
-        import threading
-        def run_retry():
-            try:
-                presentation, tracker = resume_from_section(
-                    job_id=job_id,
-                    output_dir=job_folder,
-                    markdown_content=markdown_content,
-                    resume_from_section_idx=failed_section_idx,
-                    subject=subject,
-                    grade=grade,
-                    tts_provider=tts_provider,
-                    generate_tts=True,
-                    run_renderers=True,
-                    dry_run=dry_run,
-                    skip_wan=skip_wan,
-                    status_callback=lambda phase, msg: job_manager.update_job(job_id, {"message": f"{phase}: {msg}"})
-                )
-                
-                presentation_path = job_folder / "presentation.json"
-                with open(presentation_path, 'w') as f:
-                    json.dump(presentation, f, indent=2)
-                
-                job_manager.update_job(job_id, {
-                    "status": "completed", 
-                    "progress": 100, 
-                    "message": "Retry completed successfully"
-                }, persist=True)
-            except Exception as e:
-                job_manager.update_job(job_id, {
-                    "status": "failed", 
-                    "error": str(e), 
-                    "message": f"Retry failed: {str(e)}"
-                }, persist=True)
+        # If no chunker/planner artifacts, job failed early - start fresh
+        start_fresh = not (chunker_exists and planner_exists)
         
-        thread = threading.Thread(target=run_retry, daemon=True)
-        thread.start()
-        
-        return jsonify({
-            "status": "started",
-            "job_id": job_id,
-            "message": f"Retry started from section {failed_section_idx}",
-            "resume_from_section": failed_section_idx
-        })
+        if start_fresh:
+            # ISS-202: Start fresh - job failed before any artifacts were created
+            # Clear any partial artifacts/analytics from previous failed run
+            import shutil
+            if artifacts_dir.exists():
+                shutil.rmtree(artifacts_dir)
+            analytics_path = job_folder / "analytics.json"
+            if analytics_path.exists():
+                analytics_path.unlink()
+            
+            # Reset job status for fresh start
+            job_manager.update_job(job_id, {
+                "status": "pending", 
+                "progress": 0, 
+                "message": "Preparing fresh restart...",
+                "error": None,
+                "failure_message": None,
+                "failed_phase": None
+            }, persist=True)
+            
+            # Save markdown content for the job processor
+            with open(source_markdown_path, 'w') as f:
+                f.write(markdown_content)
+            
+            # Use run_job_async for proper lifecycle management (same as new jobs)
+            run_job_async(
+                job_id,
+                process_markdown_job_v15,
+                markdown_content=markdown_content,
+                subject=subject,
+                grade=grade,
+                output_dir=str(job_folder),
+                dry_run=dry_run,
+                skip_wan=skip_wan,
+                skip_avatar=skip_avatar,
+                tts_provider=tts_provider
+            )
+            
+            return jsonify({
+                "status": "started",
+                "job_id": job_id,
+                "message": "Retry started fresh (cleared previous artifacts)",
+                "mode": "fresh"
+            })
+        else:
+            # Resume from failure point - artifacts exist
+            analytics_path = job_folder / "analytics.json"
+            error_msg = ""
+            if analytics_path.exists():
+                with open(analytics_path, 'r') as f:
+                    analytics = json.load(f)
+                error_msg = analytics.get("error", "")
+            
+            failed_section_idx = _determine_failed_section_idx(job_folder, error_msg)
+            
+            job_manager.update_job(job_id, {
+                "status": "running", 
+                "progress": 5, 
+                "message": f"Resuming from section {failed_section_idx}...",
+                "error": None,
+                "failure_message": None,
+                "failed_phase": None
+            }, persist=True)
+            
+            import threading
+            def run_resume():
+                try:
+                    presentation, tracker = resume_from_section(
+                        job_id=job_id,
+                        output_dir=job_folder,
+                        markdown_content=markdown_content,
+                        resume_from_section_idx=failed_section_idx,
+                        subject=subject,
+                        grade=grade,
+                        tts_provider=tts_provider,
+                        generate_tts=True,
+                        run_renderers=True,
+                        dry_run=dry_run,
+                        skip_wan=skip_wan,
+                        status_callback=lambda phase, msg: job_manager.update_job(job_id, {"message": f"{phase}: {msg}"}, persist=True)
+                    )
+                    
+                    presentation_path = job_folder / "presentation.json"
+                    with open(presentation_path, 'w') as f:
+                        json.dump(presentation, f, indent=2)
+                    
+                    job_manager.update_job(job_id, {
+                        "status": "completed", 
+                        "progress": 100, 
+                        "message": "Retry completed successfully"
+                    }, persist=True)
+                except Exception as e:
+                    job_manager.update_job(job_id, {
+                        "status": "failed", 
+                        "error": str(e), 
+                        "message": f"Retry failed: {str(e)}"
+                    }, persist=True)
+            
+            thread = threading.Thread(target=run_resume, daemon=True)
+            thread.start()
+            
+            return jsonify({
+                "status": "started",
+                "job_id": job_id,
+                "message": f"Retry resuming from section {failed_section_idx}",
+                "mode": "resume",
+                "resume_from_section": failed_section_idx
+            })
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
