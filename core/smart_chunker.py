@@ -34,7 +34,7 @@ SCHEMAS_DIR = Path(__file__).parent.parent / "schemas"
 
 MODEL = "google/gemini-2.5-pro"
 
-MAX_STRUCTURAL_RETRIES = 2
+MAX_STRUCTURAL_RETRIES = 3  # ISS-201: Increased from 2 to give LLM more chances to self-correct
 
 SMART_CHUNKER_SCHEMA = {
     "type": "object",
