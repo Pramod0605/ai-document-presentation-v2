@@ -79,6 +79,7 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     # ISS-161 FIX: Handle recap sections with video_prompts (not recap_scenes)
     # RecapAgent outputs video_prompts as list of 5 beat dicts, each with ~700 char prompt
     # ISS-199 FIX: Use narration segment durations for WAN videos (capped at 15 sec for WAN 2.6)
+    # ISS-200 FIX: Set _recap_video_paths so player can sequence through all 5 videos
     if section_type == "recap" and video_prompts and len(video_prompts) > 0:
         print(f"[WAN] ISS-161: Recap section {topic_id} has {len(video_prompts)} video_prompts (no recap_scenes)")
         
@@ -96,7 +97,7 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
                 vp["duration_seconds"] = capped_duration
                 print(f"  [Beat {i}] Narration: {narration_duration:.1f}s -> Video: {capped_duration}s (was {original}s)")
         
-        return _render_visual_beats(
+        first_path = _render_visual_beats(
             topic_id=topic_id,
             topic_title=topic_title,
             section_type=section_type,
@@ -108,6 +109,18 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             duration=duration,
             video_prompts=video_prompts
         )
+        
+        # ISS-200 FIX: Construct all video paths for recap sequencing
+        # _render_visual_beats creates: topic_{id}_beat_{0..n}.mp4
+        all_recap_paths = []
+        for beat_idx in range(len(video_prompts)):
+            beat_path = str(Path(output_dir) / f"topic_{topic_id}_beat_{beat_idx}.mp4")
+            all_recap_paths.append(beat_path)
+        
+        topic["_recap_video_paths"] = all_recap_paths
+        print(f"[WAN] ISS-200: Set {len(all_recap_paths)} recap video paths for player sequencing")
+        
+        return first_path
     
     # For other section types, use section-level prompt
     wan_prompt = explanation_plan.get("wan_prompt")
