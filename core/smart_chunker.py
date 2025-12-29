@@ -372,9 +372,16 @@ def _validate_topic(topic: Dict, index: int) -> List[str]:
     if topic.get("concept_type") and topic["concept_type"] not in valid_types:
         errors.append(f"{prefix}: invalid concept_type '{topic['concept_type']}'")
     
-    valid_renderers = ["remotion", "manim", "video"]
-    if topic.get("suggested_renderer") and topic["suggested_renderer"] not in valid_renderers:
-        errors.append(f"{prefix}: invalid suggested_renderer '{topic['suggested_renderer']}'")
+    # ISS-201 FIX: Accept 'none' as valid renderer (matches prompt guidance)
+    # Also accept null/None/empty string which should be treated as 'none'
+    valid_renderers = ["remotion", "manim", "video", "none"]
+    renderer_value = topic.get("suggested_renderer")
+    
+    # Normalize null/empty to 'none' (don't fail on these)
+    if renderer_value is None or renderer_value == "" or renderer_value == "null":
+        pass  # Valid - no renderer needed
+    elif renderer_value and renderer_value.lower() not in [r.lower() for r in valid_renderers]:
+        errors.append(f"{prefix}: invalid suggested_renderer '{renderer_value}'")
     
     return errors
 
@@ -389,6 +396,10 @@ RETRY REQUIRED: Your previous response had the following errors:
 
 Please fix these issues and output valid JSON matching the required schema.
 Ensure all required fields are present: source_topic, topics array with topic_id, title, concept_type, source_blocks, suggested_renderer.
+
+VALID VALUES:
+- concept_type: "process" | "definition" | "example" | "formula" | "theory" | "fact"
+- suggested_renderer: "manim" | "video" | "none" (use "none" for text-only sections like intro/summary)
 ---
 
 """
