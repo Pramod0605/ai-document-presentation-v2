@@ -130,6 +130,7 @@ The `renderFormattedContent()` function in `player.js` handles various display t
 - **ISS-198**: Image display support with CSS styling (.image-container, .content-image, .image-caption).
 - **ISS-199**: WAN video sync with narration - upgraded to WAN 2.6 (15-sec max), pipeline uses narration segment durations (capped at 15s), player loops videos when narration exceeds video length.
 - **ISS-200**: Recap video path population fix - `_render_visual_beats()` now supports `return_all_paths=True` to return all generated video paths (handles dry-run, skip-wan, and production modes). Recap sections using `video_prompts` now correctly set `topic["_recap_video_paths"]` for player sequencing.
+- **ISS-201**: Smart Chunker validation fix - validator now accepts "none" as valid `suggested_renderer` (synced with prompt guidance). Added case-insensitive matching, null/empty normalization, max_retries increased from 2 to 3, and retry prompt now includes explicit valid values.
 
 ### Player V2 Architecture
 A complete rewrite of the player with a clean architecture and enhanced features.
