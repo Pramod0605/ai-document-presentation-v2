@@ -97,7 +97,8 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
                 vp["duration_seconds"] = capped_duration
                 print(f"  [Beat {i}] Narration: {narration_duration:.1f}s -> Video: {capped_duration}s (was {original}s)")
         
-        first_path = _render_visual_beats(
+        # ISS-200 FIX: Use return_all_paths to get actual generated paths (handles dry_run correctly)
+        recap_result = _render_visual_beats(
             topic_id=topic_id,
             topic_title=topic_title,
             section_type=section_type,
@@ -107,20 +108,15 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             skip_wan=skip_wan,
             trace_output_dir=trace_output_dir,
             duration=duration,
-            video_prompts=video_prompts
+            video_prompts=video_prompts,
+            return_all_paths=True  # ISS-200: Get all paths for recap sequencing
         )
         
-        # ISS-200 FIX: Construct all video paths for recap sequencing
-        # _render_visual_beats creates: topic_{id}_beat_{0..n}.mp4
-        all_recap_paths = []
-        for beat_idx in range(len(video_prompts)):
-            beat_path = str(Path(output_dir) / f"topic_{topic_id}_beat_{beat_idx}.mp4")
-            all_recap_paths.append(beat_path)
+        # Store all paths on the topic for reconciliation (same as recap_scenes path)
+        topic["_recap_video_paths"] = recap_result.get("all_paths", [])
+        print(f"[WAN] ISS-200: Set {len(topic['_recap_video_paths'])} recap video paths for player sequencing")
         
-        topic["_recap_video_paths"] = all_recap_paths
-        print(f"[WAN] ISS-200: Set {len(all_recap_paths)} recap video paths for player sequencing")
-        
-        return first_path
+        return recap_result.get("first_path")
     
     # For other section types, use section-level prompt
     wan_prompt = explanation_plan.get("wan_prompt")
@@ -190,16 +186,20 @@ def _render_visual_beats(
     skip_wan: bool,
     trace_output_dir: str,
     duration: int,
-    video_prompts: list = None
-) -> str:
+    video_prompts: list = None,
+    return_all_paths: bool = False
+):
     """
     Render each visual beat as a separate video segment.
     
-    Returns path to first video segment.
+    Returns path to first video segment (default), or dict with all paths if return_all_paths=True.
     Creates: topic_{id}_beat_{0..n}.mp4
     
     ISS-067 FIX: If video_prompts are provided (pre-compiled by LLM),
     use them directly instead of calling visual_compiler.
+    
+    ISS-200 FIX: Added return_all_paths option to return {"first_path": str, "all_paths": list}
+    for recap sections that need all video paths for sequential playback.
     """
     from core.visual_compiler import compile_wan_prompt, VisualCompilationError
     
@@ -312,6 +312,13 @@ def _render_visual_beats(
         video_paths.append(result_path)
     
     print(f"[WAN] Completed {len(video_paths)} beat videos for section {topic_id}")
+    
+    # ISS-200 FIX: Optionally return all paths for recap sequencing
+    if return_all_paths:
+        return {
+            "first_path": video_paths[0] if video_paths else None,
+            "all_paths": video_paths
+        }
     
     # Return path to first beat (player will handle stitching or sequencing)
     return video_paths[0] if video_paths else None
