@@ -420,51 +420,47 @@ def retry_failed_job(job_id):
             
             failed_section_idx = _determine_failed_section_idx(job_folder, error_msg)
             
+            # ISS-203: Reset job state completely before launching worker
             job_manager.update_job(job_id, {
-                "status": "running", 
-                "progress": 5, 
-                "message": f"Resuming from section {failed_section_idx}...",
+                "status": "pending", 
+                "progress": 0, 
+                "message": f"Preparing to resume from section {failed_section_idx}...",
+                "status_message": f"Preparing to resume from section {failed_section_idx}...",
+                "current_phase": None,
+                "current_step": None,
                 "error": None,
                 "failure_message": None,
-                "failed_phase": None
+                "failed_phase": None,
+                "started_at": None,
+                "completed_at": None,
+                "steps_completed": 0
             }, persist=True)
             
-            import threading
-            def run_resume():
-                try:
-                    presentation, tracker = resume_from_section(
-                        job_id=job_id,
-                        output_dir=job_folder,
-                        markdown_content=markdown_content,
-                        resume_from_section_idx=failed_section_idx,
-                        subject=subject,
-                        grade=grade,
-                        tts_provider=tts_provider,
-                        generate_tts=True,
-                        run_renderers=True,
-                        dry_run=dry_run,
-                        skip_wan=skip_wan,
-                        status_callback=lambda phase, msg: job_manager.update_job(job_id, {"message": f"{phase}: {msg}"}, persist=True)
-                    )
-                    
-                    presentation_path = job_folder / "presentation.json"
-                    with open(presentation_path, 'w') as f:
-                        json.dump(presentation, f, indent=2)
-                    
-                    job_manager.update_job(job_id, {
-                        "status": "completed", 
-                        "progress": 100, 
-                        "message": "Retry completed successfully"
-                    }, persist=True)
-                except Exception as e:
-                    job_manager.update_job(job_id, {
-                        "status": "failed", 
-                        "error": str(e), 
-                        "message": f"Retry failed: {str(e)}"
-                    }, persist=True)
+            # Define wrapper function for run_job_async
+            def resume_job_wrapper(job_id, **kwargs):
+                presentation, tracker = resume_from_section(
+                    job_id=job_id,
+                    output_dir=job_folder,
+                    markdown_content=markdown_content,
+                    resume_from_section_idx=failed_section_idx,
+                    subject=subject,
+                    grade=grade,
+                    tts_provider=tts_provider,
+                    generate_tts=True,
+                    run_renderers=True,
+                    dry_run=dry_run,
+                    skip_wan=skip_wan,
+                    status_callback=lambda phase, msg: job_manager.update_job(job_id, {"message": f"{phase}: {msg}", "status_message": f"{phase}: {msg}"}, persist=True)
+                )
+                
+                presentation_path = job_folder / "presentation.json"
+                with open(presentation_path, 'w') as f:
+                    json.dump(presentation, f, indent=2)
+                
+                return {"presentation_path": str(presentation_path)}
             
-            thread = threading.Thread(target=run_resume, daemon=True)
-            thread.start()
+            # Use run_job_async for proper lifecycle management (same as fresh jobs)
+            run_job_async(job_id, resume_job_wrapper)
             
             return jsonify({
                 "status": "started",
