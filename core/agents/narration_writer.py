@@ -22,7 +22,6 @@ class NarrationWriterAgent(BaseAgent):
     output_schema_file = "section_narration.schema.json"
     model = "google/gemini-2.5-flash"
     temperature = 0.4
-    max_tokens = 6000
     
     WORD_LIMITS = {
         "intro": (50, 150),

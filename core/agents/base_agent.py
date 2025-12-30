@@ -94,7 +94,7 @@ class BaseAgent:
     output_schema_file: str = ""
     model: str = DEFAULT_MODEL
     temperature: float = 0.3
-    max_tokens: int = 8000
+    max_tokens: Optional[int] = None  # ISS-214: No limit - let API use natural limits
     structural_retries: int = 2
     semantic_retries: int = 1
     
@@ -134,15 +134,19 @@ class BaseAgent:
     
     def call_llm(self, system_prompt: str, user_prompt: str) -> Tuple[str, Dict[str, Any]]:
         """Make LLM API call and return response text and usage."""
-        response = client.chat.completions.create(
-            model=self.model,
-            messages=[
+        # ISS-214: Build kwargs, only include max_tokens if explicitly set
+        api_kwargs = {
+            "model": self.model,
+            "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            temperature=self.temperature,
-            max_tokens=self.max_tokens
-        )
+            "temperature": self.temperature
+        }
+        if self.max_tokens is not None:
+            api_kwargs["max_tokens"] = self.max_tokens
+        
+        response = client.chat.completions.create(**api_kwargs)
         
         usage: Dict[str, Any] = {}
         if response.usage:

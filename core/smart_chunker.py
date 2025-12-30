@@ -344,6 +344,7 @@ def call_smart_chunker(
             if tracker:
                 tracker.start_phase("smart_chunker", MODEL)
             
+            # ISS-214: Removed max_tokens limit - let API use natural limits
             response = client.chat.completions.create(
                 model=MODEL,
                 messages=[
@@ -351,7 +352,6 @@ def call_smart_chunker(
                     {"role": "user", "content": user_prompt}
                 ],
                 temperature=0.2,
-                max_tokens=8192,
                 response_format={"type": "json_object"}
             )
             

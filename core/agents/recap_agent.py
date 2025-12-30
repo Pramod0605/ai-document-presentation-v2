@@ -23,7 +23,6 @@ class RecapSceneAgent(BaseAgent):
     user_prompt_file = "recap_scene_user_v1.5.txt"
     model = STRONG_MODEL
     temperature = 0.5
-    max_tokens = 15000
     structural_retries = 2
     semantic_retries = 2
     

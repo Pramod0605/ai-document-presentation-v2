@@ -32,7 +32,6 @@ class ContentCreatorAgent(BaseAgent):
     output_schema_file = "content_creator.schema.json"
     model = "google/gemini-2.5-flash"
     temperature = 0.5
-    max_tokens = 12000
     structural_retries = 2
     semantic_retries = 2
     

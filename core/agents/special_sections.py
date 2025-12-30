@@ -32,7 +32,6 @@ class SpecialSectionsAgent(BaseAgent):
     output_schema_file = "special_sections.schema.json"
     model = STRONG_MODEL
     temperature = 0.5
-    max_tokens = 18000
     structural_retries = 2
     semantic_retries = 2
     

@@ -27,7 +27,7 @@
 ---
 
 ## ISS-214: Remove max_tokens Limits from All LLM Agents
-**Status:** Open
+**Status:** ✅ DONE (2025-12-30)
 **Priority:** High
 **Description:** Multiple agents have hardcoded max_tokens limits (8K-18K) that cause JSON truncation errors when generating long outputs.
 

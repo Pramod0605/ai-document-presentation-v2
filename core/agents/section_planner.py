@@ -22,7 +22,6 @@ class SectionPlannerAgent(BaseAgent):
     output_schema_file = "section_blueprint.schema.json"
     model = "google/gemini-2.5-flash"
     temperature = 0.3
-    max_tokens = 8000
     
     def validate_structural(self, output: Dict[str, Any]) -> Tuple[bool, List[str]]:
         """Validate the sections array structure."""

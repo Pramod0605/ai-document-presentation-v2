@@ -65943,21 +65943,25 @@
       "tts_provider": "edge_tts",
       "pipeline_version": "v15"
     },
-    "status": "processing",
+    "status": "failed",
     "current_step": null,
     "current_step_name": "Waiting in Queue",
-    "current_phase_key": "renderer_spec",
-    "status_message": "Creating video spec for section_6...",
+    "current_phase_key": "content_creator",
+    "status_message": "Creating content for section_7...",
     "steps_completed": 0,
     "total_steps": 3,
     "progress": 0,
     "created_at": "2025-12-30T16:56:53.561281",
     "started_at": "2025-12-30T16:56:53.770106",
-    "completed_at": null,
-    "error": null,
+    "completed_at": "2025-12-30T17:06:58.022678",
+    "error": "Agent failed: [ContentCreator] Semantic validation failed after 3 attempts: ['Narration too short for content: 84 words (min 100)']\n\nTraceback:\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/pipeline_v15_optimized.py\", line 922, in process_markdown_optimized\n    content_output = _run_content_creator_with_batching(\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/pipeline_v15_optimized.py\", line 279, in _run_content_creator_with_batching\n    return content_creator.run(\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/agents/base_agent.py\", line 284, in run\n    raise AgentError(self.name, \"Semantic validation failed\", errors, total_attempts)\ncore.agents.base_agent.AgentError: [ContentCreator] Semantic validation failed after 3 attempts: ['Narration too short for content: 84 words (min 100)']\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/job_manager.py\", line 239, in worker\n    result = process_func(job_id=job_id, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/api/app.py\", line 772, in process_document_job_v15\n    presentation, tracker = process_markdown_optimized(\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/pipeline_v15_optimized.py\", line 1147, in process_markdown_optimized\n    raise PipelineError(f\"Agent failed: {e}\", phase=e.agent_name)\ncore.pipeline_v15_optimized.PipelineError: Agent failed: [ContentCreator] Semantic validation failed after 3 attempts: ['Narration too short for content: 84 words (min 100)']\n",
     "result": null,
     "content_preview": "# 6. CONTROL & CO-ORDINATION  ## \u2756 INTRODUCTION  - Control and coordination is the process by which different activities of an organism are regulated and integrated so that it can respond properly to internal and external stimuli. - Living organisms perform many activities at the same time. These...",
     "page_count": 13,
-    "source_type": "pdf"
+    "source_type": "pdf",
+    "failure_message": null,
+    "impact": null,
+    "dev_hint": null,
+    "failed_phase": "content_creator"
   }
 }

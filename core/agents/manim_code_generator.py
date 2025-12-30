@@ -27,7 +27,7 @@ class ManimCodeGenerator:
     name = "ManimCodeGenerator"
     model = CLAUDE_SONNET_3_5
     temperature = 0.3
-    max_tokens = 16000  # Increased from 8000 to prevent truncation (ISS-139)
+    max_tokens = None  # ISS-214: No limit - let API use natural limits
     max_retries = 3
     
     def __init__(self, openrouter_api_key: Optional[str] = None, **kwargs):
@@ -115,6 +115,18 @@ class ManimCodeGenerator:
         for attempt in range(self.max_retries):
             user_prompt = self._build_user_prompt(section_data)
             
+            # ISS-214: Build request payload, only include max_tokens if set
+            request_payload = {
+                "model": self.model,
+                "messages": [
+                    {"role": "system", "content": self._system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                "temperature": self.temperature
+            }
+            if self.max_tokens is not None:
+                request_payload["max_tokens"] = self.max_tokens
+            
             response = requests.post(
                 "https://openrouter.ai/api/v1/chat/completions",
                 headers={
@@ -123,15 +135,7 @@ class ManimCodeGenerator:
                     "HTTP-Referer": "https://replit.com",
                     "X-Title": "AI Education Manim Generator"
                 },
-                json={
-                    "model": self.model,
-                    "messages": [
-                        {"role": "system", "content": self._system_prompt},
-                        {"role": "user", "content": user_prompt}
-                    ],
-                    "temperature": self.temperature,
-                    "max_tokens": self.max_tokens
-                },
+                json=request_payload,
                 timeout=120
             )
             

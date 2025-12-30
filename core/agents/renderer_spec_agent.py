@@ -20,7 +20,6 @@ class RendererSpecAgent(BaseAgent):
     output_schema_file = "render_spec.schema.json"
     model = STRONG_MODEL
     temperature = 0.4
-    max_tokens = 10000
     structural_retries = 2
     semantic_retries = 2
     
