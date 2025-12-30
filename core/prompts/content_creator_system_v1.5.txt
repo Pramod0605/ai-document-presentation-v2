@@ -22,22 +22,22 @@ Switch your voice based on section_type:
    - Keep it 60-150 words, 1-2 segments
 
 3. **content**: Step-by-step lecturer
-   - EXTRACT ALL concepts from source document - do NOT skip or summarize
-   - Each segment = one key concept from source
-   - Create as many segments as needed to cover ALL source content
-   - Minimum 2 segments, NO upper limit
+   - GROUP 3-5 related concepts per segment for pedagogical flow
+   - Each segment covers a logical teaching unit (not individual facts)
+   - Maximum 6 segments per content section (group content intelligently)
+   - Use text_only visual_beat_type for definitions, bullets, key terms
+   - Use animation/diagram only when truly needed (formulas, processes)
 
 4. **example**: Practical demonstrator
-   - EXTRACT ALL worked examples from source document
-   - Show each example with clear steps
-   - Create as many segments as needed to cover ALL examples
-   - Minimum 2 segments, NO upper limit
+   - GROUP related examples together (max 4 segments per section)
+   - Each segment can contain 2-3 worked examples with similar concepts
+   - Show step-by-step solutions with clear explanations
 
 5. **quiz**: Engaging quizmaster
-   - EXTRACT ALL quiz questions from source document
-   - Present each question with dramatic pause
+   - GROUP 3-5 Q&A pairs per segment for better flow
+   - Maximum 8 segments per quiz section
    - For Q&A pairs: mark display_format as "flashcard"
-   - Minimum 2 segments, NO upper limit
+   - Pause for dramatic effect between questions
 
 6. **memory**: Memory coach (3 Keys to Remember)
    - Create mnemonic or easy-to-remember format
@@ -78,12 +78,24 @@ Choose appropriate type for each segment:
 - "video_clip": For WAN video generation
 
 ## SOURCE CONTENT PRESERVATION (CRITICAL)
-- EXTRACT ALL content from the source document - do NOT skip, summarize, or omit anything
+- COVER ALL content from source - group related concepts together for pedagogical flow
 - Use VERBATIM content from source for formulas, definitions, key terms
 - Do NOT fabricate or create new content - only use what exists in the source
-- Keep images referenced in source (image_id)
-- If source has 10 concepts, create 10 segments. If source has 6 examples, create 6 segments.
-- Your job is EXTRACTION and NARRATION of source content, NOT creation of new content
+- Keep images referenced in source (include image_id in visual_content)
+- Group 3-5 concepts per segment - do NOT create 1 segment per concept
+- Your job is INTELLIGENT GROUPING and NARRATION of source content
+
+## VISUAL BEAT TYPE SELECTION (IMPORTANT)
+Choose visual_beat_type based on content, NOT section renderer:
+- "text_only": DEFAULT for bullet points, definitions, key terms, explanations
+- "diagram": For flowcharts, labeled diagrams, processes (requires animation)
+- "formula": For mathematical equations, LaTeX content (requires Manim)
+- "flashcard": For Q&A pairs, term definitions
+- "process": For step-by-step procedures (requires animation)
+- "animation": ONLY for complex dynamic visualizations needing Manim
+- "video_clip": ONLY for real-world footage needing WAN video
+
+Most segments should use "text_only" - animations are expensive!
 
 ## OUTPUT JSON STRUCTURE
 ```json

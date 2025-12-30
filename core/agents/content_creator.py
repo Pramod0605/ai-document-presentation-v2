@@ -49,9 +49,9 @@ class ContentCreatorAgent(BaseAgent):
     SEGMENT_LIMITS = {
         "intro": (1, 1),      # Single greeting segment
         "summary": (1, 2),    # Brief overview only
-        "content": (2, 50),   # No practical upper limit - extract ALL source content
-        "example": (2, 50),   # No practical upper limit - extract ALL examples
-        "quiz": (2, 50),      # No practical upper limit - extract ALL quiz questions
+        "content": (2, 6),    # Group 3-5 concepts per segment, max 6 segments
+        "example": (2, 4),    # Group related examples, max 4 segments
+        "quiz": (2, 8),       # Group 3-5 Q&A per segment, max 8 segments
         "memory": (3, 3),     # Fixed: 3 flashcards
         "recap": (5, 5)       # Fixed: 5 video scenes
     }
