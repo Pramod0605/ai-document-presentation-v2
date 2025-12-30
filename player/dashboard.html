@@ -374,6 +374,21 @@
         let currentJobId = null;
         let pollInterval = null;
 
+        function formatIST(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleString('en-IN', { 
+                timeZone: 'Asia/Kolkata',
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            }) + ' IST';
+        }
+
         const optionDescriptions = {
             none: "Select options to customize the job processing.",
             dry_run: "Dry Run: Skip actual video/audio generation, only log prompts to render_prompts.json",
@@ -486,7 +501,7 @@
 
             if (data.created_at) {
                 document.getElementById('createdAt').textContent = 
-                    'Created: ' + new Date(data.created_at).toLocaleTimeString();
+                    'Created: ' + formatIST(data.created_at);
             }
 
             const progress = data.progress || 0;
@@ -550,7 +565,7 @@
                     const statusClass = job.status === 'completed' ? 'completed' : 
                                        job.status === 'failed' ? 'failed' : 
                                        (job.status === 'processing' || job.status === 'running') ? 'processing' : 'pending';
-                    const createdDate = new Date(job.created_at).toLocaleString();
+                    const createdDate = formatIST(job.created_at);
                     const dryRunBadge = job.params?.dry_run ? '<span style="background: #ff9800; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-left: 5px;">DRY RUN</span>' : '';
                     
                     let actions = '';
@@ -753,7 +768,7 @@
                                 ${data.basic_info ? `
                                     <div style="margin-top: 20px; text-align: left;">
                                         <div><span style="color: #888;">Status:</span> ${data.basic_info.status}</div>
-                                        <div><span style="color: #888;">Created:</span> ${new Date(data.basic_info.created_at).toLocaleString()}</div>
+                                        <div><span style="color: #888;">Created:</span> ${formatIST(data.basic_info.created_at)}</div>
                                         ${data.basic_info.error ? `<div style="color: #ff5252; margin-top: 10px;">${data.basic_info.error}</div>` : ''}
                                     </div>
                                 ` : ''}
