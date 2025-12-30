@@ -47,13 +47,13 @@ class ContentCreatorAgent(BaseAgent):
     }
     
     SEGMENT_LIMITS = {
-        "intro": (1, 3),
-        "summary": (2, 4),
-        "content": (2, 5),
-        "example": (2, 5),
-        "quiz": (3, 8),
-        "memory": (3, 3),
-        "recap": (5, 5)
+        "intro": (1, 1),      # Single greeting segment
+        "summary": (1, 2),    # Brief overview only
+        "content": (2, 50),   # No practical upper limit - extract ALL source content
+        "example": (2, 50),   # No practical upper limit - extract ALL examples
+        "quiz": (2, 50),      # No practical upper limit - extract ALL quiz questions
+        "memory": (3, 3),     # Fixed: 3 flashcards
+        "recap": (5, 5)       # Fixed: 5 video scenes
     }
     
     def validate_structural(self, output: Dict[str, Any]) -> Tuple[bool, List[str]]:
