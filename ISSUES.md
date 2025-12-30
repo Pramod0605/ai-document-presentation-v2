@@ -14,15 +14,41 @@
 ---
 
 ## ISS-213: Smart Chunker Content Density Analysis
-**Status:** In Progress
+**Status:** ✅ DONE (2025-12-30)
 **Priority:** High
-**Description:** Chunker needs to analyze content density and recommend how many content sections are needed. Currently just splits by headers without considering:
-1. Number of concepts/bullet points per section
-2. Complexity of content (formulas, tables, images)
-3. Recommended section count based on density
+**Description:** Chunker needs to analyze content density and recommend how many content sections are needed.
 
-**Root Cause:** Without density analysis, SectionPlanner creates arbitrary section counts, causing ContentCreator to exceed segment limits on dense content.
+**Solution Implemented:**
+1. Added `content_density_analysis` output with `recommended_content_sections` count
+2. Added `topic_grouping_hints` for section assignment
+3. SectionPlanner now consumes density recommendations
+4. Pipeline uses chunker's source_blocks directly instead of re-parsing markdown
 
-**Solution:** Add content_density_analysis output with recommended_content_sections count.
+---
+
+## ISS-214: Remove max_tokens Limits from All LLM Agents
+**Status:** Open
+**Priority:** High
+**Description:** Multiple agents have hardcoded max_tokens limits (8K-18K) that cause JSON truncation errors when generating long outputs.
+
+**Symptoms:**
+- `[RendererSpec] Invalid JSON response: Unterminated string at char 25118`
+- Agents fail after 3 retries due to truncated JSON
+
+**Affected Agents:**
+- BaseAgent default: 8000
+- ContentCreator: 12000
+- RendererSpec: 10000
+- SectionPlanner: 8000
+- SpecialSections: 18000
+
+**Solution:** Set `BaseAgent.max_tokens = None` by default (let API use natural limits), remove all overrides.
+
+---
+
+## ISS-215: Job History Status Updates Not Displaying
+**Status:** Open
+**Priority:** Medium
+**Description:** Status updates not showing properly on dashboard job history page. Need to investigate status polling and display logic.
 
 ---
