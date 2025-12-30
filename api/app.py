@@ -82,14 +82,24 @@ def submit_job():
             
             filename = (uploaded_file.filename or "").lower()
             
+            # ISS-206: Accept PDF, DOC, DOCX, ODT (all via Datalab) and Markdown
             if filename.endswith(".pdf"):
-                job_type = "pdf"
+                job_type = "document"
                 suffix = ".pdf"
+            elif filename.endswith(".doc"):
+                job_type = "document"
+                suffix = ".doc"
+            elif filename.endswith(".docx"):
+                job_type = "document"
+                suffix = ".docx"
+            elif filename.endswith(".odt"):
+                job_type = "document"
+                suffix = ".odt"
             elif filename.endswith(".md") or filename.endswith(".markdown") or filename.endswith(".txt"):
                 job_type = "markdown_file"
                 suffix = ".md"
             else:
-                return jsonify({"error": "Unsupported file type. Please upload PDF or Markdown (.md) file"}), 400
+                return jsonify({"error": "Unsupported file type. Supported: PDF, DOC, DOCX, ODT, MD"}), 400
             
             temp_file = TEMP_DIR / f"{os.urandom(8).hex()}{suffix}"
             uploaded_file.save(str(temp_file))
@@ -110,12 +120,13 @@ def submit_job():
             job_output_dir = JOBS_DIR / job_id
             setup_job_folder(job_output_dir)
             
-            if job_type == "pdf":
-                pdf_processor = process_pdf_job_v15 if pipeline_version == "v15" else process_pdf_job
+            if job_type == "document":
+                # ISS-206: Handle PDF, DOC, DOCX, ODT via Datalab
+                document_processor = process_document_job_v15 if pipeline_version == "v15" else process_pdf_job
                 run_job_async(
                     job_id,
-                    pdf_processor,
-                    pdf_path=str(temp_file),
+                    document_processor,
+                    document_path=str(temp_file),
                     subject=subject,
                     grade=grade,
                     output_dir=str(job_output_dir),
@@ -694,32 +705,59 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
 
 
 def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
-    """Process PDF using V1.5 Optimized pipeline (combined agents, ~50% fewer LLM calls).
+    """Legacy wrapper - redirects to process_document_job_v15."""
+    return process_document_job_v15(
+        job_id=job_id,
+        document_path=pdf_path,
+        subject=subject,
+        grade=grade,
+        output_dir=output_dir,
+        dry_run=dry_run,
+        skip_wan=skip_wan,
+        skip_avatar=skip_avatar,
+        source_file=source_file,
+        tts_provider=tts_provider
+    )
+
+
+def process_document_job_v15(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
+    """ISS-206/207: Process PDF/DOC/DOCX/ODT using V1.5 Optimized pipeline.
     
-    1. Convert PDF to Markdown using Datalab API
-    2. Run V1.5 optimized pipeline on the markdown
+    1. Convert document to Markdown using Datalab API (supports PDF, DOC, DOCX, ODT)
+    2. Capture page_count from Datalab response
+    3. Run V1.5 optimized pipeline on the markdown
     """
-    from core.datalab_client import pdf_to_markdown, DatalabConversionError
+    from core.datalab_client import document_to_markdown, DatalabConversionError
     from pathlib import Path
     
     try:
+        file_ext = Path(document_path).suffix.lower()
         job_manager.update_job(job_id, {
-            "current_phase_key": "pdf_conversion",
-            "status_message": "Converting PDF to Markdown..."
+            "current_phase_key": "document_conversion",
+            "status_message": f"Converting {file_ext.upper()} to Markdown..."
         }, persist=True)
         
-        markdown_content = pdf_to_markdown(pdf_path)
+        # ISS-206/207: Use new document_to_markdown with ConversionResult
+        conversion_result = document_to_markdown(document_path)
+        markdown_content = conversion_result.markdown
+        page_count = conversion_result.page_count
         
         # Save raw markdown for comparison/debugging
         source_md_path = Path(output_dir) / "source_markdown.md"
         with open(source_md_path, "w", encoding="utf-8") as f:
             f.write(markdown_content)
-        print(f"[V1.5 Optimized] Saved source markdown to {source_md_path} ({len(markdown_content)} chars)")
+        print(f"[V1.5 Optimized] Saved source markdown to {source_md_path} ({len(markdown_content)} chars, {page_count} pages)")
         
         content_preview = markdown_content[:300].replace('\n', ' ').strip()
         if len(markdown_content) > 300:
             content_preview += "..."
-        job_manager.update_job(job_id, {"content_preview": content_preview}, persist=True)
+        
+        # ISS-207: Store page_count in job metadata
+        job_manager.update_job(job_id, {
+            "content_preview": content_preview,
+            "page_count": page_count,
+            "source_type": file_ext.replace('.', '')
+        }, persist=True)
         
         def status_callback(jid, phase, message):
             job_manager.update_job(jid, {
@@ -750,19 +788,23 @@ def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, ou
         
         analytics_summary = tracker.get_summary() if hasattr(tracker, 'get_summary') else {}
         
+        # ISS-207: Add page_count to analytics
+        analytics_summary["page_count"] = page_count
+        
         return {
             "status": "success",
             "presentation": presentation,
             "analytics": analytics_summary,
             "output_path": str(pres_path),
             "pipeline_version": "1.5",
-            "source_type": "pdf"
+            "source_type": file_ext.replace('.', ''),
+            "page_count": page_count
         }
     except DatalabConversionError as e:
-        raise RuntimeError(f"PDF conversion failed: {e}")
+        raise RuntimeError(f"Document conversion failed: {e}")
     finally:
-        if os.path.exists(pdf_path):
-            os.unlink(pdf_path)
+        if os.path.exists(document_path):
+            os.unlink(document_path)
 
 
 def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:

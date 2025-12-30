@@ -87,8 +87,21 @@ class PipelineError(Exception):
         self.details = details or {}
 
 
-def _save_analytics(tracker: AnalyticsTracker, presentation: Optional[Dict], output_dir: Optional[Path]) -> None:
-    """Save analytics data to analytics.json in the job folder."""
+def _save_analytics(
+    tracker: AnalyticsTracker, 
+    presentation: Optional[Dict], 
+    output_dir: Optional[Path],
+    qa_pair_count: int = 0,
+    page_count: int = 0,
+    table_count: int = 0,
+    image_count: int = 0
+) -> None:
+    """Save analytics data to analytics.json in the job folder.
+    
+    ISS-207: Added page_count
+    ISS-208: Added qa_pair_count
+    ISS-209/210: Added table_count, image_count
+    """
     if not output_dir:
         return
         
@@ -122,7 +135,11 @@ def _save_analytics(tracker: AnalyticsTracker, presentation: Optional[Dict], out
                 total_sections=total_sections,
                 total_segments=total_segments,
                 total_slides=total_sections,
-                section_types=section_types
+                section_types=section_types,
+                page_count=page_count,
+                qa_pair_count=qa_pair_count,
+                table_count=table_count,
+                image_count=image_count
             )
             
             tracker.set_renderer_metrics(
@@ -521,7 +538,14 @@ def process_markdown_optimized(
         _save_artifact(output_dir, "01_chunker.json", chunker_output)
         
         quiz_questions = chunker_output.get("quiz_questions", [])
-        logger.info(f"[Pipeline v1.5-opt] Extracted {len(quiz_questions)} quiz questions")
+        qa_pair_count = len(quiz_questions)
+        logger.info(f"[Pipeline v1.5-opt] Extracted {qa_pair_count} quiz questions")
+        
+        # ISS-209/210: Count table and image blocks
+        content_blocks = parse_content_blocks(markdown_content)
+        table_count = sum(1 for b in content_blocks if b.get("block_type") == "table")
+        image_count = sum(1 for b in content_blocks if b.get("block_type") == "image")
+        logger.info(f"[Pipeline v1.5-opt] Block types: {table_count} tables, {image_count} images")
         
         update_status("section_planner", "Planning section structure...")
         section_planner = SectionPlannerAgent(tracker=tracker, log_func=log)
@@ -773,7 +797,12 @@ def process_markdown_optimized(
             logger.info(f"[Pipeline v1.5-opt] Rendering complete: {success_count} success, {fail_count} failed")
         
         tracker.end_pipeline(status="completed")
-        _save_analytics(tracker, presentation, output_dir)
+        _save_analytics(
+            tracker, presentation, output_dir,
+            qa_pair_count=qa_pair_count,
+            table_count=table_count,
+            image_count=image_count
+        )
         
         logger.info(f"[Pipeline v1.5-opt] Completed successfully for job {job_id}")
         

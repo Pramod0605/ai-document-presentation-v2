@@ -95,14 +95,30 @@ def detect_block_type(line: str) -> str:
     """
     Detect the block type from a markdown line.
     ISS-160: Source fidelity - detect exact formatting.
+    ISS-209: Added table detection
+    ISS-210: Added image detection
     
     Returns:
-        One of: paragraph, unordered_list, ordered_list, formula, blockquote
+        One of: paragraph, unordered_list, ordered_list, formula, blockquote, table, image
     """
     stripped = line.strip()
     
     if not stripped:
         return "paragraph"  # Empty lines treated as paragraph breaks
+    
+    # ISS-210: Image detection - ![alt](url) or ![alt][ref]
+    if re.match(r'^!\[.*?\]\(.*?\)', stripped) or re.match(r'^!\[.*?\]\[.*?\]', stripped):
+        return "image"
+    
+    # ISS-209: Table detection - lines starting with | or containing | separators
+    if stripped.startswith('|') or re.match(r'^.+\|.+$', stripped):
+        # Additional check: must have at least 2 pipe characters for a valid table row
+        if stripped.count('|') >= 2:
+            return "table"
+    
+    # Table separator line: |---|---|
+    if re.match(r'^\|?\s*[-:]+\s*\|', stripped):
+        return "table"
     
     # Ordered list: starts with digit + period + space
     if re.match(r'^\d+\.\s', stripped):
@@ -178,6 +194,35 @@ def parse_content_blocks(markdown_content: str) -> List[Dict]:
                 items = [re.sub(r'^\d+\.\s*', '', line.strip())
                         for line in current_block if re.match(r'^\d+\.\s', line.strip())]
                 block["items"] = items
+            
+            # ISS-209: Parse table structure
+            elif current_type == "table":
+                rows = []
+                for line in current_block:
+                    # Skip separator lines (|---|---|)
+                    if re.match(r'^\|?\s*[-:]+\s*\|', line.strip()):
+                        continue
+                    # Parse cells from pipe-separated values
+                    cells = [cell.strip() for cell in line.strip().strip('|').split('|')]
+                    if cells and any(cell for cell in cells):
+                        rows.append(cells)
+                block["table_rows"] = rows
+                if rows:
+                    block["table_headers"] = rows[0]
+                    block["table_data"] = rows[1:] if len(rows) > 1 else []
+            
+            # ISS-210: Parse image references
+            elif current_type == "image":
+                # Extract image URL and alt text from ![alt](url) format
+                match = re.search(r'!\[(.*?)\]\((.*?)\)', content)
+                if match:
+                    block["image_alt"] = match.group(1)
+                    block["image_url"] = match.group(2)
+                # Also try ![alt][ref] format
+                ref_match = re.search(r'!\[(.*?)\]\[(.*?)\]', content)
+                if ref_match:
+                    block["image_alt"] = ref_match.group(1)
+                    block["image_ref"] = ref_match.group(2)
             
             blocks.append(block)
             block_id += 1

@@ -64,6 +64,13 @@ class ContentMetrics:
     total_segments: int = 0
     total_slides: int = 0
     section_types: Dict[str, int] = field(default_factory=dict)
+    # ISS-207: Page count from Datalab
+    page_count: int = 0
+    # ISS-208: Q&A pair count from SmartChunker
+    qa_pair_count: int = 0
+    # ISS-209/210: Block type counts
+    table_count: int = 0
+    image_count: int = 0
 
 @dataclass
 class PipelineAnalytics:
@@ -228,14 +235,27 @@ class AnalyticsTracker:
         total_sections: int,
         total_segments: int,
         total_slides: int,
-        section_types: Optional[Dict[str, int]] = None
+        section_types: Optional[Dict[str, int]] = None,
+        page_count: int = 0,
+        qa_pair_count: int = 0,
+        table_count: int = 0,
+        image_count: int = 0
     ) -> None:
-        """Set content generation metrics."""
+        """Set content generation metrics.
+        
+        ISS-207: Added page_count from Datalab
+        ISS-208: Added qa_pair_count from SmartChunker
+        ISS-209/210: Added table_count and image_count
+        """
         self.analytics.content = ContentMetrics(
             total_sections=total_sections,
             total_segments=total_segments,
             total_slides=total_slides,
-            section_types=section_types if section_types else {}
+            section_types=section_types if section_types else {},
+            page_count=page_count,
+            qa_pair_count=qa_pair_count,
+            table_count=table_count,
+            image_count=image_count
         )
 
     def _find_phase(self, phase_name: str) -> Optional[PhaseMetrics]:
@@ -302,7 +322,11 @@ class AnalyticsTracker:
                 "sections": self.analytics.content.total_sections,
                 "segments": self.analytics.content.total_segments,
                 "slides": self.analytics.content.total_slides,
-                "section_types": self.analytics.content.section_types
+                "section_types": self.analytics.content.section_types,
+                "page_count": self.analytics.content.page_count,
+                "qa_pair_count": self.analytics.content.qa_pair_count,
+                "table_count": self.analytics.content.table_count,
+                "image_count": self.analytics.content.image_count
             } if self.analytics.content else {},
             "phase_breakdown": {
                 p.phase_name: {

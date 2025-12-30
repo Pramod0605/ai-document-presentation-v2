@@ -696,10 +696,16 @@
                             <div style="margin-bottom: 20px;">
                                 <h4 style="color: #00d4ff; margin-bottom: 10px;">Content Summary</h4>
                                 <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-                                    <div><span style="color: #888;">Sections:</span> ${content_info.total_sections || phases.length || 'N/A'}</div>
-                                    <div><span style="color: #888;">Segments:</span> ${content_info.total_segments || 'N/A'}</div>
+                                    <div><span style="color: #888;">Sections:</span> ${content_info.sections || content_info.total_sections || phases.length || 'N/A'}</div>
+                                    <div><span style="color: #888;">Segments:</span> ${content_info.segments || content_info.total_segments || 'N/A'}</div>
                                     <div><span style="color: #888;">Manim:</span> ${renderer.manim_videos || 0}</div>
                                     <div><span style="color: #888;">WAN:</span> ${renderer.wan_videos || 0}</div>
+                                </div>
+                                <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 10px;">
+                                    ${content_info.page_count ? `<div><span style="color: #888;">Pages:</span> <span style="color: #4caf50;">${content_info.page_count}</span></div>` : ''}
+                                    ${content_info.qa_pair_count ? `<div><span style="color: #888;">Q&A Pairs:</span> <span style="color: #9c27b0;">${content_info.qa_pair_count}</span></div>` : ''}
+                                    ${content_info.table_count ? `<div><span style="color: #888;">Tables:</span> <span style="color: #ff9800;">${content_info.table_count}</span></div>` : ''}
+                                    ${content_info.image_count ? `<div><span style="color: #888;">Images:</span> <span style="color: #2196f3;">${content_info.image_count}</span></div>` : ''}
                                 </div>
                             </div>
                             

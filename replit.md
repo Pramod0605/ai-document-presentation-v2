@@ -133,6 +133,13 @@ The `renderFormattedContent()` function in `player.js` handles various display t
 - **ISS-201**: Smart Chunker validation fix - validator now accepts "none" as valid `suggested_renderer` (synced with prompt guidance). Added case-insensitive matching, null/empty normalization, max_retries increased from 2 to 3, and retry prompt now includes explicit valid values.
 - **ISS-202**: Retry mechanism fix - when job fails before artifacts are created (e.g., during Chunker), retry now starts fresh instead of failing with "artifacts not found". Added `persist=True` to status updates for real-time progress visibility.
 
+### Document Processing & Analytics (ISS-206 to ISS-210)
+- **ISS-206**: Multi-format document upload support - Datalab client now accepts PDF, DOC, DOCX, ODT files. Added `document_to_markdown()` with MIME type detection, `process_document_job_v15()` for unified document processing. Dashboard submit_job endpoint accepts all supported formats.
+- **ISS-207**: Page count extraction from Datalab - `ConversionResult` class captures `page_count` from API response. Displayed in analytics dashboard Content Summary section.
+- **ISS-208**: Q&A pair count surfacing - SmartChunker `quiz_questions` count tracked in pipeline and surfaced to analytics via `qa_pair_count` field. Dashboard shows Q&A pairs in Content Summary.
+- **ISS-209**: Table block detection - `detect_block_type()` now detects markdown tables (pipe-separated rows). `parse_content_blocks()` extracts `table_rows`, `table_headers`, `table_data`. Count tracked in analytics as `table_count`.
+- **ISS-210**: Image block preservation - `detect_block_type()` detects markdown images `![alt](url)`. `parse_content_blocks()` extracts `image_alt`, `image_url`, `image_ref`. Count tracked in analytics as `image_count`.
+
 ### Player V2 Architecture
 A complete rewrite of the player with a clean architecture and enhanced features.
 - **Chroma Keying**: Canvas-based green screen removal for avatar video.
