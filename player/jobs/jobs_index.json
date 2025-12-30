@@ -65963,5 +65963,40 @@
     "impact": null,
     "dev_hint": null,
     "failed_phase": "content_creator"
+  },
+  "0825e302": {
+    "id": "0825e302",
+    "type": "v15_pipeline",
+    "params": {
+      "subject": "General Science",
+      "grade": "12",
+      "file_path": "/tmp/ai_education_jobs/07425aae73bc3281.pdf",
+      "source_file": "SSLC CHAPTER 6- control and coordination.pdf",
+      "skip_wan": false,
+      "skip_avatar": false,
+      "tts_provider": "edge_tts",
+      "pipeline_version": "v15"
+    },
+    "status": "failed",
+    "current_step": null,
+    "current_step_name": "Waiting in Queue",
+    "current_phase_key": "content_creator",
+    "status_message": "Creating content for section_8...",
+    "steps_completed": 0,
+    "total_steps": 3,
+    "progress": 0,
+    "created_at": "2025-12-30T17:28:50.347322",
+    "started_at": "2025-12-30T17:31:51.810232",
+    "completed_at": "2025-12-30T17:36:39.390343",
+    "error": "Agent failed: [ContentCreator] Semantic validation failed after 3 attempts: ['Narration too long for quiz: 460 words (max ~250)']\n\nTraceback:\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/pipeline_v15_optimized.py\", line 922, in process_markdown_optimized\n    content_output = _run_content_creator_with_batching(\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/pipeline_v15_optimized.py\", line 310, in _run_content_creator_with_batching\n    batch_results = _process_batch_with_retry(\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/pipeline_v15_optimized.py\", line 212, in _process_batch_with_retry\n    sub_output = content_creator.run(\n                 ^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/agents/base_agent.py\", line 288, in run\n    raise AgentError(self.name, \"Semantic validation failed\", errors, total_attempts)\ncore.agents.base_agent.AgentError: [ContentCreator] Semantic validation failed after 3 attempts: ['Narration too long for quiz: 460 words (max ~250)']\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/job_manager.py\", line 239, in worker\n    result = process_func(job_id=job_id, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/api/app.py\", line 847, in process_markdown_job_v15\n    presentation, tracker = process_markdown_optimized(\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/core/pipeline_v15_optimized.py\", line 1147, in process_markdown_optimized\n    raise PipelineError(f\"Agent failed: {e}\", phase=e.agent_name)\ncore.pipeline_v15_optimized.PipelineError: Agent failed: [ContentCreator] Semantic validation failed after 3 attempts: ['Narration too long for quiz: 460 words (max ~250)']\n",
+    "result": null,
+    "content_preview": "# 6. CONTROL & CO-ORDINATION  ## \u2756 INTRODUCTION  - Control and coordination is the process by which different activities of an organism are regulated and integrated so that it can respond properly to internal and external stimuli. - Living organisms perform many activities at the same time. These...",
+    "page_count": 13,
+    "source_type": "pdf",
+    "failure_message": null,
+    "impact": null,
+    "dev_hint": null,
+    "failed_phase": "content_creator",
+    "message": "Preparing fresh restart..."
   }
 }
