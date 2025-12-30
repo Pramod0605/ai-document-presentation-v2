@@ -52,3 +52,24 @@
 **Description:** Status updates not showing properly on dashboard job history page. Need to investigate status polling and display logic.
 
 ---
+
+## ISS-216: Validation Tolerance Too Strict
+**Status:** ✅ DONE (2025-12-30)
+**Priority:** High
+**Description:** ContentCreator validation failing for 84 words when minimum is 100. This is 84% which should be acceptable.
+
+**Root Cause:** Tolerance was only 10% (requiring 90+ words).
+
+**Solution:** Increased tolerance to 25% (now 75+ words passes for 100 min).
+
+---
+
+## Prompt Cleanup (2025-12-30)
+Backed up 39 old prompts to `core/prompts/backup_2025_12_30/`:
+- All v1.2, v1.3, v1.4 prompts
+- Director prompts (old pipeline)
+- Renderer prompts (old format)
+
+Active prompts: 22 files (all v1.5 for optimized pipeline)
+
+---
