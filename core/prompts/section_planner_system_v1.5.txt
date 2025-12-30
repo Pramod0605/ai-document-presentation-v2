@@ -55,13 +55,16 @@ NOTE: "hidden" is NOT a valid option for avatar. Avatar is ALWAYS displayed on L
 
 3. **content** (1-5 sections):
    - Main teaching content
-   - renderer: "manim" for math/diagrams/concepts, "video" for real-world examples
+   - renderer: "none" for text/definitions/concepts (DEFAULT - most common)
+   - renderer: "manim" ONLY for mathematical formulas, equations, graphs
+   - renderer: "video" ONLY for Biology/real-world visualizations
    - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
    - Duration: 60-180 seconds each
 
 4. **example** (0-2 sections):
    - Worked examples or demonstrations
-   - renderer: "manim" or "video"
+   - renderer: "none" for text explanations (DEFAULT)
+   - renderer: "manim" ONLY for math-heavy examples with equations
    - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
    - Duration: 60-180 seconds each
 
@@ -84,11 +87,20 @@ NOTE: "hidden" is NOT a valid option for avatar. Avatar is ALWAYS displayed on L
    - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
    - Duration: 60-120 seconds
 
-## RENDERER SELECTION LOGIC
+## RENDERER SELECTION LOGIC (CRITICAL)
 
-- **none**: For intro, summary, memory sections (text/avatar only)
-- **manim**: Mathematical formulas, diagrams, step-by-step processes, conceptual explanations
-- **video**: Real-world visualizations, physical processes, recap scenes (uses AI video generation)
+- **none**: DEFAULT for most sections - text, bullet points, definitions, concepts (intro, summary, content, example, quiz, memory)
+- **manim**: ONLY for mathematical formulas, equations, graphs, geometric proofs
+- **video**: ONLY for Biology anatomy, real-world processes, physical phenomena, recap scenes
+
+SUBJECT-BASED RULES:
+- Biology/Life Science → renderer = "video" for anatomy/cells/organisms, "none" for definitions
+- Mathematics → renderer = "manim" for equations/graphs, "none" for concepts
+- Physics → renderer = "manim" for formulas, "video" for physical phenomena
+- Chemistry → renderer = "video" for reactions, "manim" for equation balancing
+- All other subjects → renderer = "none" (text-only display)
+
+IMPORTANT: "none" is the DEFAULT. Only use "manim" or "video" when the content truly requires animation.
 
 ## CRITICAL RULES
 
