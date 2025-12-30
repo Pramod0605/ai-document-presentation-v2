@@ -1,0 +1,221 @@
+{
+  "section_id": "section_6",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "text_only",
+      "description": "Introduction to predicting solution types using coefficients.",
+      "symbolic_overlay": {
+        "enabled": false,
+        "content": [],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "formula",
+      "description": "Display general form of linear equations.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "General Form",
+          "Linear Equations"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "diagram",
+      "description": "Visualizing unique solution with intersecting lines and coefficient ratio condition.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Unique Solution",
+          "Intersecting Lines",
+          "a1/a2 \u2260 b1/b2"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "diagram",
+      "description": "Visualizing no solution with parallel lines and coefficient ratio condition.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "No Solution",
+          "Parallel Lines",
+          "a1/a2 = b1/b2 \u2260 c1/c2"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "diagram",
+      "description": "Visualizing infinitely many solutions with coincident lines and coefficient ratio condition.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Infinitely Many",
+          "Coincident Lines",
+          "a1/a2 = b1/b2 = c1/c2"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Predict solution types from coefficients"
+          },
+          {
+            "level": 1,
+            "text": "Understand graphical relationships"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [
+        9,
+        10
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$$a1x + b1y + c1 = 0$$",
+          "$$a2x + b2y + c2 = 0$$"
+        ],
+        "labels": [
+          "General Form of Linear Equations"
+        ],
+        "formula": "$$a1x + b1y + c1 = 0$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Ratio of x-coeffs \u2260 Ratio of y-coeffs"
+          },
+          {
+            "level": 1,
+            "text": "$$a1/a2 \\neq b1/b2$$"
+          },
+          {
+            "level": 1,
+            "text": "Lines Intersect at One Point"
+          },
+          {
+            "level": 1,
+            "text": "Unique Solution"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Ratio of x-coeffs = Ratio of y-coeffs"
+          },
+          {
+            "level": 1,
+            "text": "But \u2260 Ratio of constant terms"
+          },
+          {
+            "level": 1,
+            "text": "$$a1/a2 = b1/b2 \\neq c1/c2$$"
+          },
+          {
+            "level": 1,
+            "text": "Lines are Parallel and Distinct"
+          },
+          {
+            "level": 1,
+            "text": "No Solution"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [],
+      "visual_content": {
+        "content_type": "bullet_list",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "All three ratios are equal"
+          },
+          {
+            "level": 1,
+            "text": "$$a1/a2 = b1/b2 = c1/c2$$"
+          },
+          {
+            "level": 1,
+            "text": "Lines are Coincident (Same Line)"
+          },
+          {
+            "level": 1,
+            "text": "Infinitely Many Solutions"
+          }
+        ]
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    }
+  ]
+}

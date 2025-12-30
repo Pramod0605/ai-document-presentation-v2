@@ -1,0 +1,194 @@
+{
+  "section_id": "section_3",
+  "visual_beats": [
+    {
+      "beat_id": "beat_1",
+      "segment_id": 1,
+      "visual_beat_type": "formula",
+      "description": "Displaying the general form of a pair of linear equations.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Linear",
+          "Equations",
+          "General Form"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_2",
+      "segment_id": 2,
+      "visual_beat_type": "formula",
+      "description": "Highlighting variables and coefficients in the general form.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Variables",
+          "Coefficients",
+          "Real Numbers"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_3",
+      "segment_id": 3,
+      "visual_beat_type": "formula",
+      "description": "Emphasizing the condition for linearity (a and b not both zero).",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Linearity",
+          "a, b \u2260 0"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_4",
+      "segment_id": 4,
+      "visual_beat_type": "diagram",
+      "description": "Illustrating two intersecting lines representing the solution.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Straight Lines",
+          "Intersection",
+          "Solution"
+        ],
+        "max_words": 4
+      }
+    },
+    {
+      "beat_id": "beat_5",
+      "segment_id": 5,
+      "visual_beat_type": "process",
+      "description": "Explaining the need for two equations for unique solutions with an example.",
+      "symbolic_overlay": {
+        "enabled": true,
+        "content": [
+          "Two Equations",
+          "Unique Solution",
+          "Example"
+        ],
+        "max_words": 4
+      }
+    }
+  ],
+  "segment_enrichments": [
+    {
+      "segment_id": 1,
+      "source_block_ids": [
+        3,
+        4
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$$a1x + b1y + c1 = 0$$",
+          "$$a2x + b2y + c2 = 0$$"
+        ],
+        "formula": "$$a1x + b1y + c1 = 0$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": 0.0
+      }
+    },
+    {
+      "segment_id": 2,
+      "source_block_ids": [
+        3,
+        4,
+        21
+      ],
+      "visual_content": {
+        "content_type": "formula",
+        "formulas": [
+          "$$a1x + b1y + c1 = 0$$",
+          "$$a2x + b2y + c2 = 0$$"
+        ],
+        "labels": [
+          "x, y: variables",
+          "a, b, c: real number coefficients"
+        ],
+        "formula": "$$a1x + b1y + c1 = 0$$"
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": 0.0
+      }
+    },
+    {
+      "segment_id": 3,
+      "source_block_ids": [
+        21
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "where  $a$ ,  $b$  and  $c$  are real numbers and  $a$  and  $b$  are not both zero.",
+        "has_inline_latex": true
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": 0.0
+      }
+    },
+    {
+      "segment_id": 4,
+      "source_block_ids": [
+        13
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "verbatim_text": "A pair of linear equations in two variables consists of two linear equations involving the same two variables, usually  $x$  and  $y$ . Each equation is of degree one. The solution of the pair is the value of the variables that satisfies both equations at the same time.",
+        "has_inline_latex": true
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": 0.0
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [
+        7,
+        24
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "One equation, two variables = infinite solutions"
+          },
+          {
+            "level": 1,
+            "text": "Two equations, two variables = unique solution"
+          },
+          {
+            "level": 1,
+            "text": "Example: Sum = 10, Difference = 2"
+          }
+        ],
+        "verbatim_text": "Two numbers have a sum of 10 and their difference is 2. Find the numbers.",
+        "has_inline_latex": false
+      },
+      "display_directives": {
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
+        "flip_timing_sec": 0.0
+      }
+    }
+  ]
+}
