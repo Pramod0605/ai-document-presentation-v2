@@ -5,7 +5,7 @@
       "beat_id": "beat_1",
       "segment_id": 1,
       "visual_beat_type": "text_only",
-      "description": "Introduction to graphical solutions of linear equations",
+      "description": "Introduction to graphical solutions and types of line interactions",
       "symbolic_overlay": {
         "enabled": false,
         "content": [],
@@ -16,13 +16,13 @@
       "beat_id": "beat_2",
       "segment_id": 2,
       "visual_beat_type": "diagram",
-      "description": "Illustrate intersecting lines with a unique solution",
+      "description": "Illustrate intersecting lines and unique solution",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
           "Intersecting",
           "Unique Solution",
-          "Consistent"
+          "Consistent System"
         ],
         "max_words": 4
       }
@@ -30,11 +30,15 @@
     {
       "beat_id": "beat_3",
       "segment_id": 3,
-      "visual_beat_type": "text_only",
-      "description": "Explain consistent system and transition to parallel lines",
+      "visual_beat_type": "diagram",
+      "description": "Illustrate parallel lines and no solution",
       "symbolic_overlay": {
-        "enabled": false,
-        "content": [],
+        "enabled": true,
+        "content": [
+          "Parallel",
+          "No Solution",
+          "Inconsistent System"
+        ],
         "max_words": 4
       }
     },
@@ -42,13 +46,13 @@
       "beat_id": "beat_4",
       "segment_id": 4,
       "visual_beat_type": "diagram",
-      "description": "Illustrate parallel lines with no solution",
+      "description": "Illustrate coincident lines and infinitely many solutions",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
-          "Parallel",
-          "No Solution",
-          "Inconsistent"
+          "Coincident",
+          "Infinite Solutions",
+          "Dependent System"
         ],
         "max_words": 4
       }
@@ -56,15 +60,11 @@
     {
       "beat_id": "beat_5",
       "segment_id": 5,
-      "visual_beat_type": "diagram",
-      "description": "Illustrate coincident lines with infinite solutions and summary",
+      "visual_beat_type": "text_only",
+      "description": "Summary of graphical interpretations",
       "symbolic_overlay": {
-        "enabled": true,
-        "content": [
-          "Coincident",
-          "Infinite Solutions",
-          "Dependent"
-        ],
+        "enabled": false,
+        "content": [],
         "max_words": 4
       }
     }
@@ -72,27 +72,23 @@
   "segment_enrichments": [
     {
       "segment_id": 1,
-      "source_block_ids": [
-        55
-      ],
+      "source_block_ids": [],
       "visual_content": {
-        "content_type": "paragraph",
+        "content_type": "bullet_list",
         "bullet_points": [
           {
             "level": 1,
-            "text": "Linear equations represent lines"
+            "text": "Graphical solutions for linear equations"
           },
           {
             "level": 1,
-            "text": "Graphical method shows solution nature"
+            "text": "How lines interact on a coordinate plane"
           },
           {
             "level": 1,
-            "text": "Visualizing algebraic solutions"
+            "text": "Three main types of solutions"
           }
-        ],
-        "verbatim_text": "A pair of linear equations represents two straight lines. The graphical method provides a visual understanding of the nature of solutions. Algebraic methods such as substitution and elimination give exact solutions. The nature of the solution depends on the ratios of coefficients. This chapter is very important for board examinations.",
-        "has_inline_latex": false
+        ]
       },
       "display_directives": {
         "text_layer": "show",
@@ -109,14 +105,14 @@
         "bullet_points": [
           {
             "level": 1,
-            "text": "Intersecting Lines"
+            "text": "Intersecting Lines: Unique Solution"
           },
           {
-            "level": 2,
-            "text": "Unique Solution"
+            "level": 1,
+            "text": "Lines cross at a single point"
           },
           {
-            "level": 2,
+            "level": 1,
             "text": "Consistent System"
           }
         ]
@@ -130,32 +126,16 @@
     },
     {
       "segment_id": 3,
-      "source_block_ids": [],
-      "visual_content": {
-        "content_type": "bullet_list",
-        "bullet_points": [
-          {
-            "level": 1,
-            "text": "Consistent System: One Solution"
-          },
-          {
-            "level": 1,
-            "text": "Next: Parallel Lines"
-          }
-        ]
-      },
-      "display_directives": {
-        "text_layer": "show",
-        "visual_layer": "hide",
-        "avatar_layer": "show",
-        "flip_timing_sec": null
-      }
-    },
-    {
-      "segment_id": 4,
       "source_block_ids": [
         3,
         4,
+        9,
+        14,
+        17,
+        18,
+        20,
+        21,
+        26,
         28
       ],
       "visual_content": {
@@ -163,18 +143,18 @@
         "bullet_points": [
           {
             "level": 1,
-            "text": "Parallel Lines"
+            "text": "Parallel Lines: No Solution"
           },
           {
-            "level": 2,
-            "text": "No Intersection"
+            "level": 1,
+            "text": "Same slope, different y-intercepts"
           },
           {
-            "level": 2,
-            "text": "No Solution"
+            "level": 1,
+            "text": "Lines never meet"
           },
           {
-            "level": 2,
+            "level": 1,
             "text": "Inconsistent System"
           }
         ],
@@ -188,10 +168,14 @@
       }
     },
     {
-      "segment_id": 5,
+      "segment_id": 4,
       "source_block_ids": [
         36,
         37,
+        41,
+        47,
+        48,
+        50,
         52,
         53
       ],
@@ -200,18 +184,18 @@
         "bullet_points": [
           {
             "level": 1,
-            "text": "Coincident Lines"
+            "text": "Coincident Lines: Infinitely Many Solutions"
           },
           {
-            "level": 2,
-            "text": "Same Line"
+            "level": 1,
+            "text": "Both equations represent the same line"
           },
           {
-            "level": 2,
-            "text": "Infinitely Many Solutions"
+            "level": 1,
+            "text": "Lines overlap perfectly"
           },
           {
-            "level": 2,
+            "level": 1,
             "text": "Dependent System"
           }
         ],
@@ -221,6 +205,33 @@
         "text_layer": "hide",
         "visual_layer": "show",
         "avatar_layer": "gesture_only",
+        "flip_timing_sec": null
+      }
+    },
+    {
+      "segment_id": 5,
+      "source_block_ids": [
+        55
+      ],
+      "visual_content": {
+        "content_type": "paragraph",
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Graphical interpretations visualize solutions"
+          },
+          {
+            "level": 1,
+            "text": "Nature of solutions for linear equations"
+          }
+        ],
+        "verbatim_text": "A pair of linear equations represents two straight lines. The graphical method provides a visual understanding of the nature of solutions. Algebraic methods such as substitution and elimination give exact solutions. The nature of the solution depends on the ratios of coefficients. This chapter is very important for board examinations.",
+        "has_inline_latex": false
+      },
+      "display_directives": {
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
         "flip_timing_sec": null
       }
     }

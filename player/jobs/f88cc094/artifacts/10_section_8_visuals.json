@@ -5,7 +5,7 @@
       "beat_id": "beat_1",
       "segment_id": 1,
       "visual_beat_type": "text_only",
-      "description": "Quiz question 1: Define linear equations in two variables",
+      "description": "Quiz question 1: Define linear equations in two variables.",
       "symbolic_overlay": {
         "enabled": false,
         "content": [],
@@ -16,7 +16,7 @@
       "beat_id": "beat_2",
       "segment_id": 2,
       "visual_beat_type": "text_only",
-      "description": "Pause for user to think",
+      "description": "Pause for thought.",
       "symbolic_overlay": {
         "enabled": false,
         "content": [],
@@ -27,13 +27,13 @@
       "beat_id": "beat_3",
       "segment_id": 3,
       "visual_beat_type": "text_only",
-      "description": "Answer to question 1: Definition of linear equations",
+      "description": "Answer to question 1: Definition of linear equations in two variables.",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
           "Linear Equations",
           "Two Variables",
-          "Simultaneous Solution"
+          "Solution"
         ],
         "max_words": 4
       }
@@ -42,7 +42,7 @@
       "beat_id": "beat_4",
       "segment_id": 4,
       "visual_beat_type": "text_only",
-      "description": "Quiz question 2: General form of linear equation",
+      "description": "Quiz question 2: General form of a linear equation.",
       "symbolic_overlay": {
         "enabled": false,
         "content": [],
@@ -53,7 +53,7 @@
       "beat_id": "beat_5",
       "segment_id": 5,
       "visual_beat_type": "text_only",
-      "description": "Pause for user to think",
+      "description": "Pause for thought.",
       "symbolic_overlay": {
         "enabled": false,
         "content": [],
@@ -64,7 +64,7 @@
       "beat_id": "beat_6",
       "segment_id": 6,
       "visual_beat_type": "formula",
-      "description": "Answer to question 2: General form formula",
+      "description": "Answer to question 2: General form of a linear equation.",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
@@ -78,7 +78,7 @@
       "beat_id": "beat_7",
       "segment_id": 7,
       "visual_beat_type": "text_only",
-      "description": "Quiz question 3: Solve graphically",
+      "description": "Quiz question 3: Solve graphically.",
       "symbolic_overlay": {
         "enabled": false,
         "content": [],
@@ -89,7 +89,7 @@
       "beat_id": "beat_8",
       "segment_id": 8,
       "visual_beat_type": "text_only",
-      "description": "Pause for user to think",
+      "description": "Pause for thought.",
       "symbolic_overlay": {
         "enabled": false,
         "content": [],
@@ -100,11 +100,11 @@
       "beat_id": "beat_9",
       "segment_id": 9,
       "visual_beat_type": "text_only",
-      "description": "Answer to question 3: Graphical solution",
+      "description": "Answer to question 3: Solution for graphical problem.",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
-          "Solution",
+          "Graphical Solution",
           "x=4, y=2"
         ],
         "max_words": 4
@@ -114,7 +114,7 @@
       "beat_id": "beat_10",
       "segment_id": 10,
       "visual_beat_type": "text_only",
-      "description": "Quiz question 4: Solve algebraically",
+      "description": "Quiz question 4: Solve algebraically.",
       "symbolic_overlay": {
         "enabled": false,
         "content": [],
@@ -125,7 +125,7 @@
       "beat_id": "beat_11",
       "segment_id": 11,
       "visual_beat_type": "text_only",
-      "description": "Pause for user to think",
+      "description": "Pause for thought.",
       "symbolic_overlay": {
         "enabled": false,
         "content": [],
@@ -136,11 +136,11 @@
       "beat_id": "beat_12",
       "segment_id": 12,
       "visual_beat_type": "text_only",
-      "description": "Answer to question 4: Algebraic solution",
+      "description": "Answer to question 4: Solution for algebraic problem.",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
-          "Solution",
+          "Algebraic Solution",
           "x=6, y=4"
         ],
         "max_words": 4
@@ -195,10 +195,10 @@
         "has_inline_latex": true
       },
       "display_directives": {
-        "text_layer": "hide",
-        "visual_layer": "show",
-        "avatar_layer": "gesture_only",
-        "flip_timing_sec": 0.0
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
       }
     },
     {
@@ -238,41 +238,28 @@
     {
       "segment_id": 6,
       "source_block_ids": [
-        47,
         48,
         49
       ],
       "visual_content": {
-        "content_type": "paragraph",
-        "verbatim_text": "The general form of a linear equation in two variables is:",
-        "has_inline_latex": false
+        "content_type": "formula",
+        "verbatim_text": "The general form of a linear equation in two variables is:\n$$ax + by + c = 0$$\nwhere  $a$ ,  $b$  and  $c$  are real numbers and  $a$  and  $b$  are not both zero.",
+        "formula": "$$ax + by + c = 0$$"
       },
       "display_directives": {
-        "text_layer": "hide",
-        "visual_layer": "show",
-        "avatar_layer": "gesture_only",
-        "flip_timing_sec": 0.0
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
       }
     },
     {
       "segment_id": 7,
       "source_block_ids": [],
       "visual_content": {
-        "content_type": "bullet_list",
-        "bullet_points": [
-          {
-            "level": 1,
-            "text": "Solve graphically:"
-          },
-          {
-            "level": 1,
-            "text": "$x - y = 2$"
-          },
-          {
-            "level": 1,
-            "text": "$x + y = 6$"
-          }
-        ]
+        "content_type": "paragraph",
+        "verbatim_text": "### Basic Form",
+        "has_inline_latex": false
       },
       "display_directives": {
         "text_layer": "show",
@@ -300,40 +287,24 @@
       "segment_id": 9,
       "source_block_ids": [],
       "visual_content": {
-        "content_type": "bullet_list",
-        "bullet_points": [
-          {
-            "level": 1,
-            "text": "Solution: x = 4, y = 2"
-          }
-        ]
+        "content_type": "formula",
+        "verbatim_text": "Solution: $x = 4$, $y = 2$",
+        "formula": "$$a1x + b1y + c1 = 0$$"
       },
       "display_directives": {
-        "text_layer": "hide",
-        "visual_layer": "show",
-        "avatar_layer": "gesture_only",
-        "flip_timing_sec": 0.0
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
       }
     },
     {
       "segment_id": 10,
       "source_block_ids": [],
       "visual_content": {
-        "content_type": "bullet_list",
-        "bullet_points": [
-          {
-            "level": 1,
-            "text": "Solve algebraically:"
-          },
-          {
-            "level": 1,
-            "text": "$x + y = 10$"
-          },
-          {
-            "level": 1,
-            "text": "$x - y = 2$"
-          }
-        ]
+        "content_type": "formula",
+        "verbatim_text": "Solve algebraically:\n$x + y = 10$\n$x - y = 2$",
+        "formula": "$$a2x + b2y + c2 = 0$$"
       },
       "display_directives": {
         "text_layer": "show",
@@ -361,19 +332,15 @@
       "segment_id": 12,
       "source_block_ids": [],
       "visual_content": {
-        "content_type": "bullet_list",
-        "bullet_points": [
-          {
-            "level": 1,
-            "text": "Solution: x = 6, y = 4"
-          }
-        ]
+        "content_type": "paragraph",
+        "verbatim_text": "#### Example 1",
+        "has_inline_latex": false
       },
       "display_directives": {
-        "text_layer": "hide",
-        "visual_layer": "show",
-        "avatar_layer": "gesture_only",
-        "flip_timing_sec": 0.0
+        "text_layer": "show",
+        "visual_layer": "hide",
+        "avatar_layer": "show",
+        "flip_timing_sec": null
       }
     }
   ]

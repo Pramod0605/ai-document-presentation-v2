@@ -16,7 +16,7 @@
       "beat_id": "beat_2",
       "segment_id": 2,
       "visual_beat_type": "process",
-      "description": "Define variables for the unknown numbers.",
+      "description": "Define variables for the numbers.",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
@@ -30,13 +30,12 @@
       "beat_id": "beat_3",
       "segment_id": 3,
       "visual_beat_type": "formula",
-      "description": "Translate word problem into two linear equations.",
+      "description": "Form the first equation from the sum condition.",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
           "Sum",
-          "Difference",
-          "Equations"
+          "Equation 1"
         ],
         "max_words": 4
       }
@@ -45,13 +44,13 @@
       "beat_id": "beat_4",
       "segment_id": 4,
       "visual_beat_type": "formula",
-      "description": "Solve the system of equations using elimination/substitution.",
+      "description": "Form the second equation from the difference condition, showing the system.",
       "symbolic_overlay": {
         "enabled": true,
         "content": [
-          "Solve",
-          "System",
-          "Equations"
+          "Difference",
+          "Equation 2",
+          "System"
         ],
         "max_words": 4
       }
@@ -59,11 +58,15 @@
     {
       "beat_id": "beat_5",
       "segment_id": 5,
-      "visual_beat_type": "text_only",
-      "description": "State the solution and summarize the problem-solving process.",
+      "visual_beat_type": "animation",
+      "description": "Animate the solution process and present the final answer.",
       "symbolic_overlay": {
-        "enabled": false,
-        "content": [],
+        "enabled": true,
+        "content": [
+          "Solve",
+          "x=6",
+          "y=4"
+        ],
         "max_words": 4
       }
     }
@@ -95,10 +98,19 @@
       ],
       "visual_content": {
         "content_type": "paragraph",
-        "ordered_list": [
-          "Step 1: Let",
-          "First number = x",
-          "Second number = y"
+        "bullet_points": [
+          {
+            "level": 1,
+            "text": "Step 1: Let"
+          },
+          {
+            "level": 1,
+            "text": "First number = x"
+          },
+          {
+            "level": 1,
+            "text": "Second number = y"
+          }
         ],
         "verbatim_text": "###### Step 1: Let",
         "has_inline_latex": false
@@ -114,16 +126,11 @@
       "segment_id": 3,
       "source_block_ids": [
         17,
-        18,
-        19
+        18
       ],
       "visual_content": {
         "content_type": "paragraph",
-        "ordered_list": [
-          "Step 2: Form equations",
-          "$x + y = 10$",
-          "$x - y = 2$"
-        ],
+        "formula": "$$x + y = 10$$",
         "verbatim_text": "Step 2: Form equations",
         "has_inline_latex": false
       },
@@ -137,18 +144,16 @@
     {
       "segment_id": 4,
       "source_block_ids": [
-        18,
-        19
+        19,
+        20
       ],
       "visual_content": {
         "content_type": "formula",
-        "ordered_list": [
-          "$x + y = 10$",
-          "$x - y = 2$",
-          "Adding equations: $2x = 12 \\implies x = 6$",
-          "Substitute $x=6$ into $x+y=10$: $6+y=10 \\implies y=4$"
+        "formulas": [
+          "$$x + y = 10$$",
+          "$$x - y = 2$$"
         ],
-        "formula": "$$x + y = 10$$"
+        "formula": "$$x - y = 2$$"
       },
       "display_directives": {
         "text_layer": "hide",
@@ -159,28 +164,45 @@
     },
     {
       "segment_id": 5,
-      "source_block_ids": [],
+      "source_block_ids": [
+        18,
+        19,
+        20
+      ],
       "visual_content": {
-        "content_type": "bullet_list",
+        "content_type": "formula",
         "bullet_points": [
           {
             "level": 1,
+            "text": "System of equations:"
+          },
+          {
+            "level": 2,
+            "text": "$x + y = 10$"
+          },
+          {
+            "level": 2,
+            "text": "$x - y = 2$"
+          },
+          {
+            "level": 1,
+            "text": "Add equations: $2x = 12 \\implies x = 6$"
+          },
+          {
+            "level": 1,
+            "text": "Substitute $x=6$: $6 + y = 10 \\implies y = 4$"
+          },
+          {
+            "level": 1,
             "text": "Numbers are 6 and 4"
-          },
-          {
-            "level": 1,
-            "text": "Convert word problem to equations"
-          },
-          {
-            "level": 1,
-            "text": "Interpret results in original context"
           }
-        ]
+        ],
+        "formula": "$$x + y = 10$$"
       },
       "display_directives": {
-        "text_layer": "show",
-        "visual_layer": "hide",
-        "avatar_layer": "show",
+        "text_layer": "hide",
+        "visual_layer": "show",
+        "avatar_layer": "gesture_only",
         "flip_timing_sec": null
       }
     }
