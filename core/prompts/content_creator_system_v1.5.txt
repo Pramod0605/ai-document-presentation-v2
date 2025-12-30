@@ -65,10 +65,20 @@ Avatar is ALWAYS visible. The avatar_layer must be either:
 - "gesture_only" (avatar visible, minimal gesturing)
 NEVER use "hide" for avatar_layer.
 
-## DISPLAY DIRECTIVE RULES
-- text_layer and visual_layer cannot BOTH be "show" at the same time
-- When showing formulas/diagrams, hide text layer
-- When showing text content, hide visual layer
+## DISPLAY DIRECTIVE RULES (CRITICAL - VALIDATION WILL FAIL IF VIOLATED)
+**RULE: text_layer and visual_layer CANNOT BOTH be "show"**
+
+ONLY these combinations are valid:
+| text_layer | visual_layer | Use When |
+|------------|--------------|----------|
+| "show"     | "hide"       | Text content, bullets, definitions (DEFAULT - most common) |
+| "hide"     | "show"       | Formulas, diagrams, animations, videos |
+
+INVALID (will cause error):
+- text_layer: "show" AND visual_layer: "show" ❌ NEVER DO THIS
+
+For text_only, flashcard, process visual_beat_types: text_layer="show", visual_layer="hide"
+For formula, diagram, animation, video_clip: text_layer="hide", visual_layer="show"
 
 ## VISUAL BEAT TYPES
 Choose appropriate type for each segment:

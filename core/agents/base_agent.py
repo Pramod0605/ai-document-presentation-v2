@@ -206,6 +206,12 @@ class BaseAgent:
                 guidance_parts.append(
                     "Ensure segments combine to exactly match full_text word for word."
                 )
+            elif "text_layer" in error.lower() and "visual_layer" in error.lower():
+                guidance_parts.append(
+                    "FIX LAYER CONFLICT: text_layer and visual_layer CANNOT both be 'show'. "
+                    "For text_only/flashcard/process content: use text_layer='show', visual_layer='hide'. "
+                    "For formula/diagram/animation/video: use text_layer='hide', visual_layer='show'."
+                )
             else:
                 guidance_parts.append(f"Fix: {error}")
         
