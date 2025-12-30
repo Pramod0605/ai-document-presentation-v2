@@ -879,6 +879,13 @@ def process_markdown_optimized(
         manim_failed_sections = []
         images_list = _extract_images_list(markdown_content)
         
+        # ISS-213 FIX: Use chunker's content_blocks instead of re-parsing
+        # This prevents creating 163 tiny blocks from dense content
+        all_content_blocks = chunker_output.get("content_blocks", [])
+        if not all_content_blocks:
+            all_content_blocks = parse_content_blocks(markdown_content)
+        logger.info(f"[Pipeline v1.5-opt] Using {len(all_content_blocks)} content blocks from chunker")
+        
         for i, blueprint in enumerate(blueprints):
             section_type = blueprint.get("section_type")
             section_id = blueprint.get("section_id")
@@ -897,7 +904,17 @@ def process_markdown_optimized(
             
             section_quiz_questions = quiz_questions if section_type == "quiz" else []
             
-            content_blocks = parse_content_blocks(source_content) if source_content else []
+            # ISS-213 FIX: Filter chunker's content_blocks by topic source_blocks
+            # instead of re-parsing markdown (which creates too many tiny blocks)
+            if topic_blocks:
+                content_blocks = [
+                    b for b in all_content_blocks 
+                    if b.get("block_id") in topic_blocks
+                ]
+                logger.info(f"[Pipeline v1.5-opt] {section_id}: filtered to {len(content_blocks)} blocks from {len(topic_blocks)} topic_blocks")
+            else:
+                # Fallback for sections without topic mappings (intro/summary/quiz)
+                content_blocks = parse_content_blocks(source_content) if source_content else []
             content_blocks_json = json.dumps(content_blocks, indent=2) if content_blocks else "[]"
             
             # ISS-211: Use batching for large content sections
