@@ -43,6 +43,24 @@ SMART_CHUNKER_SCHEMA = {
             "type": "string",
             "description": "The main subject matter of the provided text"
         },
+        "content_density_analysis": {
+            "type": "object",
+            "description": "Analysis of content density to guide section planning",
+            "properties": {
+                "total_concepts": {"type": "integer"},
+                "formula_count": {"type": "integer"},
+                "table_count": {"type": "integer"},
+                "image_count": {"type": "integer"},
+                "qa_pair_count": {"type": "integer"},
+                "density_rating": {
+                    "type": "string",
+                    "enum": ["light", "medium", "heavy"]
+                },
+                "recommended_content_sections": {"type": "integer"},
+                "reasoning": {"type": "string"}
+            },
+            "required": ["total_concepts", "recommended_content_sections", "density_rating"]
+        },
         "topics": {
             "type": "array",
             "description": "List of logical sub-topics extracted from the text",
@@ -67,9 +85,30 @@ SMART_CHUNKER_SCHEMA = {
                     "suggested_renderer": {
                         "type": "string",
                         "enum": ["none", "manim", "video"]
-                    }
+                    },
+                    "complexity": {
+                        "type": "string",
+                        "enum": ["light", "medium", "heavy"]
+                    },
+                    "concept_count": {"type": "integer"}
                 },
                 "required": ["topic_id", "title", "concept_type", "source_blocks", "suggested_renderer"]
+            }
+        },
+        "topic_grouping_hints": {
+            "type": "array",
+            "description": "Recommended groupings of topics into content sections",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "content_section": {"type": "integer"},
+                    "topic_ids": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    },
+                    "total_concepts": {"type": "integer"}
+                },
+                "required": ["content_section", "topic_ids"]
             }
         },
         "quiz_questions": {
@@ -87,7 +126,7 @@ SMART_CHUNKER_SCHEMA = {
             }
         }
     },
-    "required": ["source_topic", "topics"]
+    "required": ["source_topic", "topics", "content_density_analysis"]
 }
 
 

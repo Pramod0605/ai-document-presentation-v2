@@ -843,11 +843,22 @@ def process_markdown_optimized(
         
         update_status("section_planner", "Planning section structure...")
         section_planner = SectionPlannerAgent(tracker=tracker, log_func=log)
+        
+        # ISS-213: Pass density analysis to SectionPlanner for smart section counts
+        content_density_analysis = chunker_output.get("content_density_analysis", {})
+        topic_grouping_hints = chunker_output.get("topic_grouping_hints", [])
+        
+        if content_density_analysis:
+            rec_sections = content_density_analysis.get("recommended_content_sections", "N/A")
+            logger.info(f"[Pipeline v1.5-opt] Density analysis: {content_density_analysis.get('total_concepts', 0)} concepts, recommends {rec_sections} content sections")
+        
         planner_output = section_planner.run(
             topics=topics,
             subject=subject,
             grade=grade,
-            quiz_questions=quiz_questions
+            quiz_questions=quiz_questions,
+            content_density_analysis=json.dumps(content_density_analysis, indent=2) if content_density_analysis else "{}",
+            topic_grouping_hints=json.dumps(topic_grouping_hints, indent=2) if topic_grouping_hints else "[]"
         )
         blueprints = planner_output.get("sections", [])
         logger.info(f"[Pipeline v1.5-opt] Planned {len(blueprints)} sections")
