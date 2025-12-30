@@ -465,7 +465,7 @@
 
         function startPolling() {
             if (pollInterval) clearInterval(pollInterval);
-            pollInterval = setInterval(refreshStatus, 180000); // 3 minutes
+            pollInterval = setInterval(refreshStatus, 3000); // 3 seconds for real-time updates
         }
 
         function stopPolling() {
@@ -550,6 +550,8 @@
             }
         }
 
+        let historyPollInterval = null;
+        
         async function loadJobHistory() {
             const container = document.getElementById('jobHistoryList');
             try {
@@ -558,7 +560,16 @@
                 
                 if (!data.jobs || data.jobs.length === 0) {
                     container.innerHTML = '<div style="color: #888; text-align: center; padding: 20px;">No jobs found</div>';
+                    stopHistoryPolling();
                     return;
+                }
+                
+                // Check if any jobs are running - if so, start polling
+                const hasRunningJobs = data.jobs.some(j => j.status === 'running' || j.status === 'processing' || j.status === 'pending');
+                if (hasRunningJobs && !historyPollInterval) {
+                    startHistoryPolling();
+                } else if (!hasRunningJobs && historyPollInterval) {
+                    stopHistoryPolling();
                 }
                 
                 container.innerHTML = data.jobs.map(job => {
@@ -618,6 +629,20 @@
                 }).join('');
             } catch (err) {
                 container.innerHTML = `<div style="color: #ff5252; text-align: center; padding: 20px;">Error loading job history: ${err.message}</div>`;
+            }
+        }
+        
+        function startHistoryPolling() {
+            if (historyPollInterval) return;
+            historyPollInterval = setInterval(loadJobHistory, 3000); // 3 seconds
+            console.log('Started job history polling');
+        }
+        
+        function stopHistoryPolling() {
+            if (historyPollInterval) {
+                clearInterval(historyPollInterval);
+                historyPollInterval = null;
+                console.log('Stopped job history polling');
             }
         }
 
