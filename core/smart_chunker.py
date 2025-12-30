@@ -126,7 +126,7 @@ SMART_CHUNKER_SCHEMA = {
             }
         }
     },
-    "required": ["source_topic", "topics", "content_density_analysis"]
+    "required": ["source_topic", "topics", "content_density_analysis", "topic_grouping_hints"]
 }
 
 
