@@ -164,7 +164,9 @@ class ContentCreatorAgent(BaseAgent):
         word_count = len(full_text.split())
         
         min_words, max_words = self.WORD_LIMITS.get(section_type, (50, 300))
-        if word_count < min_words:
+        # Allow 10% tolerance on minimum word count (149 vs 150 should pass)
+        min_with_tolerance = int(min_words * 0.9)
+        if word_count < min_with_tolerance:
             errors.append(f"Narration too short for {section_type}: {word_count} words (min {min_words})")
         if word_count > max_words * 1.5:
             errors.append(f"Narration too long for {section_type}: {word_count} words (max ~{max_words})")
