@@ -105,6 +105,8 @@ def _merge_batched_outputs(batched_outputs: List[Dict], section_id: str, section
     - narration.full_text (concatenated)
     - visual_beats (concatenated, re-indexed)
     - segment_enrichments (concatenated, re-indexed)
+    
+    Preserves all other metadata fields from first batch (derived_renderer, timing_guidance, etc.)
     """
     if not batched_outputs:
         raise PipelineError("No batched outputs to merge", phase="content_batching")
@@ -112,16 +114,21 @@ def _merge_batched_outputs(batched_outputs: List[Dict], section_id: str, section
     if len(batched_outputs) == 1:
         return batched_outputs[0]
     
-    merged = {
-        "section_id": section_id,
-        "section_type": section_type,
-        "narration": {
-            "full_text": "",
-            "segments": []
-        },
-        "visual_beats": [],
-        "segment_enrichments": []
+    # Start with a deep copy of the first batch to preserve all metadata fields
+    import copy
+    merged = copy.deepcopy(batched_outputs[0])
+    
+    # Override with correct section info
+    merged["section_id"] = section_id
+    merged["section_type"] = section_type
+    
+    # Reset arrays for re-indexing
+    merged["narration"] = {
+        "full_text": "",
+        "segments": []
     }
+    merged["visual_beats"] = []
+    merged["segment_enrichments"] = []
     
     segment_offset = 0
     
@@ -137,7 +144,7 @@ def _merge_batched_outputs(batched_outputs: List[Dict], section_id: str, section
         # Merge segments with re-indexed IDs
         segments = narration.get("segments", [])
         for seg in segments:
-            new_seg = seg.copy()
+            new_seg = copy.deepcopy(seg)
             old_id = new_seg.get("segment_id", 1)
             new_seg["segment_id"] = segment_offset + old_id
             merged["narration"]["segments"].append(new_seg)
@@ -145,7 +152,7 @@ def _merge_batched_outputs(batched_outputs: List[Dict], section_id: str, section
         # Merge visual_beats with re-indexed segment_ids
         beats = batch_output.get("visual_beats", [])
         for beat in beats:
-            new_beat = beat.copy()
+            new_beat = copy.deepcopy(beat)
             old_seg_id = new_beat.get("segment_id", 1)
             new_beat["segment_id"] = segment_offset + old_seg_id
             new_beat["beat_id"] = f"beat_{len(merged['visual_beats']) + 1}"
@@ -154,7 +161,7 @@ def _merge_batched_outputs(batched_outputs: List[Dict], section_id: str, section
         # Merge segment_enrichments with re-indexed segment_ids
         enrichments = batch_output.get("segment_enrichments", [])
         for enrich in enrichments:
-            new_enrich = enrich.copy()
+            new_enrich = copy.deepcopy(enrich)
             old_seg_id = new_enrich.get("segment_id", 1)
             new_enrich["segment_id"] = segment_offset + old_seg_id
             merged["segment_enrichments"].append(new_enrich)
@@ -163,6 +170,85 @@ def _merge_batched_outputs(batched_outputs: List[Dict], section_id: str, section
     
     logger.info(f"[Pipeline v1.5-opt] Merged {len(batched_outputs)} batches into {len(merged['narration']['segments'])} segments")
     return merged
+
+
+def _process_batch_with_retry(
+    content_creator: 'ContentCreatorAgent',
+    blueprint: Dict,
+    source_content: str,
+    items: List,
+    images_list: str,
+    is_quiz: bool,
+    batch_num: int,
+    total_batches: int,
+    output_dir: Optional[Path] = None,
+    section_id: str = "unknown"
+) -> List[Dict]:
+    """
+    ISS-211: Process a batch with iterative size reduction on truncation.
+    
+    Tries progressively smaller batch sizes until success or single-item batches.
+    Returns list of outputs from successful sub-batches.
+    """
+    import copy
+    
+    current_items = items
+    current_size = len(items)
+    min_size = 1  # Minimum batch size to try
+    
+    while current_size >= min_size:
+        outputs = []
+        success = True
+        
+        for sub_idx in range(0, len(current_items), current_size):
+            sub_batch = current_items[sub_idx:sub_idx + current_size]
+            sub_num = (sub_idx // current_size) + 1
+            
+            batch_blueprint = copy.copy(blueprint)
+            batch_blueprint["_batch_info"] = f"Batch {batch_num}.{sub_num} of {total_batches} (size={current_size})"
+            
+            try:
+                if is_quiz:
+                    sub_output = content_creator.run(
+                        section_blueprint=batch_blueprint,
+                        source_markdown=source_content,
+                        quiz_questions=json.dumps(sub_batch),
+                        images_list=images_list
+                    )
+                else:
+                    sub_content = "\n\n".join(b.get("verbatim_content", "") for b in sub_batch)
+                    sub_output = content_creator.run(
+                        section_blueprint=batch_blueprint,
+                        source_markdown=sub_content,
+                        quiz_questions="None",
+                        images_list=images_list
+                    )
+                outputs.append(sub_output)
+                
+                if output_dir:
+                    _save_artifact(output_dir, f"{section_id}_batch_{batch_num}_{sub_num}.json", sub_output)
+                    
+            except AgentError as e:
+                error_str = str(e).lower()
+                if "unterminated string" in error_str or "truncat" in error_str or "json" in error_str:
+                    logger.warning(f"[Pipeline v1.5-opt] Batch {batch_num}.{sub_num} truncated at size {current_size}")
+                    success = False
+                    break
+                else:
+                    raise
+        
+        if success:
+            return outputs
+        
+        # Reduce batch size and retry
+        current_size = max(1, current_size // 2)
+        logger.info(f"[Pipeline v1.5-opt] Reducing batch size to {current_size}")
+    
+    # If we get here with size=1 and still failing, raise clear error
+    raise PipelineError(
+        f"ContentCreator batch processing failed even with batch size 1. Content may be too complex.",
+        phase="content_batching"
+    )
 
 
 def _run_content_creator_with_batching(
@@ -188,13 +274,23 @@ def _run_content_creator_with_batching(
     density = _estimate_content_density(section_type, quiz_questions, content_blocks)
     
     if not density["needs_batching"]:
-        # Normal single-call path
-        return content_creator.run(
-            section_blueprint=blueprint,
-            source_markdown=source_content,
-            quiz_questions=json.dumps(quiz_questions) if quiz_questions else "None",
-            images_list=images_list
-        )
+        # Normal single-call path - but still handle truncation
+        try:
+            return content_creator.run(
+                section_blueprint=blueprint,
+                source_markdown=source_content,
+                quiz_questions=json.dumps(quiz_questions) if quiz_questions else "None",
+                images_list=images_list
+            )
+        except AgentError as e:
+            error_str = str(e).lower()
+            if "unterminated string" in error_str or "truncat" in error_str or "json" in error_str:
+                # Force batching even though we didn't predict we needed it
+                logger.warning(f"[Pipeline v1.5-opt] Unexpected truncation for {section_id}, forcing batching")
+                density["needs_batching"] = True
+                density["recommended_batch_size"] = 2
+            else:
+                raise
     
     # Batching needed
     logger.info(f"[Pipeline v1.5-opt] Section {section_id} needs batching: {density}")
@@ -211,40 +307,19 @@ def _run_content_creator_with_batching(
             
             logger.info(f"[Pipeline v1.5-opt] Processing quiz batch {batch_num}/{total_batches} ({len(batch_qa)} Q&A pairs)")
             
-            # Create modified blueprint for this batch
-            batch_blueprint = blueprint.copy()
-            batch_blueprint["_batch_info"] = f"Batch {batch_num} of {total_batches}"
-            
-            try:
-                batch_output = content_creator.run(
-                    section_blueprint=batch_blueprint,
-                    source_markdown=source_content,
-                    quiz_questions=json.dumps(batch_qa),
-                    images_list=images_list
-                )
-                batched_outputs.append(batch_output)
-                
-                # Save batch artifact for debugging
-                if output_dir:
-                    _save_artifact(output_dir, f"{section_id}_batch_{batch_num}.json", batch_output)
-                    
-            except AgentError as e:
-                if "Unterminated string" in str(e) or "truncat" in str(e).lower():
-                    # Truncation error - try smaller batch
-                    logger.warning(f"[Pipeline v1.5-opt] Batch {batch_num} truncated, retrying with smaller size")
-                    smaller_size = max(2, batch_size // 2)
-                    
-                    for sub_idx in range(0, len(batch_qa), smaller_size):
-                        sub_batch = batch_qa[sub_idx:sub_idx + smaller_size]
-                        sub_output = content_creator.run(
-                            section_blueprint=batch_blueprint,
-                            source_markdown=source_content,
-                            quiz_questions=json.dumps(sub_batch),
-                            images_list=images_list
-                        )
-                        batched_outputs.append(sub_output)
-                else:
-                    raise
+            batch_results = _process_batch_with_retry(
+                content_creator=content_creator,
+                blueprint=blueprint,
+                source_content=source_content,
+                items=batch_qa,
+                images_list=images_list,
+                is_quiz=True,
+                batch_num=batch_num,
+                total_batches=total_batches,
+                output_dir=output_dir,
+                section_id=section_id
+            )
+            batched_outputs.extend(batch_results)
     
     else:
         # Split content blocks into batches (for content/example sections)
@@ -255,38 +330,19 @@ def _run_content_creator_with_batching(
             
             logger.info(f"[Pipeline v1.5-opt] Processing content batch {batch_num}/{total_batches} ({len(batch_blocks)} blocks)")
             
-            # Extract source content for just these blocks
-            batch_content = "\n\n".join(b.get("verbatim_content", "") for b in batch_blocks)
-            
-            batch_blueprint = blueprint.copy()
-            batch_blueprint["_batch_info"] = f"Batch {batch_num} of {total_batches}"
-            
-            try:
-                batch_output = content_creator.run(
-                    section_blueprint=batch_blueprint,
-                    source_markdown=batch_content,
-                    quiz_questions="None",
-                    images_list=images_list
-                )
-                batched_outputs.append(batch_output)
-                
-            except AgentError as e:
-                if "Unterminated string" in str(e) or "truncat" in str(e).lower():
-                    logger.warning(f"[Pipeline v1.5-opt] Batch {batch_num} truncated, retrying with smaller size")
-                    smaller_size = max(2, batch_size // 2)
-                    
-                    for sub_idx in range(0, len(batch_blocks), smaller_size):
-                        sub_blocks = batch_blocks[sub_idx:sub_idx + smaller_size]
-                        sub_content = "\n\n".join(b.get("verbatim_content", "") for b in sub_blocks)
-                        sub_output = content_creator.run(
-                            section_blueprint=batch_blueprint,
-                            source_markdown=sub_content,
-                            quiz_questions="None",
-                            images_list=images_list
-                        )
-                        batched_outputs.append(sub_output)
-                else:
-                    raise
+            batch_results = _process_batch_with_retry(
+                content_creator=content_creator,
+                blueprint=blueprint,
+                source_content=source_content,
+                items=batch_blocks,
+                images_list=images_list,
+                is_quiz=False,
+                batch_num=batch_num,
+                total_batches=total_batches,
+                output_dir=output_dir,
+                section_id=section_id
+            )
+            batched_outputs.extend(batch_results)
     
     return _merge_batched_outputs(batched_outputs, section_id, section_type)
 
