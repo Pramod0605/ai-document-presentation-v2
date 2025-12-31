@@ -63,10 +63,21 @@ Your task: Convert a textbook chapter into a COMPLETE presentation JSON in a SIN
    - text_layer: "hide", visual_layer: "show" (video takes full screen)
    - derived_renderer: "video"
 
-## RENDERER SELECTION
-- "none" - For text, bullets, simple content (most sections)
-- "manim" - For mathematical equations, graphs, geometric animations
-- "video" - For recap section only (generates AI video)
+## RENDERER SELECTION (Subject-Based)
+DEFAULT: "none" - For text, bullets, definitions, concepts (MOST common)
+
+Subject-specific rules:
+| Subject          | When to use "manim"                | When to use "video" (WAN)     |
+|------------------|-------------------------------------|-------------------------------|
+| Biology          | NEVER                               | anatomy, cells, organisms     |
+| Mathematics      | equations, graphs, geometric proofs | NEVER                         |
+| Physics          | formulas, vector diagrams           | physical phenomena            |
+| Chemistry        | equation balancing                  | reactions, molecular motion   |
+| Other subjects   | NEVER                               | NEVER (use "none" only)       |
+
+RECAP SECTION: ALWAYS use "video" (WAN AI-generated scenes)
+
+CRITICAL: "none" is the DEFAULT. Only use "manim" or "video" when the content TRULY requires animation.
 
 ## SEGMENT RULES
 - Each segment = 15-30 seconds when spoken aloud
