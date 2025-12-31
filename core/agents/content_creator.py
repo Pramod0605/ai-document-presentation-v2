@@ -10,8 +10,13 @@ V3 Integration:
 - Ensures avatar always visible
 - Word count limits from V3
 
+V1.5.1 Dynamic Budgets:
+- Uses budgets from SectionPlanner blueprint instead of fixed limits
+- Validates against dynamic budgets for word count and segment count
+
 Output is compatible with existing MergeStep - produces same fields.
 """
+import json
 from typing import Dict, Any, List, Tuple
 from .base_agent import BaseAgent, STRONG_MODEL
 
@@ -54,6 +59,42 @@ class ContentCreatorAgent(BaseAgent):
         "memory": (3, 3),     # Fixed: 3 flashcards
         "recap": (5, 5)       # Fixed: 5 video scenes
     }
+    
+    def build_user_prompt(self, **kwargs) -> str:
+        """
+        V1.5.1: Override to extract budgets from section_blueprint and inject into prompt.
+        """
+        blueprint = kwargs.get("section_blueprint", {})
+        if isinstance(blueprint, str):
+            try:
+                blueprint = json.loads(blueprint)
+            except json.JSONDecodeError:
+                blueprint = {}
+        
+        section_type = blueprint.get("section_type", "content")
+        budgets = blueprint.get("budgets", {})
+        
+        if budgets:
+            word_min = budgets.get("word_min", self.WORD_LIMITS.get(section_type, (50, 300))[0])
+            word_max = budgets.get("word_max", self.WORD_LIMITS.get(section_type, (50, 300))[1])
+            segment_min = budgets.get("segment_min", self.SEGMENT_LIMITS.get(section_type, (2, 5))[0])
+            segment_max = budgets.get("segment_max", self.SEGMENT_LIMITS.get(section_type, (2, 5))[1])
+            qa_count = budgets.get("qa_count", 0)
+            concept_count = budgets.get("concept_count", 0)
+        else:
+            word_min, word_max = self.WORD_LIMITS.get(section_type, (50, 300))
+            segment_min, segment_max = self.SEGMENT_LIMITS.get(section_type, (2, 5))
+            qa_count = 0
+            concept_count = 0
+        
+        kwargs["word_min"] = word_min
+        kwargs["word_max"] = word_max
+        kwargs["segment_min"] = segment_min
+        kwargs["segment_max"] = segment_max
+        kwargs["qa_count"] = qa_count
+        kwargs["concept_count"] = concept_count
+        
+        return super().build_user_prompt(**kwargs)
     
     def validate_structural(self, output: Dict[str, Any]) -> Tuple[bool, List[str]]:
         """Validate combined output structure."""
@@ -152,22 +193,31 @@ class ContentCreatorAgent(BaseAgent):
         return len(errors) == 0, errors
     
     def validate_semantic(self, output: Dict[str, Any], input_data: Dict[str, Any]) -> Tuple[bool, List[str]]:
-        """Validate semantic rules for combined output."""
+        """Validate semantic rules for combined output using dynamic budgets."""
         errors = []
         
         blueprint = input_data.get("section_blueprint", {})
         section_type = blueprint.get("section_type", "content")
         
+        # V1.5.1: Use dynamic budgets from blueprint if available, else fallback to fixed limits
+        budgets = blueprint.get("budgets", {})
+        
         narration = output.get("narration", {})
         full_text = narration.get("full_text", "")
         word_count = len(full_text.split())
         
-        min_words, max_words = self.WORD_LIMITS.get(section_type, (50, 300))
+        # Get word limits from dynamic budgets or fallback to fixed limits
+        if budgets:
+            min_words = budgets.get("word_min", self.WORD_LIMITS.get(section_type, (50, 300))[0])
+            max_words = budgets.get("word_max", self.WORD_LIMITS.get(section_type, (50, 300))[1])
+        else:
+            min_words, max_words = self.WORD_LIMITS.get(section_type, (50, 300))
+        
         # ISS-216: Allow 25% tolerance on minimum word count to prevent false failures
-        # 84 words should pass if min is 100 (84% is acceptable)
         min_with_tolerance = int(min_words * 0.75)
         if word_count < min_with_tolerance:
             errors.append(f"Narration too short for {section_type}: {word_count} words (min {min_with_tolerance})")
+        # Allow 50% overage before failing
         if word_count > max_words * 1.5:
             errors.append(f"Narration too long for {section_type}: {word_count} words (max ~{max_words})")
         
@@ -176,7 +226,13 @@ class ContentCreatorAgent(BaseAgent):
         if abs(total_segment_words - word_count) > 10:
             errors.append(f"Segment word count ({total_segment_words}) doesn't match full_text ({word_count})")
         
-        min_segs, max_segs = self.SEGMENT_LIMITS.get(section_type, (2, 5))
+        # Get segment limits from dynamic budgets or fallback to fixed limits
+        if budgets:
+            min_segs = budgets.get("segment_min", self.SEGMENT_LIMITS.get(section_type, (2, 5))[0])
+            max_segs = budgets.get("segment_max", self.SEGMENT_LIMITS.get(section_type, (2, 5))[1])
+        else:
+            min_segs, max_segs = self.SEGMENT_LIMITS.get(section_type, (2, 5))
+        
         if len(segments) < min_segs or len(segments) > max_segs:
             errors.append(f"{section_type} section should have {min_segs}-{max_segs} segments, got {len(segments)}")
         

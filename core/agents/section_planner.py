@@ -39,7 +39,8 @@ class SectionPlannerAgent(BaseAgent):
         required_fields = [
             "section_id", "section_type", "title", "source_topics",
             "learning_goals", "suggested_renderer", "renderer_reasoning",
-            "avatar_visibility", "avatar_position", "estimated_duration_seconds"
+            "avatar_visibility", "avatar_position", "estimated_duration_seconds",
+            "budgets"  # V1.5.1: Dynamic budgets are now required
         ]
         
         valid_section_types = ["intro", "summary", "content", "example", "quiz", "memory", "recap"]

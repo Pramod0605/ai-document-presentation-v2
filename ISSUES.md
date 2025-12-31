@@ -1,5 +1,43 @@
 # Known Issues & Future Improvements
 
+## ISS-217: Dynamic Budgeting System (V1.5.1)
+**Status:** ✅ DONE (2025-12-31)
+**Priority:** Critical
+
+**Problem**: Fixed word count and segment limits caused validation failures when actual content exceeded arbitrary limits.
+
+**Example Failure (Job 5eae7706)**:
+- Quiz narration: 419 words (fixed max was 250)
+- Quiz segments: 9 (fixed max was 8)
+- PDF had 15 Q&A pairs but system tried to fit them in 8 segments
+
+**Root Cause**: Fixed limits in prompts didn't match actual content. SmartChunker counted Q&A pairs but SectionPlanner didn't use the count to calculate appropriate budgets.
+
+**Solution: Dynamic Budgeting System**
+1. SectionPlanner now outputs `budgets` object per section (word_min, word_max, segment_min, segment_max, qa_count)
+2. Quiz sections automatically split based on Q&A count (1-8=1 section, 9-16=2 sections, etc.)
+3. ContentCreator reads budgets from blueprint instead of using fixed limits
+4. Validator validates against dynamic budgets, not fixed limits
+
+**Files Changed**:
+- `section_planner_system_v1.5.txt` - Added budget calculation rules and quiz splitting
+- `content_creator_system_v1.5.txt` - Removed fixed limits, added dynamic budget guidance
+- `content_creator_user_v1.5.txt` - Displays budgets with ⚠️ CRITICAL warnings
+- `content_creator.py` - `build_user_prompt()` extracts budgets, `validate_semantic()` uses dynamic limits
+- `section_planner.py` - Added `budgets` to required fields
+
+---
+
+## ISS-218: Stale Processing Jobs Cleanup
+**Status:** ✅ DONE (2025-12-31)
+**Priority:** Medium
+
+**Problem**: Jobs stuck in "processing" status kept pinging server on dashboard refresh.
+
+**Solution**: Cleaned up 10 stale processing jobs by marking them as "cancelled".
+
+---
+
 ## ISS-212: Token Optimization Between Agents
 **Status:** Logged for future work
 **Priority:** Medium
@@ -47,9 +85,11 @@
 ---
 
 ## ISS-215: Job History Status Updates Not Displaying
-**Status:** Open
+**Status:** ✅ DONE (2025-12-31)
 **Priority:** Medium
-**Description:** Status updates not showing properly on dashboard job history page. Need to investigate status polling and display logic.
+**Description:** Status updates not showing properly on dashboard job history page.
+
+**Solution:** Changed polling interval from 3 minutes to 3 seconds. Added auto-refresh when jobs are running.
 
 ---
 
