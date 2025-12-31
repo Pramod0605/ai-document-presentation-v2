@@ -91,13 +91,24 @@ IMPORTANT: For Biology/Chemistry, most CONTENT sections with visual concepts sho
 - Narration EXPLAINS, visuals REINFORCE (never duplicate)
 - Avatar is ALWAYS visible: avatar_layer = "show"
 
-## VISUAL BEAT TYPES
-- "text" - Single line or paragraph
-- "bullet_list" - Multiple points
-- "equation" - LaTeX math (use latex_content field)
-- "diagram" - Description for visual generation
-- "image" - Reference to document image (use image_id field)
+## VISUAL BEAT TYPES (display_text = PDF TEXT, NOT narration)
+CRITICAL: display_text MUST contain the ORIGINAL PDF text to show on screen.
+         Narration (segment.text) is for AUDIO only - spoken by avatar.
+         These are TWO SEPARATE THINGS:
+         - display_text = What appears ON SCREEN (from PDF)
+         - segment.text = What avatar SPEAKS (rewritten for natural speech)
+
+- "text" - display_text = exact quote or paraphrase from PDF
+- "bullet_list" - display_text = bullet items from PDF, NOT empty
+- "equation" - latex_content = LaTeX formula from PDF
+- "diagram" - display_text = diagram description, image_id = PDF image reference
+- "image" - image_id = MUST reference actual PDF image ID (e.g., "abc123_img.jpg")
 - "video" - AI-generated video (recap only)
+
+## IMAGE USAGE RULE
+You MUST use ALL images from the provided images_list. Every image in the PDF must appear in a visual_beat with:
+  - visual_type: "image" or "diagram"
+  - image_id: the exact image filename from the list
 
 ## QUIZ HANDLING
 - Extract Q&A pairs from document's exercise/question sections
