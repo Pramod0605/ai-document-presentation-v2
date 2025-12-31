@@ -65,26 +65,57 @@ Your task: Convert a textbook chapter into a COMPLETE presentation JSON in a SIN
    - text_layer: "hide", visual_layer: "show" (video takes full screen)
    - derived_renderer: "video"
 
-## RENDERER SELECTION (Subject-Based) - APPLIES TO CONTENT SECTIONS
-DEFAULT: "none" - For text, bullets, definitions, concepts
+## RENDERER SELECTION - INTELLIGENT VIDEO EXAMPLES
 
-Subject-specific rules for CONTENT sections:
-| Subject          | Content with visuals needs           | Example topics needing video/manim |
-|------------------|--------------------------------------|-------------------------------------|
-| Biology          | derived_renderer="video"             | Nervous System, Cells, Brain, Hormones |
-| Mathematics      | derived_renderer="manim"             | Equations, Graphs, Geometry         |
-| Physics          | derived_renderer="manim" or "video"  | Formulas (manim), Phenomena (video) |
-| Chemistry        | derived_renderer="video" or "manim"  | Reactions (video), Equations (manim)|
-| Other subjects   | derived_renderer="none"              | Text-only display                   |
+### TEACHING PATTERN: EXPLAIN → THEN SHOW VIDEO EXAMPLE
+For each topic in content sections, follow this pattern:
+1. First segment: Explain concept with text/bullets on screen (narration teaches)
+2. Second segment: Show video example demonstrating the concept (narration describes what we see)
 
-WHEN TO USE VIDEO FOR BIOLOGY CONTENT:
-- Anatomy topics (Nervous System, Brain, Heart) → video_prompts showing the structure
-- Process topics (Reflex Arc, Photosynthesis) → video_prompts showing the process in action
-- Organism topics (Cells, Hormones) → video_prompts showing microscopic views
+This makes boring educational content INTERACTIVE and ENGAGING!
 
-RECAP SECTION: ALWAYS use "video" (WAN AI-generated scenes)
+### WHEN TO GENERATE VIDEO EXAMPLES (derived_renderer="video")
+For BIOLOGY content sections, ALWAYS generate video_prompts for:
+- Anatomy (Neurons, Brain, Heart, Cells) → "3D animation of [structure] showing..."
+- Processes (Reflex Arc, Digestion, Photosynthesis) → "Animation showing [process] step by step..."
+- Organisms/Microscopic (Cells, Hormones, Blood) → "Microscopic view of [subject] revealing..."
 
-IMPORTANT: For Biology/Chemistry, most CONTENT sections with visual concepts should use derived_renderer="video" with video_prompts array.
+For PHYSICS content sections, generate video for:
+- Motion/Forces → "Simulation showing [phenomenon] in action..."
+- Waves/Energy → "Visualization of [concept] propagating..."
+
+For CHEMISTRY content sections:
+- Reactions → "Molecular animation showing [reaction] occurring..."
+- Lab processes → "Video of [experiment] demonstrating..."
+
+For MATH content sections, use derived_renderer="manim":
+- Equations → manim_spec with step-by-step solving
+- Graphs → manim_spec showing function plotting
+- Geometry → manim_spec with shape construction
+
+### CONTENT SECTION STRUCTURE WITH VIDEO EXAMPLES
+```
+Section: "The Nervous System"
+├── Segment 1: Explain (text_layer: show) - "The nervous system is..."
+│   └── visual_beat: bullet_list with key points
+├── Segment 2: Video Example (visual_layer: show, text_layer: hide)
+│   └── video_prompt: "3D animation showing neurons transmitting electrical signals..."
+├── Segment 3: Explain next concept (text_layer: show)
+│   └── visual_beat: diagram description
+└── Segment 4: Video Example (visual_layer: show, text_layer: hide)
+    └── video_prompt: "Animation of synapse with neurotransmitters crossing gap..."
+```
+
+### VIDEO PROMPT REQUIREMENTS
+Each video_prompt in content sections must:
+- Be 10-15 seconds (duration_hint: 10-15)
+- Sync with narration (segment describes what video shows)
+- Be specific and detailed for AI video generation
+- Match the concept being taught
+
+RECAP SECTION: ALWAYS use "video" with exactly 5 cinematic video_prompts
+
+DECISION LOGGING: For each section, explain WHY you chose the renderer in decision_reason.
 
 ## SEGMENT RULES
 - Each segment = 15-30 seconds when spoken aloud
@@ -132,6 +163,7 @@ Return a JSON object with this exact structure:
       "section_type": "intro|summary|content|example|quiz|memory|recap",
       "title": "Section Title",
       "derived_renderer": "none|manim|video",
+      "decision_reason": "Brief explanation of WHY this renderer was chosen for this section (for analysis)",
       "narration": {
         "full_text": "Complete narration text for this section...",
         "segments": [
@@ -161,7 +193,20 @@ Return a JSON object with this exact structure:
       "flashcards": null,
       "video_prompts": null
     }
-  ]
+  ],
+  "decision_log": {
+    "total_video_prompts": 0,
+    "total_manim_specs": 0,
+    "renderer_choices": [
+      {
+        "section_id": "section_1",
+        "section_title": "Section Title",
+        "renderer": "none|manim|video",
+        "reason": "Detailed explanation of why this renderer was selected"
+      }
+    ],
+    "content_analysis": "Brief summary of document content and key topics identified"
+  }
 }
 
 ## SPECIAL SECTION DATA
@@ -424,6 +469,9 @@ def transform_to_player_schema(
     """
     v2_output = normalize_output(v2_output)
     
+    # Preserve decision_log from LLM for analysis
+    decision_log = v2_output.get("decision_log", {})
+    
     presentation = {
         "spec_version": "v1.5",
         "title": v2_output.get("presentation_title", "Lesson"),
@@ -439,6 +487,7 @@ def transform_to_player_schema(
             "generated_by": "v1.5-v2-unified",
             "llm_calls": 1
         },
+        "decision_log": decision_log,
         "sections": []
     }
     
@@ -448,6 +497,7 @@ def transform_to_player_schema(
             "section_type": section.get("section_type", "content"),
             "title": section.get("title", f"Section {i+1}"),
             "renderer": section.get("derived_renderer", "none"),
+            "decision_reason": section.get("decision_reason", ""),
             "avatar_layout": {
                 "visibility": "always",
                 "mode": "floating",
