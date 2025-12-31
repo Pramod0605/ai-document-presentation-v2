@@ -7,7 +7,36 @@ This project is a **Deterministic Educational Film Engine** designed to convert 
 The user wants an iterative development process. The agent should prioritize clear, concise, and accurate communication. Before making any major architectural changes or introducing new dependencies, the agent must ask for explicit approval. The user prefers detailed explanations for complex technical decisions. The agent should ensure that all code is well-documented and follows best practices for maintainability and readability.
 
 ## System Architecture
-The system operates on a V1.5 pipeline, an evolution designed to automate the creation of educational films.
+The system operates on **V1.5-V2 Pipeline** (FINAL PRODUCTION VERSION - December 2025).
+
+### V1.5-V2 Pipeline (CURRENT - Single LLM Call Architecture)
+The V2 evolution achieves 95% reduction in LLM calls while adding intelligent video generation:
+
+**Key Features:**
+- **Single LLM Call**: Entire presentation generated in one API call (~150s)
+- **Intelligent Video Examples**: LLM decides when to generate videos per topic (Biology→WAN, Math→Manim)
+- **EXPLAIN → SHOW Pattern**: Each topic has explanation segments followed by video examples
+- **Decision Logging**: All LLM decisions captured in `decision_log` for analysis
+- **Image Workflow**: Datalab extracts PDF images → green screen processing → saved to job/images/
+- **Two-Channel Separation**: `display_text` (PDF content on screen) ≠ `segment.text` (TTS narration)
+
+**Pipeline Flow:**
+`PDF Upload` → `Datalab (markdown + images)` → `V2 Unified Generator (single LLM)` → `Transform to Player Schema` → `presentation.json`
+
+**Subject-Based Renderer Selection:**
+| Subject | Renderer | Use Case |
+|---------|----------|----------|
+| Biology | video (WAN) | Anatomy, processes, organisms |
+| Physics | video/manim | Phenomena (video), equations (manim) |
+| Math | manim | Equations, graphs, geometry |
+| Chemistry | video/manim | Reactions (video), formulas (manim) |
+
+**API Usage:**
+```
+POST /submit_job
+  - pipeline_version: "v15_v2" (uses V2)
+  - pipeline_version: "v15" (uses legacy multi-agent)
+```
 
 ### Core Architectural Principles
 - **PLAYER IS DUMB**: The player executes JSON instructions without determining layout, timing, or pedagogy.
