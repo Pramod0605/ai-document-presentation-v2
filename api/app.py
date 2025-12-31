@@ -511,6 +511,177 @@ def retry_failed_job(job_id):
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/job/<job_id>/retry_phase", methods=["POST"])
+def retry_phase(job_id):
+    """
+    Retry a specific phase for specific sections.
+    
+    POST body:
+    {
+        "phase": "manim_codegen" | "video_render",
+        "section_ids": [3, 6, 11]  // Optional - if not provided, retries all failed sections for that phase
+    }
+    """
+    try:
+        if is_job_running():
+            return jsonify({
+                "status": "busy",
+                "message": "A job is already running. Please wait for it to complete."
+            }), 409
+        
+        job = job_manager.get_job(job_id)
+        if not job:
+            return jsonify({"error": "Job not found"}), 404
+        
+        job_folder = Path(JOBS_DIR) / job_id
+        if not job_folder.exists():
+            return jsonify({"error": "Job folder not found"}), 404
+        
+        presentation_path = job_folder / "presentation.json"
+        if not presentation_path.exists():
+            return jsonify({"error": "Presentation not found - job must complete LLM phase first"}), 400
+        
+        with open(presentation_path, 'r') as f:
+            presentation = json.load(f)
+        
+        data = request.get_json() or {}
+        phase = data.get("phase", "video_render")
+        section_ids = data.get("section_ids")
+        
+        if phase == "manim_codegen":
+            result = _retry_manim_codegen(job_id, job_folder, presentation, section_ids)
+        elif phase == "video_render":
+            result = _retry_video_render(job_id, job_folder, presentation, section_ids)
+        else:
+            return jsonify({"error": f"Unknown phase: {phase}. Valid: manim_codegen, video_render"}), 400
+        
+        with open(presentation_path, 'w') as f:
+            json.dump(presentation, f, indent=2)
+        
+        return jsonify({
+            "status": "success",
+            "phase": phase,
+            "result": result
+        })
+        
+    except Exception as e:
+        import traceback
+        return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
+
+
+def _retry_manim_codegen(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
+    """Retry Manim code generation for specific sections."""
+    from core.agents.manim_code_generator import ManimCodeGenerator, build_manim_section_data, integrate_manim_code_into_section
+    
+    manim_generator = ManimCodeGenerator()
+    results = {"success": [], "failed": [], "skipped": []}
+    
+    failed_sections_path = job_folder / "manim_failed_sections.json"
+    if failed_sections_path.exists() and section_ids is None:
+        with open(failed_sections_path, 'r') as f:
+            failed_data = json.load(f)
+        section_ids = [s["section_id"] for s in failed_data.get("sections", [])]
+    
+    for section in presentation.get("sections", []):
+        section_id = section.get("section_id")
+        renderer = section.get("renderer", "")
+        
+        if renderer != "manim":
+            continue
+        
+        if section_ids and section_id not in section_ids:
+            results["skipped"].append({"section_id": section_id, "reason": "Not in retry list"})
+            continue
+        
+        if section.get("render_spec", {}).get("manim_scene_spec", {}).get("manim_code"):
+            if section_ids is None:
+                results["skipped"].append({"section_id": section_id, "reason": "Already has valid code"})
+                continue
+        
+        try:
+            print(f"[RETRY] Regenerating Manim code for section {section_id}")
+            manim_input = build_manim_section_data(
+                section=section,
+                narration_segments=section.get("narration", {}).get("segments", []),
+                visual_beats=section.get("visual_beats", []),
+                segment_enrichments=[]
+            )
+            
+            manim_code, validation_errors = manim_generator.generate(manim_input)
+            
+            if manim_code and len(manim_code) > 100:
+                section = integrate_manim_code_into_section(section, manim_code)
+                results["success"].append({"section_id": section_id, "code_length": len(manim_code)})
+                print(f"[RETRY] Manim code regenerated for section {section_id}: {len(manim_code)} chars")
+            else:
+                results["failed"].append({"section_id": section_id, "errors": validation_errors})
+                print(f"[RETRY] Manim code regeneration failed for section {section_id}")
+        except Exception as e:
+            results["failed"].append({"section_id": section_id, "error": str(e)})
+            print(f"[RETRY] Manim code regeneration error for section {section_id}: {e}")
+    
+    if failed_sections_path.exists() and results["success"]:
+        failed_sections_path.unlink()
+    
+    return results
+
+
+def _retry_video_render(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
+    """Retry video rendering for specific sections."""
+    from core.renderer_executor import execute_renderer
+    
+    videos_dir = job_folder / "videos"
+    videos_dir.mkdir(parents=True, exist_ok=True)
+    
+    results = {"success": [], "failed": [], "skipped": []}
+    
+    for section in presentation.get("sections", []):
+        section_id = section.get("section_id")
+        renderer = section.get("renderer", "none")
+        section_type = section.get("section_type", "")
+        
+        if renderer == "none" or section_type in ["intro", "summary", "quiz", "memory"]:
+            continue
+        
+        if section_ids and section_id not in section_ids:
+            results["skipped"].append({"section_id": section_id, "reason": "Not in retry list"})
+            continue
+        
+        existing_video = section.get("video_path")
+        if existing_video and (job_folder / existing_video).exists():
+            if section_ids is None:
+                results["skipped"].append({"section_id": section_id, "reason": "Video already exists"})
+                continue
+        
+        try:
+            print(f"[RETRY] Re-rendering video for section {section_id} (renderer: {renderer})")
+            
+            result = execute_renderer(
+                topic=section,
+                output_dir=str(videos_dir),
+                dry_run=False,
+                skip_wan=False,
+                trace_output_dir=str(job_folder),
+                strict_mode=True
+            )
+            
+            if result.get("status") == "success":
+                video_path = result.get("video_path")
+                if video_path:
+                    rel_path = Path(video_path).name
+                    section["video_path"] = f"videos/{rel_path}"
+                results["success"].append({"section_id": section_id, "video_path": video_path})
+                print(f"[RETRY] Video rendered for section {section_id}: {video_path}")
+            else:
+                results["failed"].append({"section_id": section_id, "error": result.get("error")})
+                print(f"[RETRY] Video render failed for section {section_id}: {result.get('error')}")
+        except Exception as e:
+            results["failed"].append({"section_id": section_id, "error": str(e)})
+            print(f"[RETRY] Video render error for section {section_id}: {e}")
+    
+    return results
+
+
 def _determine_failed_section_idx(job_folder: Path, error_msg: str) -> int:
     """Determine which section index to resume from based on existing artifacts."""
     artifacts_dir = job_folder / "artifacts"
