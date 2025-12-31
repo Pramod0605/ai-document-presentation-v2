@@ -38,6 +38,27 @@
 
 ---
 
+## ISS-220: Batching Inflates Section Output Beyond Budgets
+**Status:** Open
+**Priority:** High
+**Discovered:** 2025-12-31 (Job 5f13fb49)
+
+**Problem**: Auto-batching (ISS-211) splits large sections into multiple LLM calls but doesn't divide budgets per batch. When outputs are merged, totals exceed budgets.
+
+**Example**:
+- Section_8 budget: word=200-280, segments=8-10
+- Section_8 actual: 2756 words, 98 segments
+- Cause: 10 batches × ~200 words each = 2000+ words merged
+
+**Root Cause**: `_merge_batched_outputs()` concatenates all batch outputs but each batch receives the full section budget, not a divided budget.
+
+**Proposed Fix Options**:
+1. **Divide budgets per batch**: `batch_word_max = section_word_max / num_batches`
+2. **Reduce batching aggression**: Increase `MAX_QA_PAIRS_PER_BATCH` from 4 to 8
+3. **Skip batching for quiz**: Quiz sections are typically smaller, may not need batching
+
+---
+
 ## ISS-212: Token Optimization Between Agents
 **Status:** Logged for future work
 **Priority:** Medium
