@@ -20,11 +20,12 @@ class DatalabConversionError(Exception):
 
 
 class ConversionResult:
-    """ISS-207: Result object with markdown and metadata (page_count, etc)."""
-    def __init__(self, markdown: str, page_count: int = 0, metadata: Dict[str, Any] = None):
+    """ISS-207: Result object with markdown and metadata (page_count, images, etc)."""
+    def __init__(self, markdown: str, page_count: int = 0, metadata: Dict[str, Any] = None, images: Dict[str, str] = None):
         self.markdown = markdown
         self.page_count = page_count
         self.metadata = metadata or {}
+        self.images = images or {}  # Dict of filename -> base64 data
     
     def __str__(self):
         return self.markdown
@@ -127,17 +128,24 @@ def _convert_with_datalab(file_path: str) -> ConversionResult:
             # ISS-207: Extract page_count from response
             page_count = result.get("page_count", 0)
             
+            # Extract images dict from response (base64 encoded)
+            images = result.get("images", {})
+            if images:
+                print(f"[Datalab] Found {len(images)} images in response")
+            
             if result.get("markdown"):
                 return ConversionResult(
                     markdown=result["markdown"],
                     page_count=page_count,
-                    metadata={"source": "immediate"}
+                    metadata={"source": "immediate"},
+                    images=images
                 )
             if result.get("text"):
                 return ConversionResult(
                     markdown=result["text"],
                     page_count=page_count,
-                    metadata={"source": "immediate_text"}
+                    metadata={"source": "immediate_text"},
+                    images=images
                 )
             
             check_url = result.get("request_check_url")
@@ -177,11 +185,15 @@ def _poll_for_result(check_url: str) -> ConversionResult:
             
             if status == "complete":
                 markdown = result.get("markdown", result.get("text", ""))
+                images = result.get("images", {})
+                if images:
+                    print(f"[Datalab] Found {len(images)} images in polled response")
                 if markdown:
-                    print(f"[Datalab] SUCCESS: {len(markdown)} chars, {page_count} pages")
+                    print(f"[Datalab] SUCCESS: {len(markdown)} chars, {page_count} pages, {len(images)} images")
                     return ConversionResult(
                         markdown=markdown,
                         page_count=page_count,
+                        images=images,
                         metadata={"source": "polled"}
                     )
                 raise DatalabConversionError("Datalab completed but returned no content")

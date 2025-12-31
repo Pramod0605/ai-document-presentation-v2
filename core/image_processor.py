@@ -120,6 +120,73 @@ def create_image_list_for_llm(images_mapping: dict) -> str:
     return "\n".join(lines)
 
 
+def save_datalab_images(images_dict: dict, output_dir: str, apply_green_screen: bool = True) -> dict:
+    """
+    Save base64 images from Datalab API response to disk.
+    
+    Args:
+        images_dict: Dict of {filename: base64_data} from Datalab response
+        output_dir: Directory to save images
+        apply_green_screen: Whether to apply green screen for chroma key
+    
+    Returns:
+        Dict mapping original filename to saved file info
+    """
+    os.makedirs(output_dir, exist_ok=True)
+    
+    saved_images = {}
+    
+    for filename, base64_data in images_dict.items():
+        try:
+            img_bytes = base64.b64decode(base64_data)
+            img = Image.open(BytesIO(img_bytes))
+            
+            if apply_green_screen:
+                processed_img = apply_green_background(img)
+            else:
+                processed_img = img.convert('RGB') if img.mode != 'RGB' else img
+            
+            output_filename = filename.replace('.jpg', '.png').replace('.jpeg', '.png')
+            output_path = os.path.join(output_dir, output_filename)
+            
+            processed_img.save(output_path, 'PNG')
+            
+            saved_images[filename] = {
+                'filename': output_filename,
+                'path': output_path,
+                'width': processed_img.width,
+                'height': processed_img.height
+            }
+            
+            print(f"[ImageProcessor] Saved: {filename} -> {output_filename} ({processed_img.width}x{processed_img.height})")
+            
+        except Exception as e:
+            print(f"[ImageProcessor] Error saving {filename}: {e}")
+            continue
+    
+    print(f"[ImageProcessor] Saved {len(saved_images)}/{len(images_dict)} images to {output_dir}")
+    return saved_images
+
+
+def extract_image_refs_from_markdown(md_content: str) -> list:
+    """
+    Extract image references from markdown (Datalab format: filename_img.jpg).
+    Returns list of image filenames referenced in the markdown.
+    """
+    pattern = r'!\[([^\]]*)\]\(([a-f0-9]+_img\.jpg)\)'
+    matches = re.findall(pattern, md_content)
+    
+    image_refs = []
+    for alt_text, filename in matches:
+        image_refs.append({
+            'filename': filename,
+            'alt_text': alt_text
+        })
+    
+    print(f"[ImageProcessor] Found {len(image_refs)} image references in markdown")
+    return image_refs
+
+
 if __name__ == "__main__":
     test_md = """
     # Test Document

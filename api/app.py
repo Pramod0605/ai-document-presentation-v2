@@ -128,7 +128,12 @@ def submit_job():
             
             if job_type == "document":
                 # ISS-206: Handle PDF, DOC, DOCX, ODT via Datalab
-                document_processor = process_document_job_v15 if pipeline_version == "v15" else process_pdf_job
+                if pipeline_version == "v15_v2":
+                    document_processor = process_document_job_v15_v2
+                elif pipeline_version == "v15":
+                    document_processor = process_document_job_v15
+                else:
+                    document_processor = process_pdf_job
                 run_job_async(
                     job_id,
                     document_processor,
@@ -828,6 +833,56 @@ def process_document_job_v15(job_id: str, document_path: str, subject: str, grad
             os.unlink(document_path)
 
 
+def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
+    """Process PDF/DOC/DOCX/ODT using V1.5 V2 Unified pipeline with image handling.
+    
+    1. Convert document to Markdown using Datalab API (captures images)
+    2. Save images to job/images/ folder with green screen processing
+    3. Run V2 unified pipeline with images_list
+    """
+    from core.datalab_client import document_to_markdown, DatalabConversionError
+    from pathlib import Path
+    
+    try:
+        file_ext = Path(document_path).suffix.lower()
+        job_manager.update_job(job_id, {
+            "current_phase_key": "document_conversion",
+            "status_message": f"Converting {file_ext.upper()} to Markdown..."
+        }, persist=True)
+        
+        conversion_result = document_to_markdown(document_path)
+        markdown_content = conversion_result.markdown
+        page_count = conversion_result.page_count
+        images_dict = conversion_result.images
+        
+        print(f"[V1.5-V2] Document converted: {len(markdown_content)} chars, {page_count} pages, {len(images_dict)} images")
+        
+        job_manager.update_job(job_id, {
+            "page_count": page_count,
+            "source_type": file_ext.replace('.', ''),
+            "image_count": len(images_dict)
+        }, persist=True)
+        
+        return process_markdown_job_v15_v2(
+            job_id=job_id,
+            markdown_content=markdown_content,
+            subject=subject,
+            grade=grade,
+            output_dir=output_dir,
+            dry_run=dry_run,
+            skip_wan=skip_wan,
+            skip_avatar=skip_avatar,
+            source_file=source_file,
+            tts_provider=tts_provider,
+            images_dict=images_dict
+        )
+    except DatalabConversionError as e:
+        raise RuntimeError(f"Document conversion failed: {e}")
+    finally:
+        if os.path.exists(document_path):
+            os.unlink(document_path)
+
+
 def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
     """Process markdown using V1.4 Hybrid pipeline (Split Directors + V1.3 infrastructure)."""
     result = process_markdown_to_videos(
@@ -893,10 +948,11 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
     }
 
 
-def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
+def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge", images_dict: dict = None) -> dict:
     """Process markdown using V1.5 V2 Unified pipeline (single LLM call, 95% fewer calls)."""
     from pathlib import Path
     import time
+    from core.image_processor import save_datalab_images, extract_image_refs_from_markdown
     
     output_path = Path(output_dir)
     source_md_path = output_path / "source_markdown.md"
@@ -910,6 +966,20 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             "status_message": message
         }, persist=True)
     
+    images_list = "None"
+    if images_dict:
+        status_callback(job_id, "image_processing", f"Processing {len(images_dict)} images...")
+        images_dir = output_path / "images"
+        saved_images = save_datalab_images(images_dict, str(images_dir), apply_green_screen=True)
+        if saved_images:
+            images_list = ", ".join(saved_images.keys())
+            print(f"[V1.5-V2] Saved {len(saved_images)} images to {images_dir}")
+    else:
+        image_refs = extract_image_refs_from_markdown(markdown_content)
+        if image_refs:
+            images_list = ", ".join([ref['filename'] for ref in image_refs])
+            print(f"[V1.5-V2] Found {len(image_refs)} image references in markdown")
+    
     status_callback(job_id, "v2_unified", "Starting V2 Unified Content Generator (single LLM call)")
     
     start_time = time.time()
@@ -919,7 +989,7 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
         markdown_content=markdown_content,
         subject=subject,
         grade=grade,
-        images_list="None",
+        images_list=images_list,
         config=config
     )
     
