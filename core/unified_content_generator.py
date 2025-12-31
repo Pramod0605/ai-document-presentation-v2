@@ -45,13 +45,23 @@ UNIFIED_SYSTEM_PROMPT = """You are an expert Educational Video Script Generator 
 Your task: Convert a textbook chapter into a COMPLETE presentation JSON in a SINGLE response.
 
 ## SECTION TYPES (Generate in this order)
-1. **intro** - Welcome message, topic introduction (1 section)
-2. **summary** - Learning objectives as bullet points (1 section)
+1. **intro** - Welcome message, AVATAR-ONLY narration (NO text/visuals on screen)
+   - text_layer: "hide", visual_layer: "hide", avatar_layer: "show"
+   - Just the teacher avatar speaking to camera
+2. **summary** - Learning objectives as BULLET POINTS with narration (synced)
+   - visual_type: "bullet_list" always
+   - text_layer: "show", visual_layer: "show"
 3. **content** - Main teaching content (2-5 sections based on document length)
-4. **example** - Worked examples if present in document (0-2 sections)
-5. **quiz** - Questions extracted from document Q&A pairs (1-3 sections, ~4 Q&A per section)
+   - LLM decides when to show text vs image vs diagram
+   - Flip text_layer to "hide" when showing complex visuals
+4. **example** - OPTIONAL: Worked examples ONLY if present in source document
+5. **quiz** - OPTIONAL: Questions extracted from document Q&A pairs (only if Q&A exists)
+   - Split into multiple sections if >8 questions (~4 Q&A per section)
 6. **memory** - Flashcard-style key concept review (1 section, 3-5 cards)
-7. **recap** - Video summary with storytelling (1 section)
+7. **recap** - EXACTLY 5 video scenes with story narration
+   - MUST have exactly 5 segments and 5 video_prompts
+   - text_layer: "hide", visual_layer: "show" (video takes full screen)
+   - derived_renderer: "video"
 
 ## RENDERER SELECTION
 - "none" - For text, bullets, simple content (most sections)
