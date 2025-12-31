@@ -1,0 +1,1959 @@
+{
+  "spec_version": "v1.5",
+  "title": "Arithmetic Progression",
+  "subject": "General Science",
+  "grade": "12",
+  "avatar_global": {
+    "style": "teacher",
+    "default_position": "right",
+    "default_width_percent": 52,
+    "gesture_enabled": true
+  },
+  "metadata": {
+    "generated_by": "v1.5-v2-unified",
+    "llm_calls": 1,
+    "llm_time_seconds": 176.5,
+    "dry_run": false
+  },
+  "decision_log": {
+    "total_video_prompts": 5,
+    "total_manim_specs": 9,
+    "renderer_choices": [
+      {
+        "section_id": "section_3",
+        "section_title": "What is an Arithmetic Progression?",
+        "renderer": "manim",
+        "reason": "Manim was chosen to visually animate the abstract general form of an AP and the formula for common difference, making it easier for students to grasp."
+      },
+      {
+        "section_id": "section_5",
+        "section_title": "The nth Term of an AP",
+        "renderer": "manim",
+        "reason": "Manim is essential here to break down the 'nth term' formula, explaining each component visually, which is more effective than static text."
+      },
+      {
+        "section_id": "section_6",
+        "section_title": "Example: Finding the 10th Term",
+        "renderer": "manim",
+        "reason": "A worked example involving a formula is best demonstrated with Manim, which can show the step-by-step substitution and calculation process clearly."
+      },
+      {
+        "section_id": "section_7",
+        "section_title": "Sum of First n Terms of an AP",
+        "renderer": "manim",
+        "reason": "This section introduces two key formulas. Manim is used to present these mathematical formulas in a dynamic and engaging way."
+      },
+      {
+        "section_id": "section_8",
+        "section_title": "Example: Finding the Sum",
+        "renderer": "manim",
+        "reason": "Similar to the previous example, Manim is used to visually guide the student through the steps of applying the sum formula to a specific problem."
+      },
+      {
+        "section_id": "section_9",
+        "section_title": "Real-World Problem: The Spiral",
+        "renderer": "manim",
+        "reason": "Manim was used to show the calculation part of this word problem, breaking down the complex sum formula application into digestible steps."
+      },
+      {
+        "section_id": "section_10",
+        "section_title": "Real-World Problem: Stacking Logs",
+        "renderer": "manim",
+        "reason": "This problem leads to a quadratic equation. Manim is the ideal tool to animate the derivation and solution of the quadratic equation, a complex algebraic step."
+      },
+      {
+        "section_id": "section_15",
+        "section_title": "Chapter Recap",
+        "renderer": "video",
+        "reason": "The recap section requires 5 cinematic video prompts to create a compelling, story-driven summary of the chapter's main ideas, as per the specified output rules."
+      }
+    ],
+    "content_analysis": "The document is a comprehensive chapter on Arithmetic Progressions for Grade 12 students. It covers the definition, types, the formula for the nth term, and the formula for the sum of n terms. The content is structured with definitions, formulas, numerous worked examples, and exercises with solutions. Key topics identified are: defining AP, finding the common difference, calculating the nth term, calculating the sum of n terms, and applying these concepts to solve real-world problems. The document also includes three images related to specific word problems, which have been integrated into the presentation."
+  },
+  "sections": [
+    {
+      "section_id": 1,
+      "section_type": "intro",
+      "title": "Welcome",
+      "renderer": "none",
+      "decision_reason": "This is an introductory section with only the avatar speaking. No complex visuals or text are needed, so a renderer is not required.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "center",
+        "width_percent": 60
+      },
+      "narration": {
+        "full_text": "Hello students! Today, we're going to explore a fascinating topic in mathematics: Arithmetic Progression. You might be surprised to see how often these patterns appear in our daily lives, from the roll numbers in your class to the way you save your pocket money. Let's get started and uncover the secrets of these sequences!",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Hello students! Today, we're going to explore a fascinating topic in mathematics: Arithmetic Progression.",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "You might be surprised to see how often these patterns appear in our daily lives, from the roll numbers in your class to the way you save your pocket money. Let's get started and uncover the secrets of these sequences!",
+            "duration_seconds": 0,
+            "gesture_hint": "emphasize",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [],
+      "display_directives": [
+        {
+          "text_layer": "hide",
+          "visual_layer": "hide",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "hide",
+          "visual_layer": "hide",
+          "avatar_layer": "show"
+        }
+      ]
+    },
+    {
+      "section_id": 2,
+      "section_type": "summary",
+      "title": "Learning Objectives",
+      "renderer": "none",
+      "decision_reason": "This section presents a simple bulleted list of learning objectives. No dynamic rendering is necessary.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "By the end of this chapter, you will be able to understand what an Arithmetic Progression is. You'll learn how to identify its first term and common difference. We'll also cover how to find the 'nth' term of a sequence, calculate the sum of a certain number of terms, and finally, apply this knowledge to solve real-world problems.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "By the end of this chapter, you will be able to understand what an Arithmetic Progression is.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "bullet_points",
+              "display_format": "bullets",
+              "items": [
+                [
+                  "Define an Arithmetic Progression (AP)",
+                  "Identify the first term (a) and common difference (d)",
+                  "Calculate the nth term (a_n) of an AP",
+                  "Calculate the sum of the first n terms (S_n)",
+                  "Apply AP concepts to solve daily life problems"
+                ]
+              ],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "You'll learn how to identify its first term and common difference.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "We'll also cover how to find the 'nth' term of a sequence, calculate the sum of a certain number of terms, and finally, apply this knowledge to solve real-world problems.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "bullet_list",
+          "description": [
+            "Define an Arithmetic Progression (AP)",
+            "Identify the first term (a) and common difference (d)",
+            "Calculate the nth term (a_n) of an AP",
+            "Calculate the sum of the first n terms (S_n)",
+            "Apply AP concepts to solve daily life problems"
+          ],
+          "source_block_ids": []
+        }
+      ],
+      "display_directives": [
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ]
+    },
+    {
+      "section_id": 3,
+      "section_type": "content",
+      "title": "What is an Arithmetic Progression?",
+      "renderer": "manim",
+      "decision_reason": "This section introduces the fundamental concepts and general form of an AP. Manim is ideal for visualizing the sequence and the formula for the common difference, making abstract concepts more concrete.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "Let's start with the basics. An arithmetic progression, or AP, is a list of numbers where each number, or 'term', is found by adding a fixed number to the one before it. The only exception is the very first term. This fixed number is called the 'common difference', which we denote by 'd'. The common difference can be positive, negative, or even zero. To find it, you simply subtract any term from the term that follows it. The general form of an AP is represented as a, a plus d, a plus two d, and so on, where 'a' is the first term.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's start with the basics. An arithmetic progression, or AP, is a list of numbers where each number, or 'term', is found by adding a fixed number to the one before it. The only exception is the very first term.",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "An arithmetic progression is a list of numbers in which each term is obtained by adding a fixed number to the preceding term except the first term."
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "This fixed number is called the 'common difference', which we denote by 'd'. The common difference can be positive, negative, or even zero.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "bullet_points",
+              "display_format": "bullets",
+              "items": [
+                [
+                  "The fixed number is the 'common difference' (d).",
+                  "It can be positive, negative, or zero."
+                ]
+              ],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "To find it, you simply subtract any term from the term that follows it.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "equation",
+              "display_format": "latex",
+              "items": [],
+              "verbatim_content": "d = a_2 - a_1 = a_3 - a_2 = \\dots = a_n - a_{n-1}"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "The general form of an AP is represented as a, a plus d, a plus two d, and so on, where 'a' is the first term.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "equation",
+              "display_format": "latex",
+              "items": [],
+              "verbatim_content": "a, a + d, a + 2d, a + 3d, \\dots"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "text",
+          "description": "An arithmetic progression is a list of numbers in which each term is obtained by adding a fixed number to the preceding term except the first term.",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "bullet_list",
+          "description": [
+            "The fixed number is the 'common difference' (d).",
+            "It can be positive, negative, or zero."
+          ],
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "equation",
+          "description": null,
+          "source_block_ids": [],
+          "latex_content": "d = a_2 - a_1 = a_3 - a_2 = \\dots = a_n - a_{n-1}"
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_beat_type": "equation",
+          "description": "General Form of an AP:",
+          "source_block_ids": [],
+          "latex_content": "a, a + d, a + 2d, a + 3d, \\dots"
+        }
+      ],
+      "display_directives": [
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ]
+    },
+    {
+      "section_id": 4,
+      "section_type": "content",
+      "title": "Types of AP: Finite and Infinite",
+      "renderer": "none",
+      "decision_reason": "This section explains the difference between finite and infinite APs using simple text examples. Static visuals are sufficient, so no renderer is needed.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "An AP can be either finite or infinite. A finite AP has a limited number of terms and, therefore, has a last term. For example, the heights of students in a queue, like 147, 148, up to 157 cm. On the other hand, an infinite AP goes on forever and does not have a last term. An example would be the list of positive multiples of 3, which starts at 3, 6, 9 and continues without end.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "An AP can be either finite or infinite. A finite AP has a limited number of terms and, therefore, has a last term.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "Finite AP: An AP with a finite number of terms. It has a last term."
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "For example, the heights of students in a queue, like 147, 148, up to 157 cm.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "bullet_points",
+              "display_format": "bullets",
+              "items": [
+                [
+                  "Example: Heights of students (cm): 147, 148, 149, ..., 157.",
+                  "Example: Savings (Rs) for 10 months: 50, 100, 150, ..., 500."
+                ]
+              ],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "On the other hand, an infinite AP goes on forever and does not have a last term.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "Infinite AP: An AP with an infinite number of terms. It does not have a last term."
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "An example would be the list of positive multiples of 3, which starts at 3, 6, 9 and continues without end.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "bullet_points",
+              "display_format": "bullets",
+              "items": [
+                [
+                  "Example: 3, 7, 11, ...",
+                  "Example: 1, 4, 7, 10, ...",
+                  "Example: -10, -15, -20, ..."
+                ]
+              ],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "text",
+          "description": "Finite AP: An AP with a finite number of terms. It has a last term.",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "bullet_list",
+          "description": [
+            "Example: Heights of students (cm): 147, 148, 149, ..., 157.",
+            "Example: Savings (Rs) for 10 months: 50, 100, 150, ..., 500."
+          ],
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "text",
+          "description": "Infinite AP: An AP with an infinite number of terms. It does not have a last term.",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_beat_type": "bullet_list",
+          "description": [
+            "Example: 3, 7, 11, ...",
+            "Example: 1, 4, 7, 10, ...",
+            "Example: -10, -15, -20, ..."
+          ],
+          "source_block_ids": []
+        }
+      ],
+      "display_directives": [
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ]
+    },
+    {
+      "section_id": 5,
+      "section_type": "content",
+      "title": "The nth Term of an AP",
+      "renderer": "manim",
+      "decision_reason": "This section introduces the crucial formula for the nth term. Manim is essential for animating the formula's structure and showing how it works, which is more effective than a static display.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "Now, what if we want to find a specific term in a long AP, say the 50th term, without writing out the whole sequence? We can use a formula! The nth term of an AP, denoted as a_n, is given by 'a plus (n minus 1) times d'. Here, 'a' is the first term, 'd' is the common difference, and 'n' is the position of the term you want to find. Interestingly, we can also find a term from the end of a finite AP. The formula for the nth term from the last is 'l minus (n minus 1) times d', where 'l' is the last term.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Now, what if we want to find a specific term in a long AP, say the 50th term, without writing out the whole sequence? We can use a formula!",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "How to find any term in an AP without listing all of them?"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "The nth term of an AP, denoted as a_n, is given by 'a plus (n minus 1) times d'. Here, 'a' is the first term, 'd' is the common difference, and 'n' is the position of the term you want to find.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "equation",
+              "display_format": "latex",
+              "items": [],
+              "verbatim_content": "a_n = a + (n - 1)d"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Interestingly, we can also find a term from the end of a finite AP. The formula for the nth term from the last is 'l minus (n minus 1) times d', where 'l' is the last term.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "equation",
+              "display_format": "latex",
+              "items": [],
+              "verbatim_content": "l - (n - 1)d"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "text",
+          "description": "How to find any term in an AP without listing all of them?",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "equation",
+          "description": "The nth Term of an AP:",
+          "source_block_ids": [],
+          "latex_content": "a_n = a + (n - 1)d"
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "equation",
+          "description": "The nth Term from the last:",
+          "source_block_ids": [],
+          "latex_content": "l - (n - 1)d"
+        }
+      ],
+      "display_directives": [
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ]
+    },
+    {
+      "section_id": 6,
+      "section_type": "example",
+      "title": "Example: Finding the 10th Term",
+      "renderer": "manim",
+      "decision_reason": "A worked example is best demonstrated step-by-step. Manim is perfect for showing the substitution of values into the formula and the subsequent calculation, making the process clear and easy to follow.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "Let's work through an example. Find the 10th term of the AP: 2, 7, 12, and so on. First, we identify our variables. The first term, 'a', is 2. The common difference, 'd', is 7 minus 2, which is 5. And 'n', the term we want to find, is 10. Now, we plug these values into our formula: a_n equals a plus (n minus 1)d. This becomes a_10 equals 2 plus (10 minus 1) times 5. That simplifies to 2 plus 9 times 5, which is 2 plus 45. So, the 10th term is 47.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's work through an example. Find the 10th term of the AP: 2, 7, 12, and so on.",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "Example: Find the 10th term of the AP : 2, 7, 12 ..."
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "First, we identify our variables. The first term, 'a', is 2. The common difference, 'd', is 7 minus 2, which is 5. And 'n', the term we want to find, is 10.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "Solution:\nHere, a = 2, d = 7 - 2 = 5 and n = 10"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Now, we plug these values into our formula: a_n equals a plus (n minus 1)d. This becomes a_10 equals 2 plus (10 minus 1) times 5.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "equation",
+              "display_format": "latex",
+              "items": [],
+              "verbatim_content": "a_{10} = 2 + (10 - 1)5"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "That simplifies to 2 plus 9 times 5, which is 2 plus 45. So, the 10th term is 47.",
+            "duration_seconds": 0,
+            "gesture_hint": "conclude",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "Therefore, the 10th term is 47."
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "text",
+          "description": "Example: Find the 10th term of the AP : 2, 7, 12 ...",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "text",
+          "description": "Solution:\nHere, a = 2, d = 7 - 2 = 5 and n = 10",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "equation",
+          "description": "Using the formula: a_n = a + (n - 1)d",
+          "source_block_ids": [],
+          "latex_content": "a_{10} = 2 + (10 - 1)5"
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_beat_type": "text",
+          "description": "Therefore, the 10th term is 47.",
+          "source_block_ids": []
+        }
+      ],
+      "display_directives": [
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ]
+    },
+    {
+      "section_id": 7,
+      "section_type": "content",
+      "title": "Sum of First n Terms of an AP",
+      "renderer": "manim",
+      "decision_reason": "This section introduces two important formulas for calculating the sum of an AP. Manim is the best tool to visually derive and explain these mathematical formulas, making them easier to understand and remember.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "What if we need to find the sum of a certain number of terms in an AP? There's a formula for that too! The sum of the first n terms, S_n, is given by 'n divided by 2, multiplied by the quantity 2a plus (n minus 1)d'. This is useful when you know the first term, the common difference, and the number of terms. There's also a simpler version we can use if we know the last term, 'l'. In that case, the sum S_n is 'n divided by 2, multiplied by (a plus l)'.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "What if we need to find the sum of a certain number of terms in an AP? There's a formula for that too!",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "How to find the sum of the first n terms of an AP?"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "The sum of the first n terms, S_n, is given by 'n divided by 2, multiplied by the quantity 2a plus (n minus 1)d'. This is useful when you know the first term, the common difference, and the number of terms.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "equation",
+              "display_format": "latex",
+              "items": [],
+              "verbatim_content": "S_n = \\frac{n}{2}[2a + (n - 1)d]"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "There's also a simpler version we can use if we know the last term, 'l'. In that case, the sum S_n is 'n divided by 2, multiplied by (a plus l)'.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "equation",
+              "display_format": "latex",
+              "items": [],
+              "verbatim_content": "S_n = \\frac{n}{2}[a + l]"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "text",
+          "description": "How to find the sum of the first n terms of an AP?",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "equation",
+          "description": "Sum of n Terms (when d is known):",
+          "source_block_ids": [],
+          "latex_content": "S_n = \\frac{n}{2}[2a + (n - 1)d]"
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "equation",
+          "description": "Sum of n Terms (when last term 'l' is known):",
+          "source_block_ids": [],
+          "latex_content": "S_n = \\frac{n}{2}[a + l]"
+        }
+      ],
+      "display_directives": [
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ]
+    },
+    {
+      "section_id": 8,
+      "section_type": "example",
+      "title": "Example: Finding the Sum",
+      "renderer": "manim",
+      "decision_reason": "This is another calculation-based example. Manim is the best choice to visually guide students through the process of substituting values into the sum formula and arriving at the final answer.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "Let's try an example for the sum. Find the sum of the first 22 terms of the AP: 8, 3, -2, and so on. Here, the first term 'a' is 8. The common difference 'd' is 3 minus 8, which is -5. And 'n' is 22. We use the formula S_n equals n/2 times [2a + (n-1)d]. Substituting the values, we get S_22 equals 22/2 times [2 times 8 plus (22-1) times -5]. This simplifies to 11 times [16 plus 21 times -5], which is 11 times [16 minus 105]. Finally, we get 11 times -89, which equals -979.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's try an example for the sum. Find the sum of the first 22 terms of the AP: 8, 3, -2, and so on.",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "Example 11: Find the sum of the first 22 terms of the AP: 8, 3, -2, ..."
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "Here, the first term 'a' is 8. The common difference 'd' is 3 minus 8, which is -5. And 'n' is 22.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "Solution:\nHere, a = 8, d = 3 - 8 = -5, n = 22."
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "We use the formula S_n equals n/2 times [2a + (n-1)d]. Substituting the values, we get S_22 equals 22/2 times [2 times 8 plus (22-1) times -5].",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "equation",
+              "display_format": "latex",
+              "items": [],
+              "verbatim_content": "S = \\frac{22}{2}[2 \\times 8 + (22 - 1)(-5)]"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "This simplifies to 11 times [16 plus 21 times -5], which is 11 times [16 minus 105]. Finally, we get 11 times -89, which equals -979.",
+            "duration_seconds": 0,
+            "gesture_hint": "conclude",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "The sum of the first 22 terms is -979."
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "text",
+          "description": "Example 11: Find the sum of the first 22 terms of the AP: 8, 3, -2, ...",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "text",
+          "description": "Solution:\nHere, a = 8, d = 3 - 8 = -5, n = 22.",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "equation",
+          "description": "Using the formula: S = n/2[2a + (n - 1)d]",
+          "source_block_ids": [],
+          "latex_content": "S = \\frac{22}{2}[2 \\times 8 + (22 - 1)(-5)]"
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_beat_type": "text",
+          "description": "The sum of the first 22 terms is -979.",
+          "source_block_ids": []
+        }
+      ],
+      "display_directives": [
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ]
+    },
+    {
+      "section_id": 9,
+      "section_type": "example",
+      "title": "Real-World Problem: The Spiral",
+      "renderer": "manim",
+      "decision_reason": "This is a word problem involving a visual component (the spiral image). Manim is used to break down the calculation of the spiral's length, which follows an AP, making the solution process visual and tied to the provided diagram.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "Let's look at a practical problem. A spiral is made of thirteen consecutive semicircles with radii 0.5 cm, 1.0 cm, 1.5 cm, and so on. What is the total length? The length of a semicircle is pi times its radius. So, the lengths of our semicircles form a sequence: pi times 0.5, pi times 1, pi times 1.5... This is an AP! The first term 'a' is pi/2, and the common difference 'd' is also pi/2. We need to find the sum for n equals 13. Using the sum formula, S_13 is 13/2 times [2 times pi/2 plus (13-1) times pi/2]. This simplifies to 13/2 times [pi plus 12 times pi/2], which is 13/2 times 7pi. Plugging in pi as 22/7, we get a total length of 143 cm.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's look at a practical problem. A spiral is made of thirteen consecutive semicircles with radii 0.5 cm, 1.0 cm, 1.5 cm, and so on. What is the total length?",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "diagram",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "Problem: Find the total length of a spiral made of 13 consecutive semicircles with radii 0.5 cm, 1.0 cm, 1.5 cm, ...",
+              "image_id": "b570812e4fe75e47d3e8905f839dc20c_img.jpg"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "The length of a semicircle is pi times its radius. So, the lengths of our semicircles form a sequence: pi times 0.5, pi times 1, pi times 1.5... This is an AP!",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "The length of successive semicircles is l_1, l_2, l_3, ...\nLength of semicircle = \u03c0r\nl_1 = \u03c0(0.5) = \u03c0/2\nl_2 = \u03c0(1) = \u03c0\nl_3 = \u03c0(1.5) = 3\u03c0/2\nThe sequence is an AP: \u03c0/2, \u03c0, 3\u03c0/2, ..."
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "The first term 'a' is pi/2, and the common difference 'd' is also pi/2. We need to find the sum for n equals 13.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "Here, a = \u03c0/2, d = \u03c0 - \u03c0/2 = \u03c0/2, n = 13"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Using the sum formula, S_13 is 13/2 times [2 times pi/2 plus (13-1) times pi/2]. This simplifies to 13/2 times [pi plus 12 times pi/2], which is 13/2 times 7pi. Plugging in pi as 22/7, we get a total length of 143 cm.",
+            "duration_seconds": 0,
+            "gesture_hint": "conclude",
+            "visual_content": {
+              "content_type": "equation",
+              "display_format": "latex",
+              "items": [],
+              "verbatim_content": "S_{13} = \\frac{13}{2} [2 \\times \\frac{\\pi}{2} + (13-1)\\frac{\\pi}{2}]"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "diagram",
+          "description": "Problem: Find the total length of a spiral made of 13 consecutive semicircles with radii 0.5 cm, 1.0 cm, 1.5 cm, ...",
+          "source_block_ids": [],
+          "image_id": "b570812e4fe75e47d3e8905f839dc20c_img.jpg"
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "text",
+          "description": "The length of successive semicircles is l_1, l_2, l_3, ...\nLength of semicircle = \u03c0r\nl_1 = \u03c0(0.5) = \u03c0/2\nl_2 = \u03c0(1) = \u03c0\nl_3 = \u03c0(1.5) = 3\u03c0/2\nThe sequence is an AP: \u03c0/2, \u03c0, 3\u03c0/2, ...",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "text",
+          "description": "Here, a = \u03c0/2, d = \u03c0 - \u03c0/2 = \u03c0/2, n = 13",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_beat_type": "equation",
+          "description": "Calculate the sum S_13:",
+          "source_block_ids": [],
+          "latex_content": "S_{13} = \\frac{13}{2} [2 \\times \\frac{\\pi}{2} + (13-1)\\frac{\\pi}{2}]"
+        }
+      ],
+      "display_directives": [
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ]
+    },
+    {
+      "section_id": 10,
+      "section_type": "example",
+      "title": "Real-World Problem: Stacking Logs",
+      "renderer": "manim",
+      "decision_reason": "This problem requires finding 'n' from a quadratic equation, which is a common application of AP sum formulas. Manim can effectively show the algebraic manipulation and solving of the quadratic equation, which is a critical part of the solution.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "Here's another one. 200 logs are stacked with 20 in the bottom row, 19 in the next, and so on. How many rows are there? The number of logs in each row forms an AP: 20, 19, 18,... Here, 'a' is 20, 'd' is -1, and the total sum S_n is 200. We need to find 'n'. Using the sum formula, 200 equals n/2 times [2 times 20 plus (n-1) times -1]. Simplifying this gives a quadratic equation: n squared minus 41n plus 400 equals 0. Solving this, we get two possible values for n: 16 or 25. We check both. The 16th term is 5, which is possible. The 25th term is -4, which is impossible for logs. So, there are 16 rows.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Here's another one. 200 logs are stacked with 20 in the bottom row, 19 in the next, and so on. How many rows are there?",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "diagram",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "Problem: 200 logs are stacked in rows: 20, 19, 18, ... How many rows are there?",
+              "image_id": "a1fad9ca0c696e710c9a7ae5622401e4_img.jpg"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "The number of logs in each row forms an AP: 20, 19, 18,... Here, 'a' is 20, 'd' is -1, and the total sum S_n is 200. We need to find 'n'.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "AP: 20, 19, 18, ...\na = 20, d = -1, S_n = 200. Find n."
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "Using the sum formula, 200 equals n/2 times [2 times 20 plus (n-1) times -1]. Simplifying this gives a quadratic equation: n squared minus 41n plus 400 equals 0.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "equation",
+              "display_format": "latex",
+              "items": [],
+              "verbatim_content": "n^2 - 41n + 400 = 0"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Solving this, we get two possible values for n: 16 or 25. We check both. The 16th term is 5, which is possible. The 25th term is -4, which is impossible for logs. So, there are 16 rows.",
+            "duration_seconds": 0,
+            "gesture_hint": "conclude",
+            "visual_content": {
+              "content_type": "equation",
+              "display_format": "latex",
+              "items": [],
+              "verbatim_content": "(n - 16)(n - 25) = 0"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "diagram",
+          "description": "Problem: 200 logs are stacked in rows: 20, 19, 18, ... How many rows are there?",
+          "source_block_ids": [],
+          "image_id": "a1fad9ca0c696e710c9a7ae5622401e4_img.jpg"
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "text",
+          "description": "AP: 20, 19, 18, ...\na = 20, d = -1, S_n = 200. Find n.",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "equation",
+          "description": "Solving for n:",
+          "source_block_ids": [],
+          "latex_content": "n^2 - 41n + 400 = 0"
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_beat_type": "equation",
+          "description": "Factoring the quadratic equation:",
+          "source_block_ids": [],
+          "latex_content": "(n - 16)(n - 25) = 0"
+        }
+      ],
+      "display_directives": [
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ]
+    },
+    {
+      "section_id": 11,
+      "section_type": "example",
+      "title": "Real-World Problem: The Potato Race",
+      "renderer": "none",
+      "decision_reason": "This final example uses an image and a straightforward application of the sum formula. Static text and the provided image are sufficient to explain the problem and its solution without needing a complex renderer.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "Finally, let's consider a potato race. A bucket is at the start. The first potato is 5m away, and others are 3m apart. There are 10 potatoes. What is the total distance run? To get the first potato and return, the competitor runs 2 times 5 meters, which is 10 meters. For the second, they run 2 times (5+3) meters, which is 16 meters. This forms an AP: 10, 16, 22... with a=10, d=6, and n=10. We need to find the sum S_10. Using the formula, S_10 is 10/2 times [2 times 10 plus (10-1) times 6]. This is 5 times [20 plus 54], which equals 5 times 74. The total distance is 370 meters.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Finally, let's consider a potato race. A bucket is at the start. The first potato is 5m away, and others are 3m apart. There are 10 potatoes. What is the total distance run?",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "diagram",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "Problem: A competitor runs from a bucket to pick up 10 potatoes and return them one by one. Distances are shown.",
+              "image_id": "eadd8abb2c85161842bcd823881cbe5f_img.jpg"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "To get the first potato and return, the competitor runs 2 times 5 meters, which is 10 meters. For the second, they run 2 times (5+3) meters, which is 16 meters.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "Distance for 1st potato: 2 x 5 = 10 m\nDistance for 2nd potato: 2 x (5 + 3) = 16 m\nDistance for 3rd potato: 2 x (5 + 3 + 3) = 22 m"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "This forms an AP: 10, 16, 22... with a=10, d=6, and n=10. We need to find the sum S_10.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": "The distances form an AP: 10, 16, 22, ...\na = 10, d = 6, n = 10. Find S_10."
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "Using the formula, S_10 is 10/2 times [2 times 10 plus (10-1) times 6]. This is 5 times [20 plus 54], which equals 5 times 74. The total distance is 370 meters.",
+            "duration_seconds": 0,
+            "gesture_hint": "conclude",
+            "visual_content": {
+              "content_type": "equation",
+              "display_format": "latex",
+              "items": [],
+              "verbatim_content": "S_{10} = \\frac{10}{2} [2(10) + (10 - 1)(6)] = 370"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_beat_type": "diagram",
+          "description": "Problem: A competitor runs from a bucket to pick up 10 potatoes and return them one by one. Distances are shown.",
+          "source_block_ids": [],
+          "image_id": "eadd8abb2c85161842bcd823881cbe5f_img.jpg"
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_beat_type": "text",
+          "description": "Distance for 1st potato: 2 x 5 = 10 m\nDistance for 2nd potato: 2 x (5 + 3) = 16 m\nDistance for 3rd potato: 2 x (5 + 3 + 3) = 22 m",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_beat_type": "text",
+          "description": "The distances form an AP: 10, 16, 22, ...\na = 10, d = 6, n = 10. Find S_10.",
+          "source_block_ids": []
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_beat_type": "equation",
+          "description": "S_10 = (10/2) * [2(10) + (10-1)6]\n= 5 * [20 + 54]\n= 5 * 74\n= 370 m",
+          "source_block_ids": [],
+          "latex_content": "S_{10} = \\frac{10}{2} [2(10) + (10 - 1)(6)] = 370"
+        }
+      ],
+      "display_directives": [
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ]
+    },
+    {
+      "section_id": 12,
+      "section_type": "quiz",
+      "title": "Quick Quiz 1",
+      "renderer": "none",
+      "decision_reason": "This is a standard multiple-choice quiz section. No dynamic rendering is required.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "Time for a quick quiz to check your understanding. Read the questions carefully and choose the best option.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Time for a quick quiz to check your understanding. Read the questions carefully and choose the best option.",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [],
+      "display_directives": [
+        {
+          "text_layer": "hide",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ],
+      "quiz_data": {
+        "questions": [
+          {
+            "question": "The 30th term of the AP: 10, 7, 4, ..., is:",
+            "options": [
+              "A) 97",
+              "B) 77",
+              "C) -77",
+              "D) -87"
+            ],
+            "correct_answer": "C",
+            "explanation": "Here, a=10, d=7-10=-3, n=30. Using a_n = a + (n-1)d, we get a_30 = 10 + (29)(-3) = 10 - 87 = -77."
+          },
+          {
+            "question": "The 11th term of the AP: -3, -1/2, 2, ... is:",
+            "options": [
+              "A) 28",
+              "B) 22",
+              "C) -38",
+              "D) -48 1/2"
+            ],
+            "correct_answer": "B",
+            "explanation": "Here, a=-3, d=(-1/2) - (-3) = 5/2, n=11. Using a_n = a + (n-1)d, we get a_11 = -3 + (10)(5/2) = -3 + 25 = 22."
+          },
+          {
+            "question": "Which term of the AP 3, 8, 13, 18, ... is 78?",
+            "options": [
+              "A) 15th",
+              "B) 16th",
+              "C) 17th",
+              "D) 18th"
+            ],
+            "correct_answer": "B",
+            "explanation": "Here a=3, d=5, a_n=78. So, 78 = 3 + (n-1)5. This gives 75 = (n-1)5, so n-1 = 15, and n = 16."
+          },
+          {
+            "question": "An AP consists of 50 terms of which 3rd term is 12 and the last term is 106. The 29th term is:",
+            "options": [
+              "A) 56",
+              "B) 60",
+              "C) 64",
+              "D) 72"
+            ],
+            "correct_answer": "C",
+            "explanation": "a_3 = a+2d = 12 and a_50 = a+49d = 106. Solving these gives d=2 and a=8. So, a_29 = a+28d = 8 + 28(2) = 8 + 56 = 64."
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 13,
+      "section_type": "quiz",
+      "title": "Quick Quiz 2",
+      "renderer": "none",
+      "decision_reason": "This is a continuation of the quiz. No dynamic rendering is required.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "Let's continue with a few more questions. Take your time to solve them.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's continue with a few more questions. Take your time to solve them.",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [],
+      "display_directives": [
+        {
+          "text_layer": "hide",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ],
+      "quiz_data": {
+        "questions": [
+          {
+            "question": "The sum of first 22 terms of an AP in which d = 7 and 22nd term is 149, is:",
+            "options": [
+              "A) 1551",
+              "B) 1661",
+              "C) 1771",
+              "D) 1881"
+            ],
+            "correct_answer": "B",
+            "explanation": "First find 'a'. a_22 = a + 21d => 149 = a + 21(7) => a = 2. Now, S_22 = n/2(a+l) = 22/2(2+149) = 11 * 151 = 1661."
+          },
+          {
+            "question": "If the sum of first 7 terms of an AP is 49 and that of 17 terms is 289, what is the sum of first n terms?",
+            "options": [
+              "A) n",
+              "B) 2n",
+              "C) n^2",
+              "D) 2n^2"
+            ],
+            "correct_answer": "C",
+            "explanation": "S_7=49 and S_17=289. Solving the two equations for 'a' and 'd' gives a=1 and d=2. So, S_n = n/2[2(1) + (n-1)2] = n/2[2+2n-2] = n/2[2n] = n^2."
+          },
+          {
+            "question": "How many multiples of 4 lie between 10 and 250?",
+            "options": [
+              "A) 50",
+              "B) 55",
+              "C) 60",
+              "D) 65"
+            ],
+            "correct_answer": "C",
+            "explanation": "The AP is 12, 16, 20, ..., 248. Here a=12, d=4, a_n=248. So, 248 = 12 + (n-1)4. This gives 236 = (n-1)4, so n-1 = 59, and n = 60."
+          },
+          {
+            "question": "The first term of an AP is 5, the last term is 45 and the sum is 400. What is the number of terms?",
+            "options": [
+              "A) 8",
+              "B) 10",
+              "C) 16",
+              "D) 20"
+            ],
+            "correct_answer": "C",
+            "explanation": "Using S_n = n/2(a+l), we have 400 = n/2(5+45) = n/2(50) = 25n. Therefore, n = 400/25 = 16."
+          }
+        ]
+      }
+    },
+    {
+      "section_id": 14,
+      "section_type": "memory",
+      "title": "Key Concepts",
+      "renderer": "none",
+      "decision_reason": "This section is a flashcard-style review of key concepts. Static text is sufficient for this purpose.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "Let's quickly review the most important concepts with some flashcards. First, an Arithmetic Progression. It's a sequence where the difference between consecutive terms is constant. This constant is the Common Difference, 'd'. The formula to find any term, the nth term, is a plus (n-1)d. And finally, the formula to find the sum of n terms is n/2 times [2a + (n-1)d].",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Let's quickly review the most important concepts with some flashcards. First, an Arithmetic Progression.",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "It's a sequence where the difference between consecutive terms is constant. This constant is the Common Difference, 'd'.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "The formula to find any term, the nth term, is a plus (n-1)d.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "And finally, the formula to find the sum of n terms is n/2 times [2a + (n-1)d].",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [],
+      "display_directives": [
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ],
+      "flashcards": [
+        {
+          "front": "Arithmetic Progression (AP)",
+          "back": "A sequence of numbers where each term is obtained by adding a fixed number (common difference) to the preceding term."
+        },
+        {
+          "front": "Common Difference (d)",
+          "back": "The fixed number that is the difference between any two consecutive terms in an AP. Formula: d = a_n - a_{n-1}"
+        },
+        {
+          "front": "nth Term Formula (a_n)",
+          "back": "Used to find the value of any term in an AP. Formula: a_n = a + (n - 1)d"
+        },
+        {
+          "front": "Sum of n Terms Formula (S_n)",
+          "back": "Used to find the sum of the first 'n' terms of an AP. Formulas: S_n = n/2 [2a + (n - 1)d] or S_n = n/2 [a + l]"
+        }
+      ]
+    },
+    {
+      "section_id": 15,
+      "section_type": "recap",
+      "title": "Chapter Recap",
+      "renderer": "video",
+      "decision_reason": "This is the final recap section, which requires a cinematic, story-based summary. The 'video' renderer is mandatory to generate engaging, full-screen video clips for each of the 5 narrative segments.",
+      "avatar_layout": {
+        "visibility": "always",
+        "mode": "floating",
+        "position": "right",
+        "width_percent": 52
+      },
+      "narration": {
+        "full_text": "Imagine watching petals on a flower or steps on a staircase. Many things in life follow a predictable pattern, a sequence. This is the essence of an Arithmetic Progression \u2013 a journey where each step is the same size, whether you're climbing up, going down, or staying level. With a map and a compass, you can find any location. In an AP, our map is the 'nth term' formula, letting us pinpoint the value of any term, no matter how far along. But what if you wanted to know the total distance traveled? The 'sum' formula helps us add up all the steps of our journey quickly and efficiently. From calculating loan interests to stacking items in a warehouse, Arithmetic Progressions are a powerful tool for understanding and solving problems in the world around us.",
+        "segments": [
+          {
+            "segment_id": 1,
+            "text": "Imagine watching petals on a flower or steps on a staircase. Many things in life follow a predictable pattern, a sequence.",
+            "duration_seconds": 0,
+            "gesture_hint": "introduce",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 2,
+            "text": "This is the essence of an Arithmetic Progression \u2013 a journey where each step is the same size, whether you're climbing up, going down, or staying level.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 3,
+            "text": "With a map and a compass, you can find any location. In an AP, our map is the 'nth term' formula, letting us pinpoint the value of any term, no matter how far along.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 4,
+            "text": "But what if you wanted to know the total distance traveled? The 'sum' formula helps us add up all the steps of our journey quickly and efficiently.",
+            "duration_seconds": 0,
+            "gesture_hint": "explain",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": 5,
+            "text": "From calculating loan interests to stacking items in a warehouse, Arithmetic Progressions are a powerful tool for understanding and solving problems in the world around us.",
+            "duration_seconds": 0,
+            "gesture_hint": "conclude",
+            "visual_content": {
+              "content_type": "text",
+              "display_format": null,
+              "items": [],
+              "verbatim_content": null
+            },
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ],
+        "total_duration_seconds": 0
+      },
+      "visual_beats": [],
+      "display_directives": [
+        {
+          "text_layer": "hide",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "hide",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "hide",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "hide",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        },
+        {
+          "text_layer": "hide",
+          "visual_layer": "show",
+          "avatar_layer": "show"
+        }
+      ],
+      "video_prompts": [
+        {
+          "segment_id": "seg_1",
+          "prompt": "Cinematic time-lapse of a sunflower opening, with animated lines highlighting the perfect spiral patterns of its seeds. The shot is beautiful and mesmerising.",
+          "duration_hint": 10
+        },
+        {
+          "segment_id": "seg_2",
+          "prompt": "A 3D animation of a character walking up an infinite, glowing staircase. With each step, the number '+d' appears in the air, emphasizing the constant addition.",
+          "duration_hint": 10
+        },
+        {
+          "segment_id": "seg_3",
+          "prompt": "A futuristic Heads-Up Display (HUD) materializes the formula 'a_n = a + (n-1)d' over a sprawling digital map of a city. The view then zooms in dramatically to a single, glowing point labeled 'a_100'.",
+          "duration_hint": 10
+        },
+        {
+          "segment_id": "seg_4",
+          "prompt": "A fast-motion animation of colorful blocks being stacked in a triangular pattern representing an AP. A digital counter on the side of the screen rapidly sums up the total number of blocks as they are added.",
+          "duration_hint": 10
+        },
+        {
+          "segment_id": "seg_5",
+          "prompt": "A dynamic montage of real-world scenarios: a person putting coins into a piggy bank every month, a drone shot of rows of seats in a large stadium, and a construction worker stacking materials, all visually representing APs in action.",
+          "duration_hint": 10
+        }
+      ]
+    }
+  ]
+}
