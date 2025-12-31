@@ -1,0 +1,77 @@
+[
+  {
+    "timestamp": "2025-12-31T17:53:35.838149",
+    "section_id": 3,
+    "section_title": "What is an Arithmetic Progression?",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-20.8s) - Basic definition\ntitle = Text(\"Arithmetic Progression (AP)\", font_size=48).to_edge(UP)\ndefinition = Text(\"A sequence where each term is obtained by\\nadding a fixed number to the previous term\",\n                 font_size=36, line_spacing=1.5).next_to(title, DOWN, buff=1)\n\nnumbers = VGroup(\n    *[Text(str(2 + 3*i), font_size=40) for i in range(5)]\n).arrange(RIGHT, buff=1)\nnumbers.next_to(definition, DOWN, buff=1)\n\nself.play(Write(title), run_time=3)\nself.play(Write(definition), run_time=4)\nself.wait(2)\nself.play(FadeIn(numbers, shift=UP), run_time=3)\nself.wait(8.8)  # Complete 20.8s segment\n\n# Segment 2 (20.8-37.6s) - Common difference\ncommon_diff_text = Text(\"Common Difference (d)\", color=YELLOW, font_size=40)\ncommon_diff_text.next_to(numbers, DOWN, buff=1.5)\n\narrows = VGroup()\nfor i in range(len(numbers)-1):\n    arrow = Arrow(\n        numbers[i].get_bottom(),\n        numbers[i+1].get_bottom(),\n        color=YELLOW,\n        buff=0.2\n    ).shift(DOWN * 0.5)\n    arrows.add(arrow)\n\nplus_threes = VGroup()\nfor i in range(len(arrows)):\n    plus_three = MathTex(\"+3\", color=YELLOW, font_size=36)\n    plus_three.next_to(arrows[i], DOWN, buff=0.1)\n    plus_threes.add(plus_three)\n\nself.play(Write(common_diff_text), run_time=3)\nself.play(\n    *[GrowArrow(arrow) for arrow in arrows],\n    run_time=4\n)\nself.play(\n    *[Write(plus) for plus in plus_threes],\n    run_time=3\n)\nself.wait(6.8)  # Complete 16.8s segment\n\n# Segment 3 (37.6-59.9s) - Calculating common difference\ncalc_text = VGroup(\n    Text(\"d = any term - previous term\", font_size=36),\n    Text(\"d = 5 - 2 = 3\", font_size=36),\n    Text(\"d = 8 - 5 = 3\", font_size=36),\n    Text(\"d = 11 - 8 = 3\", font_size=36)\n).arrange(DOWN, aligned_edge=LEFT, buff=0.3)\ncalc_text.next_to(plus_threes, DOWN, buff=1)\n\nfor i, text in enumerate(calc_text):\n    self.play(Write(text), run_time=3)\n    self.wait(2.575)  # (22.3 - 4*3) / 4 = 2.575s per iteration\n\n# Segment 4 (59.9-83.8s) - General form\ngeneral_form = VGroup(\n    MathTex(\"a\", \", \"),\n    MathTex(\"a+d\", \", \"),\n    MathTex(\"a+2d\", \", \"),\n    MathTex(\"a+3d\", \", \"),\n    MathTex(\"a+4d\", \", \"),\n    MathTex(r\"\\cdots\")\n).arrange(RIGHT, buff=0.2)\ngeneral_form.next_to(calc_text, DOWN, buff=1)\n\ngeneral_title = Text(\"General Form:\", font_size=36)\ngeneral_title.next_to(general_form, UP)\n\nself.play(\n    Write(general_title),\n    run_time=3\n)\nself.play(\n    *[Write(term) for term in general_form],\n    run_time=8\n)\n\nexplanation = Text(\"where 'a' is first term and 'd' is common difference\",\n                  font_size=32)\nexplanation.next_to(general_form, DOWN)\n\nself.play(Write(explanation), run_time=5)\nself.wait(7.9)  # Complete 23.9s segment",
+    "output_path": "/home/runner/workspace/player/jobs/1aabb13f/videos/topic_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2676,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-31T17:54:15.674177",
+    "section_id": 4,
+    "section_title": "The Nth Term of an AP",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-29.4s) - Formula introduction\ntitle = Text(\"The nth Term of an Arithmetic Progression\", font_size=40).to_edge(UP)\nformula = MathTex(r\"a_n = a + (n-1)d\").scale(1.5)\nformula_parts = VGroup(\n    Text(\"where:\", font_size=32),\n    MathTex(r\"a_n\", r\"\\text{ is the nth term}\"),\n    MathTex(r\"a\", r\"\\text{ is the first term}\"),\n    MathTex(r\"d\", r\"\\text{ is the common difference}\"),\n    MathTex(r\"n\", r\"\\text{ is the position number}\")\n).arrange(DOWN, aligned_edge=LEFT).next_to(formula, DOWN, buff=0.5)\n\nself.play(Write(title), run_time=2)\nself.wait(2)\nself.play(Write(formula), run_time=3)\nself.wait(2)\nself.play(Write(formula_parts[0]), run_time=1)\nfor part in formula_parts[1:]:\n    self.play(Write(part), run_time=2)\nself.wait(11.4)\n\n# Segment 2 (29.4-49.8s) - Example setup\nexample = Text(\"Example: Find the 10th term of AP: 2, 7, 12, ...\", font_size=36)\ngiven = VGroup(\n    MathTex(r\"a = 2\"),\n    MathTex(r\"d = 7 - 2 = 5\"),\n    MathTex(r\"n = 10\")\n).arrange(DOWN, aligned_edge=LEFT)\n\nself.play(\n    FadeOut(formula_parts),\n    formula.animate.scale(0.7).to_edge(UP),\n    FadeOut(title),\n    run_time=2\n)\nself.play(Write(example.next_to(formula, DOWN, buff=0.5)), run_time=2)\nself.play(Write(given.next_to(example, DOWN, buff=0.5)), run_time=3)\nself.wait(13.3)\n\n# Segment 3 (49.8-67.5s) - Solution walkthrough\nsolution = VGroup(\n    MathTex(r\"a_{10} = 2 + (10-1)5\"),\n    MathTex(r\"= 2 + (9)5\"),\n    MathTex(r\"= 2 + 45\"),\n    MathTex(r\"= 47\")\n).arrange(DOWN, aligned_edge=LEFT).next_to(given, DOWN, buff=0.5)\n\nfor step in solution:\n    self.play(Write(step), run_time=2)\nself.play(\n    Circumscribe(solution[-1], color=YELLOW),\n    run_time=2\n)\nself.wait(7.8)\n\n# Segment 4 (67.5-96.5s) - Backwards example\nnew_example = VGroup(\n    Text(\"Example: Which term of AP: 21, 18, 15, ... is -81?\", font_size=36),\n    MathTex(r\"a = 21, d = -3\"),\n    MathTex(r\"-81 = 21 + (n-1)(-3)\"),\n    MathTex(r\"-81 = 21 - 3n + 3\"),\n    MathTex(r\"-105 = -3n\"),\n    MathTex(r\"n = 35\")\n).arrange(DOWN, aligned_edge=LEFT)\n\nself.play(\n    FadeOut(example),\n    FadeOut(given),\n    FadeOut(solution),\n    run_time=2\n)\nself.play(Write(new_example[0]), run_time=2)\nself.play(Write(new_example[1]), run_time=2)\nfor step in new_example[2:]:\n    self.play(Write(step), run_time=3)\nself.play(\n    Circumscribe(new_example[-1], color=YELLOW),\n    run_time=2\n)\nself.wait(7.9)",
+    "output_path": "/home/runner/workspace/player/jobs/1aabb13f/videos/topic_4.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2352,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-31T17:54:57.191291",
+    "section_id": 5,
+    "section_title": "Sum of First n Terms of an AP",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-34.0s) - Introducing sum formula\ntitle = Text(\"Sum of First n Terms of an AP\", font_size=40).to_edge(UP)\nformula1 = MathTex(\n    \"S_n = \\\\frac{n}{2}[2a + (n-1)d]\",\n    font_size=48\n).shift(UP)\n\nexplanation = VGroup(\n    Text(\"where:\", font_size=32),\n    MathTex(\"S_n\", \"=\", \"\\\\text{sum of first n terms}\"),\n    MathTex(\"a\", \"=\", \"\\\\text{first term}\"),\n    MathTex(\"d\", \"=\", \"\\\\text{common difference}\"),\n    MathTex(\"n\", \"=\", \"\\\\text{number of terms}\")\n).arrange(DOWN, aligned_edge=LEFT).shift(DOWN)\n\nself.play(Write(title), run_time=2)\nself.wait(2)\nself.play(Write(formula1), run_time=3)\nself.wait(2)\nself.play(\n    *[Write(item) for item in explanation],\n    lag_ratio=0.5,\n    run_time=5\n)\nself.wait(20)\n\n# Segment 2 (34.0-55.9s) - Alternative formula with last term\nformula2 = MathTex(\n    \"S_n = \\\\frac{n}{2}(a + l)\",\n    font_size=48\n).shift(UP)\nlast_term = MathTex(\n    \"l = \\\\text{last term}\",\n    font_size=36\n).next_to(explanation, DOWN, buff=0.5)\n\nself.play(\n    ReplacementTransform(formula1, formula2),\n    run_time=3\n)\nself.play(Write(last_term), run_time=2)\nself.wait(16.8)\n\n# Segment 3 (55.9-85.3s) - Example calculation\nexample_title = Text(\"Example: Sum of first 22 terms\", font_size=36).to_edge(UP)\nexample_ap = MathTex(\n    \"8, 3, -2, ...\",\n    font_size=40\n).shift(UP)\ncalculation = VGroup(\n    MathTex(\"a = 8\"),\n    MathTex(\"d = -5\"),\n    MathTex(\"n = 22\")\n).arrange(DOWN, aligned_edge=LEFT).shift(LEFT * 2)\n\nsolution = VGroup(\n    MathTex(\"S_{22} = \\\\frac{22}{2}[2(8) + (22-1)(-5)]\"),\n    MathTex(\"= 11[16 - 105]\"),\n    MathTex(\"= 11(-89)\"),\n    MathTex(\"= -979\")\n).arrange(DOWN, aligned_edge=LEFT).shift(RIGHT * 2)\n\nself.play(\n    ReplacementTransform(title, example_title),\n    FadeOut(VGroup(formula2, explanation, last_term)),\n    run_time=2\n)\nself.play(Write(example_ap), run_time=2)\nself.play(Write(calculation), run_time=3)\nself.wait(2)\nself.play(\n    *[Write(item) for item in solution],\n    lag_ratio=0.5,\n    run_time=5\n)\nself.wait(15.4)",
+    "output_path": "/home/runner/workspace/player/jobs/1aabb13f/videos/topic_5.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v15_llm_generated",
+      "code_length": 1985,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-31T17:55:31.107661",
+    "section_id": 6,
+    "section_title": "AP in the Real World",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-20.8s) - Spiral with increasing semicircles\naxes = Axes(x_range=[-6, 6], y_range=[-4, 4])\ncenter_a = np.array([-1, 0, 0])\ncenter_b = np.array([1, 0, 0])\n\n# Create semicircles with increasing radii\nsemicircles = VGroup()\nfor i in range(8):\n    radius = 0.5 * (i + 1)\n    if i % 2 == 0:\n        arc = Arc(radius=radius, angle=PI, start_angle=0, \n                 arc_center=center_a, color=BLUE)\n    else:\n        arc = Arc(radius=radius, angle=PI, start_angle=PI,\n                 arc_center=center_b, color=BLUE)\n    semicircles.add(arc)\n\ntitle = Text(\"Arithmetic Progressions in Real Life\", font_size=36).to_edge(UP)\nradius_label = MathTex(r\"r = 0.5, 1.0, 1.5, ...\", font_size=32).next_to(title, DOWN)\n\nself.play(Create(title), run_time=2)\nself.play(Create(axes), run_time=2)\nself.play(Write(radius_label), run_time=2)\nfor arc in semicircles:\n    self.play(Create(arc), run_time=1.5)\nself.wait(4.8)  # Complete 20.8s segment\n\n# Segment 2 (20.8-33.0s) - Show length calculation\nlength_formula = MathTex(\n    r\"S_{13} = \\frac{13}{2}({\\pi} + \\frac{13\\pi}{2}) = 143\\text{ cm}\",\n    font_size=36\n).next_to(radius_label, DOWN)\nself.play(Write(length_formula), run_time=4)\nself.play(Indicate(length_formula, color=YELLOW), run_time=4)\nself.wait(4.2)  # Complete 12.2s segment\n\n# Segment 3 (33.0-55.9s) - Log stack visualization\nself.play(\n    *[FadeOut(obj) for obj in [semicircles, axes, radius_label, length_formula]],\n    run_time=2\n)\n\n# Create log stack visualization\nlogs = VGroup()\ny_offset = -3\nfor row in range(5):  # Simplified to 5 rows for clarity\n    logs_in_row = 20 - row\n    row_group = VGroup()\n    for i in range(logs_in_row):\n        log = Rectangle(height=0.3, width=0.8, color=GOLD)\n        log.shift(RIGHT * i * 0.9 + UP * row * 0.35 + UP * y_offset)\n        row_group.add(log)\n    logs.add(row_group)\n\nstack_label = Text(\"Stack of 200 logs\", font_size=32).next_to(title, DOWN)\nap_label = MathTex(r\"20, 19, 18, ...\", font_size=32).next_to(stack_label, DOWN)\n\nself.play(Create(logs[0]), run_time=3)\nfor i in range(1, len(logs)):\n    self.play(Create(logs[i]), run_time=2)\nself.play(Write(stack_label), Write(ap_label), run_time=3)\nself.wait(4.9)  # Complete 22.9s segment\n\n# Segment 4 (55.9-61.4s) - Show equation solution\nsolution = MathTex(r\"n = 16\\text{ rows}\", font_size=36).next_to(ap_label, DOWN)\nself.play(Write(solution), run_time=3)\nself.wait(2.6)  # Complete 5.6s segment\n\n# Segment 5 (61.4-81.2s) - Potato race visualization\nself.play(\n    *[FadeOut(obj) for obj in [logs, stack_label, ap_label, solution]],\n    run_time=2\n)\n\n# Create potato race track\ntrack = Line(LEFT * 5, RIGHT * 5, color=WHITE)\nbucket = Square(side_length=0.5, color=BLUE).move_to(LEFT * 5)\npotatoes = VGroup(*[\n    Circle(radius=0.2, color=BROWN).move_to(LEFT * 5 + RIGHT * (3 * i + 5))\n    for i in range(4)\n])\n\nrace_label = Text(\"Potato Race\", font_size=32).next_to(title, DOWN)\ndistance_label = MathTex(r\"5m, 8m, 11m, ...\", font_size=32).next_to(race_label, DOWN)\n\nself.play(Create(track), Create(bucket), run_time=3)\nself.play(Create(potatoes), run_time=3)\nself.play(Write(race_label), Write(distance_label), run_time=3)\nself.wait(8.8)  # Complete 19.8s segment\n\n# Segment 6 (81.2-93.4s) - Show total distance\ntotal_distance = MathTex(\n    r\"S_{10} = 370\\text{ meters}\", font_size=36\n).next_to(distance_label, DOWN)\nself.play(Write(total_distance), run_time=4)\nself.play(Indicate(total_distance, color=YELLOW), run_time=4)\nself.wait(4.2)  # Complete 12.2s segment",
+    "output_path": "/home/runner/workspace/player/jobs/1aabb13f/videos/topic_6.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v15_llm_generated",
+      "code_length": 3480,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-31T17:55:48.261672",
+    "section_id": 7,
+    "section_title": "Worked Examples",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-12.7s) - Introducing first example\ntitle = Text(\"Worked Examples\", font_size=48).to_edge(UP)\nexample5 = Text(\"Example 5:\", font_size=36).next_to(title, DOWN, buff=1)\nproblem5 = MathTex(r\"\\text{Determine the AP whose 3rd term is 5}\\\\\", r\"\\text{and the 7th term is 9}\").next_to(example5, DOWN)\n\nself.play(Write(title), run_time=2)\nself.play(FadeIn(example5), run_time=2)\nself.play(Write(problem5), run_time=3)\nself.wait(5.7)\n\n# Segment 2 (12.7-35.5s) - Solving first example\nequations = VGroup(\n    MathTex(r\"a + 2d = 5\", r\"\\quad \\text{(3rd term)}\"),\n    MathTex(r\"a + 6d = 9\", r\"\\quad \\text{(7th term)}\")\n).arrange(DOWN, buff=0.5).next_to(problem5, DOWN, buff=1)\n\nsolution = VGroup(\n    MathTex(r\"\\text{Solving simultaneously:}\"),\n    MathTex(r\"d = 1\"),\n    MathTex(r\"a = 3\")\n).arrange(DOWN, buff=0.5).next_to(equations, DOWN, buff=1)\n\nap_terms = MathTex(r\"\\text{AP: }3, 4, 5, 6, 7, 8, 9, \\ldots\").next_to(solution, DOWN)\n\nself.play(Write(equations[0]), run_time=3)\nself.play(Write(equations[1]), run_time=3)\nself.wait(2)\nself.play(Write(solution[0]), run_time=2)\nself.play(Write(solution[1]), Write(solution[2]), run_time=3)\nself.play(Write(ap_terms), run_time=3)\nself.wait(6.9)\n\n# Segment 3 (35.5-49.2s) - Introducing second example\nself.play(FadeOut(VGroup(equations, solution, ap_terms)), run_time=2)\n\nexample7 = Text(\"Example 7:\", font_size=36).next_to(problem5, DOWN, buff=1)\nproblem7 = MathTex(r\"\\text{How many two-digit numbers}\\\\\", r\"\\text{are divisible by 3?}\").next_to(example7, DOWN)\n\nself.play(\n    ReplacementTransform(example5, example7),\n    ReplacementTransform(problem5, problem7),\n    run_time=3\n)\nself.wait(8.7)\n\n# Segment 4 (49.2-65.0s) - Solving second example\nap_info = VGroup(\n    MathTex(r\"\\text{AP: }12, 15, 18, \\ldots, 99\"),\n    MathTex(r\"a = 12, \\quad d = 3, \\quad a_n = 99\")\n).arrange(DOWN, buff=0.5).next_to(problem7, DOWN, buff=1)\n\nsolution7 = VGroup(\n    MathTex(r\"99 = 12 + (n-1)3\"),\n    MathTex(r\"n = 30 \\text{ numbers}\")\n).arrange(DOWN, buff=0.5).next_to(ap_info, DOWN, buff=1)\n\nself.play(Write(ap_info[0]), run_time=3)\nself.play(Write(ap_info[1]), run_time=3)\nself.play(Write(solution7), run_time=3)\nself.wait(6.7)",
+    "output_path": "/home/runner/workspace/player/jobs/1aabb13f/videos/topic_7.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2164,
+      "duration": 30,
+      "dry_run": false
+    }
+  }
+]
