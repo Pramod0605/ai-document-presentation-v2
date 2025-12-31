@@ -25,6 +25,7 @@ The core process is orchestrated through an optimized series of specialized agen
 - **SpecialSectionsAgent**: Combines MemoryAgent and RecapAgent functionalities.
 - **Parallel Execution**: TTS generation runs in parallel with Manim code generation.
 - **Auto-Batching**: Handles large content to prevent token limit truncation errors by estimating content density and processing in batches.
+- **Dynamic Budgeting (V1.5.1)**: SectionPlanner calculates per-section word/segment budgets based on SmartChunker's qa_pair_count and concept_count. ContentCreator validates against these dynamic budgets instead of fixed limits. Quiz sections auto-split (1-8 Q&A = 1 section, 9-16 = 2 sections).
 
 ### Guardrails
 - **Presentation Schema Immutability**: Validation against v1.3 schema.
