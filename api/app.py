@@ -1161,6 +1161,7 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
     analytics_data["manim_videos"] = analytics_data["manim_success"]
     
     # PHASE 9: Validate WAN prompts (80+ word requirement per Issue #6)
+    wan_validation_errors = []
     if not dry_run and not skip_wan:
         status_callback(job_id, "wan_validation", "Validating WAN video prompts...")
         from core.wan_prompt_validator import validate_video_prompts
@@ -1169,11 +1170,17 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             video_prompts = section.get("video_prompts", [])
             if video_prompts:
                 section_id = section.get("section_id", 0)
-                is_valid, warnings, errors = validate_video_prompts(video_prompts, section_id, strict=False)
+                is_valid, errors, warnings = validate_video_prompts(video_prompts, section_id, strict=False)
                 if warnings:
                     print(f"[V1.5-V2] WAN validation warnings for section {section_id}: {warnings}")
                 if errors:
                     print(f"[V1.5-V2] WAN validation errors for section {section_id}: {errors}")
+                    wan_validation_errors.extend(errors)
+                    # Mark section for skipping WAN render if prompts are invalid
+                    section["wan_validation_failed"] = True
+        
+        if wan_validation_errors:
+            print(f"[V1.5-V2] WARNING: {len(wan_validation_errors)} WAN prompt validation errors. Some videos may fail.")
     
     # PHASE 10: Render videos (Manim execution + WAN video generation)
     if not dry_run:
@@ -1197,7 +1204,9 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
                 beat_videos = result.get("beat_videos", [])
                 recap_video_paths = result.get("recap_video_paths", [])
                 
-                if result.get("status") == "success" and result.get("renderer") == "wan":
+                # Count WAN videos (renderer can be "wan", "video", or "wan_video")
+                renderer_type = result.get("renderer", "")
+                if result.get("status") == "success" and renderer_type in ("wan", "video", "wan_video"):
                     analytics_data["wan_videos"] += 1
                 
                 for section in presentation.get("sections", []):
