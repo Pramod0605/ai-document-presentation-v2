@@ -33,10 +33,43 @@ You MUST output ONLY valid JSON with this exact structure:
       "avatar_visibility": "required|optional",
       "avatar_position": "left|right|center",
       "avatar_width_percent": 52,
-      "estimated_duration_seconds": 60
+      "estimated_duration_seconds": 60,
+      "budgets": {
+        "word_min": 100,
+        "word_max": 300,
+        "segment_min": 2,
+        "segment_max": 6,
+        "qa_count": 0,
+        "concept_count": 15
+      }
     }
   ]
 }
+
+## BUDGET CALCULATION RULES (CRITICAL - V1.5.1)
+
+Each section MUST have a `budgets` object calculated from content analysis:
+
+| Section Type | word_min | word_max | segment_min | segment_max | Notes |
+|--------------|----------|----------|-------------|-------------|-------|
+| intro        | 40       | 80       | 1           | 1           | Fixed |
+| summary      | 60       | 150      | 1           | 2           | Fixed |
+| content      | 100      | 300      | 2           | 6           | Based on concept_count (10 words/concept) |
+| example      | 100      | 300      | 2           | 4           | Fixed |
+| quiz         | DYNAMIC  | DYNAMIC  | qa_count    | qa_count+2  | 25-35 words per Q&A |
+| memory       | 30       | 100      | 3           | 3           | Fixed, exactly 3 flashcards |
+| recap        | 150      | 350      | 5           | 5           | Fixed, exactly 5 videos |
+
+**Quiz Budget Calculation:**
+- word_min = qa_count × 25
+- word_max = qa_count × 35
+- segment_min = qa_count (1 segment per Q&A)
+- segment_max = qa_count + 2 (allow grouping flexibility)
+
+**Content Budget Calculation:**
+- concept_count = sum of concepts from assigned topics
+- word_min = max(100, concept_count × 8)
+- word_max = max(300, concept_count × 15)
 
 ## AVATAR LAYOUT RULES (IMPORTANT)
 
@@ -84,12 +117,22 @@ NOTE: "hidden" is NOT a valid option for avatar. Avatar is ALWAYS displayed on L
    - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
    - Duration: 60-180 seconds each
 
-5. **quiz** (CONDITIONAL, 0-1 section):
+5. **quiz** (CONDITIONAL, 0-N sections based on Q&A count):
    - ONLY create if quiz_questions[] is non-empty in input
    - Interactive Q&A from source document
    - renderer: "none" (flashcard-style display)
    - avatar_visibility: "optional", avatar_position: "right", avatar_width_percent: 52
    - Duration: variable based on question count (15-30 seconds per Q&A)
+   
+   **DYNAMIC QUIZ SPLITTING (CRITICAL):**
+   | Q&A Count | Quiz Sections | Q&A per Section |
+   |-----------|---------------|-----------------|
+   | 1-8       | 1 section     | all Q&A         |
+   | 9-16      | 2 sections    | ~8 each         |
+   | 17-24     | 3 sections    | ~8 each         |
+   | 25+       | 4 sections    | distribute evenly |
+   
+   Each quiz section MUST specify which quiz_questions it covers using `qa_budget`
 
 6. **memory** (REQUIRED, exactly 1):
    - Flashcard review section (LLM-generated summaries)
