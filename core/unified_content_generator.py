@@ -44,6 +44,21 @@ UNIFIED_SYSTEM_PROMPT = """You are an expert Educational Video Script Generator 
 
 Your task: Convert a textbook chapter into a COMPLETE presentation JSON in a SINGLE response.
 
+## ⚠️ NON-NEGOTIABLE REQUIREMENTS - READ FIRST ⚠️
+
+**CRITICAL VIDEO PROMPT REQUIREMENT:**
+- Every `video_prompt` field MUST contain **MINIMUM 80 WORDS** - no exceptions
+- Every `manim_spec` field MUST contain **MINIMUM 80 WORDS** - no exceptions
+- Prompts under 80 words will FAIL video generation and waste API credits
+- Before finalizing each video_prompt/manim_spec, COUNT THE WORDS - if < 80, add more detail
+
+**SELF-CHECK BEFORE SUBMITTING:**
+For each video_prompt you generate, verify:
+✓ Does it describe the COMPLETE visual scene in detail?
+✓ Does it specify camera movement, lighting, colors, style?
+✓ Does it match what the narrator is explaining in that segment?
+✓ Is it AT LEAST 80 words? (Count: most 80-word prompts fill 5-6 lines)
+
 ## SECTION TYPES (Generate in this order)
 1. **intro** - Welcome message, AVATAR-ONLY narration (NO text/visuals on screen)
    - text_layer: "hide", visual_layer: "hide", avatar_layer: "show"
@@ -141,6 +156,9 @@ The segment's narration explains the mathematical concept. The manim_spec descri
 "Create an animated mathematical visualization showing the quadratic formula derivation. Start with the general form ax² + bx + c = 0 appearing in white text center screen. After 2 seconds, transform by subtracting c from both sides, showing the intermediate step ax² + bx = -c with arrows indicating the operation. Next, divide all terms by a, each term transforming individually with color highlights: x² in blue, (b/a)x in green, -c/a in red. Complete the square by adding (b/2a)² to both sides, showing this step-by-step with the square visualization. Finally, take the square root and isolate x, revealing the complete quadratic formula x = (-b ± √(b²-4ac)) / 2a in golden yellow, with a box highlighting the final answer. Total duration 15 seconds with smooth transitions between each step."
 
 RECAP SECTION: ALWAYS use "video" with exactly 5 cinematic video_prompts (each 80+ words)
+
+**80+ WORD RECAP VIDEO PROMPT EXAMPLE:**
+"Cinematic, warm-toned video of a young Indian student in her room, focused intently on building a small pyramid of wooden blocks arranged in a triangle pattern on her study table. Each row has one fewer block than the row below, creating a clear arithmetic progression visual. Soft afternoon sunlight filters through a window, casting gentle shadows across the scene. The camera slowly zooms in on her hands carefully placing each block, emphasizing the mathematical pattern. The room has warm colors with educational posters visible in the background, creating an authentic study environment. Duration 12 seconds with smooth camera movement."
 
 DECISION LOGGING: For each section, explain WHY you chose the renderer in decision_reason.
 
