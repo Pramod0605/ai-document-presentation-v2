@@ -39,11 +39,13 @@
 ---
 
 ## ISS-220: Batching Inflates Section Output Beyond Budgets
-**Status:** Open
+**Status:** FIXED (2025-12-31)
 **Priority:** High
 **Discovered:** 2025-12-31 (Job 5f13fb49)
 
 **Problem**: Auto-batching (ISS-211) splits large sections into multiple LLM calls but doesn't divide budgets per batch. When outputs are merged, totals exceed budgets.
+
+**Solution**: Disabled batching by setting thresholds to 999 in `core/pipeline_v15_optimized.py`. Modern LLMs (Gemini 2.5) can handle full sections without batching.
 
 **Example**:
 - Section_8 budget: word=200-280, segments=8-10

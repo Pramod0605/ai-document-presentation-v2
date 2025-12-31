@@ -53,9 +53,10 @@ logger = logging.getLogger(__name__)
 PIPELINE_VERSION = "1.5-opt"
 
 # ISS-211: Content batching thresholds to prevent token limit truncation
-MAX_QA_PAIRS_PER_BATCH = 4  # Quiz sections with >4 Q&A pairs will be split
-MAX_SOURCE_BLOCKS_PER_BATCH = 6  # Content sections with >6 blocks will be split
-BATCH_SIZE_ON_TRUNCATION = 3  # Reduced batch size on truncation error recovery
+# ISS-220: Disabled batching - modern LLMs handle large contexts, batching inflates output
+MAX_QA_PAIRS_PER_BATCH = 999  # Effectively disabled - was 4
+MAX_SOURCE_BLOCKS_PER_BATCH = 999  # Effectively disabled - was 6
+BATCH_SIZE_ON_TRUNCATION = 999  # Effectively disabled - was 3
 
 
 def _estimate_content_density(section_type: str, quiz_questions: List, source_blocks: List) -> Dict:
