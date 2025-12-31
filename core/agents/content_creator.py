@@ -196,7 +196,14 @@ class ContentCreatorAgent(BaseAgent):
         """Validate semantic rules for combined output using dynamic budgets."""
         errors = []
         
+        # V1.5.1: Handle both dict and JSON string blueprints (same as build_user_prompt)
         blueprint = input_data.get("section_blueprint", {})
+        if isinstance(blueprint, str):
+            try:
+                blueprint = json.loads(blueprint)
+            except json.JSONDecodeError:
+                blueprint = {}
+        
         section_type = blueprint.get("section_type", "content")
         
         # V1.5.1: Use dynamic budgets from blueprint if available, else fallback to fixed limits
