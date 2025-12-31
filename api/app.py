@@ -1257,16 +1257,19 @@ def _link_images_to_presentation(presentation: dict, saved_images: dict, images_
     
     Args:
         presentation: The presentation dict to modify
-        saved_images: Dict of {original_name: saved_path}
+        saved_images: Dict of {original_name: {filename, path, width, height}} or {original_name: path_string}
         images_dir: Path to images directory
     """
     from pathlib import Path
     
     # Build a lookup by image filename
     image_lookup = {}
-    for orig_name, saved_path in saved_images.items():
-        # Extract just the filename
-        filename = Path(saved_path).name if saved_path else orig_name
+    for orig_name, saved_info in saved_images.items():
+        # Handle both dict format {filename, path, ...} and string path format
+        if isinstance(saved_info, dict):
+            filename = saved_info.get('filename', orig_name)
+        else:
+            filename = Path(saved_info).name if saved_info else orig_name
         image_lookup[orig_name.lower()] = filename
         image_lookup[filename.lower()] = filename
     

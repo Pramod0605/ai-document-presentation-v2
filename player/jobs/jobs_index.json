@@ -95993,5 +95993,39 @@
     "page_count": 34,
     "source_type": "pdf",
     "image_count": 3
+  },
+  "7b8dd362": {
+    "id": "7b8dd362",
+    "type": "v15_v2_pipeline",
+    "params": {
+      "subject": "General Science",
+      "grade": "12",
+      "file_path": "/tmp/ai_education_jobs/de8567786dbae386.pdf",
+      "source_file": "sslc ch 5 arithmatic progression.pdf",
+      "skip_wan": false,
+      "skip_avatar": false,
+      "tts_provider": "edge_tts",
+      "pipeline_version": "v15_v2"
+    },
+    "status": "failed",
+    "current_step": null,
+    "current_step_name": "Waiting in Queue",
+    "current_phase_key": "image_linking",
+    "status_message": "Linking extracted images to content...",
+    "steps_completed": 0,
+    "total_steps": 3,
+    "progress": 0,
+    "created_at": "2025-12-31T17:14:23.063194",
+    "started_at": "2025-12-31T17:14:23.322638",
+    "completed_at": "2025-12-31T17:17:23.952603",
+    "error": "expected str, bytes or os.PathLike object, not dict\n\nTraceback:\nTraceback (most recent call last):\n  File \"/home/runner/workspace/core/job_manager.py\", line 239, in worker\n    result = process_func(job_id=job_id, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/api/app.py\", line 866, in process_document_job_v15_v2\n    return process_markdown_job_v15_v2(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/runner/workspace/api/app.py\", line 1073, in process_markdown_job_v15_v2\n    _link_images_to_presentation(presentation, saved_images, str(output_path / \"images\"))\n  File \"/home/runner/workspace/api/app.py\", line 1269, in _link_images_to_presentation\n    filename = Path(saved_path).name if saved_path else orig_name\n               ^^^^^^^^^^^^^^^^\n  File \"/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/pathlib.py\", line 871, in __new__\n    self = cls._from_parts(args)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/pathlib.py\", line 509, in _from_parts\n    drv, root, parts = self._parse_args(args)\n                       ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/pathlib.py\", line 493, in _parse_args\n    a = os.fspath(a)\n        ^^^^^^^^^^^^\nTypeError: expected str, bytes or os.PathLike object, not dict\n",
+    "result": null,
+    "page_count": 34,
+    "source_type": "pdf",
+    "image_count": 3,
+    "failure_message": null,
+    "impact": null,
+    "dev_hint": null,
+    "failed_phase": "image_linking"
   }
 }
