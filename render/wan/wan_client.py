@@ -8,6 +8,9 @@ KIE_API_KEY = os.environ.get("KIE_API_KEY", "")
 KIE_API_URL = "https://api.kie.ai/api/v1/wan"
 
 class WANClient:
+    MAX_RETRIES = 3
+    RETRY_DELAY = 5
+    
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or KIE_API_KEY
         self.base_url = KIE_API_URL
@@ -16,7 +19,28 @@ class WANClient:
             "Content-Type": "application/json"
         }
     
-    def generate_video(self, prompt: str, duration: int = 5, output_path: Optional[str] = None) -> str:
+    def generate_video(self, prompt: str, duration: int = 5, output_path: Optional[str] = None, max_retries: Optional[int] = None) -> str:
+        """Generate video with retry logic for transient failures."""
+        retries = max_retries if max_retries is not None else self.MAX_RETRIES
+        last_error = None
+        
+        for attempt in range(retries):
+            try:
+                result = self._generate_video_attempt(prompt, duration, output_path)
+                if result and not result.endswith("_placeholder.mp4"):
+                    return result
+                last_error = "Placeholder generated instead of real video"
+            except Exception as e:
+                last_error = str(e)
+                print(f"[WAN 2.6] Attempt {attempt + 1}/{retries} failed: {e}")
+                if attempt < retries - 1:
+                    print(f"[WAN 2.6] Retrying in {self.RETRY_DELAY}s...")
+                    time.sleep(self.RETRY_DELAY)
+        
+        print(f"[WAN 2.6] All {retries} attempts failed, generating placeholder")
+        return self._generate_placeholder(prompt, duration, output_path)
+    
+    def _generate_video_attempt(self, prompt: str, duration: int = 5, output_path: Optional[str] = None) -> str:
         valid_durations = [5, 10, 15]
         if duration not in valid_durations:
             duration = 5 if duration <= 7 else (10 if duration <= 12 else 15)
@@ -41,19 +65,16 @@ class WANClient:
             )
             
             if create_response.status_code != 200:
-                print(f"[WAN 2.6] API creation failed: {create_response.status_code}")
-                return self._generate_placeholder(prompt, duration, output_path)
+                raise Exception(f"API creation failed: {create_response.status_code}")
             
             result = create_response.json()
             if result.get("code") != 200:
-                print(f"[WAN 2.6] API error: {result.get('msg', 'Unknown error')}")
-                return self._generate_placeholder(prompt, duration, output_path)
+                raise Exception(f"API error: {result.get('msg', 'Unknown error')}")
             
             task_id = result.get("data", {}).get("taskId")
             
             if not task_id:
-                print("[WAN 2.6] No task ID returned from API")
-                return self._generate_placeholder(prompt, duration, output_path)
+                raise Exception("No task ID returned from API")
             
             max_attempts = 60
             for attempt in range(max_attempts):
@@ -76,19 +97,16 @@ class WANClient:
                                 return self._download_video(video_url, output_path)
                         elif state == "fail":
                             fail_msg = status_data.get("failMsg", "Unknown error")
-                            print(f"[WAN 2.6] Generation failed: {fail_msg}")
-                            return self._generate_placeholder(prompt, duration, output_path)
+                            raise Exception(f"Generation failed: {fail_msg}")
                         elif state in ["wait", "queueing", "generating"]:
                             print(f"[WAN 2.6] Status: {state}")
                 
                 time.sleep(5)
             
-            print("[WAN 2.6] Generation timed out")
-            return self._generate_placeholder(prompt, duration, output_path)
+            raise Exception("Generation timed out after 60 attempts")
             
         except Exception as e:
-            print(f"[WAN 2.6] API error: {e}")
-            return self._generate_placeholder(prompt, duration, output_path)
+            raise Exception(f"WAN API error: {e}")
     
     def _download_video(self, video_url: str, output_path: Optional[str]) -> str:
         response = requests.get(video_url, stream=True, timeout=120)

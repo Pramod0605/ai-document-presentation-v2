@@ -107,7 +107,14 @@ class ManimCodeGenerator:
         """
         import requests
         
-        self._load_prompts()
+        try:
+            self._load_prompts()
+        except FileNotFoundError as e:
+            logger.error(f"[ManimCodeGenerator] Missing prompt file: {e}")
+            return "", [f"Missing prompt file: {e}"]
+        except Exception as e:
+            logger.error(f"[ManimCodeGenerator] Failed to load prompts: {e}")
+            return "", [f"Failed to load prompts: {e}"]
         
         code = ""
         errors: List[str] = []
