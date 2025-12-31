@@ -949,10 +949,29 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
 
 
 def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge", images_dict: dict = None) -> dict:
-    """Process markdown using V1.5 V2 Unified pipeline (single LLM call, 95% fewer calls)."""
+    """Process markdown using V1.5 V2 Unified pipeline (single LLM call, 95% fewer calls).
+    
+    Full Pipeline:
+    1. LLM Generation (single call via unified_content_generator)
+    2. Transform to player schema
+    3. Calculate duration estimates from word count
+    4. Generate TTS audio (sets actual durations)
+    5. Generate Manim code for manim sections
+    6. Render videos (Manim execution + WAN video generation)
+    7. Link images to visual_content
+    8. Apply validations (enforce_renderer_policy, WAN prompt validation)
+    9. Save analytics with full metrics
+    """
     from pathlib import Path
     import time
     from core.image_processor import save_datalab_images, extract_image_refs_from_markdown
+    from core.tts_duration import update_durations_simplified
+    from core.renderer_executor import render_all_topics, enforce_renderer_policy
+    from core.agents.manim_code_generator import (
+        ManimCodeGenerator,
+        build_manim_section_data,
+        integrate_manim_code_into_section
+    )
     
     output_path = Path(output_dir)
     source_md_path = output_path / "source_markdown.md"
@@ -966,6 +985,33 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             "status_message": message
         }, persist=True)
     
+    # Track analytics (all metrics per Issue #7)
+    analytics_data = {
+        "pipeline_version": "v1.5-v2",
+        "llm_calls": 1,
+        "dry_run": dry_run,
+        "image_count": 0,
+        "table_count": 0,
+        "qa_pair_count": 0,
+        "tts_count": 0,
+        "tts_segments": 0,
+        "manim_sections": 0,
+        "manim_success": 0,
+        "manim_failed": 0,
+        "manim_videos": 0,
+        "wan_videos": 0,
+        "total_duration_seconds": 0
+    }
+    
+    # Count tables and Q&A pairs from markdown
+    import re
+    table_matches = re.findall(r'\|.*\|', markdown_content)
+    analytics_data["table_count"] = len([t for t in table_matches if '---' not in t]) // 2  # Rough estimate
+    qa_matches = re.findall(r'Q\s*\.?\s*\d+|Question\s+\d+', markdown_content, re.IGNORECASE)
+    analytics_data["qa_pair_count"] = len(qa_matches)
+    
+    # PHASE 1: Image Processing
+    saved_images = {}
     images_list = "None"
     if images_dict:
         status_callback(job_id, "image_processing", f"Processing {len(images_dict)} images...")
@@ -973,13 +1019,16 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
         saved_images = save_datalab_images(images_dict, str(images_dir), apply_green_screen=True)
         if saved_images:
             images_list = ", ".join(saved_images.keys())
+            analytics_data["image_count"] = len(saved_images)
             print(f"[V1.5-V2] Saved {len(saved_images)} images to {images_dir}")
     else:
         image_refs = extract_image_refs_from_markdown(markdown_content)
         if image_refs:
             images_list = ", ".join([ref['filename'] for ref in image_refs])
+            analytics_data["image_count"] = len(image_refs)
             print(f"[V1.5-V2] Found {len(image_refs)} image references in markdown")
     
+    # PHASE 2: LLM Generation (single call)
     status_callback(job_id, "v2_unified", "Starting V2 Unified Content Generator (single LLM call)")
     
     start_time = time.time()
@@ -994,12 +1043,187 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
     )
     
     llm_time = time.time() - start_time
+    analytics_data["llm_time_seconds"] = round(llm_time, 2)
     print(f"[V1.5-V2] LLM call completed in {llm_time:.2f}s")
     
+    # PHASE 3: Transform to player schema
     status_callback(job_id, "v2_transform", "Transforming to player schema")
-    
     presentation = transform_to_player_schema(raw_output, subject=subject, grade=grade)
     
+    # PHASE 4: Calculate duration estimates from word count (~150 WPM = 2.5 words/sec)
+    status_callback(job_id, "duration_estimate", "Calculating duration estimates from narration...")
+    for section in presentation.get("sections", []):
+        narration = section.get("narration", {})
+        segments = narration.get("segments", [])
+        total_duration = 0
+        for seg in segments:
+            text = seg.get("text", "")
+            word_count = len(text.split())
+            # ~150 WPM = 2.5 words/sec, minimum 3 seconds
+            duration_estimate = max(3.0, word_count / 2.5)
+            seg["duration_estimate"] = round(duration_estimate, 1)
+            seg["duration_seconds"] = round(duration_estimate, 1)  # Initial estimate
+            total_duration += duration_estimate
+        narration["total_duration_seconds"] = round(total_duration, 1)
+    print(f"[V1.5-V2] Duration estimates calculated for all segments")
+    
+    # PHASE 5: Link images to visual_content
+    if saved_images:
+        status_callback(job_id, "image_linking", "Linking extracted images to content...")
+        _link_images_to_presentation(presentation, saved_images, str(output_path / "images"))
+        print(f"[V1.5-V2] Linked {len(saved_images)} images to presentation")
+    
+    # PHASE 6: Generate TTS audio (updates duration_seconds with actual values)
+    generate_tts = tts_provider != "estimate" and not dry_run
+    if generate_tts:
+        status_callback(job_id, "tts_generation", f"Generating TTS audio ({tts_provider})...")
+        try:
+            presentation = update_durations_simplified(
+                presentation=presentation,
+                output_dir=output_path,
+                production_provider=tts_provider
+            )
+            # Count TTS segments and audio files
+            tts_count = 0
+            for section in presentation.get("sections", []):
+                segments = section.get("narration", {}).get("segments", [])
+                analytics_data["tts_segments"] += len(segments)
+                # Count segments that have audio_path
+                tts_count += sum(1 for s in segments if s.get("audio_path"))
+            analytics_data["tts_count"] = tts_count
+            print(f"[V1.5-V2] TTS generation complete: {tts_count} audio files")
+        except Exception as e:
+            print(f"[V1.5-V2] TTS generation failed: {e}, using estimates")
+    
+    # Calculate total duration
+    for section in presentation.get("sections", []):
+        analytics_data["total_duration_seconds"] += section.get("narration", {}).get("total_duration_seconds", 0)
+    
+    # PHASE 7: Apply validations
+    status_callback(job_id, "validation", "Applying renderer policy validation...")
+    presentation = enforce_renderer_policy(presentation)
+    
+    # PHASE 8: Generate Manim code for manim sections
+    manim_failed_sections = []
+    if not dry_run:
+        status_callback(job_id, "manim_codegen", "Generating Manim code...")
+        manim_generator = ManimCodeGenerator()
+        
+        for i, section in enumerate(presentation.get("sections", [])):
+            renderer = section.get("renderer", "none")
+            section_id = section.get("section_id", i + 1)
+            
+            if renderer == "manim":
+                analytics_data["manim_sections"] += 1
+                print(f"[V1.5-V2] Generating Manim code for section {section_id}")
+                
+                narration = section.get("narration", {})
+                segments = narration.get("segments", []) or section.get("segments", [])
+                visual_beats = section.get("visual_beats", [])
+                
+                manim_input = build_manim_section_data(
+                    section=section,
+                    narration_segments=segments,
+                    visual_beats=visual_beats,
+                    segment_enrichments=[]
+                )
+                
+                try:
+                    manim_code, validation_errors = manim_generator.generate(manim_input)
+                    
+                    if manim_code and len(manim_code) > 50:
+                        section = integrate_manim_code_into_section(section, manim_code)
+                        presentation["sections"][i] = section
+                        analytics_data["manim_success"] += 1
+                        print(f"[V1.5-V2] Manim code generated for section {section_id}")
+                    else:
+                        manim_failed_sections.append({
+                            "section_id": section_id,
+                            "error": "Empty or too short code",
+                            "validation_errors": validation_errors
+                        })
+                        analytics_data["manim_failed"] += 1
+                except Exception as e:
+                    manim_failed_sections.append({
+                        "section_id": section_id,
+                        "error": str(e)
+                    })
+                    analytics_data["manim_failed"] += 1
+                    print(f"[V1.5-V2] Manim code generation failed for section {section_id}: {e}")
+    
+    # Save manim failures for debugging
+    if manim_failed_sections:
+        failed_path = output_path / "manim_failed_sections.json"
+        with open(failed_path, "w") as f:
+            json.dump({"failed_count": len(manim_failed_sections), "sections": manim_failed_sections}, f, indent=2)
+    
+    # Update manim_videos count (successfully generated manim sections)
+    analytics_data["manim_videos"] = analytics_data["manim_success"]
+    
+    # PHASE 9: Validate WAN prompts (80+ word requirement per Issue #6)
+    if not dry_run and not skip_wan:
+        status_callback(job_id, "wan_validation", "Validating WAN video prompts...")
+        from core.wan_prompt_validator import validate_video_prompts
+        
+        for section in presentation.get("sections", []):
+            video_prompts = section.get("video_prompts", [])
+            if video_prompts:
+                section_id = section.get("section_id", 0)
+                is_valid, warnings, errors = validate_video_prompts(video_prompts, section_id, strict=False)
+                if warnings:
+                    print(f"[V1.5-V2] WAN validation warnings for section {section_id}: {warnings}")
+                if errors:
+                    print(f"[V1.5-V2] WAN validation errors for section {section_id}: {errors}")
+    
+    # PHASE 10: Render videos (Manim execution + WAN video generation)
+    if not dry_run:
+        status_callback(job_id, "video_render", "Rendering videos (Manim + WAN)...")
+        videos_dir = output_path / "videos"
+        videos_dir.mkdir(parents=True, exist_ok=True)
+        
+        try:
+            rendered_videos = render_all_topics(
+                presentation=presentation,
+                output_dir=str(videos_dir),
+                dry_run=dry_run,
+                skip_wan=skip_wan,
+                output_dir_base=str(output_path)
+            )
+            
+            # Update presentation with video paths
+            for result in rendered_videos:
+                section_id_result = result.get("topic_id")
+                video_path = result.get("video_path")
+                beat_videos = result.get("beat_videos", [])
+                recap_video_paths = result.get("recap_video_paths", [])
+                
+                if result.get("status") == "success" and result.get("renderer") == "wan":
+                    analytics_data["wan_videos"] += 1
+                
+                for section in presentation.get("sections", []):
+                    if section.get("section_id") == section_id_result:
+                        if video_path:
+                            rel_path = Path(video_path).name if "/" in str(video_path) else video_path
+                            section["video_path"] = f"videos/{rel_path}"
+                        if beat_videos:
+                            section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
+                            visual_beats = section.get("visual_beats", [])
+                            for idx, beat_path in enumerate(beat_videos):
+                                if idx < len(visual_beats):
+                                    visual_beats[idx]["video_asset"] = f"videos/{Path(beat_path).name}"
+                            section["visual_beats"] = visual_beats
+                        if recap_video_paths:
+                            section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
+                            analytics_data["wan_videos"] += len(recap_video_paths)
+                        break
+            
+            success_count = sum(1 for r in rendered_videos if r.get("status") in ["success", "skipped"])
+            fail_count = sum(1 for r in rendered_videos if r.get("status") == "failed")
+            print(f"[V1.5-V2] Video rendering complete: {success_count} success, {fail_count} failed")
+        except Exception as e:
+            print(f"[V1.5-V2] Video rendering failed: {e}")
+    
+    # PHASE 10: Save final presentation and analytics
     presentation["metadata"] = {
         "generated_by": "v1.5-v2-unified",
         "llm_calls": 1,
@@ -1007,31 +1231,67 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
         "dry_run": dry_run
     }
     
+    analytics_data["sections"] = len(presentation.get("sections", []))
+    
     pres_path = output_path / "presentation.json"
     with open(pres_path, "w") as f:
         json.dump(presentation, f, indent=2)
     
-    analytics = {
-        "pipeline_version": "v1.5-v2",
-        "llm_calls": 1,
-        "llm_time_seconds": round(llm_time, 2),
-        "sections": len(presentation.get("sections", [])),
-        "dry_run": dry_run
-    }
-    
     analytics_path = output_path / "analytics.json"
     with open(analytics_path, "w") as f:
-        json.dump(analytics, f, indent=2)
+        json.dump(analytics_data, f, indent=2)
     
-    status_callback(job_id, "complete", f"V2 generation complete: {len(presentation.get('sections', []))} sections")
+    status_callback(job_id, "complete", f"V2 pipeline complete: {analytics_data['sections']} sections, {analytics_data['manim_success']} manim, {analytics_data['wan_videos']} WAN videos")
     
     return {
         "status": "success",
         "presentation": presentation,
-        "analytics": analytics,
+        "analytics": analytics_data,
         "output_path": str(pres_path),
         "pipeline_version": "1.5-v2"
     }
+
+
+def _link_images_to_presentation(presentation: dict, saved_images: dict, images_dir: str) -> None:
+    """Link extracted images to visual_content in presentation segments.
+    
+    Args:
+        presentation: The presentation dict to modify
+        saved_images: Dict of {original_name: saved_path}
+        images_dir: Path to images directory
+    """
+    from pathlib import Path
+    
+    # Build a lookup by image filename
+    image_lookup = {}
+    for orig_name, saved_path in saved_images.items():
+        # Extract just the filename
+        filename = Path(saved_path).name if saved_path else orig_name
+        image_lookup[orig_name.lower()] = filename
+        image_lookup[filename.lower()] = filename
+    
+    for section in presentation.get("sections", []):
+        for beat in section.get("visual_beats", []):
+            # Check if this beat references an image
+            image_id = beat.get("image_id", "")
+            if image_id:
+                # Try to find matching image
+                for key, filename in image_lookup.items():
+                    if key in image_id.lower() or image_id.lower() in key:
+                        beat["image_path"] = f"images/{filename}"
+                        break
+        
+        # Also check segments' visual_content
+        narration = section.get("narration", {})
+        for seg in narration.get("segments", []):
+            visual_content = seg.get("visual_content", {})
+            if visual_content.get("content_type") in ("image", "diagram"):
+                image_id = visual_content.get("image_id", "")
+                if image_id:
+                    for key, filename in image_lookup.items():
+                        if key in image_id.lower() or image_id.lower() in key:
+                            visual_content["image_path"] = f"images/{filename}"
+                            break
 
 
 @app.route("/process_pdf", methods=["POST"])
