@@ -16,6 +16,7 @@ from core.pipeline_v12 import process_markdown_to_videos_v12 as process_markdown
 from core.pipeline_v14 import get_pipeline_info, process_markdown_to_presentation_v14, process_with_renderers_v14, validate_presentation_v14
 from core.pipeline_v15 import process_markdown_to_presentation_v15, resume_from_section, PipelineError as PipelineV15Error
 from core.pipeline_v15_optimized import process_markdown_optimized
+from core.unified_content_generator import generate_presentation, transform_to_player_schema, GeneratorConfig
 from core.job_manager import job_manager, run_job_async, is_job_running, get_current_job_id
 
 app = Flask(__name__)
@@ -105,7 +106,12 @@ def submit_job():
             uploaded_file.save(str(temp_file))
             original_filename = uploaded_file.filename
             
-            job_type_name = "v15_pipeline" if pipeline_version == "v15" else "v14_pipeline"
+            if pipeline_version == "v15_v2":
+                job_type_name = "v15_v2_pipeline"
+            elif pipeline_version == "v15":
+                job_type_name = "v15_pipeline"
+            else:
+                job_type_name = "v14_pipeline"
             job_id = job_manager.create_job(job_type_name, {
                 "subject": subject,
                 "grade": grade,
@@ -147,7 +153,12 @@ def submit_job():
                 
                 job_manager.update_job(job_id, {"content_preview": content_preview}, persist=True)
                 
-                job_processor = process_markdown_job_v15 if pipeline_version == "v15" else process_markdown_job
+                if pipeline_version == "v15_v2":
+                    job_processor = process_markdown_job_v15_v2
+                elif pipeline_version == "v15":
+                    job_processor = process_markdown_job_v15
+                else:
+                    job_processor = process_markdown_job
                 run_job_async(
                     job_id,
                     job_processor,
@@ -180,7 +191,12 @@ def submit_job():
             if len(markdown_content) > 300:
                 content_preview += "..."
             
-            job_type_name = "v15_pipeline" if pipeline_version == "v15" else "v14_pipeline"
+            if pipeline_version == "v15_v2":
+                job_type_name = "v15_v2_pipeline"
+            elif pipeline_version == "v15":
+                job_type_name = "v15_pipeline"
+            else:
+                job_type_name = "v14_pipeline"
             job_id = job_manager.create_job(job_type_name, {
                 "subject": subject,
                 "grade": grade,
@@ -195,7 +211,12 @@ def submit_job():
             job_output_dir = JOBS_DIR / job_id
             setup_job_folder(job_output_dir)
             
-            job_processor = process_markdown_job_v15 if pipeline_version == "v15" else process_markdown_job
+            if pipeline_version == "v15_v2":
+                job_processor = process_markdown_job_v15_v2
+            elif pipeline_version == "v15":
+                job_processor = process_markdown_job_v15
+            else:
+                job_processor = process_markdown_job
             run_job_async(
                 job_id,
                 job_processor,
@@ -869,6 +890,77 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
         "analytics": analytics_summary,
         "output_path": str(pres_path),
         "pipeline_version": "1.5"
+    }
+
+
+def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
+    """Process markdown using V1.5 V2 Unified pipeline (single LLM call, 95% fewer calls)."""
+    from pathlib import Path
+    import time
+    
+    output_path = Path(output_dir)
+    source_md_path = output_path / "source_markdown.md"
+    with open(source_md_path, "w", encoding="utf-8") as f:
+        f.write(markdown_content)
+    print(f"[V1.5-V2] Saved source markdown to {source_md_path} ({len(markdown_content)} chars)")
+    
+    def status_callback(jid, phase, message):
+        job_manager.update_job(jid, {
+            "current_phase_key": phase,
+            "status_message": message
+        }, persist=True)
+    
+    status_callback(job_id, "v2_unified", "Starting V2 Unified Content Generator (single LLM call)")
+    
+    start_time = time.time()
+    
+    config = GeneratorConfig(max_retries=3)
+    raw_output = generate_presentation(
+        markdown_content=markdown_content,
+        subject=subject,
+        grade=grade,
+        images_list="None",
+        config=config
+    )
+    
+    llm_time = time.time() - start_time
+    print(f"[V1.5-V2] LLM call completed in {llm_time:.2f}s")
+    
+    status_callback(job_id, "v2_transform", "Transforming to player schema")
+    
+    presentation = transform_to_player_schema(raw_output, subject=subject, grade=grade)
+    
+    presentation["metadata"] = {
+        "generated_by": "v1.5-v2-unified",
+        "llm_calls": 1,
+        "llm_time_seconds": round(llm_time, 2),
+        "dry_run": dry_run
+    }
+    
+    pres_path = output_path / "presentation.json"
+    with open(pres_path, "w") as f:
+        json.dump(presentation, f, indent=2)
+    
+    analytics = {
+        "pipeline_version": "v1.5-v2",
+        "llm_calls": 1,
+        "llm_time_seconds": round(llm_time, 2),
+        "sections": len(presentation.get("sections", [])),
+        "dry_run": dry_run
+    }
+    
+    analytics_path = output_path / "analytics.json"
+    with open(analytics_path, "w") as f:
+        json.dump(analytics, f, indent=2)
+    
+    status_callback(job_id, "complete", f"V2 generation complete: {len(presentation.get('sections', []))} sections")
+    
+    return {
+        "status": "success",
+        "presentation": presentation,
+        "analytics": analytics,
+        "output_path": str(pres_path),
+        "pipeline_version": "1.5-v2"
     }
 
 
