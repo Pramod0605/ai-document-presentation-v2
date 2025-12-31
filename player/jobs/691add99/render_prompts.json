@@ -1,0 +1,223 @@
+[
+  {
+    "timestamp": "2025-12-31T18:36:54.530669",
+    "section_id": 3,
+    "section_title": "Defining an Arithmetic Progression",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-16.8s) - Narration: \"What exactly is an Arithmetic Progression...\"\ntitle = Text(\"Arithmetic Progression (AP)\", font_size=48).to_edge(UP)\ndefinition = Text(\"A sequence where each term is obtained by\", font_size=32).next_to(title, DOWN, buff=0.8)\ndefinition2 = Text(\"adding a fixed number to the previous term\", font_size=32).next_to(definition, DOWN, buff=0.3)\n\nself.play(Write(title), run_time=2)\nself.play(Write(definition), run_time=2.5)\nself.play(Write(definition2), run_time=2.5)\n\nexample = MathTex(\"2, 5, 8, 11, 14, ...\").scale(1.2).next_to(definition2, DOWN, buff=0.8)\nself.play(Write(example), run_time=2)\nself.wait(7.8)  # Complete 16.8s segment\n\n# Segment 2 (16.8-39.6s) - Narration: \"This fixed number is the heart of the AP...\"\ncommon_diff = Text(\"Common Difference (d)\", color=YELLOW, font_size=36).next_to(example, DOWN, buff=1)\nd_formula = MathTex(\"d = a_{n+1} - a_n\", color=YELLOW).next_to(common_diff, DOWN, buff=0.5)\n\nself.play(Write(common_diff), run_time=2)\nself.play(Write(d_formula), run_time=2)\n\n# Show different types of APs\npos_ap = MathTex(\"2, 5, 8, 11, 14, ...\", \"\\\\quad d = +3\").set_color_by_tex(\"d\", GREEN)\nneg_ap = MathTex(\"10, 7, 4, 1, -2, ...\", \"\\\\quad d = -3\").set_color_by_tex(\"d\", RED)\nzero_ap = MathTex(\"4, 4, 4, 4, 4, ...\", \"\\\\quad d = 0\").set_color_by_tex(\"d\", BLUE)\n\nap_group = VGroup(pos_ap, neg_ap, zero_ap).arrange(DOWN, buff=0.5).next_to(d_formula, DOWN, buff=0.8)\n\nself.play(Write(pos_ap), run_time=2)\nself.play(Write(neg_ap), run_time=2)\nself.play(Write(zero_ap), run_time=2)\nself.wait(12.9)  # Complete 22.9s segment\n\n# Segment 3 (39.6-58.9s) - Narration: \"Let's visualize this...\"\nself.play(FadeOut(VGroup(common_diff, d_formula, ap_group)), run_time=1.5)\n\ngeneral_form = MathTex(\n    \"a,\", \"\\\\quad\", \n    \"a+d,\", \"\\\\quad\",\n    \"a+2d,\", \"\\\\quad\", \n    \"a+3d,\", \"\\\\quad\",\n    \"a+4d,\", \"\\\\quad ...\"\n).scale(1.2).next_to(example, DOWN, buff=1.5)\n\nself.play(Write(general_form[0:2]), run_time=2)\nself.play(Write(general_form[2:4]), run_time=2)\nself.play(Write(general_form[4:6]), run_time=2)\nself.play(Write(general_form[6:8]), run_time=2)\nself.play(Write(general_form[8:]), run_time=2)\nself.wait(7.8)  # Complete 19.3s segment\n\n# Segment 4 (58.9-74.1s) - Narration: \"To find the common difference...\"\ndiff_example = MathTex(\n    \"d = (a+d) - a\", \"\\\\quad \\\\text{or} \\\\quad\",\n    \"d = (a+2d) - (a+d)\"\n).next_to(general_form, DOWN, buff=1)\n\nself.play(Write(diff_example), run_time=3)\n\nhighlight_box = SurroundingRectangle(diff_example, color=YELLOW)\nself.play(Create(highlight_box), run_time=2)\nself.wait(10.2)  # Complete 15.2s segment",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_3.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2591,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-31T18:37:29.342816",
+    "section_id": 4,
+    "section_title": "Finite and Infinite APs - Beat 0",
+    "renderer": "wan_beat",
+    "prompt": "An animation showing a line of Indian school students in uniform standing in a queue for morning assembly. The students are arranged by increasing height from front to back. As the camera pans along the line, numbers representing their heights in centimeters (e.g., 147, 148, 149) appear above each student's head. The animation should clearly show a first student and a last student, emphasizing the finite nature of the sequence. The style should be bright and illustrative, with a schoolyard background. The camera movement is smooth, starting from a wide shot and then moving along the queue. The numbers should pop up sequentially as the camera passes each student, making the progression clear. Duration 12 seconds.",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_4_beat_0.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 0,
+      "beat_total": 4,
+      "duration": 15,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "beat_id",
+        "segment_id",
+        "visual_beat_type",
+        "description",
+        "source_block_ids"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-31T18:37:43.782100",
+    "section_id": 4,
+    "section_title": "Finite and Infinite APs - Beat 1",
+    "renderer": "wan_beat",
+    "prompt": "A futuristic, abstract animation of numbers floating in a dark, cosmic space. The numbers 3, 7, 11, 15... appear one by one, glowing in a neon blue color, moving from left to right across the screen. After the first few numbers pass, the sequence continues to generate more numbers that fade into the distance, stretching towards infinity. An ellipsis (...) appears at the end of the visible line of numbers to signify that it continues forever. The camera slowly zooms out to reveal an endless river of numbers flowing into the deep space, visually representing the concept of an infinite progression. The mood is mysterious and awe-inspiring. Duration 12 seconds.",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_4_beat_1.mp4",
+    "extra": {
+      "section_type": "content",
+      "beat_index": 1,
+      "beat_total": 4,
+      "duration": 15,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": [
+        "beat_id",
+        "segment_id",
+        "visual_beat_type",
+        "description",
+        "source_block_ids"
+      ]
+    }
+  },
+  {
+    "timestamp": "2025-12-31T18:37:56.410858",
+    "section_id": 5,
+    "section_title": "The N-th Term of an AP",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-14.7s) - How to find any term without listing all?\ntitle = Text(\"Finding the nth Term of an AP\", font_size=40).to_edge(UP)\nquestion = Text(\"How to find the 50th term without listing all numbers?\", \n                font_size=32).next_to(title, DOWN, buff=1)\n\ndots = VGroup(*[MathTex(r\"\\cdots\") for _ in range(3)])\ndots.arrange(RIGHT, buff=0.7).next_to(question, DOWN, buff=1)\n\nq_mark = Text(\"?\", font_size=72, color=YELLOW)\nq_mark.next_to(dots[1], UP, buff=0.5)\n\nself.play(Write(title), run_time=2)\nself.play(Write(question), run_time=2)\nself.play(Write(dots), run_time=2)\nself.play(FadeIn(q_mark), run_time=1)\nself.wait(7.7)  # Complete 14.7s\n\n# Segment 2 (14.7-39.6s) - Formula explanation\nformula = MathTex(r\"a_n = a + (n-1)d\", font_size=48)\nformula.next_to(dots, DOWN, buff=1.5)\n\nlabels = VGroup(\n    MathTex(r\"a:\", r\"\\text{ first term}\"),\n    MathTex(r\"d:\", r\"\\text{ common difference}\"),\n    MathTex(r\"n:\", r\"\\text{ position of term}\"),\n)\nlabels.arrange(DOWN, aligned_edge=LEFT, buff=0.5)\nlabels.next_to(formula, DOWN, buff=1)\n\nself.play(\n    FadeOut(q_mark),\n    Write(formula),\n    run_time=3\n)\nself.play(Write(labels[0]), run_time=2)\nself.play(Write(labels[1]), run_time=2)\nself.play(Write(labels[2]), run_time=2)\nself.wait(15.9)  # Complete 24.9s\n\n# Segment 3 (39.6-53.3s) - Explaining (n-1) jumps\njump_arrow = Arrow(LEFT*3, RIGHT*3, color=YELLOW)\njump_arrow.next_to(formula, UP, buff=0.7)\njump_text = Text(\"(n-1) jumps of size d\", font_size=32, color=YELLOW)\njump_text.next_to(jump_arrow, UP, buff=0.2)\n\nself.play(\n    GrowArrow(jump_arrow),\n    Write(jump_text),\n    run_time=3\n)\nself.play(\n    Indicate(formula.get_part_by_tex(\"(n-1)\")),\n    run_time=2\n)\nself.wait(8.7)  # Complete 13.7s\n\n# Segment 4 (53.3-69.6s) - Formula from the end\nlast_formula = MathTex(r\"a_n = l - (n-1)d\", font_size=48)\nlast_formula.next_to(labels, DOWN, buff=1)\nlast_label = MathTex(r\"l:\", r\"\\text{ last term}\")\nlast_label.next_to(last_formula, DOWN, buff=0.5)\nlast_label.align_to(labels[0], LEFT)\n\nself.play(\n    Write(last_formula),\n    run_time=3\n)\nself.play(\n    Write(last_label),\n    run_time=2\n)\nself.wait(11.2)  # Complete 16.2s",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_5.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2139,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-31T18:38:22.397585",
+    "section_id": 6,
+    "section_title": "Example: Finding the 10th Term",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-15.7s) - Narration: \"Let's apply this formula to an example...\"\ntitle = Text(\"Finding the 10th Term of an AP\", font_size=40).to_edge(UP)\nsequence = MathTex(\"2, 7, 12, \\\\dots\").scale(1.2)\nsequence.next_to(title, DOWN, buff=1)\n\nvariables = VGroup(\n    MathTex(\"a = 2\", color=BLUE),\n    MathTex(\"d = ?\"),\n    MathTex(\"n = 10\", color=GREEN)\n).arrange(RIGHT, buff=1)\nvariables.next_to(sequence, DOWN, buff=1)\n\nself.play(Write(title), run_time=2)\nself.wait(1)\nself.play(Write(sequence), run_time=2)\nself.wait(1)\nself.play(FadeIn(variables[0]), run_time=1.5)\nself.wait(8.2)  # Complete 15.7s segment\n\n# Segment 2 (15.7-31.5s) - Narration: \"To find the common difference 'd'...\"\nd_calc = MathTex(\"d = 7 - 2 = 5\", color=RED)\nd_calc.next_to(variables, DOWN, buff=1)\n\n# Update d in variables\nnew_d = MathTex(\"d = 5\", color=RED)\nnew_d.move_to(variables[1])\n\nself.play(Write(d_calc), run_time=2.5)\nself.wait(2)\nself.play(\n    ReplacementTransform(variables[1], new_d),\n    run_time=1.5\n)\nself.play(\n    Indicate(variables[2], color=GREEN),\n    run_time=1.5\n)\nself.wait(8.2)  # Complete 15.7s segment\n\n# Segment 3 (31.5-53.8s) - Narration: \"Now, we plug these values...\"\nformula = MathTex(\n    \"a_{10}\", \"=\", \"2\", \"+\", \"(10 - 1)\", \"\\\\times\", \"5\",\n    color=WHITE\n).scale(1.2)\nformula.next_to(d_calc, DOWN, buff=1)\n\nsimplified = MathTex(\n    \"a_{10}\", \"=\", \"2\", \"+\", \"9\", \"\\\\times\", \"5\",\n    color=WHITE\n).scale(1.2)\nsimplified.move_to(formula)\n\nfinal = MathTex(\n    \"a_{10}\", \"=\", \"2\", \"+\", \"45\", \"=\", \"47\",\n    color=YELLOW\n).scale(1.2)\nfinal.move_to(formula)\n\nself.play(Write(formula), run_time=3)\nself.wait(2)\nself.play(ReplacementTransform(formula, simplified), run_time=2)\nself.wait(2)\nself.play(ReplacementTransform(simplified, final), run_time=2)\nself.play(\n    Circumscribe(final, color=YELLOW, run_time=1.5),\n    final.animate.scale(1.2)\n)\nself.wait(9.8)  # Complete 22.3s segment",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_6.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v15_llm_generated",
+      "code_length": 1890,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-31T18:38:47.771613",
+    "section_id": 7,
+    "section_title": "Sum of First n Terms of an AP",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-23.4s) - What if we need to add up terms of an AP?\ntitle = Text(\"Sum of First n Terms of an AP\", font_size=40).to_edge(UP)\nquestion = Text(\"How do we add these numbers?\", font_size=36).next_to(title, DOWN, buff=1)\n\n# Create sample AP terms\nterms = VGroup()\nfor i in range(6):\n    term = MathTex(f\"{1 + 3*i}\")\n    terms.add(term)\nterms.arrange(RIGHT, buff=0.7)\nterms.next_to(question, DOWN, buff=1)\n\nplus_signs = VGroup()\nfor i in range(5):\n    plus = MathTex(\"+\")\n    plus.move_to((terms[i].get_right() + terms[i+1].get_left())/2)\n    plus_signs.add(plus)\n\ndots = MathTex(r\"\\cdots\").next_to(terms[-1], RIGHT, buff=0.4)\n\nself.play(Write(title), run_time=3)\nself.wait(2)\nself.play(Write(question), run_time=2)\nself.wait(2)\nself.play(Write(terms[0]), run_time=1)\nself.play(\n    *[Write(plus_signs[i]) for i in range(5)],\n    *[Write(terms[i+1]) for i in range(5)],\n    Write(dots),\n    run_time=3\n)\nself.wait(10.4)\n\n# Segment 2 (23.4-41.1s) - Main formula explanation\nformula = MathTex(\n    r\"S_n = \\frac{n}{2}[2a + (n-1)d]\"\n).scale(1.2)\nformula.next_to(terms, DOWN, buff=1.5)\n\nlabels = VGroup(\n    Text(\"n = number of terms\", font_size=24),\n    Text(\"a = first term\", font_size=24),\n    Text(\"d = common difference\", font_size=24)\n)\nlabels.arrange(DOWN, aligned_edge=LEFT, buff=0.3)\nlabels.next_to(formula, DOWN, buff=0.8)\n\nself.play(Write(formula), run_time=3)\nself.wait(2)\nself.play(Write(labels[0]), run_time=1)\nself.wait(1)\nself.play(Write(labels[1]), run_time=1)\nself.wait(1)\nself.play(Write(labels[2]), run_time=1)\nself.wait(8.8)\n\n# Segment 3 (41.1-61.4s) - Alternative formula with last term\nalt_formula = MathTex(\n    r\"S_n = \\frac{n}{2}(a + l)\"\n).scale(1.2)\nalt_formula.next_to(labels, DOWN, buff=1)\n\nlast_term_label = Text(\"l = last term\", font_size=24)\nlast_term_label.next_to(alt_formula, DOWN, buff=0.5)\n\nself.play(Write(alt_formula), run_time=3)\nself.wait(2)\nself.play(Write(last_term_label), run_time=2)\nself.wait(13.3)\n\n# Segment 4 (61.4-76.2s) - Connecting the formulas\nconnecting_arrow = Arrow(formula.get_bottom(), alt_formula.get_top(), buff=0.2)\nconnection_text = Text(\"Simplified form\", font_size=24)\nconnection_text.next_to(connecting_arrow, RIGHT)\n\nself.play(\n    Create(connecting_arrow),\n    Write(connection_text),\n    run_time=3\n)\nself.wait(11.7)",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_7.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2287,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-31T18:39:15.599320",
+    "section_id": 8,
+    "section_title": "Example: Sum of the First 22 Terms",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-18.8s) - Narration: \"Let's work through an example...\"\ntitle = Text(\"Sum of First 22 Terms of an AP\", font_size=40).to_edge(UP)\nproblem = MathTex(\"8, 3, -2, ...\", font_size=48).shift(UP)\na_label = MathTex(\"a = 8\", font_size=44).shift(DOWN)\n\nself.play(Write(title), run_time=2)\nself.wait(2)\nself.play(Write(problem), run_time=2)\nself.wait(2)\nself.play(\n    problem.animate.set_color_by_tex(\"8\", YELLOW),\n    run_time=1\n)\nself.play(Write(a_label), run_time=2)\nself.wait(9.8)  # Complete 18.8s segment\n\n# Segment 2 (18.8-34.5s) - Narration: \"The common difference 'd' is...\"\nd_calc = MathTex(\"d = 3 - 8 = -5\", font_size=44).next_to(a_label, DOWN)\nn_label = MathTex(\"n = 22\", font_size=44).next_to(d_calc, DOWN)\nformula = MathTex(r\"S_n = \\frac{n}{2}[2a + (n-1)d]\", font_size=44).shift(RIGHT * 3)\n\nself.play(Write(d_calc), run_time=2)\nself.wait(2)\nself.play(Write(n_label), run_time=2)\nself.wait(2)\nself.play(Write(formula), run_time=2.5)\nself.wait(5.2)  # Complete 15.7s segment\n\n# Segment 3 (34.5-49.2s) - Narration: \"Substituting our values...\"\nsubstitution1 = MathTex(\n    r\"S_{22} = \\frac{22}{2}[2(8) + (22-1)(-5)]\",\n    font_size=40\n).shift(UP * 0.5)\nsubstitution2 = MathTex(\n    r\"= 11[16 + 21(-5)]\",\n    font_size=40\n).next_to(substitution1, DOWN)\nsubstitution3 = MathTex(\n    r\"= 11[16 - 105]\",\n    font_size=40\n).next_to(substitution2, DOWN)\n\nself.play(\n    FadeOut(problem, a_label, d_calc, n_label, formula),\n    Write(substitution1),\n    run_time=3\n)\nself.wait(2)\nself.play(Write(substitution2), run_time=2)\nself.wait(2)\nself.play(Write(substitution3), run_time=2)\nself.wait(3.7)  # Complete 14.7s segment\n\n# Segment 4 (49.2-57.9s) - Narration: \"Finally, 11 times -89...\"\nfinal_result = MathTex(\n    r\"= 11(-89) = -979\",\n    font_size=44,\n    color=YELLOW\n).next_to(substitution3, DOWN)\nbox = SurroundingRectangle(final_result, color=YELLOW)\n\nself.play(Write(final_result), run_time=2)\nself.play(Create(box), run_time=1)\nself.wait(5.6)  # Complete 8.6s segment",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_8.mp4",
+    "extra": {
+      "section_type": "example",
+      "scene_type": "v15_llm_generated",
+      "code_length": 1983,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-31T18:39:36.082139",
+    "section_id": 9,
+    "section_title": "Real-World Applications of AP",
+    "renderer": "manim_v15",
+    "prompt": "# Segment 1 (0-29.9s) - Spiral of semicircles\n# Setup axes and points A, B\naxes = Axes(x_range=[-5, 5], y_range=[-5, 5])\npoint_a = Dot([-1, 0, 0], color=RED)\npoint_b = Dot([1, 0, 0], color=BLUE)\nlabels = VGroup(\n    Text(\"A\", font_size=24).next_to(point_a, DOWN),\n    Text(\"B\", font_size=24).next_to(point_b, DOWN)\n)\n\nself.play(\n    Create(axes),\n    Create(point_a),\n    Create(point_b),\n    Write(labels),\n    run_time=3\n)\n\n# Create spiral with 13 semicircles\nspiral = VGroup()\ncenters = [point_a, point_b] * 7  # Alternating centers\nradii = [0.5 * (i+1) for i in range(13)]  # 0.5, 1.0, 1.5, ...\n\nfor i in range(13):\n    center = centers[i].get_center()\n    radius = radii[i]\n    arc = Arc(\n        radius=radius,\n        angle=PI,\n        arc_center=center,\n        start_angle=PI if i%2 else 0,\n        color=YELLOW\n    )\n    spiral.add(arc)\n\n# Show formula for semicircle lengths\nformula = MathTex(r\"\\text{Lengths: }\\frac{\\pi}{2}, \\pi, \\frac{3\\pi}{2}, ...\", font_size=36)\nformula.to_edge(UP)\n\nself.play(Create(spiral, run_time=15))\nself.play(Write(formula, run_time=3))\nself.wait(8.9)  # Complete 29.9s segment\n\n# Segment 2 (29.9-51.3s) - Log stack visualization\nself.play(FadeOut(spiral), FadeOut(formula), FadeOut(axes), \n          FadeOut(point_a), FadeOut(point_b), FadeOut(labels))\n\n# Create log stack visualization\nlogs = VGroup()\nrows = []\ny_pos = -3  # Start from bottom\nfor i in range(20, 0, -1):\n    row = VGroup(*[\n        Rectangle(height=0.3, width=0.5, color=BROWN)\n        for _ in range(i)\n    ]).arrange(RIGHT, buff=0.1)\n    row.move_to([0, y_pos, 0])\n    rows.append(row)\n    logs.add(row)\n    y_pos += 0.35\n\n# Show log stack with formula\nstack_formula = MathTex(r\"a=20, d=-1\", font_size=36).to_edge(UP)\n\nself.play(Create(logs, run_time=12))\nself.play(Write(stack_formula, run_time=3))\nself.wait(6.3)  # Complete 21.3s segment\n\n# Segment 3 (51.3-74.1s) - Potato race\nself.play(FadeOut(logs), FadeOut(stack_formula))\n\n# Create race track visualization\ntrack = Line([-4, 0, 0], [4, 0, 0], color=WHITE)\nbucket = Square(side_length=0.5, color=BLUE).move_to([-4, 0, 0])\npotatoes = VGroup(*[\n    Circle(radius=0.1, color=BROWN, fill_opacity=1)\n    for _ in range(10)\n]).arrange(RIGHT, buff=0.6)\npotatoes.next_to(track, UP, buff=0)\npotatoes.shift(RIGHT * 1)  # Offset from bucket\n\n# Add runner path visualization\npaths = VGroup()\nrunner_start = bucket.get_center()\nfor potato in potatoes:\n    path = VGroup(\n        Line(runner_start, potato.get_center(), color=RED),\n        Line(potato.get_center(), runner_start, color=RED)\n    )\n    paths.add(path)\n\nself.play(Create(track), Create(bucket), run_time=3)\nself.play(Create(potatoes), run_time=3)\n\n# Show paths one by one\nfor path in paths:\n    self.play(Create(path), run_time=1)\n\nself.wait(5.9)  # Complete 22.9s segment",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_9.mp4",
+    "extra": {
+      "section_type": "content",
+      "scene_type": "v15_llm_generated",
+      "code_length": 2789,
+      "duration": 30,
+      "dry_run": false
+    }
+  },
+  {
+    "timestamp": "2025-12-31T18:39:41.938390",
+    "section_id": 13,
+    "section_title": "Arithmetic Progression in Everyday Life - Beat 0",
+    "renderer": "wan_beat",
+    "prompt": "Cinematic, warm-toned video of a young Indian teenage girl, Priya, in her cozy study room. She is neatly arranging textbooks on her desk. There are three stacks of books. The camera pans slowly across the stacks, which visibly decrease in height. Floating numbers '10', '8', '6' appear above each stack. The lighting is soft, coming from a desk lamp, creating a focused and studious atmosphere. The background shows bookshelves and motivational posters. The camera movement is smooth, emphasizing the pattern in the stacks of books. The shot ends with a gentle zoom on her satisfied face. Duration 12 seconds.",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_13_beat_0.mp4",
+    "extra": {
+      "section_type": "recap",
+      "beat_index": 0,
+      "beat_total": 0,
+      "duration": 15,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": []
+    }
+  },
+  {
+    "timestamp": "2025-12-31T18:39:56.049458",
+    "section_id": 13,
+    "section_title": "Arithmetic Progression in Everyday Life - Beat 1",
+    "renderer": "wan_beat",
+    "prompt": "An energetic, bright morning scene in a beautiful Indian park. Priya, now in sportswear, is jogging on a path. A digital timer overlay appears on screen, starting at 'Day 1: 10:00'. The scene transitions with a quick wipe to show her jogging again, with the timer now reading 'Day 2: 15:00', and then 'Day 3: 20:00'. The camera is dynamic, using a mix of tracking shots and steady angles to convey a sense of progress and determination. The sun is rising, casting a golden glow over the park's lush greenery. The visual style is motivational and uplifting. Duration 12 seconds.",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_13_beat_1.mp4",
+    "extra": {
+      "section_type": "recap",
+      "beat_index": 1,
+      "beat_total": 0,
+      "duration": 15,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": []
+    }
+  },
+  {
+    "timestamp": "2025-12-31T18:40:09.740553",
+    "section_id": 13,
+    "section_title": "Arithmetic Progression in Everyday Life - Beat 2",
+    "renderer": "wan_beat",
+    "prompt": "A medium shot of Priya working behind the counter in a modern, bustling cafe. She is methodically stacking white paper cups into pyramids. The camera focuses on her hands as she builds three separate stacks. The first stack has 5 cups, the second has 10, and the third has 15. The camera then pulls back to show the three completed stacks side-by-side, clearly illustrating an increasing arithmetic progression. The cafe environment is lively with soft background blur. The lighting is natural and inviting, highlighting the clean, organized stacks of cups. Duration 12 seconds.",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_13_beat_2.mp4",
+    "extra": {
+      "section_type": "recap",
+      "beat_index": 2,
+      "beat_total": 0,
+      "duration": 15,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": []
+    }
+  },
+  {
+    "timestamp": "2025-12-31T18:40:24.413118",
+    "section_id": 13,
+    "section_title": "Arithmetic Progression in Everyday Life - Beat 3",
+    "renderer": "wan_beat",
+    "prompt": "A slow, contemplative shot from inside Priya's room, looking out the window at a tall residential apartment building at dusk. The camera slowly pans upwards along the building's facade. As it moves past each floor, the floor numbers (1, 2, 3, 4, ...) illuminate one by one, glowing softly in the evening light. The visual effect emphasizes the simple, perfect arithmetic progression of the floors. The mood is calm and thoughtful, with the city lights twinkling in the background. The shot creates a sense of scale and order within the urban landscape. Duration 12 seconds.",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_13_beat_3.mp4",
+    "extra": {
+      "section_type": "recap",
+      "beat_index": 3,
+      "beat_total": 0,
+      "duration": 13,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": []
+    }
+  },
+  {
+    "timestamp": "2025-12-31T18:40:37.575645",
+    "section_id": 13,
+    "section_title": "Arithmetic Progression in Everyday Life - Beat 4",
+    "renderer": "wan_beat",
+    "prompt": "A close-up shot of Priya's hands dropping money into a traditional clay piggy bank (gullak). The first shot shows her putting in a \u20b9500 note. The scene then transitions to a calendar view animation. On Week 1, \u20b9500 appears. On Week 2, a '+\u20b9100' animation shows the total becoming \u20b9600. This repeats for Week 3, showing \u20b9700. The camera then cuts back to a happy and confident Priya holding her piggy bank, with a faint, glowing image of her desired phone superimposed in her thought bubble. The lighting is optimistic and warm. Duration 12 seconds.",
+    "output_path": "/home/runner/workspace/player/jobs/691add99/videos/topic_13_beat_4.mp4",
+    "extra": {
+      "section_type": "recap",
+      "beat_index": 4,
+      "beat_total": 0,
+      "duration": 15,
+      "dry_run": false,
+      "skip_wan": false,
+      "visual_beat_fields": []
+    }
+  }
+]
