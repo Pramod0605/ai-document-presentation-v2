@@ -1,55 +1,56 @@
 # V1.5 Optimized V2: POC Implementation Plan
 
 ## Goal
-Reduce 18-22 LLM calls to **3-4 calls** while preserving all V1.5 richness (manim, video, quiz, memory, recap).
+Reduce 18-22 LLM calls to **1 call** (+ optional ManimCodeGen) while preserving all V1.5 richness (manim, video, quiz, memory, recap).
+
+## POC Test Results (Dec 31, 2025)
+
+**Tested with:** 13-page Control & Coordination PDF (raw Datalab markdown)
+- Input: 3,622 words, 24,095 characters (raw, uncleaned)
+- Output: 10 sections, 39 segments, 1,152 words
+- LLM Calls: **1** (vs 18-22 in current pipeline)
+- Schema Compatibility: **PASSED** (all player fields present)
+
+**Key Finding:** No content cleaner needed! Raw Datalab markdown works directly.
 
 ---
 
-## Current V1.5 vs Proposed V1.5-V2
+## Current V1.5 vs V2 Architecture
 
 ```
-CURRENT (18-22 calls)                      PROPOSED V2 (3-4 calls)
-─────────────────────                      ────────────────────────
+CURRENT (18-22 calls)                      V2 UNIFIED (1 call) ✓ TESTED
+─────────────────────                      ────────────────────────────
 
 PDF → Datalab                              PDF → Datalab
       │                                          │
-      ▼                                          ▼
-SmartChunker (LLM #1)                      ┌─────────────────────────┐
-      │                                    │ LLM #1: ContentCleaner  │
-      ▼                                    │ (Gemini Flash)          │
-SectionPlanner (LLM #2)                    │ - Clean PDF artifacts   │
-      │                                    │ - Structure as Markdown │
-      ▼                                    └─────────────────────────┘
-ContentCreator ×11 (LLM #3-13)                   │
+      ▼                                          │ NO CLEANER NEEDED
+SmartChunker (LLM #1)                            │
       │                                          ▼
       ▼                                    ┌─────────────────────────┐
-RendererSpec ×3 (LLM #14-17)               │ LLM #2: UnifiedContent  │
-      │                                    │ Generator               │
-      ▼                                    │ (Gemini 2.5 Pro)        │
-SpecialSections (LLM #18)                  │                         │
-      │                                    │ ONE CALL produces:      │
-      ▼                                    │ - All sections          │
-Merge → TTS → Render                       │ - All narration         │
-                                           │ - All visual_beats      │
-                                           │ - All segment_enrichments│
-                                           │ - Renderer hints        │
-                                           │ - Quiz Q&A handling     │
-                                           │ - Memory flashcards     │
-                                           │ - Recap with video prompts│
-                                           └─────────────────────────┘
-                                                 │
+SectionPlanner (LLM #2)                    │ UnifiedContentGenerator │
+      │                                    │ (Gemini 2.5 Pro)        │
+      ▼                                    │                         │
+ContentCreator ×11 (LLM #3-13)             │ ONE CALL produces:      │
+      │                                    │ ✓ All sections          │
+      ▼                                    │ ✓ All narration         │
+RendererSpec ×3 (LLM #14-17)               │ ✓ All visual_beats      │
+      │                                    │ ✓ quiz_data (structured)│
+      ▼                                    │ ✓ flashcards (structured)│
+SpecialSections (LLM #18)                  │ ✓ video_prompts         │
+      │                                    │ ✓ display_directives    │
+      ▼                                    └─────────────────────────┘
+Merge → TTS → Render                             │
                                                  ▼
                                            ┌─────────────────────────┐
-                                           │ LLM #3: ManimCodeGen    │
+                                           │ ManimCodeGen (OPTIONAL) │
                                            │ (Claude Sonnet)         │
-                                           │ OPTIONAL - only for     │
-                                           │ manim sections          │
+                                           │ Only if manim sections  │
                                            └─────────────────────────┘
                                                  │
                                                  ▼
                                            Post-Processing (no LLM):
                                            - Schema validation
-                                           - TTS generation
+                                           - TTS generation (durations)
                                            - Manim rendering
                                            - WAN video generation
 ```
@@ -66,21 +67,20 @@ OUTPUT: Raw markdown from Datalab API
 Code: Existing datalab_client.py (unchanged)
 ```
 
-### Stage 2: Content Cleaner (LLM #1 - Optional)
+### Stage 2: Content Cleaner - NOT NEEDED ✓
 ```
-INPUT:  Raw markdown with PDF artifacts
-OUTPUT: Clean markdown
+REMOVED - POC proved raw Datalab markdown works directly with UnifiedContentGenerator
 
-Model:  Gemini 2.5 Flash (fast, cheap)
-Purpose: Remove page numbers, headers, footers, fix broken sentences
-
-SKIP IF: Document is already clean (user-provided markdown)
+Testing showed:
+  - Raw Datalab output with headers, images, tables, Q&A works perfectly
+  - No preprocessing needed
+  - Gemini 2.5 Pro handles noisy PDF artifacts
 ```
 
-### Stage 3: Unified Content Generator (LLM #2 - MAIN)
+### Stage 2: Unified Content Generator (LLM #1 - MAIN)
 ```
 INPUT:  
-  - Clean markdown (full document)
+  - Raw markdown (full document, directly from Datalab)
   - Subject, Grade
   - Images list (extracted from markdown)
 
