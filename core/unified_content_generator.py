@@ -99,21 +99,48 @@ Section: "The Nervous System"
 ├── Segment 1: Explain (text_layer: show) - "The nervous system is..."
 │   └── visual_beat: bullet_list with key points
 ├── Segment 2: Video Example (visual_layer: show, text_layer: hide)
-│   └── video_prompt: "3D animation showing neurons transmitting electrical signals..."
+│   └── video_prompt: [80+ word detailed prompt based on narration]
 ├── Segment 3: Explain next concept (text_layer: show)
 │   └── visual_beat: diagram description
 └── Segment 4: Video Example (visual_layer: show, text_layer: hide)
-    └── video_prompt: "Animation of synapse with neurotransmitters crossing gap..."
+    └── video_prompt: [80+ word detailed prompt based on narration]
 ```
 
-### VIDEO PROMPT REQUIREMENTS
-Each video_prompt in content sections must:
-- Be 10-15 seconds (duration_hint: 10-15)
-- Sync with narration (segment describes what video shows)
-- Be specific and detailed for AI video generation
-- Match the concept being taught
+### VIDEO PROMPT REQUIREMENTS (WAN - Biology/Physics/Chemistry)
+CRITICAL: Each video_prompt MUST be **80+ words minimum** for the video API to generate quality results.
 
-RECAP SECTION: ALWAYS use "video" with exactly 5 cinematic video_prompts
+Each video_prompt must:
+1. **Be 80+ words minimum** - detailed enough for AI video generation
+2. **Be derived from the narration context** - visualize exactly what the narrator is explaining
+3. **Duration hint: 10-15 seconds**
+4. **Include visual details**: camera angles, lighting, animation style, motion, colors
+
+**NARRATION-VIDEO SYNC RULE:**
+The segment's narration (text) explains the concept in audio. The video_prompt describes what the viewer SEES while hearing that narration. They must match in content but differ in format:
+- Narration (audio): "The neuron transmits electrical signals through its axon..."
+- Video prompt (visual): "Detailed 3D animation of a single neuron with glowing blue cell body and dendrites, showing a bright electrical impulse pulse traveling along the elongated axon fiber as a wave of light, the signal moves smoothly from left to right, reaching terminal buttons at the synapse junction, microscopic scientific visualization style with dark background and bioluminescent effects, camera slowly follows the signal path, smooth continuous 12-second animation loop"
+
+**80+ WORD VIDEO PROMPT EXAMPLE (Biology):**
+"Cinematic 3D animation inside the human nervous system showing a detailed neuron cell with its soma glowing softly blue, multiple branching dendrites receiving signals visualized as tiny sparks, the electrical impulse consolidates and travels down the long axon as a bright wave of energy, passing through the myelin sheath segments which appear as translucent white bands, the signal reaches the axon terminals and triggers the release of neurotransmitter molecules shown as small glowing spheres crossing the synaptic cleft to the next neuron, scientific documentary style with dark purple background, smooth camera movement following the signal, duration 12 seconds"
+
+### MANIM SPEC REQUIREMENTS (Math/Physics Equations)
+CRITICAL: Each manim_spec MUST be **80+ words minimum** describing the mathematical animation in detail.
+
+Each manim_spec must:
+1. **Be 80+ words minimum** - detailed enough for Manim code generation
+2. **Be derived from the narration context** - visualize the math/equation being explained
+3. **Describe step-by-step animation**: what appears first, transformations, final result
+4. **Include visual details**: colors, positions, timing, text labels
+
+**NARRATION-MANIM SYNC RULE:**
+The segment's narration explains the mathematical concept. The manim_spec describes the animated visualization that matches:
+- Narration (audio): "Let's solve this quadratic equation step by step..."
+- Manim spec (visual): detailed description of equation appearing, transformations, solution steps
+
+**80+ WORD MANIM SPEC EXAMPLE (Math):**
+"Create an animated mathematical visualization showing the quadratic formula derivation. Start with the general form ax² + bx + c = 0 appearing in white text center screen. After 2 seconds, transform by subtracting c from both sides, showing the intermediate step ax² + bx = -c with arrows indicating the operation. Next, divide all terms by a, each term transforming individually with color highlights: x² in blue, (b/a)x in green, -c/a in red. Complete the square by adding (b/2a)² to both sides, showing this step-by-step with the square visualization. Finally, take the square root and isolate x, revealing the complete quadratic formula x = (-b ± √(b²-4ac)) / 2a in golden yellow, with a box highlighting the final answer. Total duration 15 seconds with smooth transitions between each step."
+
+RECAP SECTION: ALWAYS use "video" with exactly 5 cinematic video_prompts (each 80+ words)
 
 DECISION LOGGING: For each section, explain WHY you chose the renderer in decision_reason.
 
