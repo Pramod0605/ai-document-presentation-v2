@@ -444,11 +444,17 @@ def build_manim_section_data(
     """
     combined_segments = []
     
+    def _ensure_str(val):
+        """Convert value to string, handling lists."""
+        if isinstance(val, list):
+            return " ".join(str(v) for v in val)
+        return str(val) if val else ""
+    
     for i, seg in enumerate(narration_segments):
         visual_desc = ""
         
         if i < len(visual_beats):
-            visual_desc = visual_beats[i].get("description", "")
+            visual_desc = _ensure_str(visual_beats[i].get("description", ""))
         
         if i < len(segment_enrichments):
             enrich = segment_enrichments[i]
@@ -474,7 +480,7 @@ def build_manim_section_data(
     return {
         "section_title": section.get("title", "Educational Topic"),
         "narration_segments": combined_segments,
-        "visual_description": " ".join(vb.get("description", "") for vb in visual_beats),
+        "visual_description": " ".join(_ensure_str(vb.get("description", "")) for vb in visual_beats),
         "formulas": list(set(filter(None, all_formulas))),
         "key_terms": list(set(all_labels)),
         "special_requirements": ""
