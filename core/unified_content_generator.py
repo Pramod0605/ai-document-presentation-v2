@@ -415,7 +415,7 @@ def transform_to_player_schema(
                 "position": "right" if section.get("section_type") != "intro" else "center",
                 "width_percent": 52 if section.get("section_type") != "intro" else 60
             },
-            "narration": _transform_narration(section.get("narration", {})),
+            "narration": _transform_narration(section.get("narration", {}), section.get("visual_beats", [])),
             "visual_beats": _transform_visual_beats(section.get("visual_beats", [])),
             "display_directives": _extract_display_directives(section),
         }
@@ -434,27 +434,74 @@ def transform_to_player_schema(
     return presentation
 
 
-def _transform_narration(narration: dict) -> dict:
-    """Transform narration to player format."""
+def _transform_narration(narration: dict, visual_beats: list = None) -> dict:
+    """Transform narration to player format, mapping visual_beats into segment visual_content."""
     full_text = narration.get("full_text", "")
     segments = narration.get("segments", [])
+    visual_beats = visual_beats or []
+    
+    # Build segment_id -> visual_beat mapping
+    beat_map = {}
+    for beat in visual_beats:
+        seg_id = beat.get("segment_id", "seg_1")
+        if seg_id not in beat_map:
+            beat_map[seg_id] = beat
     
     transformed_segments = []
     for i, seg in enumerate(segments):
+        seg_id = seg.get("segment_id", f"seg_{i+1}")
+        beat = beat_map.get(seg_id, {})
+        
+        # Map visual_beat to visual_content
+        visual_type = beat.get("visual_type", "text")
+        display_text = beat.get("display_text", "")
+        
+        # Determine content_type and structure
+        if visual_type == "bullet_list":
+            content_type = "bullet_points"
+            items = [display_text] if display_text else []
+            # Split on newlines if present
+            if display_text and "\n" in display_text:
+                items = [line.strip() for line in display_text.split("\n") if line.strip()]
+            visual_content = {
+                "content_type": content_type,
+                "display_format": "bullets",
+                "items": items,
+                "verbatim_content": None
+            }
+        elif visual_type == "equation":
+            visual_content = {
+                "content_type": "equation",
+                "display_format": "latex",
+                "items": [],
+                "verbatim_content": beat.get("latex_content", display_text)
+            }
+        elif visual_type in ("diagram", "image"):
+            visual_content = {
+                "content_type": visual_type,
+                "display_format": None,
+                "items": [],
+                "verbatim_content": display_text,
+                "image_id": beat.get("image_id")
+            }
+        else:
+            # Default text type
+            visual_content = {
+                "content_type": "text",
+                "display_format": None,
+                "items": [],
+                "verbatim_content": display_text if display_text else None
+            }
+        
         transformed_seg = {
             "segment_id": i + 1,
             "text": seg.get("text", ""),
             "duration_seconds": 0,
             "gesture_hint": seg.get("purpose", "neutral"),
-            "visual_content": {
-                "content_type": "text",
-                "display_format": None,
-                "items": [],
-                "verbatim_content": None
-            },
+            "visual_content": visual_content,
             "display_directives": seg.get("display_directives", {
                 "text_layer": "show",
-                "visual_layer": "hide",
+                "visual_layer": "show" if display_text else "hide",
                 "avatar_layer": "show"
             })
         }
