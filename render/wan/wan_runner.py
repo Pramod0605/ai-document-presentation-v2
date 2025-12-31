@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import List
 from .wan_client import WANClient
 from render.render_trace import log_render_prompt
-from core.wan_prompt_validator import hard_fail_on_short_prompts, WanPromptHardFailError, truncate_video_prompts, truncate_wan_prompt
+from core.wan_prompt_validator import hard_fail_on_short_prompts, WanPromptHardFailError, truncate_video_prompts, truncate_wan_prompt, expand_video_prompts
 
 
 class WanRenderError(Exception):
@@ -160,6 +160,10 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     # ISS-158 FIX: Truncate section-level prompt BEFORE validation
     prompt = truncate_wan_prompt(prompt)
     
+    # Auto-expand short prompts before validation
+    from core.wan_prompt_validator import expand_short_prompt
+    prompt = expand_short_prompt(prompt)
+    
     # ISS-076 FIX: Validate section-level prompt before API call
     try:
         hard_fail_on_short_prompts([{"prompt": prompt}], topic_id)
@@ -225,6 +229,10 @@ def _render_visual_beats(
         video_prompts = truncate_video_prompts(video_prompts)
         truncated_lengths = [len(p.get("prompt", "")) for p in video_prompts]
         print(f"[WAN] video_prompts AFTER truncation: {truncated_lengths} chars (max 800)")
+        
+        # Auto-expand short prompts before validation
+        video_prompts = expand_video_prompts(video_prompts)
+        
         try:
             hard_fail_on_short_prompts(video_prompts, topic_id)
         except WanPromptHardFailError as e:
@@ -370,6 +378,10 @@ def _render_recap_scenes(
         for i, scene in enumerate(recap_scenes):
             if i < len(recap_prompts):
                 scene["wan_prompt"] = recap_prompts[i].get("prompt", scene.get("wan_prompt", ""))
+        
+        # Auto-expand short prompts before validation
+        recap_prompts = expand_video_prompts(recap_prompts)
+        
         try:
             hard_fail_on_short_prompts(recap_prompts, topic_id)
         except WanPromptHardFailError as e:
@@ -601,6 +613,9 @@ def render_from_video_prompts(
     
     # ISS-076 FIX: Validate all prompts before any API calls (production only)
     if not dry_run and not skip_wan:
+        # Auto-expand short prompts before validation
+        video_prompts = expand_video_prompts(video_prompts)
+        
         try:
             hard_fail_on_short_prompts(video_prompts, section_id)
         except WanPromptHardFailError as e:

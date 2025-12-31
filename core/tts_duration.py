@@ -151,6 +151,7 @@ def update_durations_simplified(
                 
                 if audio_path.exists():
                     segment["audio_file"] = str(audio_path.name)
+                    segment["audio_path"] = f"audio/{audio_path.name}"
                     audio_count += 1
                     
             except Exception as e:

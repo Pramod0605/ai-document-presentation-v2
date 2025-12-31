@@ -259,6 +259,8 @@ class ManimCodeGenerator:
             errors.append("Code appears truncated - ends with assignment")
         if last_line.endswith('+') or last_line.endswith('-') or last_line.endswith('*'):
             errors.append("Code appears truncated - ends with operator")
+        if last_line.endswith(':'):
+            errors.append("Code appears truncated - ends with colon (incomplete block)")
         
         # Check for unclosed brackets
         open_parens = code.count('(') - code.count(')')
@@ -271,6 +273,18 @@ class ManimCodeGenerator:
             errors.append(f"Unclosed brackets: {open_brackets} unmatched '['")
         if open_braces > 0:
             errors.append(f"Unclosed braces: {open_braces} unmatched '{{'")
+        
+        # Check for incomplete control structures (for, if, while, with, def, class ending with :)
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped.endswith(':') and i == len(lines) - 1:
+                # Last line ends with colon - definitely incomplete
+                errors.append(f"Incomplete control structure at line {i+1}: '{stripped[:50]}...'")
+            elif stripped.endswith(':'):
+                # Check if there's a body after this line
+                next_lines = [l for l in lines[i+1:] if l.strip()]
+                if not next_lines:
+                    errors.append(f"Control structure at line {i+1} has no body: '{stripped[:50]}...'")
         
         return errors
     
