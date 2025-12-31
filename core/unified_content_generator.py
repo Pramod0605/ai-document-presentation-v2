@@ -54,6 +54,8 @@ Your task: Convert a textbook chapter into a COMPLETE presentation JSON in a SIN
 3. **content** - Main teaching content (2-5 sections based on document length)
    - LLM decides when to show text vs image vs diagram
    - Flip text_layer to "hide" when showing complex visuals
+   - For BIOLOGY: Use derived_renderer="video" with video_prompts for anatomy, processes, organisms
+   - For MATH/PHYSICS: Use derived_renderer="manim" for equations, graphs, formulas
 4. **example** - OPTIONAL: Worked examples ONLY if present in source document
 5. **quiz** - OPTIONAL: Questions extracted from document Q&A pairs (only if Q&A exists)
    - Split into multiple sections if >8 questions (~4 Q&A per section)
@@ -63,21 +65,26 @@ Your task: Convert a textbook chapter into a COMPLETE presentation JSON in a SIN
    - text_layer: "hide", visual_layer: "show" (video takes full screen)
    - derived_renderer: "video"
 
-## RENDERER SELECTION (Subject-Based)
-DEFAULT: "none" - For text, bullets, definitions, concepts (MOST common)
+## RENDERER SELECTION (Subject-Based) - APPLIES TO CONTENT SECTIONS
+DEFAULT: "none" - For text, bullets, definitions, concepts
 
-Subject-specific rules:
-| Subject          | When to use "manim"                | When to use "video" (WAN)     |
-|------------------|-------------------------------------|-------------------------------|
-| Biology          | NEVER                               | anatomy, cells, organisms     |
-| Mathematics      | equations, graphs, geometric proofs | NEVER                         |
-| Physics          | formulas, vector diagrams           | physical phenomena            |
-| Chemistry        | equation balancing                  | reactions, molecular motion   |
-| Other subjects   | NEVER                               | NEVER (use "none" only)       |
+Subject-specific rules for CONTENT sections:
+| Subject          | Content with visuals needs           | Example topics needing video/manim |
+|------------------|--------------------------------------|-------------------------------------|
+| Biology          | derived_renderer="video"             | Nervous System, Cells, Brain, Hormones |
+| Mathematics      | derived_renderer="manim"             | Equations, Graphs, Geometry         |
+| Physics          | derived_renderer="manim" or "video"  | Formulas (manim), Phenomena (video) |
+| Chemistry        | derived_renderer="video" or "manim"  | Reactions (video), Equations (manim)|
+| Other subjects   | derived_renderer="none"              | Text-only display                   |
+
+WHEN TO USE VIDEO FOR BIOLOGY CONTENT:
+- Anatomy topics (Nervous System, Brain, Heart) → video_prompts showing the structure
+- Process topics (Reflex Arc, Photosynthesis) → video_prompts showing the process in action
+- Organism topics (Cells, Hormones) → video_prompts showing microscopic views
 
 RECAP SECTION: ALWAYS use "video" (WAN AI-generated scenes)
 
-CRITICAL: "none" is the DEFAULT. Only use "manim" or "video" when the content TRULY requires animation.
+IMPORTANT: For Biology/Chemistry, most CONTENT sections with visual concepts should use derived_renderer="video" with video_prompts array.
 
 ## SEGMENT RULES
 - Each segment = 15-30 seconds when spoken aloud
