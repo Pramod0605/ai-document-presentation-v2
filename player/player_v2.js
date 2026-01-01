@@ -438,7 +438,50 @@ function renderContent(slide) {
   // Check if this slide has a Manim/WAN video to display
   const videoPath = slide.video_path || slide.content_video_path;
   const renderer = slide.renderer || 'none';
+  const beatVideoPaths = slide.beat_video_paths || [];
   
+  // If multiple beat videos exist, use beat video playlist mode
+  if (beatVideoPaths.length > 1 && (renderer === 'manim' || renderer === 'wan_video' || renderer === 'wan' || renderer === 'video')) {
+    console.log(`[V2] ContentRenderer: Multi-beat video mode - ${beatVideoPaths.length} videos`);
+    const segments = slide.narration?.segments || [];
+    const visualBeats = slide.visual_beats || [];
+    
+    // Build beat video playlist for content section
+    beatVideoPlaylist = [];
+    currentBeatIndex = 0;
+    
+    // Map visual_beats to beat_video_paths by finding video type beats
+    let videoIndex = 0;
+    visualBeats.forEach((beat, i) => {
+      if (beat.visual_beat_type === 'video' && videoIndex < beatVideoPaths.length) {
+        beatVideoPlaylist.push({
+          videoPath: beatVideoPaths[videoIndex],
+          segmentId: beat.segment_id || i + 1,
+          startTime: getSegmentStartTime(segments, parseInt(beat.segment_id?.replace('seg_', '') || i + 1))
+        });
+        videoIndex++;
+      }
+    });
+    
+    // Fallback: just use beat_video_paths in order if visual_beats don't help
+    if (beatVideoPlaylist.length === 0) {
+      beatVideoPaths.forEach((vp, i) => {
+        beatVideoPlaylist.push({
+          videoPath: vp,
+          segmentId: i + 1,
+          startTime: getSegmentStartTime(segments, i + 1)
+        });
+      });
+    }
+    
+    console.log(`[V2] Content beat playlist: ${beatVideoPlaylist.length} videos`);
+    videoLayer.classList.remove('hidden');
+    contentLayer.classList.add('video-mode');
+    loadBeatVideo(0);
+    return;
+  }
+  
+  // Single video mode (original behavior)
   if (videoPath && (renderer === 'manim' || renderer === 'wan_video' || renderer === 'wan' || renderer === 'video')) {
     console.log(`[V2] ContentRenderer: Manim/Video mode - ${videoPath}`);
     const fullPath = resolveMediaPath(videoPath, 'video');
@@ -943,8 +986,21 @@ function renderRecap(slide) {
   const visualBeats = slide.visual_beats || [];
   const segments = slide.narration?.segments || [];
   
-  // Try to build playlist from visual_beats with video_asset
-  if (visualBeats.length > 0) {
+  // Priority 1: Use recap_video_paths array if available (new V2 format)
+  const recapVideoPaths = slide.recap_video_paths || [];
+  if (recapVideoPaths.length > 0) {
+    recapVideoPaths.forEach((videoPath, i) => {
+      beatVideoPlaylist.push({
+        videoPath: videoPath,
+        segmentId: i + 1,
+        startTime: getSegmentStartTime(segments, i + 1)
+      });
+    });
+    console.log(`[V2] Built recap playlist from recap_video_paths: ${beatVideoPlaylist.length} videos`);
+  }
+  
+  // Priority 2: Try visual_beats with video_asset
+  if (beatVideoPlaylist.length === 0 && visualBeats.length > 0) {
     visualBeats.forEach((beat, i) => {
       if (beat.video_asset) {
         beatVideoPlaylist.push({
@@ -956,14 +1012,12 @@ function renderRecap(slide) {
     });
   }
   
-  // If visual_beats don't have video_asset, check for numbered beat files
+  // Priority 3: Check for numbered beat files pattern
   if (beatVideoPlaylist.length === 0 && slide.video_path) {
-    // Extract base pattern from video_path (e.g., "videos/topic_10_beat_0.mp4")
     const baseMatch = slide.video_path.match(/(.+_beat_)(\d+)(\.mp4)$/);
     if (baseMatch) {
       const basePath = baseMatch[1];
       const ext = baseMatch[3];
-      // Try to find how many beat videos exist (assume up to 10)
       for (let i = 0; i < Math.min(segments.length, 10); i++) {
         const beatPath = `${basePath}${i}${ext}`;
         beatVideoPlaylist.push({
