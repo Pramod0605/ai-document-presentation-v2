@@ -1,8 +1,9 @@
 """
-WAN Video Client - Kie.ai WAN 2.2 A14B Text-to-Video Turbo API
+WAN Video Client - Kie.ai WAN 2.6 Text-to-Video API
 Updated: January 2026 to use new unified jobs API
 
-API Docs: https://docs.kie.ai/market/wan/2-2-a14b-text-to-video-turbo
+Uses WAN 2.6 for variable duration support (5, 10, 15 seconds).
+API Docs: https://docs.kie.ai/market/wan/2-6-text-to-video
 """
 import os
 import time
@@ -41,51 +42,62 @@ class WANClient:
                 last_error = "Placeholder generated instead of real video"
             except Exception as e:
                 last_error = str(e)
-                print(f"[WAN 2.2] Attempt {attempt + 1}/{retries} failed: {e}")
+                print(f"[WAN 2.6] Attempt {attempt + 1}/{retries} failed: {e}")
                 if attempt < retries - 1:
-                    print(f"[WAN 2.2] Retrying in {self.RETRY_DELAY}s...")
+                    print(f"[WAN 2.6] Retrying in {self.RETRY_DELAY}s...")
                     time.sleep(self.RETRY_DELAY)
         
-        print(f"[WAN 2.2] All {retries} attempts failed, generating placeholder")
+        print(f"[WAN 2.6] All {retries} attempts failed, generating placeholder")
         return self._generate_placeholder(prompt, duration, output_path)
     
     def _generate_video_attempt(self, prompt: str, duration: int = 5, output_path: Optional[str] = None) -> str:
         """
         Single attempt to generate video using new Kie.ai unified jobs API.
         
+        Uses WAN 2.6 for variable duration support (5, 10, 15 seconds).
+        
         New API format (2026):
         POST /api/v1/jobs/createTask
         {
-            "model": "wan/2-2-a14b-text-to-video-turbo",
+            "model": "wan/2-6-text-to-video",
             "input": {
                 "prompt": "...",
-                "resolution": "720p",
-                "aspect_ratio": "16:9",
-                ...
+                "duration": "5",  // "5", "10", or "15"
+                "resolution": "720p"
             }
         }
         """
         if not self.api_key:
-            print("[WAN 2.2] No API key configured, generating placeholder")
+            print("[WAN 2.6] No API key configured, generating placeholder")
             return self._generate_placeholder(prompt, duration, output_path)
         
         # Truncate prompt to 800 chars max
         prompt = self._truncate_prompt(prompt, max_chars=800)
         
-        # Prepare request payload per new API spec
+        # Normalize duration to valid WAN 2.6 values: 5, 10, or 15 seconds
+        valid_durations = [5, 10, 15]
+        if duration not in valid_durations:
+            if duration <= 7:
+                normalized_duration = 5
+            elif duration <= 12:
+                normalized_duration = 10
+            else:
+                normalized_duration = 15
+            print(f"[WAN 2.6] Normalizing duration {duration}s -> {normalized_duration}s")
+        else:
+            normalized_duration = duration
+        
+        # Prepare request payload per new API spec - using WAN 2.6 for duration support
         payload = {
-            "model": "wan/2-2-a14b-text-to-video-turbo",
+            "model": "wan/2-6-text-to-video",
             "input": {
                 "prompt": prompt,
-                "resolution": "720p",
-                "aspect_ratio": "16:9",
-                "enable_prompt_expansion": False,
-                "seed": 0,
-                "acceleration": "none"
+                "duration": str(normalized_duration),  # WAN 2.6 expects string
+                "resolution": "720p"
             }
         }
         
-        print(f"[WAN 2.2] Creating task with prompt: {prompt[:80]}...")
+        print(f"[WAN 2.6] Creating task (duration={normalized_duration}s): {prompt[:80]}...")
         
         try:
             # Step 1: Create the task
@@ -96,7 +108,7 @@ class WANClient:
                 timeout=30
             )
             
-            print(f"[WAN 2.2] Create response status: {create_response.status_code}")
+            print(f"[WAN 2.6] Create response status: {create_response.status_code}")
             
             if create_response.status_code != 200:
                 error_text = create_response.text[:500] if create_response.text else "No response body"
@@ -112,7 +124,7 @@ class WANClient:
             if not task_id:
                 raise Exception(f"No task ID returned from API. Response: {result}")
             
-            print(f"[WAN 2.2] Task created: {task_id}")
+            print(f"[WAN 2.6] Task created: {task_id}")
             
             # Step 2: Poll for completion using unified recordInfo endpoint
             video_url = self._poll_task_status(task_id)
@@ -137,7 +149,7 @@ class WANClient:
         States: waiting, queuing, generating, success, fail
         On success, resultJson contains {"resultUrls": ["url1", ...]}
         """
-        print(f"[WAN 2.2] Polling task status for {task_id}...")
+        print(f"[WAN 2.6] Polling task status for {task_id}...")
         
         for attempt in range(self.MAX_POLL_ATTEMPTS):
             try:
@@ -149,21 +161,21 @@ class WANClient:
                 )
                 
                 if status_response.status_code != 200:
-                    print(f"[WAN 2.2] Status check failed: {status_response.status_code}")
+                    print(f"[WAN 2.6] Status check failed: {status_response.status_code}")
                     time.sleep(self.POLL_INTERVAL)
                     continue
                 
                 status_result = status_response.json()
                 
                 if status_result.get("code") != 200:
-                    print(f"[WAN 2.2] Status API error: {status_result.get('msg', 'Unknown')}")
+                    print(f"[WAN 2.6] Status API error: {status_result.get('msg', 'Unknown')}")
                     time.sleep(self.POLL_INTERVAL)
                     continue
                 
                 data = status_result.get("data", {})
                 state = data.get("state", "")
                 
-                print(f"[WAN 2.2] Poll {attempt + 1}/{self.MAX_POLL_ATTEMPTS}: state={state}")
+                print(f"[WAN 2.6] Poll {attempt + 1}/{self.MAX_POLL_ATTEMPTS}: state={state}")
                 
                 if state == "success":
                     # Parse resultJson to get video URLs
@@ -172,7 +184,7 @@ class WANClient:
                         result_json = json.loads(result_json_str) if isinstance(result_json_str, str) else result_json_str
                         result_urls = result_json.get("resultUrls", [])
                         if result_urls:
-                            print(f"[WAN 2.2] Video ready: {result_urls[0][:80]}...")
+                            print(f"[WAN 2.6] Video ready: {result_urls[0][:80]}...")
                             return result_urls[0]
                         else:
                             raise Exception("Success state but no resultUrls found")
@@ -188,10 +200,10 @@ class WANClient:
                     # Still processing, continue polling
                     pass
                 else:
-                    print(f"[WAN 2.2] Unknown state: {state}")
+                    print(f"[WAN 2.6] Unknown state: {state}")
                 
             except requests.exceptions.RequestException as e:
-                print(f"[WAN 2.2] Poll request failed: {e}")
+                print(f"[WAN 2.6] Poll request failed: {e}")
             
             time.sleep(self.POLL_INTERVAL)
         
@@ -199,7 +211,7 @@ class WANClient:
     
     def _download_video(self, video_url: str, output_path: Optional[str]) -> str:
         """Download video from URL to local file."""
-        print(f"[WAN 2.2] Downloading video...")
+        print(f"[WAN 2.6] Downloading video...")
         
         response = requests.get(video_url, stream=True, timeout=120)
         if response.status_code == 200:
@@ -207,7 +219,7 @@ class WANClient:
             with open(output_path, "wb") as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
-            print(f"[WAN 2.2] Video saved to: {output_path}")
+            print(f"[WAN 2.6] Video saved to: {output_path}")
             return output_path
         raise Exception(f"Failed to download video: {response.status_code}")
     
