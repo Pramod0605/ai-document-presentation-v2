@@ -396,10 +396,10 @@ function renderSummary(slide) {
   
   segments.forEach(seg => {
     const vc = seg.visual_content;
-    if (vc?.bullet_points) {
-      vc.bullet_points.forEach(bp => {
+    const bulletData = vc?.bullet_points || vc?.items || [];
+    if (bulletData.length > 0) {
+      bulletData.forEach(bp => {
         const text = (typeof bp === 'string' ? bp : (bp.text || '')).trim();
-        // Skip "Thinking..." bullets
         if (text.toLowerCase() === 'thinking...' || text.toLowerCase() === 'thinking') {
           return;
         }
@@ -439,7 +439,7 @@ function renderContent(slide) {
   const videoPath = slide.video_path || slide.content_video_path;
   const renderer = slide.renderer || 'none';
   
-  if (videoPath && (renderer === 'manim' || renderer === 'wan_video' || renderer === 'wan')) {
+  if (videoPath && (renderer === 'manim' || renderer === 'wan_video' || renderer === 'wan' || renderer === 'video')) {
     console.log(`[V2] ContentRenderer: Manim/Video mode - ${videoPath}`);
     const fullPath = resolveMediaPath(videoPath, 'video');
     console.log(`[V2] Loading content video: ${fullPath}`);
@@ -500,19 +500,20 @@ function renderContent(slide) {
 function renderVisualContent(vc, container) {
   const contentType = vc.content_type || 'paragraph';
   
-  if (vc.verbatim_text) {
+  const verbatimText = vc.verbatim_text || vc.verbatim_content;
+  if (verbatimText) {
     const para = document.createElement('div');
     para.className = 'paragraph-block';
-    para.innerHTML = sanitizeMarkdown(vc.verbatim_text);
+    para.innerHTML = sanitizeMarkdown(verbatimText);
     container.appendChild(para);
   }
   
-  if (vc.bullet_points && vc.bullet_points.length > 0) {
+  const bulletData = vc.bullet_points || vc.items || [];
+  if (bulletData.length > 0) {
     const list = document.createElement('ul');
     list.className = 'bullet-list';
     
-    // Filter out "Thinking..." bullets
-    const filteredBullets = vc.bullet_points.filter(bp => {
+    const filteredBullets = bulletData.filter(bp => {
       const text = (typeof bp === 'string' ? bp : (bp.text || '')).trim().toLowerCase();
       return text !== 'thinking...' && text !== 'thinking';
     });
