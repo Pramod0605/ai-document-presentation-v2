@@ -295,6 +295,10 @@ function loadSlide(index) {
   slidePicker.value = index;
   revealItems = []; // Reset reveal state
   
+  // CRITICAL: Reset beat playlist to prevent Section N inheriting Section N-1's beats
+  beatVideoPlaylist = [];
+  currentBeatIndex = -1;
+  
   const slide = slides[index];
   const sectionType = slide.section_type || 'content';
   
