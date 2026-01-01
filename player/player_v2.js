@@ -445,9 +445,18 @@ function renderContent(slide) {
     console.log(`[V2] Loading content video: ${fullPath}`);
     videoLayer.classList.remove('hidden');
     contentLayer.classList.add('video-mode');
+    contentVideo.muted = true;
+    contentVideo.loop = true;
+    contentVideo.playsInline = true;
     contentVideo.src = fullPath;
     contentVideo.load();
     contentVideo.playbackRate = 1.0;
+    contentVideo.onloadeddata = () => {
+      console.log(`[V2] Content video loaded successfully: ${fullPath}`);
+      if (isPlaying) {
+        contentVideo.play().catch(e => console.warn('[V2] Content video play failed:', e));
+      }
+    };
     return;
   }
   
@@ -924,13 +933,19 @@ function loadBeatVideo(index) {
   const fullPath = resolveMediaPath(beat.videoPath, 'video');
   console.log(`[V2] Loading beat video ${index + 1}/${beatVideoPlaylist.length}: ${fullPath}`);
   
+  contentVideo.muted = true;
+  contentVideo.loop = false;
+  contentVideo.playsInline = true;
   contentVideo.src = fullPath;
   contentVideo.load();
   contentVideo.playbackRate = 1.0;
   
-  if (isPlaying) {
-    contentVideo.play().catch(() => {});
-  }
+  contentVideo.onloadeddata = () => {
+    console.log(`[V2] Beat video loaded: ${fullPath}`);
+    if (isPlaying) {
+      contentVideo.play().catch(e => console.warn('[V2] Beat video play failed:', e));
+    }
+  };
 }
 
 // ============================================
