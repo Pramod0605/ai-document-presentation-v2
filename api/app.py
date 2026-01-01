@@ -1157,8 +1157,10 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
         }, persist=True)
     
     # Track analytics (all metrics per Issue #7)
+    pipeline_start_time = time.time()
     analytics_data = {
         "pipeline_version": "v1.5-v2",
+        "status": "running",
         "llm_calls": 1,
         "dry_run": dry_run,
         "image_count": 0,
@@ -1166,12 +1168,22 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
         "qa_pair_count": 0,
         "tts_count": 0,
         "tts_segments": 0,
+        "tts_provider": tts_provider,
+        "tts_voice": "en-IN-PrabhatNeural",
+        "tts_duration_seconds": 0,
         "manim_sections": 0,
         "manim_success": 0,
         "manim_failed": 0,
         "manim_videos": 0,
+        "manim_time_seconds": 0,
         "wan_videos": 0,
-        "total_duration_seconds": 0
+        "wan_time_seconds": 0,
+        "wan_success": 0,
+        "wan_failed": 0,
+        "sections": 0,
+        "segments": 0,
+        "total_duration_seconds": 0,
+        "phases": []
     }
     
     # Count tables and Q&A pairs from markdown
@@ -1228,6 +1240,15 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
         output_cost = llm_usage.get("output_tokens", 0) * 0.00001  # $10/M
         analytics_data["llm_cost_usd"] = round(input_cost + output_cost, 4)
     
+    # Add LLM phase to phase breakdown
+    analytics_data["phases"].append({
+        "phase": "llm_generation",
+        "duration_seconds": round(llm_time, 2),
+        "tokens": analytics_data.get("llm_total_tokens", 0),
+        "cost_usd": analytics_data.get("llm_cost_usd", 0),
+        "model": analytics_data.get("llm_model", "unknown")
+    })
+    
     print(f"[V1.5-V2] LLM call completed in {llm_time:.2f}s")
     
     # PHASE 3: Transform to player schema
@@ -1259,6 +1280,7 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
     
     # PHASE 6: Generate TTS audio (updates duration_seconds with actual values)
     generate_tts = tts_provider != "estimate" and not dry_run
+    tts_start_time = time.time()
     if generate_tts:
         status_callback(job_id, "tts_generation", f"Generating TTS audio ({tts_provider})...")
         try:
@@ -1269,13 +1291,25 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             )
             # Count TTS segments and audio files
             tts_count = 0
+            tts_total_duration = 0
             for section in presentation.get("sections", []):
                 segments = section.get("narration", {}).get("segments", [])
                 analytics_data["tts_segments"] += len(segments)
                 # Count segments that have audio_path
                 tts_count += sum(1 for s in segments if s.get("audio_path"))
+                # Sum up TTS audio duration
+                tts_total_duration += sum(s.get("duration_seconds", 0) for s in segments if s.get("audio_path"))
             analytics_data["tts_count"] = tts_count
-            print(f"[V1.5-V2] TTS generation complete: {tts_count} audio files")
+            analytics_data["tts_duration_seconds"] = round(tts_total_duration, 2)
+            tts_time = time.time() - tts_start_time
+            analytics_data["tts_time_seconds"] = round(tts_time, 2)
+            analytics_data["phases"].append({
+                "phase": "tts_generation",
+                "duration_seconds": round(tts_time, 2),
+                "segments": tts_count,
+                "audio_duration": round(tts_total_duration, 2)
+            })
+            print(f"[V1.5-V2] TTS generation complete: {tts_count} audio files in {tts_time:.1f}s")
         except Exception as e:
             print(f"[V1.5-V2] TTS generation failed: {e}, using estimates")
     
@@ -1289,6 +1323,7 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
     
     # PHASE 8: Generate Manim code for manim sections
     manim_failed_sections = []
+    manim_start_time = time.time()
     if not dry_run:
         status_callback(job_id, "manim_codegen", "Generating Manim code...")
         manim_generator = ManimCodeGenerator()
@@ -1341,8 +1376,18 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
         with open(failed_path, "w") as f:
             json.dump({"failed_count": len(manim_failed_sections), "sections": manim_failed_sections}, f, indent=2)
     
-    # Update manim_videos count (successfully generated manim sections)
+    # Update manim_videos count and timing
     analytics_data["manim_videos"] = analytics_data["manim_success"]
+    manim_time = time.time() - manim_start_time
+    analytics_data["manim_time_seconds"] = round(manim_time, 2)
+    if analytics_data["manim_sections"] > 0:
+        analytics_data["phases"].append({
+            "phase": "manim_codegen",
+            "duration_seconds": round(manim_time, 2),
+            "sections": analytics_data["manim_sections"],
+            "success": analytics_data["manim_success"],
+            "failed": analytics_data["manim_failed"]
+        })
     
     # PHASE 9: Validate WAN prompts (80+ word requirement per Issue #6)
     wan_validation_errors = []
@@ -1367,6 +1412,7 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             print(f"[V1.5-V2] WARNING: {len(wan_validation_errors)} WAN prompt validation errors. Some videos may fail.")
     
     # PHASE 10: Render videos (Manim execution + WAN video generation)
+    video_render_start_time = time.time()
     if not dry_run:
         status_callback(job_id, "video_render", "Rendering videos (Manim + WAN)...")
         videos_dir = output_path / "videos"
@@ -1412,11 +1458,25 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             
             success_count = sum(1 for r in rendered_videos if r.get("status") in ["success", "skipped"])
             fail_count = sum(1 for r in rendered_videos if r.get("status") == "failed")
+            analytics_data["wan_success"] = analytics_data["wan_videos"]
+            analytics_data["wan_failed"] = fail_count
             print(f"[V1.5-V2] Video rendering complete: {success_count} success, {fail_count} failed")
         except Exception as e:
             print(f"[V1.5-V2] Video rendering failed: {e}")
     
-    # PHASE 10: Save final presentation and analytics
+    # Record video rendering timing
+    video_render_time = time.time() - video_render_start_time
+    analytics_data["wan_time_seconds"] = round(video_render_time, 2)
+    if analytics_data["wan_videos"] > 0 or analytics_data.get("wan_failed", 0) > 0:
+        analytics_data["phases"].append({
+            "phase": "video_render",
+            "duration_seconds": round(video_render_time, 2),
+            "wan_videos": analytics_data["wan_videos"],
+            "manim_rendered": analytics_data["manim_videos"],
+            "failed": analytics_data.get("wan_failed", 0)
+        })
+    
+    # PHASE 11: Save final presentation and analytics
     presentation["metadata"] = {
         "generated_by": "v1.5-v2-unified",
         "llm_calls": 1,
@@ -1424,7 +1484,17 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
         "dry_run": dry_run
     }
     
+    # Count sections and segments
     analytics_data["sections"] = len(presentation.get("sections", []))
+    total_segments = 0
+    for section in presentation.get("sections", []):
+        total_segments += len(section.get("narration", {}).get("segments", []))
+    analytics_data["segments"] = total_segments
+    
+    # Calculate total pipeline time
+    pipeline_total_time = time.time() - pipeline_start_time
+    analytics_data["pipeline_time_seconds"] = round(pipeline_total_time, 2)
+    analytics_data["status"] = "completed"
     
     pres_path = output_path / "presentation.json"
     with open(pres_path, "w") as f:
