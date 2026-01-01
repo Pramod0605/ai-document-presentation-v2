@@ -799,15 +799,39 @@
                         if (phases.length > 0 && totalCost === 0) {
                             phases.forEach(p => {
                                 totalCost += p.cost_usd || 0;
-                                totalTokens += p.total_tokens || 0;
+                                totalTokens += p.total_tokens || p.tokens || 0;
                             });
                         }
                         
-                        // TTS info
-                        const tts = a.tts || {};
-                        const renderer = a.renderer || {};
+                        // TTS info - support both V1.5 nested format and V2 flat format
+                        const tts = a.tts || {
+                            provider: a.tts_provider || 'edge_tts',
+                            voice: a.tts_voice || 'en-IN-PrabhatNeural',
+                            total_duration_seconds: a.tts_duration_seconds || 0,
+                            segments: a.tts_segments || 0
+                        };
+                        
+                        // Renderer info - support both V1.5 nested format and V2 flat format
+                        const renderer = a.renderer || {
+                            manim_videos: a.manim_videos || 0,
+                            wan_videos: a.wan_videos || 0,
+                            static_slides: a.static_slides || 0
+                        };
+                        
                         const llmModel = a.llm_model || 'N/A';
-                        const content_info = a.content || {};
+                        
+                        // Content info - support both V1.5 nested format and V2 flat format
+                        const content_info = a.content || {
+                            sections: a.sections || 0,
+                            segments: a.segments || 0,
+                            page_count: a.page_count || 0,
+                            qa_pair_count: a.qa_pair_count || 0,
+                            table_count: a.table_count || 0,
+                            image_count: a.image_count || 0
+                        };
+                        
+                        // Get total pipeline time (V2) or total_duration_seconds (V1.5)
+                        const pipelineTime = a.pipeline_time_seconds || a.total_duration_seconds || 0;
                         
                         let html = `
                             <div style="margin-bottom: 20px;">
@@ -818,12 +842,13 @@
                                         <div style="font-size: 1.2rem; color: ${a.status === 'completed' ? '#4caf50' : '#ff5252'};">${a.status || 'Unknown'}</div>
                                     </div>
                                     <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
-                                        <div style="color: #888; font-size: 0.8rem;">Total Duration</div>
-                                        <div style="font-size: 1.2rem;">${formatDuration(a.total_duration_seconds)}</div>
+                                        <div style="color: #888; font-size: 0.8rem;">Pipeline Time</div>
+                                        <div style="font-size: 1.2rem;">${formatDuration(pipelineTime)}</div>
                                     </div>
                                     <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
                                         <div style="color: #888; font-size: 0.8rem;">LLM Cost</div>
                                         <div style="font-size: 1.2rem; color: #ff9800;">${formatCost(totalCost)}</div>
+                                        <div style="font-size: 0.75rem; color: #888;">${llmModel}</div>
                                     </div>
                                     <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
                                         <div style="color: #888; font-size: 0.8rem;">Total Tokens</div>
@@ -853,8 +878,9 @@
                                 <h4 style="color: #00d4ff; margin-bottom: 10px;">TTS</h4>
                                 <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                                     <div><span style="color: #888;">Provider:</span> ${tts.provider || 'N/A'}</div>
-                                    <div><span style="color: #888;">Voice:</span> ${tts.voice || 'N/A'}</div>
-                                    <div><span style="color: #888;">Duration:</span> ${formatDuration(tts.total_duration_seconds)}</div>
+                                    <div><span style="color: #888;">Voice:</span> <span style="color: #4caf50;">${tts.voice || 'N/A'}</span></div>
+                                    <div><span style="color: #888;">Audio Duration:</span> ${formatDuration(tts.total_duration_seconds)}</div>
+                                    ${tts.segments ? `<div><span style="color: #888;">Segments:</span> ${tts.segments}</div>` : ''}
                                 </div>
                             </div>
                             
@@ -866,19 +892,27 @@
                                             <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
                                                 <th style="text-align: left; padding: 8px; color: #888;">Phase</th>
                                                 <th style="text-align: right; padding: 8px; color: #888;">Duration</th>
-                                                <th style="text-align: right; padding: 8px; color: #888;">Tokens</th>
+                                                <th style="text-align: right; padding: 8px; color: #888;">Details</th>
                                                 <th style="text-align: right; padding: 8px; color: #888;">Cost</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            ${phases.map(p => `
+                                            ${phases.map(p => {
+                                                const phaseName = p.phase_name || p.phase || 'Unknown';
+                                                const tokens = p.total_tokens || p.tokens || 0;
+                                                let details = tokens > 0 ? tokens.toLocaleString() + ' tokens' : '';
+                                                if (p.segments) details = p.segments + ' segments';
+                                                if (p.wan_videos) details = p.wan_videos + ' WAN';
+                                                if (p.manim_rendered) details += (details ? ', ' : '') + p.manim_rendered + ' Manim';
+                                                if (p.success !== undefined) details = p.success + '/' + (p.success + (p.failed || 0)) + ' ok';
+                                                return `
                                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                                    <td style="padding: 8px;">${p.phase_name || 'Unknown'}</td>
+                                                    <td style="padding: 8px;">${phaseName}</td>
                                                     <td style="text-align: right; padding: 8px;">${formatDuration(p.duration_seconds)}</td>
-                                                    <td style="text-align: right; padding: 8px;">${(p.total_tokens || 0).toLocaleString()}</td>
+                                                    <td style="text-align: right; padding: 8px; color: #888;">${details || '-'}</td>
                                                     <td style="text-align: right; padding: 8px; color: #ff9800;">${formatCost(p.cost_usd)}</td>
                                                 </tr>
-                                            `).join('')}
+                                            `}).join('')}
                                         </tbody>
                                     </table>
                                 </div>
