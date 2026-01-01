@@ -444,9 +444,56 @@ function renderContent(slide) {
   const videoPath = slide.video_path || slide.content_video_path;
   const renderer = slide.renderer || 'none';
   const beatVideoPaths = slide.beat_video_paths || [];
+  const sectionType = slide.section_type || 'content';
+  const hasVideo = videoPath && (renderer === 'manim' || renderer === 'wan_video' || renderer === 'wan' || renderer === 'video');
+  const hasMultiBeat = beatVideoPaths.length > 1 && hasVideo;
   
-  // If multiple beat videos exist, use beat video playlist mode with audio sync
-  if (beatVideoPaths.length > 1 && (renderer === 'manim' || renderer === 'wan_video' || renderer === 'wan' || renderer === 'video')) {
+  // TEACH → SHOW Pattern: Always render text content first (except for recap which is video-only)
+  const segments = slide.narration?.segments || [];
+  const isRecap = sectionType === 'recap';
+  
+  // Render text content FIRST (unless this is a recap section which is video-only)
+  if (!isRecap && segments.length > 0) {
+    console.log(`[V2] ContentRenderer: Rendering ${segments.length} segments with visual_content`);
+    
+    segments.forEach((seg, i) => {
+      if (isThinkingSegment(seg)) {
+        const placeholder = document.createElement('div');
+        placeholder.id = `seg-${i}`;
+        placeholder.style.display = 'none';
+        contentBox.appendChild(placeholder);
+        return;
+      }
+      
+      const segDiv = document.createElement('div');
+      segDiv.className = 'segment-block';
+      segDiv.id = `seg-${i}`;
+      
+      const vc = seg.visual_content;
+      if (vc) {
+        renderVisualContent(vc, segDiv);
+      } else if (seg.text) {
+        const para = document.createElement('div');
+        para.className = 'paragraph-block';
+        para.innerHTML = sanitizeMarkdown(seg.text);
+        segDiv.appendChild(para);
+      }
+      
+      if (segDiv.children.length > 0) {
+        contentBox.appendChild(segDiv);
+      }
+    });
+    
+    const firstSeg = document.getElementById('seg-0');
+    if (firstSeg) firstSeg.classList.add('segment-active');
+  }
+  
+  // Now handle video loading (for both content and recap sections)
+  // For content sections: video will overlay based on flip_timing_sec
+  // For recap sections: video-only mode
+  
+  // Multi-beat video mode
+  if (hasMultiBeat) {
     console.log(`[V2] ContentRenderer: Multi-beat video mode - ${beatVideoPaths.length} videos`);
     
     beatVideoPlaylist = buildBeatPlaylistWithTiming(slide);
@@ -457,20 +504,37 @@ function renderContent(slide) {
       beatVideoPlaylist.forEach((b, i) => {
         console.log(`  Beat ${i}: ${b.videoPath} (${b.startTime.toFixed(1)}s - ${b.endTime.toFixed(1)}s)`);
       });
-      videoLayer.classList.remove('hidden');
-      contentLayer.classList.add('video-mode');
+      
+      if (isRecap) {
+        // Recap: show video immediately (video-only mode)
+        videoLayer.classList.remove('hidden');
+        contentLayer.classList.add('video-mode');
+      } else {
+        // Content: hide video initially, show based on flip_timing_sec
+        videoLayer.classList.add('hidden');
+        contentLayer.classList.remove('video-mode');
+      }
       loadBeatVideo(0);
     }
     return;
   }
   
-  // Single video mode (original behavior)
-  if (videoPath && (renderer === 'manim' || renderer === 'wan_video' || renderer === 'wan' || renderer === 'video')) {
-    console.log(`[V2] ContentRenderer: Manim/Video mode - ${videoPath}`);
+  // Single video mode
+  if (hasVideo) {
+    console.log(`[V2] ContentRenderer: Single video mode - ${videoPath}`);
     const fullPath = resolveMediaPath(videoPath, 'video');
     console.log(`[V2] Loading content video: ${fullPath}`);
-    videoLayer.classList.remove('hidden');
-    contentLayer.classList.add('video-mode');
+    
+    if (isRecap) {
+      // Recap: show video immediately (video-only mode)
+      videoLayer.classList.remove('hidden');
+      contentLayer.classList.add('video-mode');
+    } else {
+      // Content: hide video initially, will show based on flip_timing_sec during playback
+      videoLayer.classList.add('hidden');
+      contentLayer.classList.remove('video-mode');
+    }
+    
     contentVideo.muted = true;
     contentVideo.loop = true;
     contentVideo.playsInline = true;
@@ -479,57 +543,20 @@ function renderContent(slide) {
     contentVideo.playbackRate = 1.0;
     contentVideo.onloadeddata = () => {
       console.log(`[V2] Content video loaded successfully: ${fullPath}`);
-      if (isPlaying) {
+      if (isPlaying && isRecap) {
         contentVideo.play().catch(e => console.warn('[V2] Content video play failed:', e));
       }
     };
     return;
   }
   
-  const segments = slide.narration?.segments || [];
-  
+  // No video - fallback for slide-level visual_content when no segments exist
   if (segments.length === 0) {
     const vc = slide.visual_content;
     if (vc) {
       renderVisualContent(vc, contentBox);
     }
-    return;
   }
-  
-  // Render all segments but skip "Thinking..." and gesture-only segments visually
-  // Keep original indices for DOM IDs to maintain alignment with playback
-  segments.forEach((seg, i) => {
-    // Skip thinking/pause segments but create placeholder to maintain ID alignment
-    if (isThinkingSegment(seg)) {
-      // Create hidden placeholder to maintain segment index alignment
-      const placeholder = document.createElement('div');
-      placeholder.id = `seg-${i}`;
-      placeholder.style.display = 'none';
-      contentBox.appendChild(placeholder);
-      return;
-    }
-    
-    const segDiv = document.createElement('div');
-    segDiv.className = 'segment-block';
-    segDiv.id = `seg-${i}`;
-    
-    const vc = seg.visual_content;
-    if (vc) {
-      renderVisualContent(vc, segDiv);
-    } else if (seg.text) {
-      const para = document.createElement('div');
-      para.className = 'paragraph-block';
-      para.innerHTML = sanitizeMarkdown(seg.text);
-      segDiv.appendChild(para);
-    }
-    
-    if (segDiv.children.length > 0) {
-      contentBox.appendChild(segDiv);
-    }
-  });
-  
-  const firstSeg = document.getElementById('seg-0');
-  if (firstSeg) firstSeg.classList.add('segment-active');
 }
 
 function renderVisualContent(vc, container) {
@@ -603,32 +630,41 @@ function renderVisualContent(vc, container) {
     });
   }
   
-  // Handle image display
+  // Handle image display (check content_type or explicit image path fields)
   const imagePath = vc.image || vc.image_path || vc.img || vc.figure || vc.diagram;
-  if (imagePath) {
+  const isImageType = contentType === 'image' || contentType === 'diagram';
+  
+  if (imagePath || isImageType) {
     const imgContainer = document.createElement('div');
     imgContainer.className = 'image-container';
     
-    const img = document.createElement('img');
-    img.className = 'content-image';
-    img.src = resolveMediaPath(imagePath, 'image');
-    img.alt = vc.image_caption || vc.caption || 'Content image';
-    img.onerror = () => {
-      console.warn(`[V2] Image failed to load: ${imagePath}`);
-      imgContainer.style.display = 'none';
-    };
-    
-    imgContainer.appendChild(img);
-    
-    // Add caption if provided
-    if (vc.image_caption || vc.caption) {
-      const caption = document.createElement('div');
-      caption.className = 'image-caption';
-      caption.textContent = vc.image_caption || vc.caption;
-      imgContainer.appendChild(caption);
+    const actualPath = imagePath || vc.image_path;
+    if (actualPath) {
+      const img = document.createElement('img');
+      img.className = 'content-image';
+      img.src = resolveMediaPath(actualPath, 'image');
+      img.alt = vc.image_caption || vc.caption || vc.verbatim_content || 'Content image';
+      img.onerror = () => {
+        console.warn(`[V2] Image failed to load: ${actualPath}`);
+        imgContainer.style.display = 'none';
+      };
+      img.onload = () => {
+        console.log(`[V2] Image loaded successfully: ${actualPath}`);
+      };
+      
+      imgContainer.appendChild(img);
+      
+      // Add caption if provided (use verbatim_content as fallback for image descriptions)
+      const captionText = vc.image_caption || vc.caption || vc.verbatim_content;
+      if (captionText) {
+        const caption = document.createElement('div');
+        caption.className = 'image-caption';
+        caption.textContent = captionText;
+        imgContainer.appendChild(caption);
+      }
+      
+      container.appendChild(imgContainer);
     }
-    
-    container.appendChild(imgContainer);
   }
 }
 

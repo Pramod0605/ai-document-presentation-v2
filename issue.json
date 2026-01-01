@@ -1,0 +1,73 @@
+{
+  "issues": [
+    {
+      "id": "ISS-001",
+      "title": "Player text visibility in video sections",
+      "status": "pending_user_verification",
+      "severity": "high",
+      "description": "Initial concern was that text content was hidden in video sections. Investigation revealed the code IS functioning correctly - display_directives control visibility per segment.",
+      "analysis": {
+        "intro_section": {
+          "text_layer": "hide",
+          "expected_behavior": "Text hidden - avatar-focused introduction",
+          "actual_behavior": "Text is hidden (CORRECT)"
+        },
+        "content_section": {
+          "text_layer": "show",
+          "visual_layer": "show",
+          "expected_behavior": "Text visible alongside video per TEACH→SHOW pattern",
+          "mutual_exclusion": "Warning logged at line 168-170 but not enforced"
+        }
+      },
+      "code_flow": {
+        "loadSlide": "Lines 1503-1516 add text-visible if segments exist",
+        "applyDirectives": "Lines 230-231 add text-visible if text_layer='show'"
+      },
+      "css_setup": {
+        "default": ".mode-content-video #content-box { opacity:0, max-width:0 } - hidden by default",
+        "text_visible": ".mode-content-video.text-visible #content-box { opacity:1, min-width:40% } - shown when class present"
+      },
+      "verification_needed": [
+        "1. Open player in browser",
+        "2. Click play to bypass autoplay restriction",
+        "3. Navigate to Section 3 (The Nervous System in Animals)",
+        "4. Verify content text IS visible alongside video"
+      ],
+      "note": "Screenshot tool can only capture Section 1 (intro) which correctly has text hidden. User must manually verify Section 3+"
+    },
+    {
+      "id": "ISS-002", 
+      "title": "Tables from PDF not preserved in presentation.json",
+      "status": "open",
+      "severity": "high",
+      "description": "Tables in source markdown are being converted to bullet_list instead of being preserved as tables",
+      "root_cause": "core/unified_content_generator.py does not have a 'table' visual_beat_type in the schema",
+      "fix": {
+        "approach": "Add 'table' as a visual_beat_type in generator schema and player rendering",
+        "files": ["core/unified_content_generator.py", "player/jobs/{job_id}/player.js"]
+      }
+    },
+    {
+      "id": "ISS-003",
+      "title": "Markdown formatting rendering",
+      "status": "pending_verification",
+      "severity": "medium",
+      "description": "Markdown syntax (### headings, **bold**, etc.) is preserved in visual_content - verify it renders correctly as styled content"
+    },
+    {
+      "id": "ISS-004",
+      "title": "PDF images display",
+      "status": "implemented_in_player",
+      "severity": "high",
+      "description": "Image rendering code exists in player (lines 633-659). Images extracted from PDF should display when content sections are visible.",
+      "note": "Verify after confirming ISS-001 text visibility works"
+    }
+  ],
+  "architecture_notes": {
+    "player_bundles": "Each job has its own baked player.js and index.html - not shared across jobs",
+    "display_directives": "text_layer, visual_layer, avatar_layer control per-segment visibility",
+    "mutual_exclusion": "text_layer=show + visual_layer=show logs warning but allows both (for TEACH→SHOW pattern)"
+  },
+  "testing_limitation": "Automated screenshot tool captures initial state (Section 1). Manual browser testing required for navigation.",
+  "last_updated": "2026-01-01"
+}
