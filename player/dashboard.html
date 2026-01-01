@@ -353,6 +353,33 @@
         </div>
     </div>
 
+    <!-- Retry Phase Modal -->
+    <div id="retryPhaseModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; max-width: 450px; width: 90%; padding: 25px; position: relative; border: 1px solid rgba(255,255,255,0.2);">
+            <button onclick="closeRetryPhaseModal()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            <h3 style="color: #9c27b0; margin-bottom: 20px;">Retry Phase - <span id="retryPhaseJobId"></span></h3>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; color: #aaa; font-size: 0.9rem; margin-bottom: 6px;">Phase to Retry</label>
+                <select id="retryPhaseSelect" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(0,0,0,0.3); color: #fff; font-size: 1rem;">
+                    <option value="manim_codegen">Manim Code Generation</option>
+                    <option value="video_render">Video Rendering (Manim + WAN)</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: #aaa; font-size: 0.9rem; margin-bottom: 6px;">Section IDs (optional, comma-separated)</label>
+                <input type="text" id="retrySectionIds" placeholder="e.g., 6, 9, 11" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(0,0,0,0.3); color: #fff; font-size: 1rem;">
+                <div style="color: #888; font-size: 0.75rem; margin-top: 5px;">Leave empty to retry all failed sections for this phase</div>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button id="retryPhaseBtn" onclick="executePhaseRetry()" class="btn" style="flex: 1; background: #9c27b0; color: #fff; padding: 12px;">Retry Phase</button>
+                <button onclick="closeRetryPhaseModal()" class="btn btn-secondary" style="flex: 1; padding: 12px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <div id="llmOutputsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center;">
         <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; max-width: 1000px; width: 95%; height: 85vh; display: flex; flex-direction: column; position: relative; border: 1px solid rgba(255,255,255,0.2);">
             <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
@@ -585,6 +612,7 @@
                         actions = `
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showLlmOutputs('${job.job_id}')">LLM Outputs</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showAnalytics('${job.job_id}')">Analytics</button>
+                            <button class="btn" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px; background: #9c27b0; color: #fff;" onclick="showRetryPhaseModal('${job.job_id}')">Retry Phase</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="window.open('/player_v2/?job=${job.job_id}', '_blank')">Play</button>
                         `;
                     } else if (job.status === 'failed') {
@@ -674,6 +702,70 @@
                 .catch(err => alert('Error starting retry: ' + err.message));
         }
 
+        // ISS-300: Retry Phase Modal functions
+        let currentRetryJobId = null;
+        
+        function showRetryPhaseModal(jobId) {
+            currentRetryJobId = jobId;
+            document.getElementById('retryPhaseJobId').textContent = jobId;
+            document.getElementById('retryPhaseModal').style.display = 'flex';
+            document.getElementById('retrySectionIds').value = '';
+        }
+        
+        function closeRetryPhaseModal() {
+            document.getElementById('retryPhaseModal').style.display = 'none';
+            currentRetryJobId = null;
+        }
+        
+        function executePhaseRetry() {
+            if (!currentRetryJobId) return;
+            
+            const phase = document.getElementById('retryPhaseSelect').value;
+            const sectionIdsInput = document.getElementById('retrySectionIds').value.trim();
+            
+            let payload = { phase };
+            if (sectionIdsInput) {
+                const sectionIds = sectionIdsInput.split(',').map(s => {
+                    const num = parseInt(s.trim());
+                    return isNaN(num) ? null : num;
+                }).filter(n => n !== null);
+                if (sectionIds.length > 0) {
+                    payload.section_ids = sectionIds;
+                }
+            }
+            
+            document.getElementById('retryPhaseBtn').disabled = true;
+            document.getElementById('retryPhaseBtn').textContent = 'Retrying...';
+            
+            fetch(`/job/${currentRetryJobId}/retry_phase`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('retryPhaseBtn').disabled = false;
+                document.getElementById('retryPhaseBtn').textContent = 'Retry Phase';
+                
+                if (data.error) {
+                    alert('Retry failed: ' + data.error);
+                } else {
+                    const result = data.result || {};
+                    const success = result.success?.length || 0;
+                    const failed = result.failed?.length || 0;
+                    const skipped = result.skipped?.length || 0;
+                    alert(`Phase Retry Complete!\n\nPhase: ${data.phase}\nSuccess: ${success}\nFailed: ${failed}\nSkipped: ${skipped}`);
+                    closeRetryPhaseModal();
+                    loadJobHistory();
+                }
+            })
+            .catch(err => {
+                document.getElementById('retryPhaseBtn').disabled = false;
+                document.getElementById('retryPhaseBtn').textContent = 'Retry Phase';
+                alert('Error: ' + err.message);
+            });
+        }
+
         function showAnalytics(jobId) {
             fetch(`/job/${jobId}/analytics`)
                 .then(r => r.json())
@@ -697,17 +789,24 @@
                         // Format cost nicely
                         const formatCost = (cost) => cost ? `$${cost.toFixed(4)}` : '$0.00';
                         
-                        // Calculate totals from phases
-                        let totalCost = 0;
-                        let totalTokens = 0;
-                        phases.forEach(p => {
-                            totalCost += p.cost_usd || 0;
-                            totalTokens += p.total_tokens || 0;
-                        });
+                        // Calculate totals from phases OR flat fields (V2 analytics)
+                        let totalCost = a.llm_cost_usd || 0;
+                        let totalTokens = a.llm_total_tokens || 0;
+                        let inputTokens = a.llm_input_tokens || 0;
+                        let outputTokens = a.llm_output_tokens || 0;
+                        
+                        // Fallback to phases array for older analytics format
+                        if (phases.length > 0 && totalCost === 0) {
+                            phases.forEach(p => {
+                                totalCost += p.cost_usd || 0;
+                                totalTokens += p.total_tokens || 0;
+                            });
+                        }
                         
                         // TTS info
                         const tts = a.tts || {};
                         const renderer = a.renderer || {};
+                        const llmModel = a.llm_model || 'N/A';
                         const content_info = a.content || {};
                         
                         let html = `
@@ -729,6 +828,7 @@
                                     <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px;">
                                         <div style="color: #888; font-size: 0.8rem;">Total Tokens</div>
                                         <div style="font-size: 1.2rem;">${totalTokens.toLocaleString()}</div>
+                                        ${inputTokens > 0 ? `<div style="font-size: 0.75rem; color: #888;">In: ${inputTokens.toLocaleString()} / Out: ${outputTokens.toLocaleString()}</div>` : ''}
                                     </div>
                                 </div>
                             </div>

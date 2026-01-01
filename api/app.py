@@ -1215,6 +1215,19 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
     
     llm_time = time.time() - start_time
     analytics_data["llm_time_seconds"] = round(llm_time, 2)
+    
+    # ISS-300: Extract LLM usage stats for analytics
+    llm_usage = raw_output.pop("_llm_usage", None)
+    if llm_usage:
+        analytics_data["llm_input_tokens"] = llm_usage.get("input_tokens", 0)
+        analytics_data["llm_output_tokens"] = llm_usage.get("output_tokens", 0)
+        analytics_data["llm_total_tokens"] = llm_usage.get("total_tokens", 0)
+        analytics_data["llm_model"] = llm_usage.get("model", "unknown")
+        # Calculate cost based on model (approximate for Gemini 2.5 Pro)
+        input_cost = llm_usage.get("input_tokens", 0) * 0.00000125  # $1.25/M
+        output_cost = llm_usage.get("output_tokens", 0) * 0.00001  # $10/M
+        analytics_data["llm_cost_usd"] = round(input_cost + output_cost, 4)
+    
     print(f"[V1.5-V2] LLM call completed in {llm_time:.2f}s")
     
     # PHASE 3: Transform to player schema

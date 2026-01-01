@@ -599,6 +599,12 @@ function renderVisualContent(vc, container) {
 function renderQuiz(slide) {
   console.log('[V2] QuizRenderer: Question + choices');
   
+  // ISS-300: First check for quiz_data.questions from V2 generator
+  if (slide.quiz_data?.questions && slide.quiz_data.questions.length > 0) {
+    renderQuizFromQuizData(slide.quiz_data.questions);
+    return;
+  }
+  
   const segments = slide.narration?.segments || [];
   const quizQuestions = [];
   
@@ -681,6 +687,66 @@ function renderQuiz(slide) {
   if (quizQuestions.length === 0 && slide.visual_content?.bullet_points) {
     renderQuizFromBullets(slide.visual_content.bullet_points);
   }
+}
+
+// ISS-300: Render quiz from V2 generator quiz_data.questions format
+function renderQuizFromQuizData(questions) {
+  console.log('[V2] QuizRenderer: Using quiz_data.questions format', questions.length, 'questions');
+  
+  questions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.id = `quiz-${idx}`;
+    
+    // Question
+    const qDiv = document.createElement('div');
+    qDiv.className = 'quiz-question';
+    qDiv.innerHTML = sanitizeMarkdown(q.question);
+    card.appendChild(qDiv);
+    
+    // Choices
+    if (q.options && q.options.length > 0) {
+      const choicesDiv = document.createElement('div');
+      choicesDiv.className = 'quiz-choices';
+      
+      q.options.forEach((opt, optIdx) => {
+        const choice = document.createElement('div');
+        choice.className = 'quiz-choice';
+        
+        // Parse option text - may be "A) text" or just "text"
+        let letter = String.fromCharCode(65 + optIdx);
+        let text = opt;
+        const match = opt.match(/^([A-D])[\)\.]\s*(.+)$/i);
+        if (match) {
+          letter = match[1].toUpperCase();
+          text = match[2];
+        }
+        
+        // Check if this is the correct answer
+        const isCorrect = q.correct_answer === letter;
+        
+        choice.innerHTML = `
+          <span class="choice-letter${isCorrect ? ' correct' : ''}">${letter}</span>
+          <span class="choice-text">${sanitizeMarkdown(text)}</span>
+        `;
+        choice.dataset.correct = isCorrect;
+        choicesDiv.appendChild(choice);
+      });
+      
+      card.appendChild(choicesDiv);
+    }
+    
+    // Explanation (hidden by default)
+    if (q.explanation) {
+      const explDiv = document.createElement('div');
+      explDiv.className = 'quiz-explanation';
+      explDiv.style.display = 'none';
+      explDiv.innerHTML = `<strong>Explanation:</strong> ${sanitizeMarkdown(q.explanation)}`;
+      card.appendChild(explDiv);
+    }
+    
+    contentBox.appendChild(card);
+  });
 }
 
 function renderQuizFromBullets(bullets) {

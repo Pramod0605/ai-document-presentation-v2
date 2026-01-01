@@ -312,8 +312,8 @@ def call_openrouter_llm(
     system_prompt: str,
     user_prompt: str,
     config: GeneratorConfig
-) -> str:
-    """Call OpenRouter API and return raw response text."""
+) -> Tuple[str, dict]:
+    """Call OpenRouter API and return (response_text, usage_stats)."""
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
@@ -340,7 +340,18 @@ def call_openrouter_llm(
     response.raise_for_status()
     
     data = response.json()
-    return data["choices"][0]["message"]["content"]
+    content = data["choices"][0]["message"]["content"]
+    
+    # ISS-300: Extract usage stats for analytics
+    usage = data.get("usage", {})
+    usage_stats = {
+        "input_tokens": usage.get("prompt_tokens", 0),
+        "output_tokens": usage.get("completion_tokens", 0),
+        "total_tokens": usage.get("total_tokens", 0),
+        "model": config.model
+    }
+    
+    return content, usage_stats
 
 
 def extract_json_from_response(response: str) -> dict:
@@ -452,16 +463,18 @@ def generate_presentation(
     )
     
     last_error = None
+    llm_usage_stats = None
     
     for attempt in range(config.max_retries):
         try:
             logger.info(f"Attempt {attempt + 1}/{config.max_retries}: Calling LLM...")
             
-            response = call_openrouter_llm(
+            response, usage_stats = call_openrouter_llm(
                 system_prompt=UNIFIED_SYSTEM_PROMPT,
                 user_prompt=user_prompt,
                 config=config
             )
+            llm_usage_stats = usage_stats
             
             logger.info(f"Response received: {len(response)} chars")
             
@@ -476,6 +489,9 @@ def generate_presentation(
                 raise SchemaValidationError(f"Schema validation failed: {errors[:3]}")
             
             logger.info("Schema validation passed")
+            
+            # ISS-300: Attach usage stats to output for analytics
+            output["_llm_usage"] = llm_usage_stats
             return output
             
         except (JSONParseError, SchemaValidationError) as e:
