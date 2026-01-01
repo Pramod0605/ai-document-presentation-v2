@@ -1418,6 +1418,10 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
         videos_dir = output_path / "videos"
         videos_dir.mkdir(parents=True, exist_ok=True)
         
+        # Reset WAN hash cache for this job to prevent cross-job duplicate detection
+        from render.wan.wan_runner import reset_wan_session
+        reset_wan_session()
+        
         try:
             rendered_videos = render_all_topics(
                 presentation=presentation,

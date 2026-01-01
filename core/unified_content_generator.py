@@ -186,10 +186,37 @@ You MUST use ALL images from the provided images_list. Every image in the PDF mu
   - visual_type: "image" or "diagram"
   - image_id: the exact image filename from the list
 
-## QUIZ HANDLING
+## QUIZ HANDLING - PROGRESSIVE REVEAL PATTERN
 - Extract Q&A pairs from document's exercise/question sections
 - Format as structured quiz with question, options, correct_answer, explanation
 - Split into multiple quiz sections if >8 questions
+
+**CRITICAL: Quiz sections MUST generate per-question narration segments for progressive reveal:**
+
+For EACH question in the quiz, generate exactly 3 narration segments:
+1. **Question Segment** (purpose: "introduce"): Read the question aloud
+   - display_directives: text_layer="show" (show question + options)
+   - Example: "Let's look at question 1. The growth of pollen tubes towards ovules is an example of which type of tropism? Take a moment to consider the options."
+
+2. **Pause Segment** (purpose: "emphasize"): Give thinking time
+   - duration: ~3-5 seconds of thinking prompt
+   - display_directives: text_layer="show" (keep question visible)
+   - Example: "Think about what you learned about plant movements and tropisms."
+
+3. **Answer Segment** (purpose: "explain"): Reveal and explain the answer
+   - display_directives: text_layer="show", answer_revealed=true
+   - Example: "The correct answer is C, chemotropism. This is because pollen tubes grow in response to chemical signals released by the ovule."
+
+**QUIZ SEGMENT EXAMPLE:**
+For a quiz with 2 questions, generate 6 segments total (3 per question):
+- seg_1: Read question 1 + options
+- seg_2: Pause for thinking (question 1)
+- seg_3: Reveal answer 1 with explanation
+- seg_4: Read question 2 + options
+- seg_5: Pause for thinking (question 2)
+- seg_6: Reveal answer 2 with explanation
+
+Each segment MUST include a "question_index" field (0-based) to sync with quiz_data.questions
 
 ## CRITICAL RULES
 1. Include ALL content from source document - never summarize or skip

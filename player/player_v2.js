@@ -609,9 +609,13 @@ function renderVisualContent(vc, container) {
 function renderQuiz(slide) {
   console.log('[V2] QuizRenderer: Question + choices');
   
+  // Reset quiz state when loading a new quiz slide to prevent stale state
+  window.currentQuizData = null;
+  
   // ISS-300: First check for quiz_data.questions from V2 generator
+  // Pass slide for progressive reveal detection
   if (slide.quiz_data?.questions && slide.quiz_data.questions.length > 0) {
-    renderQuizFromQuizData(slide.quiz_data.questions);
+    renderQuizFromQuizData(slide.quiz_data.questions, slide);
     return;
   }
   
@@ -700,13 +704,31 @@ function renderQuiz(slide) {
 }
 
 // ISS-300: Render quiz from V2 generator quiz_data.questions format
-function renderQuizFromQuizData(questions) {
+// With progressive reveal support: questions hidden until narration reaches them
+function renderQuizFromQuizData(questions, slide) {
   console.log('[V2] QuizRenderer: Using quiz_data.questions format', questions.length, 'questions');
+  
+  // Check if we have per-question narration segments (V2.1 progressive reveal)
+  const segments = slide?.narration?.segments || [];
+  const hasProgressiveReveal = segments.some(seg => seg.question_index !== undefined);
+  
+  if (hasProgressiveReveal) {
+    console.log('[V2] QuizRenderer: Progressive reveal mode enabled');
+  } else {
+    // Backward compatibility: show all questions and answers immediately for legacy content
+    console.log('[V2] QuizRenderer: Legacy mode - all questions visible');
+  }
   
   questions.forEach((q, idx) => {
     const card = document.createElement('div');
     card.className = 'quiz-card';
     card.id = `quiz-${idx}`;
+    
+    // In progressive reveal mode, hide questions initially
+    // In legacy mode, show everything
+    if (hasProgressiveReveal) {
+      card.classList.add('quiz-hidden');
+    }
     
     // Question
     const qDiv = document.createElement('div');
@@ -735,28 +757,93 @@ function renderQuizFromQuizData(questions) {
         // Check if this is the correct answer
         const isCorrect = q.correct_answer === letter;
         
+        // In legacy mode, show correct marker; in progressive reveal, hide initially
+        const showCorrectNow = !hasProgressiveReveal && isCorrect;
         choice.innerHTML = `
-          <span class="choice-letter${isCorrect ? ' correct' : ''}">${letter}</span>
+          <span class="choice-letter${showCorrectNow ? ' correct' : ''}">${letter}</span>
           <span class="choice-text">${sanitizeMarkdown(text)}</span>
         `;
         choice.dataset.correct = isCorrect;
+        choice.dataset.letter = letter;
+        if (showCorrectNow) {
+          choice.classList.add('correct-revealed');
+        }
         choicesDiv.appendChild(choice);
       });
       
       card.appendChild(choicesDiv);
     }
     
-    // Explanation (hidden by default)
+    // Explanation (shown in legacy mode, hidden in progressive reveal)
     if (q.explanation) {
       const explDiv = document.createElement('div');
       explDiv.className = 'quiz-explanation';
-      explDiv.style.display = 'none';
+      explDiv.style.display = hasProgressiveReveal ? 'none' : 'block';
       explDiv.innerHTML = `<strong>Explanation:</strong> ${sanitizeMarkdown(q.explanation)}`;
       card.appendChild(explDiv);
     }
     
     contentBox.appendChild(card);
   });
+  
+  // Store quiz data for progressive reveal updates
+  if (hasProgressiveReveal) {
+    window.currentQuizData = {
+      questions: questions,
+      revealedQuestions: new Set(),
+      revealedAnswers: new Set()
+    };
+  }
+}
+
+// Update quiz display based on current narration segment
+function updateQuizProgressiveReveal(segmentIndex) {
+  const slide = slides[currentSlideIndex];
+  if (slide?.section_type !== 'quiz' || !window.currentQuizData) return;
+  
+  const segments = slide.narration?.segments || [];
+  const currentSeg = segments[segmentIndex];
+  
+  if (!currentSeg || currentSeg.question_index === undefined) return;
+  
+  const qIdx = currentSeg.question_index;
+  const purpose = currentSeg.purpose || '';
+  const card = document.getElementById(`quiz-${qIdx}`);
+  
+  if (!card) return;
+  
+  // Reveal question when we reach its "introduce" segment
+  if (purpose === 'introduce' && !window.currentQuizData.revealedQuestions.has(qIdx)) {
+    card.classList.remove('quiz-hidden');
+    card.classList.add('quiz-active');
+    window.currentQuizData.revealedQuestions.add(qIdx);
+    console.log(`[V2] Quiz: Revealed question ${qIdx + 1}`);
+  }
+  
+  // Reveal answer when we reach its "explain" segment
+  if (purpose === 'explain' && !window.currentQuizData.revealedAnswers.has(qIdx)) {
+    const question = window.currentQuizData.questions[qIdx];
+    const correctAnswer = question?.correct_answer;
+    
+    // Highlight correct answer
+    const choices = card.querySelectorAll('.quiz-choice');
+    choices.forEach(choice => {
+      if (choice.dataset.correct === 'true') {
+        choice.classList.add('correct-revealed');
+        const letterSpan = choice.querySelector('.choice-letter');
+        if (letterSpan) letterSpan.classList.add('correct');
+      }
+    });
+    
+    // Show explanation
+    const explDiv = card.querySelector('.quiz-explanation');
+    if (explDiv) {
+      explDiv.style.display = 'block';
+    }
+    
+    window.currentQuizData.revealedAnswers.add(qIdx);
+    console.log(`[V2] Quiz: Revealed answer for question ${qIdx + 1}`);
+  }
 }
 
 function renderQuizFromBullets(bullets) {
@@ -1027,7 +1114,12 @@ function updateTimeDisplay(current, total) {
 }
 
 function updateActiveSegment(currentTime) {
+  // Guard against early calls before slides are loaded
+  if (!slides || !slides.length || currentSlideIndex < 0) return;
+  
   const slide = slides[currentSlideIndex];
+  if (!slide) return;
+  
   const segments = slide.narration?.segments || [];
   
   let cumulative = 0;
@@ -1037,6 +1129,11 @@ function updateActiveSegment(currentTime) {
     const duration = segments[i].duration_seconds || 5;
     if (currentTime >= cumulative && currentTime < cumulative + duration) {
       activeIndex = i;
+      
+      // Update quiz progressive reveal if this is a quiz slide
+      if (slide.section_type === 'quiz') {
+        updateQuizProgressiveReveal(i);
+      }
       break;
     }
     cumulative += duration;

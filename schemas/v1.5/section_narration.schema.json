@@ -40,6 +40,16 @@
               "gesture_hint": {
                 "type": "string",
                 "description": "Optional avatar gesture cue"
+              },
+              "question_index": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "For quiz sections: index of the question this segment relates to (0-based)"
+              },
+              "purpose": {
+                "type": "string",
+                "enum": ["introduce", "explain", "emphasize", "transition", "conclude"],
+                "description": "Purpose of this segment for progressive reveal in quiz sections"
               }
             },
             "required": ["segment_id", "text", "duration_seconds"],

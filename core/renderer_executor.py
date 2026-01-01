@@ -229,6 +229,14 @@ def validate_before_render(presentation: dict, output_dir: str, strict_v13: bool
 def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, output_dir_base: str = "", strict_mode: bool = True) -> list:
     os.makedirs(output_dir, exist_ok=True)
     
+    # Reset WAN hash cache at start of each render job to prevent cross-job duplicate detection
+    if not dry_run and not skip_wan:
+        try:
+            from render.wan.wan_runner import reset_wan_session
+            reset_wan_session()
+        except ImportError:
+            pass  # WAN module not available
+    
     trace_output_dir = output_dir_base or str(Path(output_dir).parent)
     
     if dry_run:

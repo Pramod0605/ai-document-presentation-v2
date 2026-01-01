@@ -18,6 +18,11 @@ class WanRenderError(Exception):
     pass
 
 
+def reset_wan_session():
+    """Reset WAN client hash cache at start of each job to prevent cross-job duplicate detection."""
+    WANClient.reset_hash_cache()
+
+
 def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, trace_output_dir: str = None) -> str:
     """
     Render WAN video for a section.

@@ -299,6 +299,30 @@ body {
   border-radius: 16px;
   padding: 24px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 16px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Progressive reveal: hidden state */
+.quiz-card.quiz-hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Progressive reveal: active/visible state */
+.quiz-card.quiz-active {
+  opacity: 1;
+  transform: translateY(0);
+  height: auto;
+  padding: 24px;
+  margin-bottom: 16px;
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
 }
 
 .quiz-question {
@@ -345,6 +369,35 @@ body {
 .choice-letter.correct {
   background: linear-gradient(135deg, #10b981, #34d399);
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+
+/* Progressive reveal: correct answer revealed */
+.quiz-choice.correct-revealed {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+/* Quiz explanation */
+.quiz-explanation {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #3b82f6;
+  font-size: 0.95em;
+  line-height: 1.5;
+  animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .choice-text {
