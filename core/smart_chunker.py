@@ -21,13 +21,7 @@ from core.analytics import AnalyticsTracker
 
 logger = logging.getLogger(__name__)
 
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
-OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-
-client = OpenAI(
-    api_key=OPENROUTER_API_KEY,
-    base_url=OPENROUTER_BASE_URL
-)
+# Client initialized lazily in call_smart_chunker to ensure env vars are loaded
 
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 SCHEMAS_DIR = Path(__file__).parent.parent / "schemas"
@@ -329,6 +323,19 @@ def call_smart_chunker(
     
     system_prompt = load_prompt("smart_chunker_system_v1.5")
     user_prompt_template = load_prompt("smart_chunker_user_v1.5")
+    
+    # ISS-FIX: Initialize client here to ensure env vars are loaded
+    api_key = os.environ.get("OPENROUTER_API_KEY")
+    if not api_key:
+        logger.error("[Smart Chunker] OPENROUTER_API_KEY is missing or empty!")
+        raise ChunkerError("OPENROUTER_API_KEY is not set.")
+        
+    logger.info(f"[Smart Chunker] Using API Key: {api_key[:5]}... (len={len(api_key)}) for model {MODEL}")
+    
+    client = OpenAI(
+        api_key=api_key,
+        base_url="https://openrouter.ai/api/v1"
+    )
     
     numbered_content = _add_block_numbers(markdown_content)
     
