@@ -4786,5 +4786,937 @@
     "page_count": 9,
     "source_type": "pdf",
     "image_count": 4
+  },
+  "3de510f6": {
+    "id": "3de510f6",
+    "type": "v15_v2_pipeline",
+    "params": {
+      "subject": "General Science",
+      "grade": "12",
+      "file_path": "/tmp/ai_education_jobs/be9202ac4505c929.pdf",
+      "source_file": "3-Page-Maths.pdf",
+      "skip_wan": false,
+      "skip_avatar": false,
+      "tts_provider": "edge_tts",
+      "pipeline_version": "v15_v2"
+    },
+    "status": "failed",
+    "current_step": null,
+    "current_step_name": "Waiting in Queue",
+    "current_phase_key": "chunker",
+    "status_message": "Analyzing content structure...",
+    "steps_completed": 0,
+    "total_steps": 3,
+    "progress": 0,
+    "created_at": "2026-01-02T13:08:02.793506",
+    "started_at": "2026-01-02T13:30:20.916850",
+    "completed_at": "2026-01-02T13:30:22.369171",
+    "error": "Chunker failed: Unexpected error in Smart Chunker: Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}\n\nTraceback:\nTraceback (most recent call last):\n  File \"/app/core/smart_chunker.py\", line 348, in call_smart_chunker\n    response = client.chat.completions.create(\n  File \"/usr/local/lib/python3.10/site-packages/openai/_utils/_utils.py\", line 286, in wrapper\n    return func(*args, **kwargs)\n  File \"/usr/local/lib/python3.10/site-packages/openai/resources/chat/completions/completions.py\", line 1192, in create\n    return self._post(\n  File \"/usr/local/lib/python3.10/site-packages/openai/_base_client.py\", line 1259, in post\n    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))\n  File \"/usr/local/lib/python3.10/site-packages/openai/_base_client.py\", line 1047, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.AuthenticationError: Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/app/core/pipeline_v15_optimized.py\", line 824, in process_markdown_optimized\n    chunker_output = call_smart_chunker(\n  File \"/app/core/smart_chunker.py\", line 392, in call_smart_chunker\n    raise ChunkerError(f\"Unexpected error in Smart Chunker: {e}\")\ncore.smart_chunker.ChunkerError: Unexpected error in Smart Chunker: Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/app/core/job_manager.py\", line 237, in worker\n    result = process_func(job_id=job_id, **kwargs)\n  File \"/app/api/app.py\", line 1096, in process_markdown_job_v15\n    presentation, tracker = process_markdown_optimized(\n  File \"/app/core/pipeline_v15_optimized.py\", line 1143, in process_markdown_optimized\n    raise PipelineError(f\"Chunker failed: {e}\", phase=\"chunker\")\ncore.pipeline_v15_optimized.PipelineError: Chunker failed: Unexpected error in Smart Chunker: Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}\n",
+    "result": null,
+    "page_count": 3,
+    "source_type": "pdf",
+    "image_count": 7,
+    "failure_message": "PARSE FAILED: Chunker could not segment content",
+    "impact": "No chunks generated. Director phase cannot start.",
+    "dev_hint": "Check Gemini Pro API response. Verify markdown structure and content length.",
+    "failed_phase": "chunker",
+    "message": "Preparing fresh restart..."
+  },
+  "1ccfb34a": {
+    "id": "1ccfb34a",
+    "type": "v15_pipeline",
+    "params": {
+      "subject": "Science",
+      "grade": "9",
+      "dry_run": false,
+      "skip_wan": false,
+      "skip_avatar": false,
+      "tts_provider": "edge",
+      "pipeline_version": "v15",
+      "content_preview": "This is a test presentation about the solar system."
+    },
+    "status": "failed",
+    "current_step": null,
+    "current_step_name": "Waiting in Queue",
+    "current_phase_key": "chunker",
+    "status_message": "Analyzing content structure...",
+    "steps_completed": 0,
+    "total_steps": 3,
+    "progress": 0,
+    "created_at": "2026-01-02T14:26:24.022543",
+    "started_at": "2026-01-02T14:26:24.106294",
+    "completed_at": "2026-01-02T14:26:25.180520",
+    "error": "Chunker failed: Unexpected error in Smart Chunker: Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}\n\nTraceback:\nTraceback (most recent call last):\n  File \"/app/core/smart_chunker.py\", line 374, in call_smart_chunker\n    response = client.chat.completions.create(\n  File \"/usr/local/lib/python3.10/site-packages/openai/_utils/_utils.py\", line 286, in wrapper\n    return func(*args, **kwargs)\n  File \"/usr/local/lib/python3.10/site-packages/openai/resources/chat/completions/completions.py\", line 1192, in create\n    return self._post(\n  File \"/usr/local/lib/python3.10/site-packages/openai/_base_client.py\", line 1259, in post\n    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))\n  File \"/usr/local/lib/python3.10/site-packages/openai/_base_client.py\", line 1047, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.AuthenticationError: Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/app/core/pipeline_v15_optimized.py\", line 824, in process_markdown_optimized\n    chunker_output = call_smart_chunker(\n  File \"/app/core/smart_chunker.py\", line 422, in call_smart_chunker\n    raise ChunkerError(f\"Unexpected error in Smart Chunker: {e}\")\ncore.smart_chunker.ChunkerError: Unexpected error in Smart Chunker: Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/app/core/job_manager.py\", line 237, in worker\n    result = process_func(job_id=job_id, **kwargs)\n  File \"/app/api/app.py\", line 1100, in process_markdown_job_v15\n    presentation, tracker = process_markdown_optimized(\n  File \"/app/core/pipeline_v15_optimized.py\", line 1143, in process_markdown_optimized\n    raise PipelineError(f\"Chunker failed: {e}\", phase=\"chunker\")\ncore.pipeline_v15_optimized.PipelineError: Chunker failed: Unexpected error in Smart Chunker: Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}\n",
+    "result": null,
+    "failure_message": "PARSE FAILED: Chunker could not segment content",
+    "impact": "No chunks generated. Director phase cannot start.",
+    "dev_hint": "Check Gemini Pro API response. Verify markdown structure and content length.",
+    "failed_phase": "chunker"
+  },
+  "65fb8bd2": {
+    "id": "65fb8bd2",
+    "type": "v15_pipeline",
+    "params": {
+      "subject": "Test",
+      "grade": "9",
+      "dry_run": false,
+      "skip_wan": false,
+      "skip_avatar": false,
+      "tts_provider": "edge",
+      "pipeline_version": "v15",
+      "content_preview": "Test presentation"
+    },
+    "status": "failed",
+    "current_step": null,
+    "current_step_name": "Waiting in Queue",
+    "current_phase_key": "chunker",
+    "status_message": "Analyzing content structure...",
+    "steps_completed": 0,
+    "total_steps": 3,
+    "progress": 0,
+    "created_at": "2026-01-02T14:27:22.106931",
+    "started_at": "2026-01-02T14:27:22.232835",
+    "completed_at": "2026-01-02T14:27:22.508573",
+    "error": "Chunker failed: Unexpected error in Smart Chunker: Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}\n\nTraceback:\nTraceback (most recent call last):\n  File \"/app/core/smart_chunker.py\", line 374, in call_smart_chunker\n    response = client.chat.completions.create(\n  File \"/usr/local/lib/python3.10/site-packages/openai/_utils/_utils.py\", line 286, in wrapper\n    return func(*args, **kwargs)\n  File \"/usr/local/lib/python3.10/site-packages/openai/resources/chat/completions/completions.py\", line 1192, in create\n    return self._post(\n  File \"/usr/local/lib/python3.10/site-packages/openai/_base_client.py\", line 1259, in post\n    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))\n  File \"/usr/local/lib/python3.10/site-packages/openai/_base_client.py\", line 1047, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.AuthenticationError: Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/app/core/pipeline_v15_optimized.py\", line 824, in process_markdown_optimized\n    chunker_output = call_smart_chunker(\n  File \"/app/core/smart_chunker.py\", line 422, in call_smart_chunker\n    raise ChunkerError(f\"Unexpected error in Smart Chunker: {e}\")\ncore.smart_chunker.ChunkerError: Unexpected error in Smart Chunker: Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/app/core/job_manager.py\", line 237, in worker\n    result = process_func(job_id=job_id, **kwargs)\n  File \"/app/api/app.py\", line 1100, in process_markdown_job_v15\n    presentation, tracker = process_markdown_optimized(\n  File \"/app/core/pipeline_v15_optimized.py\", line 1143, in process_markdown_optimized\n    raise PipelineError(f\"Chunker failed: {e}\", phase=\"chunker\")\ncore.pipeline_v15_optimized.PipelineError: Chunker failed: Unexpected error in Smart Chunker: Error code: 401 - {'error': {'message': 'User not found.', 'code': 401}}\n",
+    "result": null,
+    "failure_message": "PARSE FAILED: Chunker could not segment content",
+    "impact": "No chunks generated. Director phase cannot start.",
+    "dev_hint": "Check Gemini Pro API response. Verify markdown structure and content length.",
+    "failed_phase": "chunker"
+  },
+  "91002db0": {
+    "id": "91002db0",
+    "type": "v15_pipeline",
+    "params": {
+      "subject": "Science",
+      "grade": "9",
+      "dry_run": false,
+      "skip_wan": false,
+      "skip_avatar": false,
+      "tts_provider": "edge",
+      "pipeline_version": "v15",
+      "content_preview": "# Solar System The solar system consists of the Sun and the objects that orbit it."
+    },
+    "status": "completed",
+    "current_step": null,
+    "current_step_name": "Complete!",
+    "current_phase_key": "completed",
+    "status_message": "Mic drop! Your video is done!",
+    "steps_completed": 0,
+    "total_steps": 3,
+    "progress": 100,
+    "created_at": "2026-01-02T14:49:13.892336",
+    "started_at": "2026-01-02T14:49:13.959224",
+    "completed_at": "2026-01-02T14:52:18.278864",
+    "error": null,
+    "result": {
+      "status": "success",
+      "presentation": {
+        "spec_version": "v1.5",
+        "title": "Science Lesson",
+        "subject": "Science",
+        "grade": "9",
+        "avatar_global": {
+          "style": "teacher",
+          "default_position": "right",
+          "default_width_percent": 52,
+          "gesture_enabled": true
+        },
+        "sections": [
+          {
+            "section_type": "intro",
+            "title": "Welcome to the Solar System!",
+            "renderer": "none",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "center",
+              "width_percent": 60
+            },
+            "narration": {
+              "full_text": "Namaste students! Welcome to an exciting journey into our cosmic neighborhood. Today, we're going to embark on an adventure to explore the Solar System. Get ready to discover the wonders that lie beyond our planet and understand the incredible structure that holds it all together. Let's begin!",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Namaste students! Welcome to an exciting journey into our cosmic neighborhood. Today, we're going to embark on an adventure to explore the Solar System. Get ready to discover the wonders that lie beyond our planet and understand the incredible structure that holds it all together. Let's begin!",
+                  "duration_seconds": 23.86,
+                  "gesture_hint": "warm_welcome",
+                  "visual_content": {
+                    "content_type": "title_card",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "Welcome to the Solar System!"
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  }
+                }
+              ],
+              "total_duration_seconds": 23.86
+            },
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Title card: Welcome to the Solar System!",
+                "source_block_ids": []
+              }
+            ],
+            "section_id": 1
+          },
+          {
+            "section_type": "summary",
+            "title": "What We'll Explore Today",
+            "renderer": "none",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Namaste students! Today, we're embarking on an exciting journey to explore our incredible Solar System. By the end of this session, you will be able to clearly define what a solar system is, understanding its fundamental components. You will also learn to identify the key elements that make up our very own Solar System, from the central star to the planets and other celestial bodies orbiting it. Let's get started!",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Namaste students! Today, we're embarking on an exciting journey to explore our incredible Solar System. By the end of this session, you will be able to clearly define what a solar system is, understanding its fundamental components.",
+                  "duration_seconds": 18.78,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "display_format": null,
+                    "items": [
+                      "Define what a solar system is."
+                    ],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "You will also learn to identify the key elements that make up our very own Solar System, from the central star to the planets and other celestial bodies orbiting it. Let's get started!",
+                  "duration_seconds": 16.75,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "display_format": null,
+                    "items": [
+                      "Identify the key components of our Solar System."
+                    ],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  }
+                }
+              ],
+              "total_duration_seconds": 35.53
+            },
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Learning Objective 1: Define what a solar system is.",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "text_only",
+                "description": "Learning Objective 2: Identify the key components of our Solar System.",
+                "source_block_ids": []
+              }
+            ],
+            "section_id": 2
+          },
+          {
+            "section_type": "content",
+            "title": "Understanding the Solar System",
+            "renderer": "none",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Let's begin our exploration by understanding what exactly a solar system is. Simply put, a solar system is a collection of celestial bodies. At its heart is a star, like our Sun, and orbiting around this star are various objects. These objects include planets, dwarf planets, moons, asteroids, comets, and even dust and gas. All these components are bound together by the star's immense gravitational pull. Our own solar system, for instance, revolves around the Sun, which is its central star. The Sun's gravity is what keeps Earth and all the other planets in their respective orbits, preventing them from drifting off into space. It's a beautifully balanced cosmic dance!",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Let's begin our exploration by understanding what exactly a solar system is. Simply put, a solar system is a collection of celestial bodies. At its heart is a star, like our Sun, and orbiting around this star are various objects.",
+                  "duration_seconds": 20.31,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "display_format": null,
+                    "items": [
+                      "What is a Solar System?",
+                      "A star and the objects that orbit it."
+                    ],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "These objects include planets, dwarf planets, moons, asteroids, comets, and even dust and gas. All these components are bound together by the star's immense gravitational pull.",
+                  "duration_seconds": 13.2,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "display_format": null,
+                    "items": [
+                      "Components:",
+                      "Planets, Dwarf Planets, Moons",
+                      "Asteroids, Comets, Dust & Gas",
+                      "Bound by the star's gravity"
+                    ],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "Our own solar system, for instance, revolves around the Sun, which is its central star. The Sun's gravity is what keeps Earth and all the other planets in their respective orbits, preventing them from drifting off into space. It's a beautifully balanced cosmic dance!",
+                  "duration_seconds": 22.34,
+                  "gesture_hint": "waving",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "display_format": null,
+                    "items": [
+                      "Our Solar System:",
+                      "Sun is the central star.",
+                      "Sun's gravity keeps planets in orbit."
+                    ],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  }
+                }
+              ],
+              "total_duration_seconds": 55.85
+            },
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Definition of Solar System: A star and the objects that orbit it.",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "text_only",
+                "description": "Components of a Solar System: Planets, Dwarf Planets, Moons, Asteroids, Comets, Dust & Gas. All bound by gravity.",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "text_only",
+                "description": "Our Solar System: The Sun as the central star. Sun's gravity keeps planets in orbit.",
+                "source_block_ids": []
+              }
+            ],
+            "section_id": 3
+          },
+          {
+            "section_type": "content",
+            "title": "Our Place in the Cosmos",
+            "renderer": "none",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Alright students, let's explore our cosmic neighborhood: the Solar System! It's a fascinating place that we call home, and understanding its structure helps us appreciate our unique position in the universe. So, what exactly is the Solar System? \n\nSimply put, the Solar System is made up of our star, the Sun, and all the celestial objects that are gravitationally bound to it and orbit around it. This includes planets, dwarf planets, moons, asteroids, comets, and even tiny dust particles. Everything you see orbiting the Sun is part of our Solar System.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Alright students, let's explore our cosmic neighborhood: the Solar System! It's a fascinating place that we call home, and understanding its structure helps us appreciate our unique position in the universe. So, what exactly is the Solar System?",
+                  "duration_seconds": 19.29,
+                  "gesture_hint": "pointing",
+                  "visual_content": {
+                    "content_type": "text_overlay",
+                    "display_format": null,
+                    "items": null,
+                    "verbatim_content": "Our Place in the Cosmos\nThe Solar System"
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Simply put, the Solar System is made up of our star, the Sun, and all the celestial objects that are gravitationally bound to it and orbit around it. This includes planets, dwarf planets, moons, asteroids, comets, and even tiny dust particles. Everything you see orbiting the Sun is part of our Solar System.",
+                  "duration_seconds": 26.91,
+                  "gesture_hint": "explaining",
+                  "visual_content": {
+                    "content_type": "bullet_list",
+                    "display_format": null,
+                    "items": [
+                      "Solar System: The Sun and all the objects that orbit it.",
+                      "Includes: Planets, Dwarf Planets, Moons, Asteroids, Comets, Dust."
+                    ],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  }
+                }
+              ],
+              "total_duration_seconds": 46.2
+            },
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Title: Our Place in the Cosmos\nSubtitle: The Solar System",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "text_only",
+                "description": "Definition:\nSolar System: The Sun and all the objects that orbit it.\nIncludes: Planets, Dwarf Planets, Moons, Asteroids, Comets, Dust.",
+                "source_block_ids": []
+              }
+            ],
+            "section_id": 4
+          },
+          {
+            "section_type": "memory",
+            "title": "3 Keys to Remember",
+            "renderer": "none",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Let's lock these ideas in your brain with a simple trick: think of a Family, a Diya, and a Ring Road. First, the Solar System is a big joint family with the Sun as its head. Second, the Sun is the Super Ultimate Nucleus, the main Diya giving light to everyone. Third, an Orbit is the fixed Ring Road each planet follows. So remember: Family, Diya, Ring Road!",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Let's lock these ideas in your brain with a simple trick: think of a Family, a Diya, and a Ring Road.",
+                  "duration_seconds": 10.66,
+                  "gesture_hint": "pointing",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "First, the Solar System is a big joint family with the Sun as its head. Second, the Sun is the Super Ultimate Nucleus, the main Diya giving light to everyone.",
+                  "duration_seconds": 15.23,
+                  "gesture_hint": "open_palm",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "Third, an Orbit is the fixed Ring Road each planet follows. So remember: Family, Diya, Ring Road!",
+                  "duration_seconds": 8.63,
+                  "gesture_hint": "counting_fingers",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                }
+              ],
+              "total_duration_seconds": 34.52
+            },
+            "display_directives": [
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "text_only",
+                "description": "Flashcard review segment 1"
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "text_only",
+                "description": "Flashcard review segment 2"
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "text_only",
+                "description": "Flashcard review segment 3"
+              }
+            ],
+            "flashcards": [
+              {
+                "flashcard_id": 1,
+                "front": "What is the Solar System?",
+                "back": "The Sun and everything that orbits it. Think of it like a big Indian joint family: the Sun is the 'Karta' (head) and the planets are family members revolving around it.",
+                "category": "definition"
+              },
+              {
+                "flashcard_id": 2,
+                "front": "What is the Sun's role?",
+                "back": "It's the center of our solar system, providing heat and light. Remember SUN as 'Super Ultimate Nucleus'. It's the powerhouse, like the main diya lighting up the whole house during Diwali.",
+                "category": "concept"
+              },
+              {
+                "flashcard_id": 3,
+                "front": "What is an Orbit?",
+                "back": "The fixed path a planet takes around the Sun. Imagine it's a giant 'Ring Road' in space. Each planet has its own lane, so they don't crash. Earth stays in its lane, Mars in its!",
+                "category": "definition"
+              }
+            ],
+            "section_id": 5
+          },
+          {
+            "section_type": "recap",
+            "title": "Mental Movie: The Cosmic Lattu",
+            "renderer": "wan_video",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "compact",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Close your eyes and let's play a game. Imagine a village ground, empty and wide. This is our Solar System in its entirety, a vast space holding countless objects. Now, see a brightly painted lattu, our Sun. A boy gives it a sharp pull, and it spins to life, a humming, glowing center of power and energy, just like the real Sun that anchors our cosmic neighborhood. As the lattu spins, its nail carves a perfect circle in the dust. This is an orbit, the fixed road that planets must travel. It\u2019s a path determined by powerful forces, a cosmic traffic lane that ensures order. Watch now, as small pebbles, our planets, are drawn in by the lattu's motion. They begin to circle it, each one finding its own path, its own orbit, moving together in a grand, cosmic dance without ever colliding. Finally, think about that balance. The initial pull on the string wants the lattu to fly away, but its connection to the ground holds it in a spin. This is just like a planet's orbit, a perfect balance between its forward motion and the Sun's constant gravitational tug, creating an endless, stable journey through space.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Close your eyes and let's play a game. Imagine a village ground, empty and wide. This is our Solar System in its entirety, a vast space holding countless objects.",
+                  "duration_seconds": 14.72,
+                  "gesture_hint": "storytelling",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Now, see a brightly painted lattu, our Sun. A boy gives it a sharp pull, and it spins to life, a humming, glowing center of power and energy, just like the real Sun that anchors our cosmic neighborhood.",
+                  "duration_seconds": 19.29,
+                  "gesture_hint": "circular_motion",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 3,
+                  "text": "As the lattu spins, its nail carves a perfect circle in the dust. This is an orbit, the fixed road that planets must travel. It\u2019s a path determined by powerful forces, a cosmic traffic lane that ensures order.",
+                  "duration_seconds": 19.29,
+                  "gesture_hint": "drawing_circle",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 4,
+                  "text": "Watch now, as small pebbles, our planets, are drawn in by the lattu's motion. They begin to circle it, each one finding its own path, its own orbit, moving together in a grand, cosmic dance without ever colliding.",
+                  "duration_seconds": 19.29,
+                  "gesture_hint": "sweeping_motion",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                },
+                {
+                  "segment_id": 5,
+                  "text": "Finally, think about that balance. The initial pull on the string wants the lattu to fly away, but its connection to the ground holds it in a spin. This is just like a planet's orbit, a perfect balance between its forward motion and the Sun's constant gravitational tug, creating an endless, stable journey through space.",
+                  "duration_seconds": 27.92,
+                  "gesture_hint": "balancing_hands",
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  }
+                }
+              ],
+              "total_duration_seconds": 100.51
+            },
+            "display_directives": [
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              }
+            ],
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": 1,
+                "visual_beat_type": "video_clip",
+                "description": "Recap video scene 1"
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": 2,
+                "visual_beat_type": "video_clip",
+                "description": "Recap video scene 2"
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": 3,
+                "visual_beat_type": "video_clip",
+                "description": "Recap video scene 3"
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": 4,
+                "visual_beat_type": "video_clip",
+                "description": "Recap video scene 4"
+              },
+              {
+                "beat_id": "beat_5",
+                "segment_id": 5,
+                "visual_beat_type": "video_clip",
+                "description": "Recap video scene 5"
+              }
+            ],
+            "video_prompts": [
+              {
+                "beat_id": 1,
+                "prompt": "Cinematic wide shot of a dusty ground in a quiet Indian village during late afternoon. A young boy, Rohan, kneels down, holding a wooden spinning top (lattu) and string. The camera circles him slowly, showing the vast empty space around him, with a few scattered pebbles and a single mango tree in the background. This entire scene\u2014the boy, the top, the ground, the pebbles\u2014represents the whole Solar System, a collection of objects in a vast space, waiting for a central force to bring it to life.",
+                "duration_seconds": 14,
+                "style": "cinematic"
+              },
+              {
+                "beat_id": 2,
+                "prompt": "Extreme close-up on the lattu, painted bright yellow with red stripes. Rohan wraps the string tightly. With a sharp pull, the lattu hits the ground and erupts into a spinning blur of color. The camera focuses on its center, which seems to glow with energy under the sunlight, humming with a powerful buzz. This spinning, energetic lattu is our Sun, the vibrant, hot, spinning center of the solar system, from which all energy originates. The sound design emphasizes a low, powerful hum.",
+                "duration_seconds": 15,
+                "style": "cinematic"
+              },
+              {
+                "beat_id": 3,
+                "prompt": "Animated overlay on the live-action footage. As the lattu spins, its sharp iron tip carves a perfect, thin circle into the dust. A glowing line traces this path. The camera follows this newly formed circular track from a top-down perspective. A tiny ant begins to walk precisely along this carved line, unable to deviate from the path. This glowing circle represents an Orbit: the fixed, invisible pathway that a planet is bound to follow around its star, guided by gravity.",
+                "duration_seconds": 15,
+                "style": "explainer"
+              },
+              {
+                "beat_id": 4,
+                "prompt": "The camera pulls back slightly. The spinning lattu (Sun) creates a subtle vortex of air, causing three small, different-colored pebbles (planets) nearby to slowly slide and begin circling the lattu. Each pebble follows its own circular path in the dust, one inside the other, without colliding. A low-angle shot shows the pebbles moving steadily along their tracks, held in motion by the influence of the central spinning top. This visual demonstrates how multiple planets orbit the Sun simultaneously, each in its own distinct, stable orbit.",
+                "duration_seconds": 15,
+                "style": "animated"
+              },
+              {
+                "beat_id": 5,
+                "prompt": "A split-screen documentary style. On the left, we see a slow-motion replay of Rohan pulling the string, giving the lattu its initial forward motion (inertia). On the right, an animation shows a planet moving straight, but a glowing line representing the Sun's gravity constantly pulls it inward, bending its path into a circle. The two sides sync up, showing the lattu spinning perfectly. This illustrates the delicate balance: the planet's tendency to fly straight is perfectly countered by the Sun\u2019s gravitational pull, resulting in a stable orbit.",
+                "duration_seconds": 15,
+                "style": "documentary"
+              }
+            ],
+            "section_id": 6,
+            "renderer_override_reason": "Recap sections use WAN for storyboard visualization",
+            "explanation_plan": {
+              "visual_beats": [
+                {
+                  "beat_id": "beat_1",
+                  "segment_id": 1,
+                  "visual_beat_type": "video_clip",
+                  "description": "Recap video scene 1"
+                },
+                {
+                  "beat_id": "beat_2",
+                  "segment_id": 2,
+                  "visual_beat_type": "video_clip",
+                  "description": "Recap video scene 2"
+                },
+                {
+                  "beat_id": "beat_3",
+                  "segment_id": 3,
+                  "visual_beat_type": "video_clip",
+                  "description": "Recap video scene 3"
+                },
+                {
+                  "beat_id": "beat_4",
+                  "segment_id": 4,
+                  "visual_beat_type": "video_clip",
+                  "description": "Recap video scene 4"
+                },
+                {
+                  "beat_id": "beat_5",
+                  "segment_id": 5,
+                  "visual_beat_type": "video_clip",
+                  "description": "Recap video scene 5"
+                }
+              ],
+              "compiled_wan_prompt": "[Beat 1]: Cinematic wide shot of a dusty ground in a quiet Indian village during late afternoon. A young boy, Rohan, kneels down, holding a wooden spinning top (lattu) and string. The camera circles him slowly, showing the vast empty space around him, with a few scattered pebbles and a single mango tree in the background. This entire scene\u2014the boy, the top, the ground, the pebbles\u2014represents the whole Solar System, a collection of objects in a vast space, waiting for a central force to bring it to life.\n\n[Beat 2]: Extreme close-up on the lattu, painted bright yellow with red stripes. Rohan wraps the string tightly. With a sharp pull, the lattu hits the ground and erupts into a spinning blur of color. The camera focuses on its center, which seems to glow with energy under the sunlight, humming with a powerful buzz. This spinning, energetic lattu is our Sun, the vibrant, hot, spinning center of the solar system, from which all energy originates. The sound design emphasizes a low, powerful hum.\n\n[Beat 3]: Animated overlay on the live-action footage. As the lattu spins, its sharp iron tip carves a perfect, thin circle into the dust. A glowing line traces this path. The camera follows this newly formed circular track from a top-down perspective. A tiny ant begins to walk precisely along this carved line, unable to deviate from the path. This glowing circle represents an Orbit: the fixed, invisible pathway that a planet is bound to follow around its star, guided by gravity.\n\n[Beat 4]: The camera pulls back slightly. The spinning lattu (Sun) creates a subtle vortex of air, causing three small, different-colored pebbles (planets) nearby to slowly slide and begin circling the lattu. Each pebble follows its own circular path in the dust, one inside the other, without colliding. A low-angle shot shows the pebbles moving steadily along their tracks, held in motion by the influence of the central spinning top. This visual demonstrates how multiple planets orbit the Sun simultaneously, each in its own distinct, stable orbit.\n\n[Beat 5]: A split-screen documentary style. On the left, we see a slow-motion replay of Rohan pulling the string, giving the lattu its initial forward motion (inertia). On the right, an animation shows a planet moving straight, but a glowing line representing the Sun's gravity constantly pulls it inward, bending its path into a circle. The two sides sync up, showing the lattu spinning perfectly. This illustrates the delicate balance: the planet's tendency to fly straight is perfectly countered by the Sun\u2019s gravitational pull, resulting in a stable orbit.",
+              "video_prompts": [
+                {
+                  "beat_id": 1,
+                  "prompt": "Cinematic wide shot of a dusty ground in a quiet Indian village during late afternoon. A young boy, Rohan, kneels down, holding a wooden spinning top (lattu) and string. The camera circles him slowly, showing the vast empty space around him, with a few scattered pebbles and a single mango tree in the background. This entire scene\u2014the boy, the top, the ground, the pebbles\u2014represents the whole Solar System, a collection of objects in a vast space, waiting for a central force to bring it to life.",
+                  "duration_seconds": 14,
+                  "style": "cinematic"
+                },
+                {
+                  "beat_id": 2,
+                  "prompt": "Extreme close-up on the lattu, painted bright yellow with red stripes. Rohan wraps the string tightly. With a sharp pull, the lattu hits the ground and erupts into a spinning blur of color. The camera focuses on its center, which seems to glow with energy under the sunlight, humming with a powerful buzz. This spinning, energetic lattu is our Sun, the vibrant, hot, spinning center of the solar system, from which all energy originates. The sound design emphasizes a low, powerful hum.",
+                  "duration_seconds": 15,
+                  "style": "cinematic"
+                },
+                {
+                  "beat_id": 3,
+                  "prompt": "Animated overlay on the live-action footage. As the lattu spins, its sharp iron tip carves a perfect, thin circle into the dust. A glowing line traces this path. The camera follows this newly formed circular track from a top-down perspective. A tiny ant begins to walk precisely along this carved line, unable to deviate from the path. This glowing circle represents an Orbit: the fixed, invisible pathway that a planet is bound to follow around its star, guided by gravity.",
+                  "duration_seconds": 15,
+                  "style": "explainer"
+                },
+                {
+                  "beat_id": 4,
+                  "prompt": "The camera pulls back slightly. The spinning lattu (Sun) creates a subtle vortex of air, causing three small, different-colored pebbles (planets) nearby to slowly slide and begin circling the lattu. Each pebble follows its own circular path in the dust, one inside the other, without colliding. A low-angle shot shows the pebbles moving steadily along their tracks, held in motion by the influence of the central spinning top. This visual demonstrates how multiple planets orbit the Sun simultaneously, each in its own distinct, stable orbit.",
+                  "duration_seconds": 15,
+                  "style": "animated"
+                },
+                {
+                  "beat_id": 5,
+                  "prompt": "A split-screen documentary style. On the left, we see a slow-motion replay of Rohan pulling the string, giving the lattu its initial forward motion (inertia). On the right, an animation shows a planet moving straight, but a glowing line representing the Sun's gravity constantly pulls it inward, bending its path into a circle. The two sides sync up, showing the lattu spinning perfectly. This illustrates the delicate balance: the planet's tendency to fly straight is perfectly countered by the Sun\u2019s gravitational pull, resulting in a stable orbit.",
+                  "duration_seconds": 15,
+                  "style": "documentary"
+                }
+              ]
+            },
+            "_recap_video_paths": [
+              "/app/player/jobs/91002db0/videos/topic_6_beat_0.mp4",
+              "/app/player/jobs/91002db0/videos/topic_6_beat_1.mp4",
+              "/app/player/jobs/91002db0/videos/topic_6_beat_2.mp4",
+              "/app/player/jobs/91002db0/videos/topic_6_beat_3.mp4",
+              "/app/player/jobs/91002db0/videos/topic_6_beat_4.mp4"
+            ],
+            "video_path": "videos/topic_6_beat_0.mp4",
+            "recap_video_paths": [
+              "videos/topic_6_beat_0.mp4",
+              "videos/topic_6_beat_1.mp4",
+              "videos/topic_6_beat_2.mp4",
+              "videos/topic_6_beat_3.mp4",
+              "videos/topic_6_beat_4.mp4"
+            ]
+          }
+        ],
+        "metadata": {
+          "generated_at": "2026-01-02T14:51:11.967443Z",
+          "pipeline_version": "v1.5",
+          "section_count": 6,
+          "section_types": [
+            "intro",
+            "summary",
+            "content",
+            "content",
+            "memory",
+            "recap"
+          ],
+          "total_duration_seconds": 296.47,
+          "tts_segments_processed": 16,
+          "tts_provider": "estimate",
+          "tts_method": "simplified",
+          "duration_provider": "word_count_estimate",
+          "audio_provider": "edge"
+        }
+      },
+      "analytics": {
+        "job_id": "91002db0",
+        "pipeline_version": "1.5",
+        "status": "completed",
+        "error": null,
+        "started_at": "2026-01-02T14:49:13.991521",
+        "completed_at": "2026-01-02T14:52:18.251712",
+        "total_duration_seconds": 184.26,
+        "total_cost_usd": 0.1203,
+        "llm_cost_usd": 0.1203,
+        "total_tokens": 33207,
+        "input_tokens": 18718,
+        "output_tokens": 14489,
+        "phases_completed": 8,
+        "phases_failed": 0,
+        "tts": {
+          "provider": "unknown",
+          "voice": "unknown",
+          "segments": 0,
+          "duration_seconds": 0.0,
+          "characters": 0,
+          "cost_usd": 0.0
+        },
+        "renderer": {
+          "manim_videos": 0,
+          "wan_videos": 1,
+          "static_slides": 5,
+          "render_time_seconds": 0.0,
+          "failed_renders": 0
+        },
+        "content": {
+          "sections": 6,
+          "segments": 16,
+          "slides": 6,
+          "section_types": {
+            "intro": 1,
+            "summary": 1,
+            "content": 2,
+            "memory": 1,
+            "recap": 1
+          },
+          "page_count": 0,
+          "qa_pair_count": 0,
+          "table_count": 0,
+          "image_count": 0
+        },
+        "phase_breakdown": {
+          "smart_chunker": {
+            "cost_usd": 0.0203,
+            "duration_seconds": 17.68,
+            "tokens": 3403,
+            "model": "google/gemini-2.5-pro",
+            "status": "completed"
+          },
+          "v15_SectionPlanner": {
+            "cost_usd": 0.0046,
+            "duration_seconds": 0.0,
+            "tokens": 4274,
+            "model": "google/gemini-2.5-flash",
+            "status": "completed"
+          },
+          "v15_ContentCreator": {
+            "cost_usd": 0.0029,
+            "duration_seconds": 0.0,
+            "tokens": 3588,
+            "model": "google/gemini-2.5-flash",
+            "status": "completed"
+          },
+          "v15_SpecialSections": {
+            "cost_usd": 0.0391,
+            "duration_seconds": 0.0,
+            "tokens": 5455,
+            "model": "google/gemini-2.5-pro",
+            "status": "completed"
+          }
+        }
+      },
+      "output_path": "/app/player/jobs/91002db0/presentation.json",
+      "pipeline_version": "1.5"
+    }
   }
 }

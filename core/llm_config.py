@@ -15,6 +15,10 @@ def get_model_name() -> str:
     """Get the configured model name from environment or default."""
     return os.environ.get("OPENROUTER_MODEL", DEFAULT_MODEL)
 
+def get_fallback_model_name() -> str:
+    """Get the configured fallback model name from environment."""
+    return os.environ.get("OPENROUTER_MODEL_FALLBACK", "google/gemini-2.5-flash")
+
 def get_api_key() -> Optional[str]:
     """Get the API key from environment."""
     return os.environ.get("OPENROUTER_API_KEY")

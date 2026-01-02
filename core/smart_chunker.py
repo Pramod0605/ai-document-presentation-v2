@@ -8,9 +8,22 @@ ISS-160: Now detects block_type (paragraph, unordered_list, ordered_list, formul
 and preserves verbatim_content from source for display fidelity.
 """
 
-from core.llm_config import get_model_name
+import os
+import json
+import re
+import logging
+from typing import Dict, List, Optional, Any
+from pathlib import Path
+from openai import OpenAI
+
+from core.analytics import AnalyticsTracker
+from core.json_repair import repair_and_parse_json, validate_json_structure
+from core.llm_config import get_model_name, get_fallback_model_name
+
+logger = logging.getLogger(__name__)
 
 MODEL = get_model_name()
+PROMPTS_DIR = Path(__file__).parent / "prompts"
 
 MAX_STRUCTURAL_RETRIES = 3  # ISS-201: Increased from 2 to give LLM more chances to self-correct
 
@@ -336,15 +349,41 @@ def call_smart_chunker(
                 tracker.start_phase("smart_chunker", MODEL)
             
             # ISS-214: Removed max_tokens limit - let API use natural limits
-            response = client.chat.completions.create(
-                model=MODEL,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                temperature=0.2,
-                response_format={"type": "json_object"}
-            )
+            # ISS-Fallback: Implement fallback model logic
+            current_model = MODEL
+            try:
+                response = client.chat.completions.create(
+                    model=current_model,
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    temperature=0.2,
+                    response_format={"type": "json_object"}
+                )
+            except Exception as e:
+                # Check if it's an API error that warrants fallback
+                error_str = str(e).lower()
+                is_api_error = any(code in error_str for code in ["401", "404", "429", "500", "502", "503", "rate limit", "not found", "unauthorized"])
+                
+                if is_api_error:
+                    fallback_model = get_fallback_model_name()
+                    if fallback_model and fallback_model != current_model:
+                        logger.warning(f"[Smart Chunker] Primary model {current_model} failed ({e}). Switching to fallback: {fallback_model}")
+                        current_model = fallback_model
+                        response = client.chat.completions.create(
+                            model=current_model,
+                            messages=[
+                                {"role": "system", "content": system_prompt},
+                                {"role": "user", "content": user_prompt}
+                            ],
+                            temperature=0.2,
+                            response_format={"type": "json_object"}
+                        )
+                    else:
+                        raise e
+                else:
+                    raise e
             
             raw_response = response.choices[0].message.content or ""
             

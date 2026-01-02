@@ -19,7 +19,7 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 
-from core.llm_config import get_model_name
+from core.llm_config import get_model_name, get_fallback_model_name
 
 @dataclass
 class GeneratorConfig:
@@ -363,13 +363,34 @@ def call_openrouter_llm(
         "max_tokens": config.max_tokens
     }
     
-    response = requests.post(
-        f"{OPENROUTER_BASE_URL}/chat/completions",
-        headers=headers,
-        json=payload,
-        timeout=config.timeout
-    )
-    response.raise_for_status()
+    
+    try:
+        response = requests.post(
+            f"{OPENROUTER_BASE_URL}/chat/completions",
+            headers=headers,
+            json=payload,
+            timeout=config.timeout
+        )
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        status_code = e.response.status_code if e.response else 0
+        if status_code in [404, 429, 500, 502, 503, 401]:
+            fallback_model = get_fallback_model_name()
+            if fallback_model and fallback_model != config.model:
+                print(f"⚠️ Primary model {config.model} failed (Status {status_code}). Switching to fallback: {fallback_model}")
+                payload["model"] = fallback_model
+                # Retry with fallback
+                response = requests.post(
+                    f"{OPENROUTER_BASE_URL}/chat/completions",
+                    headers=headers,
+                    json=payload,
+                    timeout=config.timeout
+                )
+                response.raise_for_status()
+            else:
+                raise e
+        else:
+            raise e
     
     data = response.json()
     content = data["choices"][0]["message"]["content"]
