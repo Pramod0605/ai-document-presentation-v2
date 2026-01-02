@@ -2,72 +2,79 @@
   "issues": [
     {
       "id": "ISS-001",
-      "title": "Player text visibility in video sections",
-      "status": "pending_user_verification",
-      "severity": "high",
-      "description": "Initial concern was that text content was hidden in video sections. Investigation revealed the code IS functioning correctly - display_directives control visibility per segment.",
-      "analysis": {
-        "intro_section": {
-          "text_layer": "hide",
-          "expected_behavior": "Text hidden - avatar-focused introduction",
-          "actual_behavior": "Text is hidden (CORRECT)"
-        },
-        "content_section": {
-          "text_layer": "show",
-          "visual_layer": "show",
-          "expected_behavior": "Text visible alongside video per TEACH→SHOW pattern",
-          "mutual_exclusion": "Warning logged at line 168-170 but not enforced"
-        }
+      "title": "TEACH → SHOW mutual exclusion enforcement",
+      "status": "FIXED",
+      "severity": "critical",
+      "description": "Generator was setting both text_layer and visual_layer to 'show', violating mutual exclusion",
+      "fix_applied": {
+        "file": "core/unified_content_generator.py",
+        "lines": "676-699",
+        "change": "Added mutual exclusion enforcement - if text_layer=show, visual_layer defaults to hide",
+        "date": "2026-01-02"
       },
-      "code_flow": {
-        "loadSlide": "Lines 1503-1516 add text-visible if segments exist",
-        "applyDirectives": "Lines 230-231 add text-visible if text_layer='show'"
-      },
-      "css_setup": {
-        "default": ".mode-content-video #content-box { opacity:0, max-width:0 } - hidden by default",
-        "text_visible": ".mode-content-video.text-visible #content-box { opacity:1, min-width:40% } - shown when class present"
-      },
-      "verification_needed": [
-        "1. Open player in browser",
-        "2. Click play to bypass autoplay restriction",
-        "3. Navigate to Section 3 (The Nervous System in Animals)",
-        "4. Verify content text IS visible alongside video"
-      ],
-      "note": "Screenshot tool can only capture Section 1 (intro) which correctly has text hidden. User must manually verify Section 3+"
+      "verification": "Run new job and check presentation.json has no violations"
     },
     {
-      "id": "ISS-002", 
-      "title": "Tables from PDF not preserved in presentation.json",
-      "status": "open",
+      "id": "ISS-002",
+      "title": "Job setup now uses player_v2",
+      "status": "FIXED",
       "severity": "high",
-      "description": "Tables in source markdown are being converted to bullet_list instead of being preserved as tables",
-      "root_cause": "core/unified_content_generator.py does not have a 'table' visual_beat_type in the schema",
-      "fix": {
-        "approach": "Add 'table' as a visual_beat_type in generator schema and player rendering",
-        "files": ["core/unified_content_generator.py", "player/jobs/{job_id}/player.js"]
+      "description": "Jobs were copying old player.js and index.html instead of player_v2 files",
+      "fix_applied": {
+        "file": "api/app.py",
+        "lines": "38-53",
+        "change": "setup_job_folder now copies player_v2.html, player_v2.js, and player_v2.css",
+        "date": "2026-01-02"
       }
     },
     {
       "id": "ISS-003",
-      "title": "Markdown formatting rendering",
-      "status": "pending_verification",
-      "severity": "medium",
-      "description": "Markdown syntax (### headings, **bold**, etc.) is preserved in visual_content - verify it renders correctly as styled content"
+      "title": "Player_v2 path resolution for job folders",
+      "status": "FIXED",
+      "severity": "high",
+      "description": "player_v2.js was defaulting to /player_v2/ path when accessed from job folders",
+      "fix_applied": {
+        "file": "player/player_v2.js",
+        "lines": "14-37",
+        "change": "Added CURRENT_PATH detection using URL API - derives BASE_PATH from window.location when in job folder",
+        "date": "2026-01-02"
+      }
     },
     {
       "id": "ISS-004",
-      "title": "PDF images display",
-      "status": "implemented_in_player",
+      "title": "Existing job 222f7012 updated to player_v2",
+      "status": "FIXED",
       "severity": "high",
-      "description": "Image rendering code exists in player (lines 633-659). Images extracted from PDF should display when content sections are visible.",
-      "note": "Verify after confirming ISS-001 text visibility works"
+      "description": "Manually updated existing job to use new player files and fixed display_directives",
+      "fix_applied": {
+        "actions": [
+          "Copied player_v2.html as index.html",
+          "Copied player_v2.js",
+          "Copied player_v2.css",
+          "Fixed 27 mutual exclusion violations in presentation.json"
+        ],
+        "date": "2026-01-02"
+      }
     }
   ],
-  "architecture_notes": {
-    "player_bundles": "Each job has its own baked player.js and index.html - not shared across jobs",
-    "display_directives": "text_layer, visual_layer, avatar_layer control per-segment visibility",
-    "mutual_exclusion": "text_layer=show + visual_layer=show logs warning but allows both (for TEACH→SHOW pattern)"
+  "remaining_work": [
+    {
+      "id": "ISS-005",
+      "title": "Tables from PDF not preserved",
+      "status": "open",
+      "description": "Tables in source markdown converted to bullet_list instead of table type"
+    },
+    {
+      "id": "ISS-006",
+      "title": "Verify content display in content sections",
+      "status": "pending_user_test",
+      "description": "User needs to navigate to Section 3+ and verify text content displays with TEACH → SHOW pattern"
+    }
+  ],
+  "architecture_confirmed": {
+    "v15_v2_pipeline": "Uses consolidated section_N.mp3 audio files",
+    "player_v2": "Clean Unified Renderer - now correctly deployed to jobs",
+    "job_bundles": "Each job gets player_v2.html, player_v2.js, player_v2.css"
   },
-  "testing_limitation": "Automated screenshot tool captures initial state (Section 1). Manual browser testing required for navigation.",
-  "last_updated": "2026-01-01"
+  "last_updated": "2026-01-02"
 }

@@ -37,10 +37,11 @@ def setup_job_folder(job_output_dir: Path):
     os.makedirs(job_output_dir / "videos", exist_ok=True)
     os.makedirs(job_output_dir / "audio", exist_ok=True)
     # Copy player_v2 files for self-contained job
-    # player_v2.html becomes index.html, player_v2.js keeps its name
+    # player_v2.html becomes index.html, player_v2.js and player_v2.css keep their names
     file_mappings = [
         ("player_v2.html", "index.html"),
-        ("player_v2.js", "player_v2.js")
+        ("player_v2.js", "player_v2.js"),
+        ("player_v2.css", "player_v2.css")
     ]
     for src_name, dst_name in file_mappings:
         src = PLAYER_DIR / src_name
