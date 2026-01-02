@@ -670,17 +670,30 @@ def _transform_narration(narration: dict, visual_beats: list = None) -> dict:
                 "verbatim_content": display_text if display_text else None
             }
         
+        # TEACH → SHOW pattern: text_layer and visual_layer are mutually exclusive
+        # When showing text, visual should be hidden (TEACH phase)
+        # When showing video/visual, text should be hidden (SHOW phase)
+        seg_directives = seg.get("display_directives")
+        if not seg_directives:
+            # Default to TEACH mode: show text, hide visual
+            seg_directives = {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+            }
+        else:
+            # Enforce mutual exclusion if LLM violated it
+            if seg_directives.get("text_layer") == "show" and seg_directives.get("visual_layer") == "show":
+                # Default to TEACH mode when both are show
+                seg_directives["visual_layer"] = "hide"
+        
         transformed_seg = {
             "segment_id": i + 1,
             "text": seg.get("text", ""),
             "duration_seconds": 0,
             "gesture_hint": seg.get("purpose", "neutral"),
             "visual_content": visual_content,
-            "display_directives": seg.get("display_directives", {
-                "text_layer": "show",
-                "visual_layer": "show" if display_text else "hide",
-                "avatar_layer": "show"
-            })
+            "display_directives": seg_directives
         }
         transformed_segments.append(transformed_seg)
     

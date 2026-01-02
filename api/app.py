@@ -36,10 +36,15 @@ def setup_job_folder(job_output_dir: Path):
     """Copy player files to job folder for self-contained playback"""
     os.makedirs(job_output_dir / "videos", exist_ok=True)
     os.makedirs(job_output_dir / "audio", exist_ok=True)
-    # Copy player files for self-contained job
-    for filename in ["index.html", "player.js"]:
-        src = PLAYER_DIR / filename
-        dst = job_output_dir / filename
+    # Copy player_v2 files for self-contained job
+    # player_v2.html becomes index.html, player_v2.js keeps its name
+    file_mappings = [
+        ("player_v2.html", "index.html"),
+        ("player_v2.js", "player_v2.js")
+    ]
+    for src_name, dst_name in file_mappings:
+        src = PLAYER_DIR / src_name
+        dst = job_output_dir / dst_name
         if src.exists() and not dst.exists():
             shutil.copy(str(src), str(dst))
 
