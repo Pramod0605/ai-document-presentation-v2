@@ -8,25 +8,9 @@ ISS-160: Now detects block_type (paragraph, unordered_list, ordered_list, formul
 and preserves verbatim_content from source for display fidelity.
 """
 
-import os
-import json
-import logging
-import re
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple
-from openai import OpenAI
+from core.llm_config import get_model_name
 
-from core.json_repair import repair_and_parse_json, validate_json_structure
-from core.analytics import AnalyticsTracker
-
-logger = logging.getLogger(__name__)
-
-# Client initialized lazily in call_smart_chunker to ensure env vars are loaded
-
-PROMPTS_DIR = Path(__file__).parent / "prompts"
-SCHEMAS_DIR = Path(__file__).parent.parent / "schemas"
-
-MODEL = "google/gemini-2.0-flash-exp:free"
+MODEL = get_model_name()
 
 MAX_STRUCTURAL_RETRIES = 3  # ISS-201: Increased from 2 to give LLM more chances to self-correct
 

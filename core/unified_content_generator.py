@@ -19,10 +19,12 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 
+from core.llm_config import get_model_name
+
 @dataclass
 class GeneratorConfig:
     """Configuration for the unified content generator."""
-    model: str = "google/gemini-2.0-flash-exp:free"
+    model: str = get_model_name()
     temperature: float = 0.7
     max_tokens: int = 32000
     max_retries: int = 3

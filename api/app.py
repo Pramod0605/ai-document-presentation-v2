@@ -2649,4 +2649,16 @@ def serve_job_assets(job_id, filename):
     return jsonify({"error": "File not found"}), 404
 
 if __name__ == "__main__":
+    # Pre-flight check for LLM access
+    try:
+        from core.llm_config import validate_model_access
+        is_valid, msg = validate_model_access()
+        if is_valid:
+            print(f"✅ LLM Pre-flight check passed: {msg}")
+        else:
+            print(f"⚠️ LLM Pre-flight check FAILED: {msg}")
+            # We don't exit to allow the app to start and show dashboard, but logs will show the issue
+    except ImportError:
+        print("⚠️ Could not import validation module")
+        
     app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
