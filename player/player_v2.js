@@ -311,6 +311,7 @@ function loadSlide(index) {
   currentSegmentIndex = 0;
   slidePicker.value = index;
   revealItems = []; // Reset reveal state
+  displayDirectivesApplied = false; // Reset for new slide
   
   // CRITICAL: Reset beat playlist to prevent Section N inheriting Section N-1's beats
   beatVideoPlaylist = [];
@@ -1250,6 +1251,9 @@ function updateTimeDisplay(current, total) {
   timeDisplay.textContent = `${formatTime(current)} / ${formatTime(total)}`;
 }
 
+// Track if display_directives has been applied for current slide (reset on loadSlide)
+let displayDirectivesApplied = false;
+
 function updateActiveSegment(currentTime) {
   // Guard against early calls before slides are loaded
   if (!slides || !slides.length || currentSlideIndex < 0) return;
@@ -1276,7 +1280,11 @@ function updateActiveSegment(currentTime) {
     cumulative += duration;
   }
   
-  if (activeIndex !== currentSegmentIndex) {
+  // Apply display_directives on segment change OR on first run for initial segment
+  const segmentChanged = activeIndex !== currentSegmentIndex;
+  const needsInitialApply = !displayDirectivesApplied && segments.length > 0;
+  
+  if (segmentChanged || needsInitialApply) {
     const prevSeg = document.getElementById(`seg-${currentSegmentIndex}`);
     if (prevSeg) prevSeg.classList.remove('segment-active');
     
@@ -1284,6 +1292,48 @@ function updateActiveSegment(currentTime) {
     if (newSeg) newSeg.classList.add('segment-active');
     
     currentSegmentIndex = activeIndex;
+    
+    // TEACH → SHOW: Apply display_directives for current segment
+    applyDisplayDirectives(slide, segments[activeIndex], activeIndex);
+    displayDirectivesApplied = true;
+  }
+}
+
+/**
+ * Apply display_directives for TEACH → SHOW pattern
+ * When visual_layer='show', display the video; when 'hide', hide it
+ * When text_layer='show', ensure content is visible; when 'hide', dim it
+ */
+function applyDisplayDirectives(slide, segment, segmentIndex) {
+  if (!segment || !segment.display_directives) return;
+  
+  const dd = segment.display_directives;
+  const textLayer = dd.text_layer || 'show';
+  const visualLayer = dd.visual_layer || 'hide';
+  
+  // Only apply for content sections with video renderer
+  const sectionType = slide.section_type || 'content';
+  const renderer = slide.renderer || 'none';
+  const beatVideoPaths = slide.beat_video_paths || [];
+  
+  // Check all possible video sources (matches renderContent logic)
+  const hasVideo = (slide.video_path || slide.content_video_path || beatVideoPaths.length > 0) && 
+                   (renderer === 'video' || renderer === 'manim' || renderer === 'wan' || renderer === 'wan_video');
+  
+  // Only apply TEACH → SHOW for content sections (not intro, summary, quiz, memory, recap)
+  if (sectionType === 'content' && hasVideo) {
+    if (visualLayer === 'show') {
+      // SHOW phase: Display video, dim text
+      videoLayer.classList.remove('hidden');
+      contentLayer.classList.add('video-mode');
+      contentVideo.play().catch(() => {});
+      console.log(`[V2] Segment ${segmentIndex}: SHOW phase - displaying video`);
+    } else {
+      // TEACH phase: Hide video, show text
+      videoLayer.classList.add('hidden');
+      contentLayer.classList.remove('video-mode');
+      console.log(`[V2] Segment ${segmentIndex}: TEACH phase - showing text`);
+    }
   }
 }
 

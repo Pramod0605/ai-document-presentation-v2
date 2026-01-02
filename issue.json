@@ -2,78 +2,57 @@
   "issues": [
     {
       "id": "ISS-001",
-      "title": "TEACH → SHOW mutual exclusion enforcement",
+      "title": "TEACH → SHOW mutual exclusion enforcement in generator",
       "status": "FIXED",
-      "severity": "critical",
-      "description": "Generator was setting both text_layer and visual_layer to 'show', violating mutual exclusion",
-      "fix_applied": {
-        "file": "core/unified_content_generator.py",
-        "lines": "676-699",
-        "change": "Added mutual exclusion enforcement - if text_layer=show, visual_layer defaults to hide",
-        "date": "2026-01-02"
-      },
-      "verification": "Run new job and check presentation.json has no violations"
+      "fix": "core/unified_content_generator.py lines 676-699 - enforces text_layer=show → visual_layer=hide"
     },
     {
       "id": "ISS-002",
-      "title": "Job setup now uses player_v2",
+      "title": "Job setup uses player_v2",
       "status": "FIXED",
-      "severity": "high",
-      "description": "Jobs were copying old player.js and index.html instead of player_v2 files",
-      "fix_applied": {
-        "file": "api/app.py",
-        "lines": "38-53",
-        "change": "setup_job_folder now copies player_v2.html, player_v2.js, and player_v2.css",
-        "date": "2026-01-02"
-      }
+      "fix": "api/app.py lines 38-53 - copies player_v2.html, player_v2.js, player_v2.css to jobs"
     },
     {
       "id": "ISS-003",
       "title": "Player_v2 path resolution for job folders",
       "status": "FIXED",
-      "severity": "high",
-      "description": "player_v2.js was defaulting to /player_v2/ path when accessed from job folders",
-      "fix_applied": {
-        "file": "player/player_v2.js",
-        "lines": "14-37",
-        "change": "Added CURRENT_PATH detection using URL API - derives BASE_PATH from window.location when in job folder",
-        "date": "2026-01-02"
-      }
+      "fix": "player/player_v2.js lines 14-37 - derives BASE_PATH from window.location"
     },
     {
       "id": "ISS-004",
-      "title": "Existing job 222f7012 updated to player_v2",
+      "title": "display_directives handling in player_v2",
       "status": "FIXED",
-      "severity": "high",
-      "description": "Manually updated existing job to use new player files and fixed display_directives",
-      "fix_applied": {
-        "actions": [
-          "Copied player_v2.html as index.html",
-          "Copied player_v2.js",
-          "Copied player_v2.css",
-          "Fixed 27 mutual exclusion violations in presentation.json"
+      "description": "player_v2 was not responding to display_directives to show/hide video during playback",
+      "fix": {
+        "file": "player/player_v2.js",
+        "changes": [
+          "Line 317: Reset displayDirectivesApplied flag on loadSlide",
+          "Lines 1256-1302: updateActiveSegment applies directives on segment change OR initial run",
+          "Lines 1304-1340: applyDisplayDirectives function handles visual_layer show/hide",
+          "Lines 1321-1323: Broadened hasVideo check to include all video sources"
         ],
-        "date": "2026-01-02"
-      }
+        "behavior": "When visual_layer='show', video displays. When visual_layer='hide', video hides and text shows."
+      },
+      "date": "2026-01-02"
+    },
+    {
+      "id": "ISS-005",
+      "title": "Existing job 222f7012 updated",
+      "status": "FIXED",
+      "fix": "Copied player_v2 files and fixed 27 display_directive violations"
     }
   ],
   "remaining_work": [
     {
-      "id": "ISS-005",
+      "id": "ISS-006",
       "title": "Tables from PDF not preserved",
       "status": "open",
       "description": "Tables in source markdown converted to bullet_list instead of table type"
-    },
-    {
-      "id": "ISS-006",
-      "title": "Verify content display in content sections",
-      "status": "pending_user_test",
-      "description": "User needs to navigate to Section 3+ and verify text content displays with TEACH → SHOW pattern"
     }
   ],
   "architecture_confirmed": {
     "v15_v2_pipeline": "Uses consolidated section_N.mp3 audio files",
-    "player_v2": "Clean Unified Renderer - now correctly deployed to jobs",
+    "player_v2": "Clean Unified Renderer with TEACH → SHOW display_directives support",
     "job_bundles": "Each job gets player_v2.html, player_v2.js, player_v2.css"
   },
   "last_updated": "2026-01-02"
