@@ -17,58 +17,56 @@ This is a **narrated visual explanation engine**, not a slide system. The LLM ac
 - **YouTube-style Player**: Professional video player with subtitles and avatar zones
 - **Generation Tracing**: Complete audit trail of all LLM decisions
 
-## How to Run Locally
+## Deployment
 
-1. **Start the server**:
+### Docker Deployment (Recommended)
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Pramod0605/ai-document-presentation-v2.git
+   cd ai-document-presentation-v2
+   ```
+
+2. **Configure Environment Variables**:
+   - Copy `.env_example` to `.env`:
+     ```bash
+     cp .env_example .env
+     ```
+   - Open `.env` and replace the dummy keys with your actual API keys.
+
+3. **Build and Run**:
+   ```bash
+   docker-compose up --build -d
+   ```
+
+4. **Access the Dashboard**:
+   Open [http://localhost:5000/dashboard](http://localhost:5000/dashboard) in your browser.
+
+### Manual Run (Local)
+
+1. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Start the server**:
    ```bash
    python api/app.py
    ```
 
-2. **Access the player**:
-   Open http://localhost:5000/player/index.html in your browser
+## Job Concurrency
 
-3. **Upload content**:
-   - Upload a PDF file, or
-   - Use the sample content to see it in action
-
-## How It Works
-
-### PDF → Video Pipeline
-
-1. **PDF Parsing**: PDF is converted to Markdown (Datalab integration)
-2. **LLM Planning**: OpenRouter LLM analyzes content and creates a presentation plan
-3. **Video Rendering**: Each topic is rendered using the appropriate engine (Manim or WAN)
-4. **Audio Generation**: Narration is generated using gTTS with Indian English
-5. **Player Assembly**: Videos, audio, and subtitles are synced in the HTML player
-
-### JSON Control System
-
-Everything is controlled by `presentation.json`:
-- Chapter metadata (title, subject, grade)
-- Topic breakdowns with renderer choices
-- Layout configurations (content zone, avatar zone)
-- Narration with timed segments
-- Gesture hints for avatar
-
-### Generation Trace
-
-`generation_trace.json` stores:
-- Full LLM prompts used
-- Model information
-- Renderer decisions with reasoning
-- Timing decisions
-
-## API Endpoints
-
-- `POST /process_pdf` - Upload PDF and generate videos
-- `POST /process_markdown` - Process markdown content directly
-- `GET /health` - Health check
-- `GET /player/*` - Serve the video player
+The system is configured to handle **4 parallel jobs** by default. 
+- If you submit more than 4 jobs, they will be **queued** and processed automatically as workers become available.
+- This ensures server stability while allowing for high-throughput video generation.
 
 ## Environment Variables
 
-- `KIE_API_KEY` - API key for WAN video generation (kie.ai)
-- `DATALAB_API_KEY` - API key for PDF conversion (optional, uses stub if not set)
+The following variables must be configured in your `.env` file:
+
+- `OPENROUTER_API_KEY`: API key for LLM generation (via OpenRouter).
+- `DATALAB_API_KEY`: API key for PDF/Document conversion (via Datalab).
+- `KIE_API_KEY`: API key for WAN video generation and AI video services (via kie.ai).
 
 ## Phase-1 Limitations
 
