@@ -84,12 +84,13 @@ def save_jobs_index(jobs: Dict[str, dict]):
         log(f"[WARN] Failed to save jobs index: {e}")
 
 
+from concurrent.futures import ThreadPoolExecutor
+
 class JobManager:
     def __init__(self):
         self._jobs: Dict[str, dict] = load_jobs_index()
         self._lock = threading.Lock()
-        self._execution_lock = threading.Lock()
-        self._current_job_id: Optional[str] = None
+        self._executor = ThreadPoolExecutor(max_workers=4)  # Allow 4 parallel jobs
     
     def _persist(self):
         """Save current jobs state to disk."""
@@ -229,61 +230,57 @@ job_manager = JobManager()
 
 def run_job_async(job_id: str, process_func: Callable, **kwargs):
     def worker():
-        log(f"[JOB {job_id}] Worker thread started, waiting for execution lock...")
-        with job_manager._execution_lock:
-            log(f"[JOB {job_id}] Acquired execution lock")
+        log(f"[JOB {job_id}] Worker thread started...")
+        try:
+            log(f"\n[JOB {job_id}] Starting job...")
+            job_manager.start_job(job_id)
+            result = process_func(job_id=job_id, **kwargs)
+            log(f"[JOB {job_id}] Job completed successfully!")
+            job_manager.complete_job(job_id, result)
+        except Exception as e:
+            import traceback
+            full_traceback = traceback.format_exc()
+            log(f"\n[JOB {job_id}] JOB FAILED!")
+            log(f"[JOB {job_id}] Error: {str(e)}")
+            log(f"[JOB {job_id}] Traceback:\n{full_traceback}")
+            
+            # ISS-204: Capture full traceback for debugging
+            error_with_trace = f"{str(e)}\n\nTraceback:\n{full_traceback}"
+            job_manager.fail_job(job_id, error_with_trace)
+            
+            # ISS-204: Also update analytics.json with the error
             try:
-                job_manager._current_job_id = job_id
-                log(f"\n[JOB {job_id}] Starting job...")
-                job_manager.start_job(job_id)
-                result = process_func(job_id=job_id, **kwargs)
-                log(f"[JOB {job_id}] Job completed successfully!")
-                job_manager.complete_job(job_id, result)
-            except Exception as e:
-                import traceback
-                full_traceback = traceback.format_exc()
-                log(f"\n[JOB {job_id}] JOB FAILED!")
-                log(f"[JOB {job_id}] Error: {str(e)}")
-                log(f"[JOB {job_id}] Traceback:\n{full_traceback}")
-                
-                # ISS-204: Capture full traceback for debugging
-                error_with_trace = f"{str(e)}\n\nTraceback:\n{full_traceback}"
-                job_manager.fail_job(job_id, error_with_trace)
-                
-                # ISS-204: Also update analytics.json with the error
-                try:
-                    job = job_manager.get_job(job_id)
-                    if job and job.get("output_dir"):
-                        from pathlib import Path
-                        import json
-                        analytics_path = Path(job["output_dir"]) / "analytics.json"
-                        analytics = {}
-                        if analytics_path.exists():
-                            with open(analytics_path, 'r') as f:
-                                analytics = json.load(f)
-                        analytics["status"] = "failed"
-                        analytics["error"] = str(e)
-                        analytics["traceback"] = full_traceback
-                        analytics["failed_at"] = datetime.now().isoformat()
-                        with open(analytics_path, 'w') as f:
-                            json.dump(analytics, f, indent=2)
-                        log(f"[JOB {job_id}] Error persisted to analytics.json")
-                except Exception as analytics_error:
-                    log(f"[JOB {job_id}] Failed to update analytics: {analytics_error}")
-            finally:
-                job_manager._current_job_id = None
-                log(f"[JOB {job_id}] Released execution lock")
+                job = job_manager.get_job(job_id)
+                if job and job.get("output_dir"):
+                    from pathlib import Path
+                    import json
+                    analytics_path = Path(job["output_dir"]) / "analytics.json"
+                    analytics = {}
+                    if analytics_path.exists():
+                        with open(analytics_path, 'r') as f:
+                            analytics = json.load(f)
+                    analytics["status"] = "failed"
+                    analytics["error"] = str(e)
+                    analytics["traceback"] = full_traceback
+                    analytics["failed_at"] = datetime.now().isoformat()
+                    with open(analytics_path, 'w') as f:
+                        json.dump(analytics, f, indent=2)
+                    log(f"[JOB {job_id}] Error persisted to analytics.json")
+            except Exception as analytics_error:
+                log(f"[JOB {job_id}] Failed to update analytics: {analytics_error}")
     
-    log(f"[JOB {job_id}] Creating worker thread...")
-    thread = threading.Thread(target=worker, daemon=True)
-    thread.start()
-    log(f"[JOB {job_id}] Worker thread started (thread={thread.name})")
-    return thread
+    log(f"[JOB {job_id}] Submitting job to thread pool...")
+    job_manager._executor.submit(worker)
+    return None
 
 
 def is_job_running() -> bool:
-    return job_manager._current_job_id is not None
+    """Check if any job is currently processing."""
+    jobs = job_manager.get_all_jobs()
+    return any(j.get("status") == "processing" for j in jobs)
 
 
-def get_current_job_id() -> Optional[str]:
-    return job_manager._current_job_id
+def get_current_job_ids() -> List[str]:
+    """Get IDs of all currently processing jobs."""
+    jobs = job_manager.get_all_jobs()
+    return [j["id"] for j in jobs if j.get("status") == "processing"]

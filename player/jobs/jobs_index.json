@@ -2568,19 +2568,2221 @@
       "tts_provider": "edge_tts",
       "pipeline_version": "v15_v2"
     },
-    "status": "processing",
+    "status": "completed",
     "current_step": null,
-    "current_step_name": "Waiting in Queue",
-    "current_phase_key": "v2_unified",
-    "status_message": "Starting V2 Unified Content Generator (single LLM call)",
+    "current_step_name": "Complete!",
+    "current_phase_key": "completed",
+    "status_message": "Achievement unlocked: Video Complete!",
     "steps_completed": 0,
     "total_steps": 3,
-    "progress": 0,
+    "progress": 100,
     "created_at": "2026-01-02T11:42:25.618393",
     "started_at": "2026-01-02T11:42:25.698760",
-    "completed_at": null,
+    "completed_at": "2026-01-02T12:28:26.639266",
     "error": null,
-    "result": null,
+    "result": {
+      "status": "success",
+      "presentation": {
+        "spec_version": "v1.5",
+        "title": "Chapter 8: Heredity",
+        "subject": "General Science",
+        "grade": "12",
+        "avatar_global": {
+          "style": "teacher",
+          "default_position": "right",
+          "default_width_percent": 52,
+          "gesture_enabled": true
+        },
+        "metadata": {
+          "generated_by": "v1.5-v2-unified",
+          "llm_calls": 1,
+          "llm_time_seconds": 145.66,
+          "dry_run": false
+        },
+        "decision_log": {
+          "total_video_prompts": 7,
+          "total_manim_specs": 1,
+          "renderer_choices": [
+            {
+              "section_id": "section_4",
+              "section_title": "Mendel and His Work on Inheritance",
+              "renderer": "manim",
+              "reason": "This section explains Mendel's cross ratios (3:1, 9:3:3:1), which are ideal for a Manim animation to visualize the Punnett squares and resulting mathematical ratios clearly. A video prompt was also used to show the biological process of gene expression (DNA to protein)."
+            },
+            {
+              "section_id": "section_5",
+              "section_title": "Determination of Sex",
+              "renderer": "video",
+              "reason": "Explaining the biological process of sex determination is greatly enhanced by a video animation. The prompt describes the fertilization process, showing how X and Y chromosomes combine, which is more effective than static diagrams alone."
+            },
+            {
+              "section_id": "section_9",
+              "section_title": "Chapter Recap",
+              "renderer": "video",
+              "reason": "The recap section is designed to be a cinematic summary. Using five distinct, high-quality video prompts creates an engaging narrative that visually reinforces the key concepts of the chapter, from Mendel to human diversity."
+            }
+          ],
+          "content_analysis": "The document provides a comprehensive overview of heredity for a Grade 12 level. Key topics identified are: the definition of heredity and genetics, the importance of variation, Gregor Mendel's experiments with pea plants (including monohybrid/dihybrid crosses and his laws), and the mechanism of sex determination in humans. The document also includes a glossary of terms and an extensive Q&A section, which were used to create the memory and quiz sections, respectively. All provided images were relevant and have been incorporated into the presentation."
+        },
+        "sections": [
+          {
+            "section_id": 1,
+            "section_type": "intro",
+            "title": "Introduction to Heredity",
+            "renderer": "none",
+            "decision_reason": "This is an introductory section with the avatar speaking directly to the camera. No complex visuals or text are needed.",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "center",
+              "width_percent": 60
+            },
+            "narration": {
+              "full_text": "Namaste students! Have you ever wondered why you have your mother's eyes or your father's height? Or why some people in a family share similar habits? This is all because of something called heredity. In today's chapter, we will explore the fascinating world of genetics, the science that explains how these traits are passed down from one generation to the next. Let's begin this exciting journey of discovery together!",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Namaste students! Have you ever wondered why you have your mother's eyes or your father's height? Or why some people in a family share similar habits?",
+                  "duration_seconds": 13.2,
+                  "gesture_hint": "introduce",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 10.4,
+                  "audio_file": "1_1.mp3",
+                  "audio_path": "audio/1_1.mp3"
+                },
+                {
+                  "segment_id": 2,
+                  "text": "This is all because of something called heredity. In today's chapter, we will explore the fascinating world of genetics, the science that explains how these traits are passed down from one generation to the next. Let's begin this exciting journey of discovery together!",
+                  "duration_seconds": 21.83,
+                  "gesture_hint": "introduce",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 17.2,
+                  "audio_file": "1_2.mp3",
+                  "audio_path": "audio/1_2.mp3"
+                }
+              ],
+              "total_duration_seconds": 35.03
+            },
+            "visual_beats": [],
+            "display_directives": [
+              {
+                "text_layer": "hide",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              }
+            ],
+            "audio_path": "section_1.mp3"
+          },
+          {
+            "section_id": 2,
+            "section_type": "summary",
+            "title": "Learning Objectives",
+            "renderer": "none",
+            "decision_reason": "A bullet list is sufficient to display the learning objectives. No special renderer is required.",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "By the end of this lesson, you will be able to define heredity and understand its importance. We will learn about the groundbreaking work of Gregor Mendel and his laws of inheritance. We will also explore the concept of variation and how it drives survival. Finally, we will understand the mechanism of sex determination in humans. Let's get started.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "By the end of this lesson, you will be able to define heredity and understand its importance.",
+                  "duration_seconds": 8.63,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "bullet_points",
+                    "display_format": "bullets",
+                    "items": [
+                      "### What We Will Learn:",
+                      "- Definition and Importance of Heredity",
+                      "- Mendel's Experiments and Laws of Inheritance",
+                      "- The Role of Variation in Species Survival",
+                      "- Mechanism of Sex Determination in Humans"
+                    ],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 6.8,
+                  "audio_file": "2_1.mp3",
+                  "audio_path": "audio/2_1.mp3"
+                },
+                {
+                  "segment_id": 2,
+                  "text": "We will learn about the groundbreaking work of Gregor Mendel and his laws of inheritance.",
+                  "duration_seconds": 7.62,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 6.0,
+                  "audio_file": "2_2.mp3",
+                  "audio_path": "audio/2_2.mp3"
+                },
+                {
+                  "segment_id": 3,
+                  "text": "We will also explore the concept of variation and how it drives survival. Finally, we will understand the mechanism of sex determination in humans. Let's get started.",
+                  "duration_seconds": 13.71,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 10.8,
+                  "audio_file": "2_3.mp3",
+                  "audio_path": "audio/2_3.mp3"
+                }
+              ],
+              "total_duration_seconds": 29.96
+            },
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": "seg_1",
+                "visual_beat_type": "bullet_list",
+                "description": "### What We Will Learn:\n- Definition and Importance of Heredity\n- Mendel's Experiments and Laws of Inheritance\n- The Role of Variation in Species Survival\n- Mechanism of Sex Determination in Humans",
+                "source_block_ids": []
+              }
+            ],
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              }
+            ],
+            "audio_path": "section_2.mp3"
+          },
+          {
+            "section_id": 3,
+            "section_type": "content",
+            "title": "Heredity and Variation",
+            "renderer": "none",
+            "decision_reason": "This section explains foundational concepts using text and bullet points, which do not require a special renderer.",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "First, let's define our key terms. Heredity is the transmission of genetic characters, or traits, from parents to their offspring. The science that studies both heredity and the differences, or variations, between family members is called genetics. Heredity ensures the continuity of a species and helps us understand both similarities and differences between parents and children. But why are variations so important? Variations give individuals different advantages. For instance, bacteria that can withstand heat will survive better during a heat wave. For any species, variation increases the chances of survival, especially when the environment changes. In sexually reproducing organisms like us, we have different versions of genes for each trait, called alleles, which is a major source of this variation.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "First, let's define our key terms. Heredity is the transmission of genetic characters, or traits, from parents to their offspring. The science that studies both heredity and the differences, or variations, between family members is called genetics.",
+                  "duration_seconds": 18.78,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "**Heredity:** The transmission of genetic characters from parents to their offspring.\n\n**Genetics:** The science that deals with heredity and variation."
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 14.8,
+                  "audio_file": "3_1.mp3",
+                  "audio_path": "audio/3_1.mp3"
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Heredity ensures the continuity of a species and helps us understand both similarities and differences between parents and children. But why are variations so important?",
+                  "duration_seconds": 12.69,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "bullet_points",
+                    "display_format": "bullets",
+                    "items": [
+                      "- Ensures continuity of species.",
+                      "- Explains similarities and differences between parents and offspring.",
+                      "- Helps in understanding genetic disorders."
+                    ],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 10.0,
+                  "audio_file": "3_2.mp3",
+                  "audio_path": "audio/3_2.mp3"
+                },
+                {
+                  "segment_id": 3,
+                  "text": "Variations give individuals different advantages. For instance, bacteria that can withstand heat will survive better during a heat wave. For any species, variation increases the chances of survival, especially when the environment changes.",
+                  "duration_seconds": 16.75,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "bullet_points",
+                    "display_format": "bullets",
+                    "items": [
+                      "**Importance of Variation:**",
+                      "(i) Different individuals have different kinds of advantages. Example: Bacteria that can withstand heat will survive better in a heat wave.",
+                      "(ii) Increases the chances of a species' survival in a changing environment."
+                    ],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 13.2,
+                  "audio_file": "3_3.mp3",
+                  "audio_path": "audio/3_3.mp3"
+                },
+                {
+                  "segment_id": 4,
+                  "text": "In sexually reproducing organisms like us, we have different versions of genes for each trait, called alleles, which is a major source of this variation.",
+                  "duration_seconds": 12.69,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "Sexually reproducing organisms have two or more versions of genes for each trait, called **alleles**."
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 10.0,
+                  "audio_file": "3_4.mp3",
+                  "audio_path": "audio/3_4.mp3"
+                }
+              ],
+              "total_duration_seconds": 60.91
+            },
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": "seg_1",
+                "visual_beat_type": "text",
+                "description": "**Heredity:** The transmission of genetic characters from parents to their offspring.\n\n**Genetics:** The science that deals with heredity and variation.",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": "seg_2",
+                "visual_beat_type": "bullet_list",
+                "description": "- Ensures continuity of species.\n- Explains similarities and differences between parents and offspring.\n- Helps in understanding genetic disorders.",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": "seg_3",
+                "visual_beat_type": "bullet_list",
+                "description": "**Importance of Variation:**\n(i) Different individuals have different kinds of advantages. Example: Bacteria that can withstand heat will survive better in a heat wave.\n(ii) Increases the chances of a species' survival in a changing environment.",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": "seg_4",
+                "visual_beat_type": "text",
+                "description": "Sexually reproducing organisms have two or more versions of genes for each trait, called **alleles**.",
+                "source_block_ids": []
+              }
+            ],
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              }
+            ],
+            "audio_path": "section_3.mp3"
+          },
+          {
+            "section_id": 4,
+            "section_type": "content",
+            "title": "Mendel and His Work on Inheritance",
+            "renderer": "manim",
+            "decision_reason": "This section discusses Mendel's experiments, including specific ratios (3:1, 9:3:3:1) that are best visualized using a Manim animation for mathematical clarity. A video prompt is also used to animate the complex biological process of gene expression.",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "The foundation of modern genetics was laid by Gregor Johann Mendel, often called the 'Father of Genetics'. He conducted brilliant experiments on the garden pea, or Pisum sativum. He chose the pea plant because it had several easily observable, contrasting characters. Let's look at the seven pairs of contrasting characters Mendel studied. These included flower color, seed shape, and plant height, with each character having a dominant and a recessive form. From his experiments, Mendel derived key principles. For a monohybrid cross, involving one trait, the F2 generation shows a 3 to 1 phenotypic ratio. For a dihybrid cross, involving two traits, the F2 ratio is 9 to 3 to 3 to 1. He concluded that one trait is dominant, while the other is recessive. The factors, which we now call genes, separate during gamete formation and assort independently of each other. But how do these genes control traits? Genes carry the information to produce proteins. These proteins then control our body characteristics. For every trait, you get one allele from your father and one from your mother, creating your unique genetic combination.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "The foundation of modern genetics was laid by Gregor Johann Mendel, often called the 'Father of Genetics'. He conducted brilliant experiments on the garden pea, or Pisum sativum.",
+                  "duration_seconds": 14.22,
+                  "gesture_hint": "introduce",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "**Gregor Johann Mendel (Father of Genetics)**\n- Conducted experiments on plant breeding and hybridisation.\n- Proposed the laws of inheritance.\n- Selected Plant: *Pisum sativum* (garden pea)."
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 11.2,
+                  "audio_file": "4_1.mp3",
+                  "audio_path": "audio/4_1.mp3"
+                },
+                {
+                  "segment_id": 2,
+                  "text": "He chose the pea plant because it had several easily observable, contrasting characters. Let's look at the seven pairs of contrasting characters Mendel studied. These included flower color, seed shape, and plant height, with each character having a dominant and a recessive form.",
+                  "duration_seconds": 21.83,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "| Character       | Dominant Trait | Recessive Trait |\n|-----------------|----------------|-----------------|\n| Flower colour   | Violet         | White           |\n| Flower position | Axial          | Terminal        |\n| Seed colour     | Yellow         | Green           |\n| Seed shape      | Round          | Wrinkled        |\n| Pod shape       | Inflated       | Constricted     |\n| Pod colour      | Green          | Yellow          |\n| Height of plant | Tall           | Dwarf/ Short    |"
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 17.2,
+                  "audio_file": "4_2.mp3",
+                  "audio_path": "audio/4_2.mp3"
+                },
+                {
+                  "segment_id": 3,
+                  "text": "From his experiments, Mendel derived key principles. For a monohybrid cross, involving one trait, the F2 generation shows a 3 to 1 phenotypic ratio. For a dihybrid cross, involving two traits, the F2 ratio is 9 to 3 to 3 to 1.",
+                  "duration_seconds": 21.32,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "equation",
+                    "display_format": "latex",
+                    "items": [],
+                    "verbatim_content": "Monohybrid Cross Ratio (F2): 3 : 1\nDihybrid Cross Ratio (F2): 9 : 3 : 3 : 1"
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 16.8,
+                  "audio_file": "4_3.mp3",
+                  "audio_path": "audio/4_3.mp3"
+                },
+                {
+                  "segment_id": 4,
+                  "text": "He concluded that one trait is dominant, while the other is recessive. The factors, which we now call genes, separate during gamete formation and assort independently of each other.",
+                  "duration_seconds": 14.72,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "bullet_points",
+                    "display_format": "bullets",
+                    "items": [
+                      "**Mendel's Conclusions:**",
+                      "- One character is dominant, the other is recessive.",
+                      "- Genes separate during gamete formation (Law of Segregation).",
+                      "- Genes for different traits assort independently (Law of Independent Assortment)."
+                    ],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 11.6,
+                  "audio_file": "4_4.mp3",
+                  "audio_path": "audio/4_4.mp3"
+                },
+                {
+                  "segment_id": 5,
+                  "text": "But how do these genes control traits? Genes carry the information to produce proteins. These proteins then control our body characteristics. For every trait, you get one allele from your father and one from your mother, creating your unique genetic combination.",
+                  "duration_seconds": 20.82,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "Genes carry information for producing proteins, which in turn control the various body characteristics."
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 16.4,
+                  "audio_file": "4_5.mp3",
+                  "audio_path": "audio/4_5.mp3"
+                }
+              ],
+              "total_duration_seconds": 92.91
+            },
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": "seg_1",
+                "visual_beat_type": "text",
+                "description": "**Gregor Johann Mendel (Father of Genetics)**\n- Conducted experiments on plant breeding and hybridisation.\n- Proposed the laws of inheritance.\n- Selected Plant: *Pisum sativum* (garden pea).",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": "seg_2",
+                "visual_beat_type": "text",
+                "description": "| Character       | Dominant Trait | Recessive Trait |\n|-----------------|----------------|-----------------|\n| Flower colour   | Violet         | White           |\n| Flower position | Axial          | Terminal        |\n| Seed colour     | Yellow         | Green           |\n| Seed shape      | Round          | Wrinkled        |\n| Pod shape       | Inflated       | Constricted     |\n| Pod colour      | Green          | Yellow          |\n| Height of plant | Tall           | Dwarf/ Short    |",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": "seg_3",
+                "visual_beat_type": "equation",
+                "description": "Monohybrid Cross Ratio (F2): 3 : 1\nDihybrid Cross Ratio (F2): 9 : 3 : 3 : 1",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": "seg_4",
+                "visual_beat_type": "bullet_list",
+                "description": "**Mendel's Conclusions:**\n- One character is dominant, the other is recessive.\n- Genes separate during gamete formation (Law of Segregation).\n- Genes for different traits assort independently (Law of Independent Assortment).",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_5",
+                "segment_id": "seg_5",
+                "visual_beat_type": "video",
+                "description": "Genes carry information for producing proteins, which in turn control the various body characteristics.",
+                "source_block_ids": []
+              }
+            ],
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              }
+            ],
+            "video_prompts": [
+              {
+                "segment_id": "seg_5",
+                "prompt": "A highly detailed 3D animation illustrating the central dogma of molecular biology. The camera starts inside a cell nucleus, zooming in on a glowing strand of DNA. A specific segment, a gene, unwinds and is transcribed into an mRNA molecule, shown as a single ribbon forming alongside the DNA. The mRNA then travels out of the nucleus through a nuclear pore. In the cytoplasm, it attaches to a ribosome, depicted as a large, complex machine. The ribosome moves along the mRNA, reading codons and assembling a chain of amino acids, which are brought by tRNA molecules. The growing polypeptide chain folds into a complex 3D protein structure that then detaches and performs a function, like creating a pigment for eye color. The style is a scientific documentary visualization with vibrant, clear colors and smooth camera motion, lasting about 15 seconds.",
+                "duration_hint": 15
+              }
+            ],
+            "audio_path": "section_4.mp3",
+            "render_spec": {
+              "manim_scene_spec": {
+                "manim_code": "# Segment 1 (0-14.2s) - Introduction to Mendel\ntitle = Text(\"Gregor Johann Mendel\", font_size=48).to_edge(UP)\nsubtitle = Text(\"Father of Genetics\", font_size=36).next_to(title, DOWN)\n\nbullet_points1 = VGroup(\n    Text(\"\u2022 Conducted experiments on plant breeding\", font_size=32),\n    Text(\"\u2022 Proposed laws of inheritance\", font_size=32),\n    Text(\"\u2022 Selected Plant: Pisum sativum (garden pea)\", font_size=32)\n).arrange(DOWN, aligned_edge=LEFT).move_to(ORIGIN)\n\nself.play(Write(title), run_time=2)\nself.play(FadeIn(subtitle), run_time=2)\nself.play(Create(bullet_points1), run_time=4)\nself.wait(6.2)\n\n# Segment 2 (14.2-36.0s) - Contrasting Characters\nself.play(FadeOut(bullet_points1), run_time=1)\n\ntable_title = Text(\"Contrasting Characters\", font_size=36).to_edge(UP)\nheaders = VGroup(\n    Text(\"Character\", font_size=28),\n    Text(\"Dominant\", font_size=28),\n    Text(\"Recessive\", font_size=28)\n).arrange(RIGHT, buff=1).next_to(table_title, DOWN)\n\ntraits = [\n    [\"Flower colour\", \"Violet\", \"White\"],\n    [\"Seed colour\", \"Yellow\", \"Green\"],\n    [\"Seed shape\", \"Round\", \"Wrinkled\"],\n    [\"Height\", \"Tall\", \"Dwarf\"]\n]\n\ntable_rows = VGroup()\nfor trait in traits:\n    row = VGroup(\n        Text(trait[0], font_size=24),\n        Text(trait[1], font_size=24),\n        Text(trait[2], font_size=24)\n    ).arrange(RIGHT, buff=1)\n    table_rows.add(row)\ntable_rows.arrange(DOWN, aligned_edge=LEFT).next_to(headers, DOWN)\n\nself.play(Write(table_title), run_time=2)\nself.play(Create(headers), run_time=2)\nself.play(Create(table_rows), run_time=8)\nself.wait(8.8)\n\n# Segment 3 (36.0-57.4s) - Inheritance Ratios\nself.play(FadeOut(table_title), FadeOut(headers), FadeOut(table_rows), run_time=1)\n\nmono_title = Text(\"Monohybrid Cross (F2)\", font_size=36).to_edge(UP)\nmono_ratio = MathTex(r\"3:1\").scale(2).next_to(mono_title, DOWN)\n\ndi_title = Text(\"Dihybrid Cross (F2)\", font_size=36).next_to(mono_ratio, DOWN, buff=1)\ndi_ratio = MathTex(r\"9:3:3:1\").scale(2).next_to(di_title, DOWN)\n\nself.play(Write(mono_title), run_time=2)\nself.play(Write(mono_ratio), run_time=2)\nself.play(Write(di_title), run_time=2)\nself.play(Write(di_ratio), run_time=2)\nself.wait(13.3)\n\n# Segment 4 (57.4-72.1s) - Mendel's Conclusions\nself.play(FadeOut(mono_title), FadeOut(mono_ratio), \n          FadeOut(di_title), FadeOut(di_ratio), run_time=1)\n\nconclusions_title = Text(\"Mendel's Conclusions:\", font_size=40).to_edge(UP)\nconclusions = VGroup(\n    Text(\"\u2022 Traits show dominance and recessiveness\", font_size=32),\n    Text(\"\u2022 Law of Segregation\", font_size=32),\n    Text(\"\u2022 Law of Independent Assortment\", font_size=32)\n).arrange(DOWN, aligned_edge=LEFT).move_to(ORIGIN)\n\nself.play(Write(conclusions_title), run_time=2)\nself.play(Create(conclusions), run_time=4)\nself.wait(7.7)\n\n# Segment 5 (72.1-92.9s) - Genes and Proteins\nself.play(FadeOut(conclusions_title), FadeOut(conclusions), run_time=1)\n\nfinal_text = VGroup(\n    Text(\"Genes\", font_size=36),\n    Arrow(LEFT, RIGHT, color=WHITE),\n    Text(\"Proteins\", font_size=36),\n    Arrow(LEFT, RIGHT, color=WHITE),\n    Text(\"Traits\", font_size=36)\n).arrange(RIGHT).move_to(ORIGIN)\n\ninheritance = Text(\"One allele from each parent\", font_size=32).next_to(final_text, DOWN, buff=1)\n\nself.play(Create(final_text), run_time=4)\nself.play(Write(inheritance), run_time=3)\nself.wait(12.8)",
+                "code_type": "construct_body"
+              }
+            },
+            "explanation_plan": {
+              "visual_beats": [
+                {
+                  "beat_id": "beat_1",
+                  "segment_id": "seg_1",
+                  "visual_beat_type": "text",
+                  "description": "**Gregor Johann Mendel (Father of Genetics)**\n- Conducted experiments on plant breeding and hybridisation.\n- Proposed the laws of inheritance.\n- Selected Plant: *Pisum sativum* (garden pea).",
+                  "source_block_ids": []
+                },
+                {
+                  "beat_id": "beat_2",
+                  "segment_id": "seg_2",
+                  "visual_beat_type": "text",
+                  "description": "| Character       | Dominant Trait | Recessive Trait |\n|-----------------|----------------|-----------------|\n| Flower colour   | Violet         | White           |\n| Flower position | Axial          | Terminal        |\n| Seed colour     | Yellow         | Green           |\n| Seed shape      | Round          | Wrinkled        |\n| Pod shape       | Inflated       | Constricted     |\n| Pod colour      | Green          | Yellow          |\n| Height of plant | Tall           | Dwarf/ Short    |",
+                  "source_block_ids": []
+                },
+                {
+                  "beat_id": "beat_3",
+                  "segment_id": "seg_3",
+                  "visual_beat_type": "equation",
+                  "description": "Monohybrid Cross Ratio (F2): 3 : 1\nDihybrid Cross Ratio (F2): 9 : 3 : 3 : 1",
+                  "source_block_ids": []
+                },
+                {
+                  "beat_id": "beat_4",
+                  "segment_id": "seg_4",
+                  "visual_beat_type": "bullet_list",
+                  "description": "**Mendel's Conclusions:**\n- One character is dominant, the other is recessive.\n- Genes separate during gamete formation (Law of Segregation).\n- Genes for different traits assort independently (Law of Independent Assortment).",
+                  "source_block_ids": []
+                },
+                {
+                  "beat_id": "beat_5",
+                  "segment_id": "seg_5",
+                  "visual_beat_type": "video",
+                  "description": "Genes carry information for producing proteins, which in turn control the various body characteristics.",
+                  "source_block_ids": []
+                }
+              ],
+              "v15_manim_code": "# Segment 1 (0-14.2s) - Introduction to Mendel\ntitle = Text(\"Gregor Johann Mendel\", font_size=48).to_edge(UP)\nsubtitle = Text(\"Father of Genetics\", font_size=36).next_to(title, DOWN)\n\nbullet_points1 = VGroup(\n    Text(\"\u2022 Conducted experiments on plant breeding\", font_size=32),\n    Text(\"\u2022 Proposed laws of inheritance\", font_size=32),\n    Text(\"\u2022 Selected Plant: Pisum sativum (garden pea)\", font_size=32)\n).arrange(DOWN, aligned_edge=LEFT).move_to(ORIGIN)\n\nself.play(Write(title), run_time=2)\nself.play(FadeIn(subtitle), run_time=2)\nself.play(Create(bullet_points1), run_time=4)\nself.wait(6.2)\n\n# Segment 2 (14.2-36.0s) - Contrasting Characters\nself.play(FadeOut(bullet_points1), run_time=1)\n\ntable_title = Text(\"Contrasting Characters\", font_size=36).to_edge(UP)\nheaders = VGroup(\n    Text(\"Character\", font_size=28),\n    Text(\"Dominant\", font_size=28),\n    Text(\"Recessive\", font_size=28)\n).arrange(RIGHT, buff=1).next_to(table_title, DOWN)\n\ntraits = [\n    [\"Flower colour\", \"Violet\", \"White\"],\n    [\"Seed colour\", \"Yellow\", \"Green\"],\n    [\"Seed shape\", \"Round\", \"Wrinkled\"],\n    [\"Height\", \"Tall\", \"Dwarf\"]\n]\n\ntable_rows = VGroup()\nfor trait in traits:\n    row = VGroup(\n        Text(trait[0], font_size=24),\n        Text(trait[1], font_size=24),\n        Text(trait[2], font_size=24)\n    ).arrange(RIGHT, buff=1)\n    table_rows.add(row)\ntable_rows.arrange(DOWN, aligned_edge=LEFT).next_to(headers, DOWN)\n\nself.play(Write(table_title), run_time=2)\nself.play(Create(headers), run_time=2)\nself.play(Create(table_rows), run_time=8)\nself.wait(8.8)\n\n# Segment 3 (36.0-57.4s) - Inheritance Ratios\nself.play(FadeOut(table_title), FadeOut(headers), FadeOut(table_rows), run_time=1)\n\nmono_title = Text(\"Monohybrid Cross (F2)\", font_size=36).to_edge(UP)\nmono_ratio = MathTex(r\"3:1\").scale(2).next_to(mono_title, DOWN)\n\ndi_title = Text(\"Dihybrid Cross (F2)\", font_size=36).next_to(mono_ratio, DOWN, buff=1)\ndi_ratio = MathTex(r\"9:3:3:1\").scale(2).next_to(di_title, DOWN)\n\nself.play(Write(mono_title), run_time=2)\nself.play(Write(mono_ratio), run_time=2)\nself.play(Write(di_title), run_time=2)\nself.play(Write(di_ratio), run_time=2)\nself.wait(13.3)\n\n# Segment 4 (57.4-72.1s) - Mendel's Conclusions\nself.play(FadeOut(mono_title), FadeOut(mono_ratio), \n          FadeOut(di_title), FadeOut(di_ratio), run_time=1)\n\nconclusions_title = Text(\"Mendel's Conclusions:\", font_size=40).to_edge(UP)\nconclusions = VGroup(\n    Text(\"\u2022 Traits show dominance and recessiveness\", font_size=32),\n    Text(\"\u2022 Law of Segregation\", font_size=32),\n    Text(\"\u2022 Law of Independent Assortment\", font_size=32)\n).arrange(DOWN, aligned_edge=LEFT).move_to(ORIGIN)\n\nself.play(Write(conclusions_title), run_time=2)\nself.play(Create(conclusions), run_time=4)\nself.wait(7.7)\n\n# Segment 5 (72.1-92.9s) - Genes and Proteins\nself.play(FadeOut(conclusions_title), FadeOut(conclusions), run_time=1)\n\nfinal_text = VGroup(\n    Text(\"Genes\", font_size=36),\n    Arrow(LEFT, RIGHT, color=WHITE),\n    Text(\"Proteins\", font_size=36),\n    Arrow(LEFT, RIGHT, color=WHITE),\n    Text(\"Traits\", font_size=36)\n).arrange(RIGHT).move_to(ORIGIN)\n\ninheritance = Text(\"One allele from each parent\", font_size=32).next_to(final_text, DOWN, buff=1)\n\nself.play(Create(final_text), run_time=4)\nself.play(Write(inheritance), run_time=3)\nself.wait(12.8)"
+            }
+          },
+          {
+            "section_id": 5,
+            "section_type": "content",
+            "title": "Determination of Sex",
+            "renderer": "video",
+            "decision_reason": "This section explains sex determination, a biological process. Using diagrams from the text and a detailed video animation provides a much clearer explanation than text alone.",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Now, let's discuss how the sex of an offspring is determined. As this chart shows, there are two main types of factors: environmental and genetic. In some animals, like turtles, the temperature at which fertilized eggs are kept determines whether the offspring is male or female. This is environmental determination. However, in many animals, including humans, sex is determined genetically by a special pair of chromosomes called sex chromosomes. In humans, there are 23 pairs of chromosomes. 22 pairs are autosomes, which control general body traits. The 23rd pair are the sex chromosomes. A female has two X chromosomes, written as XX. A male has one X and one Y chromosome, written as XY. This diagram shows how it works. The mother always contributes an X chromosome to the child. The father can contribute either an X or a Y chromosome. If the father's sperm carries an X chromosome, the child will be a girl (XX). If his sperm carries a Y chromosome, the child will be a boy (XY). This means there is a 50% probability for either a male or a female child.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Now, let's discuss how the sex of an offspring is determined. As this chart shows, there are two main types of factors: environmental and genetic.",
+                  "duration_seconds": 12.69,
+                  "gesture_hint": "introduce",
+                  "visual_content": {
+                    "content_type": "diagram",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "Factors Responsible for Sex Determination",
+                    "image_id": "258c1507ae7e731f704a016f660cd469_img.jpg",
+                    "image_path": "images/258c1507ae7e731f704a016f660cd469_img.png"
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 10.0,
+                  "audio_file": "5_1.mp3",
+                  "audio_path": "audio/5_1.mp3"
+                },
+                {
+                  "segment_id": 2,
+                  "text": "In some animals, like turtles, the temperature at which fertilized eggs are kept determines whether the offspring is male or female. This is environmental determination.",
+                  "duration_seconds": 12.69,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "**Environmental:** In some animals, the temperature at which the fertilized eggs are kept, decides gender. E.g., in turtle.\n\n**Genetic:** In some animals like humans gender or individual is determined by a pair of chromosomes called sex chromosomes."
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 10.0,
+                  "audio_file": "5_2.mp3",
+                  "audio_path": "audio/5_2.mp3"
+                },
+                {
+                  "segment_id": 3,
+                  "text": "However, in many animals, including humans, sex is determined genetically by a special pair of chromosomes called sex chromosomes. In humans, there are 23 pairs of chromosomes. 22 pairs are autosomes, which control general body traits. The 23rd pair are the sex chromosomes. A female has two X chromosomes, written as XX. A male has one X and one Y chromosome, written as XY.",
+                  "duration_seconds": 32.49,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "**Sex Chromosomes in Humans:**\n- 22 pairs of autosomes.\n- 1 pair of sex chromosomes.\n  - **XX** - Female\n  - **XY** - Male"
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 25.6,
+                  "audio_file": "5_3.mp3",
+                  "audio_path": "audio/5_3.mp3"
+                },
+                {
+                  "segment_id": 4,
+                  "text": "This diagram shows how it works. The mother always contributes an X chromosome to the child. The father can contribute either an X or a Y chromosome.",
+                  "duration_seconds": 13.71,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "diagram",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "Diagram illustrating sex determination in human beings.",
+                    "image_id": "3cab54230d8ae3b786ddda81346602cc_img.jpg",
+                    "image_path": "images/3cab54230d8ae3b786ddda81346602cc_img.png"
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 10.8,
+                  "audio_file": "5_4.mp3",
+                  "audio_path": "audio/5_4.mp3"
+                },
+                {
+                  "segment_id": 5,
+                  "text": "If the father's sperm carries an X chromosome, the child will be a girl (XX). If his sperm carries a Y chromosome, the child will be a boy (XY). This means there is a 50% probability for either a male or a female child.",
+                  "duration_seconds": 22.34,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "Animation showing the fusion of male and female gametes to determine the sex of the offspring."
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 17.6,
+                  "audio_file": "5_5.mp3",
+                  "audio_path": "audio/5_5.mp3"
+                }
+              ],
+              "total_duration_seconds": 93.92
+            },
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": "seg_1",
+                "visual_beat_type": "diagram",
+                "description": "Factors Responsible for Sex Determination",
+                "source_block_ids": [],
+                "image_id": "258c1507ae7e731f704a016f660cd469_img.jpg",
+                "image_path": "images/258c1507ae7e731f704a016f660cd469_img.png"
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": "seg_2",
+                "visual_beat_type": "text",
+                "description": "**Environmental:** In some animals, the temperature at which the fertilized eggs are kept, decides gender. E.g., in turtle.\n\n**Genetic:** In some animals like humans gender or individual is determined by a pair of chromosomes called sex chromosomes.",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": "seg_3",
+                "visual_beat_type": "text",
+                "description": "**Sex Chromosomes in Humans:**\n- 22 pairs of autosomes.\n- 1 pair of sex chromosomes.\n  - **XX** - Female\n  - **XY** - Male",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": "seg_4",
+                "visual_beat_type": "diagram",
+                "description": "Diagram illustrating sex determination in human beings.",
+                "source_block_ids": [],
+                "image_id": "3cab54230d8ae3b786ddda81346602cc_img.jpg",
+                "image_path": "images/3cab54230d8ae3b786ddda81346602cc_img.png"
+              },
+              {
+                "beat_id": "beat_5",
+                "segment_id": "seg_5",
+                "visual_beat_type": "video",
+                "description": "Animation showing the fusion of male and female gametes to determine the sex of the offspring.",
+                "source_block_ids": []
+              }
+            ],
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              }
+            ],
+            "video_prompts": [
+              {
+                "segment_id": "seg_5",
+                "prompt": "Cinematic 3D animation visualizing human sex determination. The scene begins showing a vast number of sperm cells swimming towards a large, glowing ovum. Half the sperm are highlighted with a blue 'Y' chromosome, and the other half with a pink 'X'. The camera follows one 'Y' sperm as it successfully penetrates the ovum, which contains a visible pink 'X' chromosome. Upon fertilization, the two chromosomes fuse, creating a zygote with a visible 'XY' pair. The scene then transitions to show an alternative outcome, where an 'X' sperm fertilizes the egg, resulting in an 'XX' zygote. The final shot splits the screen, showing the 'XY' zygote developing into a male embryo on one side and the 'XX' zygote into a female embryo on the other, clearly illustrating the 50% probability. The animation should be fluid, with a dark, womb-like background and bioluminescent effects, lasting 15 seconds.",
+                "duration_hint": 15
+              }
+            ],
+            "audio_path": "section_5.mp3",
+            "explanation_plan": {
+              "visual_beats": [
+                {
+                  "beat_id": "beat_1",
+                  "segment_id": "seg_1",
+                  "visual_beat_type": "diagram",
+                  "description": "Factors Responsible for Sex Determination",
+                  "source_block_ids": [],
+                  "image_id": "258c1507ae7e731f704a016f660cd469_img.jpg",
+                  "image_path": "images/258c1507ae7e731f704a016f660cd469_img.png"
+                },
+                {
+                  "beat_id": "beat_2",
+                  "segment_id": "seg_2",
+                  "visual_beat_type": "text",
+                  "description": "**Environmental:** In some animals, the temperature at which the fertilized eggs are kept, decides gender. E.g., in turtle.\n\n**Genetic:** In some animals like humans gender or individual is determined by a pair of chromosomes called sex chromosomes.",
+                  "source_block_ids": []
+                },
+                {
+                  "beat_id": "beat_3",
+                  "segment_id": "seg_3",
+                  "visual_beat_type": "text",
+                  "description": "**Sex Chromosomes in Humans:**\n- 22 pairs of autosomes.\n- 1 pair of sex chromosomes.\n  - **XX** - Female\n  - **XY** - Male",
+                  "source_block_ids": []
+                },
+                {
+                  "beat_id": "beat_4",
+                  "segment_id": "seg_4",
+                  "visual_beat_type": "diagram",
+                  "description": "Diagram illustrating sex determination in human beings.",
+                  "source_block_ids": [],
+                  "image_id": "3cab54230d8ae3b786ddda81346602cc_img.jpg",
+                  "image_path": "images/3cab54230d8ae3b786ddda81346602cc_img.png"
+                },
+                {
+                  "beat_id": "beat_5",
+                  "segment_id": "seg_5",
+                  "visual_beat_type": "video",
+                  "description": "Animation showing the fusion of male and female gametes to determine the sex of the offspring.",
+                  "source_block_ids": []
+                }
+              ],
+              "compiled_wan_prompt": "[Beat 0]: Cinematic 3D animation visualizing human sex determination. The scene begins showing a vast number of sperm cells swimming towards a large, glowing ovum. Half the sperm are highlighted with a blue 'Y' chromosome, and the other half with a pink 'X'. The camera follows one 'Y' sperm as it successfully penetrates the ovum, which contains a visible pink 'X' chromosome. Upon fertilization, the two chromosomes fuse, creating a zygote with a visible 'XY' pair. The scene then transitions to show an alternative outcome, where an 'X' sperm fertilizes the egg, resulting in an 'XX' zygote. The final shot splits the screen, showing the 'XY' zygote developing into a male embryo on one side and the 'XX' zygote into a female embryo on the other, clearly illustrating the 50% probability. The animation should be fluid, with a dark, womb-like background and bioluminescent effects, lasting 15 seconds.",
+              "video_prompts": [
+                {
+                  "segment_id": "seg_5",
+                  "prompt": "Cinematic 3D animation visualizing human sex determination. The scene begins showing a vast number of sperm cells swimming towards a large, glowing ovum. Half the sperm are highlighted with a blue 'Y' chromosome, and the other half with a pink 'X'. The camera follows one 'Y' sperm as it successfully penetrates the ovum, which contains a visible pink 'X' chromosome. Upon fertilization, the two chromosomes fuse, creating a zygote with a visible 'XY' pair. The scene then transitions to show an alternative outcome, where an 'X' sperm fertilizes the egg, resulting in an 'XX' zygote. The final shot splits the screen, showing the 'XY' zygote developing into a male embryo on one side and the 'XX' zygote into a female embryo on the other, clearly illustrating the 50% probability. The animation should be fluid, with a dark, womb-like background and bioluminescent effects, lasting 15 seconds.",
+                  "duration_hint": 15
+                }
+              ]
+            },
+            "video_path": "videos/topic_5_beat_0.mp4"
+          },
+          {
+            "section_id": 6,
+            "section_type": "quiz",
+            "title": "Knowledge Check (Part 1)",
+            "renderer": "none",
+            "decision_reason": "This is a standard quiz section. It uses the progressive reveal pattern for questions and answers, which requires narration segments but no special renderer.",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Alright, let's test your understanding with a few questions. First up, question 1: What is DNA? Think about its primary role in heredity. The correct answer is that DNA is the carrier of hereditary information from parents to the next generation. It's the blueprint of life! Next, question 2: What is a gene? Recall our discussion about the link between DNA and proteins. A gene is a part of DNA that encodes the instructions for a cell to produce a specific protein or enzyme. Moving on to question 3. Why will each gamete contain only one gene set? Consider what happens during gamete formation. The answer is that the genes controlling a trait separate from each other during gamete formation. This ensures that each gamete is pure for that trait and has only one gene set. Finally, question 4. How do Mendel's experiments show that traits are inherited independently? Think about the dihybrid cross results. Mendel crossed a tall pea plant with round seeds with a short pea plant with wrinkled seeds. The F1 generation was all tall with round seeds. But when these were self-pollinated, the F2 generation showed not only the parental combinations but also new combinations like tall plants with wrinkled seeds and short plants with round seeds. This proved that the traits for height and seed shape were inherited independently of each other.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Alright, let's test your understanding with a few questions. First up, question 1: What is DNA?",
+                  "duration_seconds": 8.12,
+                  "gesture_hint": "introduce",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 6.4,
+                  "audio_file": "6_1.mp3",
+                  "audio_path": "audio/6_1.mp3"
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Think about its primary role in heredity.",
+                  "duration_seconds": 3.55,
+                  "gesture_hint": "emphasize",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 3.0,
+                  "audio_file": "6_2.mp3",
+                  "audio_path": "audio/6_2.mp3"
+                },
+                {
+                  "segment_id": 3,
+                  "text": "The correct answer is that DNA is the carrier of hereditary information from parents to the next generation. It's the blueprint of life!",
+                  "duration_seconds": 11.68,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": true
+                  },
+                  "duration_estimate": 9.2,
+                  "audio_file": "6_3.mp3",
+                  "audio_path": "audio/6_3.mp3"
+                },
+                {
+                  "segment_id": 4,
+                  "text": "Next, question 2: What is a gene?",
+                  "duration_seconds": 3.55,
+                  "gesture_hint": "introduce",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 3.0,
+                  "audio_file": "6_4.mp3",
+                  "audio_path": "audio/6_4.mp3"
+                },
+                {
+                  "segment_id": 5,
+                  "text": "Recall our discussion about the link between DNA and proteins.",
+                  "duration_seconds": 5.08,
+                  "gesture_hint": "emphasize",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 4.0,
+                  "audio_file": "6_5.mp3",
+                  "audio_path": "audio/6_5.mp3"
+                },
+                {
+                  "segment_id": 6,
+                  "text": "A gene is a part of DNA that encodes the instructions for a cell to produce a specific protein or enzyme.",
+                  "duration_seconds": 10.66,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": true
+                  },
+                  "duration_estimate": 8.4,
+                  "audio_file": "6_6.mp3",
+                  "audio_path": "audio/6_6.mp3"
+                },
+                {
+                  "segment_id": 7,
+                  "text": "Moving on to question 3. Why will each gamete contain only one gene set?",
+                  "duration_seconds": 7.11,
+                  "gesture_hint": "introduce",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 5.6,
+                  "audio_file": "6_7.mp3",
+                  "audio_path": "audio/6_7.mp3"
+                },
+                {
+                  "segment_id": 8,
+                  "text": "Consider what happens during gamete formation.",
+                  "duration_seconds": 3.05,
+                  "gesture_hint": "emphasize",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 3.0,
+                  "audio_file": "6_8.mp3",
+                  "audio_path": "audio/6_8.mp3"
+                },
+                {
+                  "segment_id": 9,
+                  "text": "The answer is that the genes controlling a trait separate from each other during gamete formation. This ensures that each gamete is pure for that trait and has only one gene set.",
+                  "duration_seconds": 16.25,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": true
+                  },
+                  "duration_estimate": 12.8,
+                  "audio_file": "6_9.mp3",
+                  "audio_path": "audio/6_9.mp3"
+                },
+                {
+                  "segment_id": 10,
+                  "text": "Finally, question 4. How do Mendel's experiments show that traits are inherited independently?",
+                  "duration_seconds": 6.6,
+                  "gesture_hint": "introduce",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 5.2,
+                  "audio_file": "6_10.mp3",
+                  "audio_path": "audio/6_10.mp3"
+                },
+                {
+                  "segment_id": 11,
+                  "text": "Think about the dihybrid cross results.",
+                  "duration_seconds": 3.05,
+                  "gesture_hint": "emphasize",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 3.0,
+                  "audio_file": "6_11.mp3",
+                  "audio_path": "audio/6_11.mp3"
+                },
+                {
+                  "segment_id": 12,
+                  "text": "Mendel crossed a tall pea plant with round seeds with a short pea plant with wrinkled seeds. The F1 generation was all tall with round seeds. But when these were self-pollinated, the F2 generation showed not only the parental combinations but also new combinations like tall plants with wrinkled seeds and short plants with round seeds. This proved that the traits for height and seed shape were inherited independently of each other.",
+                  "duration_seconds": 36.55,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": true
+                  },
+                  "duration_estimate": 28.8,
+                  "audio_file": "6_12.mp3",
+                  "audio_path": "audio/6_12.mp3"
+                }
+              ],
+              "total_duration_seconds": 115.25
+            },
+            "visual_beats": [],
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": true
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": true
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": true
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": true
+              }
+            ],
+            "quiz_data": {
+              "questions": [
+                {
+                  "question": "What is DNA?",
+                  "options": [],
+                  "correct_answer": "",
+                  "explanation": "DNA is the carrier of hereditary information from parents to the next generation."
+                },
+                {
+                  "question": "What is a gene?",
+                  "options": [],
+                  "correct_answer": "",
+                  "explanation": "Gene is a part of DNA that encodes the instructions that allow a cell to produce a specific protein or enzyme."
+                },
+                {
+                  "question": "Why will each gamete contain only one gene set?",
+                  "options": [],
+                  "correct_answer": "",
+                  "explanation": "The genes controlling a particular trait separate from each other during gamete formation. Hence gamete is always pure as far as contrasting characters considered and will possess only one gene set."
+                },
+                {
+                  "question": "How do Mendel's experiment show that traits are inherited independently?",
+                  "options": [],
+                  "correct_answer": "",
+                  "explanation": "In a dihybrid cross, the F2 progeny showed new combinations of traits (e.g., tall plants with wrinkled seeds) that were not present in the parents. This shows that the traits for height and seed shape were inherited independently."
+                }
+              ]
+            },
+            "audio_path": "section_6.mp3"
+          },
+          {
+            "section_id": 7,
+            "section_type": "quiz",
+            "title": "Knowledge Check (Part 2)",
+            "renderer": "none",
+            "decision_reason": "This is a continuation of the quiz. It includes questions with images from the source document, which are handled effectively by the standard quiz format.",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Let's continue with a few more questions. Question 5: 'It is a matter of chance whether a couple will give birth to a male child or a female child.' Justify this statement. Take a moment to think about the sex chromosomes. The sex of a child depends on the sperm that fertilizes the egg. Since the father produces both X and Y sperm in roughly equal numbers, there's a 50% chance for a boy (XY) and a 50% chance for a girl (XX), as shown in this flow chart. Next, Question 6: Explain Mendel's experiment with a monohybrid cross. What were the key steps and results? Remember the tall and dwarf plants. Mendel crossed pure tall and pure short pea plants. The F1 generation were all tall. When he self-pollinated the F1 plants, the F2 generation had both tall and short plants in a ratio of approximately 3 tall to 1 short. Let's tackle Question 7: How do Mendel's experiments show that traits may be dominant or recessive? Think about what happened to the 'short' trait in the F1 generation. In the F1 generation, only the tall trait was expressed, even though the plants had the genetic factor for shortness. The trait that is expressed, tallness, is dominant. The trait that is hidden, shortness, is recessive, and it only reappeared in the F2 generation. Finally, let's look at this textbook question. A Mendelian experiment bred tall pea plants with violet flowers with short pea plants with white flowers. The progeny all had violet flowers, but half were short. What is the genetic makeup of the tall parent? The options are TTWW, TTww, TtWW, and TtWw. Think about the results. Since half the progeny are short (tt), the tall parent must have carried the recessive 't' allele, so its genotype for height is 'Tt'. Since all progeny have violet flowers (dominant), the tall parent must have a homozygous dominant genotype for flower color, 'WW', to ensure all offspring get a 'W'. Therefore, the correct answer is (c) TtWW.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Let's continue with a few more questions. Question 5: 'It is a matter of chance whether a couple will give birth to a male child or a female child.' Justify this statement.",
+                  "duration_seconds": 16.25,
+                  "gesture_hint": "introduce",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 12.8,
+                  "audio_file": "7_1.mp3",
+                  "audio_path": "audio/7_1.mp3"
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Take a moment to think about the sex chromosomes.",
+                  "duration_seconds": 4.57,
+                  "gesture_hint": "emphasize",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 3.6,
+                  "audio_file": "7_2.mp3",
+                  "audio_path": "audio/7_2.mp3"
+                },
+                {
+                  "segment_id": 3,
+                  "text": "The sex of a child depends on the sperm that fertilizes the egg. Since the father produces both X and Y sperm in roughly equal numbers, there's a 50% chance for a boy (XY) and a 50% chance for a girl (XX), as shown in this flow chart.",
+                  "duration_seconds": 24.37,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "image",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "Flow chart illustrating human sex determination.",
+                    "image_id": "c77403039b2f646be3509139acc05f6f_img.jpg",
+                    "image_path": "images/c77403039b2f646be3509139acc05f6f_img.png"
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": true
+                  },
+                  "duration_estimate": 19.2,
+                  "audio_file": "7_3.mp3",
+                  "audio_path": "audio/7_3.mp3"
+                },
+                {
+                  "segment_id": 4,
+                  "text": "Next, Question 6: Explain Mendel's experiment with a monohybrid cross. What were the key steps and results?",
+                  "duration_seconds": 8.63,
+                  "gesture_hint": "introduce",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 6.8,
+                  "audio_file": "7_4.mp3",
+                  "audio_path": "audio/7_4.mp3"
+                },
+                {
+                  "segment_id": 5,
+                  "text": "Remember the tall and dwarf plants.",
+                  "duration_seconds": 3.05,
+                  "gesture_hint": "emphasize",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 3.0,
+                  "audio_file": "7_5.mp3",
+                  "audio_path": "audio/7_5.mp3"
+                },
+                {
+                  "segment_id": 6,
+                  "text": "Mendel crossed pure tall and pure short pea plants. The F1 generation were all tall. When he self-pollinated the F1 plants, the F2 generation had both tall and short plants in a ratio of approximately 3 tall to 1 short.",
+                  "duration_seconds": 20.31,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": true
+                  },
+                  "duration_estimate": 16.0,
+                  "audio_file": "7_6.mp3",
+                  "audio_path": "audio/7_6.mp3"
+                },
+                {
+                  "segment_id": 7,
+                  "text": "Let's tackle Question 7: How do Mendel's experiments show that traits may be dominant or recessive?",
+                  "duration_seconds": 8.12,
+                  "gesture_hint": "introduce",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 6.4,
+                  "audio_file": "7_7.mp3",
+                  "audio_path": "audio/7_7.mp3"
+                },
+                {
+                  "segment_id": 8,
+                  "text": "Think about what happened to the 'short' trait in the F1 generation.",
+                  "duration_seconds": 6.09,
+                  "gesture_hint": "emphasize",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 4.8,
+                  "audio_file": "7_8.mp3",
+                  "audio_path": "audio/7_8.mp3"
+                },
+                {
+                  "segment_id": 9,
+                  "text": "In the F1 generation, only the tall trait was expressed, even though the plants had the genetic factor for shortness. The trait that is expressed, tallness, is dominant. The trait that is hidden, shortness, is recessive, and it only reappeared in the F2 generation.",
+                  "duration_seconds": 22.34,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "image",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": "Diagram illustrating a dihybrid cross from Question 11.",
+                    "image_id": "2c51e13558d27d3452dfec3fb73aaed1_img.jpg",
+                    "image_path": "images/2c51e13558d27d3452dfec3fb73aaed1_img.png"
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": true
+                  },
+                  "duration_estimate": 17.6,
+                  "audio_file": "7_9.mp3",
+                  "audio_path": "audio/7_9.mp3"
+                },
+                {
+                  "segment_id": 10,
+                  "text": "Finally, let's look at this textbook question. A Mendelian experiment bred tall pea plants with violet flowers with short pea plants with white flowers. The progeny all had violet flowers, but half were short. What is the genetic makeup of the tall parent? The options are TTWW, TTww, TtWW, and TtWw.",
+                  "duration_seconds": 25.89,
+                  "gesture_hint": "introduce",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 20.4,
+                  "audio_file": "7_10.mp3",
+                  "audio_path": "audio/7_10.mp3"
+                },
+                {
+                  "segment_id": 11,
+                  "text": "Think about the results. Since half the progeny are short (tt), the tall parent must have carried the recessive 't' allele, so its genotype for height is 'Tt'. Since all progeny have violet flowers (dominant), the tall parent must have a homozygous dominant genotype for flower color, 'WW', to ensure all offspring get a 'W'.",
+                  "duration_seconds": 27.92,
+                  "gesture_hint": "emphasize",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": false
+                  },
+                  "duration_estimate": 22.0,
+                  "audio_file": "7_11.mp3",
+                  "audio_path": "audio/7_11.mp3"
+                },
+                {
+                  "segment_id": 12,
+                  "text": "Therefore, the correct answer is (c) TtWW.",
+                  "duration_seconds": 3.55,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show",
+                    "answer_revealed": true
+                  },
+                  "duration_estimate": 3.0,
+                  "audio_file": "7_12.mp3",
+                  "audio_path": "audio/7_12.mp3"
+                }
+              ],
+              "total_duration_seconds": 171.09
+            },
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": "seg_3",
+                "visual_beat_type": "image",
+                "description": "Flow chart illustrating human sex determination.",
+                "source_block_ids": [],
+                "image_id": "c77403039b2f646be3509139acc05f6f_img.jpg",
+                "image_path": "images/c77403039b2f646be3509139acc05f6f_img.png"
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": "seg_9",
+                "visual_beat_type": "image",
+                "description": "Diagram illustrating a dihybrid cross from Question 11.",
+                "source_block_ids": [],
+                "image_id": "2c51e13558d27d3452dfec3fb73aaed1_img.jpg",
+                "image_path": "images/2c51e13558d27d3452dfec3fb73aaed1_img.png"
+              }
+            ],
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": true
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": true
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": true
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": false
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show",
+                "answer_revealed": true
+              }
+            ],
+            "quiz_data": {
+              "questions": [
+                {
+                  "question": "'It is a matter of chance whether a couple will give birth to a male child or a female child.' Justify this statement with the help of a flow chart.",
+                  "options": [],
+                  "correct_answer": "",
+                  "explanation": "The sex depends on the male gamete (X or Y) that fuses with the female gamete (X). Since the father produces X and Y sperm in equal numbers, there is a 50% chance of a male (XY) or female (XX) child. The outcome is determined by chance at fertilization."
+                },
+                {
+                  "question": "Explain Mendel's experiment with peas on inheritance of characters considering only one visible contrasting character.",
+                  "options": [],
+                  "correct_answer": "",
+                  "explanation": "Mendel crossed pure tall (TT) and pure short (tt) plants. F1 progeny were all tall (Tt). Selfing F1 gave F2 progeny with a 3:1 ratio of tall to short plants, demonstrating the principles of dominance and segregation."
+                },
+                {
+                  "question": "How do Mendel's experiments show that traits may be dominant or recessive?",
+                  "options": [],
+                  "correct_answer": "",
+                  "explanation": "When Mendel crossed pure tall and pure dwarf pea plants, the F1 generation consisted only of tall plants. The dwarf trait was not expressed, showing that tallness was dominant over dwarfness. The dwarf trait, being recessive, only reappeared in the F2 generation."
+                },
+                {
+                  "question": "A Mendelian experiment consisted of breeding tall pea plants bearing violet flowers with short pea plants bearing white flowers. The progeny all bore violet flowers, but almost half of them were short. This suggests that the genetic makeup of the tall parent can be depicted as:",
+                  "options": [
+                    "(a) TTWW",
+                    "(b) TTww",
+                    "(c) TtWW",
+                    "(d) TtWw"
+                  ],
+                  "correct_answer": "c",
+                  "explanation": "Since half the progeny are short (tt), the tall parent must be heterozygous for height (Tt). Since all progeny have violet flowers (dominant), the tall parent must be homozygous dominant for flower color (WW) to mask the recessive white allele from the other parent."
+                }
+              ]
+            },
+            "audio_path": "section_7.mp3"
+          },
+          {
+            "section_id": 8,
+            "section_type": "memory",
+            "title": "Key Terms to Remember",
+            "renderer": "none",
+            "decision_reason": "This section is a review of key terms, best presented as flashcards. A standard display is sufficient.",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "To solidify your understanding, let's quickly review some key terms with flashcards. First, Genotype. This is the genetic constitution of an organism which determines its characters. Next, Phenotype. This is the observable appearance of an individual, like 'tall' or 'short'. What is a Dominant trait? This is a genetic trait that is expressed even if a person has only one copy of that gene. And a Recessive trait? This is a trait that is expressed only when two copies of the gene are present. Finally, Allele. An allele is one of a pair of alternative forms of a gene that can occupy the same position on a chromosome and control the same character.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "To solidify your understanding, let's quickly review some key terms with flashcards. First, Genotype. This is the genetic constitution of an organism which determines its characters.",
+                  "duration_seconds": 13.2,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 10.4,
+                  "audio_file": "8_1.mp3",
+                  "audio_path": "audio/8_1.mp3"
+                },
+                {
+                  "segment_id": 2,
+                  "text": "Next, Phenotype. This is the observable appearance of an individual, like 'tall' or 'short'.",
+                  "duration_seconds": 7.11,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 5.6,
+                  "audio_file": "8_2.mp3",
+                  "audio_path": "audio/8_2.mp3"
+                },
+                {
+                  "segment_id": 3,
+                  "text": "What is a Dominant trait? This is a genetic trait that is expressed even if a person has only one copy of that gene.",
+                  "duration_seconds": 12.18,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 9.6,
+                  "audio_file": "8_3.mp3",
+                  "audio_path": "audio/8_3.mp3"
+                },
+                {
+                  "segment_id": 4,
+                  "text": "And a Recessive trait? This is a trait that is expressed only when two copies of the gene are present.",
+                  "duration_seconds": 10.15,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 8.0,
+                  "audio_file": "8_4.mp3",
+                  "audio_path": "audio/8_4.mp3"
+                },
+                {
+                  "segment_id": 5,
+                  "text": "Finally, Allele. An allele is one of a pair of alternative forms of a gene that can occupy the same position on a chromosome and control the same character.",
+                  "duration_seconds": 14.72,
+                  "gesture_hint": "explain",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "show",
+                    "visual_layer": "hide",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 11.6,
+                  "audio_file": "8_5.mp3",
+                  "audio_path": "audio/8_5.mp3"
+                }
+              ],
+              "total_duration_seconds": 57.36
+            },
+            "visual_beats": [],
+            "display_directives": [
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "show",
+                "visual_layer": "hide",
+                "avatar_layer": "show"
+              }
+            ],
+            "flashcards": [
+              {
+                "front": "Genotype",
+                "back": "The genetic constitution of an organism which determines the characters."
+              },
+              {
+                "front": "Phenotype",
+                "back": "The observable appearance of an individual (e.g., tall, short, eye colour)."
+              },
+              {
+                "front": "Dominant Trait",
+                "back": "A trait that is expressed in a person who has only one copy of that gene."
+              },
+              {
+                "front": "Recessive Trait",
+                "back": "A trait that is expressed only when two copies of the gene are present."
+              },
+              {
+                "front": "Allele",
+                "back": "An alternative form of a gene that can occupy the same locus on a chromosome."
+              }
+            ],
+            "audio_path": "section_8.mp3"
+          },
+          {
+            "section_id": 9,
+            "section_type": "recap",
+            "title": "Chapter Recap",
+            "renderer": "wan_video",
+            "decision_reason": "A recap section is best delivered as a cinematic summary. Using five distinct, high-quality video prompts creates a memorable and engaging story to conclude the chapter.",
+            "avatar_layout": {
+              "visibility": "always",
+              "mode": "floating",
+              "position": "right",
+              "width_percent": 52
+            },
+            "narration": {
+              "full_text": "Let's recap what we've learned through a short story. Our journey began in a quiet monastery garden, where Gregor Mendel's careful observation of pea plants unlocked the first secrets of heredity. We saw how hidden within our very cells, on structures called chromosomes, lie pairs of alleles\u2014the instructions for our traits. One allele might be dominant, its voice louder than the other, the recessive. Through his experiments, Mendel gave us a powerful tool, the Punnett square, to predict the outcome of genetic crosses and understand the mathematical nature of inheritance. We then explored how this genetic lottery extends to one of our most fundamental traits: our sex, determined by the chance combination of X and Y chromosomes at the moment of conception. Ultimately, these principles of heredity and variation come together to paint the rich, beautiful tapestry of human diversity we see all around us every day.",
+              "segments": [
+                {
+                  "segment_id": 1,
+                  "text": "Let's recap what we've learned through a short story. Our journey began in a quiet monastery garden, where Gregor Mendel's careful observation of pea plants unlocked the first secrets of heredity.",
+                  "duration_seconds": 15.74,
+                  "gesture_hint": "conclude",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 12.4,
+                  "audio_file": "9_1.mp3",
+                  "audio_path": "audio/9_1.mp3"
+                },
+                {
+                  "segment_id": 2,
+                  "text": "We saw how hidden within our very cells, on structures called chromosomes, lie pairs of alleles\u2014the instructions for our traits. One allele might be dominant, its voice louder than the other, the recessive.",
+                  "duration_seconds": 16.75,
+                  "gesture_hint": "conclude",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 13.2,
+                  "audio_file": "9_2.mp3",
+                  "audio_path": "audio/9_2.mp3"
+                },
+                {
+                  "segment_id": 3,
+                  "text": "Through his experiments, Mendel gave us a powerful tool, the Punnett square, to predict the outcome of genetic crosses and understand the mathematical nature of inheritance.",
+                  "duration_seconds": 13.2,
+                  "gesture_hint": "conclude",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 10.4,
+                  "audio_file": "9_3.mp3",
+                  "audio_path": "audio/9_3.mp3"
+                },
+                {
+                  "segment_id": 4,
+                  "text": "We then explored how this genetic lottery extends to one of our most fundamental traits: our sex, determined by the chance combination of X and Y chromosomes at the moment of conception.",
+                  "duration_seconds": 16.25,
+                  "gesture_hint": "conclude",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 12.8,
+                  "audio_file": "9_4.mp3",
+                  "audio_path": "audio/9_4.mp3"
+                },
+                {
+                  "segment_id": 5,
+                  "text": "Ultimately, these principles of heredity and variation come together to paint the rich, beautiful tapestry of human diversity we see all around us every day.",
+                  "duration_seconds": 12.69,
+                  "gesture_hint": "conclude",
+                  "visual_content": {
+                    "content_type": "text",
+                    "display_format": null,
+                    "items": [],
+                    "verbatim_content": null
+                  },
+                  "display_directives": {
+                    "text_layer": "hide",
+                    "visual_layer": "show",
+                    "avatar_layer": "show"
+                  },
+                  "duration_estimate": 10.0,
+                  "audio_file": "9_5.mp3",
+                  "audio_path": "audio/9_5.mp3"
+                }
+              ],
+              "total_duration_seconds": 74.63
+            },
+            "visual_beats": [
+              {
+                "beat_id": "beat_1",
+                "segment_id": "seg_1",
+                "visual_beat_type": "video",
+                "description": "",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_2",
+                "segment_id": "seg_2",
+                "visual_beat_type": "video",
+                "description": "",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_3",
+                "segment_id": "seg_3",
+                "visual_beat_type": "video",
+                "description": "",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_4",
+                "segment_id": "seg_4",
+                "visual_beat_type": "video",
+                "description": "",
+                "source_block_ids": []
+              },
+              {
+                "beat_id": "beat_5",
+                "segment_id": "seg_5",
+                "visual_beat_type": "video",
+                "description": "",
+                "source_block_ids": []
+              }
+            ],
+            "display_directives": [
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              },
+              {
+                "text_layer": "hide",
+                "visual_layer": "show",
+                "avatar_layer": "show"
+              }
+            ],
+            "video_prompts": [
+              {
+                "segment_id": "seg_1",
+                "prompt": "A cinematic, slow-motion shot of Gregor Mendel, a gentle, thoughtful man in 19th-century attire, walking through a sun-drenched monastery garden. He is carefully examining pea plants, gently touching a vibrant violet flower on one plant and then a white flower on another. The camera focuses on his notebook where he is meticulously recording his observations with a quill pen. The lighting is soft and golden, evoking a sense of historical discovery and scientific curiosity. The background is filled with rows of lush green pea plants, creating a serene and focused atmosphere. Duration: 12 seconds.",
+                "duration_hint": 12,
+                "duration_seconds": 15
+              },
+              {
+                "segment_id": "seg_2",
+                "prompt": "An abstract, stylized 3D animation inside a cell nucleus. We see a pair of homologous chromosomes, visualized as elegant, intertwining light structures. The camera zooms into a specific location, or locus, on the chromosomes. Here, two alleles for flower color appear as glowing symbols: a capital 'W' for the dominant violet trait on one chromosome and a lowercase 'w' for the recessive white trait on the other. The dominant 'W' allele pulses with a brighter light, visually overpowering the dimmer 'w' allele, symbolizing the concept of dominance in a clear, metaphorical way. The background is dark and cosmic, emphasizing the genetic code. Duration: 12 seconds.",
+                "duration_hint": 12,
+                "duration_seconds": 15
+              },
+              {
+                "segment_id": "seg_3",
+                "prompt": "A dynamic and clean animation of a Punnett square for a monohybrid cross. The screen starts with the parent genotypes 'Tt' and 'Tt' at the top and side of a 2x2 grid. Gametes 'T' and 't' slide into place along the axes. Then, the four squares of the grid fill in one by one in a satisfying sequence: 'TT', 'Tt', 'Tt', 'tt'. As each square fills, a small icon of a tall or short pea plant appears within it. Finally, the results are tallied at the bottom of the screen, with text appearing: 'Genotypic Ratio: 1 TT : 2 Tt : 1 tt' and 'Phenotypic Ratio: 3 Tall : 1 Short'. The animation uses a clean, modern graphic style with a white background and bold, colorful text. Duration: 12 seconds.",
+                "duration_hint": 12,
+                "duration_seconds": 13
+              },
+              {
+                "segment_id": "seg_4",
+                "prompt": "A clear, educational animation showing the chromosomal basis of sex determination in humans. The screen is split. On the left, a male figure with 'XY' chromosomes shown in his cells. On the right, a female figure with 'XX' chromosomes. Animated arrows show the process of meiosis, where the male produces sperm cells containing either an 'X' or a 'Y' chromosome, and the female produces egg cells all containing an 'X'. The gametes then move to the center and combine in two possible ways: X-sperm + X-egg results in an 'XX' zygote (female), and Y-sperm + X-egg results in an 'XY' zygote (male), with a 50% probability displayed for each outcome. The visual style is simple, using clear icons and diagrams against a neutral background. Duration: 12 seconds.",
+                "duration_hint": 12,
+                "duration_seconds": 15
+              },
+              {
+                "segment_id": "seg_5",
+                "prompt": "A heartwarming and uplifting montage of diverse Indian faces. The camera smoothly pans and cuts between close-up portraits of men, women, and children of different ages and backgrounds. The focus is on the beautiful variety of inherited traits: different eye colors (brown, black, hazel), skin tones, hair textures (straight, curly, wavy), and facial features. Everyone is smiling, looking directly at the camera. The video is shot with warm, natural lighting and a shallow depth of field, creating a personal and connected feel. The final shot is a group of friends laughing together, celebrating the diversity that makes humanity unique. Duration: 12 seconds.",
+                "duration_hint": 12,
+                "duration_seconds": 12
+              }
+            ],
+            "audio_path": "section_9.mp3",
+            "renderer_override_reason": "Recap sections use WAN for storyboard visualization",
+            "explanation_plan": {
+              "visual_beats": [
+                {
+                  "beat_id": "beat_1",
+                  "segment_id": "seg_1",
+                  "visual_beat_type": "video",
+                  "description": "",
+                  "source_block_ids": []
+                },
+                {
+                  "beat_id": "beat_2",
+                  "segment_id": "seg_2",
+                  "visual_beat_type": "video",
+                  "description": "",
+                  "source_block_ids": []
+                },
+                {
+                  "beat_id": "beat_3",
+                  "segment_id": "seg_3",
+                  "visual_beat_type": "video",
+                  "description": "",
+                  "source_block_ids": []
+                },
+                {
+                  "beat_id": "beat_4",
+                  "segment_id": "seg_4",
+                  "visual_beat_type": "video",
+                  "description": "",
+                  "source_block_ids": []
+                },
+                {
+                  "beat_id": "beat_5",
+                  "segment_id": "seg_5",
+                  "visual_beat_type": "video",
+                  "description": "",
+                  "source_block_ids": []
+                }
+              ],
+              "compiled_wan_prompt": "[Beat 0]: A cinematic, slow-motion shot of Gregor Mendel, a gentle, thoughtful man in 19th-century attire, walking through a sun-drenched monastery garden. He is carefully examining pea plants, gently touching a vibrant violet flower on one plant and then a white flower on another. The camera focuses on his notebook where he is meticulously recording his observations with a quill pen. The lighting is soft and golden, evoking a sense of historical discovery and scientific curiosity. The background is filled with rows of lush green pea plants, creating a serene and focused atmosphere. Duration: 12 seconds.\n\n[Beat 1]: An abstract, stylized 3D animation inside a cell nucleus. We see a pair of homologous chromosomes, visualized as elegant, intertwining light structures. The camera zooms into a specific location, or locus, on the chromosomes. Here, two alleles for flower color appear as glowing symbols: a capital 'W' for the dominant violet trait on one chromosome and a lowercase 'w' for the recessive white trait on the other. The dominant 'W' allele pulses with a brighter light, visually overpowering the dimmer 'w' allele, symbolizing the concept of dominance in a clear, metaphorical way. The background is dark and cosmic, emphasizing the genetic code. Duration: 12 seconds.\n\n[Beat 2]: A dynamic and clean animation of a Punnett square for a monohybrid cross. The screen starts with the parent genotypes 'Tt' and 'Tt' at the top and side of a 2x2 grid. Gametes 'T' and 't' slide into place along the axes. Then, the four squares of the grid fill in one by one in a satisfying sequence: 'TT', 'Tt', 'Tt', 'tt'. As each square fills, a small icon of a tall or short pea plant appears within it. Finally, the results are tallied at the bottom of the screen, with text appearing: 'Genotypic Ratio: 1 TT : 2 Tt : 1 tt' and 'Phenotypic Ratio: 3 Tall : 1 Short'. The animation uses a clean, modern graphic style with a white background and bold, colorful text. Duration: 12 seconds.\n\n[Beat 3]: A clear, educational animation showing the chromosomal basis of sex determination in humans. The screen is split. On the left, a male figure with 'XY' chromosomes shown in his cells. On the right, a female figure with 'XX' chromosomes. Animated arrows show the process of meiosis, where the male produces sperm cells containing either an 'X' or a 'Y' chromosome, and the female produces egg cells all containing an 'X'. The gametes then move to the center and combine in two possible ways: X-sperm + X-egg results in an 'XX' zygote (female), and Y-sperm + X-egg results in an 'XY' zygote (male), with a 50% probability displayed for each outcome. The visual style is simple, using clear icons and diagrams against a neutral background. Duration: 12 seconds.\n\n[Beat 4]: A heartwarming and uplifting montage of diverse Indian faces. The camera smoothly pans and cuts between close-up portraits of men, women, and children of different ages and backgrounds. The focus is on the beautiful variety of inherited traits: different eye colors (brown, black, hazel), skin tones, hair textures (straight, curly, wavy), and facial features. Everyone is smiling, looking directly at the camera. The video is shot with warm, natural lighting and a shallow depth of field, creating a personal and connected feel. The final shot is a group of friends laughing together, celebrating the diversity that makes humanity unique. Duration: 12 seconds.",
+              "video_prompts": [
+                {
+                  "segment_id": "seg_1",
+                  "prompt": "A cinematic, slow-motion shot of Gregor Mendel, a gentle, thoughtful man in 19th-century attire, walking through a sun-drenched monastery garden. He is carefully examining pea plants, gently touching a vibrant violet flower on one plant and then a white flower on another. The camera focuses on his notebook where he is meticulously recording his observations with a quill pen. The lighting is soft and golden, evoking a sense of historical discovery and scientific curiosity. The background is filled with rows of lush green pea plants, creating a serene and focused atmosphere. Duration: 12 seconds.",
+                  "duration_hint": 12,
+                  "duration_seconds": 15
+                },
+                {
+                  "segment_id": "seg_2",
+                  "prompt": "An abstract, stylized 3D animation inside a cell nucleus. We see a pair of homologous chromosomes, visualized as elegant, intertwining light structures. The camera zooms into a specific location, or locus, on the chromosomes. Here, two alleles for flower color appear as glowing symbols: a capital 'W' for the dominant violet trait on one chromosome and a lowercase 'w' for the recessive white trait on the other. The dominant 'W' allele pulses with a brighter light, visually overpowering the dimmer 'w' allele, symbolizing the concept of dominance in a clear, metaphorical way. The background is dark and cosmic, emphasizing the genetic code. Duration: 12 seconds.",
+                  "duration_hint": 12,
+                  "duration_seconds": 15
+                },
+                {
+                  "segment_id": "seg_3",
+                  "prompt": "A dynamic and clean animation of a Punnett square for a monohybrid cross. The screen starts with the parent genotypes 'Tt' and 'Tt' at the top and side of a 2x2 grid. Gametes 'T' and 't' slide into place along the axes. Then, the four squares of the grid fill in one by one in a satisfying sequence: 'TT', 'Tt', 'Tt', 'tt'. As each square fills, a small icon of a tall or short pea plant appears within it. Finally, the results are tallied at the bottom of the screen, with text appearing: 'Genotypic Ratio: 1 TT : 2 Tt : 1 tt' and 'Phenotypic Ratio: 3 Tall : 1 Short'. The animation uses a clean, modern graphic style with a white background and bold, colorful text. Duration: 12 seconds.",
+                  "duration_hint": 12,
+                  "duration_seconds": 13
+                },
+                {
+                  "segment_id": "seg_4",
+                  "prompt": "A clear, educational animation showing the chromosomal basis of sex determination in humans. The screen is split. On the left, a male figure with 'XY' chromosomes shown in his cells. On the right, a female figure with 'XX' chromosomes. Animated arrows show the process of meiosis, where the male produces sperm cells containing either an 'X' or a 'Y' chromosome, and the female produces egg cells all containing an 'X'. The gametes then move to the center and combine in two possible ways: X-sperm + X-egg results in an 'XX' zygote (female), and Y-sperm + X-egg results in an 'XY' zygote (male), with a 50% probability displayed for each outcome. The visual style is simple, using clear icons and diagrams against a neutral background. Duration: 12 seconds.",
+                  "duration_hint": 12,
+                  "duration_seconds": 15
+                },
+                {
+                  "segment_id": "seg_5",
+                  "prompt": "A heartwarming and uplifting montage of diverse Indian faces. The camera smoothly pans and cuts between close-up portraits of men, women, and children of different ages and backgrounds. The focus is on the beautiful variety of inherited traits: different eye colors (brown, black, hazel), skin tones, hair textures (straight, curly, wavy), and facial features. Everyone is smiling, looking directly at the camera. The video is shot with warm, natural lighting and a shallow depth of field, creating a personal and connected feel. The final shot is a group of friends laughing together, celebrating the diversity that makes humanity unique. Duration: 12 seconds.",
+                  "duration_hint": 12,
+                  "duration_seconds": 12
+                }
+              ]
+            },
+            "_recap_video_paths": [
+              "/app/player/jobs/64b6589a/videos/topic_9_beat_0.mp4",
+              "/app/player/jobs/64b6589a/videos/topic_9_beat_1.mp4",
+              "/app/player/jobs/64b6589a/videos/topic_9_beat_2.mp4",
+              "/app/player/jobs/64b6589a/videos/topic_9_beat_3.mp4",
+              "/app/player/jobs/64b6589a/videos/topic_9_beat_4.mp4"
+            ],
+            "video_path": "videos/topic_9_beat_0.mp4",
+            "recap_video_paths": [
+              "videos/topic_9_beat_0.mp4",
+              "videos/topic_9_beat_1.mp4",
+              "videos/topic_9_beat_2.mp4",
+              "videos/topic_9_beat_3.mp4",
+              "videos/topic_9_beat_4.mp4"
+            ]
+          }
+        ]
+      },
+      "analytics": {
+        "pipeline_version": "v1.5-v2",
+        "status": "completed",
+        "llm_calls": 1,
+        "dry_run": false,
+        "image_count": 4,
+        "table_count": 9,
+        "qa_pair_count": 0,
+        "tts_count": 53,
+        "tts_segments": 53,
+        "tts_provider": "edge_tts",
+        "tts_voice": "en-IN-PrabhatNeural",
+        "tts_duration_seconds": 731.06,
+        "manim_sections": 1,
+        "manim_success": 1,
+        "manim_failed": 0,
+        "manim_videos": 1,
+        "manim_time_seconds": 24.76,
+        "wan_videos": 7,
+        "wan_time_seconds": 2434.39,
+        "wan_success": 7,
+        "wan_failed": 1,
+        "sections": 9,
+        "segments": 53,
+        "total_duration_seconds": 731.0600000000001,
+        "phases": [
+          {
+            "phase": "llm_generation",
+            "duration_seconds": 145.66,
+            "tokens": 26132,
+            "cost_usd": 0.1923,
+            "model": "google/gemini-2.5-pro-preview"
+          },
+          {
+            "phase": "tts_generation",
+            "duration_seconds": 145.34,
+            "segments": 53,
+            "audio_duration": 731.06
+          },
+          {
+            "phase": "manim_codegen",
+            "duration_seconds": 24.76,
+            "sections": 1,
+            "success": 1,
+            "failed": 0
+          },
+          {
+            "phase": "video_render",
+            "duration_seconds": 2434.39,
+            "wan_videos": 7,
+            "manim_rendered": 1,
+            "failed": 1
+          }
+        ],
+        "llm_time_seconds": 145.66,
+        "llm_input_tokens": 7888,
+        "llm_output_tokens": 18244,
+        "llm_total_tokens": 26132,
+        "llm_model": "google/gemini-2.5-pro-preview",
+        "llm_cost_usd": 0.1923,
+        "tts_time_seconds": 145.34,
+        "pipeline_time_seconds": 2750.56
+      },
+      "output_path": "/app/player/jobs/64b6589a/presentation.json",
+      "pipeline_version": "1.5-v2"
+    },
     "page_count": 9,
     "source_type": "pdf",
     "image_count": 4
