@@ -83,7 +83,7 @@ def submit_job():
         dry_run = request.form.get("dry_run", "false").lower() == "true"
         skip_wan = request.form.get("skip_wan", "false").lower() == "true"
         skip_avatar = request.form.get("skip_avatar", "false").lower() == "true"
-        tts_provider = request.form.get("tts_provider", "edge")
+        tts_provider = request.form.get("tts_provider", "edge_tts")
         pipeline_version = request.form.get("pipeline_version", "v15")
         
         if "file" in request.files:
@@ -196,7 +196,7 @@ def submit_job():
             dry_run = data.get("dry_run", False)
             skip_wan = data.get("skip_wan", False)
             skip_avatar = data.get("skip_avatar", False)
-            tts_provider = data.get("tts_provider", "edge")
+            tts_provider = data.get("tts_provider", "edge_tts")
             pipeline_version = data.get("pipeline_version", "v15")
             
             if not markdown_content:
@@ -528,7 +528,7 @@ def retry_phase(job_id):
     
     POST body:
     {
-        "phase": "manim_codegen" | "video_render",
+        "phase": "manim_codegen" | "video_render" | "tts_generation",
         "section_ids": [3, 6, 11]  // Optional - if not provided, retries all failed sections for that phase
     }
     """
@@ -558,8 +558,10 @@ def retry_phase(job_id):
             result = _retry_manim_codegen(job_id, job_folder, presentation, section_ids)
         elif phase == "video_render":
             result = _retry_video_render(job_id, job_folder, presentation, section_ids)
+        elif phase == "tts_generation":
+            result = _retry_tts_generation(job_id, job_folder, presentation, section_ids)
         else:
-            return jsonify({"error": f"Unknown phase: {phase}. Valid: manim_codegen, video_render"}), 400
+            return jsonify({"error": f"Unknown phase: {phase}. Valid: manim_codegen, video_render, tts_generation"}), 400
         
         with open(presentation_path, 'w') as f:
             json.dump(presentation, f, indent=2)
@@ -685,6 +687,43 @@ def _retry_video_render(job_id: str, job_folder: Path, presentation: dict, secti
             results["failed"].append({"section_id": section_id, "error": str(e)})
             print(f"[RETRY] Video render error for section {section_id}: {e}")
     
+    return results
+
+
+def _retry_tts_generation(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
+    """Retry TTS generation for specific sections (or all if None)."""
+    from core.tts_duration import update_durations_simplified
+    
+    results = {"success": [], "failed": [], "skipped": []}
+    
+    # Get tts_provider from job params or default to edge_tts
+    job = job_manager.get_job(job_id)
+    params = job.get("params", {})
+    tts_provider = params.get("tts_provider", "edge_tts")
+    if tts_provider == "edge": tts_provider = "edge_tts" # Force fix
+    
+    try:
+        print(f"[RETRY] Starting TTS generation retry for job {job_id} using {tts_provider}")
+        # update_durations_simplified updates the presentation object in-place
+        _ = update_durations_simplified(
+            presentation=presentation,
+            output_dir=job_folder,
+            production_provider=tts_provider
+        )
+        
+        # Count progress
+        audio_dir = job_folder / "audio"
+        audio_files = list(audio_dir.glob("*.mp3")) + list(audio_dir.glob("*.wav"))
+        
+        results["success"].append({
+            "message": f"TTS generation completed. {len(audio_files)} audio files present.",
+            "audio_count": len(audio_files)
+        })
+        print(f"[RETRY] TTS generation retry successful for {job_id}")
+    except Exception as e:
+        results["failed"].append({"error": str(e)})
+        print(f"[RETRY] TTS generation failed for {job_id}: {e}")
+        
     return results
 
 
@@ -888,7 +927,7 @@ def get_job_llm_output_file(job_id, file_path):
         return jsonify({"error": f"Failed to read file: {str(e)}"}), 500
 
 
-def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
+def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts") -> dict:
     try:
         result = process_pdf_to_videos(
             pdf_path=pdf_path,
@@ -907,7 +946,7 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
             os.unlink(pdf_path)
 
 
-def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
+def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts") -> dict:
     """Legacy wrapper - redirects to process_document_job_v15."""
     return process_document_job_v15(
         job_id=job_id,
@@ -923,7 +962,7 @@ def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, ou
     )
 
 
-def process_document_job_v15(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
+def process_document_job_v15(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts") -> dict:
     """ISS-206/207: Process PDF/DOC/DOCX/ODT using V1.5 Optimized pipeline.
     
     1. Convert document to Markdown using Datalab API (supports PDF, DOC, DOCX, ODT)
@@ -1010,7 +1049,7 @@ def process_document_job_v15(job_id: str, document_path: str, subject: str, grad
             os.unlink(document_path)
 
 
-def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
+def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts") -> dict:
     """Process PDF/DOC/DOCX/ODT using V1.5 V2 Unified pipeline with image handling.
     
     1. Convert document to Markdown using Datalab API (captures images)
@@ -1060,7 +1099,7 @@ def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, g
             os.unlink(document_path)
 
 
-def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
+def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts") -> dict:
     """Process markdown using V1.4 Hybrid pipeline (Split Directors + V1.3 infrastructure)."""
     result = process_markdown_to_videos(
         markdown_content=markdown_content,
@@ -1077,7 +1116,7 @@ def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade
     return result
 
 
-def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge") -> dict:
+def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts") -> dict:
     """Process markdown using V1.5 Optimized pipeline (combined agents, ~50% fewer LLM calls)."""
     from pathlib import Path
     
@@ -1125,7 +1164,7 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
     }
 
 
-def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge", images_dict: dict = None) -> dict:
+def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", images_dict: dict = None) -> dict:
     """Process markdown using V1.5 V2 Unified pipeline (single LLM call, 95% fewer calls).
     
     Full Pipeline:
