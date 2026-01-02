@@ -524,13 +524,13 @@ function renderContent(slide) {
       });
       
       if (isRecap) {
-        // Recap: show video immediately (video-only mode)
+        // Recap: show video immediately (video-only mode - hides content)
         videoLayer.classList.remove('hidden');
         contentLayer.classList.add('video-mode');
       } else {
-        // Content: hide video initially, show based on flip_timing_sec
+        // Content: hide video initially, display_directives controls visibility during playback
+        // DO NOT add video-mode - content (text/images) must remain visible
         videoLayer.classList.add('hidden');
-        contentLayer.classList.remove('video-mode');
       }
       loadBeatVideo(0);
     }
@@ -544,13 +544,13 @@ function renderContent(slide) {
     console.log(`[V2] Loading content video: ${fullPath}`);
     
     if (isRecap) {
-      // Recap: show video immediately (video-only mode)
+      // Recap: show video immediately (video-only mode - hides content)
       videoLayer.classList.remove('hidden');
       contentLayer.classList.add('video-mode');
     } else {
-      // Content: hide video initially, will show based on flip_timing_sec during playback
+      // Content: hide video initially, display_directives controls visibility during playback
+      // DO NOT add video-mode - content (text/images) must remain visible
       videoLayer.classList.add('hidden');
-      contentLayer.classList.remove('video-mode');
     }
     
     contentVideo.muted = true;
@@ -1301,14 +1301,14 @@ function updateActiveSegment(currentTime) {
 
 /**
  * Apply display_directives for TEACH → SHOW pattern
- * When visual_layer='show', display the video; when 'hide', hide it
- * When text_layer='show', ensure content is visible; when 'hide', dim it
+ * When visual_layer='show', display the video overlay; when 'hide', hide video
+ * IMPORTANT: Content layer (text/images) remains visible at all times
+ * Only the video layer visibility toggles based on display_directives
  */
 function applyDisplayDirectives(slide, segment, segmentIndex) {
   if (!segment || !segment.display_directives) return;
   
   const dd = segment.display_directives;
-  const textLayer = dd.text_layer || 'show';
   const visualLayer = dd.visual_layer || 'hide';
   
   // Only apply for content sections with video renderer
@@ -1323,16 +1323,15 @@ function applyDisplayDirectives(slide, segment, segmentIndex) {
   // Only apply TEACH → SHOW for content sections (not intro, summary, quiz, memory, recap)
   if (sectionType === 'content' && hasVideo) {
     if (visualLayer === 'show') {
-      // SHOW phase: Display video, dim text
+      // SHOW phase: Display video overlay (content stays visible underneath/beside)
       videoLayer.classList.remove('hidden');
-      contentLayer.classList.add('video-mode');
+      // DO NOT add video-mode class - that hides content which breaks image/text display
       contentVideo.play().catch(() => {});
-      console.log(`[V2] Segment ${segmentIndex}: SHOW phase - displaying video`);
+      console.log(`[V2] Segment ${segmentIndex}: SHOW phase - displaying video overlay`);
     } else {
-      // TEACH phase: Hide video, show text
+      // TEACH phase: Hide video overlay, content remains visible
       videoLayer.classList.add('hidden');
-      contentLayer.classList.remove('video-mode');
-      console.log(`[V2] Segment ${segmentIndex}: TEACH phase - showing text`);
+      console.log(`[V2] Segment ${segmentIndex}: TEACH phase - video hidden, content visible`);
     }
   }
 }
