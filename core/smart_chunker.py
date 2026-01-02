@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 SCHEMAS_DIR = Path(__file__).parent.parent / "schemas"
 
-MODEL = "google/gemini-2.5-pro"
+MODEL = "google/gemini-2.0-flash-exp:free"
 
 MAX_STRUCTURAL_RETRIES = 3  # ISS-201: Increased from 2 to give LLM more chances to self-correct
 

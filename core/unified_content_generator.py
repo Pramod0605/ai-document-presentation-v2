@@ -22,7 +22,7 @@ OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 @dataclass
 class GeneratorConfig:
     """Configuration for the unified content generator."""
-    model: str = "google/gemini-2.5-pro-preview"
+    model: str = "google/gemini-2.0-flash-exp:free"
     temperature: float = 0.7
     max_tokens: int = 32000
     max_retries: int = 3
@@ -341,8 +341,11 @@ def call_openrouter_llm(
     config: GeneratorConfig
 ) -> Tuple[str, dict]:
     """Call OpenRouter API and return (response_text, usage_stats)."""
+    # ISS-FIX: Lazy load key
+    api_key = os.environ.get("OPENROUTER_API_KEY")
+    
     headers = {
-        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
         "HTTP-Referer": "https://replit.com",
         "X-Title": "AI Education V2"
