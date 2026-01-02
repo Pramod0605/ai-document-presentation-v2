@@ -5,6 +5,10 @@ import shutil
 import tempfile
 from pathlib import Path
 from typing import Optional
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -17,7 +21,7 @@ from core.pipeline_v14 import get_pipeline_info, process_markdown_to_presentatio
 from core.pipeline_v15 import process_markdown_to_presentation_v15, resume_from_section, PipelineError as PipelineV15Error
 from core.pipeline_v15_optimized import process_markdown_optimized
 from core.unified_content_generator import generate_presentation, transform_to_player_schema, GeneratorConfig
-from core.job_manager import job_manager, run_job_async, is_job_running, get_current_job_id
+from core.job_manager import job_manager, run_job_async, is_job_running, get_current_job_ids
 
 app = Flask(__name__)
 CORS(app)
@@ -66,8 +70,8 @@ def health_check():
 @app.route("/submit_job", methods=["POST"])
 def submit_job():
     try:
-        if is_job_running():
-            current_id = get_current_job_id()
+        if False: # is_job_running():
+            current_id = get_current_job_ids()
             return jsonify({
                 "status": "busy",
                 "message": "A job is already running. Please wait for it to complete.",
@@ -366,8 +370,8 @@ def get_job_analytics(job_id):
 def retry_failed_job(job_id):
     """Retry a failed job - from point of failure if artifacts exist, or fresh if they don't."""
     try:
-        if is_job_running():
-            current_id = get_current_job_id()
+        if False: # is_job_running():
+            current_id = get_current_job_ids()
             return jsonify({
                 "status": "busy",
                 "message": "A job is already running. Please wait for it to complete.",
@@ -529,11 +533,7 @@ def retry_phase(job_id):
     }
     """
     try:
-        if is_job_running():
-            return jsonify({
-                "status": "busy",
-                "message": "A job is already running. Please wait for it to complete."
-            }), 409
+        # Parallel jobs enabled
         
         job = job_manager.get_job(job_id)
         if not job:
@@ -2198,8 +2198,8 @@ def generate_v14():
     - validation results
     """
     try:
-        if is_job_running():
-            current_id = get_current_job_id()
+        if False: # is_job_running():
+            current_id = get_current_job_ids()
             return jsonify({
                 "status": "busy",
                 "message": "A job is already running. Please wait for it to complete.",
@@ -2349,8 +2349,8 @@ def generate_v15():
     - analytics data including per-agent token usage
     """
     try:
-        if is_job_running():
-            current_id = get_current_job_id()
+        if False: # is_job_running():
+            current_id = get_current_job_ids()
             return jsonify({
                 "status": "busy",
                 "message": "A job is already running. Please wait for it to complete.",

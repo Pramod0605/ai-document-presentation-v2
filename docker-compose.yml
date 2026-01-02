@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./player/jobs:/app/player/jobs
+      - ./player/assets:/app/player/assets
+    env_file:
+      - .env
+    restart: always
+
+networks:
+  default:
+    name: ai-presentation-network
