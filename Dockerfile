@@ -19,10 +19,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libffi-dev \
     libssl-dev \
-    texlive-latex-base \
-    texlive-latex-extra \
-    texlive-fonts-extra \
+    python3-dev \
+    dvipng \
     dvisvgm \
+    texlive-latex-base \
+    texlive-latex-recommended \
+    texlive-latex-extra \
+    texlive-fonts-recommended \
+    texlive-fonts-extra \
+    texlive-science \
+    cm-super \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
