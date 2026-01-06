@@ -763,9 +763,9 @@ def _generate_our_tts(text: str, output_path: Path) -> float:
     }
     
     try:
-        # Step 1: Request TTS generation
+        # Step 1: Request TTS generation (POST to /tts endpoint)
         response = requests.post(
-            OUR_TTS_BASE_URL,
+            f"{OUR_TTS_BASE_URL}/tts",
             headers=headers,
             json=payload,
             timeout=60
