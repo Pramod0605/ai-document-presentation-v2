@@ -72,7 +72,7 @@ class ManimCodeGenerator:
 
         formulas = ", ".join(section_data.get("formulas", [])) or "None"
         key_terms = ", ".join(section_data.get("key_terms", [])) or "None"
-        total_duration = sum(seg.get("duration", 5.0) for seg in section_data.get("narration_segments", []))
+        total_duration = sum(seg.get("duration_seconds") or seg.get("duration", 5.0) for seg in section_data.get("narration_segments", []))
         special_requirements = section_data.get("special_requirements", "None")
         
         # Axes ranges - use defaults if not specified
@@ -101,7 +101,8 @@ class ManimCodeGenerator:
         current_time = 0.0
         
         for i, seg in enumerate(segments, 1):
-            duration = seg.get("duration", 5.0)
+            # V2.5 Director uses 'duration_seconds', legacy uses 'duration'
+            duration = seg.get("duration_seconds") or seg.get("duration", 5.0)
             text = seg.get("text", "")
             visual = seg.get("visual", "")
             end_time = current_time + duration
@@ -569,7 +570,7 @@ class ManimCodeGenerator:
         if not segments:
             return []
         
-        total_expected = sum(seg.get("duration", 5.0) for seg in segments)
+        total_expected = sum(seg.get("duration_seconds") or seg.get("duration", 5.0) for seg in segments)
         
         run_times = re.findall(r'run_time\s*=\s*([\d.]+)', code)
         waits = re.findall(r'self\.wait\s*\(\s*([\d.]+)\s*\)', code)

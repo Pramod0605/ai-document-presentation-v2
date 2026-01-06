@@ -62,12 +62,17 @@ NARAKEET_VOICE_SPEED = 1.0
 EDGE_TTS_VOICE = "en-IN-PrabhatNeural"
 EDGE_TTS_RATE = "+0%"
 
+# Custom TTS API (our-tts)
+OUR_TTS_BASE_URL = os.environ.get("OUR_TTS_BASE_URL", "http://69.197.145.4:8000")
+OUR_TTS_API_KEY = os.environ.get("OUR_TTS_API_KEY", "c2ef60a22479de3c143851dd9e8808786488928b7bf58c16a8ab92022c568a72")
+OUR_TTS_VOICE_DESCRIPTION = "Male speaks clearly with calm tone"
+
 MAX_RETRIES = 3
 RETRY_DELAY = 2
 
 TEMP_AUDIO_DIR = Path("/tmp/tts_audio")
 
-TTSProvider = Literal["edge_tts", "narakeet", "pyttsx3", "estimate"]
+TTSProvider = Literal["edge_tts", "narakeet", "pyttsx3", "our_tts", "estimate"]
 
 
 def update_durations_simplified(
@@ -144,6 +149,10 @@ def update_durations_simplified(
                 duration = _generate_edge_tts(clean_text, audio_path)
             elif production_provider == "narakeet":
                 duration = _generate_narakeet(clean_text, audio_path)
+            elif production_provider == "our_tts":
+                wav_path = audio_dir / f"{audio_path.stem}.wav"
+                duration = _generate_our_tts(clean_text, wav_path)
+                if wav_path.exists(): audio_path = wav_path
             elif pyttsx3_engine:
                 wav_path = audio_dir / f"{audio_path.stem}.wav"
                 duration = _generate_pyttsx3(text, wav_path, pyttsx3_engine)
@@ -727,6 +736,73 @@ def _generate_narakeet(text: str, output_path: Path) -> float:
                 raise NarakeetError(f"Failed after {MAX_RETRIES} attempts: {e}")
     
     raise NarakeetError(f"Failed to generate TTS after {MAX_RETRIES} attempts")
+
+
+class OurTTSError(Exception):
+    """Raised when our custom TTS API fails."""
+    pass
+
+
+def _generate_our_tts(text: str, output_path: Path) -> float:
+    """
+    Generate TTS audio using our custom TTS API.
+    
+    API: http://69.197.145.4:8000
+    Returns duration in seconds.
+    """
+    import requests
+    
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": OUR_TTS_API_KEY
+    }
+    
+    payload = {
+        "text": text,
+        "description": OUR_TTS_VOICE_DESCRIPTION
+    }
+    
+    try:
+        # Step 1: Request TTS generation
+        response = requests.post(
+            OUR_TTS_BASE_URL,
+            headers=headers,
+            json=payload,
+            timeout=60
+        )
+        
+        data = response.json()
+        
+        if data.get("status") == "success":
+            audio_path_from_api = data.get("audio_url")
+            full_audio_url = f"{OUR_TTS_BASE_URL}{audio_path_from_api}"
+            
+            # Step 2: Download the audio file
+            audio_response = requests.get(full_audio_url, timeout=60)
+            
+            with open(output_path, "wb") as f:
+                f.write(audio_response.content)
+            
+            # Get duration using mutagen (for WAV files)
+            if MUTAGEN_AVAILABLE and output_path.exists():
+                try:
+                    from mutagen.wave import WAVE
+                    audio = WAVE(str(output_path))
+                    duration = audio.info.length
+                    return duration
+                except:
+                    # Fallback to estimate
+                    return _estimate_duration(text)
+            else:
+                return _estimate_duration(text)
+        else:
+            error_msg = data.get("error", "Unknown error")
+            raise OurTTSError(f"TTS API returned error: {error_msg}")
+            
+    except OurTTSError:
+        raise
+    except Exception as e:
+        raise OurTTSError(f"Failed to generate TTS: {e}")
 
 
 class Pyttsx3Error(Exception):
