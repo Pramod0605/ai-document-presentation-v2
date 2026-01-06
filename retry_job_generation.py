@@ -7,6 +7,10 @@ import json
 import sys
 from pathlib import Path
 
+# Load environment variables FIRST (before importing core modules that need API keys)
+from dotenv import load_dotenv
+load_dotenv()  # This loads .env file into environment
+
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent))
 
