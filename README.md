@@ -1,119 +1,153 @@
-# AI Animated Education - Phase 1
+# AI Document Presentation - V2.5 Director Pipeline
 
-A production-grade AI pipeline that converts PDF chapters into topic-wise explanation videos (MP4), synchronized with narration, and presented in a YouTube/Vimeo-style HTML player.
+Transform educational documents into rich, animated video presentations with AI Avatar narration, Manim animations, and synchronized visual content.
 
 ## Overview
 
-This is a **narrated visual explanation engine**, not a slide system. The LLM acts as the Director and Brain, making all creative and technical decisions about how educational content should be presented.
+The **V2.5 Director Pipeline** is a production-grade AI system that converts Markdown documents into multi-layer animated presentations. It uses LLM-powered "Director" logic to intelligently partition content, generate narration, and create synchronized visual animations.
 
-## Features
+## V2.5 Pipeline Architecture
 
-- **PDF to Video Pipeline**: Upload a PDF chapter and get topic-wise explanation videos
-- **LLM-Powered Direction**: AI decides topic breakdown, narration, visuals, and timing
-- **Dual Renderer System**:
-  - **Manim**: For mathematics, geometry, graphs, and formula derivations
-  - **WAN (via kie.ai)**: For biology, physics, chemistry, and conceptual explanations
-- **Text-to-Speech**: Indian English narration using gTTS
-- **YouTube-style Player**: Professional video player with subtitles and avatar zones
-- **Generation Tracing**: Complete audit trail of all LLM decisions
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    V2.5 Director Pipeline                    │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────┐    ┌──────────────┐    ┌────────────────┐   │
+│  │ Markdown │───▶│ Smart        │───▶│ Partition      │   │
+│  │ Document │    │ Partitioner  │    │ Director (LLM) │   │
+│  └──────────┘    └──────────────┘    └────────────────┘   │
+│                                              │             │
+│                         ┌────────────────────┘             │
+│                         ▼                                  │
+│              ┌────────────────────┐                       │
+│              │   presentation.json │                       │
+│              │   (18 sections)     │                       │
+│              └────────────────────┘                       │
+│                         │                                  │
+│         ┌───────────────┼───────────────┐                 │
+│         ▼               ▼               ▼                 │
+│  ┌──────────┐   ┌──────────────┐  ┌───────────┐         │
+│  │ Manim    │   │ TTS Audio    │  │ AI Avatar │         │
+│  │ Generator│   │ (our_tts/    │  │ Generator │         │
+│  │ (LLM)    │   │  edge_tts)   │  │           │         │
+│  └──────────┘   └──────────────┘  └───────────┘         │
+│         │               │               │                 │
+│         ▼               ▼               ▼                 │
+│  ┌──────────┐   ┌──────────────┐  ┌───────────┐         │
+│  │  .mp4    │   │   .wav/.mp3  │  │   .mp4    │         │
+│  │  Videos  │   │    Audio     │  │  Avatar   │         │
+│  └──────────┘   └──────────────┘  └───────────┘         │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+```
 
-## Deployment
+## Key Features
 
-### Docker Deployment (Recommended)
+### V2.5 Director Pipeline
+- **Smart Partitioning**: Chunks large documents (55K+ chars) for parallel LLM processing
+- **Section-Aware Structure**: 18 distinct section types per V2.5 Director Bible
+- **Narration Segments**: LLM generates educator-style explanations with timing
+- **Multi-Renderer Support**: Manim for math, Cards for text, Avatar for presenter
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/Pramod0605/ai-document-presentation-v2.git
-   cd ai-document-presentation-v2
-   ```
+### Renderers
+| Renderer | Use Case | Output |
+|----------|----------|--------|
+| `manim` | Mathematical formulas, graphs, animations | Python → MP4 |
+| `text_card` | Definitions, bullet points | SVG/HTML layer |
+| `avatar` | AI presenter narrating content | MP4 video |
+| `flashcard_set` | Memory/quiz sections | Interactive cards |
 
-2. **Configure Environment Variables**:
-   - Copy `.env_example` to `.env`:
-     ```bash
-     cp .env_example .env
-     ```
-   - Open `.env` and replace the dummy keys with your actual API keys.
+### TTS Providers
+- **our_tts**: Custom TTS API (69.197.145.4:8000) - Recommended
+- **edge_tts**: Microsoft Edge TTS (free, network-dependent)
+- **narakeet**: Premium Indian voices (paid)
+- **pyttsx3**: Offline Windows TTS (fallback)
 
-3. **Build and Run**:
-   ```bash
-   docker-compose up --build -d
-   ```
+## Quick Start
 
-4. **Access the Dashboard**:
-   Open [http://localhost:5000/dashboard](http://localhost:5000/dashboard) in your browser.
+### 1. Clone & Configure
+```bash
+git clone https://github.com/Pramod0605/ai-document-presentation-v2.git
+cd ai-document-presentation-v2
+cp .env_example .env
+# Edit .env with your API keys
+```
 
-### Manual Run (Local)
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-1. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 3. Start Server
+```bash
+python api/app.py
+```
 
-2. **Start the server**:
-   ```bash
-   python api/app.py
-   ```
-
-## Job Concurrency
-
-The system is configured to handle **4 parallel jobs** by default. 
-- If you submit more than 4 jobs, they will be **queued** and processed automatically as workers become available.
-- This ensures server stability while allowing for high-throughput video generation.
+### 4. Access Dashboard
+Open [http://localhost:5000/dashboard](http://localhost:5000/dashboard)
 
 ## Environment Variables
 
-The following variables must be configured in your `.env` file:
+| Variable | Description |
+|----------|-------------|
+| `OPENROUTER_API_KEY` | LLM via OpenRouter (Claude/Gemini) |
+| `DATALAB_API_KEY` | PDF to Markdown conversion |
+| `OUR_TTS_BASE_URL` | Custom TTS API endpoint |
+| `OUR_TTS_API_KEY` | Custom TTS API key |
 
-- `OPENROUTER_API_KEY`: API key for LLM generation (via OpenRouter).
-- `DATALAB_API_KEY`: API key for PDF/Document conversion (via Datalab).
-- `KIE_API_KEY`: API key for WAN video generation and AI video services (via kie.ai).
+## API Endpoints
 
-## Phase-1 Limitations
-
-- **Avatar**: Placeholder only (no real AI avatar video)
-- **Gestures**: Hints recorded but not rendered
-- **PDF Parsing**: Stubbed conversion (real Datalab integration optional)
-- **Video Duration**: WAN API may have limits on video length
-
-## Phase-2 Roadmap
-
-1. **Real AI Avatar**: Integration with D-ID or HeyGen for avatar generation
-2. **Gesture System**: Sync avatar actions with content timing
-3. **Interactive Dev Mode**: Drag-and-resize layout editor
-4. **Real PDF Parsing**: Full Datalab integration
-5. **Job Queue**: Background processing with progress tracking
-6. **Caching**: Avoid regenerating unchanged content
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/submit_job` | POST | Submit new presentation job |
+| `/job/<id>/status` | GET | Get job processing status |
+| `/regenerate_manim/<id>` | POST | Regenerate Manim code |
+| `/job/<id>/avatar_status` | GET | Avatar generation progress |
 
 ## Project Structure
 
 ```
-ai-animated-education-phase1/
-├── api/
-│   └── app.py              # Flask API server
+ai-document-presentation-v2/
+├── api/app.py                    # Flask API server
 ├── core/
-│   ├── datalab_client.py   # PDF to Markdown
-│   ├── llm_client.py       # OpenRouter LLM integration
-│   ├── pipeline.py         # Main orchestration
-│   ├── renderer_executor.py # Renderer dispatch
+│   ├── pipeline_unified.py       # V2.5 Pipeline orchestrator
+│   ├── unified_director_generator.py
+│   ├── partition_director_generator.py
+│   ├── tts_duration.py           # TTS providers
+│   ├── agents/
+│   │   ├── manim_code_generator.py
+│   │   └── avatar_generator.py
 │   └── prompts/
-│       ├── system_prompt.txt
-│       └── user_prompt.txt
-├── render/
-│   ├── manim/
-│   │   └── manim_runner.py # Manim animation engine
-│   └── wan/
-│       ├── wan_client.py   # kie.ai API client
-│       └── wan_runner.py   # WAN video runner
-├── tts/
-│   └── generate_audio.py   # gTTS audio generation
+│       ├── director_partition_prompt.txt
+│       └── manim_*.txt
 ├── player/
-│   ├── index.html          # Video player UI
-│   ├── player.js           # Player JavaScript
-│   └── assets/             # Generated content
-├── examples/
-│   ├── sample_markdown.md
-│   └── sample_presentation.json
-└── requirements.txt
+│   ├── dashboard.html            # Job management UI
+│   ├── player_v2.html            # Presentation player
+│   └── jobs/                     # Generated presentations
+└── v2.5_Director_Bible.md        # Pipeline specification
+```
+
+## Pipeline Modes
+
+| Mode | Description |
+|------|-------------|
+| `v2.5-partition-conquer` | Full V2.5 Director with smart partitioning |
+| `v2-unified-single` | Legacy single-chunk Director |
+| `v1.5-legacy` | Original pipeline (deprecated) |
+
+## Job Output
+
+Each job creates:
+```
+player/jobs/{job_id}/
+├── presentation.json    # All sections with narration
+├── manim_code/          # Python Manim scripts
+│   └── section_*.py
+├── videos/              # Rendered MP4 animations
+├── audio/               # TTS audio files
+├── avatars/             # AI avatar videos
+└── avatar_status.json   # Avatar generation progress
 ```
 
 ## License
