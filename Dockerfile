@@ -29,6 +29,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     texlive-fonts-extra \
     texlive-science \
     cm-super \
+    sox \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

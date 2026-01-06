@@ -5,7 +5,7 @@ ISS-078 FIX: Dry run should validate everything except actual API calls.
 This module ensures all prompts, specs, and paths are complete and valid.
 
 Validations:
-1. WAN prompt word count (300+ words for v1.3)
+1. WAN prompt word count (80+ words for v1.3)
 2. Manim scene spec completeness
 3. Display directives presence
 4. Visual content extraction
@@ -16,8 +16,8 @@ import re
 from typing import Dict, List, Tuple, Any
 from pathlib import Path
 
-MIN_WAN_PROMPT_WORDS = 100
-MIN_WAN_PROMPT_WORDS_V13 = 300
+MIN_WAN_PROMPT_WORDS = 80
+MIN_WAN_PROMPT_WORDS_V13 = 80
 
 FORBIDDEN_VAGUE_PHRASES = [
     "clear diagram", "appropriate animation", "educational visualization",
@@ -80,7 +80,7 @@ def check_forbidden_phrases(prompt: str) -> List[str]:
 def validate_video_prompts(section: dict, result: DryRunValidationResult, min_words: int = MIN_WAN_PROMPT_WORDS):
     """Validate video_prompts array for a section.
     
-    v1.3 REQUIRES: Each beat must have min_words (300 for v1.3).
+    v1.3 REQUIRES: Each beat must have min_words (80 for v1.3 per Director Bible).
     This function uses the passed min_words for BOTH per-beat AND average checks.
     """
     section_id = section.get("section_id") or section.get("id", 0)
@@ -127,10 +127,31 @@ def validate_manim_scene_spec(section: dict, result: DryRunValidationResult):
         return
     
     manim_spec = section.get("manim_scene_spec")
+    # ISS-162 FIX: Check nested render_spec as well (V2.5 standard)
+    if not manim_spec:
+        manim_spec = section.get("render_spec", {}).get("manim_scene_spec")
+        
     if not manim_spec:
         result.add_error(section_id, "manim_scene_spec", "Manim section missing manim_scene_spec")
         return
     
+    
+    # [DEBUG] Diagnose V2.5 Validation Failure
+    print(f"[DEBUG VALIDATOR] Section {section_id} Manim Spec Type: {type(manim_spec)}")
+    if isinstance(manim_spec, dict):
+        print(f"[DEBUG VALIDATOR] Keys: {list(manim_spec.keys())}")
+    else:
+        print(f"[DEBUG VALIDATOR] Content Start: {str(manim_spec)[:50]}...")
+
+    # V2.5 Support: Manim Spec can be a string (Prompt) or a Dict (V1.2 Blueprint)
+    if isinstance(manim_spec, str):
+        # V2.5 String Mode -> Just check word count
+        word_count = count_words(manim_spec)
+        if word_count < 80:
+             result.add_error(section_id, "manim_scene_spec", f"Manim spec is too short ({word_count} words). Minimum 80.")
+        return # Skip structure checks for string mode
+        
+    # V1.2 Dict Mode -> Check keys
     objects = manim_spec.get("objects", [])
     equations = manim_spec.get("equations", [])
     animation_seq = manim_spec.get("animation_sequence", [])
@@ -264,7 +285,7 @@ def validate_presentation_dry_run(
     Args:
         presentation: The presentation dict
         output_dir: Expected output directory
-        strict_v13: If True, enforce v1.3 requirements (300+ words for WAN)
+        strict_v13: If True, enforce v1.3 requirements (80+ words for WAN per Director Bible)
     
     Returns:
         DryRunValidationResult with all errors and warnings
@@ -282,11 +303,48 @@ def validate_presentation_dry_run(
     result.summary["subject"] = subject
     result.summary["min_wan_words"] = min_wan_words
     
+    # Check if this is V2.5 Director Mode (uses markdown_pointer instead of display_directives)
+    generated_by = presentation.get("metadata", {}).get("generated_by", "")
+    is_v25_director = generated_by == "v1.5-v2.5-director"
+    
+    if is_v25_director:
+        result.add_warning(0, "validation", "V2.5 Director Mode detected - Using Strict V2.5 Validator")
+        try:
+            from core.validators.v25_validator import V25Validator
+            
+            # 1. Validate Global Sections
+            global_errors = V25Validator.validate_global_response(presentation)
+            for err in global_errors:
+                result.add_error(0, "v2.5_global", err)
+                
+            # 2. Validate Content Sections
+            # We don't have source text easily here for pointer check, but we can check structure
+            for section in sections:
+                if section.get("section_type") in ["content", "example", "quiz"]:
+                    # Wrap single section in dict for validator compatibility
+                    chunk_data = {"sections": [section]} 
+                    chunk_errors = V25Validator.validate_content_chunk(chunk_data, source_text="") # Empty source skips pointer check
+                    for err in chunk_errors:
+                         result.add_error(section.get("id"), "v2.5_content", err)
+            
+            # If V2.5, we SKIP the legacy checks below to avoid conflicts
+            result.summary["error_count"] = len(result.errors)
+            result.summary["warning_count"] = len(result.warnings)
+            return result
+            
+        except ImportError:
+            result.add_warning(0, "system", "Could not import V25Validator - falling back to legacy checks")
+    
+    if is_v25_director:
+        result.add_warning(0, "validation", "V2.5 Director Mode detected - skipping display_directives validation")
+    
     for section in sections:
         section_type = section.get("section_type", "content")
         renderer = section.get("renderer", "")
         
-        validate_display_directives(section, result)
+        # Skip display_directives check for V2.5 Director (uses markdown_pointer instead)
+        if not is_v25_director:
+            validate_display_directives(section, result)
         
         validate_renderer_subject_match(section, subject, result)
         

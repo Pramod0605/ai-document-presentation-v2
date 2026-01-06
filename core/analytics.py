@@ -3,6 +3,7 @@ Analytics module for tracking LLM pipeline cost and time metrics.
 Version 1.2 - Supports 3-pass architecture with per-phase tracking.
 """
 
+import os
 import time
 import json
 from datetime import datetime
@@ -56,6 +57,17 @@ class RendererMetrics:
     static_slides: int = 0
     total_render_time_seconds: float = 0.0
     failed_renders: int = 0
+    section_renders: List[Dict[str, Any]] = field(default_factory=list)
+
+@dataclass
+class AvatarMetrics:
+    """Metrics for AI Avatar generation."""
+    provider: str = "IndianAvatar"
+    total_sections: int = 0
+    successful_sections: int = 0
+    failed_sections: int = 0
+    total_duration_seconds: float = 0.0
+    section_details: List[Dict[str, Any]] = field(default_factory=list)
 
 @dataclass
 class ContentMetrics:
@@ -86,7 +98,9 @@ class PipelineAnalytics:
     phases: List[PhaseMetrics] = field(default_factory=list)
     tts: TTSMetrics = field(default_factory=TTSMetrics)
     renderer: RendererMetrics = field(default_factory=RendererMetrics)
+    avatar: AvatarMetrics = field(default_factory=AvatarMetrics)
     content: ContentMetrics = field(default_factory=ContentMetrics)
+    decisions: List[Dict[str, Any]] = field(default_factory=list)
     status: str = "pending"  # pending, running, completed, failed
     error: Optional[str] = None
 
@@ -107,6 +121,51 @@ class AnalyticsTracker:
     def __init__(self, job_id: str):
         self.analytics = PipelineAnalytics(job_id=job_id)
         self._phase_start_times: Dict[str, float] = {}
+
+    def load_from_file(self, filepath: str) -> bool:
+        """Load analytics from a JSON file if it exists."""
+        if not os.path.exists(filepath):
+            return False
+        try:
+            with open(filepath, "r") as f:
+                data = json.load(f)
+            
+            # Reconstruct the objects manually to ensure types are correct
+            self.analytics.pipeline_version = data.get("pipeline_version", "1.5")
+            self.analytics.started_at = data.get("started_at")
+            self.analytics.completed_at = data.get("completed_at")
+            self.analytics.total_duration_seconds = data.get("total_duration_seconds", 0.0)
+            self.analytics.total_cost_usd = data.get("total_cost_usd", 0.0)
+            self.analytics.total_input_tokens = data.get("total_input_tokens", 0)
+            self.analytics.total_output_tokens = data.get("total_output_tokens", 0)
+            self.analytics.status = data.get("status", "pending")
+            self.analytics.error = data.get("error")
+            
+            # Content
+            c = data.get("content", {})
+            self.analytics.content = ContentMetrics(**{k: v for k, v in c.items() if hasattr(ContentMetrics, k)})
+            
+            # TTS
+            t = data.get("tts", {})
+            self.analytics.tts = TTSMetrics(**{k: v for k, v in t.items() if hasattr(TTSMetrics, k)})
+            
+            # Renderer
+            r = data.get("renderer", {})
+            self.analytics.renderer = RendererMetrics(**{k: v for k, v in r.items() if hasattr(RendererMetrics, k)})
+            
+            # Avatar
+            a = data.get("avatar", {})
+            self.analytics.avatar = AvatarMetrics(**{k: v for k, v in a.items() if hasattr(AvatarMetrics, k)})
+            
+            # Phases
+            self.analytics.phases = []
+            for p in data.get("phases", []):
+                self.analytics.phases.append(PhaseMetrics(**{k: v for k, v in p.items() if hasattr(PhaseMetrics, k)}))
+                
+            return True
+        except Exception as e:
+            print(f"[Analytics] Failed to load {filepath}: {e}")
+            return False
 
     def start_pipeline(self) -> None:
         """Mark pipeline start."""
@@ -222,13 +281,46 @@ class AnalyticsTracker:
         failed_renders: int = 0
     ) -> None:
         """Set visual rendering metrics."""
-        self.analytics.renderer = RendererMetrics(
-            manim_videos=manim_videos,
-            wan_videos=wan_videos,
-            static_slides=static_slides,
-            total_render_time_seconds=render_time,
-            failed_renders=failed_renders
-        )
+        self.analytics.renderer.manim_videos = manim_videos
+        self.analytics.renderer.wan_videos = wan_videos
+        self.analytics.renderer.static_slides = static_slides
+        self.analytics.renderer.total_render_time_seconds = render_time
+        self.analytics.renderer.failed_renders = failed_renders
+
+    def add_render_detail(self, section_id: str, section_type: str, renderer: str, duration: float, status: str, metadata: Optional[Dict] = None) -> None:
+        """Add detail for a single section render."""
+        self.analytics.renderer.section_renders.append({
+            "section_id": section_id,
+            "section_type": section_type,
+            "renderer": renderer,
+            "duration_seconds": round(duration, 2),
+            "status": status,
+            "timestamp": datetime.utcnow().isoformat(),
+            **(metadata or {})
+        })
+
+    def set_avatar_metrics(
+        self,
+        total_sections: int,
+        successful: int,
+        failed: int,
+        duration: float
+    ) -> None:
+        """Set AI Avatar metrics summary."""
+        self.analytics.avatar.total_sections = total_sections
+        self.analytics.avatar.successful_sections = successful
+        self.analytics.avatar.failed_sections = failed
+        self.analytics.avatar.total_duration_seconds = duration
+
+    def add_avatar_detail(self, section_id: str, duration: float, status: str, error: Optional[str] = None) -> None:
+        """Add detail for a single section avatar generation."""
+        self.analytics.avatar.section_details.append({
+            "section_id": section_id,
+            "duration_seconds": round(duration, 2),
+            "status": status,
+            "error": error,
+            "timestamp": datetime.utcnow().isoformat()
+        })
 
     def set_content_metrics(
         self,
@@ -257,6 +349,24 @@ class AnalyticsTracker:
             table_count=table_count,
             image_count=image_count
         )
+
+    def track_decision(
+        self,
+        agent_name: str,
+        decision_type: str,
+        options: List[str],
+        selected: str,
+        reason: str
+    ) -> None:
+        """Track an AI decision."""
+        self.analytics.decisions.append({
+            "timestamp": datetime.utcnow().isoformat(),
+            "agent_name": agent_name,
+            "decision_type": decision_type,
+            "options": options,
+            "selected": selected,
+            "reason": reason
+        })
 
     def _find_phase(self, phase_name: str) -> Optional[PhaseMetrics]:
         """Find a phase by name."""
@@ -316,8 +426,17 @@ class AnalyticsTracker:
                 "wan_videos": self.analytics.renderer.wan_videos,
                 "static_slides": self.analytics.renderer.static_slides,
                 "render_time_seconds": round(self.analytics.renderer.total_render_time_seconds, 2),
-                "failed_renders": self.analytics.renderer.failed_renders
+                "failed_renders": self.analytics.renderer.failed_renders,
+                "details": self.analytics.renderer.section_renders
             } if self.analytics.renderer else {},
+            "avatar": {
+                "provider": self.analytics.avatar.provider,
+                "total_sections": self.analytics.avatar.total_sections,
+                "successful_sections": self.analytics.avatar.successful_sections,
+                "failed_sections": self.analytics.avatar.failed_sections,
+                "total_duration_seconds": round(self.analytics.avatar.total_duration_seconds, 2),
+                "details": self.analytics.avatar.section_details
+            } if self.analytics.avatar else {},
             "content": {
                 "sections": self.analytics.content.total_sections,
                 "segments": self.analytics.content.total_segments,

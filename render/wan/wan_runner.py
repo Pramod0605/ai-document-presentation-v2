@@ -504,7 +504,10 @@ def _create_recap_placeholder(scene_num: int, topic_id: int, concept_title: str,
 def _create_beat_placeholder(beat_idx: int, topic_id: int, output_path: str, duration: int) -> str:
     """Create placeholder video for a single beat."""
     try:
-        from moviepy import ColorClip
+        try:
+            from moviepy import ColorClip
+        except ImportError:
+            from moviepy.editor import ColorClip
         
         # Different colors for different beats to show they're separate
         colors = [(30, 60, 90), (60, 30, 90), (90, 60, 30), (30, 90, 60), (60, 90, 30)]
@@ -692,7 +695,10 @@ def render_from_video_prompts(
 def _stitch_beat_videos(video_paths: list, output_path: str) -> str:
     """Stitch multiple beat videos into a single video."""
     try:
-        from moviepy import VideoFileClip, concatenate_videoclips
+        try:
+            from moviepy import VideoFileClip, concatenate_videoclips
+        except ImportError:
+            from moviepy.editor import VideoFileClip, concatenate_videoclips
         
         clips = []
         for vp in video_paths:

@@ -18,6 +18,7 @@ import logging
 import tempfile
 import asyncio
 import requests
+from core.latex_to_speech import latex_to_speech
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Literal
 
@@ -107,8 +108,9 @@ def update_durations_simplified(
     logger.info(f"[TTS Simplified] Step 2: Generating production audio with {production_provider}...")
     
     # Initialize pyttsx3 engine if needed as fallback
+    # OPTIMIZATION: Skip completely if provider is 'estimate'
     pyttsx3_engine = None
-    if not (production_provider == "edge_tts" and EDGE_TTS_AVAILABLE):
+    if production_provider != "estimate" and not (production_provider == "edge_tts" and EDGE_TTS_AVAILABLE):
         if PYTTSX3_AVAILABLE:
             try:
                 pyttsx3_engine = pyttsx3.init()
@@ -119,51 +121,87 @@ def update_durations_simplified(
     
     sections = presentation.get("sections", [])
     audio_count = 0
-    
+    import concurrent.futures
+    tasks = []
     for section_idx, section in enumerate(sections):
         section_id = section.get("section_id", f"section_{section_idx}")
-        narration = section.get("narration", {})
-        segments = narration.get("segments", [])
-        
+        segments = section.get("narration", {}).get("segments", [])
         for seg_idx, segment in enumerate(segments):
-            segment_id = segment.get("segment_id", f"seg_{seg_idx}")
             text = segment.get("text", "")
-            
-            if not text.strip():
-                continue
-            
-            audio_filename = f"{section_id}_{segment_id}"
+            if not text.strip(): continue
+            audio_filename = f"{section_id}_{segment.get('segment_id', f'seg_{seg_idx}')}"
             audio_path = audio_dir / f"{audio_filename}.mp3"
+            tasks.append((segment, text, audio_path))
+
+    def work(task):
+        segment, text, audio_path = task
+        try:
+            nonlocal audio_count
+            # ISS-FIX: Clean text (LaTeX to Speech) before sending to TTS
+            clean_text = latex_to_speech(text)
             
-            try:
-                if production_provider == "edge_tts" and EDGE_TTS_AVAILABLE:
-                    _generate_edge_tts(text, audio_path)
-                elif pyttsx3_engine:
-                    # Fallback to pyttsx3 (skip Narakeet)
-                    wav_path = audio_dir / f"{audio_filename}.wav"
-                    _generate_pyttsx3(text, wav_path, pyttsx3_engine)
-                    # pyttsx3 generates wav, update path
-                    if wav_path.exists():
-                        audio_path = wav_path
-                else:
-                    logger.warning(f"[TTS Simplified] No TTS provider available for {segment_id}")
-                    continue
-                
-                if audio_path.exists():
-                    segment["audio_file"] = str(audio_path.name)
-                    segment["audio_path"] = f"audio/{audio_path.name}"
-                    audio_count += 1
-                    
-            except Exception as e:
-                logger.warning(f"[TTS Simplified] Audio generation failed for {segment_id}: {e}")
+            if production_provider == "edge_tts" and EDGE_TTS_AVAILABLE:
+                duration = _generate_edge_tts(clean_text, audio_path)
+            elif production_provider == "narakeet":
+                duration = _generate_narakeet(clean_text, audio_path)
+            elif pyttsx3_engine:
+                wav_path = audio_dir / f"{audio_path.stem}.wav"
+                duration = _generate_pyttsx3(text, wav_path, pyttsx3_engine)
+                if wav_path.exists(): audio_path = wav_path
+            else:
+                return
+            
+            if audio_path.exists():
+                segment["audio_file"] = str(audio_path.name)
+                segment["audio_path"] = f"audio/{audio_path.name}"
+                segment["duration_seconds"] = duration # ISS-FIX: Match player_v2.js field
+                segment["duration"] = duration # Keep for compatibility
+                audio_count += 1
+                print(f"[TTS] Generated: {audio_path.name}")
+        except Exception as e:
+            logger.warning(f"[TTS Simplified] Failed for {audio_path.name}: {e}")
+
+    logger.info(f"[TTS Simplified] Spawning workers for {len(tasks)} segments...")
     
-    logger.info(f"[TTS Simplified] Generated {audio_count} audio files")
+    # ISS-FIX: pyttsx3 is not thread-safe, especially on Windows SAPI5
+    if production_provider == "pyttsx3":
+        logger.info("[TTS Simplified] Using sequential execution for pyttsx3")
+        for task in tasks:
+            work(task)
+    else:
+        # edge_tts and narakeet (network based) are throttled in batches of 5 per user request
+        BATCH_SIZE = 5
+        task_batches = [tasks[i:i + BATCH_SIZE] for i in range(0, len(tasks), BATCH_SIZE)]
+        logger.info(f"[TTS Simplified] Processing {len(tasks)} segments in {len(task_batches)} throttled batches...")
+        
+        for batch_idx, batch in enumerate(task_batches):
+            with concurrent.futures.ThreadPoolExecutor(max_workers=BATCH_SIZE) as executor:
+                # Use wait to ensure entire batch finishes before pause
+                futures = [executor.submit(work, task) for task in batch]
+                concurrent.futures.wait(futures)
+            
+            if batch_idx < len(task_batches) - 1:
+                import time
+                time.sleep(1) # Small 1s cooldown between batches
+    
+    logger.info(f"[TTS Simplified] Parallel generation complete. Generated {audio_count} files.")
     
     if "metadata" not in presentation:
         presentation["metadata"] = {}
     presentation["metadata"]["tts_method"] = "simplified"
     presentation["metadata"]["duration_provider"] = "word_count_estimate"
     presentation["metadata"]["audio_provider"] = production_provider
+    
+    # RECALCULATE TOTALS: Ensure metadata matches real audio lengths
+    total_pres_duration = 0.0
+    for section in presentation.get("sections", []):
+        section_total = 0.0
+        for seg in section.get("narration", {}).get("segments", []):
+            section_total += seg.get("duration_seconds", 0.0)
+        if "narration" in section:
+            section["narration"]["total_duration_seconds"] = round(section_total, 2)
+        total_pres_duration += section_total
+    presentation["metadata"]["total_duration_seconds"] = round(total_pres_duration, 2)
     
     # Consolidate section audio
     if output_dir:
@@ -576,64 +614,54 @@ class NarakeetError(Exception):
 async def _generate_edge_tts_async(text: str, output_path: Path) -> float:
     """
     Async function to generate TTS audio using Edge TTS.
-    
-    Args:
-        text: Text to convert to speech
-        output_path: Path to save the audio file
-        
-    Returns:
-        Audio duration in seconds
     """
-    try:
-        communicate = edge_tts.Communicate(text, EDGE_TTS_VOICE, rate=EDGE_TTS_RATE)
-        await communicate.save(str(output_path))
-        
-        if output_path.exists() and MUTAGEN_AVAILABLE:
-            audio = MP3(output_path)
-            duration = audio.info.length
-            return duration
-        else:
-            return _estimate_duration(text)
+    import re
+    clean_text = re.sub(r'<[^>]+/>', '', text)
+    
+    for attempt in range(3):
+        try:
+            communicate = edge_tts.Communicate(clean_text, EDGE_TTS_VOICE, rate=EDGE_TTS_RATE)
+            await communicate.save(str(output_path))
             
-    except Exception as e:
-        raise EdgeTTSError(f"Edge TTS generation failed: {e}")
+            if output_path.exists() and MUTAGEN_AVAILABLE:
+                audio = MP3(output_path)
+                duration = audio.info.length
+                return duration
+            else:
+                return _estimate_duration(text)
+        except Exception as e:
+            if attempt < 2:
+                logger.warning(f"[TTS Retry] Edge TTS failed (attempt {attempt+1}/3) for {output_path.name}: {e}")
+                await asyncio.sleep(1) # Small pause before retry
+                continue
+            raise EdgeTTSError(f"Edge TTS generation failed after retries: {e}")
+    return _estimate_duration(text)
 
 
 def _generate_edge_tts(text: str, output_path: Path) -> float:
     """
     Generate TTS audio using Edge TTS (sync wrapper for async).
-    
-    Args:
-        text: Text to convert to speech
-        output_path: Path to save the audio file
-        
-    Returns:
-        Audio duration in seconds
     """
     try:
-        # ISS-137 FIX: Handle existing event loops (Flask/threading context)
-        try:
-            loop = asyncio.get_running_loop()
-            # If there's already a running loop, we need to handle it differently
-            import concurrent.futures
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                future = executor.submit(asyncio.run, _generate_edge_tts_async(text, output_path))
-                duration = future.result(timeout=60)
-                return duration
-        except RuntimeError:
-            # No running loop - safe to create new one
-            pass
+        # Simplest possible robust approach:
+        # Always run in a separate thread with a clean event loop
+        import concurrent.futures
         
-        # Standard approach for no running loop
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            duration = loop.run_until_complete(_generate_edge_tts_async(text, output_path))
-            return duration
-        finally:
-            loop.close()
+        def run_async():
+            new_loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(new_loop)
+            try:
+                async def _timed_gen():
+                    return await asyncio.wait_for(_generate_edge_tts_async(text, output_path), timeout=60.0)
+                return new_loop.run_until_complete(_timed_gen())
+            finally:
+                new_loop.close()
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            return executor.submit(run_async).result(timeout=65.0)
+
     except Exception as e:
-        logger.error(f"[TTS Duration] Edge TTS error: {e}")
+        logger.error(f"[TTS Duration] Edge TTS failure: {e}")
         raise EdgeTTSError(f"Edge TTS failed: {e}")
 
 

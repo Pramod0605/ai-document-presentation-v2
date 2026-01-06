@@ -4,6 +4,7 @@ services:
     ports:
       - "5005:5000"
     volumes:
+      - .:/app
       - ./player/jobs:/app/player/jobs
       - ./player/assets:/app/player/assets
     env_file:

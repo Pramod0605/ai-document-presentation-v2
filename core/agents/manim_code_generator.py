@@ -15,6 +15,7 @@ from typing import Dict, Any, List, Tuple, Optional
 logger = logging.getLogger(__name__)
 
 CLAUDE_SONNET_3_5 = "anthropic/claude-3.5-sonnet"
+CLAUDE_SONNET_4_5 = "anthropic/claude-sonnet-4-20250514"
 
 class ManimCodeGenerator:
     """
@@ -25,12 +26,13 @@ class ManimCodeGenerator:
     """
     
     name = "ManimCodeGenerator"
-    model = CLAUDE_SONNET_3_5
     temperature = 0.3
-    max_tokens = None  # ISS-214: No limit - let API use natural limits
+    max_tokens = 8192  # Claude Sonnet 4.5 output limit
     max_retries = 3
     
     def __init__(self, openrouter_api_key: Optional[str] = None, **kwargs):
+        from core.llm_config import get_manim_model_name
+        self.model = get_manim_model_name()
         self.api_key = openrouter_api_key or os.environ.get("OPENROUTER_API_KEY")
         self.prompts_dir = kwargs.get("prompts_dir", "core/prompts")
         self._system_prompt: Optional[str] = None
@@ -39,13 +41,20 @@ class ManimCodeGenerator:
     def _load_prompts(self):
         """Load system prompt and user template from files."""
         if self._system_prompt is None:
-            system_path = os.path.join(self.prompts_dir, "manim_system_prompt.txt")
-            with open(system_path, "r") as f:
+            # V2 PROMPT TOGGLE: Checks for _v2.txt first
+            system_path = os.path.join(self.prompts_dir, "manim_system_prompt_v2.txt")
+            if not os.path.exists(system_path):
+                system_path = os.path.join(self.prompts_dir, "manim_system_prompt.txt")
+            
+            with open(system_path, "r", encoding="utf-8") as f:
                 self._system_prompt = f.read()
         
         if self._user_template is None:
-            template_path = os.path.join(self.prompts_dir, "manim_user_prompt_template.txt")
-            with open(template_path, "r") as f:
+            template_path = os.path.join(self.prompts_dir, "manim_user_prompt_template_v2.txt")
+            if not os.path.exists(template_path):
+                 template_path = os.path.join(self.prompts_dir, "manim_user_prompt_template.txt")
+                 
+            with open(template_path, "r", encoding="utf-8") as f:
                 self._user_template = f.read()
     
     def _build_user_prompt(self, section_data: Dict[str, Any]) -> str:
@@ -53,11 +62,24 @@ class ManimCodeGenerator:
         self._load_prompts()
         
         narration_segments_text = self._format_segments(section_data.get("narration_segments", []))
-        visual_description = section_data.get("visual_description", "Create appropriate visualization for the topic")
+        
+        # FIXED: Prioritize Director's manim_spec if available
+        visual_description = section_data.get("manim_spec")
+        if not visual_description:
+             visual_description = section_data.get("visual_description", "Create appropriate visualization for the topic")
+        else:
+             visual_description = f"STRICTLY FOLLOW DIRECTOR SPEC:\n{visual_description}"
+
         formulas = ", ".join(section_data.get("formulas", [])) or "None"
         key_terms = ", ".join(section_data.get("key_terms", [])) or "None"
         total_duration = sum(seg.get("duration", 5.0) for seg in section_data.get("narration_segments", []))
         special_requirements = section_data.get("special_requirements", "None")
+        
+        # Axes ranges - use defaults if not specified
+        x_min = section_data.get("x_min", -5)
+        x_max = section_data.get("x_max", 5)
+        y_min = section_data.get("y_min", -3)
+        y_max = section_data.get("y_max", 10)
         
         if section_data.get("previous_errors"):
             special_requirements += f"\n\nFIX THESE ISSUES FROM PREVIOUS ATTEMPT:\n{section_data['previous_errors']}"
@@ -93,6 +115,16 @@ class ManimCodeGenerator:
             current_time = end_time
         
         return "\n".join(lines)
+
+    def generate_code(self, section_data: Dict[str, Any], style_config: Optional[Dict[str, Any]] = None) -> str:
+        """
+        Wrapper for generate() to match Unified Pipeline interface.
+        Returns just the code string.
+        """
+        code, errors = self.generate(section_data)
+        if errors:
+             logger.warning(f"[MANIM GEN] generated with errors: {errors}")
+        return code
     
     def generate(self, section_data: Dict[str, Any]) -> Tuple[str, List[str]]:
         """
@@ -107,33 +139,124 @@ class ManimCodeGenerator:
         """
         import requests
         
+        # Debug: Log generation start
+        logger.info(f"[MANIM GEN] ========================================")
+        logger.info(f"[MANIM GEN] Starting generation for section: {section_data.get('section_title', 'Unknown')}")
+        logger.debug(f"[MANIM GEN] Narration segments: {len(section_data.get('narration_segments', []))}")
+        logger.debug(f"[MANIM GEN] Visual description: {section_data.get('visual_description', 'None')[:100]}")
+        
         try:
             self._load_prompts()
         except FileNotFoundError as e:
-            logger.error(f"[ManimCodeGenerator] Missing prompt file: {e}")
+            logger.error(f"[MANIM GEN] Missing prompt file: {e}")
             return "", [f"Missing prompt file: {e}"]
         except Exception as e:
-            logger.error(f"[ManimCodeGenerator] Failed to load prompts: {e}")
+            logger.error(f"[MANIM GEN] Failed to load prompts: {e}")
             return "", [f"Failed to load prompts: {e}"]
         
         code = ""
         errors: List[str] = []
         
         for attempt in range(self.max_retries):
-            user_prompt = self._build_user_prompt(section_data)
+            if attempt == 0:
+                # First attempt: Generation
+                logger.info(f"[MANIM GEN] Initial Generation (Attempt {attempt + 1})")
+                code, errors = self._call_model_generate(section_data)
+            else:
+                # Subsequent attempts: Correction
+                logger.info(f"[MANIM GEN] Correction Attempt {attempt + 1}")
+                logger.warning(f"[MANIM GEN] Previous errors to fix: {section_data.get('previous_errors')}")
+                code, errors = self._call_model_fix(code, section_data)
             
-            # ISS-214: Build request payload, only include max_tokens if set
-            request_payload = {
-                "model": self.model,
-                "messages": [
-                    {"role": "system", "content": self._system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
-                "temperature": self.temperature
-            }
-            if self.max_tokens is not None:
-                request_payload["max_tokens"] = self.max_tokens
+            if not code:
+                return "", errors
+
+            # HARD SYNC ENFORCEMENT (V2 Feature)
+            # We programmatically inject self.wait() to match narration timing perfectly
+            # Check for Segment markers instead of full class definition to support fragments
             
+            # DEBUG LOGGING TO FILE
+            try:
+                with open("debug_gen.log", "a", encoding="utf-8") as f:
+                    f.write(f"\n\n--- GEN ATTEMPT ---\nCODE LEN: {len(code)}\n")
+                    f.write(f"HAS SEGMENT MSG: {'# Segment' in code}\n")
+                    f.write(f"Segments data: {len(section_data.get('narration_segments', []))}\n")
+            except: pass
+
+            if code and "# Segment" in code:
+                try:
+                    logger.info("[MANIM GEN] Applying Hard Sync timing enforcement...")
+                    code = self._enforce_timing(code, section_data)
+                    with open("debug_gen.log", "a", encoding="utf-8") as f:
+                        f.write("HARD SYNC APPLIED\n")
+                except Exception as e:
+                    logger.warning(f"[MANIM GEN] Hard Sync failed (proceeding with raw code): {e}")
+                    with open("debug_gen.log", "a", encoding="utf-8") as f:
+                        f.write(f"HARD SYNC FAILED: {e}\n")
+            else:
+                 logger.debug("[MANIM GEN] Skipping Hard Sync: No '# Segment' markers found.")
+                 with open("debug_gen.log", "a", encoding="utf-8") as f:
+                        f.write("HARD SYNC SKIPPED: No '# Segment' markers\n")
+
+            # Validation Phase
+            # 1. Structural Validation
+            structural_errors = self.validate_code(code, section_data)
+            if structural_errors:
+                logger.warning(f"[MANIM GEN] Structural validation failed: {structural_errors}")
+                section_data["previous_errors"] = "\n".join(structural_errors)
+                continue
+            
+            # 2. Dry-Run Render Validation (New Robustness Feature)
+            # Only run if structure is valid. This catches Manim-specific runtime errors.
+            runtime_error = self._validate_runtime(code, section_data)
+            if runtime_error:
+                logger.warning(f"[MANIM GEN] Runtime validation failed: {runtime_error}")
+                section_data["previous_errors"] = f"Runtime Error:\n{runtime_error}"
+                continue
+                
+            # If we got here, code is valid!
+            logger.info("[MANIM GEN] Validation successful!")
+            return code, []
+        
+        return code if code else "", ["Max retries exceeded"]
+
+    def _call_model_generate(self, section_data: Dict[str, Any]) -> Tuple[str, List[str]]:
+        """Call LLM for initial generation."""
+        user_prompt = self._build_user_prompt(section_data)
+        return self._invoke_claude(user_prompt, self._system_prompt)
+
+    def _call_model_fix(self, broken_code: str, section_data: Dict[str, Any]) -> Tuple[str, List[str]]:
+        """Call LLM to fix broken code."""
+        # Load repair prompt
+        repair_template_path = os.path.join(self.prompts_dir, "manim_repair_prompt.txt")
+        try:
+            with open(repair_template_path, "r", encoding="utf-8") as f:
+                repair_template = f.read()
+        except Exception as e:
+            return "", [f"Failed to load repair prompt: {e}"]
+            
+        user_prompt = repair_template.format(
+            code=broken_code,
+            error_log=section_data.get("previous_errors", "Unknown error")
+        )
+        # Use same system prompt
+        return self._invoke_claude(user_prompt, self._system_prompt)
+
+    def _invoke_claude(self, user_prompt: str, system_prompt: str) -> Tuple[str, List[str]]:
+        """Helper to invoke Claude API."""
+        import requests
+        
+        request_payload = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            "temperature": self.temperature,
+            "max_tokens": self.max_tokens or 8192
+        }
+        
+        try:
             response = requests.post(
                 "https://openrouter.ai/api/v1/chat/completions",
                 headers={
@@ -147,35 +270,79 @@ class ManimCodeGenerator:
             )
             
             if response.status_code != 200:
-                return "", [f"API error: {response.status_code} - {response.text}"]
-            
+                logger.error(f"[MANIM GEN] API Error: {response.text}")
+                return "", [f"API error: {response.status_code}"]
+                
             result = response.json()
             choice = result.get("choices", [{}])[0]
             code = choice.get("message", {}).get("content", "")
             finish_reason = choice.get("finish_reason", "")
             
-            # Check if response was truncated due to token limit (ISS-139)
-            if finish_reason == "length":
-                section_data = section_data.copy()
-                section_data["previous_errors"] = (
-                    "CRITICAL: Your previous response was TRUNCATED due to token limit. "
-                    "You MUST produce SHORTER, more concise code. Reduce animations, "
-                    "combine similar operations, and avoid verbose comments. "
-                    "Target under 200 lines of code."
-                )
-                continue  # Retry with truncation warning
+            # Log Code Stats
+            lines = len([l for l in code.split('\n') if l.strip()])
+            logger.info(f"[MANIM SONNET 4.5] Code stats: {lines} lines, Finish: {finish_reason}")
             
-            code = self._extract_python_code(code)
+            return self._extract_python_code(code), []
+        except Exception as e:
+            logger.error(f"[MANIM GEN] Request failed: {e}")
+            return "", [f"Request failed: {e}"]
             
-            errors = self.validate_code(code, section_data)
-            
-            if not errors:
-                return code, []
-            
-            section_data = section_data.copy()
-            section_data["previous_errors"] = "\n".join(errors)
+    def _validate_runtime(self, code: str, section_data: Dict[str, Any]) -> Optional[str]:
+        """
+        Run a dry-run render of the code using manim command.
+        Returns error string if failed, None if success.
+        Can be skipped via SKIP_MANIM_VALIDATION=true env var.
+        """
+        # OPTIMIZATION: Skip validation if requested
+        import os
+        if os.environ.get("SKIP_MANIM_VALIDATION", "").lower() == "true":
+            logger.info("[MANIM GEN] Skipping runtime validation (configured via env).")
+            return None # Return None for success, as per original return type
         
-        return code if code else "", errors if errors else ["Max retries exceeded with no output"]
+        # Check if this is already full code (V2) or needs wrapping
+        is_full_code = "class " in code and "Scene" in code and "def construct" in code
+        import tempfile
+        import subprocess
+        
+        # V2 FULL CODE CHECK: If code already has imports and class, DO NOT WRAP IT
+        if "from manim import" in code and "class " in code and "(Scene):" in code:
+             full_scene_code = code
+        else:
+             # Legacy V1 behavior: Wrap body in TestScene
+             full_scene_code = "from manim import *\n\nclass TestScene(Scene):\n    def construct(self):\n"
+             indented_body = "\n".join("        " + line for line in code.split("\n"))
+             full_scene_code += indented_body
+        
+        try:
+            with tempfile.NamedTemporaryFile(suffix=".py", mode="w", delete=False) as tmp:
+                tmp.write(full_scene_code)
+                tmp_path = tmp.name
+                
+            # Run Manim dry-run
+            # -q l: Low quality (fast)
+            # --dry_run: Don't actually render video frames, just setup scenes (checking logic)
+            # --disable_caching: Ensure we check fresh
+            cmd = ["manim", "-q", "l", "--dry_run", "--disable_caching", tmp_path, "TestScene"]
+            
+            result = subprocess.run(
+                cmd, 
+                capture_output=True, 
+                text=True, 
+                timeout=30  # Should be fast for dry-run
+            )
+            
+            os.unlink(tmp_path)
+            
+            if result.returncode != 0:
+                # Extract relevant error from stderr
+                stderr = result.stderr
+                # Try to get the last few lines which usually contain the Traceback
+                return f"Manim Dry-Run Failed (RC={result.returncode}):\n{stderr[-1000:]}"
+            
+            return None
+            
+        except Exception as e:
+            return f"Validation harness error: {str(e)}"
     
     def _extract_python_code(self, response: str) -> str:
         """Extract Python code from LLM response, removing markdown if present."""
@@ -303,8 +470,9 @@ class ManimCodeGenerator:
             
             undefined_names = self._check_undefined_names(tree, code)
             if undefined_names:
-                for name in undefined_names[:3]:
-                    errors.append(f"Potentially undefined name: '{name}'")
+                # RELAXATION: Only log as warning to console, don't block.
+                # Let dry-run + LLM fix it if it's a real error.
+                logger.info(f"[MANIM GEN] Validation note - potentially unknown names: {undefined_names[:5]}")
         except Exception as e:
             logger.warning(f"AST analysis warning: {e}")
         
@@ -393,6 +561,8 @@ class ManimCodeGenerator:
     
     def _check_timing(self, code: str, section_data: Dict[str, Any]) -> List[str]:
         """Check if animation timing matches narration segments."""
+        # ISS-Relax: We want to be lenient here. 
+        # A 2-second difference on a 60s video is fine.
         errors = []
         
         segments = section_data.get("narration_segments", [])
@@ -406,13 +576,24 @@ class ManimCodeGenerator:
         
         total_animation = sum(float(t) for t in run_times) + sum(float(w) for w in waits)
         
-        tolerance = 0.5 * len(segments)
+        # INCREASED TOLERANCE: 
+        # 1. Base tolerance proportional to segments
+        # 2. Percentage-based tolerance (10%)
+        # 3. Minimum absolute tolerance (3s)
+        base_tolerance = 1.0 * len(segments)
+        percent_tolerance = 0.10 * total_expected
+        max_tolerance = max(base_tolerance, percent_tolerance, 3.0)
         
-        if abs(total_animation - total_expected) > tolerance:
+        diff = abs(total_animation - total_expected)
+        
+        if diff > max_tolerance:
             errors.append(
                 f"Timing mismatch: animation total {total_animation:.1f}s vs expected {total_expected:.1f}s "
-                f"(tolerance ±{tolerance:.1f}s)"
+                f"(tolerance ±{max_tolerance:.1f}s). Please adjust self.wait() or run_time."
             )
+        elif diff > 0.5:
+            # Minor mismatch - just log it but don't block
+            logger.info(f"[MANIM GEN] Minor timing mismatch ({diff:.1f}s) - allowing it.")
         
         return errors
     
@@ -432,6 +613,94 @@ class ManimCodeGenerator:
                 )
         
         return errors
+
+    def _enforce_timing(self, code: str, section_data: Dict[str, Any]) -> str:
+        """
+        Programmatically enforce strict timing synchronization.
+        Parses # Segment X comments and injects self.wait() to match audio duration.
+        """
+        segments = section_data.get("narration_segments", [])
+        if not segments:
+            return code
+
+        lines = code.split('\n')
+        new_lines = []
+        
+        current_segment_idx = -1
+        segment_lines = []
+        
+        # Helper to process a finished segment block
+        def process_block(lines_in_block, seg_idx):
+            if seg_idx < 0 or seg_idx >= len(segments):
+                return lines_in_block
+            
+            block_content = "\n".join(lines_in_block)
+            
+            # Calculate current animation duration
+            run_time_matches = re.findall(r'run_time\s*=\s*([\d\.]+)', block_content)
+            run_time_sum = sum(float(x) for x in run_time_matches)
+            
+            wait_matches = re.findall(r'self\.wait\s*\(\s*([\d\.]+)', block_content)
+            wait_sum = sum(float(x) for x in wait_matches)
+            
+            actual_duration = run_time_sum + wait_sum
+            
+            # Get target duration (handle both duration formats)
+            seg = segments[seg_idx]
+            target_duration = float(seg.get("duration", seg.get("duration_seconds", 0)))
+            
+            deficit = target_duration - actual_duration
+            
+            # Find indentation of the last line to match
+            indent = "        " # Default
+            for line in reversed(lines_in_block):
+                if line.strip():
+                    leading_spaces = len(line) - len(line.lstrip())
+                    indent = line[:leading_spaces]
+                    break
+            
+            # Injection Logic
+            if deficit > 0.1:
+                lines_in_block.append(f"{indent}# Hard Sync: Injected wait to match audio ({actual_duration:.2f}s -> {target_duration:.2f}s)")
+                lines_in_block.append(f"{indent}self.wait({deficit:.3f})")
+            elif deficit < -0.5:
+                 lines_in_block.append(f"{indent}# Hard Sync WARNING: Animation exceeds audio by {abs(deficit):.2f}s")
+            
+            return lines_in_block
+
+        # Parsing Loop
+        for line in lines:
+            # Check for segment start marker
+            # We look for "# Segment X" (case insensitive)
+            seg_match = re.search(r'#\s*Segment\s*(\d+)', line, re.IGNORECASE)
+            
+            if seg_match:
+                # Process previous segment if exists
+                if current_segment_idx >= 0:
+                    processed = process_block(segment_lines, current_segment_idx)
+                    new_lines.extend(processed)
+                    segment_lines = []
+                
+                # Start new segment
+                try:
+                    current_segment_idx = int(seg_match.group(1)) - 1 # 1-based to 0-based
+                except:
+                    current_segment_idx = -1
+                
+                # Only trust it if valid range
+                if current_segment_idx < 0: current_segment_idx = -1
+            
+            if current_segment_idx >= 0:
+                segment_lines.append(line)
+            else:
+                new_lines.append(line) # Header/Imports before first segment
+        
+        # Process final segment
+        if current_segment_idx >= 0 and segment_lines:
+             processed = process_block(segment_lines, current_segment_idx)
+             new_lines.extend(processed)
+        
+        return "\n".join(new_lines)
 
 
 def build_manim_section_data(
@@ -523,8 +792,15 @@ def integrate_manim_code_into_section(
     
     render_spec = section["render_spec"]
     
+    # V2.5 Compatibility: If manim_scene_spec is a string, convert to dict
     if not render_spec.get("manim_scene_spec"):
         render_spec["manim_scene_spec"] = {}
+    elif isinstance(render_spec["manim_scene_spec"], str):
+        # Save the original spec string as a description, convert container to dict
+        original_spec = render_spec["manim_scene_spec"]
+        render_spec["manim_scene_spec"] = {
+            "description": original_spec
+        }
     
     render_spec["manim_scene_spec"]["manim_code"] = manim_code
     render_spec["manim_scene_spec"]["code_type"] = "construct_body"

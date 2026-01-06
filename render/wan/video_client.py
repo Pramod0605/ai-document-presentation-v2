@@ -256,9 +256,12 @@ class VideoClient:
         raise Exception(f"Failed to download video: {response.status_code}")
     
     def _generate_placeholder(self, prompt: str, duration: int, output_path: Optional[str]) -> str:
-        """Generate placeholder video when API unavailable"""
+        """Generate placeholder video when API fails or is not configured."""
         try:
-            from moviepy import ColorClip
+            try:
+                from moviepy import ColorClip
+            except ImportError:
+                from moviepy.editor import ColorClip
             
             output_path = output_path or f"placeholder_{int(time.time())}.mp4"
             

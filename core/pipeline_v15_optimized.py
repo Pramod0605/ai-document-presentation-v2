@@ -25,6 +25,7 @@ Key improvements:
 import os
 import json
 import logging
+import time
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any
 from datetime import datetime
@@ -1091,6 +1092,7 @@ def process_markdown_optimized(
             
             presentation = enforce_renderer_policy(presentation)
             
+            render_start = time.time()
             rendered_videos = render_all_topics(
                 presentation=presentation,
                 output_dir=str(videos_dir),
@@ -1098,9 +1100,41 @@ def process_markdown_optimized(
                 skip_wan=skip_wan,
                 output_dir_base=str(output_dir)
             )
+            render_duration = time.time() - render_start
             
+            manim_count = 0
+            wan_count = 0
+            static_count = 0
+            failed_renders = 0
+
             for result in rendered_videos:
                 section_id_result = result.get("topic_id")
+                status = result.get("status")
+                renderer = result.get("renderer")
+                
+                # Update counts
+                if status == "success":
+                    if renderer == "manim": manim_count += 1
+                    elif renderer in ["wan", "wan_video"]: wan_count += 1
+                elif status == "skipped":
+                    static_count += 1
+                else:
+                    failed_renders += 1
+
+                # Record Per-Section Details
+                tracker.add_render_detail(
+                    section_id=str(section_id_result),
+                    section_type=result.get("section_type", "unknown"),
+                    renderer=renderer,
+                    duration=result.get("duration_seconds", 0.0),
+                    status=status,
+                    metadata={
+                        "error": result.get("error"),
+                        "compilation_errors": result.get("compilation_errors"),
+                        "source": "LLM Generated" if result.get("v12_specs_used") == False else "Pre-compiled"
+                    }
+                )
+
                 video_path = result.get("video_path")
                 beat_videos = result.get("beat_videos", [])
                 recap_video_paths = result.get("recap_video_paths", [])
@@ -1121,8 +1155,13 @@ def process_markdown_optimized(
                             section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
                         break
             
-            success_count = sum(1 for r in rendered_videos if r.get("status") in ["success", "skipped"])
-            fail_count = sum(1 for r in rendered_videos if r.get("status") == "failed")
+            tracker.set_renderer_metrics(
+                manim_videos=manim_count,
+                wan_videos=wan_count,
+                static_slides=static_count,
+                render_time=render_duration,
+                failed_renders=failed_renders
+            )
             logger.info(f"[Pipeline v1.5-opt] Rendering complete: {success_count} success, {fail_count} failed")
         
         tracker.end_pipeline(status="completed")
@@ -1179,11 +1218,21 @@ def _generate_all_manim_code(presentation: Dict, tracker: AnalyticsTracker) -> D
             )
             
             try:
+                gen_start = time.time()
                 manim_code, validation_errors = manim_generator.generate(manim_input)
+                gen_duration = time.time() - gen_start
                 
                 if manim_code and len(manim_code) > 50:
                     results[section_id] = {"code": manim_code, "errors": validation_errors}
-                    logger.info(f"[Pipeline v1.5-opt] Manim code generated for {section_id}")
+                    logger.info(f"[Pipeline v1.5-opt] Manim code generated for {section_id} in {gen_duration:.1f}s")
+                    
+                    # Track this as a phase for timing
+                    tracker.add_llm_call(
+                        phase=f"manim_code_{section_id}",
+                        model=manim_generator.model,
+                        prompt_tokens=0, # Tokens not easily accessible
+                        completion_tokens=len(manim_code) // 4 # Rough estimate
+                    ).duration_seconds = gen_duration
                 else:
                     results[section_id] = {"error": "Empty or too short code", "errors": validation_errors}
                     logger.warning(f"[Pipeline v1.5-opt] Manim code empty/short for {section_id}")

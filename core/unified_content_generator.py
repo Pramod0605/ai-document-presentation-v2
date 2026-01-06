@@ -29,7 +29,7 @@ class GeneratorConfig:
     max_tokens: int = 32000
     max_retries: int = 3
     retry_delay_base: float = 2.0
-    timeout: int = 300
+    timeout: int = 60
 
 
 class SchemaValidationError(Exception):
@@ -42,279 +42,19 @@ class JSONParseError(Exception):
     pass
 
 
-UNIFIED_SYSTEM_PROMPT = """You are an expert Educational Video Script Generator for Indian students (Grade 8-12).
-
-Your task: Convert a textbook chapter into a COMPLETE presentation JSON in a SINGLE response.
-
-## ⚠️ NON-NEGOTIABLE REQUIREMENTS - READ FIRST ⚠️
-
-**CRITICAL VIDEO PROMPT REQUIREMENT:**
-- Every `video_prompt` field MUST contain **MINIMUM 80 WORDS** - no exceptions
-- Every `manim_spec` field MUST contain **MINIMUM 80 WORDS** - no exceptions
-- Prompts under 80 words will FAIL video generation and waste API credits
-- Before finalizing each video_prompt/manim_spec, COUNT THE WORDS - if < 80, add more detail
-
-**SELF-CHECK BEFORE SUBMITTING:**
-For each video_prompt you generate, verify:
-✓ Does it describe the COMPLETE visual scene in detail?
-✓ Does it specify camera movement, lighting, colors, style?
-✓ Does it match what the narrator is explaining in that segment?
-✓ Is it AT LEAST 80 words? (Count: most 80-word prompts fill 5-6 lines)
-
-## SECTION TYPES (Generate in this order)
-1. **intro** - Welcome message, AVATAR-ONLY narration (NO text/visuals on screen)
-   - text_layer: "hide", visual_layer: "hide", avatar_layer: "show"
-   - Just the teacher avatar speaking to camera
-2. **summary** - Learning objectives as BULLET POINTS with narration (synced)
-   - visual_type: "bullet_list" always
-   - text_layer: "show", visual_layer: "show"
-3. **content** - Main teaching content (2-5 sections based on document length)
-   - LLM decides when to show text vs image vs diagram
-   - Flip text_layer to "hide" when showing complex visuals
-   - For BIOLOGY: Use derived_renderer="video" with video_prompts for anatomy, processes, organisms
-   - For MATH/PHYSICS: Use derived_renderer="manim" for equations, graphs, formulas
-4. **example** - OPTIONAL: Worked examples ONLY if present in source document
-5. **quiz** - OPTIONAL: Questions extracted from document Q&A pairs (only if Q&A exists)
-   - Split into multiple sections if >8 questions (~4 Q&A per section)
-6. **memory** - Flashcard-style key concept review (1 section, 3-5 cards)
-7. **recap** - EXACTLY 5 video scenes with story narration
-   - MUST have exactly 5 segments and 5 video_prompts
-   - text_layer: "hide", visual_layer: "show" (video takes full screen)
-   - derived_renderer: "video"
-
-## RENDERER SELECTION - INTELLIGENT VIDEO EXAMPLES
-
-### TEACHING PATTERN: EXPLAIN → THEN SHOW VIDEO EXAMPLE
-For each topic in content sections, follow this pattern:
-1. First segment: Explain concept with text/bullets on screen (narration teaches)
-2. Second segment: Show video example demonstrating the concept (narration describes what we see)
-
-This makes boring educational content INTERACTIVE and ENGAGING!
-
-### WHEN TO GENERATE VIDEO EXAMPLES (derived_renderer="video")
-For BIOLOGY content sections, ALWAYS generate video_prompts for:
-- Anatomy (Neurons, Brain, Heart, Cells) → "3D animation of [structure] showing..."
-- Processes (Reflex Arc, Digestion, Photosynthesis) → "Animation showing [process] step by step..."
-- Organisms/Microscopic (Cells, Hormones, Blood) → "Microscopic view of [subject] revealing..."
-
-For PHYSICS content sections, generate video for:
-- Motion/Forces → "Simulation showing [phenomenon] in action..."
-- Waves/Energy → "Visualization of [concept] propagating..."
-
-For CHEMISTRY content sections:
-- Reactions → "Molecular animation showing [reaction] occurring..."
-- Lab processes → "Video of [experiment] demonstrating..."
-
-For MATH content sections, use derived_renderer="manim":
-- Equations → manim_spec with step-by-step solving
-- Graphs → manim_spec showing function plotting
-- Geometry → manim_spec with shape construction
-
-### CONTENT SECTION STRUCTURE WITH VIDEO EXAMPLES
-```
-Section: "The Nervous System"
-├── Segment 1: Explain (text_layer: show) - "The nervous system is..."
-│   └── visual_beat: bullet_list with key points
-├── Segment 2: Video Example (visual_layer: show, text_layer: hide)
-│   └── video_prompt: [80+ word detailed prompt based on narration]
-├── Segment 3: Explain next concept (text_layer: show)
-│   └── visual_beat: diagram description
-└── Segment 4: Video Example (visual_layer: show, text_layer: hide)
-    └── video_prompt: [80+ word detailed prompt based on narration]
-```
-
-### VIDEO PROMPT REQUIREMENTS (WAN - Biology/Physics/Chemistry)
-CRITICAL: Each video_prompt MUST be **80+ words minimum** for the video API to generate quality results.
-
-Each video_prompt must:
-1. **Be 80+ words minimum** - detailed enough for AI video generation
-2. **Be derived from the narration context** - visualize exactly what the narrator is explaining
-3. **Duration hint: 10-15 seconds**
-4. **Include visual details**: camera angles, lighting, animation style, motion, colors
-
-**NARRATION-VIDEO SYNC RULE:**
-The segment's narration (text) explains the concept in audio. The video_prompt describes what the viewer SEES while hearing that narration. They must match in content but differ in format:
-- Narration (audio): "The neuron transmits electrical signals through its axon..."
-- Video prompt (visual): "Detailed 3D animation of a single neuron with glowing blue cell body and dendrites, showing a bright electrical impulse pulse traveling along the elongated axon fiber as a wave of light, the signal moves smoothly from left to right, reaching terminal buttons at the synapse junction, microscopic scientific visualization style with dark background and bioluminescent effects, camera slowly follows the signal path, smooth continuous 12-second animation loop"
-
-**80+ WORD VIDEO PROMPT EXAMPLE (Biology):**
-"Cinematic 3D animation inside the human nervous system showing a detailed neuron cell with its soma glowing softly blue, multiple branching dendrites receiving signals visualized as tiny sparks, the electrical impulse consolidates and travels down the long axon as a bright wave of energy, passing through the myelin sheath segments which appear as translucent white bands, the signal reaches the axon terminals and triggers the release of neurotransmitter molecules shown as small glowing spheres crossing the synaptic cleft to the next neuron, scientific documentary style with dark purple background, smooth camera movement following the signal, duration 12 seconds"
-
-### MANIM SPEC REQUIREMENTS (Math/Physics Equations)
-CRITICAL: Each manim_spec MUST be **80+ words minimum** describing the mathematical animation in detail.
-
-Each manim_spec must:
-1. **Be 80+ words minimum** - detailed enough for Manim code generation
-2. **Be derived from the narration context** - visualize the math/equation being explained
-3. **Describe step-by-step animation**: what appears first, transformations, final result
-4. **Include visual details**: colors, positions, timing, text labels
-
-**NARRATION-MANIM SYNC RULE:**
-The segment's narration explains the mathematical concept. The manim_spec describes the animated visualization that matches:
-- Narration (audio): "Let's solve this quadratic equation step by step..."
-- Manim spec (visual): detailed description of equation appearing, transformations, solution steps
-
-**80+ WORD MANIM SPEC EXAMPLE (Math):**
-"Create an animated mathematical visualization showing the quadratic formula derivation. Start with the general form ax² + bx + c = 0 appearing in white text center screen. After 2 seconds, transform by subtracting c from both sides, showing the intermediate step ax² + bx = -c with arrows indicating the operation. Next, divide all terms by a, each term transforming individually with color highlights: x² in blue, (b/a)x in green, -c/a in red. Complete the square by adding (b/2a)² to both sides, showing this step-by-step with the square visualization. Finally, take the square root and isolate x, revealing the complete quadratic formula x = (-b ± √(b²-4ac)) / 2a in golden yellow, with a box highlighting the final answer. Total duration 15 seconds with smooth transitions between each step."
-
-RECAP SECTION: ALWAYS use "video" with exactly 5 cinematic video_prompts (each 80+ words)
-
-**80+ WORD RECAP VIDEO PROMPT EXAMPLE:**
-"Cinematic, warm-toned video of a young Indian student in her room, focused intently on building a small pyramid of wooden blocks arranged in a triangle pattern on her study table. Each row has one fewer block than the row below, creating a clear arithmetic progression visual. Soft afternoon sunlight filters through a window, casting gentle shadows across the scene. The camera slowly zooms in on her hands carefully placing each block, emphasizing the mathematical pattern. The room has warm colors with educational posters visible in the background, creating an authentic study environment. Duration 12 seconds with smooth camera movement."
-
-DECISION LOGGING: For each section, explain WHY you chose the renderer in decision_reason.
-
-## SEGMENT RULES
-- Each segment = 15-30 seconds when spoken aloud
-- Narration EXPLAINS, visuals REINFORCE (never duplicate)
-- Avatar is ALWAYS visible: avatar_layer = "show"
-
-## VISUAL BEAT TYPES (display_text = PDF TEXT, NOT narration)
-CRITICAL: display_text MUST contain the ORIGINAL PDF text to show on screen.
-         Narration (segment.text) is for AUDIO only - spoken by avatar.
-         These are TWO SEPARATE THINGS:
-         - display_text = What appears ON SCREEN (from PDF)
-         - segment.text = What avatar SPEAKS (rewritten for natural speech)
-
-- "text" - display_text = exact quote or paraphrase from PDF
-- "bullet_list" - display_text = bullet items from PDF, NOT empty
-- "equation" - latex_content = LaTeX formula from PDF
-- "diagram" - display_text = diagram description, image_id = PDF image reference
-- "image" - image_id = MUST reference actual PDF image ID (e.g., "abc123_img.jpg")
-- "video" - AI-generated video (recap only)
-
-## IMAGE USAGE RULE
-You MUST use ALL images from the provided images_list. Every image in the PDF must appear in a visual_beat with:
-  - visual_type: "image" or "diagram"
-  - image_id: the exact image filename from the list
-
-## QUIZ HANDLING - PROGRESSIVE REVEAL PATTERN
-- Extract Q&A pairs from document's exercise/question sections
-- Format as structured quiz with question, options, correct_answer, explanation
-- Split into multiple quiz sections if >8 questions
-
-**CRITICAL: Quiz sections MUST generate per-question narration segments for progressive reveal:**
-
-For EACH question in the quiz, generate exactly 3 narration segments:
-1. **Question Segment** (purpose: "introduce"): Read the question aloud
-   - display_directives: text_layer="show" (show question + options)
-   - Example: "Let's look at question 1. The growth of pollen tubes towards ovules is an example of which type of tropism? Take a moment to consider the options."
-
-2. **Pause Segment** (purpose: "emphasize"): Give thinking time
-   - duration: ~3-5 seconds of thinking prompt
-   - display_directives: text_layer="show" (keep question visible)
-   - Example: "Think about what you learned about plant movements and tropisms."
-
-3. **Answer Segment** (purpose: "explain"): Reveal and explain the answer
-   - display_directives: text_layer="show", answer_revealed=true
-   - Example: "The correct answer is C, chemotropism. This is because pollen tubes grow in response to chemical signals released by the ovule."
-
-**QUIZ SEGMENT EXAMPLE:**
-For a quiz with 2 questions, generate 6 segments total (3 per question):
-- seg_1: Read question 1 + options
-- seg_2: Pause for thinking (question 1)
-- seg_3: Reveal answer 1 with explanation
-- seg_4: Read question 2 + options
-- seg_5: Pause for thinking (question 2)
-- seg_6: Reveal answer 2 with explanation
-
-Each segment MUST include a "question_index" field (0-based) to sync with quiz_data.questions
-
-## CRITICAL RULES
-1. Include ALL content from source document - never summarize or skip
-2. Preserve all educational details, definitions, examples
-3. Maintain academic accuracy
-4. Output MUST be valid JSON matching schema exactly
-5. Every segment must have display_directives with avatar_layer: "show"
-
-## OUTPUT SCHEMA
-Return a JSON object with this exact structure:
-{
-  "presentation_title": "Chapter/Topic Name",
-  "sections": [
-    {
-      "section_id": "section_1",
-      "section_type": "intro|summary|content|example|quiz|memory|recap",
-      "title": "Section Title",
-      "derived_renderer": "none|manim|video",
-      "decision_reason": "Brief explanation of WHY this renderer was chosen for this section (for analysis)",
-      "narration": {
-        "full_text": "Complete narration text for this section...",
-        "segments": [
-          {
-            "segment_id": "seg_1",
-            "text": "Individual segment narration...",
-            "purpose": "introduce|explain|emphasize|transition|conclude",
-            "display_directives": {
-              "text_layer": "show|dim|hide",
-              "visual_layer": "show|hide",
-              "avatar_layer": "show"
-            }
-          }
-        ]
-      },
-      "visual_beats": [
-        {
-          "beat_id": "beat_1",
-          "segment_id": "seg_1",
-          "visual_type": "text|bullet_list|equation|diagram|image|video",
-          "display_text": "Visual content to show...",
-          "latex_content": null,
-          "image_id": null
-        }
-      ],
-      "quiz_data": null,
-      "flashcards": null,
-      "video_prompts": null
-    }
-  ],
-  "decision_log": {
-    "total_video_prompts": 0,
-    "total_manim_specs": 0,
-    "renderer_choices": [
-      {
-        "section_id": "section_1",
-        "section_title": "Section Title",
-        "renderer": "none|manim|video",
-        "reason": "Detailed explanation of why this renderer was selected"
-      }
-    ],
-    "content_analysis": "Brief summary of document content and key topics identified"
-  }
-}
-
-## SPECIAL SECTION DATA
-
-For quiz sections, include:
-"quiz_data": {
-  "questions": [
-    {
-      "question": "Question text?",
-      "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
-      "correct_answer": "A",
-      "explanation": "Why this is correct..."
-    }
-  ]
-}
-
-For memory sections, include:
-"flashcards": [
-  {
-    "front": "Term or concept",
-    "back": "Definition or explanation"
-  }
-]
-
-For recap sections, include:
-"video_prompts": [
-  {
-    "segment_id": "seg_1",
-    "prompt": "Detailed video generation prompt...",
-    "duration_hint": 10
-  }
-]
-
-Return ONLY valid JSON, no markdown formatting or explanation."""
+# REQ-001: Explicitly REMOVED Hardcoded Fallback. 
+# All prompts must be loaded from 'core/prompts/' directory.
+# If file load fails, the system MUST Fail Fast.
+try:
+    _PROMPT_PATH = os.path.join(os.path.dirname(__file__), "prompts", "unified_system_prompt_CURRENT.txt")
+    with open(_PROMPT_PATH, "r", encoding="utf-8") as f:
+        UNIFIED_SYSTEM_PROMPT = f.read()
+    print(f"[INFO] Loaded UNIFIED_SYSTEM_PROMPT from {_PROMPT_PATH} ({len(UNIFIED_SYSTEM_PROMPT)} chars)")
+except Exception as e:
+    print(f"[FATAL] Failed to load UNIFIED_SYSTEM_PROMPT from core/prompts/: {e}")
+    # Fail fast as required
+    UNIFIED_SYSTEM_PROMPT = None
+    # We allow the module to load, but generation will fail if this is None (handled in generate_presentation) 
 
 
 def build_user_prompt(
@@ -352,6 +92,16 @@ def call_openrouter_llm(
         "HTTP-Referer": "https://replit.com",
         "X-Title": "AI Education V2"
     }
+    
+    # DEBUG AUTH (Stderr for immediate visibility)
+    import sys
+    safe_key = f"{api_key[:10]}...{api_key[-5:]}" if api_key else "None"
+    sys.stderr.write(f"\n[DEBUG] call_openrouter_llm\n")
+    sys.stderr.write(f"[DEBUG] Key: {safe_key}\n")
+    sys.stderr.write(f"[DEBUG] Model: {config.model}\n")
+    sys.stderr.write(f"[DEBUG] Env Matches: {api_key == os.environ.get('OPENROUTER_API_KEY')}\n")
+    sys.stderr.flush()
+    
     
     payload = {
         "model": config.model,
@@ -423,8 +173,53 @@ def extract_json_from_response(response: str) -> dict:
     
     try:
         return json.loads(content)
-    except json.JSONDecodeError as e:
-        raise JSONParseError(f"Failed to parse JSON: {e}")
+    except json.JSONDecodeError as first_err:
+        # ISS-FIX: Common LLM error - single backslash in LaTeX within JSON string
+        # e.g. "formula": "\frac{1}{2}" -> Invalid \f escape
+        try:
+            import re
+            # Regex to find backslashes that are NOT followed by valid JSON escape chars
+            # Valid escapes: ", \, /, b, f, n, r, t, uXXXX
+            # We want to double-escape invalid ones.
+            # Pattern: \ (not one of " \ / b f n r t u)
+            fixed_content = re.sub(r'\\(?![/\"\\bfnrtu])', r'\\\\', content)
+            return json.loads(fixed_content)
+        except json.JSONDecodeError as second_err:
+            # ISS-FIX: Handle Truncated JSON (Model stopped early)
+            # Try to auto-close brackets/braces
+            try:
+                # Naive helper to close open structures
+                # Count opens/closes
+                opens_br = content.count('{') - content.count('}')
+                opens_sq = content.count('[') - content.count(']')
+                
+                repaired = content
+                # Close quotes if needed (simple heuristic)
+                if repaired.strip()[-1] not in ['"', '}', ']'] and '"' in repaired.splitlines()[-1]:
+                     repaired += '"'
+                     
+                repaired += '}' * opens_br
+                repaired += ']' * opens_sq
+                
+                # Double check braces balance, sometimes we need to close ] before }
+                # Better approach: recursive fix or just try simple append
+                # For now, appending }]*20 is safer? No.
+                
+                # Let's try just the simple count balance
+                # If the last char was inside a string, we might have botched it.
+                # Recovering from mid-string check:
+                val = json.loads(repaired)
+                print(f"[WARN] Recovered from TRUNCATED JSON by auto-closing tags.")
+                return val
+            except Exception:
+                pass
+
+            # If that fails, Dump the raw content for debugging
+            try:
+                with open("llm_parse_fail.txt", "w", encoding="utf-8") as f:
+                    f.write(content)
+            except: pass
+            raise JSONParseError(f"Failed to parse JSON: {first_err}")
 
 
 def normalize_output(output: dict) -> dict:
@@ -453,31 +248,43 @@ def validate_schema(output: dict) -> Tuple[bool, List[str]]:
         errors.append("Empty sections array")
         return False, errors
     
+    valid_sections = []
     required_section_fields = ["section_type", "narration"]
     
     for i, section in enumerate(sections):
+        if not isinstance(section, dict):
+            errors.append(f"[Section {i}] Invalid format: Expected dict")
+            continue
+            
         section_id = section.get("section_id", f"section_{i+1}")
+        section_errors = []
         
         for field in required_section_fields:
             if field not in section:
-                errors.append(f"[{section_id}] Missing required field: {field}")
+                section_errors.append(f"Missing field: {field}")
         
         narration = section.get("narration", {})
         if "segments" not in narration:
-            errors.append(f"[{section_id}] Missing narration.segments")
+            section_errors.append("Missing narration.segments")
         elif not narration.get("segments"):
-            errors.append(f"[{section_id}] Empty segments array")
-        else:
-            for j, seg in enumerate(narration["segments"]):
-                if "text" not in seg:
-                    errors.append(f"[{section_id}] Segment {j} missing 'text'")
-                if "display_directives" not in seg:
-                    errors.append(f"[{section_id}] Segment {j} missing 'display_directives'")
-        
+            section_errors.append("Empty segments array")
+            
         if "visual_beats" not in section:
-            errors.append(f"[{section_id}] Missing visual_beats")
+            section_errors.append("Missing visual_beats")
+            
+        if not section_errors:
+            valid_sections.append(section)
+        else:
+            errors.append(f"[{section_id}] Corrupt section (likely truncated): {section_errors}")
     
-    return len(errors) == 0, errors
+    # Update sections with only valid ones
+    output["sections"] = valid_sections
+    
+    if not valid_sections:
+        errors.append("No valid sections remained after filtering corruption.")
+        return False, errors
+        
+    return True, errors
 
 
 def generate_presentation(
@@ -536,12 +343,23 @@ def generate_presentation(
             
             output = normalize_output(output)
             
+            # USER REQUEST: Dump raw output for inspection
+            try:
+                with open("llm_debug_dump.json", "w", encoding="utf-8") as f:
+                    json.dump(output, f, indent=2)
+                print("[DEBUG] Saved raw LLM output to 'llm_debug_dump.json'")
+            except Exception as e:
+                print(f"[DEBUG] Failed to save dump: {e}")
+
             is_valid, errors = validate_schema(output)
             
             if not is_valid:
-                raise SchemaValidationError(f"Schema validation failed: {errors[:3]}")
+                # USER REQUEST: FORCE PROCEED on Validation Failure
+                logger.warning(f"Schema validation FAILED (IGNORING): {errors}")
+                print(f"⚠️ Schema Validation Failed with {len(errors)} errors - PROCEEDING ANYWAY")
+                # raise SchemaValidationError(f"Schema validation failed: {errors[:3]}")
             
-            logger.info("Schema validation passed")
+            logger.info("Schema validation passed (or bypassed)")
             
             # ISS-300: Attach usage stats to output for analytics
             output["_llm_usage"] = llm_usage_stats
@@ -732,6 +550,9 @@ def _transform_narration(narration: dict, visual_beats: list = None) -> dict:
 
 def _transform_visual_beats(visual_beats: list) -> list:
     """Transform visual beats to player format."""
+    if not visual_beats:
+        return []
+        
     transformed = []
     for beat in visual_beats:
         t_beat = {

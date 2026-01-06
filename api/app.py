@@ -8,7 +8,8 @@ from typing import Optional
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
-load_dotenv()
+# Load environment variables from .env file (Force override to ensure correct key)
+load_dotenv(override=True)
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -26,6 +27,21 @@ from core.job_manager import job_manager, run_job_async, is_job_running, get_cur
 app = Flask(__name__)
 CORS(app)
 
+# SILENCE POLLING LOGS: Prevent console flood from status calls
+import logging
+class PollingLogFilter(logging.Filter):
+    def filter(self, record):
+        msg = record.getMessage()
+        # Silence /avatar_status and /status calls
+        if "avatar_status" in msg or "/status" in msg:
+            return False
+        return True
+
+# Apply to werkzeug and root loggers to be sure
+logging.getLogger("werkzeug").setLevel(logging.ERROR)
+logging.getLogger("werkzeug").addFilter(PollingLogFilter())
+logging.getLogger("flask.app").addFilter(PollingLogFilter())
+
 PLAYER_DIR = Path(__file__).parent.parent / "player"
 ASSETS_DIR = PLAYER_DIR / "assets"
 JOBS_DIR = PLAYER_DIR / "jobs"
@@ -35,6 +51,9 @@ os.makedirs(ASSETS_DIR / "videos", exist_ok=True)
 os.makedirs(ASSETS_DIR / "audio", exist_ok=True)
 os.makedirs(JOBS_DIR, exist_ok=True)
 os.makedirs(TEMP_DIR, exist_ok=True)
+
+# Track active avatar generation jobs in memory
+ACTIVE_AVATAR_JOBS = set()
 
 def setup_job_folder(job_output_dir: Path):
     """Copy player files to job folder for self-contained playback"""
@@ -67,6 +86,8 @@ def health_check():
     })
 
 
+
+
 @app.route("/submit_job", methods=["POST"])
 def submit_job():
     try:
@@ -84,7 +105,13 @@ def submit_job():
         skip_wan = request.form.get("skip_wan", "false").lower() == "true"
         skip_avatar = request.form.get("skip_avatar", "false").lower() == "true"
         tts_provider = request.form.get("tts_provider", "edge_tts")
-        pipeline_version = request.form.get("pipeline_version", "v15")
+        # FIXED: Default to V2.5 Director Mode for all new jobs
+        pipeline_version = request.form.get("pipeline_version", "v15_v2_director")
+        generation_scope = request.form.get("generation_scope", "full")
+        model = request.form.get("model")
+        print(f"=" * 80)
+        print(f"[ROUTING DEBUG] Received pipeline_version from form: '{pipeline_version}'")
+        print(f"=" * 80)
         
         if "file" in request.files:
             uploaded_file = request.files["file"]
@@ -110,13 +137,13 @@ def submit_job():
                 job_type = "markdown_file"
                 suffix = ".md"
             else:
-                return jsonify({"error": "Unsupported file type. Supported: PDF, DOC, DOCX, ODT, MD"}), 400
+                return jsonify({"error": " Unsupported file type. Supported: PDF, DOC, DOCX, ODT, MD"}), 400
             
             temp_file = TEMP_DIR / f"{os.urandom(8).hex()}{suffix}"
             uploaded_file.save(str(temp_file))
             original_filename = uploaded_file.filename
             
-            if pipeline_version == "v15_v2":
+            if pipeline_version in ["v15_v2", "v15_v2_director"]:
                 job_type_name = "v15_v2_pipeline"
             elif pipeline_version == "v15":
                 job_type_name = "v15_pipeline"
@@ -130,7 +157,9 @@ def submit_job():
                 "skip_wan": skip_wan,
                 "skip_avatar": skip_avatar,
                 "tts_provider": tts_provider,
-                "pipeline_version": pipeline_version
+                "pipeline_version": pipeline_version,
+                "generation_scope": generation_scope,
+                "model": model
             })
             
             job_output_dir = JOBS_DIR / job_id
@@ -138,7 +167,7 @@ def submit_job():
             
             if job_type == "document":
                 # ISS-206: Handle PDF, DOC, DOCX, ODT via Datalab
-                if pipeline_version == "v15_v2":
+                if pipeline_version in ["v15_v2", "v15_v2_director"]:
                     document_processor = process_document_job_v15_v2
                 elif pipeline_version == "v15":
                     document_processor = process_document_job_v15
@@ -152,10 +181,12 @@ def submit_job():
                     grade=grade,
                     output_dir=str(job_output_dir),
                     dry_run=dry_run,
-                    skip_wan=skip_wan,
                     skip_avatar=skip_avatar,
                     source_file=original_filename,
-                    tts_provider=tts_provider
+                    tts_provider=tts_provider,
+                    pipeline_version=pipeline_version,
+                    generation_scope=generation_scope,
+                    model=model
                 )
             else:
                 with open(temp_file, "r", encoding="utf-8") as f:
@@ -168,12 +199,16 @@ def submit_job():
                 
                 job_manager.update_job(job_id, {"content_preview": content_preview}, persist=True)
                 
-                if pipeline_version == "v15_v2":
+                if pipeline_version in ["v15_v2", "v15_v2_director"]:
                     job_processor = process_markdown_job_v15_v2
+                    print(f"[ROUTING DEBUG] Selected processor: process_markdown_job_v15_v2")
                 elif pipeline_version == "v15":
                     job_processor = process_markdown_job_v15
+                    print(f"[ROUTING DEBUG] Selected processor: process_markdown_job_v15")
                 else:
                     job_processor = process_markdown_job
+                    print(f"[ROUTING DEBUG] Selected processor: process_markdown_job (legacy)")
+                print(f"[ROUTING DEBUG] Calling {job_processor.__name__} with pipeline_version='{pipeline_version}'")
                 run_job_async(
                     job_id,
                     job_processor,
@@ -185,7 +220,10 @@ def submit_job():
                     skip_wan=skip_wan,
                     skip_avatar=skip_avatar,
                     source_file=original_filename,
-                    tts_provider=tts_provider
+                    tts_provider=tts_provider,
+                    pipeline_version=pipeline_version,
+                    generation_scope=generation_scope,
+                    model=model
                 )
         
         elif request.is_json:
@@ -197,7 +235,10 @@ def submit_job():
             skip_wan = data.get("skip_wan", False)
             skip_avatar = data.get("skip_avatar", False)
             tts_provider = data.get("tts_provider", "edge_tts")
-            pipeline_version = data.get("pipeline_version", "v15")
+            # FIXED: Default to V2.5 Director Mode for all new jobs
+            pipeline_version = data.get("pipeline_version", "v15_v2_director")
+            generation_scope = data.get("generation_scope", "full")
+            model = data.get("model")
             
             if not markdown_content:
                 return jsonify({"error": "Markdown content is required"}), 400
@@ -220,13 +261,15 @@ def submit_job():
                 "skip_avatar": skip_avatar,
                 "tts_provider": tts_provider,
                 "pipeline_version": pipeline_version,
+                "generation_scope": generation_scope,
+                "model": model,
                 "content_preview": content_preview
             })
             
             job_output_dir = JOBS_DIR / job_id
             setup_job_folder(job_output_dir)
             
-            if pipeline_version == "v15_v2":
+            if pipeline_version in ["v15_v2", "v15_v2_director"]:
                 job_processor = process_markdown_job_v15_v2
             elif pipeline_version == "v15":
                 job_processor = process_markdown_job_v15
@@ -242,7 +285,10 @@ def submit_job():
                 dry_run=dry_run,
                 skip_wan=skip_wan,
                 skip_avatar=skip_avatar,
-                tts_provider=tts_provider
+                tts_provider=tts_provider,
+                pipeline_version=pipeline_version,
+                generation_scope=generation_scope,
+                model=model
             )
         
         else:
@@ -594,6 +640,8 @@ def _retry_manim_codegen(job_id: str, job_folder: Path, presentation: dict, sect
         section_id = section.get("section_id")
         renderer = section.get("renderer", "")
         
+        print(f"DEBUG: Checking Section {section_id} (Renderer: {renderer}) for retry. Target IDs: {section_ids}")
+
         if renderer != "manim":
             continue
         
@@ -605,6 +653,8 @@ def _retry_manim_codegen(job_id: str, job_folder: Path, presentation: dict, sect
             if section_ids is None:
                 results["skipped"].append({"section_id": section_id, "reason": "Already has valid code"})
                 continue
+            else:
+                print(f"DEBUG: Forcing regen for Section {section_id} despite existing code.")
         
         try:
             print(f"[RETRY] Regenerating Manim code for section {section_id}")
@@ -1049,7 +1099,7 @@ def process_document_job_v15(job_id: str, document_path: str, subject: str, grad
             os.unlink(document_path)
 
 
-def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts") -> dict:
+def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", pipeline_version: str = "v15_v2_director", generation_scope: str = "full", model: Optional[str] = None) -> dict:
     """Process PDF/DOC/DOCX/ODT using V1.5 V2 Unified pipeline with image handling.
     
     1. Convert document to Markdown using Datalab API (captures images)
@@ -1090,7 +1140,9 @@ def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, g
             skip_avatar=skip_avatar,
             source_file=source_file,
             tts_provider=tts_provider,
-            images_dict=images_dict
+            images_dict=images_dict,
+            pipeline_version=pipeline_version,
+            generation_scope=generation_scope
         )
     except DatalabConversionError as e:
         raise RuntimeError(f"Document conversion failed: {e}")
@@ -1164,30 +1216,17 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
     }
 
 
-def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", images_dict: dict = None) -> dict:
-    """Process markdown using V1.5 V2 Unified pipeline (single LLM call, 95% fewer calls).
+def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", images_dict: dict = None, pipeline_version: str = "v15_v2_director", generation_scope: str = "full", model: Optional[str] = None) -> dict:
+    """Process markdown using V1.5 V2 Unified pipeline (single LLM call).
     
-    Full Pipeline:
-    1. LLM Generation (single call via unified_content_generator)
-    2. Transform to player schema
-    3. Calculate duration estimates from word count
-    4. Generate TTS audio (sets actual durations)
-    5. Generate Manim code for manim sections
-    6. Render videos (Manim execution + WAN video generation)
-    7. Link images to visual_content
-    8. Apply validations (enforce_renderer_policy, WAN prompt validation)
-    9. Save analytics with full metrics
+    Routes to core.pipeline_unified.process_markdown_unified which handles:
+    - Image extraction and processing
+    - Single LLM generation
+    - Manim code generation (Bridging)
+    - TTS and Rendering
     """
     from pathlib import Path
-    import time
-    from core.image_processor import save_datalab_images, extract_image_refs_from_markdown
-    from core.tts_duration import update_durations_simplified
-    from core.renderer_executor import render_all_topics, enforce_renderer_policy
-    from core.agents.manim_code_generator import (
-        ManimCodeGenerator,
-        build_manim_section_data,
-        integrate_manim_code_into_section
-    )
+    from core.pipeline_unified import process_markdown_unified, PipelineUnifiedError
     
     output_path = Path(output_dir)
     source_md_path = output_path / "source_markdown.md"
@@ -1201,412 +1240,65 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             "status_message": message
         }, persist=True)
     
-    # Track analytics (all metrics per Issue #7)
-    pipeline_start_time = time.time()
-    analytics_data = {
-        "pipeline_version": "v1.5-v2",
-        "status": "running",
-        "llm_calls": 1,
-        "dry_run": dry_run,
-        "image_count": 0,
-        "table_count": 0,
-        "qa_pair_count": 0,
-        "tts_count": 0,
-        "tts_segments": 0,
-        "tts_provider": tts_provider,
-        "tts_voice": "en-IN-PrabhatNeural",
-        "tts_duration_seconds": 0,
-        "manim_sections": 0,
-        "manim_success": 0,
-        "manim_failed": 0,
-        "manim_videos": 0,
-        "manim_time_seconds": 0,
-        "wan_videos": 0,
-        "wan_time_seconds": 0,
-        "wan_success": 0,
-        "wan_failed": 0,
-        "sections": 0,
-        "segments": 0,
-        "total_duration_seconds": 0,
-        "phases": []
-    }
-    
-    # Count tables and Q&A pairs from markdown
-    import re
-    table_matches = re.findall(r'\|.*\|', markdown_content)
-    analytics_data["table_count"] = len([t for t in table_matches if '---' not in t]) // 2  # Rough estimate
-    qa_matches = re.findall(r'Q\s*\.?\s*\d+|Question\s+\d+', markdown_content, re.IGNORECASE)
-    analytics_data["qa_pair_count"] = len(qa_matches)
-    
-    # PHASE 1: Image Processing
-    saved_images = {}
-    images_list = "None"
-    if images_dict:
-        status_callback(job_id, "image_processing", f"Processing {len(images_dict)} images...")
-        images_dir = output_path / "images"
-        saved_images = save_datalab_images(images_dict, str(images_dir), apply_green_screen=True)
-        if saved_images:
-            images_list = ", ".join(saved_images.keys())
-            analytics_data["image_count"] = len(saved_images)
-            print(f"[V1.5-V2] Saved {len(saved_images)} images to {images_dir}")
-    else:
-        image_refs = extract_image_refs_from_markdown(markdown_content)
-        if image_refs:
-            images_list = ", ".join([ref['filename'] for ref in image_refs])
-            analytics_data["image_count"] = len(image_refs)
-            print(f"[V1.5-V2] Found {len(image_refs)} image references in markdown")
-    
-    # PHASE 2: LLM Generation (single call)
-    status_callback(job_id, "v2_unified", "Starting V2 Unified Content Generator (single LLM call)")
-    
-    start_time = time.time()
-    
-    config = GeneratorConfig(max_retries=3)
-    raw_output = generate_presentation(
-        markdown_content=markdown_content,
-        subject=subject,
-        grade=grade,
-        images_list=images_list,
-        config=config
-    )
-    
-    llm_time = time.time() - start_time
-    analytics_data["llm_time_seconds"] = round(llm_time, 2)
-    
-    # ISS-300: Extract LLM usage stats for analytics
-    llm_usage = raw_output.pop("_llm_usage", None)
-    if llm_usage:
-        analytics_data["llm_input_tokens"] = llm_usage.get("input_tokens", 0)
-        analytics_data["llm_output_tokens"] = llm_usage.get("output_tokens", 0)
-        analytics_data["llm_total_tokens"] = llm_usage.get("total_tokens", 0)
-        analytics_data["llm_model"] = llm_usage.get("model", "unknown")
-        # Calculate cost based on model (approximate for Gemini 2.5 Pro)
-        input_cost = llm_usage.get("input_tokens", 0) * 0.00000125  # $1.25/M
-        output_cost = llm_usage.get("output_tokens", 0) * 0.00001  # $10/M
-        analytics_data["llm_cost_usd"] = round(input_cost + output_cost, 4)
-    
-    # Add LLM phase to phase breakdown
-    analytics_data["phases"].append({
-        "phase": "llm_generation",
-        "duration_seconds": round(llm_time, 2),
-        "tokens": analytics_data.get("llm_total_tokens", 0),
-        "cost_usd": analytics_data.get("llm_cost_usd", 0),
-        "model": analytics_data.get("llm_model", "unknown")
-    })
-    
-    print(f"[V1.5-V2] LLM call completed in {llm_time:.2f}s")
-    
-    # PHASE 3: Transform to player schema
-    status_callback(job_id, "v2_transform", "Transforming to player schema")
-    presentation = transform_to_player_schema(raw_output, subject=subject, grade=grade)
-    
-    # PHASE 4: Calculate duration estimates from word count (~150 WPM = 2.5 words/sec)
-    status_callback(job_id, "duration_estimate", "Calculating duration estimates from narration...")
-    for section in presentation.get("sections", []):
-        narration = section.get("narration", {})
-        segments = narration.get("segments", [])
-        total_duration = 0
-        for seg in segments:
-            text = seg.get("text", "")
-            word_count = len(text.split())
-            # ~150 WPM = 2.5 words/sec, minimum 3 seconds
-            duration_estimate = max(3.0, word_count / 2.5)
-            seg["duration_estimate"] = round(duration_estimate, 1)
-            seg["duration_seconds"] = round(duration_estimate, 1)  # Initial estimate
-            total_duration += duration_estimate
-        narration["total_duration_seconds"] = round(total_duration, 1)
-    print(f"[V1.5-V2] Duration estimates calculated for all segments")
-    
-    # PHASE 5: Link images to visual_content
-    if saved_images:
-        status_callback(job_id, "image_linking", "Linking extracted images to content...")
-        _link_images_to_presentation(presentation, saved_images, str(output_path / "images"))
-        print(f"[V1.5-V2] Linked {len(saved_images)} images to presentation")
-    
-    # PHASE 6: Generate TTS audio (updates duration_seconds with actual values)
-    generate_tts = tts_provider != "estimate" and not dry_run
-    tts_start_time = time.time()
-    if generate_tts:
-        status_callback(job_id, "tts_generation", f"Generating TTS audio ({tts_provider})...")
-        try:
-            presentation = update_durations_simplified(
-                presentation=presentation,
-                output_dir=output_path,
-                production_provider=tts_provider
-            )
-            # Count TTS segments and audio files
-            tts_count = 0
-            tts_total_duration = 0
-            for section in presentation.get("sections", []):
-                segments = section.get("narration", {}).get("segments", [])
-                analytics_data["tts_segments"] += len(segments)
-                # Count segments that have audio_path
-                tts_count += sum(1 for s in segments if s.get("audio_path"))
-                # Sum up TTS audio duration
-                tts_total_duration += sum(s.get("duration_seconds", 0) for s in segments if s.get("audio_path"))
-            analytics_data["tts_count"] = tts_count
-            analytics_data["tts_duration_seconds"] = round(tts_total_duration, 2)
-            tts_time = time.time() - tts_start_time
-            analytics_data["tts_time_seconds"] = round(tts_time, 2)
-            analytics_data["phases"].append({
-                "phase": "tts_generation",
-                "duration_seconds": round(tts_time, 2),
-                "segments": tts_count,
-                "audio_duration": round(tts_total_duration, 2)
-            })
-            print(f"[V1.5-V2] TTS generation complete: {tts_count} audio files in {tts_time:.1f}s")
-        except Exception as e:
-            print(f"[V1.5-V2] TTS generation failed: {e}, using estimates")
-    
-    # Calculate total duration
-    for section in presentation.get("sections", []):
-        analytics_data["total_duration_seconds"] += section.get("narration", {}).get("total_duration_seconds", 0)
-    
-    # PHASE 7: Apply validations
-    status_callback(job_id, "validation", "Applying renderer policy validation...")
-    presentation = enforce_renderer_policy(presentation)
-    
-    # PHASE 8: Generate Manim code for manim sections
-    manim_failed_sections = []
-    manim_start_time = time.time()
-    if not dry_run:
-        status_callback(job_id, "manim_codegen", "Generating Manim code...")
-        manim_generator = ManimCodeGenerator()
+    try:
+        generate_tts = tts_provider not in ["estimate"]
         
-        for i, section in enumerate(presentation.get("sections", [])):
-            renderer = section.get("renderer", "none")
-            section_id = section.get("section_id", i + 1)
+        presentation, tracker = process_markdown_unified(
+            markdown_content=markdown_content,
+            subject=subject,
+            grade=grade,
+            job_id=job_id,
+            update_status_callback=status_callback,
+            generate_tts=generate_tts,
+            output_dir=output_path,
+            tts_provider=tts_provider,
+            dry_run=dry_run,
+            skip_wan=skip_wan,
+            images_dict=images_dict,
+            pipeline_version=pipeline_version,
+            generation_scope=generation_scope
+        )
+        
+        pres_path = output_path / "presentation.json"
+        with open(pres_path, "w") as f:
+            json.dump(presentation, f, indent=2)
             
-            if renderer == "manim":
-                analytics_data["manim_sections"] += 1
-                print(f"[V1.5-V2] Generating Manim code for section {section_id}")
-                
-                narration = section.get("narration", {})
-                segments = narration.get("segments", []) or section.get("segments", [])
-                visual_beats = section.get("visual_beats", [])
-                
-                manim_input = build_manim_section_data(
-                    section=section,
-                    narration_segments=segments,
-                    visual_beats=visual_beats,
-                    segment_enrichments=[]
-                )
-                
-                try:
-                    manim_code, validation_errors = manim_generator.generate(manim_input)
-                    
-                    if manim_code and len(manim_code) > 50:
-                        section = integrate_manim_code_into_section(section, manim_code)
-                        presentation["sections"][i] = section
-                        analytics_data["manim_success"] += 1
-                        print(f"[V1.5-V2] Manim code generated for section {section_id}")
-                    else:
-                        manim_failed_sections.append({
-                            "section_id": section_id,
-                            "error": "Empty or too short code",
-                            "validation_errors": validation_errors
-                        })
-                        analytics_data["manim_failed"] += 1
-                except Exception as e:
-                    manim_failed_sections.append({
-                        "section_id": section_id,
-                        "error": str(e)
-                    })
-                    analytics_data["manim_failed"] += 1
-                    print(f"[V1.5-V2] Manim code generation failed for section {section_id}: {e}")
-    
-    # Save manim failures for debugging
-    if manim_failed_sections:
-        failed_path = output_path / "manim_failed_sections.json"
-        with open(failed_path, "w") as f:
-            json.dump({"failed_count": len(manim_failed_sections), "sections": manim_failed_sections}, f, indent=2)
-    
-    # Update manim_videos count and timing
-    analytics_data["manim_videos"] = analytics_data["manim_success"]
-    manim_time = time.time() - manim_start_time
-    analytics_data["manim_time_seconds"] = round(manim_time, 2)
-    if analytics_data["manim_sections"] > 0:
-        analytics_data["phases"].append({
-            "phase": "manim_codegen",
-            "duration_seconds": round(manim_time, 2),
-            "sections": analytics_data["manim_sections"],
-            "success": analytics_data["manim_success"],
-            "failed": analytics_data["manim_failed"]
-        })
-    
-    # PHASE 9: Validate WAN prompts (80+ word requirement per Issue #6)
-    wan_validation_errors = []
-    if not dry_run and not skip_wan:
-        status_callback(job_id, "wan_validation", "Validating WAN video prompts...")
-        from core.wan_prompt_validator import validate_video_prompts
+        # Analytics handling
+        analytics_summary = tracker.get_summary() if hasattr(tracker, 'get_summary') else {}
+        # Ensure complete analytics dict is saved if get_summary is partial
+        if hasattr(tracker, 'to_dict'):
+            analytics_full = tracker.to_dict()
+            analytics_path = output_path / "analytics.json"
+            with open(analytics_path, "w") as f:
+                json.dump(analytics_full, f, indent=2)
         
-        for section in presentation.get("sections", []):
-            video_prompts = section.get("video_prompts", [])
-            if video_prompts:
-                section_id = section.get("section_id", 0)
-                is_valid, errors, warnings = validate_video_prompts(video_prompts, section_id, strict=False)
-                if warnings:
-                    print(f"[V1.5-V2] WAN validation warnings for section {section_id}: {warnings}")
-                if errors:
-                    print(f"[V1.5-V2] WAN validation errors for section {section_id}: {errors}")
-                    wan_validation_errors.extend(errors)
-                    # Mark section for skipping WAN render if prompts are invalid
-                    section["wan_validation_failed"] = True
+        # Auto-trigger Avatar Polling & Download
+        if not skip_avatar:
+            print(f"[AVATAR] Auto-triggering background generation task for Job {job_id}", flush=True)
+            from threading import Thread
+            if job_id not in ACTIVE_AVATAR_JOBS:
+                ACTIVE_AVATAR_JOBS.add(job_id)
+                thread = Thread(target=run_avatar_generation_task, args=(job_id, str(JOBS_DIR)))
+                thread.daemon = True
+                thread.start()
         
-        if wan_validation_errors:
-            print(f"[V1.5-V2] WARNING: {len(wan_validation_errors)} WAN prompt validation errors. Some videos may fail.")
-    
-    # PHASE 10: Render videos (Manim execution + WAN video generation)
-    video_render_start_time = time.time()
-    if not dry_run:
-        status_callback(job_id, "video_render", "Rendering videos (Manim + WAN)...")
-        videos_dir = output_path / "videos"
-        videos_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Reset WAN hash cache for this job to prevent cross-job duplicate detection
-        from render.wan.wan_runner import reset_wan_session
-        reset_wan_session()
-        
-        try:
-            rendered_videos = render_all_topics(
-                presentation=presentation,
-                output_dir=str(videos_dir),
-                dry_run=dry_run,
-                skip_wan=skip_wan,
-                output_dir_base=str(output_path)
-            )
-            
-            # Update presentation with video paths
-            for result in rendered_videos:
-                section_id_result = result.get("topic_id")
-                video_path = result.get("video_path")
-                beat_videos = result.get("beat_videos", [])
-                recap_video_paths = result.get("recap_video_paths", [])
-                
-                # Count WAN videos (renderer can be "wan", "video", or "wan_video")
-                renderer_type = result.get("renderer", "")
-                if result.get("status") == "success" and renderer_type in ("wan", "video", "wan_video"):
-                    analytics_data["wan_videos"] += 1
-                
-                for section in presentation.get("sections", []):
-                    if section.get("section_id") == section_id_result:
-                        if video_path:
-                            rel_path = Path(video_path).name if "/" in str(video_path) else video_path
-                            section["video_path"] = f"videos/{rel_path}"
-                        if beat_videos:
-                            section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
-                            visual_beats = section.get("visual_beats", [])
-                            for idx, beat_path in enumerate(beat_videos):
-                                if idx < len(visual_beats):
-                                    visual_beats[idx]["video_asset"] = f"videos/{Path(beat_path).name}"
-                            section["visual_beats"] = visual_beats
-                        if recap_video_paths:
-                            section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
-                            analytics_data["wan_videos"] += len(recap_video_paths)
-                        break
-            
-            success_count = sum(1 for r in rendered_videos if r.get("status") in ["success", "skipped"])
-            fail_count = sum(1 for r in rendered_videos if r.get("status") == "failed")
-            analytics_data["wan_success"] = analytics_data["wan_videos"]
-            analytics_data["wan_failed"] = fail_count
-            print(f"[V1.5-V2] Video rendering complete: {success_count} success, {fail_count} failed")
-        except Exception as e:
-            print(f"[V1.5-V2] Video rendering failed: {e}")
-    
-    # Record video rendering timing
-    video_render_time = time.time() - video_render_start_time
-    analytics_data["wan_time_seconds"] = round(video_render_time, 2)
-    if analytics_data["wan_videos"] > 0 or analytics_data.get("wan_failed", 0) > 0:
-        analytics_data["phases"].append({
-            "phase": "video_render",
-            "duration_seconds": round(video_render_time, 2),
-            "wan_videos": analytics_data["wan_videos"],
-            "manim_rendered": analytics_data["manim_videos"],
-            "failed": analytics_data.get("wan_failed", 0)
-        })
-    
-    # PHASE 11: Save final presentation and analytics
-    presentation["metadata"] = {
-        "generated_by": "v1.5-v2-unified",
-        "llm_calls": 1,
-        "llm_time_seconds": round(llm_time, 2),
-        "dry_run": dry_run
-    }
-    
-    # Count sections and segments
-    analytics_data["sections"] = len(presentation.get("sections", []))
-    total_segments = 0
-    for section in presentation.get("sections", []):
-        total_segments += len(section.get("narration", {}).get("segments", []))
-    analytics_data["segments"] = total_segments
-    
-    # Calculate total pipeline time
-    pipeline_total_time = time.time() - pipeline_start_time
-    analytics_data["pipeline_time_seconds"] = round(pipeline_total_time, 2)
-    analytics_data["status"] = "completed"
-    
-    pres_path = output_path / "presentation.json"
-    with open(pres_path, "w") as f:
-        json.dump(presentation, f, indent=2)
-    
-    analytics_path = output_path / "analytics.json"
-    with open(analytics_path, "w") as f:
-        json.dump(analytics_data, f, indent=2)
-    
-    status_callback(job_id, "complete", f"V2 pipeline complete: {analytics_data['sections']} sections, {analytics_data['manim_success']} manim, {analytics_data['wan_videos']} WAN videos")
-    
-    return {
-        "status": "success",
-        "presentation": presentation,
-        "analytics": analytics_data,
-        "output_path": str(pres_path),
-        "pipeline_version": "1.5-v2"
-    }
+        return {
+            "status": "success",
+            "presentation": presentation,
+            "analytics": analytics_summary,
+            "output_path": str(pres_path),
+            "pipeline_version": "1.5-unified"
+        }
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        print(f"[V1.5-V2 Pipeline Error] {str(e)}\n{tb}")
+        raise RuntimeError(f"Unified Pipeline Error: {e}")
 
 
-def _link_images_to_presentation(presentation: dict, saved_images: dict, images_dir: str) -> None:
-    """Link extracted images to visual_content in presentation segments.
+
     
-    Args:
-        presentation: The presentation dict to modify
-        saved_images: Dict of {original_name: {filename, path, width, height}} or {original_name: path_string}
-        images_dir: Path to images directory
-    """
-    from pathlib import Path
-    
-    # Build a lookup by image filename
-    image_lookup = {}
-    for orig_name, saved_info in saved_images.items():
-        # Handle both dict format {filename, path, ...} and string path format
-        if isinstance(saved_info, dict):
-            filename = saved_info.get('filename', orig_name)
-        else:
-            filename = Path(saved_info).name if saved_info else orig_name
-        image_lookup[orig_name.lower()] = filename
-        image_lookup[filename.lower()] = filename
-    
-    for section in presentation.get("sections", []):
-        for beat in section.get("visual_beats", []):
-            # Check if this beat references an image
-            image_id = beat.get("image_id", "")
-            if image_id:
-                # Try to find matching image
-                for key, filename in image_lookup.items():
-                    if key in image_id.lower() or image_id.lower() in key:
-                        beat["image_path"] = f"images/{filename}"
-                        break
-        
-        # Also check segments' visual_content
-        narration = section.get("narration", {})
-        for seg in narration.get("segments", []):
-            visual_content = seg.get("visual_content", {})
-            if visual_content.get("content_type") in ("image", "diagram"):
-                image_id = visual_content.get("image_id", "")
-                if image_id:
-                    for key, filename in image_lookup.items():
-                        if key in image_id.lower() or image_id.lower() in key:
-                            visual_content["image_path"] = f"images/{filename}"
-                            break
+
 
 
 @app.route("/process_pdf", methods=["POST"])
@@ -2437,7 +2129,11 @@ def generate_v15():
         
         generate_tts = tts_provider not in ["estimate"]
         
-        presentation, tracker = process_markdown_optimized(
+        
+        # Switch to Unified Pipeline (Single LLM) - Phase 16
+        from core.pipeline_unified import process_markdown_unified, PipelineUnifiedError
+        
+        presentation, tracker = process_markdown_unified(
             markdown_content=markdown_content,
             subject=subject,
             grade=grade,
@@ -2459,7 +2155,7 @@ def generate_v15():
         job_manager.update_job(job_id, {
             "status": "completed",
             "progress": 100,
-            "pipeline_version": "1.5"
+            "pipeline_version": "1.5-unified"
         }, persist=True)
         
         return jsonify({
@@ -2468,17 +2164,15 @@ def generate_v15():
             "presentation": presentation,
             "analytics": analytics_summary,
             "output_path": str(pres_path),
-            "pipeline_version": "1.5",
+            "pipeline_version": "1.5-unified",
             "skip_wan": skip_wan,
             "tts_provider": tts_provider
         })
         
-    except PipelineV15Error as e:
+    except PipelineUnifiedError as e:
         import traceback
         tb = traceback.format_exc()
-        print(f"[V1.5 Pipeline Error] Phase: {e.phase}")
-        print(f"[V1.5 Pipeline Error] Error: {str(e)}")
-        print(f"[V1.5 Pipeline Error] Traceback:\n{tb}")
+        print(f"[Results] Unified Pipeline Error: {str(e)}")
         if 'job_id' in locals():
             job_manager.fail_job(job_id, str(e), phase_key=e.phase)
         return jsonify({
@@ -2686,6 +2380,251 @@ def serve_job_assets(job_id, filename):
     if (PLAYER_DIR / filename).exists():
         return send_from_directory(PLAYER_DIR, filename)
     return jsonify({"error": "File not found"}), 404
+
+# --- Avatar Generation Endpoints ---
+
+@app.route("/job/<job_id>/generate_avatar", methods=["POST"])
+def generate_avatar(job_id):
+    """Trigger AI Avatar generation for a job."""
+    print(f"[AVATAR] Received request to generate for Job {job_id}", flush=True)
+    job_dir = JOBS_DIR / job_id
+    if not job_dir.exists():
+        return jsonify({"error": "Job not found"}), 404
+        
+    # Check if already running in memory
+    if job_id in ACTIVE_AVATAR_JOBS:
+        return jsonify({"status": "already_running", "message": "Avatar generation in progress (Active Thread)"}), 409
+            
+    # Start async task
+    ACTIVE_AVATAR_JOBS.add(job_id)
+    from threading import Thread
+    thread = Thread(target=run_avatar_generation_task, args=(job_id, str(JOBS_DIR)))
+    thread.daemon = True
+    thread.start()
+    
+    return jsonify({"status": "queued", "message": "Avatar generation started"})
+
+@app.route("/job/<job_id>/avatar_status", methods=["GET"])
+def get_avatar_status(job_id):
+    """Get AI Avatar generation status."""
+    job_dir = JOBS_DIR / job_id
+    status_file = job_dir / "avatar_status.json"
+    
+    if not status_file.exists():
+        # If it doesn't exist, it's either an old dead job or not started. 
+        # Return 404 to signal the client to STOP polling.
+        return jsonify({"state": "not_found", "message": "Job status not found or expired"}), 404
+        
+    try:
+        return jsonify(json.loads(status_file.read_text()))
+    except Exception as e:
+        return jsonify({"state": "error", "error": str(e)}), 500
+
+def run_avatar_generation_task(job_id, jobs_root):
+    """
+    Background worker to handle avatar generation workflow:
+    1. Read presentation.json
+    2. Iterate sections -> Preprocess text -> Submit to API
+    3. Poll status until complete
+    4. Download videos
+    5. Update presentation.json
+    """
+    from core.agents.avatar_generator import AvatarGenerator
+    import time
+    
+    print(f"[DEBUG] Starting avatar task for job {job_id} in {jobs_root}", flush=True)
+    job_dir = Path(jobs_root) / job_id
+    status_file = job_dir / "avatar_status.json"
+    presentation_file = job_dir / "presentation.json"
+    avatar_dir = job_dir / "avatars"
+    
+    try:
+        os.makedirs(avatar_dir, exist_ok=True)
+        print(f"[DEBUG] Avatar dir created at {avatar_dir}", flush=True)
+    except Exception as e:
+        print(f"[ERROR] Failed to create avatar dir: {e}", flush=True)
+        return
+
+    def update_status(state, message, progress=0, details=None):
+        print(f"[DEBUG] Status Update: {state} - {message}", flush=True)
+        data = {
+            "state": state,
+            "message": message,
+            "progress": progress,
+            "updated_at": time.time(),
+            "details": details or {}
+        }
+        try:
+            with open(status_file, "w") as f:
+                json.dump(data, f)
+        except Exception as e:
+             print(f"[ERROR] Failed to write status file {status_file}: {e}", flush=True)
+
+    try:
+        if not presentation_file.exists():
+            print(f"[ERROR] Presentation file not found at {presentation_file}", flush=True)
+            update_status("failed", "presentation.json not found")
+            return
+            
+        update_status("processing", "Initializing generator...", 5)
+        
+        with open(presentation_file, "r") as f:
+            presentation = json.load(f)
+            
+        generator = AvatarGenerator()
+        tasks = []
+        
+        # Initialize Analytics Tracker
+        from core.analytics import create_tracker
+        tracker = create_tracker(job_id)
+        analytics_file = job_dir / "analytics.json"
+        tracker.load_from_file(str(analytics_file))
+        
+        avatar_overall_start = time.time()
+        submission_times = {}
+        sections = presentation.get("sections", [])
+        total_sections = len(sections)
+        
+        update_status("processing", "Checking sections for avatar generation...", 10)
+        
+        # Use shared helper for consistency
+        results = generator.submit_parallel_job(presentation, job_id, str(JOBS_DIR / job_id))
+        
+        queued = len(results["queued"])
+        skipped = len(results["skipped"])
+        failed = len(results["failed"])
+        
+        # Add to tracking
+        for item in results["queued"]:
+            tasks.append({
+                "section_id": item["section_id"],
+                "task_id": item["task_id"],
+                "status": "queued"
+            })
+            submission_times[ item["task_id"] ] = time.time()
+            
+        # Add failed to tracking
+        for item in results["failed"]:
+            failed_tasks.append({
+                "section_id": item["section_id"],
+                "task_id": "failed",
+                "status": "failed_submit",
+                "error": item.get("error", "Unknown")
+            })
+            
+        if not tasks:
+            update_status("completed", f"Done. (Queued: {queued}, Skipped: {skipped}, Failed: {failed})", 100)
+            return
+
+        # 2. Poll & Download
+        active_tasks = list(tasks)
+        completed_tasks = []
+        failed_tasks = []
+        start_time = time.time()
+        
+        while active_tasks:
+            still_active = []
+            
+            # Calculate overall progress
+            total_count = len(tasks)
+            success_count = len(completed_tasks)
+            error_count = len(failed_tasks)
+            done_count = success_count + error_count
+            
+            base_progress = 30 + (done_count / total_count) * 60
+            
+            status_msg = f"Progress: {done_count}/{total_count} processed ({success_count} ready, {error_count} failed)"
+            if active_tasks:
+                status_msg += f" - {len(active_tasks)} still active..."
+            
+            details = {
+                "success": [t["section_id"] for t in completed_tasks],
+                "failed": [t["section_id"] for t in failed_tasks],
+                "active": [t["section_id"] for t in active_tasks]
+            }
+            
+            update_status("processing", status_msg, base_progress, details=details)
+            
+            for task in active_tasks:
+                task_id = task["task_id"]
+                section_id = task["section_id"]
+                
+                # Check API
+                try:
+                    status_res = generator.check_status(task_id)
+                    api_status = status_res.get("status")
+                    if api_status != "completed":
+                        print(f"[AVATAR] Task {task_id} (Sec {section_id}) status: {api_status}", flush=True)
+                except Exception as e:
+                    print(f"[ERROR] Status check failed for task {task_id}: {e}", flush=True)
+                    api_status = "error_check"
+                
+                if api_status == "completed":
+                    # Download
+                    output_filename = f"section_{section_id}_avatar.mp4"
+                    output_path = avatar_dir / output_filename
+                    
+                    if generator.download_video(task_id, str(output_path)):
+                        task["status"] = "downloaded"
+                        task["local_path"] = f"/jobs/{job_id}/avatars/{output_filename}"
+                        completed_tasks.append(task)
+                        
+                        # Track Analytics Detail
+                        duration = time.time() - submission_times.get(task_id, time.time())
+                        tracker.add_avatar_detail(str(section_id), duration, "success")
+                        
+                        # Update presentation.json immediately
+                        for sec in presentation["sections"]:
+                            if sec["section_id"] == section_id:
+                                sec["avatar_video"] = task["local_path"]
+                                sec["avatar_task_id"] = task_id
+                                break
+                        with open(presentation_file, "w") as f:
+                            json.dump(presentation, f, indent=2)
+                    else:
+                        task["status"] = "failed_download"
+                        failed_tasks.append(task)
+                        tracker.add_avatar_detail(str(section_id), 0, "failed_download")
+                        
+                elif api_status == "failed":
+                    task["status"] = "failed_api"
+                    failed_tasks.append(task)
+                    tracker.add_avatar_detail(str(section_id), 0, "failed_api", error=status_res.get("error"))
+                elif api_status == "error_check":
+                    # Potentially transient, but let's count attempts or just keep active?
+                    # For now, keep it active to retry check
+                    still_active.append(task)
+                else:
+                    still_active.append(task)
+            
+            active_tasks = still_active
+            time.sleep(5) # Poll interval
+            
+            if time.time() - start_time > 1800: # 30 min timeout
+                update_status("failed", "Timeout waiting for avatar generation", details=details)
+                return
+
+        final_msg = f"Completed: {len(completed_tasks)} successes, {len(failed_tasks)} failures"
+        update_status("completed", final_msg, 100, details={
+            "success": [t["section_id"] for t in completed_tasks],
+            "failed": [t["section_id"] for t in failed_tasks]
+        })
+
+        # Save Final Analytics
+        tracker.set_avatar_metrics(
+            total_sections=total_sections,
+            successful=len(completed_tasks),
+            failed=len(failed_tasks),
+            duration=time.time() - avatar_overall_start
+        )
+        tracker.save_to_file(str(analytics_file))
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        update_status("failed", f"Internal error: {str(e)}")
+    finally:
+        ACTIVE_AVATAR_JOBS.discard(job_id)
 
 if __name__ == "__main__":
     # Pre-flight check for LLM access

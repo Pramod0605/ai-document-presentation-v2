@@ -888,7 +888,20 @@ def _execute_spec_generated_render(
     # Sanitize the code to fix common LaTeX issues
     sanitized_code = _sanitize_manim_code(manim_code)
     
-    scene_wrapper = f'''
+    # V2 FULL CODE CHECK: If code is already a full scene, use it directly
+    is_full_code = "class " in sanitized_code and "(Scene):" in sanitized_code and "def construct" in sanitized_code
+    
+    if is_full_code:
+        scene_wrapper = sanitized_code
+        scene_class_name = "MainScene" # Default for V2
+        # Try to find actual class name if different
+        import re
+        match = re.search(r"class\s+(\w+)\(.*?Scene\):", sanitized_code)
+        if match:
+             scene_class_name = match.group(1)
+    else:
+        # Legacy V1: Wrap logic fragment
+        scene_wrapper = f'''
 from manim import *
 import numpy as np
 
@@ -896,7 +909,21 @@ class SpecGeneratedScene(Scene):
     def construct(self):
 {chr(10).join("        " + line for line in sanitized_code.split(chr(10)))}
 '''
-    
+        scene_class_name = "SpecGeneratedScene"
+
+    # PERSISTENCE: Save code to job/manim_code/section_{id}.py using output_dir context
+    # output_dir is typically .../jobs/{job_id}/videos
+    try:
+        job_dir = Path(output_path).parent.parent
+        code_dir = job_dir / "manim_code"
+        code_dir.mkdir(parents=True, exist_ok=True)
+        persistent_file = code_dir / f"section_{topic_id}.py"
+        with open(persistent_file, "w", encoding="utf-8") as f:
+            f.write(scene_wrapper)
+        print(f"[MANIM V2] Saved source code to: {persistent_file}")
+    except Exception as e:
+        print(f"[MANIM V2] Warning: Could not save persistent code: {e}")
+
     # Get environment with vendored LaTeX files
     env = _get_texinputs_env()
     
@@ -904,14 +931,16 @@ class SpecGeneratedScene(Scene):
         scene_file = Path(tmpdir) / "scene.py"
         with open(scene_file, "w") as f:
             f.write(scene_wrapper)
+        with open(scene_file, "w") as f:
+            f.write(scene_wrapper)
         
         cmd = [
             "manim", "render",
-            "-ql",
+            "-q", "l",
             "-o", "output.mp4",
             "--media_dir", tmpdir,
             str(scene_file),
-            "SpecGeneratedScene"
+            scene_class_name
         ]
         
         try:
@@ -977,7 +1006,7 @@ def _execute_manim_render(
         
         cmd = [
             "manim", "render",
-            "-ql",  # Low quality for speed
+            "-q", "l",  # Low quality for speed
             "-o", "output.mp4",
             "--media_dir", tmpdir,
             str(scene_file),

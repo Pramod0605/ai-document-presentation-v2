@@ -6,10 +6,10 @@ from typing import Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
-# Default to the known working free model if not specified
-DEFAULT_MODEL = "google/gemini-2.0-flash-exp:free"
-# Fallback model if the primary fails validation (optional, could be user config)
-FALLBACK_MODEL = "google/gemini-2.0-flash-exp:free" 
+# Default to Gemini 2.5 Flash (User Request: "Use Flash for everything")
+DEFAULT_MODEL = "google/gemini-2.5-flash"
+# Fallback model - sticking to Flash as requested
+FALLBACK_MODEL = "google/gemini-2.5-flash" 
 
 def get_model_name() -> str:
     """Get the configured model name from environment or default."""
@@ -17,7 +17,12 @@ def get_model_name() -> str:
 
 def get_fallback_model_name() -> str:
     """Get the configured fallback model name from environment."""
-    return os.environ.get("OPENROUTER_MODEL_FALLBACK", "google/gemini-2.5-flash")
+    return os.environ.get("OPENROUTER_MODEL_FALLBACK", FALLBACK_MODEL)
+
+def get_manim_model_name() -> str:
+    """Get the configured Manim model name from environment."""
+    # Keeping Claude/Sonnet for Manim Code Generation as it is specialized
+    return os.environ.get("MANIM_LLM_MODEL", "anthropic/claude-3.5-sonnet")
 
 def get_api_key() -> Optional[str]:
     """Get the API key from environment."""

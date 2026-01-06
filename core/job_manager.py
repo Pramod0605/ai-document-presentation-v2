@@ -91,6 +91,7 @@ class JobManager:
         self._jobs: Dict[str, dict] = load_jobs_index()
         self._lock = threading.Lock()
         self._executor = ThreadPoolExecutor(max_workers=4)  # Allow 4 parallel jobs
+        self.cleanup_stale_jobs()
     
     def _persist(self):
         """Save current jobs state to disk."""
@@ -223,6 +224,50 @@ class JobManager:
             "status": "processing",
             "started_at": datetime.now().isoformat()
         }, persist=True)
+
+    def cleanup_stale_jobs(self):
+        """
+        Mark jobs that were interrupted (server crash/restart) as failed.
+        Also cleans up stuck avatar statuses.
+        """
+        changed = False
+        interrupted_count = 0
+        
+        # 1. Pipeline Jobs Cleanup
+        for job_id, job in self._jobs.items():
+            if job.get("status") in ["processing", "running", "queued"]:
+                job["status"] = "failed"
+                job["error"] = "Process interrupted (Server Restart)"
+                job["failure_message"] = "The process was interrupted because the server was restarted."
+                job["completed_at"] = datetime.now().isoformat()
+                interrupted_count += 1
+                changed = True
+        
+        if changed:
+            log(f"[Janitor] Cleaned up {interrupted_count} stale pipeline jobs.")
+            self._persist()
+
+        # 2. Avatar Status Cleanup (Local file based)
+        try:
+            cleaned_avatars = 0
+            if JOBS_DIR.exists():
+                for job_folder in JOBS_DIR.iterdir():
+                    if job_folder.is_dir():
+                        status_file = job_folder / "avatar_status.json"
+                        if status_file.exists():
+                            try:
+                                data = json.loads(status_file.read_text())
+                                if data.get("state") == "processing":
+                                    data["state"] = "failed"
+                                    data["error"] = "Avatar generation was interrupted due to server restart."
+                                    status_file.write_text(json.dumps(data, indent=2))
+                                    cleaned_avatars += 1
+                            except Exception:
+                                pass
+            if cleaned_avatars > 0:
+                log(f"[Janitor] Cleaned up {cleaned_avatars} stuck avatar tasks.")
+        except Exception as e:
+            log(f"[Janitor] Avatar cleanup failed: {e}")
 
 
 job_manager = JobManager()
