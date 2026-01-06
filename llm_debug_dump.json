@@ -1,0 +1,1347 @@
+{
+  "presentation_title": "Arithmetic Progression",
+  "sections": [
+    {
+      "section_id": "section_1",
+      "section_type": "intro",
+      "title": "Introduction to Arithmetic Progression",
+      "derived_renderer": "none",
+      "decision_reason": "Introductory section, best delivered by avatar only to set the stage.",
+      "narration": {
+        "full_text": "Hello students! Welcome to our session on Arithmetic Progression. Have you ever noticed patterns in nature, like the arrangement of sunflower petals or the spirals in a pineapple? Or perhaps in your daily life, like roll numbers in a class or the days of the week? Mathematics often helps us understand these patterns. Today, we're going to explore a specific type of pattern called an Arithmetic Progression, or AP. We'll learn what defines an AP, how to find any term in the sequence, and how to calculate the sum of multiple terms. This knowledge will not only help us with mathematical problems but also in solving real-world scenarios. Let's dive in and discover the fascinating world of Arithmetic Progressions!",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Hello students! Welcome to our session on Arithmetic Progression. Have you ever noticed patterns in nature, like the arrangement of sunflower petals or the spirals in a pineapple?",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Or perhaps in your daily life, like roll numbers in a class or the days of the week? Mathematics often helps us understand these patterns.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Today, we're going to explore a specific type of pattern called an Arithmetic Progression, or AP. We'll learn what defines an AP, how to find any term in the sequence, and how to calculate the sum of multiple terms.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "This knowledge will not only help us with mathematical problems but also in solving real-world scenarios. Let's dive in and discover the fascinating world of Arithmetic Progressions!",
+            "purpose": "conclude",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": []
+    },
+    {
+      "section_id": "section_2",
+      "section_type": "summary",
+      "title": "Learning Objectives",
+      "derived_renderer": "none",
+      "decision_reason": "Summary section, bullet points are ideal for outlining learning objectives clearly.",
+      "narration": {
+        "full_text": "By the end of this lesson, you will be able to define an arithmetic progression and identify its key components, such as the first term and common difference. You will learn how to determine if a given list of numbers forms an AP. Furthermore, you will be able to calculate the nth term of an AP using a specific formula. We will also cover how to compute the sum of the first 'n' terms of an AP. Finally, you'll be able to apply these concepts to solve various real-life problems involving arithmetic progressions, enhancing your problem-solving skills in practical contexts.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "By the end of this lesson, you will be able to define an arithmetic progression and identify its key components, such as the first term and common difference.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "You will learn how to determine if a given list of numbers forms an AP. Furthermore, you will be able to calculate the nth term of an AP using a specific formula.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "We will also cover how to compute the sum of the first 'n' terms of an AP. Finally, you'll be able to apply these concepts to solve various real-life problems involving arithmetic progressions, enhancing your problem-solving skills in practical contexts.",
+            "purpose": "conclude",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "bullet_list",
+          "display_text": "- Define an arithmetic progression and its components.\n- Identify if a list of numbers forms an AP.",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "bullet_list",
+          "display_text": "- Calculate the nth term of an AP.\n- Compute the sum of the first 'n' terms of an AP.",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "bullet_list",
+          "display_text": "- Apply AP concepts to solve real-life problems.",
+          "latex_content": null,
+          "image_id": null
+        }
+      ]
+    },
+    {
+      "section_id": "section_3",
+      "section_type": "content",
+      "title": "What is an Arithmetic Progression?",
+      "derived_renderer": "manim",
+      "decision_reason": "Defining AP and common difference involves mathematical examples and definitions, which Manim can animate clearly.",
+      "narration": {
+        "full_text": "An arithmetic progression, or AP, is a special sequence of numbers where each term, after the first, is obtained by adding a fixed number to the preceding term. This fixed number is incredibly important and is called the common difference, denoted by 'd'. The common difference can be a positive value, meaning the terms are increasing; a negative value, meaning the terms are decreasing; or even zero, resulting in a sequence where all terms are the same. For example, consider the sequence 10, 20, 30, 40. Here, each term is obtained by adding 10 to the previous one, so the common difference 'd' is 10. In another sequence, such as -1, 0, 1, 2, 3, the common difference is 1. The general form of an AP is represented as a, a + d, a + 2d, a + 3d, and so on, where 'a' is the first term. Understanding 'a' and 'd' allows us to generate any AP.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "An arithmetic progression, or AP, is a special sequence of numbers where each term, after the first, is obtained by adding a fixed number to the preceding term.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "This fixed number is incredibly important and is called the common difference, denoted by 'd'. The common difference can be a positive value, meaning the terms are increasing; a negative value, meaning the terms are decreasing; or even zero, resulting in a sequence where all terms are the same.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "For example, consider the sequence 10, 20, 30, 40. Here, each term is obtained by adding 10 to the previous one, so the common difference 'd' is 10. In another sequence, such as -1, 0, 1, 2, 3, the common difference is 1.",
+            "purpose": "example",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "The general form of an AP is represented as a, a + d, a + 2d, a + 3d, and so on, where 'a' is the first term. Understanding 'a' and 'd' allows us to generate any AP.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "display_text": "An arithmetic progression is a list of numbers in which each term is obtained by adding a fixed number to the preceding term except the first term.",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "bullet_list",
+          "display_text": "This fixed number is called the common difference (c.d).\nIt can be positive, negative or zero.",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "text",
+          "display_text": "Example: 10, 20, 30, 40 .... (d = 10)\nExample: -1, 0, 1, 2, 3 .... (d = 1)",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "equation",
+          "display_text": null,
+          "latex_content": "a, a + d, a + 2d, a + 3d, \\dots",
+          "image_id": null
+        }
+      ],
+      "manim_specs": [
+        {
+          "beat_id": "beat_3",
+          "manim_spec": "Display the sequence '10, 20, 30, 40...' centered on the screen. Highlight '10' as the first term in blue. Then, animate arrows showing '+10' between each consecutive term. After this, transition to display the sequence '-1, 0, 1, 2, 3...' centered. Highlight '-1' as the first term in green. Animate arrows showing '+1' between each consecutive term. Ensure the common difference 'd' is clearly labeled for each sequence, possibly appearing in a small text box next to the arrows. The background should be a subtle gradient. Ensure smooth transitions between the two examples, making it easy to follow the pattern recognition. Each sequence should stay on screen for about 5 seconds, with transitions taking 2 seconds.",
+          "duration_hint": 12
+        },
+        {
+          "beat_id": "beat_4",
+          "manim_spec": "Display the general form of an AP: 'a, a + d, a + 2d, a + 3d, ...' using clear, legible mathematical typesetting. Highlight 'a' in blue as 'first term' and 'd' in green as 'common difference'. Animate the terms appearing one by one, with 'a' appearing first, then 'a+d', then 'a+2d', etc. Each new term should be accompanied by a small animation showing ' + d' being added to the previous term. The text 'General form of an AP' should appear above the sequence. The background should be clean and white, allowing the mathematical expressions to stand out. Ensure the animation is smooth and easy to follow, lasting around 10 seconds.",
+          "duration_hint": 10
+        }
+      ]
+    },
+    {
+      "section_id": "section_4",
+      "section_type": "content",
+      "title": "Common Difference and Types of APs",
+      "derived_renderer": "manim",
+      "decision_reason": "Explaining common difference calculation and types of APs (finite/infinite) involves formulas and examples, suitable for Manim animation.",
+      "narration": {
+        "full_text": "To find the common difference 'd' in an AP, we simply subtract any term from its succeeding term. So, 'd' equals the second term minus the first term, or the third term minus the second term, and so on. This difference must be consistent throughout the sequence for it to be an AP. For instance, in the sequence 1, 2, 3, 4, the common difference is 1. If we look at 100, 70, 40, 10, the common difference is -30. An AP can be classified as either finite or infinite. A finite AP has a limited number of terms and, therefore, a last term. Examples include the heights of students in a queue, which might be 147, 148, up to 157 centimeters. Or the balance money after paying off a loan, decreasing from 950 to 50 rupees. In contrast, an infinite AP continues indefinitely, having no last term, like the sequence 3, 7, 11, and so on, extending infinitely. Knowing the first term 'a' and the common difference 'd' is enough to construct any AP.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "To find the common difference 'd' in an AP, we simply subtract any term from its succeeding term. So, 'd' equals the second term minus the first term, or the third term minus the second term, and so on.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "This difference must be consistent throughout the sequence for it to be an AP. For instance, in the sequence 1, 2, 3, 4, the common difference is 1. If we look at 100, 70, 40, 10, the common difference is -30.",
+            "purpose": "example",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "An AP can be classified as either finite or infinite. A finite AP has a limited number of terms and, therefore, a last term. Examples include the heights of students in a queue, which might be 147, 148, up to 157 centimeters. Or the balance money after paying off a loan, decreasing from 950 to 50 rupees.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "In contrast, an infinite AP continues indefinitely, having no last term, like the sequence 3, 7, 11, and so on, extending infinitely. Knowing the first term 'a' and the common difference 'd' is enough to construct any AP.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "equation",
+          "display_text": null,
+          "latex_content": "d = a_2 - a_1 = a_3 - a_2 = \\dots = a_n - a_{n-1}",
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "bullet_list",
+          "display_text": "Ex 1: 1, 2, 3, 4,............ (d = 1)\nEx 2: 100, 70, 40, 10,............ (d = -30)",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "bullet_list",
+          "display_text": "Finite AP: Has a finite number of terms and a last term.\nExample: 147, 148, ..., 157 (heights of students).",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "bullet_list",
+          "display_text": "Infinite AP: Has an infinite number of terms and no last term.\nExample: 3, 7, 11, ...",
+          "latex_content": null,
+          "image_id": null
+        }
+      ],
+      "manim_specs": [
+        {
+          "beat_id": "beat_1",
+          "manim_spec": "Display the formula for common difference: 'd = a_2 - a_1 = a_3 - a_2 = ... = a_n - a_{n-1}'. Highlight 'd' in blue. Animate arrows showing the subtraction process between consecutive terms, for example, 'a_2 - a_1' resolving to 'd'. Demonstrate that this difference is constant across multiple pairs of terms in the sequence. The formula should be clearly typeset and centered. Use a dark blue background with white text for high contrast. The animation should last about 10 seconds, with each subtraction step highlighted for 2 seconds.",
+          "duration_hint": 10
+        },
+        {
+          "beat_id": "beat_2",
+          "manim_spec": "Show two examples of APs. First, display '1, 2, 3, 4, ...' and animate the calculation '2-1=1', '3-2=1', confirming d=1. Second, display '100, 70, 40, 10, ...' and animate '70-100=-30', '40-70=-30', confirming d=-30. Use different colors for positive and negative common differences. The numbers should appear sequentially, with the calculation for 'd' becoming visible below each sequence. A small text box showing 'd = [value]' should appear next to each sequence. The animation should be clear and concise, showing the pattern of common difference. The total duration should be around 15 seconds.",
+          "duration_hint": 15
+        }
+      ]
+    },
+    {
+      "section_id": "section_5",
+      "section_type": "content",
+      "title": "The nth Term of an AP",
+      "derived_renderer": "manim",
+      "decision_reason": "Deriving and applying the nth term formula is a core mathematical concept that Manim can visualize effectively.",
+      "narration": {
+        "full_text": "One of the most powerful aspects of arithmetic progressions is the ability to find any term in the sequence without listing all of them. This is done using the formula for the nth term: a_n = a + (n - 1)d. Here, 'a_n' represents the nth term you want to find, 'a' is the first term of the AP, 'n' is the position of the term in the sequence, and 'd' is the common difference. For example, if we want to find the 10th term of the AP: 2, 7, 12, we identify 'a' as 2, 'd' as 5, and 'n' as 10. Plugging these values into the formula, we get a_10 = 2 + (10 - 1) * 5, which simplifies to 2 + 9 * 5, resulting in 2 + 45, making the 10th term 47. This formula allows us to quickly jump to any term, no matter how far along in the sequence it is. Furthermore, we can also calculate the nth term from the last, using a similar formula: l - (n-1)d, where 'l' is the last term.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "One of the most powerful aspects of arithmetic progressions is the ability to find any term in the sequence without listing all of them. This is done using the formula for the nth term: a_n = a + (n - 1)d.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Here, 'a_n' represents the nth term you want to find, 'a' is the first term of the AP, 'n' is the position of the term in the sequence, and 'd' is the common difference.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "For example, if we want to find the 10th term of the AP: 2, 7, 12, we identify 'a' as 2, 'd' as 5, and 'n' as 10. Plugging these values into the formula, we get a_10 = 2 + (10 - 1) * 5, which simplifies to 2 + 9 * 5, resulting in 2 + 45, making the 10th term 47.",
+            "purpose": "example",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "This formula allows us to quickly jump to any term, no matter how far along in the sequence it is. Furthermore, we can also calculate the nth term from the last, using a similar formula: l - (n-1)d, where 'l' is the last term.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "equation",
+          "display_text": null,
+          "latex_content": "a_n = a + (n - 1)d",
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "bullet_list",
+          "display_text": "a_n: nth term\na: first term\nn: term number\nd: common difference",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "equation",
+          "display_text": "Example: Find the 10th term of the AP :2, 7, 12 ...",
+          "latex_content": "a = 2, d = 7 - 2 = 5, n = 10 \\\\ a_{10} = 2 + (10 - 1)5 = 2 + 9 \\times 5 = 2 + 45 = 47",
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "equation",
+          "display_text": "nth term from the last:",
+          "latex_content": "l - (n - 1)d",
+          "image_id": null
+        }
+      ],
+      "manim_specs": [
+        {
+          "beat_id": "beat_1",
+          "manim_spec": "Display the nth term formula 'a_n = a + (n - 1)d' prominently in the center of the screen. Animate the 'a_n' appearing first, then the equals sign, and then the rest of the formula term by term, with a slight pause between 'a' and '(n-1)d'. Use a clean, professional font. The background should be a subtle grid pattern. The formula should remain on screen for about 8 seconds, allowing viewers to absorb it. The overall aesthetic should be clear and academic.",
+          "duration_hint": 8
+        },
+        {
+          "beat_id": "beat_3",
+          "manim_spec": "Present the problem: 'Find the 10th term of the AP: 2, 7, 12...'. Then, clearly show the identification of variables: 'a = 2', 'd = 5', 'n = 10'. Animate the substitution of these values into the nth term formula: 'a_10 = 2 + (10 - 1)5'. Show the step-by-step simplification: 'a_10 = 2 + (9)5', then 'a_10 = 2 + 45', concluding with 'a_10 = 47'. Each step should be highlighted as it's computed, using different colors for variables and results. The final answer '47' should be boxed. The animation should be smooth, with each calculation taking approximately 2-3 seconds, total duration around 15 seconds.",
+          "duration_hint": 15
+        }
+      ]
+    },
+    {
+      "section_id": "section_6",
+      "section_type": "content",
+      "title": "Sum of First n Terms of an AP",
+      "derived_renderer": "manim",
+      "decision_reason": "Presenting the formula for the sum of an AP and its application for examples is best visualized using Manim for step-by-step calculation clarity.",
+      "narration": {
+        "full_text": "Beyond finding individual terms, we often need to calculate the sum of the first 'n' terms of an arithmetic progression. There are two main formulas for this. The primary formula for the sum S_n is: S_n = n/2 * [2a + (n - 1)d]. Here, 'n' is the number of terms, 'a' is the first term, and 'd' is the common difference. This formula is incredibly versatile as it only requires the first term, common difference, and the number of terms. For instance, to find the sum of the first 22 terms of the AP: 8, 3, -2, we identify 'a' as 8, 'd' as -5, and 'n' as 22. Substituting these into the formula gives us S_22 = 22/2 * [2 * 8 + (22 - 1) * (-5)], which simplifies to 11 * [16 + 21 * (-5)], leading to 11 * [16 - 105], and finally S_22 = -979. A simpler formula can be used if you know the last term, 'l': S_n = n/2 * [a + l]. This is particularly useful when the last term is already given.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Beyond finding individual terms, we often need to calculate the sum of the first 'n' terms of an arithmetic progression. There are two main formulas for this.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "The primary formula for the sum S_n is: S_n = n/2 * [2a + (n - 1)d]. Here, 'n' is the number of terms, 'a' is the first term, and 'd' is the common difference. This formula is incredibly versatile as it only requires the first term, common difference, and the number of terms.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "For instance, to find the sum of the first 22 terms of the AP: 8, 3, -2, we identify 'a' as 8, 'd' as -5, and 'n' as 22. Substituting these into the formula gives us S_22 = 22/2 * [2 * 8 + (22 - 1) * (-5)], which simplifies to 11 * [16 + 21 * (-5)], leading to 11 * [16 - 105], and finally S_22 = -979.",
+            "purpose": "example",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "A simpler formula can be used if you know the last term, 'l': S_n = n/2 * [a + l]. This is particularly useful when the last term is already given.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "equation",
+          "display_text": null,
+          "latex_content": "S = \\frac{n}{2}[2a + (n - 1)d]",
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "bullet_list",
+          "display_text": "S: sum of n terms\nn: number of terms\na: first term\nd: common difference",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "equation",
+          "display_text": "Example: Find the sum of the first 22 terms of the AP: 8, 3, -2, ...",
+          "latex_content": "a = 8, d = -5, n = 22 \\\\ S_{22} = \\frac{22}{2}[2 \\times 8 + (22 - 1)(-5)] \\\\ S_{22} = 11[16 + 21(-5)] \\\\ S_{22} = 11[16 - 105] \\\\ S_{22} = -979",
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "equation",
+          "display_text": "Sum when last term 'l' is known:",
+          "latex_content": "S = \\frac{n}{2}[a + l]",
+          "image_id": null
+        }
+      ],
+      "manim_specs": [
+        {
+          "beat_id": "beat_1",
+          "manim_spec": "Display the sum formula 'S = n/2 * [2a + (n - 1)d]' in a large, bold font, centered on a dark blue background. The formula should appear with a slight glow effect. Then, animate the labels 'S', 'n', 'a', and 'd' appearing and briefly highlighting their positions within the formula. This visual should emphasize the structure and components of the sum formula. The animation should be smooth and captivating, lasting approximately 8-10 seconds, ensuring each element is clearly visible and understandable.",
+          "duration_hint": 10
+        },
+        {
+          "beat_id": "beat_3",
+          "manim_spec": "Present the problem: 'Find the sum of the first 22 terms of the AP: 8, 3, -2, ...'. Clearly display the identified values: 'a = 8', 'd = -5', 'n = 22'. Animate the substitution of these values into the sum formula: 'S_22 = 22/2 * [2 * 8 + (22 - 1)(-5)]'. Proceed with step-by-step simplification, highlighting each calculation: 'S_22 = 11 * [16 + 21(-5)]', then 'S_22 = 11 * [16 - 105]', and finally 'S_22 = 11 * (-89) = -979'. The final answer should be boxed in a contrasting color. Each calculation step should be clearly animated, taking about 3 seconds, for a total duration of 18-20 seconds.",
+          "duration_hint": 20
+        }
+      ]
+    },
+    {
+      "section_id": "section_7",
+      "section_type": "example",
+      "title": "Worked Examples of AP Identification",
+      "derived_renderer": "manim",
+      "decision_reason": "Identifying APs and finding next terms requires step-by-step calculation and comparison, which Manim can illustrate effectively.",
+      "narration": {
+        "full_text": "Let's apply what we've learned to determine if a list of numbers forms an AP and, if so, find its next terms. For the sequence 4, 10, 16, 22, we calculate the differences between consecutive terms: 10 minus 4 is 6, 16 minus 10 is 6, and 22 minus 16 is 6. Since the common difference is constant at 6, this is indeed an AP. The next two terms would be 22 plus 6, which is 28, and 28 plus 6, which is 34. Now consider -2, 2, -2, 2. Here, 2 minus -2 is 4, but -2 minus 2 is -4. Since the differences are not consistent, this sequence does not form an AP. Similarly, for 1, 1, 1, 2, 2, 2, 3, 3, 3, the difference between the first two terms is 0, but between the third and fourth terms, it's 1. Again, inconsistency means it's not an AP. It's crucial to check all consecutive differences to confirm an AP.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Let's apply what we've learned to determine if a list of numbers forms an AP and, if so, find its next terms. For the sequence 4, 10, 16, 22, we calculate the differences between consecutive terms: 10 minus 4 is 6, 16 minus 10 is 6, and 22 minus 16 is 6.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Since the common difference is constant at 6, this is indeed an AP. The next two terms would be 22 plus 6, which is 28, and 28 plus 6, which is 34.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Now consider -2, 2, -2, 2. Here, 2 minus -2 is 4, but -2 minus 2 is -4. Since the differences are not consistent, this sequence does not form an AP.",
+            "purpose": "example",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Similarly, for 1, 1, 1, 2, 2, 2, 3, 3, 3, the difference between the first two terms is 0, but between the third and fourth terms, it's 1. Again, inconsistency means it's not an AP. It's crucial to check all consecutive differences to confirm an AP.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "display_text": "i) 4, 10, 16, 22...",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "equation",
+          "display_text": null,
+          "latex_content": "a_2 - a_1 = 10 - 4 = 6 \\\\ a_3 - a_2 = 16 - 10 = 6 \\\\ a_4 - a_3 = 22 - 16 = 6 \\\\ \\text{Next two terms: } 28, 34",
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "text",
+          "display_text": "iii) -2, 2, -2, 2...",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "equation",
+          "display_text": null,
+          "latex_content": "a_2 - a_1 = 2 - (-2) = 4 \\\\ a_3 - a_2 = -2 - 2 = -4 \\\\ \\text{Not an AP as } a_{k+1} \\neq a_k",
+          "image_id": null
+        }
+      ],
+      "manim_specs": [
+        {
+          "beat_id": "beat_1",
+          "manim_spec": "Display the sequence '4, 10, 16, 22...' prominently. Animate the calculation of differences: '10 - 4 = 6', '16 - 10 = 6', '22 - 16 = 6'. Each calculation should appear below the corresponding terms, with '6' highlighted in green. A text box 'Common difference d = 6' should then appear. The sequence should be clearly visible with a dark background and white numbers. The animation should flow smoothly, emphasizing the common difference, lasting about 10-12 seconds.",
+          "duration_hint": 12
+        },
+        {
+          "beat_id": "beat_2",
+          "manim_spec": "Following the previous calculation, display 'Next two terms:' and then animate '22 + 6 = 28' and '28 + 6 = 34'. These next terms should appear as part of the sequence '4, 10, 16, 22, 28, 34'. The newly added terms should be highlighted in a different color, such as yellow. The animation should be quick and clear, building on the previous visual. This part should last approximately 5-7 seconds.",
+          "duration_hint": 7
+        },
+        {
+          "beat_id": "beat_3",
+          "manim_spec": "Display the sequence '-2, 2, -2, 2...'. Animate the calculation of differences: '2 - (-2) = 4' and '-2 - 2 = -4'. Show a clear visual comparison between '4' and '-4', perhaps with a 'not equal' symbol. A text box 'Not an AP' should appear, explaining 'differences are not constant'. Use contrasting colors for the terms and calculations. The animation should emphasize the inconsistency, lasting about 10-12 seconds with clear transitions.",
+          "duration_hint": 12
+        },
+        {
+          "beat_id": "beat_4",
+          "manim_spec": "Display the sequence '1, 1, 1, 2, 2, 2, 3, 3, 3...'. Animate the calculation of differences: '1 - 1 = 0' then '2 - 1 = 1'. Clearly show that '0' is not equal to '1'. A text box 'Not an AP' should appear, reinforcing the concept that all consecutive differences must be the same. The numbers should be easy to read, and the animation should clearly demonstrate the check for common difference. This visual should last around 10 seconds.",
+          "duration_hint": 10
+        }
+      ]
+    },
+    {
+      "section_id": "section_8",
+      "section_type": "example",
+      "title": "Solving for AP Properties",
+      "derived_renderer": "manim",
+      "decision_reason": "Solving for unknown 'a', 'd', 'n', or 'a_n' when other parameters are given involves algebraic manipulation and formula application, which Manim can clearly animate.",
+      "narration": {
+        "full_text": "Let's work through some examples where we determine properties of an AP given certain information. If we have an AP where the 3rd term is 5 and the 7th term is 9, we can find the common difference 'd' and the first term 'a'. We know that a_3 = a + 2d = 5 and a_7 = a + 6d = 9. By subtracting the first equation from the second, we get 4d = 4, which means d = 1. Substituting d = 1 back into the first equation, a + 2(1) = 5, we find that a = 3. So the AP is 3, 4, 5, 6, and so on. In another scenario, consider how many two-digit numbers are divisible by 3. The first two-digit number divisible by 3 is 12, and the last is 99. This forms an AP: 12, 15, ..., 99, with a = 12 and d = 3. Using the formula a_n = a + (n - 1)d, we set a_n = 99 and solve for 'n': 99 = 12 + (n - 1)3. This simplifies to 87 = (n - 1)3, so n - 1 = 29, which means n = 30. Therefore, there are 30 two-digit numbers divisible by 3.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Let's work through some examples where we determine properties of an AP given certain information. If we have an AP where the 3rd term is 5 and the 7th term is 9, we can find the common difference 'd' and the first term 'a'.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "We know that a_3 = a + 2d = 5 and a_7 = a + 6d = 9. By subtracting the first equation from the second, we get 4d = 4, which means d = 1. Substituting d = 1 back into the first equation, a + 2(1) = 5, we find that a = 3.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "So the AP is 3, 4, 5, 6, and so on. In another scenario, consider how many two-digit numbers are divisible by 3. The first two-digit number divisible by 3 is 12, and the last is 99.",
+            "purpose": "example",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "This forms an AP: 12, 15, ..., 99, with a = 12 and d = 3. Using the formula a_n = a + (n - 1)d, we set a_n = 99 and solve for 'n': 99 = 12 + (n - 1)3. This simplifies to 87 = (n - 1)3, so n - 1 = 29, which means n = 30. Therefore, there are 30 two-digit numbers divisible by 3.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "display_text": "Example 5: Determine the AP whose 3rd term is 5 and the 7th term is 9.",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "equation",
+          "display_text": null,
+          "latex_content": "a + 2d = 5 \\\\ a + 6d = 9 \\\\ \\Rightarrow 4d = 4 \\Rightarrow d = 1 \\\\ a + 2(1) = 5 \\Rightarrow a = 3",
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "text",
+          "display_text": "AP: 3, 4, 5, 6, ...\nExample 7: How many two-digit numbers are divisible by 3?",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "equation",
+          "display_text": null,
+          "latex_content": "a = 12, d = 3, a_n = 99 \\\\ a_n = a + (n - 1)d \\\\ 99 = 12 + (n - 1)3 \\\\ 87 = (n - 1)3 \\\\ n - 1 = 29 \\Rightarrow n = 30",
+          "image_id": null
+        }
+      ],
+      "manim_specs": [
+        {
+          "beat_id": "beat_1",
+          "manim_spec": "Display the problem statement: 'Determine the AP whose 3rd term is 5 and the 7th term is 9.' in a clear, readable font. This should be presented as a title or question at the top of the screen. The background should be a subtle, calm color. The text should be static for about 5 seconds to ensure comprehension before the solution begins. This sets up the context for the subsequent mathematical steps.",
+          "duration_hint": 5
+        },
+        {
+          "beat_id": "beat_2",
+          "manim_spec": "Animate the two equations 'a + 2d = 5' and 'a + 6d = 9' appearing on screen, stacked vertically. Highlight the subtraction process by drawing a line below the equations and animating the result: '-4d = -4'. Then, solve for 'd': 'd = 1'. Next, animate the substitution of 'd = 1' into 'a + 2d = 5', showing 'a + 2(1) = 5', and then solving for 'a': 'a = 3'. Each step should be clearly presented with highlighting and smooth transitions. The background should be a dark, contrasting color to make the equations stand out. This animation should be about 15 seconds long, detailing each algebraic step.",
+          "duration_hint": 15
+        },
+        {
+          "beat_id": "beat_3",
+          "manim_spec": "Display the resulting AP: '3, 4, 5, 6, ...' to reinforce the solution from the previous step. Then, transition to the new problem statement: 'How many two-digit numbers are divisible by 3?'. This transition should be smooth, perhaps by fading out the previous AP and fading in the new question. The new problem should be centered and clearly visible. This segment should last about 7 seconds, providing time to read the new problem.",
+          "duration_hint": 7
+        },
+        {
+          "beat_id": "beat_4",
+          "manim_spec": "Animate the identification of the AP: '12, 15, ..., 99'. Clearly state 'a = 12', 'd = 3', 'a_n = 99'. Then, substitute these values into the formula 'a_n = a + (n - 1)d': '99 = 12 + (n - 1)3'. Show the algebraic steps to solve for 'n': '87 = (n - 1)3', 'n - 1 = 29', and finally 'n = 30'. Each step should be individually animated and highlighted. The final answer 'n = 30' should be boxed. The animation should be approximately 15-18 seconds, detailing each calculation for clarity.",
+          "duration_hint": 18
+        }
+      ]
+    },
+    {
+      "section_id": "section_9",
+      "section_type": "example",
+      "title": "Real-World AP Problems",
+      "derived_renderer": "video",
+      "decision_reason": "Real-world problems involving APs are best illustrated with video prompts that depict the scenario, making the abstract concepts tangible and relatable to students.",
+      "narration": {
+        "full_text": "Arithmetic progressions are not just abstract math; they appear in many real-world situations. Consider the problem of stacking logs: 20 logs in the bottom row, 19 in the next, 18 in the row after that, and so on. If there are 200 logs in total, we need to find out how many rows there are and how many logs are in the top row. This is an AP with a = 20 and d = -1. If S_n = 200, we use the sum formula to find 'n'. After solving the quadratic equation, we find n = 16 or n = 25. Since the number of logs cannot be negative, we calculate a_16 = 20 + (16-1)(-1) = 5. For n=25, a_25 = -4, which is not possible. So, there are 16 rows, with 5 logs in the top row. Another engaging example is the potato race. A competitor runs to pick up potatoes placed at increasing distances and returns them to a bucket. The distances form an AP. The first potato is 5m away, then 3m apart. So, the distances run are 2*5=10m, then 2*(5+3)=16m, and so on. This forms an AP: 10, 16, 22... If there are 10 potatoes, we need to find the sum of the first 10 terms of this AP. Using the sum formula S_10 = 10/2 * [2*10 + (10-1)6] = 5 * [20 + 54] = 5 * 74 = 370 meters. These examples show how APs help us model and solve practical problems.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Arithmetic progressions are not just abstract math; they appear in many real-world situations. Consider the problem of stacking logs: 20 logs in the bottom row, 19 in the next, 18 in the row after that, and so on. If there are 200 logs in total, we need to find out how many rows there are and how many logs are in the top row.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "This is an AP with a = 20 and d = -1. If S_n = 200, we use the sum formula to find 'n'. After solving the quadratic equation, we find n = 16 or n = 25. Since the number of logs cannot be negative, we calculate a_16 = 20 + (16-1)(-1) = 5. For n=25, a_25 = -4, which is not possible. So, there are 16 rows, with 5 logs in the top row.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Another engaging example is the potato race. A competitor runs to pick up potatoes placed at increasing distances and returns them to a bucket. The distances form an AP. The first potato is 5m away, then 3m apart. So, the distances run are 2*5=10m, then 2*(5+3)=16m, and so on. This forms an AP: 10, 16, 22... If there are 10 potatoes, we need to find the sum of the first 10 terms of this AP.",
+            "purpose": "example",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Using the sum formula S_10 = 10/2 * [2*10 + (10-1)6] = 5 * [20 + 54] = 5 * 74 = 370 meters. These examples show how APs help us model and solve practical problems.",
+            "purpose": "conclude",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "image",
+          "display_text": "Diagram showing 20 logs stacked in rows, decreasing by one log per row (20, 19, 18, ...). The stack is labeled 'up 1 cm'.",
+          "latex_content": null,
+          "image_id": "a1fad9ca0c696e710c9a7ae5622401e4_img.jpg"
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "text",
+          "display_text": "AP: 20, 19, 18...\na = 20, d = -1, S_n = 200\nSolving for n gives n = 16 (or n = 25, which gives negative logs).\na_16 = 20 + (16-1)(-1) = 5 logs in top row.",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "image",
+          "display_text": "Diagram showing a bucket, a competitor running, and several potatoes arranged in a line. The distances between the bucket and the first potato is 5 m, and between the first and second potato is 3 m. The diagram illustrates the path of the competitor.",
+          "latex_content": null,
+          "image_id": "eadd8abb2c85161842bcd823881cbe5f_img.jpg"
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "text",
+          "display_text": "Distances run: 10, 16, 22, ... (for 10 potatoes)\na = 10, d = 6, n = 10\nS_10 = 10/2 * [2*10 + (10-1)6] = 370 meters.",
+          "latex_content": null,
+          "image_id": null
+        }
+      ],
+      "video_prompts": [
+        {
+          "beat_id": "beat_1",
+          "prompt": "A realistic, slightly elevated camera view of perfectly stacked wooden logs. The bottom row has 20 logs, the next has 19, and so on, clearly showing a decreasing pattern. The logs are neatly arranged in a natural outdoor setting, possibly a lumberyard or a forest edge, under soft daylight. A subtle animation highlights the '20' logs at the base, then the '19' logs above it, visually demonstrating the arithmetic progression. The camera slowly pans upwards, following the stack. Ensure the logs appear rustic and authentic, with visible wood grain, creating a sense of a tangible, real-world scenario where mathematics is applied, lasting about 12-15 seconds.",
+          "duration_hint": 15
+        },
+        {
+          "beat_id": "beat_3",
+          "prompt": "A dynamic video showing a person participating in a 'potato race'. The camera follows the competitor as they start from a bucket, run to pick up a potato 5 meters away, run back to drop it in the bucket, then run to pick up the next potato (8 meters total from bucket), and return. The scene should clearly show the increasing distances and the repetitive 'run-pick-return' action. The setting is a bright, open field with clear markings for potato placement. The competitor is an agile figure, perhaps a student. Use motion graphics to subtly highlight the distances covered for each potato, e.g., '10m', '16m', '22m' appearing briefly. The overall feel should be energetic and illustrative of the problem, lasting approximately 15-18 seconds.",
+          "duration_hint": 18
+        }
+      ]
+    },
+    {
+      "section_id": "section_10",
+      "section_type": "quiz",
+      "title": "Quiz on Arithmetic Progressions",
+      "derived_renderer": "none",
+      "decision_reason": "Quiz section with multiple choice questions and detailed explanations, requiring specific segments for progressive reveal.",
+      "narration": {
+        "full_text": "Let's test your understanding with a few quiz questions. First question: The 30th term of the AP: 10, 7, 4, is... Is it A, 97; B, 77; C, -77; or D, -87? Take a moment to calculate. The correct answer is C, -77. Here, the first term 'a' is 10, and the common difference 'd' is 7 minus 10, which is -3. Using the formula a_n = a + (n-1)d, for the 30th term, we have a_30 = 10 + (30-1)(-3) = 10 + 29(-3) = 10 - 87 = -77. Next question: How many terms of the AP: 9, 17, 25, must be taken to give a sum of 636? Is it A, 10; B, 12; C, 14; or D, 16? Think about the sum formula. The correct answer is B, 12. Here, 'a' is 9, and 'd' is 8. We use the sum formula S_n = n/2 * [2a + (n-1)d]. Substituting S_n = 636, a = 9, and d = 8, we get a quadratic equation: 4n^2 + 5n - 636 = 0. Solving this gives n = 12 or n = -53/4. Since the number of terms cannot be negative, n = 12. Final question: Check whether -150 is a term of the AP: 11, 8, 5, 2. Is the answer Yes or No? Consider the formula for the nth term. The correct answer is No. For this AP, 'a' is 11 and 'd' is -3. If -150 were a term, then -150 = 11 + (n-1)(-3). Solving for 'n', we get n = 164/3. Since 'n' is not an integer, -150 cannot be a term of this AP.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Let's test your understanding with a few quiz questions. First question: The 30th term of the AP: 10, 7, 4, is... Is it A, 97; B, 77; C, -77; or D, -87?",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "question_index": 0
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Take a moment to calculate.",
+            "purpose": "emphasize",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "question_index": 0
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "The correct answer is C, -77. Here, the first term 'a' is 10, and the common difference 'd' is 7 minus 10, which is -3. Using the formula a_n = a + (n-1)d, for the 30th term, we have a_30 = 10 + (30-1)(-3) = 10 + 29(-3) = 10 - 87 = -77.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "question_index": 0
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Next question: How many terms of the AP: 9, 17, 25, must be taken to give a sum of 636? Is it A, 10; B, 12; C, 14; or D, 16?",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "question_index": 1
+          },
+          {
+            "segment_id": "seg_5",
+            "text": "Think about the sum formula.",
+            "purpose": "emphasize",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "question_index": 1
+          },
+          {
+            "segment_id": "seg_6",
+            "text": "The correct answer is B, 12. Here, 'a' is 9, and 'd' is 8. We use the sum formula S_n = n/2 * [2a + (n-1)d]. Substituting S_n = 636, a = 9, and d = 8, we get a quadratic equation: 4n^2 + 5n - 636 = 0. Solving this gives n = 12 or n = -53/4. Since the number of terms cannot be negative, n = 12.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "question_index": 1
+          },
+          {
+            "segment_id": "seg_7",
+            "text": "Final question: Check whether -150 is a term of the AP: 11, 8, 5, 2. Is the answer Yes or No? Consider the formula for the nth term.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "question_index": 2
+          },
+          {
+            "segment_id": "seg_8",
+            "text": "The correct answer is No. For this AP, 'a' is 11 and 'd' is -3. If -150 were a term, then -150 = 11 + (n-1)(-3). Solving for 'n', we get n = 164/3. Since 'n' is not an integer, -150 cannot be a term of this AP.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            },
+            "question_index": 2
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "bullet_list",
+          "display_text": "1. 30th term of the AP: 10, 7, 4, ..., is\n(A) 97\n(B) 77\n(C) -77\n(D) -87",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "bullet_list",
+          "display_text": "1. 30th term of the AP: 10, 7, 4, ..., is\n(A) 97\n(B) 77\n(C) -77\n(D) -87",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "bullet_list",
+          "display_text": "Correct Answer: (C) -77\nExplanation: a=10, d=-3. a_30 = 10 + (29)(-3) = 10 - 87 = -77",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "bullet_list",
+          "display_text": "2. How many terms of the AP: 9, 17, 25, ... must be taken to give a sum of 636?\n(A) 10\n(B) 12\n(C) 14\n(D) 16",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_5",
+          "segment_id": "seg_5",
+          "visual_type": "bullet_list",
+          "display_text": "2. How many terms of the AP: 9, 17, 25, ... must be taken to give a sum of 636?\n(A) 10\n(B) 12\n(C) 14\n(D) 16",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_6",
+          "segment_id": "seg_6",
+          "visual_type": "bullet_list",
+          "display_text": "Correct Answer: (B) 12\nExplanation: a=9, d=8. S_n = n/2[2a+(n-1)d] = 636. 4n^2+5n-636=0 => n=12 (n cannot be negative).",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_7",
+          "segment_id": "seg_7",
+          "visual_type": "bullet_list",
+          "display_text": "3. Check whether -150 is a term of the AP: 11, 8, 5, 2...\n(A) Yes\n(B) No",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_8",
+          "segment_id": "seg_8",
+          "visual_type": "bullet_list",
+          "display_text": "Correct Answer: (B) No\nExplanation: a=11, d=-3. If -150 = 11 + (n-1)(-3), then n = 164/3. Since n is not an integer, -150 is not a term.",
+          "latex_content": null,
+          "image_id": null
+        }
+      ],
+      "quiz_data": {
+        "questions": [
+          {
+            "question": "The 30th term of the AP: 10, 7, 4, ..., is",
+            "options": [
+              "A) 97",
+              "B) 77",
+              "C) -77",
+              "D) -87"
+            ],
+            "correct_answer": "C",
+            "explanation": "Here, a = 10, d = 7 - 10 = -3. Using the formula a_n = a + (n-1)d, a_30 = 10 + (30-1)(-3) = 10 + 29(-3) = 10 - 87 = -77."
+          },
+          {
+            "question": "How many terms of the AP: 9, 17, 25, ... must be taken to give a sum of 636?",
+            "options": [
+              "A) 10",
+              "B) 12",
+              "C) 14",
+              "D) 16"
+            ],
+            "correct_answer": "B",
+            "explanation": "Here, a = 9, d = 17 - 9 = 8. Using the sum formula S_n = n/2[2a + (n-1)d], we have 636 = n/2[2(9) + (n-1)8]. This simplifies to 4n^2 + 5n - 636 = 0. Solving this quadratic equation gives n = 12 or n = -53/4. Since the number of terms cannot be negative, n = 12."
+          },
+          {
+            "question": "Check whether -150 is a term of the AP: 11, 8, 5, 2...",
+            "options": [
+              "A) Yes",
+              "B) No"
+            ],
+            "correct_answer": "B",
+            "explanation": "Here, a = 11, d = 8 - 11 = -3. If -150 is a term, then a_n = -150. Using a_n = a + (n-1)d, we get -150 = 11 + (n-1)(-3). Solving for n: -161 = -3(n-1) => n-1 = 161/3 => n = 161/3 + 1 = 164/3. Since n is not an integer, -150 is not a term of this AP."
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "section_11",
+      "section_type": "memory",
+      "title": "Key Concepts to Remember",
+      "derived_renderer": "none",
+      "decision_reason": "Flashcards are effective for reviewing key definitions and formulas, making this suitable for a memory section.",
+      "narration": {
+        "full_text": "Let's quickly recap the essential concepts we've covered today. An Arithmetic Progression, or AP, is a sequence where each term after the first is found by adding a constant, the common difference 'd', to the preceding term. The general form of an AP is a, a + d, a + 2d, and so on. Remember, the common difference 'd' can be positive, negative, or zero. To find the nth term of an AP, we use the formula a_n = a + (n - 1)d, where 'a' is the first term and 'n' is the term number. Finally, to calculate the sum of the first 'n' terms of an AP, we have two useful formulas: S_n = n/2 * [2a + (n - 1)d], or if the last term 'l' is known, S_n = n/2 * [a + l]. Keep these definitions and formulas handy!",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Let's quickly recap the essential concepts we've covered today. An Arithmetic Progression, or AP, is a sequence where each term after the first is found by adding a constant, the common difference 'd', to the preceding term.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "The general form of an AP is a, a + d, a + 2d, and so on. Remember, the common difference 'd' can be positive, negative, or zero.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "To find the nth term of an AP, we use the formula a_n = a + (n - 1)d, where 'a' is the first term and 'n' is the term number.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Finally, to calculate the sum of the first 'n' terms of an AP, we have two useful formulas: S_n = n/2 * [2a + (n - 1)d], or if the last term 'l' is known, S_n = n/2 * [a + l]. Keep these definitions and formulas handy!",
+            "purpose": "conclude",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "bullet_list",
+          "display_text": "Arithmetic Progression (AP): Sequence with a constant difference between consecutive terms.",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "bullet_list",
+          "display_text": "General Form: a, a + d, a + 2d, ...\nCommon Difference (d): Can be positive, negative, or zero.",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "bullet_list",
+          "display_text": "nth Term Formula: a_n = a + (n - 1)d",
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "bullet_list",
+          "display_text": "Sum of n Terms: S_n = n/2[2a + (n - 1)d] or S_n = n/2[a + l]",
+          "latex_content": null,
+          "image_id": null
+        }
+      ],
+      "flashcards": [
+        {
+          "front": "What is an Arithmetic Progression?",
+          "back": "A sequence of numbers where each term after the first is obtained by adding a fixed number (common difference) to the preceding term."
+        },
+        {
+          "front": "What is the common difference 'd'?",
+          "back": "The fixed number added to each term to get the next term. It can be positive, negative, or zero."
+        },
+        {
+          "front": "What is the formula for the nth term of an AP?",
+          "back": "a_n = a + (n - 1)d, where 'a' is the first term, 'n' is the term number, and 'd' is the common difference."
+        },
+        {
+          "front": "What are the formulas for the sum of the first 'n' terms of an AP?",
+          "back": "S_n = n/2[2a + (n - 1)d] or S_n = n/2[a + l], where 'l' is the last term."
+        }
+      ]
+    },
+    {
+      "section_id": "section_12",
+      "section_type": "recap",
+      "title": "Recap of Arithmetic Progression",
+      "derived_renderer": "video",
+      "decision_reason": "Recap section requires engaging video visuals to reinforce all key concepts, hence derived_renderer='video' with multiple detailed prompts.",
+      "narration": {
+        "full_text": "Today, we embarked on a journey into the world of Arithmetic Progressions. We started by understanding that an AP is simply a sequence where numbers increase or decrease by a constant value, known as the common difference. We explored how to identify if a series of numbers forms an AP by checking for this consistent difference. Then, we learned the powerful formula to find any specific term, the nth term, in an AP, which saves us from listing out long sequences. We also mastered calculating the sum of multiple terms in an AP, using efficient formulas that simplify complex additions. Finally, we saw how these mathematical tools are not just theoretical but are incredibly useful for solving practical challenges in our everyday lives. Keep practicing these concepts to become an expert!",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Today, we embarked on a journey into the world of Arithmetic Progressions. We started by understanding that an AP is simply a sequence where numbers increase or decrease by a constant value, known as the common difference.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "We explored how to identify if a series of numbers forms an AP by checking for this consistent difference.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Then, we learned the powerful formula to find any specific term, the nth term, in an AP, which saves us from listing out long sequences.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "We also mastered calculating the sum of multiple terms in an AP, using efficient formulas that simplify complex additions.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_5",
+            "text": "Finally, we saw how these mathematical tools are not just theoretical but are incredibly useful for solving practical challenges in our everyday lives. Keep practicing these concepts to become an expert!",
+            "purpose": "conclude",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "video",
+          "display_text": null,
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "video",
+          "display_text": null,
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "video",
+          "display_text": null,
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "video",
+          "display_text": null,
+          "latex_content": null,
+          "image_id": null
+        },
+        {
+          "beat_id": "beat_5",
+          "segment_id": "seg_5",
+          "visual_type": "video",
+          "display_text": null,
+          "latex_content": null,
+          "image_id": null
+        }
+      ],
+      "video_prompts": [
+        {
+          "segment_id": "seg_1",
+          "prompt": "A vibrant animation showing a sequence of numbers (e.g., 5, 10, 15, 20) appearing one by one, with a subtle '+5' indicator animating between each number, emphasizing the constant common difference. The numbers should be large, clear, and brightly colored against a dynamic, geometric background that suggests progression. The camera should smoothly pan along the sequence, highlighting the pattern. The overall tone should be engaging and illustrative of the fundamental definition of an AP. The animation should last approximately 10-12 seconds, with a smooth, continuous flow.",
+          "duration_hint": 12
+        },
+        {
+          "segment_id": "seg_2",
+          "prompt": "A visual representation of checking for a common difference. Show two different sequences of numbers. For the first sequence (e.g., 2, 4, 6, 8), animate the calculation '4-2=2', '6-4=2', '8-6=2', with a green checkmark appearing to confirm it's an AP. For the second sequence (e.g., 1, 3, 4, 7), animate '3-1=2' and '4-3=1', with a red 'X' appearing to indicate it's not an AP due to inconsistent differences. The numbers should be clearly typeset, and the calculations should be easy to follow, using distinct colors for 'yes' and 'no' outcomes. This visual should be dynamic and clear, lasting about 10-12 seconds.",
+          "duration_hint": 12
+        },
+        {
+          "segment_id": "seg_3",
+          "prompt": "An animated display of the nth term formula, `a_n = a + (n - 1)d`, with each component (a, n, d) highlighted and annotated with its meaning (first term, term number, common difference). Show a simple example, perhaps calculating the 5th term when a=3, d=2. Animate the substitution and step-by-step calculation, with the final result `a_5 = 11` appearing prominently. The visuals should be clean, mathematical, and easy to understand, possibly using a digital whiteboard style. The animation should be about 10-12 seconds, focusing on clarity and precision.",
+          "duration_hint": 12
+        },
+        {
+          "segment_id": "seg_4",
+          "prompt": "Visualize the sum of an AP. Show a series of blocks or items arranged in increasing order (e.g., 1 block, then 2, then 3, then 4). Then, display the sum formula `S_n = n/2[2a + (n - 1)d]` and `S_n = n/2[a + l]`. Animate the process of summing these blocks, perhaps by grouping them visually, and then show how the formula quickly provides the total sum (e.g., for 1+2+3+4, S_4 = 10). Use engaging graphics, like colorful blocks or spheres, to represent the terms. The animation should be about 10-12 seconds, clearly connecting the visual sum to the formula.",
+          "duration_hint": 12
+        },
+        {
+          "segment_id": "seg_5",
+          "prompt": "A montage of real-world scenarios where APs are applicable. This could include a time-lapse of a plant growing at a steady rate, a person saving money consistently each month with increasing totals, or a construction worker stacking bricks in a linear pattern. Each scene should briefly flash, accompanied by a subtle overlay of an AP sequence (e.g., '100, 200, 300...' for savings). The final shot shows a student confidently solving a math problem with a pen, surrounded by books, reinforcing the idea of practical application. The overall visual should be inspiring and show the relevance of APs in everyday life, lasting about 12-15 seconds.",
+          "duration_hint": 15
+        }
+      ]
+    }
+  ],
+  "decision_log": {
+    "total_video_prompts": 7,
+    "total_manim_specs": 8,
+    "renderer_choices": [
+      {
+        "section_id": "section_1",
+        "section_title": "Introduction to Arithmetic Progression",
+        "renderer": "none",
+        "reason": "Introductory section, best delivered by avatar only to set the stage."
+      },
+      {
+        "section_id": "section_2",
+        "section_title": "Learning Objectives",
+        "renderer": "none",
+        "reason": "Summary section, bullet points are ideal for outlining learning objectives clearly."
+      },
+      {
+        "section_id": "section_3",
+        "section_title": "What is an Arithmetic Progression?",
+        "renderer": "manim",
+        "reason": "Defining AP and common difference involves mathematical examples and definitions, which Manim can animate clearly."
+      },
+      {
+        "section_id": "section_4",
+        "section_title": "Common Difference and Types of APs",
+        "renderer": "manim",
+        "reason": "Explaining common difference calculation and types of APs (finite/infinite) involves formulas and examples, suitable for Manim animation."
+      },
+      {
+        "section_id": "section_5",
+        "section_title": "The nth Term of an AP",
+        "renderer": "manim",
+        "reason": "Deriving and applying the nth term formula is a core mathematical concept that Manim can visualize effectively."
+      },
+      {
+        "section_id": "section_6",
+        "section_title": "Sum of First n Terms of an AP",
+        "renderer": "manim",
+        "reason": "Presenting the formula for the sum of an AP and its application for examples is best visualized using Manim for step-by-step calculation clarity."
+      },
+      {
+        "section_id": "section_7",
+        "section_title": "Worked Examples of AP Identification",
+        "renderer": "manim",
+        "reason": "Identifying APs and finding next terms requires step-by-step calculation and comparison, which Manim can illustrate effectively."
+      },
+      {
+        "section_id": "section_8",
+        "section_title": "Solving for AP Properties",
+        "renderer": "manim",
+        "reason": "Solving for unknown 'a', 'd', 'n', or 'a_n' when other parameters are given involves algebraic manipulation and formula application, which Manim can clearly animate."
+      },
+      {
+        "section_id": "section_9",
+        "section_title": "Real-World AP Problems",
+        "renderer": "video",
+        "reason": "Real-world problems involving APs are best illustrated with video prompts that depict the scenario, making the abstract concepts tangible and relatable to students."
+      },
+      {
+        "section_id": "section_10",
+        "section_title": "Quiz on Arithmetic Progressions",
+        "renderer": "none",
+        "reason": "Quiz section with multiple choice questions and detailed explanations, requiring specific segments for progressive reveal."
+      },
+      {
+        "section_id": "section_11",
+        "section_title": "Key Concepts to Remember",
+        "renderer": "none",
+        "reason": "Flashcards are effective for reviewing key definitions and formulas, making this suitable for a memory section."
+      },
+      {
+        "section_id": "section_12",
+        "section_title": "Recap of Arithmetic Progression",
+        "renderer": "video",
+        "reason": "Recap section requires engaging video visuals to reinforce all key concepts, hence derived_renderer='video' with multiple detailed prompts."
+      }
+    ],
+    "content_analysis": "The document covers the definition, properties, and applications of Arithmetic Progressions (APs). It introduces the concept of common difference, general form of an AP, finite and infinite APs. It then delves into finding the nth term and the sum of the first n terms of an AP with various solved examples and exercises. Real-world problems like log stacking and potato race are included. The content is suitable for Grade 12 students, focusing on formulas, derivations, and problem-solving techniques."
+  }
+}

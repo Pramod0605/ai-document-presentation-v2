@@ -1,0 +1,482 @@
+{
+  "sections": [
+    {
+      "section_id": "section_1",
+      "section_type": "content",
+      "title": "Understanding Common Difference",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "Namaste students! Let's talk about the 'common difference'. In any arithmetic progression, we have a series of terms. We call the first one a1, the second a2, and so on. The secret ingredient that makes it an AP is this 'common difference', which we call 'd'. Think of it like the steady rhythm of a boatman's paddle in the Kerala backwaters. Each push is the same, moving the boat forward a fixed distance. In an AP, this fixed step is our common difference. You find it by subtracting any term from the one that follows it. And this difference, 'd', stays constant throughout the series. It can be a positive number, a negative one, or even zero. This gives us the general form of an AP: starting with 'a', the next term is 'a' plus 'd', then 'a' plus two 'd's, and it continues just like that.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Namaste students! Let's talk about the 'common difference'. In any arithmetic progression, we have a series of terms. We call the first one a1, the second a2, and so on. The secret ingredient that makes it an AP is this 'common difference', which we call 'd'.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Think of it like the steady rhythm of a boatman's paddle in the Kerala backwaters. Each push is the same, moving the boat forward a fixed distance. In an AP, this fixed step is our common difference.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "You find it by subtracting any term from the one that follows it. And this difference, 'd', stays constant throughout the series.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "It can be a positive number, a negative one, or even zero.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "dim",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_5",
+            "text": "This gives us the general form of an AP: starting with 'a', the next term is 'a' plus 'd', then 'a' plus two 'd's, and it continues just like that.",
+            "purpose": "conclude",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "In this progression for a given",
+            "end_phrase": "difference by d . Then the AP"
+          },
+          "display_text": "In this progression for a given series the terms used are the first term  $a_1$  second terms  $a_2$  ...  $n^{th}$  terms are  $a_n$  and the common difference by  $d$ . Then the AP becomes  $a_1$ ,  $a_2, a_3 \dots a_n$",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "diagram",
+          "markdown_pointer": null,
+          "display_text": "Animation showing a boat moving in steps on water.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "equation",
+          "markdown_pointer": {
+            "start_phrase": "The common difference between the two",
+            "end_phrase": "$$d = a_2 - a_1 = a_3 - a_2 = \\dots = a_n - a_{n-1}$$"
+          },
+          "display_text": "The common difference between the two terms and the  $n^{th}$  terms is\n\n$$d = a_2 - a_1 = a_3 - a_2 = \\dots = a_n - a_{n-1}$$",
+          "latex_content": "d = a_2 - a_1 = a_3 - a_2 = \\dots = a_n - a_{n-1}",
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "where d is common difference, it",
+            "end_phrase": "can be +ve, -ve and zero"
+          },
+          "display_text": "where d is common difference, it can be +ve, -ve and zero",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_5",
+          "segment_id": "seg_5",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "$a, a + d, a + 2d, a + 3d, \\dots$",
+            "end_phrase": "form of an AP."
+          },
+          "display_text": "$a, a + d, a + 2d, a + 3d, \\dots$\n\nRepresents an arithmetic progression where  $a$  is the first term and  $d$  the common difference. This is called the general form of an AP.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "Start with a visual of a traditional Kerala houseboat on serene backwaters. As the narration mentions the boatman's paddle, show an oar dipping into the water and pushing, causing the boat to move a fixed distance. Label this jump 'd'. Repeat the paddle motion, showing the boat moving the same distance 'd' again. Transition to a number line. Place 'a1', 'a2', 'a3' as points. Animate a calculation showing 'a2 - a1' and label the result 'd'. Then animate 'a3 - a2' and show the result is also 'd'. A large 'd' appears with the text 'Constant'. Then, show three scenarios side-by-side: 1) d > 0 with numbers ascending. 2) d < 0 with numbers descending. 3) d = 0 with numbers staying the same. Finally, show the construction of the general form: start with 'a', then animate adding '+d' to get 'a+d', then '+d' again to get 'a+2d', building the sequence dynamically across the screen.",
+        "video_prompts": []
+      }
+    },
+    {
+      "section_id": "section_2",
+      "section_type": "example",
+      "title": "Examples of Arithmetic Progressions",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "Let's look at some examples to make this crystal clear. In the first case, we add 1 each time. In the second, we are subtracting 30, so the common difference is negative. Example 3, we add 1 to a negative number. Example 4 is interesting, isn't it? Like a car stuck in Bangalore traffic, it's not moving at all! The common difference is zero. And in the last one, we subtract 0.5 each time. All of these are perfect Arithmetic Progressions.",
+        "segments": [
+          {
+            "segment_id": "seg_6",
+            "text": "Let's look at some examples to make this crystal clear. In the first case, we add 1 each time. In the second, we are subtracting 30, so the common difference is negative. Example 3, we add 1 to a negative number.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_7",
+            "text": "Example 4 is interesting, isn't it? Like a car stuck in Bangalore traffic, it's not moving at all! The common difference is zero. And in the last one, we subtract 0.5 each time. All of these are perfect Arithmetic Progressions.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "dim",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_6",
+          "segment_id": "seg_6",
+          "visual_type": "bullet_list",
+          "markdown_pointer": {
+            "start_phrase": "| Ex 1 | 1, 2, 3,<br>4,............",
+            "end_phrase": "from) the term preceding it. |"
+          },
+          "display_text": "Table of Examples",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_7",
+          "segment_id": "seg_7",
+          "visual_type": "diagram",
+          "markdown_pointer": null,
+          "display_text": "Animation of the table examples",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "Display the table on the screen. For each row, create a separate animation. Row 1: The numbers 1, 2, 3, 4 appear sequentially. A bright green arrow labeled '+1' animates moving from 1 to 2, then 2 to 3, and so on. Row 2: The numbers 100, 70, 40, 10 appear. A red arrow labeled '-30' animates between them. Row 3: The numbers -3, -2, -1, 0 appear on a number line, showing the progression towards the right with green '+1' arrows. Row 4: The number 3 appears, then another 3 next to it, and so on. A circular arrow labeled '+0' appears above them. This can be accompanied by a small cartoon car icon that stays in one place. Row 5: The numbers -1.0, -1.5, -2.0, -2.5 appear, with red '-0.5' arrows showing the decrease. Each animation should clearly highlight the constant difference.",
+        "video_prompts": []
+      }
+    },
+    {
+      "section_id": "section_3",
+      "section_type": "content",
+      "title": "Finite and Infinite APs",
+      "renderer": "video",
+      "narration": {
+        "full_text": "Now, APs can be finite or infinite. A finite AP has a limited number of terms, it has a definite end. Think of it like a box of Diwali ladoos – you know exactly how many there are, and there is always a last one! The examples here, like students in a line for assembly, or a loan payment schedule, all have a clear last term. An infinite AP, on the other hand, is like the stars in the night sky. They just seem to go on forever, with no last term in sight. If we know the first term 'a' and the common difference 'd', we can write out any AP, whether it ends or not.",
+        "segments": [
+          {
+            "segment_id": "seg_8",
+            "text": "Now, APs can be finite or infinite. A finite AP has a limited number of terms, it has a definite end.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_9",
+            "text": "Think of it like a box of Diwali ladoos – you know exactly how many there are, and there is always a last one! The examples here, like students in a line for assembly, or a loan payment schedule, all have a clear last term.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_10",
+            "text": "An infinite AP, on the other hand, is like the stars in the night sky. They just seem to go on forever, with no last term in sight.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_11",
+            "text": "If we know the first term 'a' and the common difference 'd', we can write out any AP, whether it ends or not.",
+            "purpose": "conclude",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_8",
+          "segment_id": "seg_8",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "### Finite AP.: In an AP",
+            "end_phrase": "has a last term."
+          },
+          "display_text": "### Finite AP.:\n\nIn an AP there are only a finite number of terms. Such an AP is called a finite AP. Each of these Arithmetic Progressions (APs) has a last term.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_9",
+          "segment_id": "seg_9",
+          "visual_type": "bullet_list",
+          "markdown_pointer": {
+            "start_phrase": "a) The heights (in cm) of",
+            "end_phrase": "400, 450, 500."
+          },
+          "display_text": "a) The heights (in cm) of some students of a school standing in a queue in the morning assembly are 147, 148, 149, ..., 157.\n\nb) The balance money (in Rs) after paying 5% of the total loan of Rs 1000 every month is 950, 900, 850, 800, ..., 50.\n\nc) The total savings (in Rs) after every month for 10 months when Rs 50 are saved each month are 50, 100, 150, 200, 250, 300, 350, 400, 450, 500.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_10",
+          "segment_id": "seg_10",
+          "visual_type": "bullet_list",
+          "markdown_pointer": {
+            "start_phrase": "### Infinite AP.: In an AP",
+            "end_phrase": "c) -10, -15, -20 ..."
+          },
+          "display_text": "### Infinite AP.:\n\nIn an AP there are infinite number of terms. Such an AP is called a infinite AP. Each of these Arithmetic Progressions (APs) do not have last term.\n\na) 3, 7, 11 ...  \nb) 1, 4, 7, 10, ...  \nc) -10, -15, -20 ...",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_11",
+          "segment_id": "seg_11",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "Note: You will If we know",
+            "end_phrase": "can write an AP."
+          },
+          "display_text": "Note: You will If we know the first term  $a'$  and the common difference  $d'$  then we can write an AP.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "",
+        "video_prompts": [
+          "Create a vibrant, warm video montage. Start with a close-up shot of a decorative box of Indian sweets (ladoos) being opened. A hand takes one, then another, until only one is left, which is then picked up, emphasizing the 'last term'. Transition to a real-life shot of students of varying heights standing in a neat morning assembly line, with their heights in cm floating above their heads (147, 148, ... 157). Then, show an animation of a bank passbook, with entries showing a loan balance decreasing in fixed steps (950, 900, 850...). For the infinite AP, transition to a beautiful time-lapse of a clear night sky, with stars appearing. The sequence '3, 7, 11...' appears on screen, with the numbers stretching out towards the horizon and the '...' fading into the starry background, conveying a sense of endlessness. This should feel expansive and awe-inspiring."
+        ]
+      }
+    },
+    {
+      "section_id": "section_4",
+      "section_type": "example",
+      "title": "Let's Solve Some Problems",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "Alright, let's put our knowledge to the test. In this first example, we need to find the first term and the common difference. The first term, 'a', is simply the first number in the list. To find 'd', we just subtract the first term from the second. We can double check by subtracting the second from the third - it's the same! Now for the next set of problems, we become detectives. We check if the difference between terms is constant. In the first case, the difference is always 6, so yes, it's an AP. We find the next terms by simply adding 6. In the second case, the difference is a constant -2. So it is also an AP. For the third one, the difference changes from 4 to -4. Not constant! So, this is not an AP. And the last one also fails the test, as the difference changes from 0 to 1. It is not an AP. See? It's all about that constant difference.",
+        "segments": [
+          {
+            "segment_id": "seg_12",
+            "text": "Alright, let's put our knowledge to the test. In this first example, we need to find the first term and the common difference. The first term, 'a', is simply the first number in the list.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_13",
+            "text": "To find 'd', we just subtract the first term from the second. We can double check by subtracting the second from the third - it's the same!",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_14",
+            "text": "Now for the next set of problems, we become detectives. We check if the difference between terms is constant.",
+            "purpose": "transition",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_15",
+            "text": "In the first case, the difference is always 6, so yes, it's an AP. We find the next terms by simply adding 6.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_16",
+            "text": "In the second case, the difference is a constant -2. So it is also an AP.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_17",
+            "text": "For the third one, the difference changes from 4 to -4. Not constant! So, this is not an AP.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_18",
+            "text": "And the last one also fails the test, as the difference changes from 0 to 1. It is not an AP. See? It's all about that constant difference.",
+            "purpose": "conclude",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_12",
+          "segment_id": "seg_12",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "Example 1:  $\\frac{3}{2}, \\frac{1}{2}, -\\frac{1}{2},",
+            "end_phrase": "the common difference ' $d$ '."
+          },
+          "display_text": "Example 1:  $\\frac{3}{2}, \\frac{1}{2}, -\\frac{1}{2}, -\\frac{3}{2}, \\dots$  write the first term ' $a$ ' and the common difference ' $d$ '.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_13",
+          "segment_id": "seg_13",
+          "visual_type": "equation",
+          "markdown_pointer": {
+            "start_phrase": "$$\\text{Here, } a_1 = \\frac{3}{2} \\quad d",
+            "end_phrase": "= -\\frac{1}{2} - \\frac{1}{2} = -1$$"
+          },
+          "display_text": "$$\\text{Here, } a_1 = \\frac{3}{2} \\quad d = a_2 - a_1 = \\frac{1}{2} - \\frac{3}{2} = -1 \\quad a_3 - a_2 = -\\frac{1}{2} - \\frac{1}{2} = -1$$",
+          "latex_content": "\\text{Here, } a_1 = \\frac{3}{2} \\quad d = a_2 - a_1 = \\frac{1}{2} - \\frac{3}{2} = -1 \\quad a_3 - a_2 = -\\frac{1}{2} - \\frac{1}{2} = -1",
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_14",
+          "segment_id": "seg_14",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "Example 2: Which of the following",
+            "end_phrase": "the next two terms"
+          },
+          "display_text": "Example 2: Which of the following list of numbers form an AP? If they form an AP, write the next two terms",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_15",
+          "segment_id": "seg_15",
+          "visual_type": "equation",
+          "markdown_pointer": {
+            "start_phrase": "i) 4, 10, 16, 22...",
+            "end_phrase": "and  $28 + 6 = 34$ ."
+          },
+          "display_text": "i) 4, 10, 16, 22...\n\n$$a_2 - a_1 = 10 - 4 = 6; a_3 - a_2 = 16 - 10 = 6; a_3 - a_2 = 22 - 16 = 6$$\n\nSo, the given list of numbers forms an AP with the common difference  $d = 6$ .\n\nThe next two terms are:  $22 + 6 = 28$  and  $28 + 6 = 34$ .",
+          "latex_content": "a_2 - a_1 = 10 - 4 = 6; a_3 - a_2 = 16 - 10 = 6; a_3 - a_2 = 22 - 16 = 6",
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_16",
+          "segment_id": "seg_16",
+          "visual_type": "equation",
+          "markdown_pointer": {
+            "start_phrase": "ii) 1, -1, -3, -5",
+            "end_phrase": "and  $-7 + (-2) = -9$"
+          },
+          "display_text": "ii) 1, -1, -3, -5 ...\n\n$$a_2 - a_1 = -1 - 1 = -2; a_3 - a_2 = -3 - (-1) = -2; a_3 - a_2 = -5 - (-3) = -2$$\n\nSo, the given list of numbers forms an AP with the common difference  $d = -2$ .\n\nThe next two terms are:  $-5 + (-2) = -7$  and  $-7 + (-2) = -9$",
+          "latex_content": "a_2 - a_1 = -1 - 1 = -2; a_3 - a_2 = -3 - (-1) = -2; a_3 - a_2 = -5 - (-3) = -2",
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_17",
+          "segment_id": "seg_17",
+          "visual_type": "equation",
+          "markdown_pointer": {
+            "start_phrase": "iii) -2, 2, -2, 2...",
+            "end_phrase": "does not form an AP."
+          },
+          "display_text": "iii) -2, 2, -2, 2...\n\n$$a_2 - a_1 = 2 - (-2) = 2 + 2 = 4; a_3 - a_2 = -2 - 2 = -4; a_3 - a_2 = 2 - (-2) = 2 + 2 = 4$$\n\nHere,  $a_{k+1} \\neq a_k$  So, the given list of numbers does not form an AP.",
+          "latex_content": "a_2 - a_1 = 2 - (-2) = 2 + 2 = 4; a_3 - a_2 = -2 - 2 = -4; a_3 - a_2 = 2 - (-2) = 2 + 2 = 4",
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_18",
+          "segment_id": "seg_18",
+          "visual_type": "equation",
+          "markdown_pointer": {
+            "start_phrase": "iv) 1, 1, 1, 2,",
+            "end_phrase": "does not form an AP."
+          },
+          "display_text": "iv) 1, 1, 1, 2, 2, 2, 3, 3, 3...\n\n$$a_2 - a_1 = 1 - 1 = 0; a_3 - a_2 = 1 - 1 = 0; a_3 - a_2 = 2 - 1 = 1$$\n\n$a_2 - a_1 = a_3 - a_2 \\neq a_3 - a_2$  So, the given list of numbers does not form an AP.",
+          "latex_content": "a_2 - a_1 = 1 - 1 = 0; a_3 - a_2 = 1 - 1 = 0; a_3 - a_2 = 2 - 1 = 1",
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "For Example 1, show the sequence 3/2, 1/2, ... on a number line. Highlight a1 = 3/2. Animate the calculation '1/2 - 3/2', with the result '-1' appearing. Then do the same for '-1/2 - 1/2', showing '-1' again. For Example 2, animate each sub-problem. (i) Show '4, 10, 16, 22'. Calculate '10-4=6' and '16-10=6'. Since they are equal, a large green checkmark appears. Then '+6' animates to generate 28 and 34. (ii) Do the same for '1, -1, -3, -5', showing d=-2 and a green checkmark. (iii) Show '-2, 2, -2, 2'. Calculate '2 - (-2) = 4'. Then calculate '-2 - 2 = -4'. Flash a red '≠' symbol between 4 and -4. A large red 'X' appears over the sequence. (iv) Show '1, 1, 1, 2, 2...'. Calculate '1-1=0'. Then '2-1=1'. Flash a red '≠' between 0 and 1, and show a large red 'X'.",
+        "video_prompts": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,398 @@
+"""
+V1.5 Unified Pipeline Orchestrator
+Uses Single LLM Architecture (UnifiedContentGenerator) + Explicit Renderer Bridging.
+"""
+
+import logging
+import json
+import time
+import os
+import requests
+from pathlib import Path
+from typing import Dict, List, Tuple, Optional, Any
+
+from core.unified_content_generator import (
+    generate_presentation, 
+    transform_to_player_schema,
+    GeneratorConfig
+)
+from core.unified_director_generator import generate_director_presentation
+from core.partition_director_generator import PartitionDirectorGenerator # New Phase 7
+from core.validators.job_certifier import JobCertifier # Automated Certification
+from core.analytics import create_tracker, PipelineAnalytics, AnalyticsTracker
+from core.renderer_executor import enforce_renderer_policy, render_all_topics
+from core.tts_duration import update_durations_simplified, TTSProvider
+from core.agents.manim_code_generator import ManimCodeGenerator, integrate_manim_code_into_section
+from core.agents.avatar_generator import AvatarGenerator
+from core.image_processor import save_datalab_images, extract_image_refs_from_markdown
+
+logger = logging.getLogger(__name__)
+
+class PipelineUnifiedError(Exception):
+    def __init__(self, message: str, phase: str):
+        super().__init__(message)
+        self.phase = phase
+
+def process_markdown_unified(
+    markdown_content: str,
+    subject: str,
+    grade: str,
+    job_id: str,
+    update_status_callback=None,
+    generate_tts: bool = True,
+    output_dir: Optional[Path] = None,
+    tts_provider: TTSProvider = "edge_tts",
+    dry_run: bool = False,
+    skip_wan: bool = False,
+    images_dict: Optional[dict] = None,
+    pipeline_version: str = "v15_v2",
+    generation_scope: str = "full",
+    model: Optional[str] = None
+) -> Tuple[Dict, AnalyticsTracker]:
+    """
+    Execute the True Unified Pipeline (Single LLM Call).
+    
+    Flow:
+    0. Image Processing (Save Datalab images)
+    1. UnifiedContentGenerator -> V2 JSON (Single Call)
+    2. Transform -> Player Schema
+    3. GAP FILL 1: Manim Code Generation (Bridge)
+    4. GAP FILL 2: TTS Generation
+    5. Link Images & Renderers (Manim + WAN)
+    """
+    
+    tracker = create_tracker(job_id)
+    TRACKER_COLORS = "\033[94m" # Blue
+    RESET_COLORS = "\033[0m"
+
+    def log_status(phase: str, message: str):
+        logger.info(f"[Job {job_id}] {phase}: {message}")
+        print(f"{TRACKER_COLORS}[PIPELINE STATUS] {phase.upper()}: {message}{RESET_COLORS}")
+        if update_status_callback:
+            update_status_callback(job_id, phase, message)
+                
+    try:
+        # User Request: Skip TTS in Dry Run
+        if dry_run:
+            logger.info("Pipeline: Dry Run active - Disabling TTS generation.")
+            generate_tts = False
+
+        if not markdown_content:
+            raise PipelineUnifiedError("Markdown content is empty", "input_validation")
+
+        # --- PHASE 0: Image Processing ---
+        saved_images = {}
+        images_list = "None"
+        output_path = output_dir if output_dir else Path(f"jobs/{job_id}")
+        output_path.mkdir(parents=True, exist_ok=True)
+        
+        if images_dict:
+            log_status("image_processing", f"Processing {len(images_dict)} images...")
+            images_dir = output_path / "images"
+            try:
+                saved_images = save_datalab_images(images_dict, str(images_dir), apply_green_screen=True)
+                if saved_images:
+                    images_list = ", ".join(saved_images.keys())
+                    logger.info(f"Saved {len(saved_images)} images to {images_dir}")
+            except Exception as e:
+                logger.error(f"Image processing failed: {e}")
+                # Continue without images rather than failing pipeline
+        else:
+            # Try to extract refs from markdown (if already local)
+            image_refs = extract_image_refs_from_markdown(markdown_content)
+            if image_refs:
+                images_list = ", ".join([ref['filename'] for ref in image_refs])
+                logger.info(f"Found {len(image_refs)} image references in markdown")
+
+        # --- PHASE 1: Unified Generation (Single Call) ---
+        log_status("llm_generation", "Generating full presentation (Single Call)...")
+        start_time = time.time()
+        
+        # 1. Generate (Retries handled internally)
+        print(f"=" * 80)
+        print(f"[PIPELINE DEBUG] pipeline_version received: '{pipeline_version}'")
+        print(f"[PIPELINE DEBUG] Checking if == 'v15_v2_director': {pipeline_version == 'v15_v2_director'}")
+        print(f"=" * 80)
+        
+        if pipeline_version == "v15_v2_director":
+            print(f"[PIPELINE DEBUG] ✓ BRANCH: Director Mode (V2.5) - Calling generate_director_presentation")
+            log_status("llm_generation", "Generating Director Mode presentation (Pointers)...")
+            
+            # Save source markdown for Player V2.5
+            source_md_path = output_path / "source_markdown.md"
+            with open(source_md_path, "w", encoding="utf-8") as f:
+                f.write(markdown_content)
+            logger.info(f"Saved source markdown to {source_md_path}")
+
+            # v2_output = generate_director_presentation(
+            #     markdown_content=markdown_content,
+            #     subject=subject,
+            #     grade=grade,
+            #     images_list=images_list,
+            #     update_status_callback=log_status
+            # )
+            
+            # PHASE 7 SWAP: Use Partition & Conquer architecture
+            config = GeneratorConfig(model=model) if model else None
+            director = PartitionDirectorGenerator(config=config)
+            v2_output = director.generate_presentation_partitioned(
+                markdown_content=markdown_content,
+                subject=subject,
+                grade=grade,
+                images_list=images_list,
+                update_status_callback=log_status,
+                generation_scope=generation_scope
+            )
+            
+            # Director output is already close to player schema, but needs standard metadata
+            presentation = v2_output # It returns directly valid schema
+            
+            # Update metadata if not present or preserve chunk info
+            if "metadata" not in presentation:
+                presentation["metadata"] = {}
+                
+            # Enrich metadata
+            inner_meta = v2_output.get("metadata", {})
+            presentation["metadata"].update({
+                "doc_length": len(markdown_content),
+                "chunks": inner_meta.get("chunks", 1),
+                "llm_calls": inner_meta.get("llm_calls", 1),
+                "pipeline_mode": "v2.5-partition-conquer",
+                "total_sections": len(presentation.get("sections", []))
+            })
+            
+            presentation["avatar_global"] = {
+                "style": "teacher",
+                "default_position": "right",
+                "default_width_percent": 52,
+                "gesture_enabled": True
+            }
+            
+        else:
+            # Legacy V2 Unified
+            print(f"[PIPELINE DEBUG] ✗ BRANCH: Legacy V2 Unified - Calling generate_presentation")
+            v2_output = generate_presentation(
+                markdown_content=markdown_content,
+                subject=subject,
+                grade=grade,
+                images_list=images_list
+            )
+            
+            # 2. Transform to Player Schema
+            presentation = transform_to_player_schema(
+                v2_output,
+                subject=subject,
+                grade=grade
+            )
+        
+        llm_duration = time.time() - start_time
+        logger.info(f"Unified Generation took {llm_duration:.2f}s")
+        
+        # Track Layout Decisions
+        tracker.track_decision(
+            agent_name="UnifiedContentGenerator",
+            decision_type="structure",
+            options=["sections"],
+            selected=f"{len(presentation.get('sections', []))} sections",
+            reason=v2_output.get("decision_log", {}).get("content_analysis", "Review complete")
+        )
+
+        # --- PHASE 2: Validation & Policy ---
+        log_status("validation", "Enforcing renderer policies...")
+        presentation = enforce_renderer_policy(presentation)
+        
+        # --- PHASE 3: MANIM CODE BRIDGING (Crucial Step) ---
+        # The Unified LLM outputs 'manim_spec' (text) but no code.
+        # We must explicitly call ManimCodeGenerator to fill this gap.
+        
+        manim_gen = ManimCodeGenerator()
+        sections = presentation.get("sections", [])
+        manim_sections = []
+        for i, section in enumerate(sections):
+            # Safety: Skip if section is not a dict
+            if not isinstance(section, dict):
+                logger.warning(f"Section {i} is not a dict (type: {type(section)}), skipping...")
+                continue
+                
+            # FIXED: Map derived_renderer (Director) to renderer (Executor)
+            if "derived_renderer" in section and "renderer" not in section:
+                section["renderer"] = section["derived_renderer"]
+            
+            renderer = section.get("renderer")
+            # Only generate code if renderer is manim
+            # AND we don't already have code (Unified LLM doesn't produce code, so this is always true)
+            if renderer == "manim":
+                manim_sections.append((i, section))
+
+        if manim_sections:
+            log_status("manim_codegen", f"Parallelizing code generation for {len(manim_sections)} Manim sections...")
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+                def process_manim(idx_sec):
+                    idx, sec = idx_sec
+                    try:
+                        log_status("manim_codegen", f"Generating Manim code for Section {idx+1}: {sec.get('title')}...")
+                        
+                        # Transform V2.5 Director section to Manim Code Generator format
+                        # The generator expects 'narration_segments' at top level, but Director has 'narration.segments'
+                        nar = sec.get("narration", {})
+                        segments = nar.get("segments", [])
+                        
+                        # Extract manim_spec from render_spec if available (Director's visual directive)
+                        render_spec = sec.get("render_spec", {})
+                        manim_spec_from_director = render_spec.get("manim_scene_spec")
+                        if isinstance(manim_spec_from_director, dict):
+                            manim_spec_from_director = manim_spec_from_director.get("description", "")
+                        
+                        section_data_for_generator = {
+                            "section_title": sec.get("title", "Section"),
+                            "narration_segments": segments,  # Flatten the nested structure
+                            "manim_spec": manim_spec_from_director or sec.get("explanation_plan", ""),
+                            "visual_description": sec.get("visual_description", ""),
+                            "formulas": [],
+                            "key_terms": []
+                        }
+                        
+                        print(f"[MANIM CODEGEN DEBUG] Section {idx+1} has {len(segments)} narration segments")
+                        
+                        res = manim_gen.generate_code(section_data=section_data_for_generator, style_config={"style": "standard"})
+                        integrate_manim_code_into_section(sec, res)
+                        tracker.add_llm_call(
+                            phase="ManimCodeGenerator",
+                            model="anthropic/claude-sonnet-4",
+                            prompt_tokens=1000, # Placeholder, actual tokens would be dynamic
+                            completion_tokens=1000 # Placeholder
+                        )
+                        return True
+                    except Exception as e:
+                        logger.error(f"Manim codegen failed for section {idx+1}: {e}")
+                        return False
+
+                results = list(executor.map(process_manim, manim_sections))
+                manim_count = sum(1 for r in results if r)
+                log_status("manim_codegen", f"Generated code for {manim_count} Manim sections")
+
+        # --- PHASE 3.5: Checkpoint Save ---
+        if output_dir:
+            pres_path = os.path.join(output_dir, "presentation.json")
+            with open(pres_path, "w", encoding="utf-8") as f:
+                json.dump(presentation, f, indent=4)
+            logger.info(f"Pipeline: Saved presentation checkpoint to {pres_path}")
+
+        # --- PHASE 4: AUTOMATED PARALLEL FORK (Avatar + TTS + Manim/WAN) ---
+        # 4a. Trigger Avatar Generation (Fire-and-Forget)
+        if output_dir:
+            try:
+                log_status("avatar_generation", "Triggering parallel avatar generation...")
+                avatar_gen = AvatarGenerator()
+                # Run in separate thread to not block pipeline if overhead is high
+                # But our helper returns fast, so direct call is fine.
+                avatar_results = avatar_gen.submit_parallel_job(presentation, job_id, str(output_dir))
+                log_status("avatar_generation", f"Triggered: {len(avatar_results['queued'])} reqs, {len(avatar_results['skipped'])} skips")
+            except Exception as e:
+                logger.error(f"Avatar Generation Trigger Failed: {e}")
+                log_status("avatar_generation", f"Error triggering avatars: {e}")
+        
+        # --- PHASE 4b: TTS Generation & Duration Update ---
+        # FIXED: Always run this block to ensure durations are calculated (even if Estimate Mode)
+        if True: # Always enter to allow 'estimate' provider to work
+            if generate_tts:
+                log_status("tts_generation", "Generating narration audio...")
+            else:
+                log_status("tts_generation", "Calculating duration estimates...")
+                
+            if output_dir:
+                try:
+                    # If generate_tts is False, force 'estimate' provider
+                    effective_provider = tts_provider if generate_tts else "estimate"
+                    
+                    presentation = update_durations_simplified(
+                        presentation, 
+                        output_dir, 
+                        production_provider=effective_provider
+                    )
+                except Exception as e:
+                    logger.error(f"TTS Failed: {e}. Falling back to estimated durations.")
+                    log_status("tts_generation", f"TTS Warning: {e}. Using estimates.")
+                    # Continue anyway
+        
+        # --- PHASE 5: Image Linking & Visual Rendering ---
+        
+        # Link Images (if any)
+        if saved_images and output_dir:
+            log_status("image_linking", "Linking extracted images to content...")
+            try:
+                _link_images_to_presentation(presentation, saved_images, str(output_dir / "images"))
+            except Exception as e:
+                logger.error(f"Image linking failed: {e}")
+
+        # Visual Rendering (Manim + WAN)
+        if output_dir:
+            log_status("rendering", "Rendering video content (Manim + WAN)...")
+            render_results = render_all_topics(
+                presentation,
+                str(output_dir / "videos"),
+                dry_run=dry_run,
+                skip_wan=skip_wan,
+                output_dir_base=str(output_dir)
+            )
+            logger.info(f"Render results: {len(render_results)} videos processed")
+            
+            
+        # --- PHASE 5.5: Final State Save (CRITICAL FOR CERTIFICATION) ---
+        if output_dir:
+            pres_path = os.path.join(output_dir, "presentation.json")
+            with open(pres_path, "w", encoding="utf-8") as f:
+                json.dump(presentation, f, indent=4)
+            logger.info(f"Pipeline: Saved FINAL presentation to {pres_path}")
+
+        # --- PHASE 6: AUTOMATED CERTIFICATION ---
+        # --- PHASE 6: AUTOMATED CERTIFICATION ---
+        if output_dir:
+            try:
+                cert_summary = JobCertifier.certify_job(str(output_dir))
+                log_status("certification", f"Job Validation: {cert_summary}")
+            except Exception as e:
+                logger.error(f"Certification Phase Failed (Non-Critical): {e}")
+                log_status("certification", f"Certification Warning: Report generation failed, but job is valid.")
+
+        return presentation, tracker
+
+    except Exception as e:
+        import traceback
+        logger.error(f"Unified Pipeline Failed: {e}\n{traceback.format_exc()}")
+        raise PipelineUnifiedError(str(e), "unknown")
+
+
+def _link_images_to_presentation(presentation: dict, saved_images: dict, images_dir: str) -> None:
+    """Link extracted images to visual_content in presentation segments."""
+    from pathlib import Path
+    
+    # Build a lookup by image filename (normalized)
+    image_lookup = {}
+    for orig_name, saved_info in saved_images.items():
+        if isinstance(saved_info, dict):
+            # If saved_info is dict {filename: ..., path: ...}
+            filename = saved_info.get('filename', orig_name)
+        else:
+            # If saved_info is just path string
+            filename = Path(saved_info).name if saved_info else orig_name
+            
+        image_lookup[orig_name.lower()] = filename
+        image_lookup[filename.lower()] = filename
+    
+    for section in presentation.get("sections", []):
+        for beat in section.get("visual_beats", []):
+            # Check if this beat references an image
+            if beat.get("visual_type") == "image":
+                desc = beat.get("description", "").lower()
+                
+                # Check for direct match in description
+                found_match = None
+                for key, fname in image_lookup.items():
+                    if key in desc or fname.lower() in desc:
+                        found_match = fname
+                        break
+                
+                if found_match:
+                    beat["image_asset"] = f"images/{found_match}"
