@@ -178,9 +178,18 @@ def update_durations_simplified(
                     return  # Success, exit retry loop
                     
             except Exception as e:
+                # FAIL-FAST: Stop retrying if Server Error (5xx) OR Timeout
+                err_str = str(e)
+                fail_indicators = [
+                    "500", "502", "503", "504", "Internal Server Error",
+                    "Read timed out", "Connection timed out", "ConnectTimeout", "ReadTimeout"
+                ]
+                if any(x in err_str for x in fail_indicators):
+                    logger.error(f"[TTS] Fail-Fast on Server Error/Timeout for {audio_path.name}: {e}")
+                    break # Stop retrying immediately
+
                 if attempt < MAX_TTS_RETRIES - 1:
                     logger.warning(f"[TTS] Retry {attempt + 1}/{MAX_TTS_RETRIES} for {audio_path.name}: {e}")
-                    import time
                     time.sleep(0.5)  # Brief pause before retry
                 else:
                     logger.error(f"[TTS] Failed after {MAX_TTS_RETRIES} attempts for {audio_path.name}: {e}")
@@ -796,7 +805,7 @@ def _generate_our_tts(text: str, output_path: Path) -> float:
             f"{OUR_TTS_BASE_URL}/tts",
             headers=headers,
             json=payload,
-            timeout=60
+            timeout=(5, 15)
         )
         
         data = response.json()
@@ -806,7 +815,7 @@ def _generate_our_tts(text: str, output_path: Path) -> float:
             full_audio_url = f"{OUR_TTS_BASE_URL}{audio_path_from_api}"
             
             # Step 2: Download the audio file
-            audio_response = requests.get(full_audio_url, timeout=60)
+            audio_response = requests.get(full_audio_url, timeout=(5, 30))
             
             with open(output_path, "wb") as f:
                 f.write(audio_response.content)

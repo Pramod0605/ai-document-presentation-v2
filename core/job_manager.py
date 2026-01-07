@@ -174,10 +174,10 @@ class JobManager:
                 "progress": min(progress, 99)
             }, persist=True)
     
-    def complete_job(self, job_id: str, result: dict = None):
-        completed_message = get_phase_message("completed")
+    def complete_job(self, job_id: str, result: dict = None, status: str = "completed"):
+        completed_message = get_phase_message(status)
         self.update_job(job_id, {
-            "status": "completed",
+            "status": status,
             "progress": 100,
             "current_step_name": "Complete!",
             "current_phase_key": "completed",
@@ -281,7 +281,20 @@ def run_job_async(job_id: str, process_func: Callable, **kwargs):
             job_manager.start_job(job_id)
             result = process_func(job_id=job_id, **kwargs)
             log(f"[JOB {job_id}] Job completed successfully!")
-            job_manager.complete_job(job_id, result)
+            
+            # Determine final status from result metadata if available
+            final_status = "completed"
+            if isinstance(result, dict):
+                 meta_status = result.get("metadata", {}).get("job_status")
+                 if meta_status == "completed_with_errors":
+                     final_status = "completed_with_errors"
+            elif isinstance(result, tuple) and len(result) > 0 and isinstance(result[0], dict):
+                 # Handle (presentation, tracker) tuple
+                 meta_status = result[0].get("metadata", {}).get("job_status")
+                 if meta_status == "completed_with_errors":
+                     final_status = "completed_with_errors"
+
+            job_manager.complete_job(job_id, result, status=final_status)
         except Exception as e:
             import traceback
             full_traceback = traceback.format_exc()

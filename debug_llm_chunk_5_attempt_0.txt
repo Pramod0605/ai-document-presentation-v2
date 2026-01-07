@@ -1,0 +1,155 @@
+```json
+{
+  "sections": [
+    {
+      "section_id": "section_1",
+      "section_type": "quiz",
+      "title": "Final Practice (Mixed Quiz)",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "Alright, let's wrap up with a couple of quick questions to test our knowledge. First question: How many terms are there in the AP: 4, 7, 10, and so on, up to 100? Take a moment to work it out. <pause duration='3'/> Correct! The answer is 33. To find this, we use our formula for the nth term. Think of it like Bangalore traffic – you know your starting point (4), your destination (100), and the fixed distance you move between each signal (3). We just need to find out how many signals ('n') are on this route! We set a_n to 100, 'a' to 4, and 'd' to 3, and solve for 'n', which gives us 33. Now for the second question. Is the sequence −5, −10, −15 an AP? <pause duration='3'/> Yes, it is! The common difference 'd' is -5. Remember, an AP is all about a constant difference. Here, if we take the second term and subtract the first, we get -10 minus -5, which is -5. Doing the same for the third and second terms, -15 minus -10, also gives us -5. Since the difference is constant, it is definitely an Arithmetic Progression.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Alright, let's wrap up with a couple of quick questions to test our knowledge. First question: How many terms are there in the AP: 4, 7, 10, and so on, up to 100?",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Take a moment to work it out. <pause duration='3'/>",
+            "purpose": "emphasize",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Correct! The answer is 33. To find this, we use our formula for the nth term. Think of it like Bangalore traffic – you know your starting point (4), your destination (100), and the fixed distance you move between each signal (3). We just need to find out how many signals ('n') are on this route! We set a_n to 100, 'a' to 4, and 'd' to 3, and solve for 'n', which gives us 33.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Now for the second question. Is the sequence −5, −10, −15 an AP?",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_5",
+            "text": "<pause duration='3'/>",
+            "purpose": "emphasize",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_6",
+            "text": "Yes, it is! The common difference 'd' is -5. Remember, an AP is all about a constant difference. Here, if we take the second term and subtract the first, we get -10 minus -5, which is -5. Doing the same for the third and second terms, -15 minus -10, also gives us -5. Since the difference is constant, it is definitely an Arithmetic Progression.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "**Q1.** How many terms are there",
+            "end_phrase": "in the AP: 4, 7, 10, …, 100?"
+          },
+          "display_text": "**Q1.** How many terms are there in the AP: 4, 7, 10, …, 100?",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "diagram",
+          "markdown_pointer": null,
+          "display_text": "Thinking Indicator Animation",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "equation",
+          "markdown_pointer": {
+            "start_phrase": "**Answer:** 33",
+            "end_phrase": "**Answer:** 33"
+          },
+          "display_text": "**Answer:** 33",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": true
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "**Q2.** Is the sequence −5, −10,",
+            "end_phrase": "−15 an AP?"
+          },
+          "display_text": "**Q2.** Is the sequence −5, −10, −15 an AP?",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_5",
+          "segment_id": "seg_5",
+          "visual_type": "diagram",
+          "markdown_pointer": null,
+          "display_text": "Thinking Indicator Animation",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_6",
+          "segment_id": "seg_6",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "**Answer:** Yes, d = −5",
+            "end_phrase": "**Answer:** Yes, d = −5"
+          },
+          "display_text": "**Answer:** Yes, d = −5",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": true
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "Scene opens with the formula `a_n = a + (n-1)d` displayed prominently in white at the top. The sequence `4, 7, 10, ..., 100` appears below it. The values `a_n=100`, `a=4`, and `d=3` are extracted from the sequence and slide into place in the formula, which transforms to `100 = 4 + (n-1)3`. Animate the solving process step-by-step with smooth transformations: first, `100 - 4` highlights and resolves to `96`, showing `96 = (n-1)3`. Then, the `3` moves to the other side to show `96/3`, which resolves to `32`. The equation is now `32 = n-1`. Finally, the `-1` moves over, `32 + 1` resolves to `33`, and the final answer `n = 33` is displayed in a vibrant green box. For the second part, clear the screen. Show the sequence `-5, -10, -15`. Draw a curved arrow from -5 to -10, and label it with the calculation `d = -10 - (-5) = -5`. The result `-5` glows. Then, draw another curved arrow from -10 to -15, labeling it with `d = -15 - (-10) = -5`. The second result `-5` also glows. A large green checkmark appears next to the text 'Constant Difference', confirming it is an AP.",
+        "video_prompts": []
+      }
+    }
+  ]
+}
+```

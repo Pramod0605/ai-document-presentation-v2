@@ -1,0 +1,330 @@
+```json
+{
+  "sections": [
+    {
+      "section_id": "section_1",
+      "section_type": "content",
+      "title": "Nth Term of an Arithmetic Progression",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "Now, let's learn how to find any term in an Arithmetic Progression without having to write them all out. To do this, we need to know three things. First, 'a', which is our starting point, the very first term. Next, 'd', the common difference we keep adding. And finally, 'n', which is the position of the term we want to find – is it the 5th, 10th, or 100th term? With these three, we can use a very powerful formula. The nth term of an AP, which we write as 'a sub n', is given by this simple formula: a plus, in brackets, n minus 1, all multiplied by d. Think of it like this: to get to the nth step, you start at 'a' and then take 'n minus 1' jumps, with each jump being of size 'd'. Let's see this in action with an example. Suppose we want to find the 10th term of the AP: 2, 7, 12, and so on. It's like planning for Diwali. Your first year's bonus is 2 thousand rupees. Every year it increases by a fixed 5 thousand. What will your bonus be in the 10th year? Here, our first term 'a' is 2. The common difference 'd' is 7 minus 2, which is 5. And the term number 'n' we are looking for is 10. Now, we just put these values into our formula. The 10th term, 'a sub 10', is 2 plus (10 minus 1) times 5. That simplifies to 2 plus 9 times 5, which is 2 plus 45. So, the 10th term is 47. Simple, isn't it?",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Now, let's learn how to find any term in an Arithmetic Progression without having to write them all out. To do this, we need to know three things.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "First, 'a', which is our starting point, the very first term. Next, 'd', the common difference we keep adding. And finally, 'n', which is the position of the term we want to find – is it the 5th, 10th, or 100th term?",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "With these three, we can use a very powerful formula. The nth term of an AP, which we write as 'a sub n', is given by this simple formula: a plus, in brackets, n minus 1, all multiplied by d.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Think of it like this: to get to the nth step, you start at 'a' and then take 'n minus 1' jumps, with each jump being of size 'd'.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_5",
+            "text": "Let's see this in action with an example. Suppose we want to find the 10th term of the AP: 2, 7, 12, and so on.",
+            "purpose": "transition",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_6",
+            "text": "It's like planning for Diwali. Your first year's bonus is 2 thousand rupees. Every year it increases by a fixed 5 thousand. What will your bonus be in the 10th year? Here, our first term 'a' is 2. The common difference 'd' is 7 minus 2, which is 5. And the term number 'n' we are looking for is 10.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_7",
+            "text": "Now, we just put these values into our formula. The 10th term, 'a sub 10', is 2 plus (10 minus 1) times 5. That simplifies to 2 plus 9 times 5, which is 2 plus 45. So, the 10th term is 47. Simple, isn't it?",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "## 3. Nth Term of an Arithmetic Progression",
+            "end_phrase": "Progression\n\nLet:\n- **a** be the first term"
+          },
+          "display_text": "## 3. Nth Term of an Arithmetic Progression\nLet:",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "bullet_list",
+          "markdown_pointer": {
+            "start_phrase": "- **a** be the first term\n-",
+            "end_phrase": "be the term number"
+          },
+          "display_text": "- **a** be the first term\n- **d** be the common difference\n- **n** be the term number",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "equation",
+          "markdown_pointer": {
+            "start_phrase": "### Formula for the nth Term",
+            "end_phrase": "aₙ = a + (n − 1)d"
+          },
+          "display_text": "### Formula for the nth Term\nThe nth term of an AP is given by:\naₙ = a + (n − 1)d",
+          "latex_content": "a_n = a + (n-1)d",
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "diagram",
+          "markdown_pointer": null,
+          "display_text": null,
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_5",
+          "segment_id": "seg_5",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "### Example\nFind the 10th term",
+            "end_phrase": "the AP: 2, 7, 12, …"
+          },
+          "display_text": "### Example\nFind the 10th term of the AP: 2, 7, 12, …",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_6",
+          "segment_id": "seg_6",
+          "visual_type": "bullet_list",
+          "markdown_pointer": {
+            "start_phrase": "Here:\n- a = 2\n- d",
+            "end_phrase": "= 5\n- n = 10"
+          },
+          "display_text": "Here:\n- a = 2\n- d = 5\n- n = 10",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_7",
+          "segment_id": "seg_7",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "a₁₀ = 2 + (10 −",
+            "end_phrase": "a₁₀ = 47\n\n---"
+          },
+          "display_text": "a₁₀ = 2 + (10 − 1) × 5\na₁₀ = 2 + 45\na₁₀ = 47",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "Scene opens with the formula a_n = a + (n-1)d written in a clean, large font at the center. As the narration explains 'n-1 jumps', animate a number line appearing below. A dot starts at position 'a'. Animate curved arrows jumping from one point to the next. Each arrow is labeled '+d'. The animation performs this 'n-1' times, landing on the final term 'a_n'. For the example part, show the sequence 2, 7, 12... appearing on screen. The numbers a=2, d=5, n=10 are extracted and placed into the formula, which is shown on screen. Animate the substitution: 'a' glows and '2' moves into its place. 'n' glows and '10' moves into its place. 'd' glows and '5' moves into its place. The calculation (10-1) is solved first, transforming to '9'. Then 9x5 transforms to '45'. Finally, 2+45 transforms into the final answer '47', which enlarges and glows.",
+        "video_prompts": []
+      }
+    },
+    {
+      "section_id": "section_2",
+      "section_type": "quiz",
+      "title": "Quiz 3 — Nth Term",
+      "renderer": "none",
+      "narration": {
+        "full_text": "Alright, time for a quick check. Find the 15th term of the AP: 5, 8, 11, and so on. <pause duration='3'/> Bilkul sahi! The correct answer is 47. Here, a is 5, d is 3, and n is 15. So we calculate 5 plus (15 minus 1) times 3, which is 5 plus 14 times 3, giving us 5 plus 42, which equals 47. Next question. If a = 3 and d = 4, what is a sub 7? <pause duration='3'/> Correct! The answer is 27. We simply calculate 3 plus (7 minus 1) times 4. This is 3 plus 6 times 4, or 3 plus 24, which gives us 27. Well done!",
+        "segments": [
+          {
+            "segment_id": "seg_8",
+            "text": "Alright, time for a quick check. Find the 15th term of the AP: 5, 8, 11, and so on.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_9",
+            "text": "<pause duration='3'/>",
+            "purpose": "emphasize",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_10",
+            "text": "Bilkul sahi! The correct answer is 47. Here, a is 5, d is 3, and n is 15. So we calculate 5 plus (15 minus 1) times 3, which is 5 plus 14 times 3, giving us 5 plus 42, which equals 47.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_11",
+            "text": "Next question. If a = 3 and d = 4, what is a sub 7?",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_12",
+            "text": "<pause duration='3'/>",
+            "purpose": "emphasize",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_13",
+            "text": "Correct! The answer is 27. We simply calculate 3 plus (7 minus 1) times 4. This is 3 plus 6 times 4, or 3 plus 24, which gives us 27. Well done!",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_8",
+          "segment_id": "seg_8",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "### Quiz 3 — Nth Term\n\n**Q1.**",
+            "end_phrase": "the AP: 5, 8, 11, …"
+          },
+          "display_text": "### Quiz 3 — Nth Term\n\n**Q1.** Find the 15th term of the AP: 5, 8, 11, …",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_9",
+          "segment_id": "seg_9",
+          "visual_type": "diagram",
+          "markdown_pointer": null,
+          "display_text": "Thinking Indicator...",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_10",
+          "segment_id": "seg_10",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "**Answer:** 47\n\n**Q2.** If a =",
+            "end_phrase": "a = 3, d = 4,"
+          },
+          "display_text": "**Answer:** 47",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": true
+        },
+        {
+          "beat_id": "beat_11",
+          "segment_id": "seg_11",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "If a = 3, d = 4,",
+            "end_phrase": "what is a₇?  "
+          },
+          "display_text": "**Q2.** If a = 3, d = 4, what is a₇?",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_12",
+          "segment_id": "seg_12",
+          "visual_type": "diagram",
+          "markdown_pointer": null,
+          "display_text": "Thinking Indicator...",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_13",
+          "segment_id": "seg_13",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "**Answer:** 27\n\n---",
+            "end_phrase": "**Answer:** 27\n\n---"
+          },
+          "display_text": "**Answer:** 27",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": true
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": null,
+        "video_prompts": []
+      }
+    }
+  ]
+}
+```

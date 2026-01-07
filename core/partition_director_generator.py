@@ -224,6 +224,15 @@ class PartitionDirectorGenerator:
             while retries < max_retries:
                 try:
                     response, _ = call_openrouter_llm(sys_p, current_prompt, self.config)
+                    
+                    # [DEBUG] Save Raw LLM Response to verify if it's String or Dict
+                    try:
+                        debug_file = f"debug_llm_chunk_{index}_attempt_{retries}.txt"
+                        with open(debug_file, "w", encoding="utf-8") as f:
+                            f.write(response)
+                        logger.info(f"Saved raw LLM response to {debug_file}")
+                    except Exception as e:
+                        logger.warning(f"Failed to save debug LLM response: {e}")
                     data = extract_json_from_response(response)
                     
                     # VALIDATION GATE (PARTITION)

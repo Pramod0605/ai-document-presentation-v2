@@ -314,6 +314,8 @@ def process_markdown_unified(
                 except Exception as e:
                     logger.error(f"TTS Failed: {e}. Falling back to estimated durations.")
                     log_status("tts_generation", f"TTS Warning: {e}. Using estimates.")
+                    presentation.setdefault("metadata", {})["job_status"] = "completed_with_errors"
+                    presentation["metadata"]["error_summary"] = f"TTS Warning: {str(e)}."
                     # Continue anyway
         
         # --- PHASE 5: Image Linking & Visual Rendering ---
@@ -325,6 +327,8 @@ def process_markdown_unified(
                 _link_images_to_presentation(presentation, saved_images, str(output_dir / "images"))
             except Exception as e:
                 logger.error(f"Image linking failed: {e}")
+                presentation.setdefault("metadata", {})["job_status"] = "completed_with_errors"
+                presentation["metadata"]["error_summary"] = f"Image Linking Warning: {str(e)}."
 
         # Visual Rendering (Manim + WAN)
         if output_dir:
@@ -355,6 +359,8 @@ def process_markdown_unified(
             except Exception as e:
                 logger.error(f"Certification Phase Failed (Non-Critical): {e}")
                 log_status("certification", f"Certification Warning: Report generation failed, but job is valid.")
+                presentation.setdefault("metadata", {})["job_status"] = "completed_with_errors"
+                presentation["metadata"]["error_summary"] = f"Certification Warning: {str(e)}."
 
         return presentation, tracker
 

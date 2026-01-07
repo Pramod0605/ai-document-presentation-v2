@@ -711,7 +711,7 @@
                 }
 
                 container.innerHTML = data.jobs.map(job => {
-                    const statusClass = job.status === 'completed' ? 'completed' :
+                    const statusClass = job.status === 'completed' || job.status === 'completed_with_errors' ? 'completed' :
                         job.status === 'failed' ? 'failed' :
                             (job.status === 'processing' || job.status === 'running') ? 'processing' : 'pending';
                     const createdDate = formatIST(job.created_at);
@@ -719,7 +719,7 @@
 
                     let actions = '';
                     let progressBar = '';
-                    if (job.status === 'completed') {
+                    if (job.status === 'completed' || job.status === 'completed_with_errors') {
                         actions = `
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showLlmOutputs('${job.job_id}')">LLM Outputs</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showAnalytics('${job.job_id}')">Analytics</button>
@@ -765,7 +765,7 @@
                                 </div>
                             </div>
                         `;
-                        actions = `<span style="color: #ffc107; font-size: 0.8rem;">In Progress...</span>`;
+                        actions = `<span style="color: #ffc107; font-size: 0.8rem; margin-right: 10px;">In Progress...</span><button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; border: 1px solid #ff5252; color: #ff5252;" onclick="forceStopJob('${job.job_id}')">Force Stop</button>`;
                     }
 
                     const errorPreview = (job.error && job.status !== 'running') ? `<div style="color: #ff5252; font-size: 0.8rem; margin-top: 5px; max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${job.error.substring(0, 100)}...</div>` : '';
@@ -795,6 +795,18 @@
 
         function startHistoryPolling() {
             // Auto-polling disabled by user request. Use manual refresh.
+        }
+
+        async function forceStopJob(jobId) {
+            if (!confirm('Are you sure you want to force stop this job? It may be left in an inconsistent state.')) return;
+            try {
+                const response = await fetch(`/job/${jobId}/cancel`, { method: 'POST' });
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                loadJobHistory(); // Refresh list
+            } catch (e) {
+                alert('Error stopping job: ' + e.message);
+            }
         }
 
         function stopHistoryPolling() {

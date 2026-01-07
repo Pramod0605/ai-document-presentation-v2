@@ -1,0 +1,278 @@
+```json
+{
+  "sections": [
+    {
+      "section_id": "section_1",
+      "section_type": "content",
+      "title": "Chapter Summary",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "Alright, let's quickly recap what we've learned about Arithmetic Progressions. Think of it like this: an AP is simply a list of numbers where the gap between any two neighbours is always the same. Now, this gap, which we call the common difference, can be positive, negative, or even zero. Imagine you are rowing a boat in the beautiful Kerala backwaters. If you row forward with a steady rhythm, that's a positive difference. If you row backward, it's a negative difference. And if you just let the boat float without rowing, that's a zero difference! The pattern is constant. The general form is always a, then a plus d, a plus two d, and so on. And the most powerful tool we have is the formula to find any term in the sequence: a_n equals a plus (n minus 1) times d. Don't forget this one!",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Alright, let's quickly recap what we've learned about Arithmetic Progressions. Think of it like this: an AP is simply a list of numbers where the gap between any two neighbours is always the same.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Now, this gap, which we call the common difference, can be positive, negative, or even zero.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Imagine you are rowing a boat in the beautiful Kerala backwaters. If you row forward with a steady rhythm, that's a positive difference. If you row backward, it's a negative difference. And if you just let the boat float without rowing, that's a zero difference! The pattern is constant.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "The general form is always a, then a plus d, a plus two d, and so on. And the most powerful tool we have is the formula to find any term in the sequence: a_n equals a plus (n minus 1) times d. Don't forget this one!",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "bullet_list",
+          "markdown_pointer": {
+            "start_phrase": "- An Arithmetic Progression is a sequence",
+            "end_phrase": "difference between consecutive terms."
+          },
+          "display_text": "- An Arithmetic Progression is a sequence with a constant difference between consecutive terms.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "bullet_list",
+          "markdown_pointer": {
+            "start_phrase": "- The common difference can be",
+            "end_phrase": "positive, negative, or zero."
+          },
+          "display_text": "- The common difference can be positive, negative, or zero.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "diagram",
+          "markdown_pointer": null,
+          "display_text": null,
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "bullet_list",
+          "markdown_pointer": {
+            "start_phrase": "- The general form of an",
+            "end_phrase": "**aₙ = a + (n − 1)d**"
+          },
+          "display_text": "- The general form of an AP is: a, a + d, a + 2d, …\n- The nth term is calculated using:  \n  **aₙ = a + (n − 1)d**",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "Scene opens with the text 'Chapter Summary'. For seg_3, animate three simple sequences on screen. First, '2, 5, 8, 11...' appears in green, and an arrow labeled '+3' hops from one number to the next. Below it, '10, 6, 2, -2...' appears in red, with an arrow labeled '-4' hopping between numbers. Finally, '7, 7, 7, 7...' appears in blue, with a looping arrow labeled '+0' on the first 7. A stylized, simple animation of a boat rowing forward appears next to the positive sequence, rowing backward for the negative, and floating still for the zero sequence. For seg_4, show the text 'a' on the left. Then animate '+d' appearing, and the result 'a+d' shows up. Repeat for '+d' to get 'a+2d'. Then, have the full sequence 'a, a+d, a+2d,...' transform elegantly into the final formula 'aₙ = a + (n-1)d', with each component of the formula glowing briefly as it settles into place.",
+        "video_prompts": []
+      }
+    },
+    {
+      "section_id": "section_2",
+      "section_type": "quiz",
+      "title": "Final Practice (Mixed Quiz)",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "Time for a quick practice round! First question: How many terms are there in the AP: 4, 7, 10, …, 100? Think about the formula we just saw. <pause duration='3'/> Correct! The answer is 33. Let's break it down. We use our master formula, a_n = a + (n-1)d. The last term, a_n, is 100. The first term, a, is 4. The common difference, d, is 7 minus 4, which is 3. We are looking for 'n'. So, we plug in the values: 100 equals 4 plus (n minus 1) times 3. A little bit of algebra, and we find that n is 33.",
+        "segments": [
+          {
+            "segment_id": "seg_5",
+            "text": "Time for a quick practice round! First question: How many terms are there in the AP: 4, 7, 10, …, 100? Think about the formula we just saw.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_6",
+            "text": "<pause duration='3'/>",
+            "purpose": "emphasize",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_7",
+            "text": "Correct! The answer is 33. Let's break it down. We use our master formula, a_n = a + (n-1)d. The last term, a_n, is 100. The first term, a, is 4. The common difference, d, is 7 minus 4, which is 3. We are looking for 'n'. So, we plug in the values: 100 equals 4 plus (n minus 1) times 3. A little bit of algebra, and we find that n is 33.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_5",
+          "segment_id": "seg_5",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "**Q1.** How many terms are there",
+            "end_phrase": "the AP: 4, 7, 10, …, 100?"
+          },
+          "display_text": "**Q1.** How many terms are there in the AP: 4, 7, 10, …, 100?",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_6",
+          "segment_id": "seg_6",
+          "visual_type": "diagram",
+          "markdown_pointer": null,
+          "display_text": "Thinking indicator (e.g., a pulsing lightbulb icon)",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_7",
+          "segment_id": "seg_7",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "**Answer:** 33",
+            "end_phrase": "**Answer:** 33"
+          },
+          "display_text": "**Answer:** 33",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": true
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "For the explanation in seg_7, display the formula `aₙ = a + (n-1)d` at the top. Below it, show the sequence `4, 7, 10, ..., 100`. The number 4 glows and a label `a=4` flies out. An arrow appears between 4 and 7, labeled `+3`, and a label `d=3` flies out. The number 100 glows and a label `aₙ=100` flies out. The variable `n` in the formula gets a question mark `n=?`. Then, substitute these values into the formula, showing `100 = 4 + (n-1)3`. Animate the algebraic steps clearly: first, `100 - 4 = 96` on the left. Then, `96 / 3 = 32`. Finally, `32 + 1 = n`, which resolves to `n = 33`. Box the final answer in bright green.",
+        "video_prompts": []
+      }
+    },
+    {
+      "section_id": "section_3",
+      "section_type": "quiz",
+      "title": "Final Practice (Mixed Quiz)",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "Okay, one more. Is the sequence −5, −10, −15 an AP? <pause duration='4'/> Yes, it is! The common difference is -5. Remember, the common difference can be negative. It's just like the heavy traffic in Bangalore, sometimes you move backward a little, but as long as it's a consistent step back, it's still a pattern!",
+        "segments": [
+          {
+            "segment_id": "seg_8",
+            "text": "Okay, one more. Is the sequence −5, −10, −15 an AP?",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_9",
+            "text": "<pause duration='4'/>",
+            "purpose": "emphasize",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_10",
+            "text": "Yes, it is! The common difference is -5. Remember, the common difference can be negative. It's just like the heavy traffic in Bangalore, sometimes you move backward a little, but as long as it's a consistent step back, it's still a pattern!",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_8",
+          "segment_id": "seg_8",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "**Q2.** Is the sequence −5, −10,",
+            "end_phrase": "−15 an AP?"
+          },
+          "display_text": "**Q2.** Is the sequence −5, −10, −15 an AP?",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_9",
+          "segment_id": "seg_9",
+          "visual_type": "diagram",
+          "markdown_pointer": null,
+          "display_text": "Thinking indicator (e.g., a countdown timer from 3)",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_10",
+          "segment_id": "seg_10",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "**Answer:** Yes, d = −5",
+            "end_phrase": "**Answer:** Yes, d = −5"
+          },
+          "display_text": "**Answer:** Yes, d = −5",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": true
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "For the explanation in seg_10, show the sequence `-5, -10, -15` on screen. Animate the calculation for the difference. First, `a₂ - a₁` appears, then the numbers substitute in: `-10 - (-5)`. This resolves to `-5`, which glows. Then, animate `a₃ - a₂`, which becomes `-15 - (-10)` and also resolves to `-5`. Since both results are `-5`, a large green checkmark appears next to the sequence, and the text `d = -5 (Constant)` is displayed prominently. A small, stylized car icon could appear and take a small, measured step backward for each term, reinforcing the Bangalore traffic analogy of consistent backward movement.",
+        "video_prompts": []
+      }
+    }
+  ]
+}
+```

@@ -1,6 +1,7 @@
 import logging
 import json
 import re
+import os
 from typing import List, Dict, Optional
 from core.unified_content_generator import call_openrouter_llm, extract_json_from_response, GeneratorConfig
 
@@ -61,7 +62,7 @@ class SmartPartitioner:
         # Use Flash for Chunker (Fast & Cheap)
         import copy
         flash_config = copy.copy(self.config)
-        flash_config.model = "google/gemini-1.5-flash"
+        flash_config.model = os.environ.get("CHUNKER_MODEL", "google/gemini-2.0-flash-exp")
         
         chunk_hint = "\nIMPORTANT: The document is large. Aim for chunks of roughly 10,000 to 15,000 characters each to allow parallel processing." if len(markdown_content) > 15000 else ""
         user_prompt += chunk_hint

@@ -74,8 +74,10 @@ class V25Validator:
         quiz = data.get("quiz")
         if quiz:
             # If present, check structure
-            if quiz.get("visual_type") != "multiple_choice":
-                errors.append(f"Quiz visual_type must be 'multiple_choice', got '{quiz.get('visual_type')}'.")
+            # Relaxed: Allow other types (single answer, open ended) per user feedback
+            # if quiz.get("visual_type") != "multiple_choice":
+            #    errors.append(f"Quiz visual_type must be 'multiple_choice', got '{quiz.get('visual_type')}'.")
+            pass
 
         return errors
 
@@ -101,20 +103,29 @@ class V25Validator:
             title = sec.get("title", f"Section {i+1}")
             
             # 1. QUIZ CHOREOGRAPHY (Bible: 3-Step Dance)
+            # Support grouped questions (multiples of 3 segments)
             if stype == "quiz":
                 narr_segs = sec.get("narration", {}).get("segments", [])
-                if len(narr_segs) != 3:
-                     errors.append(f"Quiz '{title}' must have exactly 3 segments (Introduce, Pause, Reveal), got {len(narr_segs)}.")
+                
+                if len(narr_segs) == 0 or len(narr_segs) % 3 != 0:
+                     errors.append(f"Quiz '{title}' segments count ({len(narr_segs)}) must be a multiple of 3 (3 segments per question).")
                 else:
-                    # Strict Choreography Check
+                    # Strict Choreography Check (Loop through groups)
                     steps = ["introduce", "emphasize", "explain"]
-                    for idx, seg in enumerate(narr_segs):
-                        if seg.get("purpose") != steps[idx]:
-                             errors.append(f"Quiz '{title}' segment {idx+1} purpose must be '{steps[idx]}', got '{seg.get('purpose')}'.")
-                             
-                    # Pivot Check: Pause Duration
-                    if '<pause duration=' not in narr_segs[1].get("text", ""):
-                         errors.append(f"Quiz '{title}' segment 2 (Pause) must contain <pause duration='3'/> tag.")
+                    num_questions = len(narr_segs) // 3
+                    
+                    for q_idx in range(num_questions):
+                        base = q_idx * 3
+                        # Check each step in the trio
+                        for step_idx, purpose in enumerate(steps):
+                            seg = narr_segs[base + step_idx]
+                            if seg.get("purpose") != purpose:
+                                 errors.append(f"Quiz '{title}' Q{q_idx+1} segment {step_idx+1} purpose must be '{purpose}', got '{seg.get('purpose')}'.")
+                        
+                        # Pivot Check: Pause Duration (Middle segment)
+                        pause_seg = narr_segs[base + 1]
+                        if '<pause duration=' not in pause_seg.get("text", ""):
+                             errors.append(f"Quiz '{title}' Q{q_idx+1} Pause segment must contain <pause duration='3'/> tag.")
 
             if stype in ["content", "example"]:
                 # Renderer Check
@@ -151,21 +162,20 @@ class V25Validator:
                             if wc < 80:
                                 errors.append(f"Section '{title}' video_prompt {idx} is too short ({wc} words). Must be 80+ words.")
 
-                # VERBATIM POINTER CHECK (New for v2.5 Fidelity)
-                if source_text:
-                    visual_beats = sec.get("visual_beats", [])
-                    for beat in visual_beats:
-                        ptr = beat.get("markdown_pointer")
-                        if ptr:
-                            start = ptr.get("start_phrase", "").strip()
-                            end = ptr.get("end_phrase", "").strip()
-                            
-                            if start and start not in source_text:
-                                errors.append(f"Section '{title}': Pointer start_phrase '{start[:20]}...' NOT FOUND in source text.")
-                            if end and end not in source_text:
-                                errors.append(f"Section '{title}': Pointer end_phrase '{end[:20]}...' NOT FOUND in source text.")
-                        elif beat.get("visual_type") == "text":
-                             # If type is text, strictly RECOMMEND pointer
-                             pass # Ideally we mandate it, but let's allow fallback to display_text for now to avoid bricking.
+                # VERBATIM POINTER CHECK - DISABLED PER USER FEEDBACK (Trust LLM)
+                # if source_text:
+                #    visual_beats = sec.get("visual_beats", [])
+                #    for beat in visual_beats:
+                #        ptr = beat.get("markdown_pointer")
+                #        if ptr:
+                #            start = ptr.get("start_phrase", "").strip()
+                #            end = ptr.get("end_phrase", "").strip()
+                #            
+                #            if start and start not in source_text:
+                #                errors.append(f"Section '{title}': Pointer start_phrase '{start[:20]}...' NOT FOUND in source text.")
+                #            if end and end not in source_text:
+                #                errors.append(f"Section '{title}': Pointer end_phrase '{end[:20]}...' NOT FOUND in source text.")
+                
+                pass
 
         return errors

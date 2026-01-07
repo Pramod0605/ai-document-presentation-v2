@@ -1,0 +1,89 @@
+```json
+{
+  "sections": [
+    {
+      "section_id": "section_1",
+      "section_type": "quiz",
+      "title": "Final Practice (Mixed Quiz)",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "For our Final Practice Mixed Quiz, let's tackle two questions at once. First, how many terms are in the AP: 4, 7, 10, up to 100? Second, is the sequence −5, −10, −15 an AP? <pause duration='4'/> Okay, let's see the answers. For the first question, the answer is 33. We use our formula a_n = a + (n-1)d. Think of it like cars in Bangalore's heavy traffic, each moving forward a fixed distance. Here, a_n is 100, 'a' is 4, and 'd' is 3. We solve for 'n' and get 33! For the second question, the answer is Yes! The common difference 'd' is -5. Each term is 5 less than the previous one, just like the flame on a Diwali diya getting smaller by a fixed amount each minute. So it is an AP.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "For our Final Practice Mixed Quiz, let's tackle two questions at once. First, how many terms are in the AP: 4, 7, 10, up to 100? Second, is the sequence −5, −10, −15 an AP?",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "<pause duration='4'/>",
+            "purpose": "emphasize",
+            "display_directives": {
+              "text_layer": "dim",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Okay, let's see the answers. For the first question, the answer is 33. We use our formula a_n = a + (n-1)d. Think of it like cars in Bangalore's heavy traffic, each moving forward a fixed distance. Here, a_n is 100, 'a' is 4, and 'd' is 3. We solve for 'n' and get 33! For the second question, the answer is Yes! The common difference 'd' is -5. Each term is 5 less than the previous one, just like the flame on a Diwali diya getting smaller by a fixed amount each minute. So it is an AP.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "## Final Practice (Mixed Quiz)",
+            "end_phrase": "−5, −10, −15 an AP?"
+          },
+          "display_text": "## Final Practice (Mixed Quiz)\n\n**Q1.** How many terms are there in the AP: 4, 7, 10, …, 100?  \n\n**Q2.** Is the sequence −5, −10, −15 an AP?  ",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "diagram",
+          "markdown_pointer": null,
+          "display_text": "Thinking Indicator",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "## Final Practice (Mixed Quiz)",
+            "end_phrase": "**Answer:** Yes, d = −5"
+          },
+          "display_text": "## Final Practice (Mixed Quiz)\n\n**Q1.** How many terms are there in the AP: 4, 7, 10, …, 100?  \n**Answer:** 33\n\n**Q2.** Is the sequence −5, −10, −15 an AP?  \n**Answer:** Yes, d = −5",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": true
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "The scene starts with the two questions on screen. During the pause, a glowing thought bubble with a spinning gear icon appears. For the reveal, first animate the explanation for Q1. Show the formula aₙ = a + (n-1)d in bright yellow. The values a=4, d=3, and aₙ=100 fly in from the sides and substitute themselves into the formula. Animate the algebraic steps cleanly: 100 - 4 = 96, then 96 / 3 = 32, then 32 + 1 = 33. The final answer 'n = 33' glows green. For Q2, show the sequence -5, -10, -15. Draw red arrows between the numbers, with the label '-5' appearing above each arrow. A small animation of a Diwali diya appears, its flame visibly shrinking in two distinct steps, reinforcing the negative common difference.",
+        "video_prompts": []
+      }
+    }
+  ]
+}
+```

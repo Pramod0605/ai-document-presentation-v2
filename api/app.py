@@ -666,6 +666,26 @@ def retry_failed_job(job_id):
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/job/<job_id>/cancel", methods=["POST"])
+def cancel_job(job_id):
+    """Force cancel a running job."""
+    try:
+        job = job_manager.get_job(job_id)
+        if not job:
+            return jsonify({"error": "Job not found"}), 404
+            
+        # Update status to failed so user can retry or see it's stopped
+        job_manager.update_job(job_id, {
+            "status": "failed",
+            "error": "Force stopped by user",
+            "failure_message": "User initiated force stop"
+        }, persist=True)
+        
+        return jsonify({"status": "cancelled", "job_id": job_id})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/job/<job_id>/retry_phase", methods=["POST"])
 def retry_phase(job_id):
     """
@@ -2572,6 +2592,7 @@ def run_avatar_generation_task(job_id, jobs_root):
             
         generator = AvatarGenerator()
         tasks = []
+        failed_tasks = []
         
         # Initialize Analytics Tracker
         from core.analytics import create_tracker
