@@ -144,23 +144,43 @@ def validate_job(job_id: str) -> Dict:
     results["stats"]["total_segments"] = total_segments
     results["stats"]["total_words"] = total_words
     
-    # Check renderers
-    renderers = Counter([s.get("visual", {}).get("renderer", "none") for s in sections])
-    results["stats"]["renderers"] = dict(renderers)
-    
-    # Check manim_spec fields
+    # Check renderers and V2.5 content
+    renderers = Counter()
     manim_count = 0
-    for s in sections:
-        if s.get("visual", {}).get("manim_spec"):
-            manim_count += 1
-    results["stats"]["sections_with_manim_spec"] = manim_count
-    
-    # Check video_prompts
     wan_count = 0
+    hidden_content_count = 0
+    
     for s in sections:
-        if s.get("visual", {}).get("video_prompts"):
-            wan_count += 1
+        renderer = s.get("visual", {}).get("renderer", "none")
+        
+        # Check V2.5 render_spec location
+        spec = s.get("render_spec") or {}
+        has_manim = bool(spec.get("manim_scene_spec"))
+        has_wan = bool(spec.get("video_prompts"))
+        
+        # Also check deprecated V1 location just in case
+        if not has_manim:
+            has_manim = bool(s.get("visual", {}).get("manim_spec"))
+        if not has_wan:
+            has_wan = bool(s.get("visual", {}).get("video_prompts"))
+            
+        # Count content
+        if has_manim: manim_count += 1
+        if has_wan: wan_count += 1
+        
+        # Detect hidden content (content exists but renderer is none)
+        if renderer == "none" and (has_manim or has_wan):
+            hidden_content_count += 1
+            # Simulate what the pipeline auto-detect logic will do
+            if has_wan: renderer = "wan_video (auto-detect)"
+            elif has_manim: renderer = "manim (auto-detect)"
+            
+        renderers[renderer] += 1
+
+    results["stats"]["renderers"] = dict(renderers)
+    results["stats"]["sections_with_manim_spec"] = manim_count
     results["stats"]["sections_with_video_prompts"] = wan_count
+    results["stats"]["hidden_content_detected"] = hidden_content_count
     
     # === DIRECTOR BIBLE VALIDATION ===
     

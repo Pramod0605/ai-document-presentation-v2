@@ -74,8 +74,8 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     section_type = topic.get("section_type", "content")
     visual_beats = topic.get("visual_beats", [])
     
-    manim_scene_spec = topic.get("manim_scene_spec") or topic.get("render_spec", {}).get("manim_scene_spec")
-    video_prompts = topic.get("video_prompts") or topic.get("render_spec", {}).get("video_prompts")
+    manim_scene_spec = topic.get("manim_scene_spec") or (topic.get("render_spec") or {}).get("manim_scene_spec")
+    video_prompts = topic.get("video_prompts") or (topic.get("render_spec") or {}).get("video_prompts")
     
     # DEEP DIVE FIX: For V2.5, Manim Spec String is a Prompt (needs compiling), NOT a pre-compiled spec.
     # So valid "specs" to bypass compiler are: Dict (V1.2/V1.5 Code) for Manim, OR Any truthy Video Prompts (WAN takes strings/dicts)
@@ -84,6 +84,15 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     
     has_v12_specs = is_valid_manim_spec or is_valid_wan_spec
     
+    # V2.5 FIX: Auto-detect renderer if LLM provided content but forgot to set flag
+    if renderer == "none" and section_type not in TEXT_ONLY_SECTION_TYPES:
+        if video_prompts:
+            renderer = "wan_video"
+            logger.info(f"[Renderer] Auto-detected WAN content for section {topic_id}. Upgrading renderer to 'wan_video'.")
+        elif manim_scene_spec:
+            renderer = "manim_flow"
+            logger.info(f"[Renderer] Auto-detected Manim content for section {topic_id}. Upgrading renderer to 'manim_flow'.")
+
     if renderer == "none" or section_type in TEXT_ONLY_SECTION_TYPES:
         return {
             "topic_id": topic_id,
