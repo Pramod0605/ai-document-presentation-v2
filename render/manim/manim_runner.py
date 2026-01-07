@@ -929,9 +929,7 @@ class SpecGeneratedScene(Scene):
     
     with tempfile.TemporaryDirectory() as tmpdir:
         scene_file = Path(tmpdir) / "scene.py"
-        with open(scene_file, "w") as f:
-            f.write(scene_wrapper)
-        with open(scene_file, "w") as f:
+        with open(scene_file, "w", encoding="utf-8") as f:
             f.write(scene_wrapper)
         
         cmd = [
@@ -948,6 +946,7 @@ class SpecGeneratedScene(Scene):
                 cmd,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
                 timeout=120,
                 cwd=tmpdir,
                 env=env
@@ -1018,6 +1017,7 @@ def _execute_manim_render(
                 cmd,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
                 timeout=120,
                 cwd=tmpdir,
                 env=env

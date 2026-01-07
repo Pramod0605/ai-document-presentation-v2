@@ -163,8 +163,7 @@ function setupEventListeners() {
 
 
   narrationAudio.onerror = (e) => {
-    console.warn('[V2] Audio failed to load. Switching to Browser TTS Fallback.');
-    enableBrowserTTSFallback();
+    console.error('[V2] Audio failed to load:', narrationAudio.src);
   };
 
   contentVideo.addEventListener('ended', onContentVideoEnd);
@@ -1336,9 +1335,8 @@ function setupMediaSource(slide) {
       // Only use fallback if we actually have text segments
       const hasText = slide.narration?.segments?.length > 0;
       if (hasText) {
-        console.warn('[V2] No audio path. Using Browser TTS Fallback.');
-        enableBrowserTTSFallback();
-        return; // Exit here, fallback handles activeTimeSource
+        console.warn('[V2] No audio path found for slide with text segments.');
+        narrationAudio.src = '';
       } else {
         narrationAudio.src = '';
       }
@@ -2053,112 +2051,4 @@ function seekToSegment(segmentIndex) {
     activeTimeSource.currentTime = cumTime;
   }
 }
-// ============================================
-// BROWSER TTS FALLBACK (BrowserTTSPlayer)
-// ============================================
-class BrowserTTSPlayer {
-  constructor(slide) {
-    this.slide = slide;
-    this.segments = slide.narration?.segments || [];
-    this.fullText = this.segments.map(s => s.text).join(' ');
-    this.duration = slide.audio_duration || (this.fullText.length * 0.08) || 10;
-    this.currentTime = 0;
-    this.paused = true;
-    this.listeners = {};
-    this.startTime = 0;
-    this.animationFrame = null;
 
-    // Prep synthesis
-    this.utterance = new SpeechSynthesisUtterance(this.fullText);
-    this.utterance.rate = 1.0;
-    this.utterance.onend = () => {
-      this.currentTime = this.duration;
-      this.dispatchEvent({ type: 'ended' });
-      this.pause();
-    };
-    // Attempt to select a good voice
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(v => v.name.includes('Google US English') || v.name.includes('Microsoft Zira'));
-    if (preferred) this.utterance.voice = preferred;
-  }
-
-  addEventListener(type, callback) {
-    if (!this.listeners[type]) this.listeners[type] = [];
-    this.listeners[type].push(callback);
-  }
-
-  removeEventListener(type, callback) {
-    if (!this.listeners[type]) return;
-    this.listeners[type] = this.listeners[type].filter(cb => cb !== callback);
-  }
-
-  dispatchEvent(event) {
-    const list = this.listeners[event.type];
-    if (list) list.forEach(cb => cb(event));
-  }
-
-  play() {
-    if (!this.paused) return Promise.resolve();
-    this.paused = false;
-
-    // JS Speech API doesn't support seeking well, so we just speak from start or resume
-    // Ideally we would split utterance by segment, but for fallback simplified is okay
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
-    } else {
-      window.speechSynthesis.cancel(); // Reset
-      window.speechSynthesis.speak(this.utterance);
-    }
-
-    this.lastTick = Date.now();
-    this.tick();
-    return Promise.resolve();
-  }
-
-  pause() {
-    this.paused = true;
-    window.speechSynthesis.pause();
-    if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
-  }
-
-  tick() {
-    if (this.paused) return;
-
-    const now = Date.now();
-    const dt = (now - this.lastTick) / 1000;
-    this.lastTick = now;
-
-    this.currentTime += dt;
-    if (this.currentTime >= this.duration) {
-      this.currentTime = this.duration; // End logic handled by utterance.onend usually, but failsafe
-    }
-
-    this.dispatchEvent({ type: 'timeupdate' });
-
-    if (this.currentTime < this.duration) {
-      this.animationFrame = requestAnimationFrame(this.tick.bind(this));
-    }
-  }
-}
-
-function enableBrowserTTSFallback() {
-  const slide = slides[currentSlideIndex];
-  if (!slide) return;
-
-  console.log('[V2] Initializing BrowserTTSPlayer...');
-
-  if (activeTimeSource) {
-    unbindTimeEvents(activeTimeSource);
-  }
-
-  activeTimeSource = new BrowserTTSPlayer(slide);
-  // Important: activeTimeSource must be set BEFORE bindTimeEvents
-  bindTimeEvents(activeTimeSource);
-
-  // Show visual cue
-  const errDiv = document.createElement('div');
-  errDiv.style.cssText = 'position:fixed; top:10px; right:10px; background:rgba(255,193,7,0.8); color:black; padding:5px 10px; border-radius:4px; font-size:12px; z-index:9999; pointer-events:none;';
-  errDiv.textContent = 'Using Browser TTS (Fallback)';
-  document.body.appendChild(errDiv);
-  setTimeout(() => errDiv.remove(), 5000);
-}

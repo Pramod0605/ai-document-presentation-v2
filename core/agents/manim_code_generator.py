@@ -41,8 +41,8 @@ class ManimCodeGenerator:
     def _load_prompts(self):
         """Load system prompt and user template from files."""
         if self._system_prompt is None:
-            # V2 PROMPT TOGGLE: Checks for _v2.txt first
-            system_path = os.path.join(self.prompts_dir, "manim_system_prompt_v2.txt")
+            # V2.5 PROMPT: Use v25 prompts for Manim generation
+            system_path = os.path.join(self.prompts_dir, "manim_system_prompt_v25.txt")
             if not os.path.exists(system_path):
                 system_path = os.path.join(self.prompts_dir, "manim_system_prompt.txt")
             
@@ -50,7 +50,7 @@ class ManimCodeGenerator:
                 self._system_prompt = f.read()
         
         if self._user_template is None:
-            template_path = os.path.join(self.prompts_dir, "manim_user_prompt_template_v2.txt")
+            template_path = os.path.join(self.prompts_dir, "manim_user_prompt_v25.txt")
             if not os.path.exists(template_path):
                  template_path = os.path.join(self.prompts_dir, "manim_user_prompt_template.txt")
                  
@@ -172,18 +172,16 @@ class ManimCodeGenerator:
             if not code:
                 return "", errors
 
+            # NEW: Validate RAW code BEFORE timing sync to catch truncation
+            # This prevents _enforce_timing from masking truncated code with balanced wait() calls
+            raw_completeness_errors = self._check_completeness(code)
+            if raw_completeness_errors:
+                logger.warning(f"[MANIM GEN] RAW Completeness check failed: {raw_completeness_errors}")
+                section_data["previous_errors"] = f"Code appears truncated or incomplete:\n" + "\n".join(raw_completeness_errors)
+                continue
+
             # HARD SYNC ENFORCEMENT (V2 Feature)
             # We programmatically inject self.wait() to match narration timing perfectly
-            # Check for Segment markers instead of full class definition to support fragments
-            
-            # DEBUG LOGGING TO FILE
-            try:
-                with open("debug_gen.log", "a", encoding="utf-8") as f:
-                    f.write(f"\n\n--- GEN ATTEMPT ---\nCODE LEN: {len(code)}\n")
-                    f.write(f"HAS SEGMENT MSG: {'# Segment' in code}\n")
-                    f.write(f"Segments data: {len(section_data.get('narration_segments', []))}\n")
-            except: pass
-
             if code and "# Segment" in code:
                 try:
                     logger.info("[MANIM GEN] Applying Hard Sync timing enforcement...")
@@ -199,11 +197,11 @@ class ManimCodeGenerator:
                  with open("debug_gen.log", "a", encoding="utf-8") as f:
                         f.write("HARD SYNC SKIPPED: No '# Segment' markers\n")
 
-            # Validation Phase
+            # Final Validation Phase
             # 1. Structural Validation
             structural_errors = self.validate_code(code, section_data)
             if structural_errors:
-                logger.warning(f"[MANIM GEN] Structural validation failed: {structural_errors}")
+                logger.warning(f"[MANIM GEN] Final validation failed: {structural_errors}")
                 section_data["previous_errors"] = "\n".join(structural_errors)
                 continue
             
@@ -416,7 +414,26 @@ class ManimCodeGenerator:
         if not lines:
             return ["Empty code"]
         
-        last_line = lines[-1].strip()
+        # ISS-151 FIX: Ignore comments when checking for last-line completeness
+        # We use a simple heuristic: if a line ends with # preceded by space, or consists only of #
+        logical_lines = []
+        for line in lines:
+            stripped = line.strip()
+            if not stripped: continue
+            if stripped.startswith('#'): continue
+            # Split on ' #' but keep the part before
+            if ' #' in line:
+                logic_part = line.split(' #')[0].strip()
+            else:
+                logic_part = stripped
+                
+            if logic_part:
+                logical_lines.append(logic_part)
+        
+        if not logical_lines:
+            return ["No logical code found (only comments or empty)"]
+        
+        last_line = logical_lines[-1]
         
         # Check for incomplete statements
         if last_line.endswith(','):
@@ -654,8 +671,15 @@ class ManimCodeGenerator:
             
             # Find indentation of the last line to match
             indent = "        " # Default
+            last_logical_line = ""
             for line in reversed(lines_in_block):
                 if line.strip():
+                    # Check for truncation BEFORE appending sync comments
+                    if not last_logical_line:
+                        last_logical_line = line.split('#')[0].strip()
+                        if last_logical_line.endswith(('=', ',', '(', '+', '-', '*')):
+                            lines_in_block.append(f"{' ' * (len(line) - len(line.lstrip()))}# TRUNCATION DETECTED: Code ends mid-statement")
+                    
                     leading_spaces = len(line) - len(line.lstrip())
                     indent = line[:leading_spaces]
                     break

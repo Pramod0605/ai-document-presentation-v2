@@ -345,12 +345,26 @@ def process_markdown_unified(
             # ISS-FIX: Apply video paths from render results back to presentation sections!
             for result in render_results:
                 section_id_result = result.get("topic_id")
+                status = result.get("status")
+                error = result.get("error")
                 video_path = result.get("video_path")
                 beat_videos = result.get("beat_videos", [])
                 recap_video_paths = result.get("recap_video_paths", [])
                 
                 for section in presentation.get("sections", []):
                     if section.get("section_id") == section_id_result:
+                        # Capture render status for diagnostic visibility
+                        if status == "failed" or status == "compilation_failed":
+                            section["render_error"] = error
+                            # Also add to global metadata for quick inspection
+                            meta = presentation.setdefault("metadata", {})
+                            meta.setdefault("render_errors", []).append({
+                                "section_id": section_id_result,
+                                "section_type": section.get("section_type"),
+                                "error": error
+                            })
+                            meta["job_status"] = "completed_with_errors"
+
                         if video_path:
                             rel_path = Path(video_path).name if "/" in str(video_path) else video_path
                             section["video_path"] = f"videos/{rel_path}"
@@ -363,7 +377,11 @@ def process_markdown_unified(
                                     visual_beats[idx]["video_asset"] = f"videos/{Path(beat_path).name}"
                             section["visual_beats"] = visual_beats
                         if recap_video_paths:
+                            # ISS-161/200: Ensure recap videos are properly linked for V2.5 sequencing
                             section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
+                            # For recap, also set the first video as the main video_path for compatibility
+                            if not section.get("video_path") and recap_video_paths:
+                                section["video_path"] = f"videos/{Path(recap_video_paths[0]).name}"
                         break
             
             

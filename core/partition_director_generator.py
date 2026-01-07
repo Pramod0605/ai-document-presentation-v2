@@ -124,8 +124,14 @@ class PartitionDirectorGenerator:
             intro = global_results["intro"]
             intro["section_id"] = 1
             final_presentation["sections"].append(intro)
+        
+        # 2. Summary (V2.5 Bible: Summary comes BEFORE Content)
+        if global_results.get("summary"):
+            summary = global_results["summary"]
+            summary["section_id"] = len(final_presentation["sections"]) + 1
+            final_presentation["sections"].append(summary)
             
-        # 2. Content Sections (Order matters - logic preserves chunk order)
+        # 3. Content Sections (Order matters - logic preserves chunk order)
         current_id = len(final_presentation["sections"]) + 1
         for chunk_res in content_results:
             if chunk_res:
@@ -137,8 +143,8 @@ class PartitionDirectorGenerator:
                         sec["visual_beats"] = []
                 final_presentation["sections"].extend(chunk_res)
                 
-        # 3. Global Footer
-        for key in ["summary", "memory", "recap"]:
+        # 4. Memory and Recap (Global Footer)
+        for key in ["memory", "recap"]:
             if global_results.get(key):
                 sec = global_results[key]
                 sec["section_id"] = current_id

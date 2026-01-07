@@ -1,0 +1,32 @@
+Generate a complete, executable Manim script for the following section.
+
+**Section Title**: {section_title}
+
+=== NARRATION SCHEDULE (Use strictly for timing) ===
+{narration_segments}
+
+=== VISUAL PLAN ===
+{visual_description}
+
+=== MATHEMATICAL CONTENT ===
+- Main formulas: {formulas}
+- Key terms: {key_terms}
+
+=== MANDATORY SKELETON (Copy this structure EXACTLY) ===
+You must output the code following this exact pattern. Do not change the class name.
+
+from manim import *
+
+class MainScene(Scene):
+    def construct(self):
+        # Segment 1
+        # ... your code here ...
+        
+        # Segment 2
+        # ... your code here ...
+
+=== GENERATION CONSTRAINTS ===
+1. **Timing**: `run_time` + `wait` MUST equal Segment Duration exactly.
+2. **Anti-Overlap**: Use `FadeOut` to clear old objects before new ones.
+3. **Encoding**: Use ASCII text only (Rs., -, " "). NO Unicode symbols.
+4. **Output**: Return PURE PYTHON CODE ONLY. No markdown (```), no explanations.

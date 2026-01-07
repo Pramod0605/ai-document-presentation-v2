@@ -89,18 +89,21 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
         if video_prompts:
             renderer = "wan_video"
             logger.info(f"[Renderer] Auto-detected WAN content for section {topic_id}. Upgrading renderer to 'wan_video'.")
+            print(f"  [{topic_id}] -> Auto-upgraded to WAN (found video_prompts)")
         elif manim_scene_spec:
             renderer = "manim_flow"
             logger.info(f"[Renderer] Auto-detected Manim content for section {topic_id}. Upgrading renderer to 'manim_flow'.")
+            print(f"  [{topic_id}] -> Auto-upgraded to Manim (found manim_scene_spec)")
 
     if renderer == "none" or section_type in TEXT_ONLY_SECTION_TYPES:
+        reason = f"Section type '{section_type}' is text-only" if section_type in TEXT_ONLY_SECTION_TYPES else "Renderer explicitly set to 'none'"
         return {
             "topic_id": topic_id,
             "section_type": section_type,
             "renderer": "none",
             "status": "skipped",
             "video_path": None,
-            "reason": f"Section type '{section_type}' is text-only (no video rendering)"
+            "reason": reason
         }
     
     if visual_beats:
@@ -212,12 +215,19 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
         
         result["status"] = "success"
         
-        # ISS-093 FIX: Handle Manim multi-beat returns (list of paths)
+        # ISS-093 FIX: Handle different return types from renderers
         if isinstance(video_path, list):
+            # Manim multi-beat returns a list of paths
             result["video_path"] = video_path[0] if video_path else None
             result["beat_videos"] = video_path
             print(f"[RENDER] Manim multi-beat: {len(video_path)} beat videos for section {topic_id}")
+        elif isinstance(video_path, dict):
+            # WAN recap returns a dict with first_path and all_paths
+            result["video_path"] = video_path.get("first_path")
+            result["recap_video_paths"] = video_path.get("all_paths", [])
+            print(f"[RENDER] WAN recap: {len(result['recap_video_paths'])} videos for section {topic_id}")
         else:
+            # Standard single video path (string)
             result["video_path"] = video_path
         
         # ISS-092 FIX: Capture recap video paths if they were set by WAN renderer

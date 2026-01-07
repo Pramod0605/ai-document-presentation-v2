@@ -768,13 +768,21 @@ def _retry_manim_codegen(job_id: str, job_folder: Path, presentation: dict, sect
             results["skipped"].append({"section_id": section_id, "reason": "Not in retry list"})
             continue
         
-        if section.get("render_spec", {}).get("manim_scene_spec", {}).get("manim_code"):
+        # Check for existing manim_code in multiple locations (V2.5 compatibility)
+        has_code = (
+            section.get("manim_code") or  # Top-level (v1.5)
+            section.get("render_spec", {}).get("manim_scene_spec", {}).get("manim_code")  # Nested (v2.5)
+        )
+        print(f"DEBUG: Section {section_id} has_code={bool(has_code)}")
+        if has_code:
             if section_ids is None:
+                print(f"DEBUG: Section {section_id} SKIPPED - already has valid code")
                 results["skipped"].append({"section_id": section_id, "reason": "Already has valid code"})
                 continue
             else:
                 print(f"DEBUG: Forcing regen for Section {section_id} despite existing code.")
         
+        print(f"DEBUG: Section {section_id} PROCEEDING to code generation")
         try:
             print(f"[RETRY] Regenerating Manim code for section {section_id}")
             manim_input = build_manim_section_data(
@@ -1397,7 +1405,7 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             from threading import Thread
             if job_id not in ACTIVE_AVATAR_JOBS:
                 ACTIVE_AVATAR_JOBS.add(job_id)
-                thread = Thread(target=run_avatar_generation_task, args=(job_id, str(JOBS_DIR)))
+                thread = Thread(target=run_avatar_sequential_task, args=(job_id, str(JOBS_DIR)))
                 thread.daemon = True
                 thread.start()
         
@@ -2516,8 +2524,7 @@ def generate_avatar(job_id):
             
     # Start async task
     ACTIVE_AVATAR_JOBS.add(job_id)
-    from threading import Thread
-    thread = Thread(target=run_avatar_generation_task, args=(job_id, str(JOBS_DIR)))
+    thread = Thread(target=run_avatar_sequential_task, args=(job_id, str(JOBS_DIR)))
     thread.daemon = True
     thread.start()
     
@@ -2743,6 +2750,140 @@ def run_avatar_generation_task(job_id, jobs_root):
         import traceback
         traceback.print_exc()
         update_status("failed", f"Internal error: {str(e)}")
+    finally:
+        ACTIVE_AVATAR_JOBS.discard(job_id)
+
+def run_avatar_sequential_task(job_id, jobs_root):
+    """
+    Background worker to handle avatar generation workflow SEQUENTIALLY:
+    1. Read presentation.json
+    2. For each section:
+       a. Submit to API
+       b. Poll status until complete
+       c. Download video
+       d. Update presentation.json
+    """
+    from core.agents.avatar_generator import AvatarGenerator
+    import time
+    
+    print(f"[AVATAR-SEQ] Starting sequential task for job {job_id}", flush=True)
+    job_dir = Path(jobs_root) / job_id
+    status_file = job_dir / "avatar_status.json"
+    presentation_file = job_dir / "presentation.json"
+    avatar_dir = job_dir / "avatars"
+    
+    try:
+        os.makedirs(avatar_dir, exist_ok=True)
+    except Exception as e:
+        print(f"[AVATAR-SEQ] Error creating dir: {e}", flush=True)
+        return
+
+    def update_status(state, message, progress=0, details=None):
+        data = {
+            "state": state, "message": message, "progress": progress,
+            "updated_at": time.time(), "details": details or {}
+        }
+        try:
+            with open(status_file, "w") as f:
+                json.dump(data, f)
+        except: pass
+
+    try:
+        if not presentation_file.exists():
+            update_status("failed", "presentation.json not found")
+            return
+            
+        with open(presentation_file, "r") as f:
+            presentation = json.load(f)
+            
+        generator = AvatarGenerator()
+        sections = presentation.get("sections", [])
+        total_sections = len(sections)
+        
+        # Initialize Analytics
+        from core.analytics import create_tracker
+        tracker = create_tracker(job_id)
+        analytics_file = job_dir / "analytics.json"
+        
+        completed_count = 0
+        failed_count = 0
+        
+        for idx, section in enumerate(sections):
+            sec_id = section.get("section_id")
+            
+            # Progress calculation
+            progress = 10 + int((idx / total_sections) * 80)
+            update_status("processing", f"Processing Section {sec_id} ({idx+1}/{total_sections})", progress)
+            
+            # 1. Extract context/text
+            narration_text = ""
+            if "narration_segments" in section:
+                narration_text = " ".join([str(seg.get("text", "") or "") for seg in section["narration_segments"]])
+            elif "narration" in section:
+                narr = section["narration"]
+                if isinstance(narr, dict):
+                    narration_text = narr.get("full_text", "") or " ".join([str(s.get("text", "") or "") for s in narr.get("segments", [])])
+                else:
+                    narration_text = str(narr)
+            
+            if not narration_text or not narration_text.strip():
+                print(f"[AVATAR-SEQ] Skipping Sec {sec_id} (No text)", flush=True)
+                completed_count += 1
+                continue
+
+            # Check if exists
+            output_filename = f"section_{sec_id}_avatar.mp4"
+            output_path = avatar_dir / output_filename
+            if output_path.exists() and output_path.stat().st_size > 1000:
+                print(f"[AVATAR-SEQ] Sec {sec_id} exists. Skipping.", flush=True)
+                completed_count += 1
+                continue
+
+            # 2. Submit
+            print(f"[AVATAR-SEQ] Submitting Sec {sec_id}...", flush=True)
+            res = generator.generate_avatar_video(narration_text, job_id, sec_id)
+            task_id = res.get("task_id")
+            
+            if not task_id:
+                print(f"[AVATAR-SEQ] Submission failed for Sec {sec_id}: {res.get('error')}", flush=True)
+                failed_count += 1
+                continue
+            
+            # 3. Poll
+            start_poll = time.time()
+            success = False
+            while time.time() - start_poll < 600: # 10 min per section
+                try:
+                    status_res = generator.check_status(task_id)
+                    api_status = status_res.get("status")
+                    if api_status == "completed":
+                        # 4. Download
+                        if generator.download_video(task_id, str(output_path)):
+                            print(f"[AVATAR-SEQ] Sec {sec_id} ready and downloaded.", flush=True)
+                            section["avatar_video"] = f"/jobs/{job_id}/avatars/{output_filename}"
+                            section["avatar_task_id"] = task_id
+                            with open(presentation_file, "w") as f:
+                                json.dump(presentation, f, indent=2)
+                            success = True
+                        break
+                    elif api_status == "failed":
+                        print(f"[AVATAR-SEQ] Sec {sec_id} API failed.", flush=True)
+                        break
+                except Exception as e:
+                    print(f"[AVATAR-SEQ] Poll error: {e}", flush=True)
+                
+                time.sleep(10)
+            
+            if success:
+                completed_count += 1
+            else:
+                failed_count += 1
+
+        update_status("completed", f"Sequential processing complete. Success: {completed_count}, Failed: {failed_count}", 100)
+        
+    except Exception as e:
+        print(f"[AVATAR-SEQ] Fatal error: {e}", flush=True)
+        update_status("failed", str(e))
     finally:
         ACTIVE_AVATAR_JOBS.discard(job_id)
 
