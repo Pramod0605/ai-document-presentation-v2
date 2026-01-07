@@ -41,7 +41,7 @@ def process_markdown_unified(
     update_status_callback=None,
     generate_tts: bool = True,
     output_dir: Optional[Path] = None,
-    tts_provider: TTSProvider = "edge_tts",
+    tts_provider: TTSProvider = "our_tts",
     dry_run: bool = False,
     skip_wan: bool = False,
     images_dict: Optional[dict] = None,
