@@ -473,46 +473,53 @@ def _transform_narration(narration: dict, visual_beats: list = None) -> dict:
         seg_id = seg.get("segment_id", f"seg_{i+1}")
         beat = beat_map.get(seg_id, {})
         
-        # Map visual_beat to visual_content
-        visual_type = beat.get("visual_type", "text")
-        display_text = beat.get("display_text", "")
-        
-        # Determine content_type and structure
-        if visual_type == "bullet_list":
-            content_type = "bullet_points"
-            items = [display_text] if display_text else []
-            # Split on newlines if present
-            if display_text and "\n" in display_text:
-                items = [line.strip() for line in display_text.split("\n") if line.strip()]
-            visual_content = {
-                "content_type": content_type,
-                "display_format": "bullets",
-                "items": items,
-                "verbatim_content": None
-            }
-        elif visual_type == "equation":
-            visual_content = {
-                "content_type": "equation",
-                "display_format": "latex",
-                "items": [],
-                "verbatim_content": beat.get("latex_content", display_text)
-            }
-        elif visual_type in ("diagram", "image"):
-            visual_content = {
-                "content_type": visual_type,
-                "display_format": None,
-                "items": [],
-                "verbatim_content": display_text,
-                "image_id": beat.get("image_id")
-            }
+        # ISS-FIX: PRESERVE existing visual_content from LLM output if present
+        existing_vc = seg.get("visual_content")
+        if existing_vc and isinstance(existing_vc, dict):
+            # Use LLM-provided visual_content directly
+            visual_content = existing_vc
         else:
-            # Default text type
-            visual_content = {
-                "content_type": "text",
-                "display_format": None,
-                "items": [],
-                "verbatim_content": display_text if display_text else None
-            }
+            # Derive visual_content from visual_beats (legacy path)
+            # Map visual_beat to visual_content
+            visual_type = beat.get("visual_type", "text")
+            display_text = beat.get("display_text", "")
+            
+            # Determine content_type and structure
+            if visual_type == "bullet_list":
+                content_type = "bullet_points"
+                items = [display_text] if display_text else []
+                # Split on newlines if present
+                if display_text and "\n" in display_text:
+                    items = [line.strip() for line in display_text.split("\n") if line.strip()]
+                visual_content = {
+                    "content_type": content_type,
+                    "display_format": "bullets",
+                    "items": items,
+                    "verbatim_content": None
+                }
+            elif visual_type == "equation":
+                visual_content = {
+                    "content_type": "equation",
+                    "display_format": "latex",
+                    "items": [],
+                    "verbatim_content": beat.get("latex_content", display_text)
+                }
+            elif visual_type in ("diagram", "image"):
+                visual_content = {
+                    "content_type": visual_type,
+                    "display_format": None,
+                    "items": [],
+                    "verbatim_content": display_text,
+                    "image_id": beat.get("image_id")
+                }
+            else:
+                # Default text type
+                visual_content = {
+                    "content_type": "text",
+                    "display_format": None,
+                    "items": [],
+                    "verbatim_content": display_text if display_text else None
+                }
         
         # TEACH → SHOW pattern: text_layer and visual_layer are mutually exclusive
         # When showing text, visual should be hidden (TEACH phase)

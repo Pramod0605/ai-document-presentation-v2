@@ -371,7 +371,7 @@ def _order_sections(sections: List[Dict]) -> List[Dict]:
     }
     
     def sort_key(section):
-        section_type = section.get("section_type", "content")
+        section_type = section.get("section_type", "content").lower()  # Normalize case
         return type_order.get(section_type, 2)
     
     return sorted(sections, key=sort_key)

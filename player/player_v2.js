@@ -163,7 +163,8 @@ function setupEventListeners() {
 
 
   narrationAudio.onerror = (e) => {
-    console.error('[V2] Audio error:', narrationAudio.error);
+    console.warn('[V2] Audio failed to load. Switching to Browser TTS Fallback.');
+    enableBrowserTTSFallback();
   };
 
   contentVideo.addEventListener('ended', onContentVideoEnd);
@@ -436,7 +437,8 @@ function loadSlide(index) {
       renderMemory(slide);
       break;
     case 'recap':
-      renderRecap(slide);
+      // Recap uses renderContent which has special isRecap handling for video-only mode
+      renderContent(slide);
       break;
     case 'content':
     case 'example':
@@ -1089,35 +1091,32 @@ function renderQuizFromBullets(bullets) {
 }
 
 function renderMemory(slide) {
-  console.log('[V2] MemoryRenderer: Flashcards');
+  console.log('[V2] MemoryRenderer: Flashcards (V2.5 Bible Aligned)');
 
-  const flashcards = slide.visual_content?.flashcards || [];
+  // V2.5 Director Bible: flashcards at top level, NOT inside visual_content
+  const flashcards = slide.flashcards || slide.visual_content?.flashcards || [];
 
   if (flashcards.length === 0) {
-    const segments = slide.narration?.segments || [];
-    segments.forEach((seg, i) => {
-      const card = document.createElement('div');
-      card.className = 'flashcard';
-      card.id = `seg-${i}`;
-      card.innerHTML = `
-        <div class="flashcard-title">${sanitizeMarkdown(seg.text || '')}</div>
-      `;
-      contentBox.appendChild(card);
-    });
+    // V2.5 Bible: Memory = Flashcards ONLY, no narration text fallback
+    console.warn('[V2] Memory section has no flashcards - showing placeholder');
+    const placeholder = document.createElement('div');
+    placeholder.className = 'memory-placeholder';
+    placeholder.textContent = 'No flashcards available for this section.';
+    contentBox.appendChild(placeholder);
     return;
   }
 
   const container = document.createElement('div');
   container.className = 'flashcard-container';
 
+  // V2.5 Director Bible: flashcards have "front" (Term) and "back" (Mnemonic/Answer)
   flashcards.forEach((fc, i) => {
     const card = document.createElement('div');
     card.className = 'flashcard';
     card.id = `seg-${i}`;
     card.innerHTML = `
-      <div class="flashcard-letter">${fc.letter || ''}</div>
-      <div class="flashcard-title">${fc.title || ''}</div>
-      ${fc.mnemonic ? `<div class="flashcard-mnemonic">${fc.mnemonic}</div>` : ''}
+      <div class="flashcard-front">${sanitizeMarkdown(fc.front || fc.title || '')}</div>
+      <div class="flashcard-back">${sanitizeMarkdown(fc.back || fc.mnemonic || '')}</div>
     `;
     container.appendChild(card);
   });
@@ -1333,7 +1332,16 @@ function setupMediaSource(slide) {
       narrationAudio.src = fullPath;
       narrationAudio.load();
     } else {
-      narrationAudio.src = '';
+      // No audio file path found - check if we have text to speak
+      // Only use fallback if we actually have text segments
+      const hasText = slide.narration?.segments?.length > 0;
+      if (hasText) {
+        console.warn('[V2] No audio path. Using Browser TTS Fallback.');
+        enableBrowserTTSFallback();
+        return; // Exit here, fallback handles activeTimeSource
+      } else {
+        narrationAudio.src = '';
+      }
     }
   }
 
@@ -2044,4 +2052,113 @@ function seekToSegment(segmentIndex) {
   if (activeTimeSource) {
     activeTimeSource.currentTime = cumTime;
   }
+}
+// ============================================
+// BROWSER TTS FALLBACK (BrowserTTSPlayer)
+// ============================================
+class BrowserTTSPlayer {
+  constructor(slide) {
+    this.slide = slide;
+    this.segments = slide.narration?.segments || [];
+    this.fullText = this.segments.map(s => s.text).join(' ');
+    this.duration = slide.audio_duration || (this.fullText.length * 0.08) || 10;
+    this.currentTime = 0;
+    this.paused = true;
+    this.listeners = {};
+    this.startTime = 0;
+    this.animationFrame = null;
+
+    // Prep synthesis
+    this.utterance = new SpeechSynthesisUtterance(this.fullText);
+    this.utterance.rate = 1.0;
+    this.utterance.onend = () => {
+      this.currentTime = this.duration;
+      this.dispatchEvent({ type: 'ended' });
+      this.pause();
+    };
+    // Attempt to select a good voice
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v => v.name.includes('Google US English') || v.name.includes('Microsoft Zira'));
+    if (preferred) this.utterance.voice = preferred;
+  }
+
+  addEventListener(type, callback) {
+    if (!this.listeners[type]) this.listeners[type] = [];
+    this.listeners[type].push(callback);
+  }
+
+  removeEventListener(type, callback) {
+    if (!this.listeners[type]) return;
+    this.listeners[type] = this.listeners[type].filter(cb => cb !== callback);
+  }
+
+  dispatchEvent(event) {
+    const list = this.listeners[event.type];
+    if (list) list.forEach(cb => cb(event));
+  }
+
+  play() {
+    if (!this.paused) return Promise.resolve();
+    this.paused = false;
+
+    // JS Speech API doesn't support seeking well, so we just speak from start or resume
+    // Ideally we would split utterance by segment, but for fallback simplified is okay
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    } else {
+      window.speechSynthesis.cancel(); // Reset
+      window.speechSynthesis.speak(this.utterance);
+    }
+
+    this.lastTick = Date.now();
+    this.tick();
+    return Promise.resolve();
+  }
+
+  pause() {
+    this.paused = true;
+    window.speechSynthesis.pause();
+    if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
+  }
+
+  tick() {
+    if (this.paused) return;
+
+    const now = Date.now();
+    const dt = (now - this.lastTick) / 1000;
+    this.lastTick = now;
+
+    this.currentTime += dt;
+    if (this.currentTime >= this.duration) {
+      this.currentTime = this.duration; // End logic handled by utterance.onend usually, but failsafe
+    }
+
+    this.dispatchEvent({ type: 'timeupdate' });
+
+    if (this.currentTime < this.duration) {
+      this.animationFrame = requestAnimationFrame(this.tick.bind(this));
+    }
+  }
+}
+
+function enableBrowserTTSFallback() {
+  const slide = slides[currentSlideIndex];
+  if (!slide) return;
+
+  console.log('[V2] Initializing BrowserTTSPlayer...');
+
+  if (activeTimeSource) {
+    unbindTimeEvents(activeTimeSource);
+  }
+
+  activeTimeSource = new BrowserTTSPlayer(slide);
+  // Important: activeTimeSource must be set BEFORE bindTimeEvents
+  bindTimeEvents(activeTimeSource);
+
+  // Show visual cue
+  const errDiv = document.createElement('div');
+  errDiv.style.cssText = 'position:fixed; top:10px; right:10px; background:rgba(255,193,7,0.8); color:black; padding:5px 10px; border-radius:4px; font-size:12px; z-index:9999; pointer-events:none;';
+  errDiv.textContent = 'Using Browser TTS (Fallback)';
+  document.body.appendChild(errDiv);
+  setTimeout(() => errDiv.remove(), 5000);
 }

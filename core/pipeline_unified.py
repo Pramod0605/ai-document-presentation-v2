@@ -342,6 +342,30 @@ def process_markdown_unified(
             )
             logger.info(f"Render results: {len(render_results)} videos processed")
             
+            # ISS-FIX: Apply video paths from render results back to presentation sections!
+            for result in render_results:
+                section_id_result = result.get("topic_id")
+                video_path = result.get("video_path")
+                beat_videos = result.get("beat_videos", [])
+                recap_video_paths = result.get("recap_video_paths", [])
+                
+                for section in presentation.get("sections", []):
+                    if section.get("section_id") == section_id_result:
+                        if video_path:
+                            rel_path = Path(video_path).name if "/" in str(video_path) else video_path
+                            section["video_path"] = f"videos/{rel_path}"
+                        if beat_videos:
+                            section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
+                            # Also populate visual_beats[].video_asset for player sync
+                            visual_beats = section.get("visual_beats", [])
+                            for idx, beat_path in enumerate(beat_videos):
+                                if idx < len(visual_beats):
+                                    visual_beats[idx]["video_asset"] = f"videos/{Path(beat_path).name}"
+                            section["visual_beats"] = visual_beats
+                        if recap_video_paths:
+                            section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
+                        break
+            
             
         # --- PHASE 5.5: Final State Save (CRITICAL FOR CERTIFICATION) ---
         if output_dir:
@@ -388,6 +412,7 @@ def _link_images_to_presentation(presentation: dict, saved_images: dict, images_
         image_lookup[filename.lower()] = filename
     
     for section in presentation.get("sections", []):
+        # Link to visual_beats (legacy)
         for beat in section.get("visual_beats", []):
             # Check if this beat references an image
             if beat.get("visual_type") == "image":
@@ -402,3 +427,37 @@ def _link_images_to_presentation(presentation: dict, saved_images: dict, images_
                 
                 if found_match:
                     beat["image_asset"] = f"images/{found_match}"
+        
+        # ISS-FIX: Link to segments' visual_content (for player to display)
+        for seg in section.get("narration", {}).get("segments", []):
+            vc = seg.get("visual_content", {})
+            if not isinstance(vc, dict):
+                continue
+            
+            # Check for image_id reference from LLM
+            image_id = vc.get("image_id")
+            content_type = vc.get("content_type", "")
+            
+            if image_id or content_type in ("image", "diagram"):
+                # Try to find matching image
+                found_match = None
+                
+                # First try image_id directly
+                if image_id:
+                    normalized_id = image_id.lower()
+                    for key, fname in image_lookup.items():
+                        if normalized_id in key or key in normalized_id:
+                            found_match = fname
+                            break
+                
+                # Fallback: try verbatim_content as description
+                if not found_match and vc.get("verbatim_content"):
+                    desc = vc.get("verbatim_content", "").lower()
+                    for key, fname in image_lookup.items():
+                        if key in desc or fname.lower() in desc:
+                            found_match = fname
+                            break
+                
+                if found_match:
+                    vc["image_path"] = f"images/{found_match}"
+                    seg["visual_content"] = vc  # Update in place
