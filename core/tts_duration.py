@@ -138,37 +138,57 @@ def update_durations_simplified(
             audio_path = audio_dir / f"{audio_filename}.mp3"
             tasks.append((segment, text, audio_path))
 
+    # TTS Retry Configuration
+    MAX_TTS_RETRIES = 2
+    tts_failures = []  # Track failed segments for reporting
+    
     def work(task):
         segment, text, audio_path = task
-        try:
-            nonlocal audio_count
-            # ISS-FIX: Clean text (LaTeX to Speech) before sending to TTS
-            clean_text = latex_to_speech(text)
-            
-            if production_provider == "edge_tts" and EDGE_TTS_AVAILABLE:
-                duration = _generate_edge_tts(clean_text, audio_path)
-            elif production_provider == "narakeet":
-                duration = _generate_narakeet(clean_text, audio_path)
-            elif production_provider == "our_tts":
-                wav_path = audio_dir / f"{audio_path.stem}.wav"
-                duration = _generate_our_tts(clean_text, wav_path)
-                if wav_path.exists(): audio_path = wav_path
-            elif pyttsx3_engine:
-                wav_path = audio_dir / f"{audio_path.stem}.wav"
-                duration = _generate_pyttsx3(text, wav_path, pyttsx3_engine)
-                if wav_path.exists(): audio_path = wav_path
-            else:
-                return
-            
-            if audio_path.exists():
-                segment["audio_file"] = str(audio_path.name)
-                segment["audio_path"] = f"audio/{audio_path.name}"
-                segment["duration_seconds"] = duration # ISS-FIX: Match player_v2.js field
-                segment["duration"] = duration # Keep for compatibility
-                audio_count += 1
-                print(f"[TTS] Generated: {audio_path.name}")
-        except Exception as e:
-            logger.warning(f"[TTS Simplified] Failed for {audio_path.name}: {e}")
+        nonlocal audio_count, tts_failures
+        
+        # ISS-FIX: Clean text (LaTeX to Speech) before sending to TTS
+        clean_text = latex_to_speech(text)
+        
+        # Retry logic with max 2 attempts
+        for attempt in range(MAX_TTS_RETRIES):
+            try:
+                if production_provider == "edge_tts" and EDGE_TTS_AVAILABLE:
+                    duration = _generate_edge_tts(clean_text, audio_path)
+                elif production_provider == "narakeet":
+                    duration = _generate_narakeet(clean_text, audio_path)
+                elif production_provider == "our_tts":
+                    wav_path = audio_dir / f"{audio_path.stem}.wav"
+                    duration = _generate_our_tts(clean_text, wav_path)
+                    if wav_path.exists(): audio_path = wav_path
+                elif pyttsx3_engine:
+                    wav_path = audio_dir / f"{audio_path.stem}.wav"
+                    duration = _generate_pyttsx3(text, wav_path, pyttsx3_engine)
+                    if wav_path.exists(): audio_path = wav_path
+                else:
+                    # Estimate provider - no retries needed
+                    return
+                
+                if audio_path.exists():
+                    segment["audio_file"] = str(audio_path.name)
+                    segment["audio_path"] = f"audio/{audio_path.name}"
+                    segment["duration_seconds"] = duration
+                    segment["duration"] = duration
+                    audio_count += 1
+                    print(f"[TTS] Generated: {audio_path.name}")
+                    return  # Success, exit retry loop
+                    
+            except Exception as e:
+                if attempt < MAX_TTS_RETRIES - 1:
+                    logger.warning(f"[TTS] Retry {attempt + 1}/{MAX_TTS_RETRIES} for {audio_path.name}: {e}")
+                    import time
+                    time.sleep(0.5)  # Brief pause before retry
+                else:
+                    logger.error(f"[TTS] Failed after {MAX_TTS_RETRIES} attempts for {audio_path.name}: {e}")
+                    tts_failures.append(str(audio_path.name))
+                    # Use estimated duration as fallback
+                    segment["duration_seconds"] = _estimate_duration(text)
+                    segment["duration"] = segment["duration_seconds"]
+                    segment["tts_failed"] = True
 
     logger.info(f"[TTS Simplified] Spawning workers for {len(tasks)} segments...")
     
@@ -200,6 +220,14 @@ def update_durations_simplified(
     presentation["metadata"]["tts_method"] = "simplified"
     presentation["metadata"]["duration_provider"] = "word_count_estimate"
     presentation["metadata"]["audio_provider"] = production_provider
+    
+    # TTS failure tracking for completed_with_warnings status
+    presentation["metadata"]["tts_generated_count"] = audio_count
+    presentation["metadata"]["tts_total_segments"] = len(tasks)
+    if tts_failures:
+        presentation["metadata"]["tts_failed_count"] = len(tts_failures)
+        presentation["metadata"]["tts_failures"] = tts_failures[:10]  # First 10 for debugging
+        logger.warning(f"[TTS] {len(tts_failures)} segments failed - using estimated durations")
     
     # RECALCULATE TOTALS: Ensure metadata matches real audio lengths
     total_pres_duration = 0.0
