@@ -74,17 +74,45 @@ cp .env_example .env
 # Edit .env with your API keys
 ```
 
-### 2. Install Dependencies
+### 2. System Requirements (for Manim)
+Manim requires system-level dependencies:
+
+**Windows:**
+```bash
+# Install Chocolatey, then:
+choco install miktex ffmpeg
+```
+
+**Ubuntu/Debian:**
+```bash
+sudo apt install texlive-full ffmpeg
+```
+
+**macOS:**
+```bash
+brew install --cask mactex
+brew install ffmpeg
+```
+
+### 3. Install Python Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Start Server
+**Key packages:**
+- `manim` - Mathematical animation engine
+- `edge-tts` - Microsoft Edge TTS (free)
+- `pyttsx3` - Offline TTS fallback
+- `moviepy` - Video processing
+- `rembg` - Background removal for images
+
+
+### 4. Start Server
 ```bash
 python api/app.py
 ```
 
-### 4. Access Dashboard
+### 5. Access Dashboard
 Open [http://localhost:5000/dashboard](http://localhost:5000/dashboard)
 
 ## Environment Variables
