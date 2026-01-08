@@ -1580,6 +1580,13 @@ function updateActiveSegment(currentTime) {
  * Only the video layer visibility toggles based on display_directives
  */
 function applyDisplayDirectives(slide, segment, segmentIndex) {
+  // SUBTITLES: Update subtitle text for current segment (Always apply, regardless of section type or directives)
+  if (segment && segment.text) {
+    updateSubtitleText(segment.text);
+  } else {
+    updateSubtitleText("");
+  }
+
   if (!segment || !segment.display_directives) return;
 
   const dd = segment.display_directives;
@@ -1603,18 +1610,12 @@ function applyDisplayDirectives(slide, segment, segmentIndex) {
       contentLayer.classList.add('hidden');
       contentVideo.play().catch(() => { });
       console.log(`[V2] Segment ${segmentIndex}: SHOW phase - displaying video overlay (content hidden)`);
-      console.log(`[V2] Segment ${segmentIndex}: SHOW phase - displaying video overlay (content hidden)`);
     } else {
       // TEACH phase: Hide video overlay, content becomes visible again
       videoLayer.classList.add('hidden');
       contentLayer.classList.remove('hidden');
       console.log(`[V2] Segment ${segmentIndex}: TEACH phase - video hidden, content visible`);
     }
-
-    // SUBTITLES: Update subtitle text for current segment
-    updateSubtitleText(seg.text);
-  } else {
-    updateSubtitleText(""); // Clear if no active segment
   }
 }
 
