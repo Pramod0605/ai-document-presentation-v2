@@ -1662,12 +1662,14 @@ function setupSubtitleContainer() {
   style.textContent = `
     .sub-word {
       display: inline-block;
-      margin: 0 3px;
-      transition: color 0.1s, text-shadow 0.1s;
+      white-space: pre;
+      margin: 0 2px;
+      transition: color 0.05s ease-out, text-shadow 0.05s ease-out;
     }
     .sub-word.played {
-      color: #ffffff;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      color: #ffffff !important;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.4);
+      transform: scale(1.05);
     }
   `;
   document.head.appendChild(style);
