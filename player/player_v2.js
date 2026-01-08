@@ -1567,8 +1567,13 @@ function updateActiveSegment(currentTime) {
 
     currentSegmentIndex = activeIndex;
 
+    // Calculate progress within the current segment for karaoke subtitles
+    const duration = segments[activeIndex]?.duration_seconds || 5;
+    const progress = Math.min(1, Math.max(0, (currentTime - cumulative) / duration));
+
     // TEACH → SHOW: Apply display_directives for current segment
-    applyDisplayDirectives(slide, segments[activeIndex], activeIndex);
+    // Pass progress for karaoke subtitles
+    applyDisplayDirectives(slide, segments[activeIndex], activeIndex, progress);
     displayDirectivesApplied = true;
   }
 }
@@ -1579,12 +1584,12 @@ function updateActiveSegment(currentTime) {
  * IMPORTANT: Content layer (text/images) remains visible at all times
  * Only the video layer visibility toggles based on display_directives
  */
-function applyDisplayDirectives(slide, segment, segmentIndex) {
+function applyDisplayDirectives(slide, segment, segmentIndex, progress = 0) {
   // SUBTITLES: Update subtitle text for current segment (Always apply, regardless of section type or directives)
   if (segment && segment.text) {
-    updateSubtitleText(segment.text);
+    updateSubtitleText(segment.text, progress);
   } else {
-    updateSubtitleText("");
+    updateSubtitleText("", 0);
   }
 
   if (!segment || !segment.display_directives) return;
@@ -1623,6 +1628,7 @@ function applyDisplayDirectives(slide, segment, segmentIndex) {
 // SUBTITLES SYSTEM
 // ============================================
 let subtitleContainer = null;
+let currentSubtitleText = ""; // Track current text to avoid re-rendering DOM
 
 function setupSubtitleContainer() {
   if (document.getElementById('subtitle-overlay')) return;
@@ -1639,33 +1645,76 @@ function setupSubtitleContainer() {
     pointer-events: none;
     z-index: 50;
     font-family: 'Inter', sans-serif;
-    color: white;
-    font-size: 18px;
-    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5); /* Dimmed by default */
+    font-size: 20px;
+    font-weight: 600;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-    background: rgba(0, 0, 0, 0.6);
-    padding: 8px 16px;
-    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 12px 24px;
+    border-radius: 12px;
     transition: opacity 0.3s ease;
     opacity: 0; 
+    line-height: 1.4;
   `;
+
+  // Add CSS for highlighted words
+  const style = document.createElement('style');
+  style.textContent = `
+    .sub-word {
+      display: inline-block;
+      margin: 0 3px;
+      transition: color 0.1s, text-shadow 0.1s;
+    }
+    .sub-word.played {
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+  `;
+  document.head.appendChild(style);
+
   document.getElementById('stage').appendChild(subtitleContainer);
 }
 
-function updateSubtitleText(text) {
+function updateSubtitleText(text, progress) {
   if (!subtitleContainer) setupSubtitleContainer();
 
   if (!text || !text.trim()) {
     subtitleContainer.style.opacity = '0';
+    currentSubtitleText = "";
     return;
   }
 
-  // Clean markdown basic syntax for subtitles if needed, mainly bold/italic
-  // Simple regex strip for now or use the text as is if clean
-  const cleanText = text.replace(/[*_#\[\]]/g, '');
+  const cleanText = text.replace(/[*_#\[\]]/g, '').trim();
 
-  subtitleContainer.textContent = cleanText;
-  subtitleContainer.style.opacity = '1';
+  // If new text, rebuild DOM
+  if (cleanText !== currentSubtitleText) {
+    currentSubtitleText = cleanText;
+    const words = cleanText.split(/\s+/);
+    subtitleContainer.innerHTML = ''; // Clear
+    words.forEach((w, i) => {
+      const span = document.createElement('span');
+      span.textContent = w;
+      span.className = 'sub-word';
+      span.id = `sub-w-${i}`;
+      subtitleContainer.appendChild(span);
+    });
+    subtitleContainer.style.opacity = '1';
+  }
+
+  // Update highlighting based on progress
+  if (subtitleContainer.children.length > 0) {
+    const totalWords = subtitleContainer.children.length;
+    // Simple linear interpolation: which word index are we at?
+    const activeIndex = Math.floor(progress * totalWords);
+
+    Array.from(subtitleContainer.children).forEach((span, i) => {
+      if (i <= activeIndex) {
+        span.classList.add('played');
+      } else {
+        span.classList.remove('played');
+      }
+    });
+  }
 }
 
 function seekTimeline(e) {
