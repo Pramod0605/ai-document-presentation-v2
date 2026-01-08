@@ -859,9 +859,30 @@ def _sanitize_manim_code(manim_code: str) -> str:
         if r'\text{' in line:
             line = line.replace(r'\text{', r'\textrm{')
         
+        # Scrub invalid waits as a fail-safe
+        if 'self.wait(0.0)' in line or 'self.wait(0)' in line:
+            if re.search(r'^\s*self\.wait\(\s*0?\.?0\s*\)\s*(#.*)?$', line):
+                 continue # Strip entirely if it's the whole line
+            else:
+                 line = re.sub(r'self\.wait\(\s*0?\.?0\s*\)', '', line)
+        
         fixed_lines.append(line)
     
+    # Ensure every construct method ends with a small wait (v2.5 rule for stability)
+    last_idx = -1
+    for i in range(len(fixed_lines)-1, -1, -1):
+         if fixed_lines[i].strip():
+              last_idx = i
+              break
+    
+    if last_idx >= 0:
+         indent_match = re.match(r'^(\s*)', fixed_lines[last_idx])
+         indent = indent_match.group(1) if indent_match else "        "
+         fixed_lines.insert(last_idx + 1, f"{indent}self.wait(0.1) # Terminal stabilizer")
+         print(f"[MANIM SANITIZER] Added terminal stabilizer wait(0.1)")
+
     return '\n'.join(fixed_lines)
+
 
 
 def _get_texinputs_env() -> dict:

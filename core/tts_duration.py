@@ -78,8 +78,10 @@ TTSProvider = Literal["edge_tts", "narakeet", "pyttsx3", "our_tts", "estimate"]
 def update_durations_simplified(
     presentation: Dict,
     output_dir: Optional[Path] = None,
-    production_provider: TTSProvider = "edge_tts"
+    production_provider: TTSProvider = "edge_tts",
+    update_status_callback=None
 ) -> Dict:
+
     """
     ISS-164 FIX: Simplified TTS system - word count estimation + single Edge TTS pass.
     
@@ -236,7 +238,11 @@ def update_durations_simplified(
     if tts_failures:
         presentation["metadata"]["tts_failed_count"] = len(tts_failures)
         presentation["metadata"]["tts_failures"] = tts_failures[:10]  # First 10 for debugging
-        logger.warning(f"[TTS] {len(tts_failures)} segments failed - using estimated durations")
+        msg = f"[TTS] {len(tts_failures)} segments failed - using estimated durations"
+        logger.warning(msg)
+        if update_status_callback:
+            update_status_callback("tts_generation", f"Warning: {len(tts_failures)} audio files failed. Using estimates.")
+
     
     # RECALCULATE TOTALS: Ensure metadata matches real audio lengths
     total_pres_duration = 0.0

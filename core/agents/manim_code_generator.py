@@ -213,9 +213,13 @@ class ManimCodeGenerator:
                 section_data["previous_errors"] = f"Runtime Error:\n{runtime_error}"
                 continue
                 
+            # NEW: Post-processing scrubber for wait(0.0) which crashes Manim 0.19
+            code = self._scrub_invalid_waits(code)
+
             # If we got here, code is valid!
             logger.info("[MANIM GEN] Validation successful!")
             return code, []
+
         
         return code if code else "", ["Max retries exceeded"]
 
@@ -343,7 +347,16 @@ class ManimCodeGenerator:
         except Exception as e:
             return f"Validation harness error: {str(e)}"
     
+    def _scrub_invalid_waits(self, code: str) -> str:
+        """Remove self.wait(0) and self.wait(0.0) which cause Manim crashes."""
+        # Remove lines that are exactly self.wait(0) or self.wait(0.0) with optional indentation
+        cleaned = re.sub(r'^\s*self\.wait\(\s*0?\.?0\s*\)\s*$', '', code, flags=re.MULTILINE)
+        # Also handle inline ones cautiously
+        cleaned = re.sub(r'self\.wait\(\s*0?\.?0\s*\)', '', cleaned)
+        return cleaned
+
     def _extract_python_code(self, response: str) -> str:
+
         """Extract Python code from LLM response, removing markdown if present."""
         code = response.strip()
         
@@ -685,10 +698,11 @@ class ManimCodeGenerator:
                     break
             
             # Injection Logic
-            if deficit > 0.1:
+            if deficit > 0.05: # Use 0.05 as threshold to avoid tiny waits
                 lines_in_block.append(f"{indent}# Hard Sync: Injected wait to match audio ({actual_duration:.2f}s -> {target_duration:.2f}s)")
                 lines_in_block.append(f"{indent}self.wait({deficit:.3f})")
             elif deficit < -0.5:
+
                  lines_in_block.append(f"{indent}# Hard Sync WARNING: Animation exceeds audio by {abs(deficit):.2f}s")
             
             return lines_in_block

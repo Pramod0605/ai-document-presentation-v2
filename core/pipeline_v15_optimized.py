@@ -1029,8 +1029,11 @@ def process_markdown_optimized(
                     update_durations_simplified,
                     presentation=presentation,
                     output_dir=output_dir,
-                    production_provider=tts_provider
+                    production_provider=tts_provider,
+                    update_status_callback=update_status
                 )
+
+
                 
                 manim_results = {}
                 manim_future = executor.submit(
@@ -1060,8 +1063,10 @@ def process_markdown_optimized(
                 presentation = update_durations_simplified(
                     presentation=presentation,
                     output_dir=output_dir,
-                    production_provider=tts_provider
+                    production_provider=tts_provider,
+                    update_status_callback=update_status
                 )
+
             
             update_status("manim_code", "Generating Manim code with actual TTS timing...")
             manim_results = _generate_all_manim_code(presentation, tracker)

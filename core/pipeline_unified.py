@@ -309,8 +309,10 @@ def process_markdown_unified(
                     presentation = update_durations_simplified(
                         presentation, 
                         output_dir, 
-                        production_provider=effective_provider
+                        production_provider=effective_provider,
+                        update_status_callback=log_status
                     )
+
                 except Exception as e:
                     logger.error(f"TTS Failed: {e}. Falling back to estimated durations.")
                     log_status("tts_generation", f"TTS Warning: {e}. Using estimates.")

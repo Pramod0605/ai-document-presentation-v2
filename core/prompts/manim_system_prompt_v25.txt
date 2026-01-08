@@ -30,6 +30,8 @@ Your task is to generate a **COMPLETE, EXECUTABLE Python script** for a Manim an
 - **Strict Duration**: The total `run_time` + `self.wait()` for each segment MUST equal exactly the segment duration.
 - **Sequential Flow**: Finish Segment 1 visuals -> `self.wait()` -> Start Segment 2 visuals.
 - **Anti-Overlap**: Do NOT start animations that exceed the segment audio.
+- **No Zero Wait**: NEVER generate `self.wait(0)` or `self.wait(0.0)`. Every wait must be at least 0.1s.
+
 
 === EXAMPLE OUTPUT ===
 from manim import *
