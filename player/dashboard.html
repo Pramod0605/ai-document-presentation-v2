@@ -901,11 +901,37 @@
                     .then(r => r.json())
                     .then(data => {
                         if (data.state === 'completed') {
-                            btn.textContent = "Avatars Ready!";
-                            btn.style.background = "#4caf50";
+                            // Parse success/failed counts from message
+                            // Message format: "Sequential processing complete. Success: X, Failed: Y"
+                            const msg = data.message || '';
+                            const match = msg.match(/Success:\s*(\d+).*Failed:\s*(\d+)/i);
+                            let successCount = 0;
+                            let failedCount = 0;
+                            if (match) {
+                                successCount = parseInt(match[1]);
+                                failedCount = parseInt(match[2]);
+                            }
+
+                            if (failedCount > 0 && successCount === 0) {
+                                // All failed
+                                btn.textContent = "Avatar Gen Failed (0/" + (failedCount) + ")";
+                                btn.style.background = "#f44336";
+                                window.avatarStates[jobId] = 'failed';
+                                alert(`Avatar generation failed!\n\nAll ${failedCount} sections failed.`);
+                            } else if (failedCount > 0) {
+                                // Partial success
+                                btn.textContent = `Avatars Partial (${successCount}/${successCount + failedCount})`;
+                                btn.style.background = "#ff9800";
+                                window.avatarStates[jobId] = 'completed_with_errors';
+                                alert(`Avatar generation completed with errors.\n\nSuccess: ${successCount}\nFailed: ${failedCount}`);
+                            } else {
+                                // All success
+                                btn.textContent = "Avatars Ready!";
+                                btn.style.background = "#4caf50";
+                                window.avatarStates[jobId] = 'completed';
+                                alert("Avatar generation complete!");
+                            }
                             btn.disabled = false;
-                            window.avatarStates[jobId] = 'completed';
-                            alert("Avatar generation complete!");
                         } else if (data.state === 'failed') {
                             btn.textContent = "Avatar Gen Failed";
                             btn.style.background = "#f44336";
@@ -924,6 +950,7 @@
             // Perform one immediate check. Subsequent updates via manual "Refresh".
             statusCheck();
         }
+
 
         // --- Avatar Generation Functions ---
 
@@ -974,10 +1001,34 @@
                         if (!data) return;
                         if (data.state === 'completed') {
                             clearInterval(checkInterval);
-                            btn.textContent = "Avatars Ready!";
-                            btn.style.background = "#4caf50";
+
+                            // Parse success/failed counts from message
+                            const msg = data.message || '';
+                            const match = msg.match(/Success:\s*(\d+).*Failed:\s*(\d+)/i);
+                            let successCount = 0;
+                            let failedCount = 0;
+                            if (match) {
+                                successCount = parseInt(match[1]);
+                                failedCount = parseInt(match[2]);
+                            }
+
+                            if (failedCount > 0 && successCount === 0) {
+                                btn.textContent = "Avatar Gen Failed (0/" + failedCount + ")";
+                                btn.style.background = "#f44336";
+                                window.avatarStates[jobId] = 'failed';
+                                alert(`Avatar generation failed!\n\nAll ${failedCount} sections failed.`);
+                            } else if (failedCount > 0) {
+                                btn.textContent = `Avatars Partial (${successCount}/${successCount + failedCount})`;
+                                btn.style.background = "#ff9800";
+                                window.avatarStates[jobId] = 'completed_with_errors';
+                                alert(`Avatar generation completed with errors.\n\nSuccess: ${successCount}\nFailed: ${failedCount}`);
+                            } else {
+                                btn.textContent = "Avatars Ready!";
+                                btn.style.background = "#4caf50";
+                                window.avatarStates[jobId] = 'completed';
+                                alert("Avatar generation complete!");
+                            }
                             btn.disabled = false;
-                            alert("Avatar generation complete!");
                         } else if (data.state === 'failed' || data.state === 'not_found') {
                             clearInterval(checkInterval);
                             btn.textContent = data.state === 'not_found' ? "Job Not Found" : "Avatar Gen Failed";
@@ -993,6 +1044,7 @@
                     });
             }, 5000);
         }
+
 
         function executePhaseRetry() {
             if (!currentRetryJobId) return;
@@ -1151,6 +1203,43 @@
                                 </div>
                             </div>
                             
+                            <div style="margin-bottom: 20px;">
+                                <h4 style="color: #00d4ff; margin-bottom: 10px;">Validation & Quality</h4>
+                                ${a.validation ? `
+                                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
+                                        <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 2rem; font-weight: bold; color: ${a.validation.quality_score >= 80 ? '#4caf50' : a.validation.quality_score >= 50 ? '#ff9800' : '#f44336'};">${a.validation.quality_score || 0}</div>
+                                            <div style="color: #888; font-size: 0.8rem;">Quality Score</div>
+                                        </div>
+                                        <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px;">
+                                            <div style="color: #888; font-size: 0.75rem; margin-bottom: 5px;">Mandatory Sections</div>
+                                            <div style="font-size: 0.85rem;">
+                                                <span style="color: ${a.validation.has_intro ? '#4caf50' : '#f44336'};">Intro ${a.validation.has_intro ? '✓' : '✗'}</span>
+                                                <span style="margin-left: 8px; color: ${a.validation.has_summary ? '#4caf50' : '#f44336'};">Summary ${a.validation.has_summary ? '✓' : '✗'}</span><br>
+                                                <span style="color: ${a.validation.has_memory ? '#4caf50' : '#f44336'};">Memory ${a.validation.has_memory ? '✓' : '✗'}</span>
+                                                <span style="margin-left: 8px; color: ${a.validation.has_recap ? '#4caf50' : '#f44336'};">Recap ${a.validation.has_recap ? '✓' : '✗'}</span>
+                                            </div>
+                                        </div>
+                                        <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px;">
+                                            <div style="color: #888; font-size: 0.75rem; margin-bottom: 5px;">Generation Stats</div>
+                                            <div style="font-size: 0.85rem;">
+                                                ${a.validation.audio ? `<div>Audio: <span style="color: ${a.validation.audio.success_rate >= 100 ? '#4caf50' : a.validation.audio.success_rate > 0 ? '#ff9800' : '#f44336'};">${a.validation.audio.generated}/${a.validation.audio.expected}</span></div>` : ''}
+                                                ${a.validation.video ? `<div>Video: <span style="color: ${a.validation.video.success_rate >= 100 ? '#4caf50' : a.validation.video.success_rate > 0 ? '#ff9800' : '#f44336'};">${a.validation.video.generated}/${a.validation.video.expected}</span></div>` : ''}
+                                                ${a.validation.avatar ? `<div>Avatar: <span style="color: ${a.validation.avatar.success_rate >= 100 ? '#4caf50' : a.validation.avatar.success_rate > 0 ? '#ff9800' : '#f44336'};">${a.validation.avatar.success}/${a.validation.avatar.success + a.validation.avatar.failed}</span></div>` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    ${a.validation.issues && a.validation.issues.length > 0 ? `
+                                        <div style="background: rgba(255,82,82,0.1); padding: 10px; border-radius: 8px; border-left: 3px solid #f44336;">
+                                            <div style="color: #f44336; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px;">Issues Found:</div>
+                                            <ul style="margin: 0; padding-left: 20px; color: #ff8a80; font-size: 0.8rem;">
+                                                ${a.validation.issues.map(i => `<li>${i}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                    ` : ''}
+                                ` : '<div style="color: #888;">No validation data available</div>'}
+                            </div>
+
                             <div style="margin-bottom: 20px;">
                                 <h4 style="color: #00d4ff; margin-bottom: 10px;">TTS</h4>
                                 <div style="display: flex; gap: 20px; flex-wrap: wrap;">

@@ -84,6 +84,46 @@ class ContentMetrics:
     table_count: int = 0
     image_count: int = 0
 
+
+@dataclass
+class ValidationMetrics:
+    """Validation results for the generated presentation."""
+    # Mandatory sections (V2.5 Bible)
+    has_intro: bool = False
+    has_summary: bool = False
+    has_quiz: bool = False
+    has_memory: bool = False
+    has_recap: bool = False
+    mandatory_sections_valid: bool = False
+    
+    # Quiz validation
+    quiz_question_count: int = 0
+    flashcard_count: int = 0
+    
+    # Audio validation
+    audio_files_generated: int = 0
+    audio_files_expected: int = 0
+    audio_success_rate: float = 0.0
+    
+    # Video validation
+    video_files_generated: int = 0
+    video_files_expected: int = 0
+    video_success_rate: float = 0.0
+    manim_success_count: int = 0
+    manim_failed_count: int = 0
+    wan_success_count: int = 0
+    wan_failed_count: int = 0
+    
+    # Avatar validation
+    avatar_success_count: int = 0
+    avatar_failed_count: int = 0
+    avatar_success_rate: float = 0.0
+    
+    # Overall quality score (0-100)
+    quality_score: int = 0
+    issues: List[str] = field(default_factory=list)
+
+
 @dataclass
 class PipelineAnalytics:
     """Complete analytics for a pipeline run."""
@@ -100,9 +140,11 @@ class PipelineAnalytics:
     renderer: RendererMetrics = field(default_factory=RendererMetrics)
     avatar: AvatarMetrics = field(default_factory=AvatarMetrics)
     content: ContentMetrics = field(default_factory=ContentMetrics)
+    validation: ValidationMetrics = field(default_factory=ValidationMetrics)
     decisions: List[Dict[str, Any]] = field(default_factory=list)
     status: str = "pending"  # pending, running, completed, failed
     error: Optional[str] = None
+
 
     def to_dict(self) -> Dict:
         """Convert to dictionary for JSON serialization."""
@@ -350,6 +392,117 @@ class AnalyticsTracker:
             image_count=image_count
         )
 
+    def set_validation_metrics(
+        self,
+        section_types: Dict[str, int],
+        quiz_question_count: int = 0,
+        flashcard_count: int = 0,
+        audio_generated: int = 0,
+        audio_expected: int = 0,
+        video_generated: int = 0,
+        video_expected: int = 0,
+        manim_success: int = 0,
+        manim_failed: int = 0,
+        wan_success: int = 0,
+        wan_failed: int = 0,
+        avatar_success: int = 0,
+        avatar_failed: int = 0
+    ) -> None:
+        """Set comprehensive validation metrics for the job.
+        
+        Validates against V2.5 Director Bible requirements:
+        - Mandatory sections: intro, summary, memory, recap
+        - Optional: quiz (depends on content)
+        - Audio, video, avatar generation success rates
+        """
+        # Check mandatory sections
+        has_intro = section_types.get("intro", 0) >= 1
+        has_summary = section_types.get("summary", 0) >= 1
+        has_memory = section_types.get("memory", 0) >= 1
+        has_recap = section_types.get("recap", 0) >= 1
+        has_quiz = section_types.get("quiz", 0) >= 1
+        
+        mandatory_valid = has_intro and has_summary and has_memory and has_recap
+        
+        # Calculate success rates
+        audio_rate = (audio_generated / audio_expected * 100) if audio_expected > 0 else 0.0
+        video_rate = (video_generated / video_expected * 100) if video_expected > 0 else 0.0
+        avatar_total = avatar_success + avatar_failed
+        avatar_rate = (avatar_success / avatar_total * 100) if avatar_total > 0 else 0.0
+        
+        # Calculate quality score (0-100)
+        issues = []
+        score = 100
+        
+        # Mandatory sections (30 points)
+        if not has_intro:
+            score -= 8
+            issues.append("Missing intro section")
+        if not has_summary:
+            score -= 8
+            issues.append("Missing summary section")
+        if not has_memory:
+            score -= 7
+            issues.append("Missing memory section")
+        if not has_recap:
+            score -= 7
+            issues.append("Missing recap section")
+        
+        # Audio generation (25 points)
+        if audio_rate < 100:
+            audio_penalty = int((100 - audio_rate) * 0.25)
+            score -= audio_penalty
+            if audio_rate == 0:
+                issues.append("No audio files generated")
+            else:
+                issues.append(f"Audio generation incomplete: {audio_generated}/{audio_expected}")
+        
+        # Video generation (25 points)
+        if video_expected > 0 and video_rate < 100:
+            video_penalty = int((100 - video_rate) * 0.25)
+            score -= video_penalty
+            if video_rate == 0:
+                issues.append("No video files generated")
+            else:
+                issues.append(f"Video generation incomplete: {video_generated}/{video_expected}")
+        
+        # Avatar generation (20 points)
+        if avatar_total > 0 and avatar_rate < 100:
+            avatar_penalty = int((100 - avatar_rate) * 0.20)
+            score -= avatar_penalty
+            if avatar_rate == 0:
+                issues.append("No avatar files generated")
+            else:
+                issues.append(f"Avatar generation incomplete: {avatar_success}/{avatar_total}")
+        
+        score = max(0, score)
+        
+        self.analytics.validation = ValidationMetrics(
+            has_intro=has_intro,
+            has_summary=has_summary,
+            has_quiz=has_quiz,
+            has_memory=has_memory,
+            has_recap=has_recap,
+            mandatory_sections_valid=mandatory_valid,
+            quiz_question_count=quiz_question_count,
+            flashcard_count=flashcard_count,
+            audio_files_generated=audio_generated,
+            audio_files_expected=audio_expected,
+            audio_success_rate=round(audio_rate, 1),
+            video_files_generated=video_generated,
+            video_files_expected=video_expected,
+            video_success_rate=round(video_rate, 1),
+            manim_success_count=manim_success,
+            manim_failed_count=manim_failed,
+            wan_success_count=wan_success,
+            wan_failed_count=wan_failed,
+            avatar_success_count=avatar_success,
+            avatar_failed_count=avatar_failed,
+            avatar_success_rate=round(avatar_rate, 1),
+            quality_score=score,
+            issues=issues
+        )
+
     def track_decision(
         self,
         agent_name: str,
@@ -447,6 +600,37 @@ class AnalyticsTracker:
                 "table_count": self.analytics.content.table_count,
                 "image_count": self.analytics.content.image_count
             } if self.analytics.content else {},
+            "validation": {
+                "mandatory_sections_valid": self.analytics.validation.mandatory_sections_valid,
+                "has_intro": self.analytics.validation.has_intro,
+                "has_summary": self.analytics.validation.has_summary,
+                "has_quiz": self.analytics.validation.has_quiz,
+                "has_memory": self.analytics.validation.has_memory,
+                "has_recap": self.analytics.validation.has_recap,
+                "quiz_question_count": self.analytics.validation.quiz_question_count,
+                "flashcard_count": self.analytics.validation.flashcard_count,
+                "audio": {
+                    "generated": self.analytics.validation.audio_files_generated,
+                    "expected": self.analytics.validation.audio_files_expected,
+                    "success_rate": self.analytics.validation.audio_success_rate
+                },
+                "video": {
+                    "generated": self.analytics.validation.video_files_generated,
+                    "expected": self.analytics.validation.video_files_expected,
+                    "success_rate": self.analytics.validation.video_success_rate,
+                    "manim_success": self.analytics.validation.manim_success_count,
+                    "manim_failed": self.analytics.validation.manim_failed_count,
+                    "wan_success": self.analytics.validation.wan_success_count,
+                    "wan_failed": self.analytics.validation.wan_failed_count
+                },
+                "avatar": {
+                    "success": self.analytics.validation.avatar_success_count,
+                    "failed": self.analytics.validation.avatar_failed_count,
+                    "success_rate": self.analytics.validation.avatar_success_rate
+                },
+                "quality_score": self.analytics.validation.quality_score,
+                "issues": self.analytics.validation.issues
+            } if self.analytics.validation else {},
             "phase_breakdown": {
                 p.phase_name: {
                     "cost_usd": round(p.cost_usd, 4),
@@ -477,11 +661,18 @@ class AnalyticsTracker:
         print(f"Phases: {summary['phases_completed']} completed, {summary['phases_failed']} failed")
         print("-" * 60)
         print("PHASE BREAKDOWN:")
-        for phase_name, data in summary["cost_breakdown"].items():
+        for phase_name, data in summary["phase_breakdown"].items():
             print(f"  {phase_name}:")
             print(f"    Duration: {data['duration_seconds']:.2f}s")
             print(f"    Cost: ${data['cost_usd']:.4f}")
             print(f"    Tokens: {data['tokens']:,}")
+        print("-" * 60)
+        print("VALIDATION:")
+        val = summary.get("validation", {})
+        print(f"  Quality Score: {val.get('quality_score', 'N/A')}/100")
+        print(f"  Mandatory Sections: {'✅' if val.get('mandatory_sections_valid') else '❌'}")
+        if val.get("issues"):
+            print(f"  Issues: {', '.join(val['issues'])}")
         print("=" * 60 + "\n")
 
 

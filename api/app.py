@@ -2807,13 +2807,16 @@ def run_avatar_sequential_task(job_id, jobs_root):
         
         completed_count = 0
         failed_count = 0
+        skipped_count = 0
         
         for idx, section in enumerate(sections):
             sec_id = section.get("section_id")
             
-            # Progress calculation
-            progress = 10 + int((idx / total_sections) * 80)
-            update_status("processing", f"Processing Section {sec_id} ({idx+1}/{total_sections})", progress)
+            # Progress calculation - show X/Y format
+            progress = 10 + int(((idx + 1) / total_sections) * 80)
+            done_count = completed_count + failed_count + skipped_count
+            status_msg = f"Processing {idx+1}/{total_sections} sections ({completed_count} done, {failed_count} failed)"
+            update_status("processing", status_msg, progress)
             
             # 1. Extract context/text
             narration_text = ""
@@ -2828,7 +2831,7 @@ def run_avatar_sequential_task(job_id, jobs_root):
             
             if not narration_text or not narration_text.strip():
                 print(f"[AVATAR-SEQ] Skipping Sec {sec_id} (No text)", flush=True)
-                completed_count += 1
+                skipped_count += 1
                 continue
 
             # Check if exists
@@ -2836,7 +2839,7 @@ def run_avatar_sequential_task(job_id, jobs_root):
             output_path = avatar_dir / output_filename
             if output_path.exists() and output_path.stat().st_size > 1000:
                 print(f"[AVATAR-SEQ] Sec {sec_id} exists. Skipping.", flush=True)
-                completed_count += 1
+                skipped_count += 1
                 continue
 
             # 2. Submit
@@ -2878,6 +2881,10 @@ def run_avatar_sequential_task(job_id, jobs_root):
                 completed_count += 1
             else:
                 failed_count += 1
+            
+            # Update status after each section completes
+            done_count = completed_count + failed_count + skipped_count
+            update_status("processing", f"Completed {done_count}/{total_sections} sections ({completed_count} success, {failed_count} failed)", progress)
 
         update_status("completed", f"Sequential processing complete. Success: {completed_count}, Failed: {failed_count}", 100)
         

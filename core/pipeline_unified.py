@@ -293,32 +293,59 @@ def process_markdown_unified(
                 logger.error(f"Avatar Generation Trigger Failed: {e}")
                 log_status("avatar_generation", f"Error triggering avatars: {e}")
         
-        # --- PHASE 4b: TTS Generation & Duration Update ---
-        # FIXED: Always run this block to ensure durations are calculated (even if Estimate Mode)
-        if True: # Always enter to allow 'estimate' provider to work
-            if generate_tts:
-                log_status("tts_generation", "Generating narration audio...")
-            else:
-                log_status("tts_generation", "Calculating duration estimates...")
-                
-            if output_dir:
+        # --- PHASE 4b: TTS Duration Estimation (FAST, Non-blocking) ---
+        # Step 1: Apply instant word-count based estimates (always needed for rendering)
+        log_status("tts_estimation", "Calculating narration durations...")
+        try:
+            from core.tts_duration import _apply_estimates
+            presentation = _apply_estimates(presentation)
+            logger.info("Pipeline: Applied instant duration estimates from word count")
+        except Exception as e:
+            logger.warning(f"Duration estimation failed: {e}")
+        
+        # Step 2: Fire off TTS audio generation in background (LOW PRIORITY - doesn't block)
+        tts_thread = None
+        if output_dir and generate_tts:
+            log_status("tts_generation", "Starting TTS audio generation (background)...")
+            
+            from threading import Thread
+            import copy
+            
+            def run_tts_background(pres_copy, out_dir, provider, job_id_ref):
+                """Background TTS generation - runs while rendering proceeds."""
                 try:
-                    # If generate_tts is False, force 'estimate' provider
-                    effective_provider = tts_provider if generate_tts else "estimate"
+                    from core.tts_duration import update_durations_simplified
+                    logger.info(f"[TTS-BG] Starting background TTS for job {job_id_ref}")
                     
-                    presentation = update_durations_simplified(
-                        presentation, 
-                        output_dir, 
-                        production_provider=effective_provider,
-                        update_status_callback=log_status
+                    # This will generate audio files but NOT block main thread
+                    result_pres = update_durations_simplified(
+                        pres_copy,
+                        out_dir,
+                        production_provider=provider,
+                        update_status_callback=None  # No status updates from background
                     )
-
+                    
+                    # Save updated presentation with audio paths
+                    pres_path = Path(out_dir) / "presentation.json"
+                    with open(pres_path, "w") as f:
+                        json.dump(result_pres, f, indent=4)
+                    logger.info(f"[TTS-BG] Background TTS complete for job {job_id_ref}")
+                    
                 except Exception as e:
-                    logger.error(f"TTS Failed: {e}. Falling back to estimated durations.")
-                    log_status("tts_generation", f"TTS Warning: {e}. Using estimates.")
-                    presentation.setdefault("metadata", {})["job_status"] = "completed_with_errors"
-                    presentation["metadata"]["error_summary"] = f"TTS Warning: {str(e)}."
-                    # Continue anyway
+                    logger.error(f"[TTS-BG] Background TTS failed: {e}")
+            
+            # Make a deep copy for the background thread
+            pres_for_tts = copy.deepcopy(presentation)
+            tts_thread = Thread(
+                target=run_tts_background,
+                args=(pres_for_tts, output_dir, tts_provider, job_id),
+                daemon=True
+            )
+            tts_thread.start()
+            log_status("tts_generation", "TTS audio generation running in background...")
+        elif not generate_tts:
+            log_status("tts_generation", "TTS disabled - using duration estimates only")
+
         
         # --- PHASE 5: Image Linking & Visual Rendering ---
         
@@ -394,7 +421,136 @@ def process_markdown_unified(
                 json.dump(presentation, f, indent=4)
             logger.info(f"Pipeline: Saved FINAL presentation to {pres_path}")
 
-        # --- PHASE 6: AUTOMATED CERTIFICATION ---
+        # --- PHASE 5.6: SAVE COMPREHENSIVE ANALYTICS ---
+        if output_dir:
+            try:
+                # End pipeline tracking
+                tracker.end_pipeline(status="completed")
+                
+                # Calculate content metrics from presentation
+                sections = presentation.get("sections", [])
+                total_segments = sum(
+                    len(sec.get("narration", {}).get("segments", [])) 
+                    for sec in sections
+                )
+                section_types = {}
+                manim_count = 0
+                video_count = 0
+                static_count = 0
+                manim_success = 0
+                manim_failed = 0
+                wan_success = 0
+                wan_failed = 0
+                quiz_question_count = 0
+                flashcard_count = 0
+                
+                for sec in sections:
+                    st = sec.get("section_type", "content")
+                    section_types[st] = section_types.get(st, 0) + 1
+                    renderer = sec.get("renderer", sec.get("derived_renderer", "none"))
+                    
+                    if renderer == "manim":
+                        manim_count += 1
+                        if sec.get("video_path") or sec.get("beat_videos"):
+                            manim_success += 1
+                        elif sec.get("render_error"):
+                            manim_failed += 1
+                    elif renderer in ("wan", "wan_video", "video"):
+                        video_count += 1
+                        if sec.get("video_path"):
+                            wan_success += 1
+                        elif sec.get("render_error"):
+                            wan_failed += 1
+                    else:
+                        static_count += 1
+                    
+                    # Count quiz questions
+                    if st == "quiz":
+                        questions = sec.get("quiz_data", {}).get("questions", [])
+                        if not questions:
+                            questions = sec.get("questions", [])
+                        quiz_question_count += len(questions)
+                    
+                    # Count flashcards
+                    if st == "memory":
+                        cards = sec.get("flashcards", [])
+                        flashcard_count += len(cards)
+                
+                # Count audio files
+                audio_dir = Path(output_dir) / "audio"
+                audio_generated = 0
+                if audio_dir.exists():
+                    audio_files = list(audio_dir.glob("*.mp3")) + list(audio_dir.glob("*.wav"))
+                    audio_generated = len([f for f in audio_files if f.stat().st_size > 1000])
+                
+                # Count video files
+                video_dir = Path(output_dir) / "videos"
+                video_generated = 0
+                if video_dir.exists():
+                    video_files = list(video_dir.glob("*.mp4"))
+                    video_generated = len([f for f in video_files if f.stat().st_size > 5000])
+                
+                # Get avatar status
+                avatar_success = 0
+                avatar_failed = 0
+                avatar_status_path = Path(output_dir) / "avatar_status.json"
+                if avatar_status_path.exists():
+                    try:
+                        with open(avatar_status_path, "r") as f:
+                            avatar_status = json.load(f)
+                        # Parse message like "Sequential processing complete. Success: 5, Failed: 8"
+                        msg = avatar_status.get("message", "")
+                        import re
+                        match = re.search(r"Success:\s*(\d+).*Failed:\s*(\d+)", msg)
+                        if match:
+                            avatar_success = int(match.group(1))
+                            avatar_failed = int(match.group(2))
+                    except Exception:
+                        pass
+                
+                # Set content metrics
+                tracker.set_content_metrics(
+                    total_sections=len(sections),
+                    total_segments=total_segments,
+                    total_slides=len(sections),
+                    section_types=section_types,
+                    qa_pair_count=quiz_question_count
+                )
+                tracker.set_renderer_metrics(
+                    manim_videos=manim_count,
+                    wan_videos=video_count,
+                    static_slides=static_count,
+                    failed_renders=manim_failed + wan_failed
+                )
+                
+                # Set comprehensive validation metrics
+                tracker.set_validation_metrics(
+                    section_types=section_types,
+                    quiz_question_count=quiz_question_count,
+                    flashcard_count=flashcard_count,
+                    audio_generated=audio_generated,
+                    audio_expected=len(sections),
+                    video_generated=video_generated,
+                    video_expected=manim_count + video_count,
+                    manim_success=manim_success,
+                    manim_failed=manim_failed,
+                    wan_success=wan_success,
+                    wan_failed=wan_failed,
+                    avatar_success=avatar_success,
+                    avatar_failed=avatar_failed
+                )
+                
+                # Save to analytics.json
+                analytics_path = Path(output_dir) / "analytics.json"
+                tracker.save_to_file(str(analytics_path))
+                log_status("analytics", f"Analytics saved - Quality Score: {tracker.analytics.validation.quality_score}/100")
+                
+            except Exception as e:
+                logger.warning(f"Failed to save analytics: {e}")
+                import traceback
+                logger.warning(traceback.format_exc())
+
+
         # --- PHASE 6: AUTOMATED CERTIFICATION ---
         if output_dir:
             try:
@@ -405,6 +561,7 @@ def process_markdown_unified(
                 log_status("certification", f"Certification Warning: Report generation failed, but job is valid.")
                 presentation.setdefault("metadata", {})["job_status"] = "completed_with_errors"
                 presentation["metadata"]["error_summary"] = f"Certification Warning: {str(e)}."
+
 
         return presentation, tracker
 

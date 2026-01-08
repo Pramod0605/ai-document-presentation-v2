@@ -229,11 +229,61 @@ function showAvatarPlaceholder() {
 // TIME SOURCE MANAGEMENT
 // ============================================
 
+// Timer-based fallback for when no audio/video is available
+// Allows playback using WPM-calculated durations from presentation.json
+let timerFallback = {
+  currentTime: 0,
+  duration: 30,
+  _interval: null,
+  _eventListeners: { timeupdate: [], ended: [] },
+
+  play: function () {
+    if (this._interval) return Promise.resolve();
+    this._interval = setInterval(() => {
+      this.currentTime += 0.1;
+      this._eventListeners.timeupdate.forEach(fn => fn());
+      if (this.currentTime >= this.duration) {
+        this.pause();
+        this._eventListeners.ended.forEach(fn => fn());
+      }
+    }, 100);
+    console.log('[V2] Timer fallback playing (no media)');
+    return Promise.resolve();
+  },
+
+  pause: function () {
+    if (this._interval) {
+      clearInterval(this._interval);
+      this._interval = null;
+    }
+  },
+
+  addEventListener: function (event, fn) {
+    if (this._eventListeners[event]) this._eventListeners[event].push(fn);
+  },
+
+  removeEventListener: function (event, fn) {
+    if (this._eventListeners[event]) {
+      this._eventListeners[event] = this._eventListeners[event].filter(f => f !== fn);
+    }
+  },
+
+  reset: function (duration) {
+    this.pause();
+    this.currentTime = 0;
+    this.duration = duration || 30;
+  }
+};
+
+let useTimerFallback = false; // Flag to track if we're using timer
+
 function getTime() {
+  if (useTimerFallback) return timerFallback.currentTime;
   return activeTimeSource ? activeTimeSource.currentTime : 0;
 }
 
 function getDuration() {
+  if (useTimerFallback) return timerFallback.duration;
   return activeTimeSource ? (activeTimeSource.duration || 1) : 1;
 }
 
@@ -1295,6 +1345,11 @@ function syncBeatVideoToAudio(currentTime) {
 // ============================================
 function setupMediaSource(slide) {
   const hasAvatarVideo = !!slide.avatar_video;
+  const audioPath = slide.audio_path || '';
+
+  // Reset timer fallback state
+  useTimerFallback = false;
+  timerFallback.pause();
 
   if (hasAvatarVideo) {
     console.log('[V2] Using Avatar Video as Time Source');
@@ -1309,13 +1364,12 @@ function setupMediaSource(slide) {
     // Ensure audio is cleared
     narrationAudio.pause();
     narrationAudio.src = '';
-  } else {
+  } else if (audioPath) {
+    // Has audio file - use audio as time source
     console.log('[V2] Using Narration Audio as Time Source');
     activeTimeSource = narrationAudio;
 
     // Reset avatar to idle
-    // Check if we need to reset src to avoid reloading if already correct
-    const placeholderUrl = resolveMediaPath(AVATAR_URL); // Ensure resolved path for comparison
     if (!avatarVideo.src.includes('avatar_placeholder') && slide.section_type !== 'intro') {
       avatarVideo.src = AVATAR_URL;
       avatarVideo.muted = true;
@@ -1323,30 +1377,87 @@ function setupMediaSource(slide) {
       avatarVideo.load();
     }
 
-    // Setup Audio logic (legacy setupAudio content)
-    const audioPath = slide.audio_path || '';
-    if (audioPath) {
-      const fullPath = resolveMediaPath(audioPath, 'audio');
-      console.log(`[V2] Loading audio: ${fullPath}`);
-      narrationAudio.src = fullPath;
-      narrationAudio.load();
-    } else {
-      // No audio file path found - check if we have text to speak
-      // Only use fallback if we actually have text segments
-      const hasText = slide.narration?.segments?.length > 0;
-      if (hasText) {
-        console.warn('[V2] No audio path found for slide with text segments.');
-        narrationAudio.src = '';
-      } else {
-        narrationAudio.src = '';
-      }
+    const fullPath = resolveMediaPath(audioPath, 'audio');
+    console.log(`[V2] Loading audio: ${fullPath}`);
+    narrationAudio.src = fullPath;
+    narrationAudio.load();
+  } else {
+    // NO MEDIA AVAILABLE - Use timer fallback with WPM-based duration
+    console.log('[V2] No audio/avatar available - Using Timer Fallback (WPM-based)');
+    useTimerFallback = true;
+
+    // Calculate duration from segments (already has WPM-based estimates)
+    const totalDuration = getTotalDuration(slide);
+    timerFallback.reset(totalDuration);
+    activeTimeSource = timerFallback;
+
+    // Reset avatar to idle placeholder
+    if (slide.section_type !== 'intro') {
+      avatarVideo.src = AVATAR_URL;
+      avatarVideo.muted = true;
+      avatarVideo.loop = true;
+      avatarVideo.load();
     }
+
+    // Clear audio
+    narrationAudio.pause();
+    narrationAudio.src = '';
+
+    // Show "Silent Mode" indicator (audio not ready yet)
+    showSilentModeIndicator(true);
+  }
+
+  // Hide silent mode indicator if we have media
+  if (!useTimerFallback) {
+    showSilentModeIndicator(false);
   }
 
   // Bind events to the chosen source
   bindTimeEvents(activeTimeSource);
 
   updateTimeDisplay(0, getTotalDuration(slide));
+}
+
+// Visual indicator for when audio is not available
+function showSilentModeIndicator(show) {
+  let indicator = document.getElementById('silent-mode-badge');
+
+  if (show) {
+    if (!indicator) {
+      indicator = document.createElement('div');
+      indicator.id = 'silent-mode-badge';
+      indicator.innerHTML = '🔇 Silent Mode (Audio generating...)';
+      indicator.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 152, 0, 0.9);
+        color: #fff;
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        z-index: 1000;
+        animation: pulse 2s infinite;
+      `;
+      // Add pulse animation if not exists
+      if (!document.getElementById('silent-mode-style')) {
+        const style = document.createElement('style');
+        style.id = 'silent-mode-style';
+        style.textContent = `
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      document.body.appendChild(indicator);
+    }
+    indicator.style.display = 'block';
+  } else if (indicator) {
+    indicator.style.display = 'none';
+  }
 }
 
 function getTotalDuration(slide) {
