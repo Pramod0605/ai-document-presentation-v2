@@ -178,6 +178,38 @@ player/jobs/{job_id}/
 └── avatar_status.json   # Avatar generation progress
 ```
 
+## Server Operations & Maintenance
+
+### 1. Docker Management
+- **Start/Rebuild Server**: `docker compose up -d --build`
+- **Stop Server**: `docker compose down`
+- **Restart Server**: `docker compose restart`
+
+### 2. Code Updates
+- **Update to latest code**: `git pull`
+- **Apply updates and restart**:
+  ```bash
+  git pull
+  docker compose up -d --build
+  ```
+
+### 3. Monitoring & Logs
+- **View live logs**: `docker compose logs -f`
+- **Check specific service**: `docker compose logs -f api`
+- **Monitor logs on server**: `./view_logs.bat` (Local) or `tail -f debug.log` (Server)
+
+### 4. Utility Scripts
+- **Validate `presentation.json` Content**:
+  `python verify_job_content.py <JOB_ID>` (Detailed Director Bible compliance check)
+- **Check Job Status**:
+  `python check_job.py <JOB_ID>`
+- **Reset Stuck Jobs**:
+  `python reset_jobs.py` (Resets all "processing" jobs to "failed" in index)
+- **Manual Job Fix**:
+  `python fix_job_status.py` (Manually update/fix specific job entries)
+- **Analyze Job Fidelity**:
+  `python scripts/deep_fidelity_analysis.py <JOB_ID>`
+
 ## License
 
 MIT License
