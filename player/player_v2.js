@@ -1603,13 +1603,68 @@ function applyDisplayDirectives(slide, segment, segmentIndex) {
       contentLayer.classList.add('hidden');
       contentVideo.play().catch(() => { });
       console.log(`[V2] Segment ${segmentIndex}: SHOW phase - displaying video overlay (content hidden)`);
+      console.log(`[V2] Segment ${segmentIndex}: SHOW phase - displaying video overlay (content hidden)`);
     } else {
       // TEACH phase: Hide video overlay, content becomes visible again
       videoLayer.classList.add('hidden');
       contentLayer.classList.remove('hidden');
       console.log(`[V2] Segment ${segmentIndex}: TEACH phase - video hidden, content visible`);
     }
+
+    // SUBTITLES: Update subtitle text for current segment
+    updateSubtitleText(seg.text);
+  } else {
+    updateSubtitleText(""); // Clear if no active segment
   }
+}
+
+// ============================================
+// SUBTITLES SYSTEM
+// ============================================
+let subtitleContainer = null;
+
+function setupSubtitleContainer() {
+  if (document.getElementById('subtitle-overlay')) return;
+
+  subtitleContainer = document.createElement('div');
+  subtitleContainer.id = 'subtitle-overlay';
+  subtitleContainer.style.cssText = `
+    position: absolute;
+    bottom: 80px; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    text-align: center;
+    pointer-events: none;
+    z-index: 50;
+    font-family: 'Inter', sans-serif;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: opacity 0.3s ease;
+    opacity: 0; 
+  `;
+  document.getElementById('stage').appendChild(subtitleContainer);
+}
+
+function updateSubtitleText(text) {
+  if (!subtitleContainer) setupSubtitleContainer();
+
+  if (!text || !text.trim()) {
+    subtitleContainer.style.opacity = '0';
+    return;
+  }
+
+  // Clean markdown basic syntax for subtitles if needed, mainly bold/italic
+  // Simple regex strip for now or use the text as is if clean
+  const cleanText = text.replace(/[*_#\[\]]/g, '');
+
+  subtitleContainer.textContent = cleanText;
+  subtitleContainer.style.opacity = '1';
 }
 
 function seekTimeline(e) {
