@@ -5,6 +5,7 @@ import shutil
 import tempfile
 from pathlib import Path
 from typing import Optional
+from threading import Thread
 from dotenv import load_dotenv
 
 # Load environment variables from .env file

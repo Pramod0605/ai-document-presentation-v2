@@ -49,22 +49,45 @@ class AvatarGenerator:
             payload = {
                 "text": clean_text
             }
-            logger.info(f"[AVATAR] Submitting to {url}")
             
-            response = requests.post(url, data=payload, timeout=30)
+            # 2. Submit to API with Retry Logic
+            max_retries = 3
+            backoff_factor = 2
             
-            if response.status_code == 200:
-                data = response.json()
-                task_id = data.get("task_id")
-                logger.info(f"[AVATAR] Task queued successfully: {task_id}")
-                return {
-                    "task_id": task_id,
-                    "status": "queued",
-                    "clean_text": clean_text
-                }
-            else:
-                logger.error(f"[AVATAR] API Error ({response.status_code}): {response.text}")
-                return {"error": f"API Error: {response.text}", "status": "failed"}
+            for attempt in range(max_retries):
+                try:
+                    logger.info(f"[AVATAR] Submitting to {url} (Attempt {attempt + 1}/{max_retries})")
+                    response = requests.post(url, data=payload, timeout=60) # Increased timeout
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        task_id = data.get("task_id")
+                        logger.info(f"[AVATAR] Task queued successfully: {task_id}")
+                        return {
+                            "task_id": task_id,
+                            "status": "queued",
+                            "clean_text": clean_text
+                        }
+                    elif response.status_code == 429: # Rate limit
+                         wait = backoff_factor ** attempt
+                         logger.warning(f"[AVATAR] Rate limited. Waiting {wait}s...")
+                         time.sleep(wait)
+                         continue
+                    else:
+                        logger.error(f"[AVATAR] API Error ({response.status_code}): {response.text}")
+                        # Don't retry client errors (4xx) unless rate limit
+                        if 400 <= response.status_code < 500:
+                             return {"error": f"API Error: {response.text}", "status": "failed"}
+                
+                except requests.exceptions.RequestException as e:
+                    logger.warning(f"[AVATAR] Network error on attempt {attempt + 1}: {e}")
+                    if attempt < max_retries - 1:
+                        time.sleep(backoff_factor ** attempt)
+                    else:
+                        logger.error(f"[AVATAR] Max retries exceeded.")
+                        return {"error": str(e), "status": "failed"}
+
+            return {"error": "Max retries exceeded", "status": "failed"}
                 
         except Exception as e:
             logger.error(f"[AVATAR] Request failed: {e}")
@@ -138,7 +161,7 @@ class AvatarGenerator:
         skipped_count = 0
         failed_count = 0
         
-        def _submit_single_section(section):
+        def _submit_single_section(section, job_id, avatar_dir):
             sec_id = section.get("section_id")
             
             # 1. Check for existing video (Smart Retry)
@@ -166,6 +189,11 @@ class AvatarGenerator:
             if not narration_text or not narration_text.strip():
                 return {"status": "skipped", "section_id": sec_id, "reason": "empty_text"}
             
+            # UNIQUE CONFIRMATION LOGGING
+            snippet = narration_text[:100].replace('\n', ' ')
+            print(f"[AVATAR] Submitting Sec {sec_id}: '{snippet}...' ({len(narration_text)} chars)")
+            logger.info(f"[AVATAR] Submission text for Sec {sec_id}: {snippet}...")
+            
             # 3. Submit
             res = self.generate_avatar_video(narration_text, job_id, sec_id)
             if "task_id" in res:
@@ -191,8 +219,8 @@ class AvatarGenerator:
             print(f"[AVATAR] Warning: No sections found in presentation to process.")
             return results
 
-        # Concurrency: 5 Workers at a time per user request
-        BATCH_SIZE = 5
+        # Concurrency: 2 Workers at a time per user request
+        BATCH_SIZE = 2
         section_batches = [sections[i:i + BATCH_SIZE] for i in range(0, len(sections), BATCH_SIZE)]
         
         print(f"[AVATAR] Initiating throttled submission in {len(section_batches)} batches of {BATCH_SIZE}...")
@@ -201,7 +229,7 @@ class AvatarGenerator:
             print(f"[AVATAR] Processing Batch {batch_idx + 1}/{len(section_batches)}...")
             with ThreadPoolExecutor(max_workers=BATCH_SIZE) as executor:
                 future_to_sec = {
-                    executor.submit(_submit_single_section, sec): sec 
+                    executor.submit(_submit_single_section, sec, job_id, avatar_dir): sec 
                     for sec in batch
                 }
                 

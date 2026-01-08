@@ -955,7 +955,7 @@ class SpecGeneratedScene(Scene):
         
         cmd = [
             "manim", "render",
-            "-q", "l",
+            "-q", "m", "--fps", "30", # Medium quality (Sweet Spot: 720p 30fps)
             "-o", "output.mp4",
             "--media_dir", tmpdir,
             str(scene_file),
@@ -968,7 +968,7 @@ class SpecGeneratedScene(Scene):
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
-                timeout=120,
+                timeout=300, # Increased timeout
                 cwd=tmpdir,
                 env=env
             )
@@ -977,12 +977,27 @@ class SpecGeneratedScene(Scene):
                 print(f"[MANIM DEBUG] Section {topic_id} stdout: {result.stdout[:1000]}")
                 print(f"[MANIM DEBUG] Section {topic_id} stderr: {result.stderr[:1000]}")
                 print(f"[MANIM DEBUG] Generated code:\n{scene_wrapper[:2000]}")
+                
+                 # CRASH LOGGING
+                try:
+                    crash_log = Path(output_path).parent / f"manim_crash_{topic_id}.log"
+                    with open(crash_log, "w", encoding="utf-8") as f:
+                        f.write(f"EXIT CODE: {result.returncode}\n")
+                        f.write(f"STDOUT:\n{result.stdout}\n")
+                        f.write(f"STDERR:\n{result.stderr}\n")
+                        f.write(f"CODE:\n{scene_wrapper}\n")
+                    print(f"[MANIM] Saved crash log to {crash_log}")
+                except Exception as e:
+                    print(f"Failed to save crash log: {e}")
+
                 raise ManimRenderError(
                     f"Section {topic_id}: Manim spec render failed. "
                     f"Return code: {result.returncode}. "
                     f"Stderr: {result.stderr[:500]}"
                 )
             
+            # Find output video - v2.5 sweet spot path
+            # manim -qm produces 720p30 directory
             video_files = list(Path(tmpdir).rglob("output.mp4"))
             if video_files:
                 import shutil
@@ -995,7 +1010,7 @@ class SpecGeneratedScene(Scene):
             
         except subprocess.TimeoutExpired:
             raise ManimRenderError(
-                f"Section {topic_id}: Manim spec render timed out after 120s"
+                f"Section {topic_id}: Manim spec render timed out after 300s"
             )
 
 
@@ -1026,7 +1041,7 @@ def _execute_manim_render(
         
         cmd = [
             "manim", "render",
-            "-q", "l",  # Low quality for speed
+            "-q", "m", "--fps", "30", # Medium quality (Sweet Spot: 720p 30fps)
             "-o", "output.mp4",
             "--media_dir", tmpdir,
             str(scene_file),
@@ -1039,7 +1054,7 @@ def _execute_manim_render(
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
-                timeout=120,
+                timeout=300, # Increased timeout
                 cwd=tmpdir,
                 env=env
             )
@@ -1052,9 +1067,16 @@ def _execute_manim_render(
                 )
             
             # Find output video
-            media_path = Path(tmpdir) / "videos" / "scene" / "480p15"
-            for video_file in media_path.glob("*.mp4"):
-                shutil.copy(video_file, output_path)
+            # Manim -qm output structure: videos/scene/720p30/...
+            # We use rglob to find it safely regardless of resolution folder name
+            media_path = Path(tmpdir) / "videos" 
+            found_video = None
+            for video_file in media_path.rglob("output.mp4"):
+                 found_video = video_file
+                 break
+            
+            if found_video:
+                shutil.copy(found_video, output_path)
                 print(f"[MANIM] Generated: {output_path}")
                 return output_path
             
@@ -1064,7 +1086,7 @@ def _execute_manim_render(
             
         except subprocess.TimeoutExpired:
             raise ManimRenderError(
-                f"Section {topic_id}: Manim render timed out after 120s"
+                f"Section {topic_id}: Manim render timed out after 300s"
             )
         except FileNotFoundError:
             raise ManimRenderError(

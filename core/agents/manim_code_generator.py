@@ -44,7 +44,7 @@ class ManimCodeGenerator:
             # V2.5 PROMPT: Use v25 prompts for Manim generation
             system_path = os.path.join(self.prompts_dir, "manim_system_prompt_v25.txt")
             if not os.path.exists(system_path):
-                system_path = os.path.join(self.prompts_dir, "manim_system_prompt.txt")
+                system_path = os.path.join(self.prompts_dir, "manim_system_prompt_v25.txt")
             
             with open(system_path, "r", encoding="utf-8") as f:
                 self._system_prompt = f.read()
@@ -52,7 +52,7 @@ class ManimCodeGenerator:
         if self._user_template is None:
             template_path = os.path.join(self.prompts_dir, "manim_user_prompt_v25.txt")
             if not os.path.exists(template_path):
-                 template_path = os.path.join(self.prompts_dir, "manim_user_prompt_template.txt")
+                 template_path = os.path.join(self.prompts_dir, "manim_user_prompt_v25.txt")
                  
             with open(template_path, "r", encoding="utf-8") as f:
                 self._user_template = f.read()
@@ -61,29 +61,32 @@ class ManimCodeGenerator:
         """Build user prompt from template and section data."""
         self._load_prompts()
         
+        # FIX 1: Send cleaner segments (without per-segment visual noise)
         narration_segments_text = self._format_segments(section_data.get("narration_segments", []))
         
-        # FIXED: Prioritize Director's manim_spec if available
-        visual_description = section_data.get("manim_spec")
-        if not visual_description:
-             visual_description = section_data.get("visual_description", "Create appropriate visualization for the topic")
-        else:
-             visual_description = f"STRICTLY FOLLOW DIRECTOR SPEC:\n{visual_description}"
+        # FIX 2: Soften the Director's spec to allow for Simplification
+        raw_visual = section_data.get("manim_spec") or section_data.get("visual_description", "Create appropriate visualization")
+        visual_description = f"VISUAL GUIDE (SIMPLIFY AS NEEDED):\n{raw_visual}"
 
         formulas = ", ".join(section_data.get("formulas", [])) or "None"
         key_terms = ", ".join(section_data.get("key_terms", [])) or "None"
+        
+        # Calculate strict duration
         total_duration = sum(seg.get("duration_seconds") or seg.get("duration", 5.0) for seg in section_data.get("narration_segments", []))
+        
         special_requirements = section_data.get("special_requirements", "None")
+        
+        # FIX 3: Truncate error logs to prevent Context Window overflow
+        if section_data.get("previous_errors"):
+            error_msg = str(section_data['previous_errors'])
+            # Only keep the last 500 chars (usually contains the actual error)
+            sanitized_error = error_msg[-500:] if len(error_msg) > 500 else error_msg
+            special_requirements += f"\n\nPREVIOUS ERROR (FIX THIS): {sanitized_error}"
         
         # Axes ranges - use defaults if not specified
         x_min = section_data.get("x_min", -5)
         x_max = section_data.get("x_max", 5)
-        y_min = section_data.get("y_min", -3)
-        y_max = section_data.get("y_max", 10)
-        
-        if section_data.get("previous_errors"):
-            special_requirements += f"\n\nFIX THESE ISSUES FROM PREVIOUS ATTEMPT:\n{section_data['previous_errors']}"
-        
+
         assert self._user_template is not None, "User template not loaded"
         return self._user_template.format(
             section_title=section_data.get("section_title", "Educational Section"),
@@ -101,16 +104,14 @@ class ManimCodeGenerator:
         current_time = 0.0
         
         for i, seg in enumerate(segments, 1):
-            # V2.5 Director uses 'duration_seconds', legacy uses 'duration'
             duration = seg.get("duration_seconds") or seg.get("duration", 5.0)
             text = seg.get("text", "")
-            visual = seg.get("visual", "")
+            # FIX 1 (Part B): Do NOT append 'Visual:' here. It duplicates the global plan.
+            
             end_time = current_time + duration
             
             lines.append(f"Segment {i} ({current_time:.1f}s - {end_time:.1f}s, duration {duration:.1f}s):")
             lines.append(f"  Narration: \"{text}\"")
-            if visual:
-                lines.append(f"  Visual: {visual}")
             lines.append("")
             
             current_time = end_time
@@ -396,6 +397,46 @@ class ManimCodeGenerator:
         errors.extend(self._check_runtime_patterns(code))
         
         errors.extend(self._check_completeness(code))
+        
+        errors.extend(self._check_structure(code))
+        
+        errors.extend(self._check_forbidden_chars(code))
+        
+        return errors
+    
+    def _check_structure(self, code: str) -> List[str]:
+        """Check for mandatory Manim structure."""
+        errors = []
+        if "from manim import *" not in code:
+            errors.append("Missing 'from manim import *'")
+        
+        # Check for class definition (allow any name inheriting from Scene)
+        if not re.search(r'class\s+\w+\(.*Scene\):', code):
+            errors.append("Missing Class definition inheriting from Scene (e.g. 'class MainScene(Scene):')")
+            
+        if "def construct(self):" not in code:
+            errors.append("Missing 'def construct(self):' method")
+            
+        return errors
+
+    def _check_forbidden_chars(self, code: str) -> List[str]:
+        """Check for non-ASCII characters that cause Manim/LaTeX crashes."""
+        errors = []
+        forbidden = ['₹', '•', '…', '“', '”', '‘', '’', '×', '÷', '°']
+        
+        for char in forbidden:
+            if char in code:
+                errors.append(f"Forbidden character detected: '{char}' (Replace with standard ASCII)")
+                
+        # General non-ASCII check (excluding comments if possible, but safer to ban all for now)
+        # We allow basic Latin-1 supplement if needed, but strictly no multi-byte unicode symbols
+        try:
+            code.encode('ascii')
+        except UnicodeEncodeError as e:
+            # Find the specific character
+            bad_char = code[e.start:e.end]
+            if bad_char not in forbidden: # Avoid duplicate error if already caught
+                 errors.append(f"Non-ASCII character detected at position {e.start}: '{bad_char}'")
         
         return errors
     
@@ -843,5 +884,16 @@ def integrate_manim_code_into_section(
     
     render_spec["manim_scene_spec"]["manim_code"] = manim_code
     render_spec["manim_scene_spec"]["code_type"] = "construct_body"
+    
+    # RESET VISUAL LAYERS: Ensure player shows the video, not fallback text
+    # (Fixes issue where regenerating code didn't clear previous "hide" flags)
+    narration = section.get("narration", {})
+    for seg in narration.get("segments", []):
+        directives = seg.get("display_directives", {})
+        # If we have Manim code (and it's not an Intro/Summary which uses text), show it.
+        # We aggressively reset to "show" because if we generated code, we want to see it.
+        directives["visual_layer"] = "show"
+        directives["text_layer"] = "hide" # Enforce mutual exclusion
+        seg["display_directives"] = directives
     
     return section

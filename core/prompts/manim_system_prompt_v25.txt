@@ -12,6 +12,11 @@ Your task is to generate a **COMPLETE, EXECUTABLE Python script** for a Manim an
    - If 3D is required, use `MainScene(ThreeDScene)`.
 3. **Method**: Implement `def construct(self):`.
 4. **NO MARKDOWN**: Output PURE PYTHON CODE ONLY. Do not use ```python``` blocks.
+5. **Code Efficiency Rule**: 
+   - You have a strict token limit. 
+   - NEVER use list comprehensions to generate many objects (e.g., `[Dot() for i in range(50)]`).
+   - If you need to show "many" things, show THREE (3) representative objects only.
+   - Prefer `Text("Heat")` over drawing complex flames.
 
 === TEXT AND ENCODING RULES (CRITICAL) ===
 - **ASCII-ONLY TEXT**: Non-ASCII characters cause Manim crashes or Mojibake errors.
@@ -25,6 +30,11 @@ Your task is to generate a **COMPLETE, EXECUTABLE Python script** for a Manim an
 - Use `Text` (not `TextMobject`).
 - Use `Create()`, `Write()`, `FadeIn()`, `FadeOut()`.
 - **Plotting**: Use `axes.plot(lambda x: ...)`
+
+**COLORS & STYLING**:
+- ✅ Use ONLY these standard constants: RED, GREEN, BLUE, YELLOW, ORANGE, PURPLE, PINK, TEAL, GOLD, MAROON, GRAY, WHITE, BLACK.
+- ❌ DO NOT use: BROWN, CYAN, MAGENTA, TAN, INDIGO.
+- ✅ For any other color, YOU MUST use a Hex String (e.g., color="#8B4513" for Brown).
 
 === TIMING & SYNCHRONIZATION ===
 - **Strict Duration**: The total `run_time` + `self.wait()` for each segment MUST equal exactly the segment duration.
