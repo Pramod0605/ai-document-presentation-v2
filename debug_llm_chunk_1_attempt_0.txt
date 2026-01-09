@@ -3,45 +3,45 @@
   "sections": [
     {
       "section_id": "section_1",
-      "section_type": "content",
-      "title": "Definition and Common Difference",
+      "section_type": "example",
+      "title": "Worked Example: Calculating Speed",
       "renderer": "manim",
       "narration": {
-        "full_text": "Let's begin with the formal definition. An Arithmetic Progression, or AP, is a list of numbers where each new number is found by adding a fixed number to the one before it. The only exception is the very first number, of course! This fixed number we keep adding is very important. It's called the common difference, and we use the letter 'd' to represent it. Now, this common difference 'd' can be a positive number, a negative number, or even zero. Think of it like walking on the steps of a ghat in Varanasi. If you are walking up, your height increases by a fixed amount with each step – that's a positive 'd'. If you are walking down, your height decreases by a fixed amount – a negative 'd'. And if you are walking on a flat platform between the steps, your height doesn't change at all, so the difference is zero!",
+        "full_text": "Now, let's solve a problem together. Imagine you are at the top of a giant water slide at Wonderla in Bangalore. All that height gives you potential energy. We have a 500kg car dropping from 20 meters. Our goal is to find its speed at the very bottom. First, we calculate the Potential Energy at the top. Using the formula PE equals mgh, we get 500 kilograms times 9.8 times 20 meters, which equals 98,000 Joules. At this point, the car is still, so Kinetic Energy is zero. Now, as the car slides down, just like you on that water slide, all that stored potential energy gets converted into kinetic energy. So at the bottom, the kinetic energy is 98,000 Joules. Finally, we use the kinetic energy formula to find the speed. We set 98,000 equal to one-half times 500 times velocity squared. A little bit of algebra, and we find that the final speed, v, is 14 meters per second. That's a thrilling ride!",
         "segments": [
           {
             "segment_id": "seg_1",
-            "text": "Let's begin with the formal definition. An Arithmetic Progression, or AP, is a list of numbers where each new number is found by adding a fixed number to the one before it. The only exception is the very first number, of course!",
-            "purpose": "explain",
+            "text": "Now, let's solve a problem together. Imagine you are at the top of a giant water slide at Wonderla in Bangalore. All that height gives you potential energy. We have a 500kg car dropping from 20 meters. Our goal is to find its speed at the very bottom.",
+            "purpose": "introduce",
             "display_directives": {
               "text_layer": "show",
-              "visual_layer": "show",
+              "visual_layer": "hide",
               "avatar_layer": "show"
             }
           },
           {
             "segment_id": "seg_2",
-            "text": "This fixed number we keep adding is very important. It's called the common difference, and we use the letter 'd' to represent it.",
+            "text": "First, we calculate the Potential Energy at the top. Using the formula PE equals mgh, we get 500 kilograms times 9.8 times 20 meters, which equals 98,000 Joules. At this point, the car is still, so Kinetic Energy is zero.",
             "purpose": "explain",
             "display_directives": {
               "text_layer": "show",
-              "visual_layer": "show",
+              "visual_layer": "hide",
               "avatar_layer": "show"
             }
           },
           {
             "segment_id": "seg_3",
-            "text": "Now, this common difference 'd' can be a positive number, a negative number, or even zero.",
+            "text": "Now, as the car slides down, just like you on that water slide, all that stored potential energy gets converted into kinetic energy.",
             "purpose": "explain",
             "display_directives": {
               "text_layer": "show",
-              "visual_layer": "show",
+              "visual_layer": "hide",
               "avatar_layer": "show"
             }
           },
           {
             "segment_id": "seg_4",
-            "text": "Think of it like walking on the steps of a ghat in Varanasi. If you are walking up, your height increases by a fixed amount with each step – that's a positive 'd'. If you are walking down, your height decreases by a fixed amount – a negative 'd'. And if you are walking on a flat platform between the steps, your height doesn't change at all, so the difference is zero!",
+            "text": "So at the bottom, the kinetic energy is 98,000 Joules. Finally, we use the kinetic energy formula to find the speed. We set 98,000 equal to one-half times 500 times velocity squared. A little bit of algebra, and we find that the final speed, v, is 14 meters per second. That's a thrilling ride!",
             "purpose": "explain",
             "display_directives": {
               "text_layer": "hide",
@@ -57,10 +57,10 @@
           "segment_id": "seg_1",
           "visual_type": "text",
           "markdown_pointer": {
-            "start_phrase": "An **Arithmetic Progression (AP)** is a list",
-            "end_phrase": "term, except the first term."
+            "start_phrase": "## Worked Example: Calculating Speed\n**Problem**:",
+            "end_phrase": "is its speed at the bottom?"
           },
-          "display_text": "An **Arithmetic Progression (AP)** is a list of numbers in which each term is obtained by adding a fixed number to the preceding term, except the first term.",
+          "display_text": "## Worked Example: Calculating Speed\n**Problem**: A 500kg car drops from 20m. What is its speed at the bottom?",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
@@ -70,10 +70,10 @@
           "segment_id": "seg_2",
           "visual_type": "text",
           "markdown_pointer": {
-            "start_phrase": "The fixed number added is called",
-            "end_phrase": "difference, denoted by **d**."
+            "start_phrase": "**Solution**:\n1. At top: $PE =",
+            "end_phrase": "98,000 J$. $KE = 0$."
           },
-          "display_text": "The fixed number added is called the **common difference**, denoted by **d**.",
+          "display_text": "**Solution**:\n1. At top: $PE = 500 \\cdot 9.8 \\cdot 20 = 98,000 J$. $KE = 0$.",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
@@ -81,12 +81,12 @@
         {
           "beat_id": "beat_3",
           "segment_id": "seg_3",
-          "visual_type": "bullet_list",
+          "visual_type": "text",
           "markdown_pointer": {
-            "start_phrase": "The common difference can be:\n- positive",
-            "end_phrase": "- negative\n- zero"
+            "start_phrase": "2. At bottom: All PE becomes",
+            "end_phrase": "All PE becomes KE."
           },
-          "display_text": "The common difference can be:\n- positive\n- negative\n- zero",
+          "display_text": "2. At bottom: All PE becomes KE.",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
@@ -94,33 +94,56 @@
         {
           "beat_id": "beat_4",
           "segment_id": "seg_4",
-          "visual_type": "diagram",
-          "markdown_pointer": null,
-          "display_text": null,
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "3. $98,000 = \\frac{1}{2}(500)v^2$.",
+            "end_phrase": "$v^2 \\rightarrow v = 14 m/s$."
+          },
+          "display_text": "3. $98,000 = \\frac{1}{2}(500)v^2$.\n4. $196 = v^2 \\rightarrow v = 14 m/s$.",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
         }
       ],
       "render_spec": {
-        "manim_scene_spec": "Scene opens with a stylized, minimalist animation of ghat steps against a saffron-orange sunrise background. A simple stick figure walks down the steps. As it takes each step, a label '-1' in a cool blue color appears beside it, and a number line at the bottom shows the sequence 10, 9, 8... The figure then walks on a flat section, and a label '0' in a neutral grey color pulses. Finally, the figure walks up a few steps, and a label '+1' in a warm green color appears, with the sequence on the number line changing to 8, 9, 10... The words 'Positive d', 'Negative d', and 'Zero d' appear to label each action clearly.",
+        "manim_scene_spec": "A vibrant Manim scene opens, showing a stylized roller coaster track against a blue sky. A red coaster car appears at the top of a 20m hill. Text labels `mass = 500kg` and `height = 20m` pop up near the car. The formula `PE = mgh` writes itself out. The numbers `500 * 9.8 * 20` substitute themselves into the formula, glowing briefly before calculating the result `PE = 98,000 J`. Simultaneously, a vertical bar gauge labeled 'Energy' appears, filled completely with blue ('PE'). The car then animates smoothly down the track. As it descends, the blue 'PE' bar decreases while a new yellow 'KE' bar grows, perfectly illustrating the energy conversion. At the bottom, the car stops, and the gauge is now fully yellow. The formula `KE = 1/2*m*v^2` appears. The value `98,000` flows from the gauge to replace 'KE'. The equation solves step-by-step, highlighting each part of the calculation, finally revealing `v = 14 m/s` in a bold, celebratory font.",
         "video_prompts": []
       }
     },
     {
       "section_id": "section_2",
-      "section_type": "example",
-      "title": "Examples of Common Difference",
-      "renderer": "manim",
+      "section_type": "quiz",
+      "title": "Quiz Time",
+      "renderer": "none",
       "narration": {
-        "full_text": "Let's look at a few quick examples. In the sequence 1, 2, 3, 4, and so on, we are adding 1 each time, so d equals 1. In the sequence 10, 7, 4, 1, we are subtracting 3 each time, which means d is negative 3. And in a sequence like 5, 5, 5, 5, nothing is being added or subtracted, so the common difference d is simply 0.",
+        "full_text": "Alright, time for a quick question to check your understanding. What happens to Potential Energy as the roller coaster car falls? Is it a) Increases, b) Decreases, c) Stays same, or d) Becomes Zero? <pause duration='3'/> Correct! The answer is b) Decreases. As the car goes down, its height reduces. Since potential energy depends on height, it must decrease. This lost potential energy is what transforms into kinetic energy, making the car go faster and faster.",
         "segments": [
           {
             "segment_id": "seg_5",
-            "text": "Let's look at a few quick examples. In the sequence 1, 2, 3, 4, and so on, we are adding 1 each time, so d equals 1. In the sequence 10, 7, 4, 1, we are subtracting 3 each time, which means d is negative 3. And in a sequence like 5, 5, 5, 5, nothing is being added or subtracted, so the common difference d is simply 0.",
-            "purpose": "explain",
+            "text": "Alright, time for a quick question to check your understanding. What happens to Potential Energy as the roller coaster car falls? Is it a) Increases, b) Decreases, c) Stays same, or d) Becomes Zero?",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_6",
+            "text": "<pause duration='3'/>",
+            "purpose": "emphasize",
             "display_directives": {
               "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_7",
+            "text": "Correct! The answer is b) Decreases. As the car goes down, its height reduces. Since potential energy depends on height, it must decrease. This lost potential energy is what transforms into kinetic energy, making the car go faster and faster.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
               "visual_layer": "show",
               "avatar_layer": "show"
             }
@@ -133,14 +156,43 @@
           "segment_id": "seg_5",
           "visual_type": "bullet_list",
           "markdown_pointer": {
-            "start_phrase": "### Examples\n- 1, 2, 3, 4,",
-            "end_phrase": "… → d = 0"
+            "start_phrase": "## Quiz Time\n1. What happens",
+            "end_phrase": "d) Becomes Zero"
           },
-          "display_text": "- 1, 2, 3, 4, … → d = 1\n- 10, 7, 4, 1, … → d = −3\n- 5, 5, 5, 5, … → d = 0",
+          "display_text": "1. What happens to PE as the car falls?\n   a) Increases\n   b) Decreases\n   c) Stays same\n   d) Becomes Zero",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_6",
+          "segment_id": "seg_6",
+          "visual_type": "diagram",
+          "markdown_pointer": null,
+          "display_text": "Thinking Indicator Animation (e.g., spinning gear, ticking clock)",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_7",
+          "segment_id": "seg_7",
+          "visual_type": "bullet_list",
+          "markdown_pointer": {
+            "start_phrase": "## Quiz Time\n1. What happens",
+            "end_phrase": "**Answer**: b) Decreases (It converts to KE)."
+          },
+          "display_text": "1. What happens to PE as the car falls?\n   a) Increases\n   b) Decreases\n   c) Stays same\n   d) Becomes Zero\n   **Answer**: b) Decreases (It converts to KE).",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": true
         }
       ],
       "render_spec": {
-        "manim_scene_spec": "Animate the three examples on a clean, dark background. For the first example, the numbers 1,
+        "manim_scene_spec": null,
+        "video_prompts": []
+      }
+    }
+  ]
+}
+```

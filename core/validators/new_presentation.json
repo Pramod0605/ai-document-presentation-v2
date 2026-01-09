@@ -1,0 +1,199 @@
+{
+  "presentation_title": "Arithmetic Progression",
+  "metadata": {
+    "subject": "Mathematics",
+    "grade": "10-12",
+    "renderer_mode": "Director-Pointer"
+  },
+  "sections": [
+    {
+      "section_id": "intro_1",
+      "section_type": "intro",
+      "title": "Patterns in Nature and Life",
+      "derived_renderer": "none",
+      "decision_reason": "Standard welcome message focused on the avatar to build student rapport. [cite: 5]",
+      "narration": {
+        "full_text": "Namaste! Have you ever looked closely at a sunflower or a honeycomb? Nature is full of beautiful, predictable patterns. In math, we call these sequences. Today, we'll explore 'Arithmetic Progressions'—a specific type of pattern found in everything from your roll numbers to how you save money. Let's dive in!",
+        "segments": [
+          {
+            "segment_id": "seg_intro_1",
+            "text": "Namaste! Have you ever looked closely at a sunflower or a honeycomb? Nature is full of beautiful, predictable patterns.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "content_definition",
+      "section_type": "content",
+      "title": "What is an AP?",
+      "derived_renderer": "manim",
+      "decision_reason": "Moving from a text-based definition to a Manim visualization to satisfy the Teach and Show principle. [cite: 7, 8]",
+      "narration": {
+        "full_text": "An arithmetic progression is a list of numbers where each term comes from adding a fixed number to the one before it. We call this fixed number the common difference. It can be positive, negative, or even zero!",
+        "segments": [
+          {
+            "segment_id": "seg_def_explain",
+            "text": "An arithmetic progression is a list of numbers where each term comes from adding a fixed number to the one before it. [cite: 31]",
+            "purpose": "explain",
+            "markdown_pointer": {
+              "start_phrase": "An arithmetic progression is a",
+              "end_phrase": "except the first term.",
+              "block_type": "text"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_def_visual",
+            "text": "Watch this sequence. Notice how every 'jump' is exactly the same size? That jump is our common difference, denoted by the letter 'd'.",
+            "purpose": "emphasize",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_def_manim",
+          "segment_id": "seg_def_visual",
+          "visual_type": "manim_spec",
+          "display_text": "Visualizing the common difference 'd'"
+        }
+      ],
+      "manim_spec": "Create a sophisticated mathematical animation on a clean dark charcoal background. The first term 'a' appears as a bold white number. A bright neon cyan #00FFFF curved arrow springs from 'a' and lands to the right, where the term 'a plus d' fades in. This repeats three times, with each subsequent term—'a plus 2d' and 'a plus 3d'—appearing in a vibrant lime green #32CD32. Above each jump arrow, a small golden pulsing letter 'd' #FFD700 signifies the constant addition. The camera follows the sequence with a smooth ease-in-out lateral pan, creating a sense of infinite growth. Total duration 15 seconds. [cite: 14, 16, 17]"
+    },
+    {
+      "section_id": "content_formula",
+      "section_type": "content",
+      "title": "The nth Term Formula",
+      "derived_renderer": "manim",
+      "decision_reason": "Using Manim to animate the derivation and substitution of the general form formula. [cite: 8, 15]",
+      "narration": {
+        "full_text": "If we know the first term 'a' and the common difference 'd', we can find any term in the world using this formula: a sub n equals a plus n minus one times d. Let's see how the variables interact.",
+        "segments": [
+          {
+            "segment_id": "seg_formula_show",
+            "text": "The n-th term formula is our most powerful tool for solving these sequences. [cite: 31]",
+            "purpose": "explain",
+            "markdown_pointer": {
+              "start_phrase": "The nth term is a_n",
+              "end_phrase": "a - first term, d - c.d.",
+              "block_type": "equation"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_formula_anim",
+            "text": "See how the formula is built? We start at 'a' and take 'n minus one' steps of size 'd' to reach our destination.",
+            "purpose": "emphasize",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "manim_spec": "Generate a dynamic derivation animation. The formula a_n = a + (n-1)d appears in the center in a crisp white LaTeX font. As the narrator mentions 'a', the letter 'a' glows in a brilliant sapphire blue #0F52BA. When 'n-1' is mentioned, that part of the formula scales up slightly and turns a vivid ruby red #E0115F. The 'd' then pulses in a rich emerald green #50C878. Translucent particles move from the 'a' toward the 'a_n' to represent the steps taken. The background features a subtle grid to emphasize the mathematical precision. The camera remains steady but uses focal blurs to highlight each component as it is explained. Total duration 15 seconds. [cite: 14, 16, 17]"
+    },
+    {
+      "section_id": "example_logs",
+      "section_type": "example",
+      "title": "Real World: Stacking Logs",
+      "derived_renderer": "video",
+      "decision_reason": "Applying the 'Teach and Show' principle by using the textbook's log problem and showing a high-quality video simulation. [cite: 7, 8, 24]",
+      "narration": {
+        "full_text": "Let's look at a practical example from your book. Imagine stacking 200 logs where the bottom row has 20 logs, and each row above has one less. This is a decreasing AP where d is minus one.",
+        "segments": [
+          {
+            "segment_id": "seg_log_text",
+            "text": "Let's examine the log stacking problem. [cite: 31]",
+            "purpose": "explain",
+            "markdown_pointer": {
+              "start_phrase": "200 logs are stacked in",
+              "end_phrase": "In how many rows",
+              "block_type": "image_ref"
+            },
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_log_video",
+            "text": "Notice how the stack narrows as it goes up? This visual symmetry is the power of arithmetic progression in action.",
+            "purpose": "emphasize",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "video_prompts": [
+        {
+          "segment_id": "seg_log_video",
+          "prompt": "A cinematic, high-definition 3D animation of wooden logs being stacked in a clearing of a misty forest. The camera starts at a ground-level macro view, showing the first 20 logs being laid side-by-side. As the camera smoothly pans upward and zooms out, we see the next row of 19 logs being placed in the grooves of the bottom row. The sunlight filters through the canopy in realistic 'god rays,' highlighting the rough texture of the bark. The stack grows in a perfect trapezoidal shape, visually demonstrating the decreasing arithmetic progression. The colors are warm and natural, with deep browns and forest greens. Duration 12 seconds. [cite: 10, 11, 12, 13]",
+          "duration_hint": 12
+        }
+      ]
+    },
+    {
+      "section_id": "recap_final",
+      "section_type": "recap",
+      "title": "Summary of AP",
+      "derived_renderer": "video",
+      "decision_reason": "Exactly 5 cinematic scenes to wrap up the chapter and ground the math in reality. [cite: 7, 17]",
+      "video_prompts": [
+        {
+          "segment_id": "recap_1",
+          "prompt": "Cinematic shot of an Indian classroom where a teacher is drawing a straight line of dots on a chalkboard, each dot spaced exactly 10 centimeters apart. The camera focus shifts from the teacher's hand to the rhythmic pattern of the dots, symbolizing the constant 'd'. Soft morning light enters through the window, highlighting the chalk dust in the air. The atmosphere is quiet and academic. Duration 10 seconds. [cite: 10, 22]",
+          "duration_hint": 10
+        },
+        {
+          "segment_id": "recap_2",
+          "prompt": "A top-down view of a student's study desk. We see a hand using a compass to draw the spiral of semicircles from the textbook example. The graphite line is crisp on the white paper. As the spiral expands, animated translucent labels 'l1', 'l2', and 'l3' appear briefly above each curve. The lighting is warm and focused from a desk lamp, creating a cozy study environment. Duration 10 seconds. [cite: 17, 18]",
+          "duration_hint": 10
+        },
+        {
+          "segment_id": "recap_3",
+          "prompt": "An outdoor shot of a playground where children are standing in a queue for a race. The camera pans down the line, showing the uniform distance between each child. This represents a finite AP. The colors are vibrant and saturated, reflecting a sunny afternoon. The motion is smooth and steady as the camera moves past the line of students. Duration 12 seconds. [cite: 17, 21]",
+          "duration_hint": 12
+        },
+        {
+          "segment_id": "recap_4",
+          "prompt": "A close-up of an old-fashioned clock face where the second hand moves in steady, rhythmic ticks. Each tick represents the passage of time in a constant sequence. The camera then zooms out to show a student watching the clock while solving a math problem, connecting the concept of time to arithmetic patterns. The lighting is soft and ambient. Duration 10 seconds. [cite: 10, 17]",
+          "duration_hint": 10
+        },
+        {
+          "segment_id": "recap_5",
+          "prompt": "A soaring drone shot of a modern city at dusk. The streetlights turn on one by one in a long, straight avenue, creating a glowing line of light that stretches into the distance. This visualizes the idea of an infinite progression. The sky is a deep indigo with hints of orange on the horizon. The camera moves forward along the line of lights. Duration 12 seconds. [cite: 10, 17]",
+          "duration_hint": 12
+        }
+      ]
+    }
+  ],
+  "decision_log": {
+    "total_video_prompts": 6,
+    "total_manim_specs": 2,
+    "content_analysis": "The document covers Arithmetic Progression definitions, formulas for the nth term, and real-world applications like log stacking and spirals. I used Director Pointers to ensure the LaTeX equations and specific textbook examples are rendered perfectly by the player. [cite: 29, 32, 33]"
+  }
+}

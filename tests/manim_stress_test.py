@@ -17,7 +17,7 @@ def run_stress_test():
     
     # --- CONFIGURATION ---
     # PASTE YOUR API KEY HERE IF ENV VARS FAIL
-    HARDCODED_API_KEY = "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"
+    HARDCODED_API_KEY = ""  # REMOVED - Use OPENROUTER_API_KEY from .env
  
     # Example: HARDCODED_API_KEY = "sk-or-..." 
 

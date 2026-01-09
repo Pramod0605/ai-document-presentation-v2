@@ -12,7 +12,7 @@ HEADERS = {
 # Data payload
 payload = {
     "text": "This is a test using the remote API.", #replace our narration
-    "description": "Divya speaks clearly with calm tone"
+    "description": "Male speaks clearly with calm tone"
 }
 
 # 1. Request the TTS generation

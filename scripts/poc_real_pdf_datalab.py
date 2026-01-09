@@ -2,7 +2,7 @@ import sys
 import os
 
 # FORCE CORRECT KEYS BEFORE ANY IMPORTS LOAD
-os.environ["OPENROUTER_API_KEY"] = "sk-or-v1-791c5436887fcbf8f52a7ae3290a30454030249e063b3701d9b690442ff87c38b"
+# os.environ["OPENROUTER_API_KEY"] = ""  # REMOVED - Use .env file
 os.environ["DATALAB_API_KEY"] = "WmFbeYfN6tUoCNfHoGi4Xy66W5WqOud3Kr1FXmHYmW0"
 
 import json

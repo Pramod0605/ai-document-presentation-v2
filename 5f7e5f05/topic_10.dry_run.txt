@@ -1,0 +1,114 @@
+DRY RUN - Manim section 10
+Duration: 30s
+Output would be: 5f7e5f05\topic_10.mp4
+
+--- SCENE CODE ---
+from manim import *
+
+class MainScene(Scene):
+    def construct(self):
+        # Segment 1: Introduction (9.7s)
+        problem_text = Text("Find the 10th term of an AP", font_size=42).to_edge(UP)
+        self.play(Write(problem_text), run_time=3.0)
+        self.wait(6.7)
+        
+        # Segment 2: Identify known values (4.6s)
+        known_values = VGroup(
+            MathTex("a = 2", font_size=48),
+            MathTex("d = 5", font_size=48),
+            MathTex("n = 10", font_size=48)
+        ).arrange(DOWN, buff=0.5).to_edge(LEFT, buff=1.0).shift(DOWN * 0.5)
+        
+        self.play(FadeIn(known_values, shift=RIGHT), run_time=2.5)
+        self.wait(2.1)
+        
+        # Segment 3: Apply formula and solve (25.4s)
+        formula = MathTex("a_n", "=", "a", "+", "(n-1)", "d", font_size=44).to_edge(UP).shift(DOWN * 0.5)
+        self.play(
+            FadeOut(problem_text),
+            Write(formula),
+            run_time=2.0
+        )
+        self.wait(1.0)
+        
+        # Create copies of values to animate
+        a_copy = MathTex("2", font_size=44, color=YELLOW).move_to(known_values[0].get_center())
+        d_copy = MathTex("5", font_size=44, color=YELLOW).move_to(known_values[2].get_center())
+        n_copy = MathTex("10", font_size=44, color=YELLOW).move_to(known_values[1].get_center())
+        
+        # Animate values flying into formula
+        self.add(a_copy, d_copy, n_copy)
+        
+        substituted_formula = MathTex("a_{10}", "=", "2", "+", "(10-1)", "\\times", "5", font_size=44).move_to(formula.get_center())
+        
+        self.play(
+            a_copy.animate.move_to(substituted_formula[2].get_center()),
+            n_copy.animate.move_to(substituted_formula[4].get_center()),
+            d_copy.animate.move_to(substituted_formula[6].get_center()),
+            Transform(formula, substituted_formula),
+            run_time=2.5
+        )
+        self.remove(a_copy, d_copy, n_copy)
+        self.wait(0.5)
+        
+        # Highlight (10-1) and simplify to 9
+        highlight_box1 = SurroundingRectangle(substituted_formula[4], color=BLUE, buff=0.1)
+        self.play(Create(highlight_box1), run_time=0.8)
+        self.wait(0.5)
+        
+        nine = MathTex("9", font_size=44, color=GREEN).move_to(substituted_formula[4].get_center())
+        self.play(
+            FadeOut(highlight_box1),
+            Transform(substituted_formula[4], nine),
+            run_time=1.2
+        )
+        self.wait(0.8)
+        
+        # Update formula to show 9 × 5
+        step2_formula = MathTex("a_{10}", "=", "2", "+", "9", "\\times", "5", font_size=44).move_to(formula.get_center())
+        self.play(Transform(formula, step2_formula), run_time=0.8)
+        self.wait(0.5)
+        
+        # Highlight 9 × 5 and simplify to 45
+        mult_group = VGroup(step2_formula[4], step2_formula[5], step2_formula[6])
+        highlight_box2 = SurroundingRectangle(mult_group, color=BLUE, buff=0.1)
+        self.play(Create(highlight_box2), run_time=0.8)
+        self.wait(0.5)
+        
+        fortyfive = MathTex("45", font_size=44, color=GREEN).move_to(mult_group.get_center())
+        step3_formula = MathTex("a_{10}", "=", "2", "+", "45", font_size=44).move_to(formula.get_center())
+        self.play(
+            FadeOut(highlight_box2),
+            Transform(formula, step3_formula),
+            run_time=1.2
+        )
+        self.wait(0.8)
+        
+        # Highlight 2 + 45 and show final answer
+        add_group = VGroup(step3_formula[2], step3_formula[3], step3_formula[4])
+        highlight_box3 = SurroundingRectangle(add_group, color=BLUE, buff=0.1)
+        self.play(Create(highlight_box3), run_time=0.8)
+        self.wait(0.5)
+        
+        final_answer = MathTex("a_{10}", "=", "47", font_size=44).move_to(formula.get_center())
+        self.play(
+            FadeOut(highlight_box3),
+            Transform(formula, final_answer),
+            run_time=1.0
+        )
+        self.wait(0.5)
+        
+        # Make 47 large and centered
+        big_answer = MathTex("47", font_size=96, color=GOLD).move_to(ORIGIN)
+        self.play(
+            FadeOut(known_values),
+            FadeOut(VGroup(final_answer[0], final_answer[1])),
+            Transform(final_answer[2], big_answer),
+            run_time=2.0
+        )
+        
+        # Flash effect
+        self.play(Flash(big_answer, color=YELLOW, flash_radius=1.5), run_time=1.0)
+        self.wait(5.5)
+        # Hard Sync: Injected wait to match audio (25.20s -> 25.38s)
+        self.wait(0.180)

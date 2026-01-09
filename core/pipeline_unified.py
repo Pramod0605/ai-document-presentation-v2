@@ -39,7 +39,7 @@ def process_markdown_unified(
     grade: str,
     job_id: str,
     update_status_callback=None,
-    generate_tts: bool = True,
+    generate_tts: bool = False,
     output_dir: Optional[Path] = None,
     tts_provider: TTSProvider = "our_tts",
     dry_run: bool = False,
@@ -281,14 +281,33 @@ def process_markdown_unified(
 
         # --- PHASE 4: AUTOMATED PARALLEL FORK (Avatar + TTS + Manim/WAN) ---
         # 4a. Trigger Avatar Generation (Fire-and-Forget)
+        # 4a. Trigger Avatar Generation (Fire-and-Forget)
         if output_dir:
             try:
-                log_status("avatar_generation", "Triggering parallel avatar generation...")
-                avatar_gen = AvatarGenerator()
-                # Run in separate thread to not block pipeline if overhead is high
-                # But our helper returns fast, so direct call is fine.
-                avatar_results = avatar_gen.submit_parallel_job(presentation, job_id, str(output_dir))
-                log_status("avatar_generation", f"Triggered: {len(avatar_results['queued'])} reqs, {len(avatar_results['skipped'])} skips")
+                log_status("avatar_generation", "Triggering parallel avatar generation (Background)...")
+                
+                import threading
+                def avatar_worker(pres, j_id, out_dir):
+                    try:
+                        avatar_gen = AvatarGenerator()
+                        # This method now handles updating presentation.json and analytics.json live!
+                        res = avatar_gen.submit_parallel_job(pres, j_id, str(out_dir))
+                        logger.info(f"[Avatar Worker] Finished job {j_id}. Summary: {len(res.get('completed', []))} completed.")
+                    except Exception as e:
+                        logger.error(f"[Avatar Worker] Failed: {e}")
+
+                # Fire and Forget
+                # Daemon=True ensures it doesn't block app shutdown, but we want it to finish even if main thread ends?
+                # Actually, in Flask/Gunicorn, daemon threads might be killed. 
+                # But for this script execution, daemon=False (default) or explicit join is needed if script exits.
+                # However, the user wants "Pipeline Completes". Use Daemon=True to allow script to exit if needed, 
+                # OR Daemon=False to keep process alive but unblocked main flow?
+                # Let's use Daemon=True for now as often these are run in long-lived server processes.
+                t = threading.Thread(target=avatar_worker, args=(presentation, job_id, output_dir))
+                t.daemon = True 
+                t.start()
+                
+                log_status("avatar_generation", "Avatar generation started in background thread.")
             except Exception as e:
                 logger.error(f"Avatar Generation Trigger Failed: {e}")
                 log_status("avatar_generation", f"Error triggering avatars: {e}")
