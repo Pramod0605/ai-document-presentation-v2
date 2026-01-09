@@ -724,7 +724,7 @@
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showLlmOutputs('${job.job_id}')">LLM Outputs</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showAnalytics('${job.job_id}')">Analytics</button>
                             <button class="btn" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px; background: #9c27b0; color: #fff;" onclick="showRetryPhaseModal('${job.job_id}')">Retry Phase</button>
-                            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="window.open('/player_v2/?job=${job.job_id}', '_blank')">Play</button>
+                            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="window.open('/player_v2/?job=${job.job_id}', '_blank')">Play</button>
                         `;
                     } else if (job.status === 'failed') {
                         actions = `

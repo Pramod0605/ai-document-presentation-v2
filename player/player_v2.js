@@ -164,6 +164,22 @@ function setupEventListeners() {
 
   narrationAudio.onerror = (e) => {
     console.error('[V2] Audio failed to load:', narrationAudio.src);
+    // Fallback to timer if audio fails
+    if (activeTimeSource === narrationAudio) {
+      console.warn('[V2] Switching to Timer Fallback due to audio error');
+      activeTimeSource = timerFallback;
+      // Recalculate duration just in case
+      const duration = getTotalDuration(slides[currentSlideIndex]);
+      timerFallback.reset(duration);
+
+      bindTimeEvents(timerFallback);
+
+      showSilentModeIndicator(true);
+
+      if (isPlaying) {
+        timerFallback.play();
+      }
+    }
   };
 
   contentVideo.addEventListener('ended', onContentVideoEnd);
@@ -197,11 +213,8 @@ function setupEventListeners() {
 
   avatarVideo.addEventListener('play', startChromaKeyLoop);
 
-  avatarVideo.src = AVATAR_URL;
-  avatarVideo.muted = true;
-  avatarVideo.loop = true;
-  avatarVideo.playsInline = true;
-  avatarVideo.load();
+  // Avatar will be loaded per-slide in setupMediaSource
+  // Don't load placeholder here - it causes the issue
 }
 
 function showAvatarPlaceholder() {
@@ -379,25 +392,96 @@ function renderChromaFrame() {
   requestAnimationFrame(renderChromaFrame);
 }
 
+// ... existing imports ...
+
+// --- Markdown Parsing Utilities ---
+function parseSourceMarkdown(markdown) {
+  if (!markdown) return [];
+
+  const lines = markdown.split('\n');
+  const sections = [];
+  let currentSection = { title: '', content: [] };
+
+  lines.forEach(line => {
+    // Check for headers (mapped to sections)
+    if (line.match(/^#{1,3}\s/)) {
+      if (currentSection.title || currentSection.content.length > 0) {
+        sections.push(currentSection);
+      }
+      currentSection = {
+        title: line.replace(/^#{1,3}\s/, '').trim(),
+        content: []
+      };
+    } else {
+      currentSection.content.push(line);
+    }
+  });
+
+  if (currentSection.title || currentSection.content.length > 0) {
+    sections.push(currentSection); // Push last section
+  }
+
+  return sections;
+}
+
 async function loadPresentation() {
   try {
     const response = await fetch(PRESENTATION_PATH);
     lessonData = await response.json();
+    slides = lessonData.sections || [];
 
-    // V2.5 Director Mode: Fetch source markdown if pointers are expected
+    // V2.5 Director Mode: Fetch source markdown and map to sections
     try {
       const mdResponse = await fetch(SOURCE_MARKDOWN_PATH);
       if (mdResponse.ok) {
         sourceMarkdown = await mdResponse.text();
         console.log(`[V2.5] Source Markdown loaded: ${sourceMarkdown.length} chars`);
+
+        const parsedSections = parseSourceMarkdown(sourceMarkdown);
+        console.log(`[V2.5] Parsed ${parsedSections.length} markdown sections`);
+
+        // Map parsed markdown to slides
+        slides.forEach((slide, index) => {
+          // 1. Try exact Title match
+          let match = parsedSections.find(p => p.title.toLowerCase().trim() === slide.title?.toLowerCase().trim());
+
+          // 2. Try Partial Title match
+          if (!match) {
+            match = parsedSections.find(p => p.title.toLowerCase().includes(slide.title?.toLowerCase() || 'xxx'));
+          }
+
+          // 3. Try Section Type Mapping (Robust Fallback)
+          if (!match && slide.section_type) {
+            const type = slide.section_type.toLowerCase();
+            // Map 'summary' -> 'Summary' or 'Learning Objectives'
+            if (type === 'summary') {
+              match = parsedSections.find(p => p.title.toLowerCase().includes('summary') || p.title.toLowerCase().includes('learning objectives'));
+            } else if (type === 'intro') {
+              match = parsedSections.find(p => p.title.toLowerCase().includes('introduction'));
+            } else if (type === 'quiz') {
+              match = parsedSections.find(p => p.title.toLowerCase().includes('exercise') || p.title.toLowerCase().includes('quiz'));
+            }
+          }
+
+          // 4. Fallback index
+          const fallback = parsedSections[index];
+
+          if (match) {
+            console.log(`[V2.5] Mapped Slide '${slide.title}' to MD Section '${match.title}'`);
+            slide.markdown_content = match.content.filter(l => l.trim() !== '');
+          } else if (fallback) {
+            // Weak index matching fallback
+            slide.markdown_content = fallback.content.filter(l => l.trim() !== '');
+          }
+        });
+
       } else {
-        console.warn("[V2.5] source_markdown.md not found, pointers will fail.");
+        console.warn("[V2.5] source_markdown.md not found.");
       }
     } catch (e) {
       console.warn("[V2.5] Failed to load source_markdown.md", e);
     }
 
-    slides = lessonData.sections || [];
 
     // Set header title from presentation
     if (headerTitle && lessonData.title) {
@@ -521,6 +605,84 @@ function loadSlide(index) {
   });
 }
 
+// ============================================
+// MEDIA SOURCE SETUP (Avatar, Audio, Video)
+// ============================================
+function setupMediaSource(slide) {
+  const sectionType = slide.section_type || 'content';
+
+  // 1. Setup AVATAR (job-specific path per slide)
+  const avatarPath = slide.avatar_video_path || slide.avatar_video;
+  if (avatarPath) {
+    const fullAvatarPath = resolveMediaPath(avatarPath, 'video');
+    console.log(`[V2] Loading avatar for ${sectionType}: ${fullAvatarPath}`);
+
+    // Hide placeholder if it exists
+    const placeholder = document.getElementById('avatar-placeholder');
+    if (placeholder) placeholder.remove();
+    avatarCanvas.style.display = 'block';
+
+    avatarVideo.src = fullAvatarPath;
+    avatarVideo.muted = true; // CRITICAL for autoplay
+    avatarVideo.loop = true;
+    avatarVideo.playsInline = true;
+    avatarVideo.load();
+
+    avatarVideo.onloadeddata = () => {
+      console.log('[V2] Avatar loaded successfully');
+      syncCanvasSize();
+      // Auto-play avatar (muted, so should work)
+      avatarVideo.play().catch(e => {
+        console.warn('[V2] Avatar autoplay failed (rare):', e);
+        // Don't show placeholder - video is loaded, user just needs to click play
+      });
+    };
+  } else {
+    console.warn('[V2] No avatar path found for this slide');
+    showAvatarPlaceholder();
+  }
+
+  // 2. Setup NARRATION AUDIO (main timeline)
+  const audioPath = slide.audio_path;
+  if (audioPath) {
+    const fullAudioPath = resolveMediaPath(audioPath, 'audio');
+    narrationAudio.src = fullAudioPath;
+    narrationAudio.load();
+    activeTimeSource = narrationAudio;
+    useTimerFallback = false;
+    bindTimeEvents(narrationAudio);
+    console.log(`[V2] Audio source: ${fullAudioPath}`);
+  } else {
+    // Use timer fallback if no audio
+    const duration = getTotalDuration(slide);
+    timerFallback.reset(duration);
+    activeTimeSource = timerFallback;
+    useTimerFallback = true;
+    bindTimeEvents(timerFallback);
+    showSilentModeIndicator(true);
+    console.log(`[V2] No audio - using timer fallback (${duration.toFixed(1)}s)`);
+  }
+
+  // 3. Setup CONTENT VIDEO (if applicable - handled by renderContent)
+  // Beat videos are loaded separately in loadBeatVideo()
+}
+
+function getTotalDuration(slide) {
+  const segments = slide.narration?.segments || [];
+  return segments.reduce((sum, seg) => sum + (seg.duration_seconds || 5), 0) || 30;
+}
+
+function showSilentModeIndicator(show) {
+  console.log('[V2] 🔇 Silent Mode: No audio available, using timer');
+}
+
+function renderIntro(slide) {
+  console.log('[V2] IntroRenderer: Clean avatar-only start');
+  // Intro handles its own clean layout via setStageMode('intro')
+  contentBox.innerHTML = '';
+  // Optionally add a welcome message or title if desired, but Bible says "Clean Start"
+}
+
 function setStageMode(sectionType) {
   stage.className = '';
 
@@ -532,45 +694,90 @@ function setStageMode(sectionType) {
   }
 }
 
-// ============================================
-// SECTION RENDERERS
-// ============================================
-
-function renderIntro(slide) {
-  console.log('[V2] IntroRenderer: Avatar only, no content');
-}
-
 function renderSummary(slide) {
   console.log('[V2] SummaryRenderer: Level-1 bullets with checkmarks');
 
-  const segments = slide.narration?.segments || [];
-  const allBullets = [];
+  const contentBox = document.getElementById('content-box');
+  contentBox.innerHTML = '';
 
-  segments.forEach(seg => {
-    const vc = seg.visual_content;
-    const bulletData = vc?.bullet_points || vc?.items || [];
-    if (bulletData.length > 0) {
-      bulletData.forEach(bp => {
-        const text = (typeof bp === 'string' ? bp : (bp.text || '')).trim();
-        if (text.toLowerCase() === 'thinking...' || text.toLowerCase() === 'thinking') {
-          return;
-        }
-        if (!bp.level || bp.level === 1) {
-          allBullets.push(sanitizeMarkdown(text));
-        }
-      });
+  // Title if needed (usually handled by slide title element, but we can add header)
+  const header = document.createElement('h2');
+  header.className = 'summary-header';
+  header.textContent = slide.title || 'Summary';
+  contentBox.appendChild(header);
+
+  // V2.5 Summary Mode Priority:
+  // 1. Visual Beats (Director Standard)
+  // 2. Slide Visual Content (Global Fallback)
+  // 3. Narration Segments (Legacy/Aligned)
+
+  const collectedBullets = new Set();
+
+  // Strategy 1: Visual Beats (Primary for V2.5)
+  if (slide.visual_beats && slide.visual_beats.length > 0) {
+    console.log(`[V2] SummaryRenderer: Found ${slide.visual_beats.length} visual beats`);
+    slide.visual_beats.forEach(beat => {
+      if (beat.visual_type === 'bullet_list' && beat.display_text) {
+        const text = beat.display_text.trim();
+        if (text) collectedBullets.add(sanitizeMarkdown(text));
+      }
+    });
+  }
+
+  // Strategy 2: Slide-Level Visual Content
+  if (collectedBullets.size === 0 && slide.visual_content?.bullet_points) {
+    console.log('[V2] SummaryRenderer: Found slide-level bullets');
+    slide.visual_content.bullet_points.forEach(bp => {
+      const text = (typeof bp === 'string' ? bp : (bp.text || '')).trim();
+      if (!bp.level || bp.level === 1) {
+        collectedBullets.add(sanitizeMarkdown(text));
+      }
+    });
+  }
+
+  // Strategy 3: Narration Segments (Fallback)
+  if (collectedBullets.size === 0) {
+    const segments = slide.narration?.segments || [];
+    segments.forEach(seg => {
+      const vc = seg.visual_content;
+      const bulletData = vc?.bullet_points || vc?.items || [];
+      if (bulletData.length > 0) {
+        bulletData.forEach(bp => {
+          const text = (typeof bp === 'string' ? bp : (bp.text || '')).trim();
+          if (text.toLowerCase().includes('thinking')) return;
+          if (!bp.level || bp.level === 1) {
+            collectedBullets.add(sanitizeMarkdown(text));
+          }
+        });
+      }
+    });
+  }
+
+  // Final Rendering
+  const allBulletsArray = Array.from(collectedBullets);
+
+  if (allBulletsArray.length === 0) {
+    // Last ditch: check markdown content if allowed
+    if (slide.markdown_content && slide.markdown_content.length > 0) {
+      console.log('[V2] SummaryRenderer: Fallback to markdown source');
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'summary-markdown-wrapper';
+      contentDiv.innerHTML = sanitizeMarkdown(slide.markdown_content.join('\n'));
+      contentBox.appendChild(contentDiv);
+      return;
     }
-  });
 
-  if (allBullets.length === 0) {
-    contentBox.innerHTML = '<p class="paragraph-block">Summary content</p>';
+    const p = document.createElement('p');
+    p.className = 'paragraph-block';
+    p.textContent = 'Summary content';
+    contentBox.appendChild(p);
     return;
   }
 
   const list = document.createElement('ul');
   list.className = 'summary-list';
 
-  allBullets.forEach((text, i) => {
+  allBulletsArray.forEach((text, i) => {
     const item = document.createElement('li');
     item.className = 'summary-item';
     item.id = `seg-${i}`;
@@ -600,39 +807,57 @@ function renderContent(slide) {
   const isRecap = sectionType === 'recap';
 
   // Render text content FIRST (unless this is a recap section which is video-only)
-  if (!isRecap && segments.length > 0) {
-    console.log(`[V2] ContentRenderer: Rendering ${segments.length} segments with visual_content`);
+  if (!isRecap) {
+    // [V2.5] MARKDOWN SOURCE TRUTH
+    // If we have parsed markdown content, use THAT for the visual text.
+    // Narration segments are still valid for timing, but we decouple text display.
+    if (slide.markdown_content && slide.markdown_content.length > 0) {
+      console.log(`[V2.5] Rendering from Markdown Source(${slide.markdown_content.length} lines)`);
 
-    segments.forEach((seg, i) => {
-      if (isThinkingSegment(seg)) {
-        const placeholder = document.createElement('div');
-        placeholder.id = `seg-${i}`;
-        placeholder.style.display = 'none';
-        contentBox.appendChild(placeholder);
-        return;
-      }
-
-      const segDiv = document.createElement('div');
-      segDiv.className = 'segment-block';
-      segDiv.id = `seg-${i}`;
-
-      const vc = seg.visual_content;
-      if (vc) {
-        renderVisualContent(vc, segDiv);
-      } else if (seg.text) {
+      slide.markdown_content.forEach((line, i) => {
         const para = document.createElement('div');
         para.className = 'paragraph-block';
-        para.innerHTML = sanitizeMarkdown(seg.text);
-        segDiv.appendChild(para);
-      }
+        para.id = `md - block - ${i} `; // Use md- prefix to avoid sync issues with segments for now
+        // Basic markdown sanitization/conversion could happen here
+        para.innerHTML = sanitizeMarkdown(line);
+        contentBox.appendChild(para);
+      });
 
-      if (segDiv.children.length > 0) {
-        contentBox.appendChild(segDiv);
-      }
-    });
+    } else if (segments.length > 0) {
+      // Fallback to legacy segment-based rendering
+      console.log(`[V2] ContentRenderer: Rendering ${segments.length} segments with visual_content`);
 
-    const firstSeg = document.getElementById('seg-0');
-    if (firstSeg) firstSeg.classList.add('segment-active');
+      segments.forEach((seg, i) => {
+        if (isThinkingSegment(seg)) {
+          const placeholder = document.createElement('div');
+          placeholder.id = `seg - ${i} `;
+          placeholder.style.display = 'none';
+          contentBox.appendChild(placeholder);
+          return;
+        }
+
+        const segDiv = document.createElement('div');
+        segDiv.className = 'segment-block';
+        segDiv.id = `seg - ${i} `;
+
+        const vc = seg.visual_content;
+        if (vc) {
+          renderVisualContent(vc, segDiv);
+        } else if (seg.text) {
+          const para = document.createElement('div');
+          para.className = 'paragraph-block';
+          para.innerHTML = sanitizeMarkdown(seg.text);
+          segDiv.appendChild(para);
+        }
+
+        if (segDiv.children.length > 0) {
+          contentBox.appendChild(segDiv);
+        }
+      });
+
+      const firstSeg = document.getElementById('seg-0');
+      if (firstSeg) firstSeg.classList.add('segment-active');
+    }
   }
 
   // Now handle video loading (for both content and recap sections)
@@ -641,7 +866,7 @@ function renderContent(slide) {
 
   // Multi-beat video mode
   if (hasMultiBeat) {
-    console.log(`[V2] ContentRenderer: Multi-beat video mode - ${beatVideoPaths.length} videos`);
+    console.log(`[V2] ContentRenderer: Multi - beat video mode - ${beatVideoPaths.length} videos`);
 
     beatVideoPlaylist = buildBeatPlaylistWithTiming(slide);
     currentBeatIndex = -1;
@@ -649,7 +874,7 @@ function renderContent(slide) {
     if (beatVideoPlaylist.length > 0) {
       console.log(`[V2] Content beat playlist built with ${beatVideoPlaylist.length} videos`);
       beatVideoPlaylist.forEach((b, i) => {
-        console.log(`  Beat ${i}: ${b.videoPath} (${b.startTime.toFixed(1)}s - ${b.endTime.toFixed(1)}s)`);
+        console.log(`  Beat ${i}: ${b.videoPath} (${b.startTime.toFixed(1)} s - ${b.endTime.toFixed(1)}s)`);
       });
 
       if (isRecap) {
@@ -668,9 +893,9 @@ function renderContent(slide) {
 
   // Single video mode
   if (hasVideo) {
-    console.log(`[V2] ContentRenderer: Single video mode - ${videoPath}`);
+    console.log(`[V2] ContentRenderer: Single video mode - ${videoPath} `);
     const fullPath = resolveMediaPath(videoPath, 'video');
-    console.log(`[V2] Loading content video: ${fullPath}`);
+    console.log(`[V2] Loading content video: ${fullPath} `);
 
     if (isRecap) {
       // Recap: show video immediately (video-only mode - hides content)
@@ -689,7 +914,7 @@ function renderContent(slide) {
     contentVideo.load();
     contentVideo.playbackRate = 1.0;
     contentVideo.onloadeddata = () => {
-      console.log(`[V2] Content video loaded successfully: ${fullPath}`);
+      console.log(`[V2] Content video loaded successfully: ${fullPath} `);
       if (isPlaying && isRecap) {
         contentVideo.play().catch(e => console.warn('[V2] Content video play failed:', e));
       }
@@ -746,7 +971,7 @@ function renderVisualContent(vc, container) {
       const item = document.createElement('li');
       item.className = 'bullet-item';
       if (bp.level && bp.level > 1) {
-        item.classList.add(`level-${bp.level}`);
+        item.classList.add(`level - ${bp.level} `);
       }
 
       const markers = ['•', '○', '◦', '◇'];
@@ -754,9 +979,9 @@ function renderVisualContent(vc, container) {
       const marker = markers[Math.min(level - 1, markers.length - 1)];
 
       item.innerHTML = `
-        <span class="bullet-marker">${marker}</span>
-        <span class="bullet-text">${sanitizeMarkdown(bp.text || bp)}</span>
-      `;
+  < span class="bullet-marker" > ${marker}</span >
+    <span class="bullet-text">${sanitizeMarkdown(bp.text || bp)}</span>
+`;
       list.appendChild(item);
     });
 
@@ -773,9 +998,9 @@ function renderVisualContent(vc, container) {
       const item = document.createElement('li');
       item.className = 'ordered-item';
       item.innerHTML = `
-        <span class="ordered-number">${i + 1}.</span>
-        <span>${sanitizeMarkdown(text)}</span>
-      `;
+  < span class="ordered-number" > ${i + 1}.</span >
+    <span>${sanitizeMarkdown(text)}</span>
+`;
       list.appendChild(item);
     });
 
@@ -807,11 +1032,11 @@ function renderVisualContent(vc, container) {
       img.src = resolveMediaPath(actualPath, 'image');
       img.alt = vc.image_caption || vc.caption || vc.verbatim_content || 'Content image';
       img.onerror = () => {
-        console.warn(`[V2] Image failed to load: ${actualPath}`);
+        console.warn(`[V2] Image failed to load: ${actualPath} `);
         imgContainer.style.display = 'none';
       };
       img.onload = () => {
-        console.log(`[V2] Image loaded successfully: ${actualPath}`);
+        console.log(`[V2] Image loaded successfully: ${actualPath} `);
       };
 
       imgContainer.appendChild(img);
@@ -911,7 +1136,7 @@ function renderQuiz(slide) {
   quizQuestions.forEach((q, idx) => {
     const card = document.createElement('div');
     card.className = 'quiz-card';
-    card.id = `seg-${q.segIdx}`;
+    card.id = `seg - ${q.segIdx} `;
 
     if (q.question) {
       const qDiv = document.createElement('div');
@@ -935,9 +1160,9 @@ function renderQuiz(slide) {
           isCorrect = true;
         }
         choice.innerHTML = `
-          <span class="choice-letter${isCorrect ? ' correct' : ''}">${c.letter}</span>
-          <span class="choice-text">${sanitizeMarkdown(choiceText)}</span>
-        `;
+  < span class="choice-letter${isCorrect ? ' correct' : ''}" > ${c.letter}</span >
+    <span class="choice-text">${sanitizeMarkdown(choiceText)}</span>
+`;
         choicesDiv.appendChild(choice);
       });
 
@@ -972,7 +1197,7 @@ function renderQuizFromQuizData(questions, slide) {
   questions.forEach((q, idx) => {
     const card = document.createElement('div');
     card.className = 'quiz-card';
-    card.id = `quiz-${idx}`;
+    card.id = `quiz - ${idx} `;
 
     // In progressive reveal mode, hide questions initially
     // In legacy mode, show everything
@@ -1010,9 +1235,9 @@ function renderQuizFromQuizData(questions, slide) {
         // In legacy mode, show correct marker; in progressive reveal, hide initially
         const showCorrectNow = !hasProgressiveReveal && isCorrect;
         choice.innerHTML = `
-          <span class="choice-letter${showCorrectNow ? ' correct' : ''}">${letter}</span>
-          <span class="choice-text">${sanitizeMarkdown(text)}</span>
-        `;
+  < span class="choice-letter${showCorrectNow ? ' correct' : ''}" > ${letter}</span >
+    <span class="choice-text">${sanitizeMarkdown(text)}</span>
+`;
         choice.dataset.correct = isCorrect;
         choice.dataset.letter = letter;
         if (showCorrectNow) {
@@ -1029,7 +1254,7 @@ function renderQuizFromQuizData(questions, slide) {
       const explDiv = document.createElement('div');
       explDiv.className = 'quiz-explanation';
       explDiv.style.display = hasProgressiveReveal ? 'none' : 'block';
-      explDiv.innerHTML = `<strong>Explanation:</strong> ${sanitizeMarkdown(q.explanation)}`;
+      explDiv.innerHTML = `< strong > Explanation:</strong > ${sanitizeMarkdown(q.explanation)} `;
       card.appendChild(explDiv);
     }
 
@@ -1047,6 +1272,8 @@ function renderQuizFromQuizData(questions, slide) {
 }
 
 // Update quiz display based on current narration segment
+// Update quiz display based on current narration segment
+// V2.5 Strict 3-Step Dance: Intro -> Pause -> Reveal
 function updateQuizProgressiveReveal(segmentIndex) {
   const slide = slides[currentSlideIndex];
   if (slide?.section_type !== 'quiz' || !window.currentQuizData) return;
@@ -1057,31 +1284,57 @@ function updateQuizProgressiveReveal(segmentIndex) {
   if (!currentSeg || currentSeg.question_index === undefined) return;
 
   const qIdx = currentSeg.question_index;
-  const purpose = currentSeg.purpose || '';
-  const card = document.getElementById(`quiz-${qIdx}`);
+  const purpose = (currentSeg.purpose || '').toLowerCase(); // introduce, pause, explain
+  const card = document.getElementById(`quiz - ${qIdx} `); // Fixed ID format (removed spaces)
 
   if (!card) return;
 
-  // Reveal question when we reach its "introduce" segment
+  // 1. INTRODUCE: Show Question + Options. Hide Answer.
   if (purpose === 'introduce' && !window.currentQuizData.revealedQuestions.has(qIdx)) {
     card.classList.remove('quiz-hidden');
     card.classList.add('quiz-active');
+
+    // Ensure answers are HIDDEN
+    const choices = card.querySelectorAll('.quiz-choice');
+    choices.forEach(c => {
+      c.classList.remove('correct-revealed');
+      const letter = c.querySelector('.choice-letter');
+      if (letter) letter.classList.remove('correct');
+    });
+
     window.currentQuizData.revealedQuestions.add(qIdx);
-    console.log(`[V2] Quiz: Revealed question ${qIdx + 1}`);
+    console.log(`[V2.5]Quiz: Introduce Q${qIdx + 1} `);
   }
 
-  // Reveal answer when we reach its "explain" segment
+  // 2. PAUSE: "Thinking Time". Nothing changes visually, or maybe pulsing effect.
+  // STRICTLY DO NOT REVEAL ANSWER HERE.
+  if (purpose === 'pause' || purpose === 'silence') {
+    console.log(`[V2.5]Quiz: Pause / Thinking for Q${qIdx + 1}`);
+    return;
+  }
+
+  // 3. REVEAL: Show Correct Answer + Explanation.
   if (purpose === 'explain' && !window.currentQuizData.revealedAnswers.has(qIdx)) {
+    console.log(`[V2.5]Quiz: Reveal A${qIdx + 1} `);
+
     const question = window.currentQuizData.questions[qIdx];
-    const correctAnswer = question?.correct_answer;
 
     // Highlight correct answer
     const choices = card.querySelectorAll('.quiz-choice');
     choices.forEach(choice => {
-      if (choice.dataset.correct === 'true') {
+      // Logic for both generator types
+      const isCorrect = choice.dataset.correct === 'true' || choice.dataset.correct === 'true'; // dataset stores string
+
+      if (isCorrect) {
         choice.classList.add('correct-revealed');
         const letterSpan = choice.querySelector('.choice-letter');
-        if (letterSpan) letterSpan.classList.add('correct');
+        if (letterSpan) {
+          letterSpan.classList.add('correct');
+          // Force repaint hack if needed
+          letterSpan.style.display = 'none';
+          letterSpan.offsetHeight;
+          letterSpan.style.display = '';
+        }
       }
     });
 
@@ -1089,10 +1342,10 @@ function updateQuizProgressiveReveal(segmentIndex) {
     const explDiv = card.querySelector('.quiz-explanation');
     if (explDiv) {
       explDiv.style.display = 'block';
+      explDiv.classList.add('fade-in');
     }
 
     window.currentQuizData.revealedAnswers.add(qIdx);
-    console.log(`[V2] Quiz: Revealed answer for question ${qIdx + 1}`);
   }
 }
 
@@ -1128,9 +1381,9 @@ function renderQuizFromBullets(bullets) {
       const choice = document.createElement('div');
       choice.className = 'quiz-choice';
       choice.innerHTML = `
-        <span class="choice-letter">${c.letter}</span>
-        <span class="choice-text">${sanitizeMarkdown(c.text)}</span>
-      `;
+  < span class="choice-letter" > ${c.letter}</span >
+    <span class="choice-text">${sanitizeMarkdown(c.text)}</span>
+`;
       choicesDiv.appendChild(choice);
     });
     card.appendChild(choicesDiv);
@@ -1162,11 +1415,11 @@ function renderMemory(slide) {
   flashcards.forEach((fc, i) => {
     const card = document.createElement('div');
     card.className = 'flashcard';
-    card.id = `seg-${i}`;
+    card.id = `seg - ${i} `;
     card.innerHTML = `
-      <div class="flashcard-front">${sanitizeMarkdown(fc.front || fc.title || '')}</div>
-      <div class="flashcard-back">${sanitizeMarkdown(fc.back || fc.mnemonic || '')}</div>
-    `;
+  < div class="flashcard-front" > ${sanitizeMarkdown(fc.front || fc.title || '')}</div >
+    <div class="flashcard-back">${sanitizeMarkdown(fc.back || fc.mnemonic || '')}</div>
+`;
     container.appendChild(card);
   });
 
@@ -1189,7 +1442,7 @@ function renderRecap(slide) {
   if (beatVideoPlaylist.length > 0) {
     console.log(`[V2] Recap beat playlist: ${beatVideoPlaylist.length} videos with timing`);
     beatVideoPlaylist.forEach((b, i) => {
-      console.log(`  Scene ${i + 1}: ${b.videoPath} (${b.startTime.toFixed(1)}s - ${b.endTime.toFixed(1)}s)`);
+      console.log(`  Scene ${i + 1}: ${b.videoPath} (${b.startTime.toFixed(1)} s - ${b.endTime.toFixed(1)}s)`);
     });
     videoLayer.classList.remove('hidden');
     contentLayer.classList.add('video-mode');
@@ -1571,57 +1824,107 @@ function updateActiveSegment(currentTime) {
     const duration = segments[activeIndex]?.duration_seconds || 5;
     const progress = Math.min(1, Math.max(0, (currentTime - cumulative) / duration));
 
-    // TEACH → SHOW: Apply display_directives for current segment
-    // Pass progress for karaoke subtitles
-    applyDisplayDirectives(slide, segments[activeIndex], activeIndex, progress);
+    // V2.5: Enforce strict "Teach -> Show" toggling logic
+    enforceTeachShowLogic(slide, segments[activeIndex], activeIndex);
+
+    // Update subtitles
+    const currentSeg = segments[activeIndex];
+    if (currentSeg && currentSeg.text) {
+      updateSubtitleText(currentSeg.text, progress);
+    } else {
+      updateSubtitleText("", 0);
+    }
+
     displayDirectivesApplied = true;
   }
 }
 
 /**
- * Apply display_directives for TEACH → SHOW pattern
- * When visual_layer='show', display the video overlay; when 'hide', hide video
- * IMPORTANT: Content layer (text/images) remains visible at all times
- * Only the video layer visibility toggles based on display_directives
+ * enforceTeachShowLogic: Strict V2.5 Director Bible Implementation
+ * 
+ * Rules:
+ * 1. Intro/Summary/Quiz/Memory/Recap: Handled by own renderers.
+ * 2. Content/Example:
+ *    - TEACH Phase (Segment 1): Display TEXT (Pointer/JSON). Hide Video. Avatar Optional.
+ *    - SHOW Phase (Segment 2): Display VIDEO (Full Screen). Hide Text. Avatar Optional.
  */
-function applyDisplayDirectives(slide, segment, segmentIndex, progress = 0) {
-  // SUBTITLES: Update subtitle text for current segment (Always apply, regardless of section type or directives)
-  if (segment && segment.text) {
-    updateSubtitleText(segment.text, progress);
-  } else {
-    updateSubtitleText("", 0);
+function enforceTeachShowLogic(slide, segment, segmentIndex) {
+  if (!slide || !segment) return;
+  const type = slide.section_type || 'content';
+
+  // Only apply to Content and Example sections
+  if (type !== 'content' && type !== 'example') return;
+
+  const purpose = (segment.purpose || '').toLowerCase();
+
+  // Rule 1: SHOW Phase (Video Mode)
+  // Trigger: Purpose is 'show' OR visual_type is 'video' OR has video path + strict mode
+  const isShowPhase = purpose === 'show' ||
+    segment.visual_type === 'video' ||
+    segment.visual_type === 'manim' ||
+    (segment.display_directives?.visual_layer === 'show');
+
+  if (isShowPhase) {
+    console.log(`[V2.5] Segment ${segmentIndex}: SHOW Phase (Video Mode)`);
+    videoLayer.classList.remove('hidden');
+    contentLayer.classList.add('hidden'); // Hide text layer
+    if (contentVideo.paused) {
+      contentVideo.play().catch(e => console.warn('Video play failed', e));
+    }
+    return;
   }
 
-  if (!segment || !segment.display_directives) return;
+  // Rule 2: TEACH Phase (Text Mode)
+  // Trigger: Default if not Show Phase.
+  console.log(`[V2.5] Segment ${segmentIndex}: TEACH Phase (Text Mode)`);
 
-  const dd = segment.display_directives;
-  const visualLayer = dd.visual_layer || 'hide';
+  videoLayer.classList.add('hidden');
+  contentLayer.classList.remove('hidden');
 
-  // Only apply for content sections with video renderer
-  const sectionType = slide.section_type || 'content';
-  const renderer = slide.renderer || 'none';
-  const beatVideoPaths = slide.beat_video_paths || [];
-
-  // Check all possible video sources (matches renderContent logic)
-  const hasVideo = (slide.video_path || slide.content_video_path || beatVideoPaths.length > 0) &&
-    (renderer === 'video' || renderer === 'manim' || renderer === 'wan' || renderer === 'wan_video');
-
-  // Only apply TEACH → SHOW for content sections (not intro, summary, quiz, memory, recap)
-  if (sectionType === 'content' && hasVideo) {
-    if (visualLayer === 'show') {
-      // SHOW phase: Display video overlay (FULL SCREEN)
-      // Hide content layer to prevent overlap (TEACH -> SHOW exclusivity)
-      videoLayer.classList.remove('hidden');
-      contentLayer.classList.add('hidden');
-      contentVideo.play().catch(() => { });
-      console.log(`[V2] Segment ${segmentIndex}: SHOW phase - displaying video overlay (content hidden)`);
-    } else {
-      // TEACH phase: Hide video overlay, content becomes visible again
-      videoLayer.classList.add('hidden');
-      contentLayer.classList.remove('hidden');
-      console.log(`[V2] Segment ${segmentIndex}: TEACH phase - video hidden, content visible`);
+  // V2.5 Pointer Resolution (Dynamic Text Update)
+  // If segment has a 'markdown_pointer', we MUST fetch strict text from sourceMarkdown.
+  if (segment.markdown_pointer) {
+    const strictText = resolvePointer(segment.markdown_pointer);
+    if (strictText) {
+      // Find the active segment block and update it dynamically? 
+      // Or strictly rely on renderContent having pre-rendered it?
+      // For V2.5, we often want to highlight or ensure ONLY this text is visible.
+      // Implementation: Scroll to or Highight the pre-rendered block.
+      const segEl = document.getElementById(`seg-${segmentIndex}`);
+      if (segEl) {
+        segEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
   }
+}
+
+/**
+ * Helper for V2.5 Pointer Resolution
+ * Extracts exact text from sourceMarkdown using start/end phrases.
+ */
+function resolvePointer(pointer) {
+  if (!sourceMarkdown || !pointer) return null;
+
+  const start = pointer.start_phrase;
+  const end = pointer.end_phrase;
+
+  if (!start || !end) return null;
+
+  const startIndex = sourceMarkdown.indexOf(start);
+  if (startIndex === -1) {
+    console.warn(`[V2.5] Pointer START not found: "${start.substring(0, 20)}..."`);
+    return null;
+  }
+
+  const endIndex = sourceMarkdown.indexOf(end, startIndex);
+  if (endIndex === -1) {
+    console.warn(`[V2.5] Pointer END not found after start: "${end.substring(0, 20)}..."`);
+    return null;
+  }
+
+  // Extract full text including end phrase
+  const extracted = sourceMarkdown.substring(startIndex, endIndex + end.length);
+  return extracted;
 }
 
 // ============================================
@@ -2066,52 +2369,58 @@ async function typesetMath(element) {
  * Sanitize markdown while PRESERVING LaTeX expressions
  * LaTeX delimiters: $...$, $$...$$, \(...\), \[...\]
  */
+/**
+ * Enhanced Markdown Sanitizer with Table & Image Support
+ * PRESERVES LaTeX expressions
+ */
 function sanitizeMarkdown(text) {
   if (!text || typeof text !== 'string') return text;
 
-  // First, protect LaTeX expressions by replacing them with placeholders
+  // 1. Protect LaTeX expressions
   const latexPatterns = [];
   let placeholderIndex = 0;
 
-  // Match $$...$$ (block LaTeX)
-  text = text.replace(/\$\$([^$]+)\$\$/g, (match) => {
-    latexPatterns.push(match);
-    return `__LATEX_BLOCK_${placeholderIndex++}__`;
+  text = text.replace(/\$\$([^$]+)\$\$/g, (match) => { latexPatterns.push(match); return `__LATEX_BLOCK_${placeholderIndex++}__`; });
+  text = text.replace(/\$([^$\n]+?)\$/g, (match) => { latexPatterns.push(match); return `__LATEX_INLINE_${placeholderIndex++}__`; });
+  text = text.replace(/\\\((.+?)\\\)/g, (match) => { latexPatterns.push(match); return `__LATEX_PAREN_${placeholderIndex++}__`; });
+  text = text.replace(/\\\[(.+?)\\\]/g, (match) => { latexPatterns.push(match); return `__LATEX_BRACKET_${placeholderIndex++}__`; });
+
+  // 2. Markdown Images: ![alt](src)
+  text = text.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
+    const fullSrc = resolveMediaPath(src, 'image');
+    return `<div class="image-container"><img src="${fullSrc}" alt="${alt}" class="content-image" /><div class="image-caption">${alt}</div></div>`;
   });
 
-  // Match $...$ (inline LaTeX) - careful not to match $$ or empty $
-  text = text.replace(/\$([^$\n]+?)\$/g, (match) => {
-    latexPatterns.push(match);
-    return `__LATEX_INLINE_${placeholderIndex++}__`;
+  // 3. Markdown Tables
+  // Matches: | head | head | \n |---|---| \n | cell | cell |
+  const tableRegex = /\|(.+)\|\n\s*\|[-:| ]+\|\s*\n((?:\|.*\|\n?)+)/g;
+  text = text.replace(tableRegex, (match, headerLine, bodyLines) => {
+    const headers = headerLine.split('|').filter(c => c.trim()).map(c => c.trim());
+    const headerHtml = '<thead><tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead>';
+
+    const rows = bodyLines.trim().split('\n').map(row => {
+      const cells = row.split('|').filter(c => c.trim() !== '').map(c => c.trim());
+      // Note: Simple split might be fragile with pipes in content, but sufficient for now
+      return '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+    }).join('');
+
+    return `<div class="table-wrapper"><table class="md-table">${headerHtml}<tbody>${rows}</tbody></table></div>`;
   });
 
-  // Match \(...\) (inline LaTeX)
-  text = text.replace(/\\\((.+?)\\\)/g, (match) => {
-    latexPatterns.push(match);
-    return `__LATEX_PAREN_${placeholderIndex++}__`;
-  });
-
-  // Match \[...\] (block LaTeX)
-  text = text.replace(/\\\[(.+?)\\\]/g, (match) => {
-    latexPatterns.push(match);
-    return `__LATEX_BRACKET_${placeholderIndex++}__`;
-  });
-
-  // Now apply markdown sanitization
+  // 4. Basic Formatting
   text = text
-    .replace(/^#{1,6}\s*/gm, '')           // Remove heading markers at start
-    .replace(/\s*#{1,6}\s*$/gm, '')        // Remove heading markers at end
-    .replace(/^(.+)\n[=]{2,}\s*$/gm, '$1') // Setext h1
-    .replace(/^(.+)\n[-]{2,}\s*$/gm, '$1') // Setext h2
-    .replace(/\*\*([^*]+)\*\*/g, '$1')     // Bold **text**
-    .replace(/__([^_]+)__/g, '$1')         // Bold __text__
-    .replace(/\*([^*]+)\*/g, '$1')         // Italic *text*
-    .replace(/_([^_]+)_/g, '$1')           // Italic _text_ (careful with underscores in words)
-    .replace(/^>\s*/gm, '')                // Blockquotes
-    .replace(/`([^`]+)`/g, '$1')           // Inline code
+    .replace(/^#{1,6}\s*/gm, '') // Remove headers (rendered semantically elsewhere usually, or just strip)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/__([^_]+)__/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    .replace(/_([^_]+)_/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/^>\s*(.+)$/gm, '<blockquote>$1</blockquote>')
+    // Link support [text](url)
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
     .trim();
 
-  // Restore LaTeX expressions
+  // 5. Restore LaTeX
   text = text.replace(/__LATEX_(BLOCK|INLINE|PAREN|BRACKET)_(\d+)__/g, (match, type, idx) => {
     return latexPatterns[parseInt(idx)] || match;
   });

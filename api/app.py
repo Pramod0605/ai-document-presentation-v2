@@ -2474,6 +2474,8 @@ def serve_player_v2(filename=None):
         return send_from_directory(PLAYER_DIR, "player_v2.html")
     return send_from_directory(PLAYER_DIR, filename)
 
+# --- Remotion V2 Player Routes ---
+
 @app.route("/player/assets/<path:filename>")
 def serve_assets(filename):
     return send_from_directory(ASSETS_DIR, filename)
