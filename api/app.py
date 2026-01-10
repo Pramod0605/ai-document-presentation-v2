@@ -443,6 +443,19 @@ def get_job_status(job_id):
         response["failure_message"] = job.get("failure_message")
         response["failed_phase"] = job.get("failed_phase")
     
+    # ISS-Analytics: Inject live progress details from analytics.json if available
+    job_folder = Path(JOBS_DIR) / job_id
+    analytics_path = job_folder / "analytics.json"
+    if analytics_path.exists():
+        try:
+            with open(analytics_path, 'r') as f:
+                analytics_data = json.load(f)
+            # Inject relevant fields
+            response["progress_details"] = analytics_data.get("progress_details")
+            response["timings"] = analytics_data.get("timings")
+        except:
+            pass # Non-critical if read fails
+    
     return jsonify(response)
 
 

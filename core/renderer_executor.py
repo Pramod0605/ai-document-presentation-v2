@@ -165,7 +165,9 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
                     topic["explanation_plan"]["video_prompts"] = video_prompts
                     print(f"  [OK] Using v1.2 video_prompts: {len(video_prompts)} beat prompts")
                     for i, p in enumerate(video_prompts):
-                        log_render_prompt(topic_id, i, "video", p.get("prompt", ""))
+                        # DEFENSIVE FIX: Check multiple keys for prompt text
+                        prompt_text = p.get("prompt") or p.get("wan_prompt") or p.get("text") or p.get("video_prompt") or ""
+                        log_render_prompt(topic_id, i, "video", prompt_text)
                     
                     quality_summary = log_prompt_quality_summary(video_prompts, topic_id)
                     if quality_summary["issues"]:
@@ -173,7 +175,7 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
                         for issue in quality_summary["issues"][:3]:
                             print(f"    - {issue}")
             elif isinstance(video_prompts, dict):
-                prompt_text = video_prompts.get("prompt", "")
+                prompt_text = video_prompts.get("prompt") or video_prompts.get("wan_prompt") or video_prompts.get("text") or video_prompts.get("video_prompt") or ""
                 topic["explanation_plan"]["compiled_wan_prompt"] = prompt_text
                 print(f"  [OK] Using v1.2 video_prompts: {len(prompt_text)} chars")
                 log_render_prompt(topic_id, 0, "video", prompt_text)
@@ -278,7 +280,7 @@ def validate_before_render(presentation: dict, output_dir: str, strict_v13: bool
     return result
 
 
-def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, output_dir_base: str = "", strict_mode: bool = True) -> list:
+def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, output_dir_base: str = "", strict_mode: bool = True, renderer_filter: str = None) -> list:
     os.makedirs(output_dir, exist_ok=True)
     
     # Reset WAN hash cache at start of each render job to prevent cross-job duplicate detection
@@ -314,6 +316,21 @@ def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False
     strict_label = "[STRICT] " if strict_mode else ""
     
     logger.info(f"{mode_label}{skip_label}{strict_label}Starting Parallel Render for {len(topics)} topics...")
+    
+    # Filter topics if requested (e.g., only run "manim" in blocking phase)
+    if renderer_filter:
+        filtered_topics = []
+        for t in topics:
+            r = t.get("renderer", "none")
+            # If logic:
+            # filter="manim" -> include only "manim"
+            # filter="wan" -> include ["wan", "wan_video"]
+            if renderer_filter == "manim" and r == "manim":
+                filtered_topics.append(t)
+            elif renderer_filter == "wan" and r in ["wan", "wan_video"]:
+                filtered_topics.append(t)
+        topics = filtered_topics
+        logger.info(f"Filtered topics for '{renderer_filter}': {len(topics)} remaining")
     
     import concurrent.futures
     rendered_videos = [None] * len(topics)
@@ -359,3 +376,184 @@ def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False
     
     print(f"{mode_label}{skip_label}{strict_label}Rendering complete: {success_count} success, {compile_fail_count} compilation failures, {fail_count} render failures")
     return rendered_videos
+
+
+def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, skip_wan: bool = False, batch_size: int = 5):
+    """
+    Submits WAN video generation tasks to a background thread.
+    Features:
+    - Batches requests (default 5 at a time) to respect parallelism limits
+    - Updates presentation.json and analytics.json in real-time
+    - Fire-and-Forget from the main pipeline's perspective
+    """
+    try:
+        import time
+        from render.wan.wan_runner import render_wan_video, reset_wan_session
+        
+        # Reset session for this thread
+        if not skip_wan:
+            try:
+                reset_wan_session()
+            except:
+                pass
+
+        topics = presentation.get("sections", presentation.get("topics", []))
+        wan_topics = []
+        
+        # 1. Identify WAN topics
+        for topic in topics:
+            renderer = topic.get("renderer", "none")
+            # Strict filtering: Only process if renderer is explicitly generic video or wan
+            # We assume 'manim' was handled by the blocking phase
+            if renderer in ["wan", "wan_video"]:
+                wan_topics.append(topic)
+        
+        if not wan_topics:
+            logger.info(f"[WAN-BG] No WAN topics found for job {job_id}")
+            return
+
+        logger.info(f"[WAN-BG] Starting background generation for {len(wan_topics)} topics (Batch Size: {batch_size})")
+
+        # 2. Process in Batches
+        # Group topics into batches
+        batches = [wan_topics[i:i + batch_size] for i in range(0, len(wan_topics), batch_size)]
+        
+        topic_map = {t.get("section_id", t.get("id")): t for t in wan_topics}
+        output_dir_path = Path(output_dir)
+        pres_path = output_dir_path.parent / "presentation.json" # output_dir is usually .../videos
+
+        for batch_idx, batch in enumerate(batches):
+            logger.info(f"[WAN-BG] Processing Batch {batch_idx + 1}/{len(batches)} ({len(batch)} videos)...")
+            
+            with concurrent.futures.ThreadPoolExecutor(max_workers=batch_size) as executor:
+                future_to_topic = {
+                    executor.submit(
+                        execute_renderer, 
+                        topic, 
+                        output_dir, 
+                        False, # dry_run
+                        skip_wan, 
+                        str(output_dir_path.parent), # trace_dir
+                        True # strict_mode
+                    ): topic for topic in batch
+                }
+                
+                for future in concurrent.futures.as_completed(future_to_topic):
+                    topic = future_to_topic[future]
+                    topic_id = topic.get("section_id", topic.get("id"))
+                    
+                    try:
+                        result = future.result()
+                        status = result.get("status")
+                        video_path = result.get("video_path")
+                        
+                        if status == "success" and video_path:
+                            # REAL-TIME UPDATE of presentation.json
+                            _update_presentation_safely(pres_path, topic_id, video_path, result)
+                            
+                            # REAL-TIME UPDATE of analytics.json
+                            _update_analytics_safely(pres_path.parent / "analytics.json", topic_id, result)
+                            
+                            logger.info(f"[WAN-BG] Saved video for {topic_id}")
+                        else:
+                            logger.warning(f"[WAN-BG] Failed/Skipped {topic_id}: {result.get('error')}")
+                            
+                    except Exception as e:
+                        logger.error(f"[WAN-BG] Error in batch processing topic {topic_id}: {e}")
+
+            # Optional: Small cooldown between batches to let GPU cool?
+            # time.sleep(2) 
+            
+        logger.info(f"[WAN-BG] All batches complete for job {job_id}")
+
+    except Exception as e:
+        logger.error(f"[WAN-BG] Fatal error in background thread: {e}")
+
+
+def _update_presentation_safely(pres_path: Path, section_id: str, video_path: str, result: dict):
+    """Helper to safely update presentation.json with new video paths."""
+    try:
+        if not pres_path.exists():
+            return
+            
+        import json
+        
+        # Simple R-M-W lock mechanism could be added here if concurrency is high, 
+        # but for now we rely on OS file locking or low probability of collision
+        with open(pres_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            
+        updated = False
+        for section in data.get("sections", []):
+            if section.get("section_id") == section_id:
+                # Update paths
+                rel_path = Path(video_path).name
+                section["video_path"] = f"videos/{rel_path}"
+                
+                # Handle Recaps/Beats
+                beat_videos = result.get("beat_videos", [])
+                recap_video_paths = result.get("recap_video_paths", [])
+                
+                if beat_videos:
+                     section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
+                if recap_video_paths:
+                     section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
+                
+                updated = True
+                break
+        
+        if updated:
+            with open(pres_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4)
+                
+    except Exception as e:
+        logger.error(f"Failed to update presentation.json: {e}")
+
+
+def _update_analytics_safely(analytics_path: Path, section_id: str, result: dict):
+    """Helper to safely update analytics.json with new render results."""
+    try:
+        if not analytics_path.exists():
+            return
+            
+        import json
+        from datetime import datetime
+        
+        with open(analytics_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            
+        # Update renderer metrics
+        if "renderer_metrics" not in data:
+            data["renderer_metrics"] = {"manim_videos": 0, "wan_videos": 0, "failed_renders": 0}
+            
+        metrics = data["renderer_metrics"]
+        
+        if result["status"] == "success":
+             # Assuming WAN since this is the WAN BG job
+             metrics["wan_videos"] = metrics.get("wan_videos", 0) + 1
+        else:
+             metrics["failed_renders"] = metrics.get("failed_renders", 0) + 1
+             
+        # Add detailed entry
+        if "detailed_renders" not in data:
+            data["detailed_renders"] = []
+            
+        detail = {
+            "section_id": section_id,
+            "status": result["status"],
+            "timestamp": datetime.now().isoformat(),
+            "renderer": "wan", # We know this is WAN context
+            "duration": result.get("duration_seconds", 0)
+        }
+        
+        if result.get("error"):
+            detail["error"] = result["error"]
+            
+        data["detailed_renders"].append(detail)
+        
+        with open(analytics_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4)
+            
+    except Exception as e:
+        logger.error(f"Failed to update analytics.json: {e}")
+

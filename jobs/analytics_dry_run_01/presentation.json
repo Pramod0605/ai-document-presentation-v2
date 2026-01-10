@@ -1,0 +1,66 @@
+{
+    "title": "Test Presentation",
+    "sections": [
+        {
+            "section_id": "sec_1",
+            "title": "Intro",
+            "section_type": "intro",
+            "narration": {
+                "segments": [
+                    {
+                        "text": "Hello",
+                        "duration_seconds": 0.51
+                    }
+                ],
+                "total_duration_seconds": 0.51
+            },
+            "renderer": "none",
+            "explanation_plan": "Show text",
+            "visual_description": "Text on screen",
+            "renderer_override_reason": "Section type 'intro' is text-only (no video rendering)"
+        },
+        {
+            "section_id": "sec_2",
+            "title": "Main",
+            "section_type": "content",
+            "narration": {
+                "segments": [
+                    {
+                        "text": "Content",
+                        "duration_seconds": 0.51
+                    }
+                ],
+                "total_duration_seconds": 0.51
+            },
+            "renderer": "video",
+            "explanation_plan": "Show video",
+            "visual_description": "Video of concept",
+            "render_error": "'str' object has no attribute 'get'"
+        }
+    ],
+    "metadata": {
+        "chunks": 1,
+        "llm_calls": 0,
+        "doc_length": 124,
+        "pipeline_mode": "v2.5-partition-conquer",
+        "total_sections": 2,
+        "total_duration_seconds": 1.02,
+        "tts_segments_processed": 2,
+        "tts_provider": "estimate",
+        "render_errors": [
+            {
+                "section_id": "sec_2",
+                "section_type": "content",
+                "error": "'str' object has no attribute 'get'"
+            }
+        ],
+        "job_status": "completed_with_errors"
+    },
+    "decision_log": {},
+    "avatar_global": {
+        "style": "teacher",
+        "default_position": "right",
+        "default_width_percent": 52,
+        "gesture_enabled": true
+    }
+}

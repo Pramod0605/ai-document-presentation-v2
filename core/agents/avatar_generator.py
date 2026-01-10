@@ -8,6 +8,7 @@ from typing import Dict, Any, List, Optional
 from core.latex_to_speech import latex_to_speech
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from core.analytics import AnalyticsTracker
 
 logger = logging.getLogger(__name__)
 
@@ -241,7 +242,7 @@ class AvatarGenerator:
         except Exception as e:
             logger.error(f"[AVATAR] Critical error in _update_artifacts: {e}")
 
-    def submit_parallel_job(self, presentation: Dict[str, Any], job_id: str, output_dir: str) -> Dict[str, Any]:
+    def submit_parallel_job(self, presentation: Dict[str, Any], job_id: str, output_dir: str, tracker: Optional[AnalyticsTracker] = None) -> Dict[str, Any]:
         """
         Submits sections in strict batches of 2.
         For each batch:
@@ -254,6 +255,17 @@ class AvatarGenerator:
         """
         logger.info(f"[AVATAR] Starting strict batch submission for Job {job_id}")
         sections = presentation.get("sections", [])
+        total_sections = len(sections)
+        
+        # Initialize progress
+        if tracker:
+            tracker.update_progress(
+                category="avatar_generation", 
+                completed=0, 
+                total=total_sections, 
+                failed=0,
+                message="Starting avatar generation..."
+            )
         avatar_dir = Path(output_dir) / "avatars" # We might want to put them in root output_dir usually, but let's stick to existing pattern or caller's pref.
         # Check if caller expects them in root or subdir. 
         # Usually pipeline passes output_dir as job_dir. videos often go to output_dir directly or 'videos' subdir.
@@ -359,12 +371,27 @@ class AvatarGenerator:
                         elif status == "skipped":
                             results["skipped"].append(res)
                             print(f"[AVATAR] - Sec {res.get('section_id')} skipped.")
-                            # Even if skipped (already exists), update artifacts!
                             if "output_path" in res:
                                  self._update_artifacts(output_dir, res["section_id"], res["output_path"])
+                            if tracker:
+                                tracker.update_progress(
+                                    category="avatar_generation",
+                                    completed=len(results["completed"]) + len(results["skipped"]),
+                                    total=total_sections,
+                                    failed=len(results["failed"]),
+                                    message=f"Skipped Section {res.get('section_id')}"
+                                )
                         else:
                             results["failed"].append(res)
                             print(f"[AVATAR] x Sec {res.get('section_id')} submission failed.")
+                            if tracker:
+                                tracker.update_progress(
+                                    category="avatar_generation",
+                                    completed=len(results["completed"]) + len(results["skipped"]),
+                                    total=total_sections,
+                                    failed=len(results["failed"]),
+                                    message=f"Failed to submit Section {res.get('section_id')}"
+                                )
                     except Exception as e:
                          print(f"[AVATAR] Submission Ex: {e}")
             
@@ -414,8 +441,16 @@ class AvatarGenerator:
                         if success:
                             results["completed"].append(active_map[tid])
                             completed_in_batch.add(tid)
-                            # LIVE UPDATE ARTIFACTS
                             self._update_artifacts(output_dir, active_map[tid]["section_id"], out_path, duration)
+                            
+                            if tracker:
+                                tracker.update_progress(
+                                    category="avatar_generation",
+                                    completed=len(results["completed"]) + len(results["skipped"]),
+                                    total=total_sections,
+                                    failed=len(results["failed"]),
+                                    message=f"Completed Section {active_map[tid]['section_id']}"
+                                )
                         else:
                             print(f"[AVATAR] Failed to download {tid}")
                             # Treat as completed (but failed download) to stop polling
@@ -425,6 +460,15 @@ class AvatarGenerator:
                         print(f"[AVATAR] Task {tid} FAILED on server.")
                         results["failed"].append(active_map[tid])
                         completed_in_batch.add(tid)
+                        
+                        if tracker:
+                            tracker.update_progress(
+                                category="avatar_generation",
+                                completed=len(results["completed"]) + len(results["skipped"]),
+                                total=total_sections,
+                                failed=len(results["failed"]),
+                                message=f"Task {tid} failed"
+                            )
                     
                     # If 'queued' or 'processing', just wait
                 

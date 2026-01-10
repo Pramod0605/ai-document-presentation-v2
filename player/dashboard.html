@@ -667,6 +667,28 @@
                 document.getElementById('errorMessage').style.display = 'none';
             }
 
+            // Show detailed progress if available
+            if (data.progress_details) {
+                const pd = data.progress_details;
+                let detailsText = [];
+                if (pd.avatar_generation) {
+                    const av = pd.avatar_generation;
+                    if (av.total > 0) detailsText.push(`Avatar: ${av.completed}/${av.total}`);
+                }
+                if (pd.manim_video) {
+                    const mv = pd.manim_video;
+                    if (mv.total > 0) detailsText.push(`Manim: ${mv.completed}/${mv.total}`);
+                }
+                if (pd.wan_video) {
+                    const wv = pd.wan_video;
+                    if (wv.total > 0) detailsText.push(`WAN: ${wv.completed}/${wv.total}`);
+                }
+
+                if (detailsText.length > 0) {
+                    document.getElementById('statusMessage').textContent += " | " + detailsText.join(" | ");
+                }
+            }
+
             if (data.status === 'completed') {
                 document.getElementById('playBtn').style.display = 'inline-block';
                 document.getElementById('filesSection').style.display = 'block';
@@ -1283,6 +1305,52 @@
                                     </table>
                                 </div>
                             </div>
+
+                            
+                            <div style="margin-bottom: 20px;">
+                                <h4 style="color: #00d4ff; margin-bottom: 10px;">Renderer Status</h4>
+                                <div style="max-height: 300px; overflow-y: auto;">
+                                    <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse;">
+                                        <thead>
+                                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                                                <th style="text-align: left; padding: 8px; color: #888;">Section</th>
+                                                <th style="text-align: left; padding: 8px; color: #888;">Type</th>
+                                                <th style="text-align: left; padding: 8px; color: #888;">Renderer</th>
+                                                <th style="text-align: center; padding: 8px; color: #888;">Status</th>
+                                                <th style="text-align: center; padding: 8px; color: #888;">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${(renderer.details || []).map(r => {
+                                const statusColor = r.status === 'success' ? '#4caf50' : r.status === 'skipped' ? '#aaa' : '#ff5252';
+
+                                let actionBtn = '-';
+                                if (r.status === 'failed' || r.status === 'compilation_failed') {
+                                    // Extract retry link components if available, or build logical retry
+                                    // The backend add_render_detail populates retry_action with a link like /retry_phase...
+                                    // But dashboard works with buttons calling modals.
+                                    // Let's use showRetryPhaseModal passing specific section.
+
+                                    const phaseToRetry = r.renderer === 'manim' ? 'manim_codegen' : 'video_render';
+                                    actionBtn = `<button class="btn" style="padding: 2px 8px; font-size: 0.7rem; background: #9c27b0; color: #fff;" 
+                                                        onclick="openRetryForSection('${job_id}', '${phaseToRetry}', '${r.section_id}')">Retry</button>`;
+                                }
+
+                                return `
+                                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                                    <td style="padding: 8px;">${r.section_id}</td>
+                                                    <td style="padding: 8px; color: #ccc;">${r.section_type}</td>
+                                                    <td style="padding: 8px; color: #ccc;">${r.renderer}</td>
+                                                    <td style="padding: 8px; text-align: center; color: ${statusColor};">${r.status.toUpperCase()}</td>
+                                                    <td style="padding: 8px; text-align: center;">${actionBtn}</td>
+                                                </tr>
+                                            `}).join('')}
+                                            ${(!renderer.details || renderer.details.length === 0) ? '<tr><td colspan="5" style="padding: 15px; text-align: center; color: #666;">No renderer details recorded</td></tr>' : ''}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
                         `;
                         content.innerHTML = html;
                     } else {
@@ -1577,6 +1645,14 @@
                 }
             });
         }
+        function openRetryForSection(jobId, phase, sectionId) {
+            currentRetryJobId = jobId;
+            document.getElementById('retryPhaseJobId').textContent = jobId;
+            document.getElementById('retryPhaseModal').style.display = 'flex';
+            document.getElementById('retryPhaseSelect').value = phase;
+            document.getElementById('retrySectionIds').value = sectionId;
+        }
+
     </script>
 </body>
 

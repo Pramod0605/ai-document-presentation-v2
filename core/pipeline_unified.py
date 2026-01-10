@@ -118,6 +118,11 @@ def process_markdown_unified(
             print(f"[PIPELINE DEBUG] ✓ BRANCH: Director Mode (V2.5) - Calling generate_director_presentation")
             log_status("llm_generation", "Generating Director Mode presentation (Pointers)...")
             
+            # ISS-207: Disable TTS for V2.5 pipelines as per user request
+            if not dry_run: # Keep dry_run's own logic separate
+                generate_tts = False
+                logger.info("Pipeline: V2.5 Director Mode active - Disabling TTS generation (User Preference).")
+            
             # Save source markdown for Player V2.5
             source_md_path = output_path / "source_markdown.md"
             with open(source_md_path, "w", encoding="utf-8") as f:
@@ -132,6 +137,9 @@ def process_markdown_unified(
             #     update_status_callback=log_status
             # )
             
+            # Start LLM Phase
+            llm_phase = tracker.start_phase("llm_generation", model=model or "default")
+            
             # PHASE 7 SWAP: Use Partition & Conquer architecture
             config = GeneratorConfig(model=model) if model else None
             director = PartitionDirectorGenerator(config=config)
@@ -142,6 +150,12 @@ def process_markdown_unified(
                 images_list=images_list,
                 update_status_callback=log_status,
                 generation_scope=generation_scope
+            )
+            
+            tracker.end_phase(
+                phase_name="llm_generation",
+                input_tokens=0, # TODO: Get from director output if available
+                output_tokens=0
             )
             
             # Director output is already close to player schema, but needs standard metadata
@@ -225,6 +239,7 @@ def process_markdown_unified(
                 manim_sections.append((i, section))
 
         if manim_sections:
+            tracker.start_phase("manim_codegen", model="anthropic/claude-sonnet-4")
             log_status("manim_codegen", f"Parallelizing code generation for {len(manim_sections)} Manim sections...")
             import concurrent.futures
             with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
@@ -271,6 +286,7 @@ def process_markdown_unified(
                 results = list(executor.map(process_manim, manim_sections))
                 manim_count = sum(1 for r in results if r)
                 log_status("manim_codegen", f"Generated code for {manim_count} Manim sections")
+            tracker.end_phase("manim_codegen", 0, 0)
 
         # --- PHASE 3.5: Checkpoint Save ---
         if output_dir:
@@ -287,23 +303,23 @@ def process_markdown_unified(
                 log_status("avatar_generation", "Triggering parallel avatar generation (Background)...")
                 
                 import threading
-                def avatar_worker(pres, j_id, out_dir):
+                def avatar_worker(pres, j_id, out_dir, trk):
                     try:
                         avatar_gen = AvatarGenerator()
                         # This method now handles updating presentation.json and analytics.json live!
-                        res = avatar_gen.submit_parallel_job(pres, j_id, str(out_dir))
+                        res = avatar_gen.submit_parallel_job(pres, j_id, str(out_dir), tracker=trk)
                         logger.info(f"[Avatar Worker] Finished job {j_id}. Summary: {len(res.get('completed', []))} completed.")
                     except Exception as e:
                         logger.error(f"[Avatar Worker] Failed: {e}")
 
                 # Fire and Forget
                 # Daemon=True ensures it doesn't block app shutdown, but we want it to finish even if main thread ends?
-                # Actually, in Flask/Gunicorn, daemon threads might be killed. 
+                # Actually, in Flask/Gunicorn, daemon threads might be killed.
                 # But for this script execution, daemon=False (default) or explicit join is needed if script exits.
-                # However, the user wants "Pipeline Completes". Use Daemon=True to allow script to exit if needed, 
+                # However, the user wants "Pipeline Completes". Use Daemon=True to allow script to exit if needed,
                 # OR Daemon=False to keep process alive but unblocked main flow?
                 # Let's use Daemon=True for now as often these are run in long-lived server processes.
-                t = threading.Thread(target=avatar_worker, args=(presentation, job_id, output_dir))
+                t = threading.Thread(target=avatar_worker, args=(presentation, job_id, output_dir, tracker))
                 t.daemon = True 
                 t.start()
                 
@@ -380,15 +396,40 @@ def process_markdown_unified(
 
         # Visual Rendering (Manim + WAN)
         if output_dir:
-            log_status("rendering", "Rendering video content (Manim + WAN)...")
+            tracker.start_phase("visual_rendering", model="renderer")
+            
+            # --- PART A: BLOCKING MANIM RENDERING ---
+            log_status("rendering", "Rendering Manim video content (Blocking)...")
+            # Only render Manim topics here - this BLOCKS until done
             render_results = render_all_topics(
                 presentation,
                 str(output_dir / "videos"),
                 dry_run=dry_run,
                 skip_wan=skip_wan,
-                output_dir_base=str(output_dir)
+                output_dir_base=str(output_dir),
+                renderer_filter="manim" # NEW: Only block for Manim
             )
-            logger.info(f"Render results: {len(render_results)} videos processed")
+            
+            # --- PART B: ASYNC WAN RENDERING (Batched) ---
+            log_status("wan_rendering", "Starting WAN video generation (Background)...")
+            try:
+                from core.renderer_executor import submit_wan_background_job
+                from threading import Thread
+                
+                # Submit to background thread (Fire-and-Forget)
+                wan_thread = Thread(
+                    target=submit_wan_background_job,
+                    args=(presentation, str(output_dir / "videos"), job_id, skip_wan, 5), # Batch size 5
+                    daemon=True
+                )
+                wan_thread.start()
+                logger.info(f"Pipeline: Triggered async WAN generation for job {job_id}")
+                
+            except Exception as e:
+                logger.error(f"Failed to trigger async WAN generation: {e}")
+            
+            tracker.end_phase("visual_rendering", 0, 0)
+            logger.info(f"Manim Render results: {len(render_results)} videos processed")
             
             # ISS-FIX: Apply video paths from render results back to presentation sections!
             for result in render_results:
@@ -401,6 +442,22 @@ def process_markdown_unified(
                 
                 for section in presentation.get("sections", []):
                     if section.get("section_id") == section_id_result:
+                        # Log detailed render status to analytics
+                        retry_link = None
+                        if status == "failed" or status == "compilation_failed":
+                            # Construct retry URL for simple copy-paste or API trigger
+                            retry_link = f"/retry_phase/{job_id}?phase=manim&section={section_id_result}"
+                            
+                        tracker.add_render_detail(
+                            section_id=str(section_id_result),
+                            section_type=section.get("section_type", "unknown"),
+                            renderer=section.get("renderer", "unknown"),
+                            duration=0.0, # detailed duration needs to be passed back from render_all_topics
+                            status=status,
+                            metadata={"error": error} if error else {},
+                            retry_action=retry_link
+                        )
+
                         # Capture render status for diagnostic visibility
                         if status == "failed" or status == "compilation_failed":
                             section["render_error"] = error

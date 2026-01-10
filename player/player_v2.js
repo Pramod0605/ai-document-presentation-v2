@@ -36,33 +36,48 @@ if (JOB_ID) {
   SOURCE_MARKDOWN_PATH = 'source_markdown.md';
 }
 
-// Media path resolver - handles audio, video, and image paths
+// Media path resolver - handles audio, video, avatar, and image paths
+// CRITICAL: Handles Windows absolute paths stored in presentation.json
 function resolveMediaPath(path, type = 'audio') {
   if (!path) return '';
 
-  // Already absolute path
-  if (path.startsWith('/') || path.startsWith('http')) {
+  // STEP 1: Handle Windows absolute paths (C:\...) - extract just filename
+  if (path.includes(':\\') || path.includes('\\')) {
+    // Extract filename from Windows path
+    const parts = path.split(/[\\\/]/);
+    path = parts[parts.length - 1]; // Get just the filename
+    console.log(`[V2.5] Extracted filename from Windows path: ${path}`);
+  }
+
+  // STEP 2: If path starts with / and contains /jobs/, extract relative portion
+  if (path.startsWith('/jobs/') || path.startsWith('/player/jobs/')) {
+    // Already a server-relative path, return as-is
     return path;
   }
 
-  // Already has subfolder path
-  if (path.includes('/')) {
+  // STEP 3: If path is already HTTP URL, return as-is
+  if (path.startsWith('http')) {
+    return path;
+  }
+
+  // STEP 4: If path contains subfolder structure (avatars/, videos/, audio/)
+  // but not a Windows path, prepend BASE_PATH
+  if (path.includes('avatars/') || path.includes('videos/') || path.includes('audio/') || path.includes('images/')) {
     return BASE_PATH + path;
   }
 
-  // For audio files, they're in audio/ subfolder
-  if (type === 'audio') {
-    return BASE_PATH + 'audio/' + path;
+  // STEP 5: Simple filename - prepend BASE_PATH + appropriate folder
+  if (type === 'avatar') {
+    return BASE_PATH + 'avatars/' + path;
   }
-
-  // For videos, they're in videos/ subfolder
   if (type === 'video') {
     return BASE_PATH + 'videos/' + path;
   }
-
-  // For images, they're in images/ subfolder
   if (type === 'image') {
     return BASE_PATH + 'images/' + path;
+  }
+  if (type === 'audio') {
+    return BASE_PATH + 'audio/' + path;
   }
 
   return BASE_PATH + path;
@@ -184,7 +199,10 @@ function setupEventListeners() {
 
   contentVideo.addEventListener('ended', onContentVideoEnd);
   contentVideo.onerror = (e) => {
-    console.error('[V2] Content video error:', contentVideo.error);
+    // Only log if src was actually set (some sections like Intro/Summary have no content video)
+    if (contentVideo.src && !contentVideo.src.includes('player_v2')) {
+      console.error('[V2] Content video error:', contentVideo.error);
+    }
   };
 
   document.getElementById('timeline-track').addEventListener('click', seekTimeline);
@@ -205,9 +223,11 @@ function setupEventListeners() {
   avatarVideo.onloadeddata = () => {
     console.log('[V2] Avatar video loaded, starting chroma key');
     syncCanvasSize();
+    // Try autoplay - if blocked, user will need to click play button
+    // DO NOT show placeholder - avatar will play when user clicks play
     avatarVideo.play().catch(e => {
-      console.log('[V2] Avatar autoplay blocked:', e);
-      showAvatarPlaceholder();
+      console.log('[V2] Avatar autoplay blocked (normal) - will play on user click:', e.name);
+      // Keep canvas visible, don't show placeholder
     });
   };
 
@@ -324,10 +344,110 @@ function unbindTimeEvents(source) {
 function handleTimeUpdateMain() {
   // Central handler for all time-based updates
   updateTimeline();
-  updateProgressiveReveal();
   updateContentPages();
   // Sync beat video needs explicit time passing or refactoring
   syncBeatVideoToAudio(getTime());
+
+  // V2.5: Update display state based on directives
+  updateDisplayState();
+
+  // V2.5: Progressive reveal for Summary bullets
+  updateSummaryProgressiveReveal();
+}
+
+// V2.5: Progressive reveal for Summary section bullets
+// Reveals bullets one-by-one based on current playback time
+function updateSummaryProgressiveReveal() {
+  const slide = slides[currentSlideIndex];
+  if (!slide || slide.section_type !== 'summary') return;
+
+  const bulletCount = window.summaryBulletCount || 0;
+  if (bulletCount === 0) return;
+
+  const currentTime = getTime();
+  const totalDuration = getDuration() || 30;
+
+  // Calculate which bullet should be visible based on time progress
+  // Each bullet gets equal time: totalDuration / bulletCount
+  const timePerBullet = totalDuration / bulletCount;
+  const bulletsToShow = Math.floor(currentTime / timePerBullet) + 1;
+
+  // Reveal bullets up to current time
+  for (let i = 0; i < Math.min(bulletsToShow, bulletCount); i++) {
+    const bullet = document.getElementById(`summary-bullet-${i}`);
+    if (bullet && bullet.classList.contains('reveal-hidden')) {
+      bullet.classList.remove('reveal-hidden');
+      bullet.classList.add('reveal-visible');
+      console.log(`[V2.5] Summary: Revealed bullet ${i + 1}/${bulletCount}`);
+    }
+  }
+}
+
+function updateDisplayState() {
+  if (!slides[currentSlideIndex]) return;
+
+  const currentTime = getTime();
+  // We need to find the *latest* directive that has passed
+  const directives = parseDisplayDirectives(slides[currentSlideIndex]);
+  let activeDirective = null;
+
+  for (const dir of directives) {
+    if (currentTime >= dir.time) {
+      activeDirective = dir;
+    } else {
+      break;
+    }
+  }
+
+  if (activeDirective) {
+    const action = activeDirective.action;
+    const data = activeDirective.data;
+
+    if (action === 'show_video') {
+      videoLayer.classList.add('fullscreen');
+      videoLayer.classList.remove('hidden');
+      contentLayer.style.opacity = '0';
+      // Ensure avatar is visible (overlay)
+      if (avatarLayer) avatarLayer.style.opacity = '1';
+    } else if (action === 'show_text') {
+      videoLayer.classList.remove('fullscreen');
+      videoLayer.classList.add('hidden');
+      contentLayer.style.opacity = '1';
+    } else if (action === 'flip_card') {
+      const cardIndex = data.card_index || 0;
+      const card = document.getElementById(`flashcard-${cardIndex}`);
+      if (card && card.dataset.flipped !== 'true') {
+        card.classList.add('flipped');
+        card.dataset.flipped = 'true';
+      }
+    } else if (action === 'reveal_answer') {
+      const qIndex = data.question_index || 0;
+      const quiz = document.getElementById(`quiz-${qIndex}`);
+      if (quiz && !quiz.classList.contains('revealed')) {
+        quiz.classList.add('revealed');
+        const slide = slides[currentSlideIndex];
+        if (slide.quiz_questions && slide.quiz_questions[qIndex]) {
+          const correctIndex = slide.quiz_questions[qIndex].correct_option;
+          const choices = quiz.querySelectorAll('.quiz-choice');
+          if (choices[correctIndex]) {
+            choices[correctIndex].classList.add('correct-revealed');
+            const letter = choices[correctIndex].querySelector('.choice-letter');
+            if (letter) letter.classList.add('correct');
+          }
+        }
+      }
+    } else if (action === 'pause') {
+      // Handled by pause logic, mostly UI indication could be added here
+    }
+  } else {
+    // Default state: Content visible, Video hidden (unless it's recap/intro logic handled elsewhere)
+    // Only verify if we are in a content slide and NO directive has triggered yet
+    // This prevents flickering if we are just starting
+    if (slides[currentSlideIndex].section_type === 'content' && !videoLayer.classList.contains('fullscreen')) {
+      // contentLayer.style.opacity = '1'; 
+      // We leave it as set by renderContent defaults
+    }
+  }
 }
 
 // ============================================
@@ -602,6 +722,11 @@ function loadSlide(index) {
 
     // Typeset LaTeX after content is rendered
     await typesetMath(contentBox);
+
+    // V2.5: Preload next section media
+    if (typeof preloadNextSection === 'function') {
+      preloadNextSection(index + 1);
+    }
   });
 }
 
@@ -611,11 +736,30 @@ function loadSlide(index) {
 function setupMediaSource(slide) {
   const sectionType = slide.section_type || 'content';
 
+  // CRITICAL: Stop and unbind any existing time source before setting up a new one
+  if (activeTimeSource) {
+    activeTimeSource.pause();
+    unbindTimeEvents(activeTimeSource);
+    activeTimeSource = null;
+  }
+
   // 1. Setup AVATAR (job-specific path per slide)
-  const avatarPath = slide.avatar_video_path || slide.avatar_video;
+  let avatarPath = slide.avatar_video_path || slide.avatar_video;
+
+  // FALLBACK: If no avatar path for this slide (e.g., Summary), try using the Intro avatar
+  // This is a temporary hotfix to ensure timing works even if generation skipped a section
+  if (!avatarPath && slides[0] && (slides[0].avatar_video || slides[0].avatar_video_path)) {
+    console.warn('[V2] No avatar for this slide - falling back to INTRO avatar for timing');
+    avatarPath = slides[0].avatar_video || slides[0].avatar_video_path;
+  }
+
+  // Always reset avatar state first
+  avatarVideo.pause();
+  avatarVideo.removeAttribute('src'); // Clear previous source
+
   if (avatarPath) {
-    const fullAvatarPath = resolveMediaPath(avatarPath, 'video');
-    console.log(`[V2] Loading avatar for ${sectionType}: ${fullAvatarPath}`);
+    const fullAvatarPath = resolveMediaPath(avatarPath, 'avatar');
+    console.log(`[V2] Setting Avatar URL: ${fullAvatarPath}`); // User requested explicit log
 
     // Hide placeholder if it exists
     const placeholder = document.getElementById('avatar-placeholder');
@@ -624,7 +768,7 @@ function setupMediaSource(slide) {
 
     avatarVideo.src = fullAvatarPath;
     avatarVideo.muted = true; // CRITICAL for autoplay
-    avatarVideo.loop = true;
+    avatarVideo.loop = false; // V2.5: Should not loop narration
     avatarVideo.playsInline = true;
     avatarVideo.load();
 
@@ -637,30 +781,39 @@ function setupMediaSource(slide) {
         // Don't show placeholder - video is loaded, user just needs to click play
       });
     };
+
+    avatarVideo.onplay = () => console.log('[V2] Avatar STARTED playing');
+    avatarVideo.onpause = () => console.log('[V2] Avatar PAUSED');
+
+    avatarVideo.onerror = (e) => {
+      console.error('[V2] Avatar failed to load:', e);
+      // If avatar fails, we might need to fallback to timer logic dynamically
+      // But for now, let's just log it.
+    };
+
   } else {
     console.warn('[V2] No avatar path found for this slide');
     showAvatarPlaceholder();
   }
 
-  // 2. Setup NARRATION AUDIO (main timeline)
-  const audioPath = slide.audio_path;
-  if (audioPath) {
-    const fullAudioPath = resolveMediaPath(audioPath, 'audio');
-    narrationAudio.src = fullAudioPath;
-    narrationAudio.load();
-    activeTimeSource = narrationAudio;
+  // 2. V2.5 TIME SOURCE SETUP
+  // V2.5 Architecture: NO separate MP3 audio files
+  // Time source priority: Avatar Video (MP4) → Timer Fallback
+  if (avatarPath) {
+    // PRIMARY: Use avatar video as time source (has embedded audio)
+    activeTimeSource = avatarVideo;
     useTimerFallback = false;
-    bindTimeEvents(narrationAudio);
-    console.log(`[V2] Audio source: ${fullAudioPath}`);
+    bindTimeEvents(avatarVideo);
+    console.log('[V2.5] Using Avatar Video as Time Source');
   } else {
-    // Use timer fallback if no audio
+    // FALLBACK: Use timer when no avatar available
     const duration = getTotalDuration(slide);
     timerFallback.reset(duration);
     activeTimeSource = timerFallback;
     useTimerFallback = true;
     bindTimeEvents(timerFallback);
     showSilentModeIndicator(true);
-    console.log(`[V2] No audio - using timer fallback (${duration.toFixed(1)}s)`);
+    console.log(`[V2.5] No avatar - using timer fallback (${duration.toFixed(1)}s)`);
   }
 
   // 3. Setup CONTENT VIDEO (if applicable - handled by renderContent)
@@ -718,8 +871,16 @@ function renderSummary(slide) {
     console.log(`[V2] SummaryRenderer: Found ${slide.visual_beats.length} visual beats`);
     slide.visual_beats.forEach(beat => {
       if (beat.visual_type === 'bullet_list' && beat.display_text) {
-        const text = beat.display_text.trim();
-        if (text) collectedBullets.add(sanitizeMarkdown(text));
+        // display_text can be a string OR an array
+        if (Array.isArray(beat.display_text)) {
+          beat.display_text.forEach(item => {
+            const text = (typeof item === 'string' ? item : (item.text || '')).trim();
+            if (text) collectedBullets.add(sanitizeMarkdown(text));
+          });
+        } else if (typeof beat.display_text === 'string') {
+          const text = beat.display_text.trim();
+          if (text) collectedBullets.add(sanitizeMarkdown(text));
+        }
       }
     });
   }
@@ -777,10 +938,12 @@ function renderSummary(slide) {
   const list = document.createElement('ul');
   list.className = 'summary-list';
 
+  // V2.5: Add bullets with reveal-hidden class for progressive reveal
   allBulletsArray.forEach((text, i) => {
     const item = document.createElement('li');
-    item.className = 'summary-item';
-    item.id = `seg-${i}`;
+    item.className = 'summary-item reveal-hidden'; // Hidden initially
+    item.id = `summary-bullet-${i}`;
+    item.dataset.index = i;
     item.innerHTML = `
       <span class="summary-marker">✓</span>
       <span class="summary-text">${text}</span>
@@ -789,6 +952,11 @@ function renderSummary(slide) {
   });
 
   contentBox.appendChild(list);
+
+  // Store bullet count for progressive reveal logic
+  window.summaryBulletCount = allBulletsArray.length;
+  window.summaryBulletsRevealed = 0;
+  console.log(`[V2.5] Summary: ${allBulletsArray.length} bullets ready for progressive reveal`);
 }
 
 function renderContent(slide) {
@@ -931,6 +1099,168 @@ function renderContent(slide) {
   }
 }
 
+// ============================================
+// V2.5 COMPLIANCE FUNCTIONS FOR PLAYER_V2.JS
+// Insert after line 932 (after renderContent function)
+// ============================================
+
+// QUIZ RENDERER (V2.5 Compliance)
+function renderQuiz(slide) {
+  console.log('[V2.5] QuizRenderer: 3-step dance');
+
+  const contentBox = document.getElementById('content-box');
+  contentBox.innerHTML = '';
+
+  const questions = slide.quiz_questions || [];
+
+  questions.forEach((q, qIndex) => {
+    const quizCard = document.createElement('div');
+    quizCard.className = 'quiz-card quiz-hidden';
+    quizCard.id = `quiz-${qIndex}`;
+
+    const questionDiv = document.createElement('div');
+    questionDiv.className = 'quiz-question';
+    questionDiv.textContent = q.question;
+    quizCard.appendChild(questionDiv);
+
+    const choicesDiv = document.createElement('div');
+    choicesDiv.className = 'quiz-choices';
+
+    q.options.forEach((opt, optIndex) => {
+      const choiceDiv = document.createElement('div');
+      choiceDiv.className = 'quiz-choice';
+      choiceDiv.dataset.index = optIndex;
+
+      const letter = document.createElement('div');
+      letter.className = 'choice-letter';
+      letter.textContent = String.fromCharCode(65 + optIndex);
+      choiceDiv.appendChild(letter);
+
+      const text = document.createElement('div');
+      text.className = 'choice-text';
+      text.textContent = opt;
+      choiceDiv.appendChild(text);
+
+      choicesDiv.appendChild(choiceDiv);
+    });
+
+    quizCard.appendChild(choicesDiv);
+    contentBox.appendChild(quizCard);
+  });
+}
+
+// MEMORY FLASHCARD RENDERER (V2.5 Compliance)
+function renderMemory(slide) {
+  console.log('[V2.5] MemoryRenderer: Flashcards with flip animation');
+
+  const contentBox = document.getElementById('content-box');
+  contentBox.innerHTML = '';
+
+  const flashcards = slide.flashcards || slide.memory_items || [];
+  const container = document.createElement('div');
+  container.className = 'flashcard-container';
+
+  flashcards.forEach((card, index) => {
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'flashcard';
+    cardDiv.id = `flashcard-${index}`;
+    cardDiv.dataset.flipped = 'false';
+
+    const front = document.createElement('div');
+    front.className = 'flashcard-front';
+    front.innerHTML = `<div class="flashcard-title" style="font-size: 1.3em; font-weight: 600;">${sanitizeMarkdown(card.front)}</div>`;
+
+    const back = document.createElement('div');
+    back.className = 'flashcard-back';
+    back.innerHTML = `<div class="flashcard-mnemonic" style="font-size: 1.1em;">${sanitizeMarkdown(card.back)}</div>`;
+
+    cardDiv.appendChild(front);
+    cardDiv.appendChild(back);
+    container.appendChild(cardDiv);
+  });
+
+  contentBox.appendChild(container);
+}
+
+// MEDIA PRELOADING (V2.5 UX Enhancement)
+function preloadNextSection(nextIndex) {
+  if (nextIndex >= slides.length) return;
+
+  const nextSlide = slides[nextIndex];
+
+  if (nextSlide.video_path) {
+    const videoPreloader = document.createElement('video');
+    const resolvedPath = resolveMediaPath(nextSlide.video_path, 'video');
+    videoPreloader.src = resolvedPath;
+    videoPreloader.preload = 'auto';
+    videoPreloader.load();
+    console.log(`[V2.5] Preloading next video: ${resolvedPath}`);
+  }
+
+  if (nextSlide.avatar_video || nextSlide.avatar_video_path) {
+    const avatarPath = nextSlide.avatar_video || nextSlide.avatar_video_path;
+    const avatarPreloader = document.createElement('video');
+    const resolvedPath = resolveMediaPath(avatarPath, 'avatar');
+    avatarPreloader.src = resolvedPath;
+    avatarPreloader.preload = 'auto';
+    avatarPreloader.load();
+    console.log(`[V2.5] Preloading next avatar: ${resolvedPath}`);
+  }
+
+  if (nextSlide.audio_path) {
+    const resolvedPath = resolveMediaPath(nextSlide.audio_path, 'audio');
+    const audioPreloader = new Audio(resolvedPath);
+    audioPreloader.preload = 'auto';
+    audioPreloader.load();
+    console.log(`[V2.5] Preloading next audio: ${resolvedPath}`);
+  }
+}
+
+async function checkMediaExists(path) {
+  try {
+    const response = await fetch(path, { method: 'HEAD' });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+function showMediaGeneratingPlaceholder(type, container) {
+  container.innerHTML = `
+    <div class="media-generating-placeholder">
+      <div class="spinner"></div>
+      <div style="font-size: 1.2em; font-weight: 600;">Generating ${type}...</div>
+      <div style="font-size: 0.9em; opacity: 0.9;">This may take a few moments</div>
+    </div>
+  `;
+}
+
+// DISPLAY DIRECTIVES PARSER (V2.5 Core)
+function parseDisplayDirectives(slide) {
+  const directives = [];
+  const segments = slide.narration?.segments || [];
+
+  segments.forEach((seg, i) => {
+    if (seg.display_directives) {
+      directives.push({
+        time: seg.start_time_sec || 0,
+        action: seg.display_directives.action_type,
+        data: seg.display_directives
+      });
+    }
+  });
+
+  if (slide.flip_timing_sec) {
+    directives.push({
+      time: slide.flip_timing_sec,
+      action: 'show_video',
+      data: {}
+    });
+  }
+
+  return directives.sort((a, b) => a.time - b.time);
+}
+
 function renderVisualContent(vc, container) {
   const contentType = vc.content_type || 'paragraph';
 
@@ -1055,379 +1385,8 @@ function renderVisualContent(vc, container) {
   }
 }
 
-function renderQuiz(slide) {
-  console.log('[V2] QuizRenderer: Question + choices');
-
-  // Reset quiz state when loading a new quiz slide to prevent stale state
-  window.currentQuizData = null;
-
-  // ISS-300: First check for quiz_data.questions from V2 generator
-  // Pass slide for progressive reveal detection
-  if (slide.quiz_data?.questions && slide.quiz_data.questions.length > 0) {
-    renderQuizFromQuizData(slide.quiz_data.questions, slide);
-    return;
-  }
-
-  const segments = slide.narration?.segments || [];
-  const quizQuestions = [];
-
-  segments.forEach((seg, segIdx) => {
-    const vc = seg.visual_content;
-    if (vc?.bullet_points && vc.bullet_points.length > 0) {
-      let question = '';
-      const choices = [];
-
-      vc.bullet_points.forEach(bp => {
-        // Handle both object format {level, text} and plain string format
-        const text = typeof bp === 'string' ? bp : (bp.text || '');
-        const level = typeof bp === 'object' ? bp.level : null;
-
-        // Detect question (starts with number or "Question")
-        const isQuestion = /^(\d+\.|Question\s*\d*:?)/i.test(text.trim());
-        // Detect choice (starts with A), B), C), D) or A., B., C., D.)
-        const choiceMatch = text.trim().match(/^([A-D])[\)\.]\s*(.+)$/i);
-
-        if (level === 1 || isQuestion) {
-          // This is a question
-          question = text.replace(/^(\d+\.\s*|Question\s*\d*:\s*)/i, '');
-        } else if (level === 2 || choiceMatch) {
-          // This is a choice
-          if (choiceMatch) {
-            choices.push({ letter: choiceMatch[1].toUpperCase(), text: choiceMatch[2] });
-          } else {
-            choices.push({ letter: String.fromCharCode(65 + choices.length), text: text });
-          }
-        }
-      });
-
-      if (question || choices.length > 0) {
-        quizQuestions.push({ question, choices, segIdx });
-      }
-    }
-  });
-
-  // Render all questions
-
-  // Helper for V2.5 Pointer Resolution
-  function resolvePointer(pointer) {
-    if (!sourceMarkdown || !pointer) return null;
-
-    const start = pointer.start_phrase;
-    const end = pointer.end_phrase;
-
-    if (!start || !end) return null;
-
-    const startIndex = sourceMarkdown.indexOf(start);
-    if (startIndex === -1) {
-      console.warn(`[V2.5] Pointer START not found: "${start.substring(0, 20)}..."`);
-      return null;
-    }
-
-    const endIndex = sourceMarkdown.indexOf(end, startIndex);
-    if (endIndex === -1) {
-      console.warn(`[V2.5] Pointer END not found after start: "${end.substring(0, 20)}..."`);
-      return null;
-    }
-
-    // Extract full text including end phrase
-    const extracted = sourceMarkdown.substring(startIndex, endIndex + end.length);
-    return extracted;
-  }
-  quizQuestions.forEach((q, idx) => {
-    const card = document.createElement('div');
-    card.className = 'quiz-card';
-    card.id = `seg - ${q.segIdx} `;
-
-    if (q.question) {
-      const qDiv = document.createElement('div');
-      qDiv.className = 'quiz-question';
-      qDiv.innerHTML = sanitizeMarkdown(q.question);
-      card.appendChild(qDiv);
-    }
-
-    if (q.choices.length > 0) {
-      const choicesDiv = document.createElement('div');
-      choicesDiv.className = 'quiz-choices';
-
-      q.choices.forEach(c => {
-        const choice = document.createElement('div');
-        choice.className = 'quiz-choice';
-        // Check for [Correct] marker
-        let choiceText = c.text;
-        let isCorrect = false;
-        if (choiceText.includes('[Correct]')) {
-          choiceText = choiceText.replace(/\s*\[Correct\]\s*/i, '');
-          isCorrect = true;
-        }
-        choice.innerHTML = `
-  < span class="choice-letter${isCorrect ? ' correct' : ''}" > ${c.letter}</span >
-    <span class="choice-text">${sanitizeMarkdown(choiceText)}</span>
-`;
-        choicesDiv.appendChild(choice);
-      });
-
-      card.appendChild(choicesDiv);
-    }
-
-    contentBox.appendChild(card);
-  });
-
-  // If no quiz questions found from segments, try slide-level visual_content
-  if (quizQuestions.length === 0 && slide.visual_content?.bullet_points) {
-    renderQuizFromBullets(slide.visual_content.bullet_points);
-  }
-}
-
-// ISS-300: Render quiz from V2 generator quiz_data.questions format
-// With progressive reveal support: questions hidden until narration reaches them
-function renderQuizFromQuizData(questions, slide) {
-  console.log('[V2] QuizRenderer: Using quiz_data.questions format', questions.length, 'questions');
-
-  // Check if we have per-question narration segments (V2.1 progressive reveal)
-  const segments = slide?.narration?.segments || [];
-  const hasProgressiveReveal = segments.some(seg => seg.question_index !== undefined);
-
-  if (hasProgressiveReveal) {
-    console.log('[V2] QuizRenderer: Progressive reveal mode enabled');
-  } else {
-    // Backward compatibility: show all questions and answers immediately for legacy content
-    console.log('[V2] QuizRenderer: Legacy mode - all questions visible');
-  }
-
-  questions.forEach((q, idx) => {
-    const card = document.createElement('div');
-    card.className = 'quiz-card';
-    card.id = `quiz - ${idx} `;
-
-    // In progressive reveal mode, hide questions initially
-    // In legacy mode, show everything
-    if (hasProgressiveReveal) {
-      card.classList.add('quiz-hidden');
-    }
-
-    // Question
-    const qDiv = document.createElement('div');
-    qDiv.className = 'quiz-question';
-    qDiv.innerHTML = sanitizeMarkdown(q.question);
-    card.appendChild(qDiv);
-
-    // Choices
-    if (q.options && q.options.length > 0) {
-      const choicesDiv = document.createElement('div');
-      choicesDiv.className = 'quiz-choices';
-
-      q.options.forEach((opt, optIdx) => {
-        const choice = document.createElement('div');
-        choice.className = 'quiz-choice';
-
-        // Parse option text - may be "A) text" or just "text"
-        let letter = String.fromCharCode(65 + optIdx);
-        let text = opt;
-        const match = opt.match(/^([A-D])[\)\.]\s*(.+)$/i);
-        if (match) {
-          letter = match[1].toUpperCase();
-          text = match[2];
-        }
-
-        // Check if this is the correct answer
-        const isCorrect = q.correct_answer === letter;
-
-        // In legacy mode, show correct marker; in progressive reveal, hide initially
-        const showCorrectNow = !hasProgressiveReveal && isCorrect;
-        choice.innerHTML = `
-  < span class="choice-letter${showCorrectNow ? ' correct' : ''}" > ${letter}</span >
-    <span class="choice-text">${sanitizeMarkdown(text)}</span>
-`;
-        choice.dataset.correct = isCorrect;
-        choice.dataset.letter = letter;
-        if (showCorrectNow) {
-          choice.classList.add('correct-revealed');
-        }
-        choicesDiv.appendChild(choice);
-      });
-
-      card.appendChild(choicesDiv);
-    }
-
-    // Explanation (shown in legacy mode, hidden in progressive reveal)
-    if (q.explanation) {
-      const explDiv = document.createElement('div');
-      explDiv.className = 'quiz-explanation';
-      explDiv.style.display = hasProgressiveReveal ? 'none' : 'block';
-      explDiv.innerHTML = `< strong > Explanation:</strong > ${sanitizeMarkdown(q.explanation)} `;
-      card.appendChild(explDiv);
-    }
-
-    contentBox.appendChild(card);
-  });
-
-  // Store quiz data for progressive reveal updates
-  if (hasProgressiveReveal) {
-    window.currentQuizData = {
-      questions: questions,
-      revealedQuestions: new Set(),
-      revealedAnswers: new Set()
-    };
-  }
-}
-
-// Update quiz display based on current narration segment
-// Update quiz display based on current narration segment
-// V2.5 Strict 3-Step Dance: Intro -> Pause -> Reveal
-function updateQuizProgressiveReveal(segmentIndex) {
-  const slide = slides[currentSlideIndex];
-  if (slide?.section_type !== 'quiz' || !window.currentQuizData) return;
-
-  const segments = slide.narration?.segments || [];
-  const currentSeg = segments[segmentIndex];
-
-  if (!currentSeg || currentSeg.question_index === undefined) return;
-
-  const qIdx = currentSeg.question_index;
-  const purpose = (currentSeg.purpose || '').toLowerCase(); // introduce, pause, explain
-  const card = document.getElementById(`quiz - ${qIdx} `); // Fixed ID format (removed spaces)
-
-  if (!card) return;
-
-  // 1. INTRODUCE: Show Question + Options. Hide Answer.
-  if (purpose === 'introduce' && !window.currentQuizData.revealedQuestions.has(qIdx)) {
-    card.classList.remove('quiz-hidden');
-    card.classList.add('quiz-active');
-
-    // Ensure answers are HIDDEN
-    const choices = card.querySelectorAll('.quiz-choice');
-    choices.forEach(c => {
-      c.classList.remove('correct-revealed');
-      const letter = c.querySelector('.choice-letter');
-      if (letter) letter.classList.remove('correct');
-    });
-
-    window.currentQuizData.revealedQuestions.add(qIdx);
-    console.log(`[V2.5]Quiz: Introduce Q${qIdx + 1} `);
-  }
-
-  // 2. PAUSE: "Thinking Time". Nothing changes visually, or maybe pulsing effect.
-  // STRICTLY DO NOT REVEAL ANSWER HERE.
-  if (purpose === 'pause' || purpose === 'silence') {
-    console.log(`[V2.5]Quiz: Pause / Thinking for Q${qIdx + 1}`);
-    return;
-  }
-
-  // 3. REVEAL: Show Correct Answer + Explanation.
-  if (purpose === 'explain' && !window.currentQuizData.revealedAnswers.has(qIdx)) {
-    console.log(`[V2.5]Quiz: Reveal A${qIdx + 1} `);
-
-    const question = window.currentQuizData.questions[qIdx];
-
-    // Highlight correct answer
-    const choices = card.querySelectorAll('.quiz-choice');
-    choices.forEach(choice => {
-      // Logic for both generator types
-      const isCorrect = choice.dataset.correct === 'true' || choice.dataset.correct === 'true'; // dataset stores string
-
-      if (isCorrect) {
-        choice.classList.add('correct-revealed');
-        const letterSpan = choice.querySelector('.choice-letter');
-        if (letterSpan) {
-          letterSpan.classList.add('correct');
-          // Force repaint hack if needed
-          letterSpan.style.display = 'none';
-          letterSpan.offsetHeight;
-          letterSpan.style.display = '';
-        }
-      }
-    });
-
-    // Show explanation
-    const explDiv = card.querySelector('.quiz-explanation');
-    if (explDiv) {
-      explDiv.style.display = 'block';
-      explDiv.classList.add('fade-in');
-    }
-
-    window.currentQuizData.revealedAnswers.add(qIdx);
-  }
-}
-
-function renderQuizFromBullets(bullets) {
-  let question = '';
-  const choices = [];
-
-  bullets.forEach(bp => {
-    const text = typeof bp === 'string' ? bp : (bp.text || '');
-    const choiceMatch = text.trim().match(/^([A-D])[\)\.]\s*(.+)$/i);
-
-    if (/^(\d+\.|Question)/i.test(text.trim())) {
-      question = text.replace(/^(\d+\.\s*|Question\s*\d*:\s*)/i, '');
-    } else if (choiceMatch) {
-      choices.push({ letter: choiceMatch[1].toUpperCase(), text: choiceMatch[2] });
-    }
-  });
-
-  const card = document.createElement('div');
-  card.className = 'quiz-card';
-
-  if (question) {
-    const qDiv = document.createElement('div');
-    qDiv.className = 'quiz-question';
-    qDiv.innerHTML = sanitizeMarkdown(question);
-    card.appendChild(qDiv);
-  }
-
-  if (choices.length > 0) {
-    const choicesDiv = document.createElement('div');
-    choicesDiv.className = 'quiz-choices';
-    choices.forEach(c => {
-      const choice = document.createElement('div');
-      choice.className = 'quiz-choice';
-      choice.innerHTML = `
-  < span class="choice-letter" > ${c.letter}</span >
-    <span class="choice-text">${sanitizeMarkdown(c.text)}</span>
-`;
-      choicesDiv.appendChild(choice);
-    });
-    card.appendChild(choicesDiv);
-  }
-
-  contentBox.appendChild(card);
-}
-
-function renderMemory(slide) {
-  console.log('[V2] MemoryRenderer: Flashcards (V2.5 Bible Aligned)');
-
-  // V2.5 Director Bible: flashcards at top level, NOT inside visual_content
-  const flashcards = slide.flashcards || slide.visual_content?.flashcards || [];
-
-  if (flashcards.length === 0) {
-    // V2.5 Bible: Memory = Flashcards ONLY, no narration text fallback
-    console.warn('[V2] Memory section has no flashcards - showing placeholder');
-    const placeholder = document.createElement('div');
-    placeholder.className = 'memory-placeholder';
-    placeholder.textContent = 'No flashcards available for this section.';
-    contentBox.appendChild(placeholder);
-    return;
-  }
-
-  const container = document.createElement('div');
-  container.className = 'flashcard-container';
-
-  // V2.5 Director Bible: flashcards have "front" (Term) and "back" (Mnemonic/Answer)
-  flashcards.forEach((fc, i) => {
-    const card = document.createElement('div');
-    card.className = 'flashcard';
-    card.id = `seg - ${i} `;
-    card.innerHTML = `
-  < div class="flashcard-front" > ${sanitizeMarkdown(fc.front || fc.title || '')}</div >
-    <div class="flashcard-back">${sanitizeMarkdown(fc.back || fc.mnemonic || '')}</div>
-`;
-    container.appendChild(card);
-  });
-
-  contentBox.appendChild(container);
-
-  const firstCard = document.querySelector('.flashcard');
-  if (firstCard) firstCard.classList.add('active');
-}
+// [LEGACY RENDERERS REMOVED]
+// V2.5 renderQuiz and renderMemory are defined earlier in this file.
 
 // Beat video playlist state for recap sections
 let beatVideoPlaylist = [];
@@ -1743,6 +1702,11 @@ function togglePlay() {
       avatarVideo.play().catch(() => { });
     }
 
+    // Ensure avatar canvas is visible and placeholder is hidden
+    const placeholder = document.getElementById('avatar-placeholder');
+    if (placeholder) placeholder.remove();
+    if (avatarCanvas) avatarCanvas.style.display = 'block';
+
     if (!videoLayer.classList.contains('hidden')) {
       contentVideo.play().catch(() => { });
     }
@@ -1939,25 +1903,23 @@ function setupSubtitleContainer() {
   subtitleContainer = document.createElement('div');
   subtitleContainer.id = 'subtitle-overlay';
   subtitleContainer.style.cssText = `
-    position: absolute;
-    bottom: 80px; 
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
     text-align: center;
     pointer-events: none;
     z-index: 50;
     font-family: 'Inter', sans-serif;
-    color: rgba(255, 255, 255, 0.5); /* Dimmed by default */
-    font-size: 20px;
-    font-weight: 600;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-    background: rgba(0, 0, 0, 0.7);
-    padding: 12px 24px;
-    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.2em;
+    font-weight: 500;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    background: transparent;
+    padding: 8px 40px;
     transition: opacity 0.3s ease;
-    opacity: 0; 
-    line-height: 1.4;
+    opacity: 0;
+    line-height: 1.5;
   `;
 
   // Add CSS for highlighted words

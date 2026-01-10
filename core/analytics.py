@@ -70,6 +70,16 @@ class AvatarMetrics:
     section_details: List[Dict[str, Any]] = field(default_factory=list)
 
 @dataclass
+class ProgressMetrics:
+    """Live progress tracking for async operations."""
+    total: int = 0
+    completed: int = 0
+    failed: int = 0
+    pending: int = 0
+    message: Optional[str] = None
+    estimated_remaining_seconds: float = 0.0
+
+@dataclass
 class ContentMetrics:
     """Metrics about the generated content."""
     total_sections: int = 0
@@ -142,6 +152,11 @@ class PipelineAnalytics:
     content: ContentMetrics = field(default_factory=ContentMetrics)
     validation: ValidationMetrics = field(default_factory=ValidationMetrics)
     decisions: List[Dict[str, Any]] = field(default_factory=list)
+    
+    # New Fields for Enhanced Reporting
+    progress_details: Dict[str, ProgressMetrics] = field(default_factory=dict)
+    timings: Dict[str, float] = field(default_factory=dict)
+    
     status: str = "pending"  # pending, running, completed, failed
     error: Optional[str] = None
 
@@ -150,6 +165,7 @@ class PipelineAnalytics:
         """Convert to dictionary for JSON serialization."""
         result = asdict(self)
         result["phases"] = [asdict(p) for p in self.phases]
+        result["progress_details"] = {k: asdict(v) for k, v in self.progress_details.items()}
         return result
 
     def to_json(self) -> str:
@@ -203,7 +219,16 @@ class AnalyticsTracker:
             self.analytics.phases = []
             for p in data.get("phases", []):
                 self.analytics.phases.append(PhaseMetrics(**{k: v for k, v in p.items() if hasattr(PhaseMetrics, k)}))
-                
+
+            # Progress Details (Enhanced)
+            pd = data.get("progress_details", {})
+            self.analytics.progress_details = {}
+            for k, v in pd.items():
+                self.analytics.progress_details[k] = ProgressMetrics(**{pk: pv for pk, pv in v.items() if hasattr(ProgressMetrics, pk)})
+
+            # Timings
+            self.analytics.timings = data.get("timings", {})
+
             return True
         except Exception as e:
             print(f"[Analytics] Failed to load {filepath}: {e}")
@@ -270,6 +295,9 @@ class AnalyticsTracker:
         # Calculate cost
         phase.cost_usd = self._calculate_cost(phase.model, input_tokens, output_tokens)
 
+        # Update timings map
+        self.analytics.timings[phase_name] = phase.duration_seconds
+
         return phase
 
     def add_llm_call(
@@ -329,9 +357,9 @@ class AnalyticsTracker:
         self.analytics.renderer.total_render_time_seconds = render_time
         self.analytics.renderer.failed_renders = failed_renders
 
-    def add_render_detail(self, section_id: str, section_type: str, renderer: str, duration: float, status: str, metadata: Optional[Dict] = None) -> None:
+    def add_render_detail(self, section_id: str, section_type: str, renderer: str, duration: float, status: str, metadata: Optional[Dict] = None, retry_action: Optional[str] = None) -> None:
         """Add detail for a single section render."""
-        self.analytics.renderer.section_renders.append({
+        render_data = {
             "section_id": section_id,
             "section_type": section_type,
             "renderer": renderer,
@@ -339,7 +367,28 @@ class AnalyticsTracker:
             "status": status,
             "timestamp": datetime.utcnow().isoformat(),
             **(metadata or {})
-        })
+        }
+        if retry_action:
+            render_data["retry_action"] = retry_action
+            
+        self.analytics.renderer.section_renders.append(render_data)
+
+    def update_progress(self, category: str, completed: int, total: int, failed: int = 0, message: Optional[str] = None) -> None:
+        """Update live progress for a category (e.g., 'avatar_generation')."""
+        remaining = total - (completed + failed)
+        
+        # Simple estimation logic: (avg time per item) * remaining
+        # Ideally this should be based on actual measured rate
+        est_seconds = 0.0 
+        
+        self.analytics.progress_details[category] = ProgressMetrics(
+            total=total,
+            completed=completed,
+            failed=failed,
+            pending=remaining,
+            message=message,
+            estimated_remaining_seconds=est_seconds
+        )
 
     def set_avatar_metrics(
         self,
@@ -590,6 +639,8 @@ class AnalyticsTracker:
                 "total_duration_seconds": round(self.analytics.avatar.total_duration_seconds, 2),
                 "details": self.analytics.avatar.section_details
             } if self.analytics.avatar else {},
+            "progress": {k: asdict(v) for k, v in self.analytics.progress_details.items()},
+            "timings": self.analytics.timings,
             "content": {
                 "sections": self.analytics.content.total_sections,
                 "segments": self.analytics.content.total_segments,

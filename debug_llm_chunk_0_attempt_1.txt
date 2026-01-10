@@ -1,0 +1,722 @@
+```json
+{
+  "sections": [
+    {
+      "section_id": "section_1",
+      "section_type": "content",
+      "title": "Introduction to Patterns",
+      "renderer": "video",
+      "narration": {
+        "full_text": "Namaste! Have you ever noticed how beautifully patterns are woven into our world? From the petals of a sunflower to the intricate designs of a honeycomb. Even in our daily lives, we see them everywhere. Think about the roll numbers in your class, or the days in a week. It's like the beautiful, repeating patterns in a rangoli we make for Diwali! This idea of patterns is what we call 'Progression' in mathematics.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Namaste! Have you ever noticed how beautifully patterns are woven into our world? From the petals of a sunflower to the intricate designs of a honeycomb.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "Even in our daily lives, we see them everywhere. Think about the roll numbers in your class, or the days in a week. It's like the beautiful, repeating patterns in a rangoli we make for Diwali!",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "This idea of patterns is what we call 'Progression' in mathematics.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "You must have observed that in",
+            "end_phrase": "a pine etc.,....and also, if"
+          },
+          "display_text": "You must have observed that in nature, many things follows a certain pattern such as the petals of a sunflower the holes of a honeycomb The grain in a maize cob, the spirals in a pineapple and in a pine etc.,....",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": null,
+          "display_text": "Show video montage",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_2",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "we observe in our regular lives,",
+            "end_phrase": "months in a year. This pattern"
+          },
+          "display_text": "if we observe in our regular lives, we come across, Arithmetic progression quite often, for example Roll numbers of a student's in a class, days in a week or months in a year.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_3",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "This pattern of series and sequence",
+            "end_phrase": "in maths as progression."
+          },
+          "display_text": "This pattern of series and sequence has been generalised in maths as progression.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": null,
+        "video_prompts": [
+          "A vibrant, cinematic montage showcasing natural patterns. Start with a close-up, time-lapse of a sunflower blooming, highlighting the spiral arrangement of its seeds. Transition to a macro shot of a honeycomb, with bees filling the hexagonal cells. Then, a slow pan across a maize cob, emphasizing the neat rows of grain. Follow with a dynamic shot of a colourful rangoli being created on the floor, focusing on the symmetrical and repeating geometric shapes. The style should be warm, inviting, and slightly magical, with rich, natural colours."
+        ]
+      }
+    },
+    {
+      "section_id": "section_2",
+      "section_type": "example",
+      "title": "Example: Shalika's Money Box",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "Let's look at a simple example. Shalika decides to save money for her daughter. On her first birthday, she puts 100 rupees in a money box. Every year after that, she adds 50 rupees more than the previous year. So the amounts are 100, 150, 200, 250, and so on. Notice a pattern? Each new amount is found by just adding a fixed number, 50, to the last one. It's like collecting money for Diwali expenses, adding a fixed amount each month to reach your goal!",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Let's look at a simple example. Shalika decides to save money for her daughter. On her first birthday, she puts 100 rupees in a money box. Every year after that, she adds 50 rupees more than the previous year.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "So the amounts are 100, 150, 200, 250, and so on. Notice a pattern? Each new amount is found by just adding a fixed number, 50, to the last one.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "It's like collecting money for Diwali expenses, adding a fixed amount each month to reach your goal!",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "Shalika puts ₹100 into her daughter",
+            "end_phrase": "Birthdays were 100,150,200,250 .... respectively."
+          },
+          "display_text": "Shalika puts ₹100 into her daughter money box when she was 1 year old and increased the amount by ₹ 50 every year. The amount of money ( in ₹ )in the box on the 1st, 2nd, 3rd, 4th, .... Birthdays were 100,150,200,250 .... respectively.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "In the example above we observe",
+            "end_phrase": "by adding a fixed numbers."
+          },
+          "display_text": "In the example above we observe some pattern and we found that the succeeding terms are obtained by adding a fixed numbers.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_2",
+          "visual_type": "text",
+          "markdown_pointer": null,
+          "display_text": "Show Manim animation.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "Scene starts with a stylized piggy bank on the left. The number '100' in bright yellow appears and flies into the piggy bank. A label 'Year 1' appears below. Then, a curved arrow animates from the piggy bank, labelled '+50', and the number '150' appears to the right. This new number flies into the bank, and the label updates to 'Year 2'. This repeats for '200' (Year 3) and '250' (Year 4). The numbers 100, 150, 200, 250 remain on screen in a neat line, and the '+50' label flashes between each successive pair to emphasize the constant addition.",
+        "video_prompts": []
+      }
+    },
+    {
+      "section_id": "section_3",
+      "section_type": "content",
+      "title": "Chapter Goals",
+      "renderer": "none",
+      "narration": {
+        "full_text": "In this chapter, we will dive deep into this specific pattern where we get the next number by adding a fixed value. We'll also learn how to find any term in the series, say the 10th or 100th term, and how to find the sum of these terms. This will help us solve many daily life problems.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "In this chapter, we will dive deep into this specific pattern where we get the next number by adding a fixed value.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "We'll also learn how to find any term in the series, say the 10th or 100th term, and how to find the sum of these terms. This will help us solve many daily life problems.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "In this chapter we shall discuss",
+            "end_phrase": "to the preceding terms."
+          },
+          "display_text": "In this chapter we shall discuss one of these pattern in which succeeding term are obtained by a fixed number to the preceding terms.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "We shall also see how to",
+            "end_phrase": "solving some daily life problems."
+          },
+          "display_text": "We shall also see how to find there $n^{th}$ term and the sum of $n$ consecutive and use this knowledge in solving some daily life problems.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": null,
+        "video_prompts": []
+      }
+    },
+    {
+      "section_id": "section_4",
+      "section_type": "content",
+      "title": "Definition of Arithmetic Progression",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "Now for the formal definition. An Arithmetic Progression, or AP, is a list of numbers where each number, which we call a 'term', is found by adding a fixed number to the term before it. This applies to every term except the very first one, of course. This fixed number is the heart of the AP and is called the 'common difference'. It can be a positive number, a negative number, or even zero!",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Now for the formal definition. An Arithmetic Progression, or AP, is a list of numbers where each number, which we call a 'term', is found by adding a fixed number to the term before it.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "This applies to every term except the very first one, of course.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "This fixed number is the heart of the AP and is called the 'common difference'. It can be a positive number, a negative number, or even zero!",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "",
+            "purpose": "transition",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "An arithmetic progression is a list",
+            "end_phrase": "adding a fixed number to the"
+          },
+          "display_text": "An arithmetic progression is a list of numbers in which each term is obtained by adding a fixed number to the preceding term",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "preceding term except the first term.",
+            "end_phrase": "preceding term except the first term."
+          },
+          "display_text": "except the first term.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "This fixed number is called the",
+            "end_phrase": "positive, negative or zero."
+          },
+          "display_text": "This fixed number is called the common difference (c.d) of the arithmetic progression.\n\nIt can be positive, negative or zero.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "text",
+          "markdown_pointer": null,
+          "display_text": "Show Manim animation.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "A number line appears. A dot labeled 'a₁' (first term) materializes at a point. An animated arc jumps from 'a₁' to a new point, with a label '+d' appearing above the arc. As the arc lands, the new point is labeled 'a₂'. The process repeats: another '+d' arc jumps from 'a₂' to 'a₃', and then from 'a₃' to 'a₄'. The labels 'a₁', 'a₂', 'a₃', 'a₄' are in blue. The '+d' labels are in a contrasting green. The words 'Fixed Number' and 'Common Difference' appear at the top of the screen, with an arrow pointing to the green '+d' labels.",
+        "video_prompts": []
+      }
+    },
+    {
+      "section_id": "section_5",
+      "section_type": "content",
+      "title": "General Form of an AP",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "So, if we name the first term 'a' and the common difference 'd', we can write out any AP. The first term is a. The second is a plus d. The third is a plus d plus another d, which is a plus 2d, and so on. This form, 'a, a+d, a+2d, a+3d...', is called the general form of an AP. Think of it like cars in Bangalore traffic. If the first car is at position 'a', and every car keeps a fixed distance 'd' from the one ahead, their positions form an AP!",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "So, if we name the first term 'a' and the common difference 'd', we can write out any AP.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "The first term is a. The second is a plus d. The third is a plus d plus another d, which is a plus 2d, and so on. This form, 'a, a+d, a+2d, a+3d...', is called the general form of an AP.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Think of it like cars in Bangalore traffic. If the first car is at position 'a', and every car keeps a fixed distance 'd' from the one ahead, their positions form an AP!",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "In this progression for a given",
+            "end_phrase": "Then the AP becomes  $a_1$ ,  $a_2, a_3 \\dots a_n$"
+          },
+          "display_text": "In this progression for a given series the terms used are the first term  $a_1$  second terms  $a_2$  ...  $n^{th}$  terms are  $a_n$  and the common difference by  $d$ . Then the AP becomes  $a_1$ ,  $a_2, a_3 \\dots a_n$",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "$a, a+d, a+2d, a+3d, \\dots$",
+            "end_phrase": "called the general form of an AP."
+          },
+          "display_text": "$a, a+d, a+2d, a+3d, \\dots$\n\nRepresents an arithmetic progression where  $a$  is the first term and  $d$  the common difference. This is called the general form of an AP.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "text",
+          "markdown_pointer": null,
+          "display_text": "Show Manim animation.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "The scene starts with a clean, white background. The letter 'a' in a bold, blue font appears on the left with the `Write` animation. A green, curved arrow labeled '+d' animates from 'a' to a new position. As it lands, the expression 'a+d' is written in blue. This process repeats: another green '+d' arrow animates from 'a+d', and 'a+2d' is written. This continues for 'a+3d'. The final sequence 'a, a+d, a+2d, a+3d, ...' is centered. Below this, the text 'General Form of an AP' fades in. The animation should be smooth and paced with the narration, clearly showing the step-by-step construction of the sequence.",
+        "video_prompts": []
+      }
+    },
+    {
+      "section_id": "section_6",
+      "section_type": "content",
+      "title": "Finite vs. Infinite AP",
+      "renderer": "video",
+      "narration": {
+        "full_text": "Now, an AP can be either finite or infinite. A finite AP has a limited number of terms, it has a clear end. For example, the heights of students in a morning assembly queue. It starts with the first student and ends with the last. An infinite AP, on the other hand, goes on forever. It has no last term. Just like the list of numbers 3, 7, 11, and so on; you can always find the next term by adding 4.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Now, an AP can be either finite or infinite. A finite AP has a limited number of terms, it has a clear end.",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "For example, the heights of students in a morning assembly queue. It starts with the first student and ends with the last.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "An infinite AP, on the other hand, goes on forever. It has no last term.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_4",
+            "text": "Just like the list of numbers 3, 7, 11, and so on; you can always find the next term by adding 4.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "In an AP there are only",
+            "end_phrase": "Progressions (APs) has a last term."
+          },
+          "display_text": "In an AP there are only a finite number of terms. Such an AP is called a finite AP. Each of these Arithmetic Progressions (APs) has a last term.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "a) The heights (in cm) of",
+            "end_phrase": "147, 148, 149, ..., 157."
+          },
+          "display_text": "a) The heights (in cm) of some students of a school standing in a queue in the morning assembly are 147, 148, 149, ..., 157.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "In an AP there are infinite",
+            "end_phrase": "do not have last term."
+          },
+          "display_text": "In an AP there are infinite number of terms. Such an AP is called a infinite AP. Each of these Arithmetic Progressions (APs) do not have last term.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_4",
+          "segment_id": "seg_4",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "a) 3, 7, 11 ...",
+            "end_phrase": "a) 3, 7, 11 ..."
+          },
+          "display_text": "a) 3, 7, 11 ...",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": null,
+        "video_prompts": [
+          "Split screen. On the left, a real video of Indian students in school uniforms lining up for morning assembly. As they line up by height, animated numbers (147, 148, 149...) pop up above their heads, ending with 157 and a full stop symbol. The title 'Finite AP' is displayed. On the right, a stylized animation of a number line. The numbers 3, 7, 11, 15 appear one by one, and the line extends infinitely to the right with an ellipsis (...) and an arrow. The title 'Infinite AP' is displayed. The visual style should be bright and clear, making the distinction obvious."
+        ]
+      }
+    },
+    {
+      "section_id": "section_7",
+      "section_type": "example",
+      "title": "Finding 'a' and 'd'",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "Let's practice. If you have the AP: 3/2, 1/2, -1/2, -3/2, and so on... can you find the first term 'a' and the common difference 'd'? It's simple! The first term 'a' is just the first number in the list, which is 3/2. To find the common difference 'd', we subtract any term from the term that comes right after it. So, let's take the second term minus the first: 1/2 minus 3/2 equals -1. That's our common difference, d equals -1.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Let's practice. If you have the AP: 3/2, 1/2, -1/2, -3/2, and so on... can you find the first term 'a' and the common difference 'd'?",
+            "purpose": "introduce",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "It's simple! The first term 'a' is just the first number in the list, which is 3/2.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "To find the common difference 'd', we subtract any term from the term that comes right after it. So, let's take the second term minus the first: 1/2 minus 3/2 equals -1. That's our common difference, d equals -1.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "Example 1:  $\\frac{3}{2}, \\frac{1}{2}, -\\frac{1}{2},",
+            "end_phrase": "and the common difference 'd'."
+          },
+          "display_text": "Example 1:  $\\frac{3}{2}, \\frac{1}{2}, -\\frac{1}{2}, -\\frac{3}{2}, \\dots$  write the first term 'a' and the common difference 'd'.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "equation",
+          "markdown_pointer": {
+            "start_phrase": "$$\\text{Here, } a_1 = \\frac{3}{2} \\text{ d}",
+            "end_phrase": "$$\\text{Here, } a_1 = \\frac{3}{2} \\text{ d}"
+          },
+          "display_text": "Here,  $a_1 = \\frac{3}{2}$",
+          "latex_content": "a_1 = \\frac{3}{2}",
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "equation",
+          "markdown_pointer": {
+            "start_phrase": "d} = a_2 - a_1 = \\frac{1}{2}",
+            "end_phrase": "- \\frac{1}{2} = -1$$"
+          },
+          "display_text": "d = a_2 - a_1 = \\frac{1}{2} - \\frac{3}{2} = -1",
+          "latex_content": "d = a_2 - a_1 = \\frac{1}{2} - \\frac{3}{2} = -1",
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "The sequence 3/2, 1/2, -1/2, ... appears at the top. The first term, 3/2, glows and a label 'a = 3/2' is drawn from it. Then, the terms 1/2 and 3/2 are highlighted. They are pulled down to form the expression 'd = 1/2 - 3/2'. The calculation animates: ' (1-3)/2 ', which then simplifies to '-2/2', and finally transforms into a bold '-1'. The final result 'd = -1' is displayed prominently. The animation uses clean lines and bright colors to make the fractions and the subtraction process easy to follow for all learners.",
+        "video_prompts": []
+      }
+    },
+    {
+      "section_id": "section_8",
+      "section_type": "example",
+      "title": "Identifying an AP",
+      "renderer": "manim",
+      "narration": {
+        "full_text": "Let's check if these lists are APs. First: 4, 10, 16, 22. The difference between 10 and 4 is 6. Between 16 and 10 is also 6. And 22 and 16 is 6. The difference is common! So yes, it's an AP. The next two terms would be 22 plus 6, which is 28, and 28 plus 6, which is 34. Now, what about -2, 2, -2, 2? The difference between 2 and -2 is 4. But the difference between -2 and 2 is -4. Since 4 and -4 are not equal, this is not an AP.",
+        "segments": [
+          {
+            "segment_id": "seg_1",
+            "text": "Let's check if these lists are APs. First: 4, 10, 16, 22. The difference between 10 and 4 is 6. Between 16 and 10 is also 6. And 22 and 16 is 6. The difference is common! So yes, it's an AP.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_2",
+            "text": "The next two terms would be 22 plus 6, which is 28, and 28 plus 6, which is 34.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_3",
+            "text": "Now, what about -2, 2, -2, 2? The difference between 2 and -2 is 4. But the difference between -2 and 2 is -4. Since 4 and -4 are not equal, this is not an AP.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          }
+        ]
+      },
+      "visual_beats": [
+        {
+          "beat_id": "beat_1",
+          "segment_id": "seg_1",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "i) 4, 10, 16, 22 ...",
+            "end_phrase": "common difference  $d = 6$ ."
+          },
+          "display_text": "i) 4, 10, 16, 22 ...\n\n$$a_2 - a_1 = 10 - 4 = 6; a_3 - a_2 = 16 - 10 = 6; a_3 - a_2 = 22 - 16 = 6$$\n\nSo, the given list of numbers forms an AP with the common difference  $d = 6$ .",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_2",
+          "segment_id": "seg_2",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "The next two terms are:  $22",
+            "end_phrase": "and  $28 + 6 = 34$ ."
+          },
+          "display_text": "The next two terms are:  $22 + 6 = 28$  and  $28 + 6 = 34$ .",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        },
+        {
+          "beat_id": "beat_3",
+          "segment_id": "seg_3",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "iii) -2, 2, -2, 2...",
+            "end_phrase": "does not form an AP."
+          },
+          "display_text": "iii) -2, 2, -2, 2...\n\n$$a_2 - a_1 = 2 - (-2) = 2 + 2 = 4; a_3 - a_2 = -2 - 2 = -4; a_3 - a_2 = 2 - (-2) = 2 + 2 = 4$$\n\nHere,  $a_{k+1} \\neq a_k$  So, the given list of numbers does not form an AP.",
+          "latex_content": null,
+          "image_id": null,
+          "answer_revealed": false
+        }
+      ],
+      "render_spec": {
+        "manim_scene_spec": "Scene animates in two parts. Part 1: The list '4, 10, 16, 22...' appears. Below it, the calculation '10 - 4 = 6' writes itself out. Then, '16 - 10 = 6' appears next to it. Finally, '22 - 16 = 6'. The three '6's glow green, and a large green checkmark appears with the text 'Forms an AP'. Part 2: The screen clears. The list '-2, 2, -2, 2...' appears. Below, '2 - (-2) = 4' is written. Then, '-2 - 2 = -4' appears next to it. The '4' and '-4' flash red, and a large '≠' symbol appears between them. A big red 'X' animates over the list with text 'Does NOT form an AP'.",
+        "video_prompts": []
+      }
+    }
+  ]
+}
+```
