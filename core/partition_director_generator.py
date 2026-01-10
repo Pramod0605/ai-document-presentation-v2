@@ -3,6 +3,7 @@ import logging
 import asyncio
 import json
 import time
+import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional, List, Dict
 from core.unified_content_generator import GeneratorConfig, extract_json_from_response, call_openrouter_llm, normalize_output
@@ -10,6 +11,92 @@ from core.utils.smart_partitioner import SmartPartitioner
 from core.tts_duration import update_durations_simplified
 
 logger = logging.getLogger(__name__)
+
+
+def inject_missing_image_ids(sections: List[Dict], images_list: str, source_content: str) -> int:
+    """
+    Pipeline-level fix: Scan visual_beats for diagram/image types with null image_id
+    and inject the correct image_id based on markdown_pointer matching.
+    
+    Returns: Number of image_ids injected
+    """
+    injected_count = 0
+    
+    # Parse images_list (could be JSON string, comma-separated string, or list)
+    available_images = []
+    if images_list and images_list != "None":
+        if isinstance(images_list, list):
+            available_images = images_list
+        elif isinstance(images_list, dict):
+            available_images = images_list
+        elif isinstance(images_list, str):
+            # Try JSON first
+            try:
+                available_images = json.loads(images_list)
+            except json.JSONDecodeError:
+                # Fallback: Comma-separated string of filenames
+                available_images = [img.strip() for img in images_list.split(',') if img.strip()]
+                logger.info(f"[ImageInjection] Parsed {len(available_images)} images from comma-separated string")
+    
+    if not available_images:
+        logger.info("[ImageInjection] No images available to inject")
+        return 0
+    
+    # Extract image references from source markdown: ![alt](filename.jpg)
+    image_refs_in_source = re.findall(r'!\[([^\]]*)\]\(([^)]+)\)', source_content)
+    # Create map: {filename: alt_text, ...}
+    source_image_map = {ref[1]: ref[0] for ref in image_refs_in_source}
+    
+    logger.info(f"[ImageInjection] Found {len(source_image_map)} image refs in source, {len(available_images)} available images")
+    
+    for section in sections:
+        visual_beats = section.get("visual_beats", [])
+        for beat in visual_beats:
+            visual_type = beat.get("visual_type", "")
+            image_id = beat.get("image_id")
+            
+            # Only process diagram/image types with no image_id
+            if visual_type in ["diagram", "image"] and not image_id:
+                # Try to match based on markdown_pointer
+                pointer = beat.get("markdown_pointer", {})
+                start_phrase = pointer.get("start_phrase", "")
+                
+                # Strategy 1: Check if start_phrase contains an image reference
+                matched_image = None
+                for img_filename in source_image_map.keys():
+                    if img_filename in start_phrase:
+                        matched_image = img_filename
+                        break
+                
+                # Strategy 2: Find image whose alt text matches pointer content
+                if not matched_image:
+                    for img_filename, alt_text in source_image_map.items():
+                        if alt_text and len(alt_text) > 10:  # Skip empty/short alt texts
+                            # Check if alt text keywords appear in source near pointer
+                            if any(word.lower() in start_phrase.lower() for word in alt_text.split()[:3]):
+                                matched_image = img_filename
+                                break
+                
+                # Strategy 3: Check available_images list directly
+                if not matched_image and isinstance(available_images, dict):
+                    for key, info in available_images.items():
+                        filename = info.get("filename", "") if isinstance(info, dict) else str(info)
+                        alt = info.get("alt_text", "") if isinstance(info, dict) else ""
+                        if alt and any(word.lower() in start_phrase.lower() for word in alt.split()[:3]):
+                            matched_image = filename
+                            break
+                
+                if matched_image:
+                    beat["image_id"] = matched_image
+                    injected_count += 1
+                    logger.info(f"[ImageInjection] Injected image_id '{matched_image}' for beat {beat.get('beat_id')}")
+                else:
+                    logger.warning(f"[ImageInjection] Could not find matching image for beat {beat.get('beat_id')} (visual_type={visual_type})")
+    
+    logger.info(f"[ImageInjection] Total injected: {injected_count} image_ids")
+    return injected_count
+
+
 
 class PartitionDirectorGenerator:
     """
@@ -142,6 +229,16 @@ class PartitionDirectorGenerator:
                     if not sec.get("visual_beats"):
                         sec["visual_beats"] = []
                 final_presentation["sections"].extend(chunk_res)
+        
+        # 3.5 IMAGE INJECTION FIX (Pipeline-level)
+        # Scan for visual_type=diagram/image with null image_id and inject correct references
+        content_sections = [s for s in final_presentation["sections"] if s.get("section_type") in ["content", "example"]]
+        if content_sections:
+            injected = inject_missing_image_ids(content_sections, images_list, markdown_content)
+            if injected > 0:
+                msg = f"Phase 4.5: Injected {injected} missing image_ids"
+                logger.info(msg)
+                if update_status_callback: update_status_callback("image_injection", msg)
                 
         # 4. Memory and Recap (Global Footer)
         for key in ["memory", "recap"]:

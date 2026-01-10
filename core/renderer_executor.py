@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import traceback
+import concurrent.futures
 from pathlib import Path
 from render.wan.wan_runner import render_wan_video
 from render.manim.manim_runner import render_manim_video

@@ -41,10 +41,13 @@ if (JOB_ID) {
 function resolveMediaPath(path, type = 'audio') {
   if (!path) return '';
 
-  // STEP 1: Handle Windows absolute paths (C:\...) - extract just filename
-  if (path.includes(':\\') || path.includes('\\')) {
-    // Extract filename from Windows path
-    const parts = path.split(/[\\\/]/);
+  // STEP 1: Handle Windows paths with backslashes (from JSON)
+  // Note: JSON may have single backslash (\) or double backslash (\\)
+  if (path.includes(':\\') || path.includes('\\') || path.includes('\u005C')) {
+    // Normalize all backslashes to forward slashes first
+    path = path.replace(/\\/g, '/').replace(/\u005C/g, '/');
+    // Extract just the last component (filename)
+    const parts = path.split('/');
     path = parts[parts.length - 1]; // Get just the filename
     console.log(`[V2.5] Extracted filename from Windows path: ${path}`);
   }
@@ -1851,12 +1854,31 @@ function enforceTeachShowLogic(slide, segment, segmentIndex, currentTime = 0, se
 
   const purpose = (segment.purpose || '').toLowerCase();
 
+  // V2.5 Player-Based Teach→Show Alternation
+  // Since LLM may not reliably generate alternating display_directives,
+  // the player uses segment index as smart fallback:
+  // - Even segments (0, 2, 4...): TEACH phase (text visible, video hidden)
+  // - Odd segments (1, 3, 5...): SHOW phase (video visible, text hidden)
+
+  // Priority 1: Explicit display_directives.visual_layer from LLM
+  const explicitVisualLayer = segment.display_directives?.visual_layer;
+
+  // Priority 2: Player-based alternation using segment index
+  // Only applies when renderer is manim/video (has visual content)
+  const hasVideo = slide.renderer === 'manim' || slide.renderer === 'video';
+  const playerBasedShowPhase = hasVideo && (segmentIndex % 2 === 1); // Odd segments = SHOW
+
   // Rule 1: SHOW Phase (Video Mode)
-  // Trigger: Purpose is 'show' OR visual_type is 'video' OR has video path + strict mode
-  const isShowPhase = purpose === 'show' ||
+  // Trigger hierarchy:
+  // 1. Explicit visual_layer === 'show' from LLM
+  // 2. Purpose is 'show' 
+  // 3. Player-based: Odd segment index when video content exists
+  const isShowPhase =
+    explicitVisualLayer === 'show' ||
+    purpose === 'show' ||
     segment.visual_type === 'video' ||
     segment.visual_type === 'manim' ||
-    (segment.display_directives?.visual_layer === 'show');
+    playerBasedShowPhase;
 
   if (isShowPhase) {
     console.log(`[V2.5] Segment ${segmentIndex}: SHOW Phase (Video Mode)`);
