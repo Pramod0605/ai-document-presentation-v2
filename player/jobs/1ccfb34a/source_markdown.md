@@ -1,1 +1,0 @@
-This is a test presentation about the solar system.
