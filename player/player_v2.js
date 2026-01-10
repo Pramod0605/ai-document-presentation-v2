@@ -356,7 +356,7 @@ function handleTimeUpdateMain() {
 }
 
 // V2.5: Progressive reveal for Summary section bullets
-// Reveals bullets one-by-one based on current playback time
+// Reveals bullets one-by-one based on visual_beats.start_time OR narration segment timing
 function updateSummaryProgressiveReveal() {
   const slide = slides[currentSlideIndex];
   if (!slide || slide.section_type !== 'summary') return;
@@ -365,20 +365,34 @@ function updateSummaryProgressiveReveal() {
   if (bulletCount === 0) return;
 
   const currentTime = getTime();
-  const totalDuration = getDuration() || 30;
 
-  // Calculate which bullet should be visible based on time progress
-  // Each bullet gets equal time: totalDuration / bulletCount
+  // Strategy 1: Use visual_beats start_time if available (V2.5 Director Mode)
+  const visualBeats = slide.visual_beats || [];
+  if (visualBeats.length > 0) {
+    for (let i = 0; i < Math.min(visualBeats.length, bulletCount); i++) {
+      const beatStartTime = visualBeats[i].start_time || 0;
+      const bullet = document.getElementById(`summary-bullet-${i}`);
+
+      if (bullet && currentTime >= beatStartTime && bullet.classList.contains('reveal-hidden')) {
+        bullet.classList.remove('reveal-hidden');
+        bullet.classList.add('reveal-visible');
+        console.log(`[V2.5] Summary: Revealed bullet ${i + 1} at ${currentTime.toFixed(1)}s (beat start: ${beatStartTime}s)`);
+      }
+    }
+    return;
+  }
+
+  // Strategy 2: Fallback to equal time distribution
+  const totalDuration = getDuration() || 30;
   const timePerBullet = totalDuration / bulletCount;
   const bulletsToShow = Math.floor(currentTime / timePerBullet) + 1;
 
-  // Reveal bullets up to current time
   for (let i = 0; i < Math.min(bulletsToShow, bulletCount); i++) {
     const bullet = document.getElementById(`summary-bullet-${i}`);
     if (bullet && bullet.classList.contains('reveal-hidden')) {
       bullet.classList.remove('reveal-hidden');
       bullet.classList.add('reveal-visible');
-      console.log(`[V2.5] Summary: Revealed bullet ${i + 1}/${bulletCount}`);
+      console.log(`[V2.5] Summary: Revealed bullet ${i + 1}/${bulletCount} (fallback mode)`);
     }
   }
 }
@@ -1775,6 +1789,7 @@ function updateActiveSegment(currentTime) {
   const segmentChanged = activeIndex !== currentSegmentIndex;
   const needsInitialApply = !displayDirectivesApplied && segments.length > 0;
 
+  // === SEGMENT CHANGE LOGIC (One-time per segment) ===
   if (segmentChanged || needsInitialApply) {
     const prevSeg = document.getElementById(`seg-${currentSegmentIndex}`);
     if (prevSeg) prevSeg.classList.remove('segment-active');
@@ -1783,23 +1798,32 @@ function updateActiveSegment(currentTime) {
     if (newSeg) newSeg.classList.add('segment-active');
 
     currentSegmentIndex = activeIndex;
-
-    // Calculate progress within the current segment for karaoke subtitles
-    const duration = segments[activeIndex]?.duration_seconds || 5;
-    const progress = Math.min(1, Math.max(0, (currentTime - cumulative) / duration));
-
-    // V2.5: Enforce strict "Teach -> Show" toggling logic
-    enforceTeachShowLogic(slide, segments[activeIndex], activeIndex);
-
-    // Update subtitles
-    const currentSeg = segments[activeIndex];
-    if (currentSeg && currentSeg.text) {
-      updateSubtitleText(currentSeg.text, progress);
-    } else {
-      updateSubtitleText("", 0);
-    }
-
     displayDirectivesApplied = true;
+
+    console.log(`[V2.5] Segment changed to ${activeIndex}`);
+  }
+
+  // === CONTINUOUS LOGIC (Every timeupdate) ===
+  // These MUST run on every tick, not just on segment change!
+
+  // 1. Calculate segment start time (cumulative of previous segments)
+  const segmentStart = segments.slice(0, activeIndex).reduce(
+    (sum, seg) => sum + (seg.duration_seconds || 5), 0
+  );
+
+  // 2. Calculate progress within the current segment for karaoke subtitles
+  const duration = segments[activeIndex]?.duration_seconds || 5;
+  const progress = Math.min(1, Math.max(0, (currentTime - segmentStart) / duration));
+
+  // 3. V2.5: Enforce strict "Teach -> Show" toggling logic (continuous check)
+  enforceTeachShowLogic(slide, segments[activeIndex], activeIndex, currentTime, segmentStart);
+
+  // 4. Update subtitles with karaoke highlighting (runs every tick!)
+  const currentSeg = segments[activeIndex];
+  if (currentSeg && currentSeg.text) {
+    updateSubtitleText(currentSeg.text, progress);
+  } else {
+    updateSubtitleText("", 0);
   }
 }
 
@@ -1811,8 +1835,14 @@ function updateActiveSegment(currentTime) {
  * 2. Content/Example:
  *    - TEACH Phase (Segment 1): Display TEXT (Pointer/JSON). Hide Video. Avatar Optional.
  *    - SHOW Phase (Segment 2): Display VIDEO (Full Screen). Hide Text. Avatar Optional.
+ * 
+ * @param {Object} slide - Current slide data
+ * @param {Object} segment - Current segment data
+ * @param {number} segmentIndex - Index of current segment
+ * @param {number} currentTime - Current playback time (for continuous checks)
+ * @param {number} segmentStart - Start time of current segment (for progress calculations)
  */
-function enforceTeachShowLogic(slide, segment, segmentIndex) {
+function enforceTeachShowLogic(slide, segment, segmentIndex, currentTime = 0, segmentStart = 0) {
   if (!slide || !segment) return;
   const type = slide.section_type || 'content';
 
