@@ -2317,7 +2317,7 @@ function setupContentSplitting(slide) {
   console.log('[V2] Content splitting: Overflow detected, splitting content');
 
   // Split content into pages based on what fits
-  const totalDuration = getTotalDuration(slide);
+  // const totalDuration = getTotalDuration(slide); // REMOVED (Defined above)
   const pageBreakpoints = [];
   let currentHeight = 0;
   const maxHeight = contentBox.clientHeight * 0.9; // 90% of container
