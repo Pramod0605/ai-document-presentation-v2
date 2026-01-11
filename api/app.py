@@ -73,6 +73,10 @@ def setup_job_folder(job_output_dir: Path):
         if src.exists() and not dst.exists():
             shutil.copy(str(src), str(dst))
 
+@app.route("/sanity_check.html")
+def serve_sanity_check():
+    return send_from_directory(PLAYER_DIR, "sanity_check.html")
+
 @app.route("/")
 def index():
     return redirect("/dashboard")

@@ -89,7 +89,16 @@
         // Auto-detect job ID from URL or default to known bad job
         const urlParams = new URLSearchParams(window.location.search);
         const JOB_ID = urlParams.get('job') || '0f1eaff8';
-        const BASE_PATH = `./player/jobs/${JOB_ID}/`;
+
+        let BASE_PATH;
+        if (window.location.protocol.startsWith('http')) {
+            // Server mode: Use API structure
+            BASE_PATH = `/jobs/${JOB_ID}/`;
+        } else {
+            // Local file mode: Use relative file structure
+            BASE_PATH = `./player/jobs/${JOB_ID}/`;
+        }
+
         const PRESENTATION_URL = `${BASE_PATH}presentation.json`;
 
         async function checkUrl(url, type = 'misc') {
