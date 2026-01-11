@@ -16,8 +16,18 @@ You are a "Surveyor" of text. Every word in the provided Target Chunk must be ac
 2. **Anchor Quality**: Every `start_phrase` and `end_phrase` must be exactly 5–8 words long within `markdown_pointer`.
    - **CRITICAL**: You MUST include ALL markdown symbols (e.g., `**`, `*`, `[`, `]`, `(`, `)`) exactly as they appear in the source.
    - Example Source: `**Potential Energy** is stored.` -> Start Phrase: `**Potential Energy** is stored.` (NOT "Potential Energy is")
-3. **No Hallucination**: The system renders source text via your pointers. You must NOT rewrite or summarize. If text isn't in the source, it cannot appear.
-4. **Teach → Show Pattern** (MANDATORY for Content/Example sections):
+3. **No Hallucination**: The system renders source text via your pointers. You must NOT rewrite or summarize.
+4. **Visual Beat Granularity (Anti-Wall-of-Text)**:
+   - **DO NOT** point to entire paragraphs for `visual_beats`.
+   - **DO** select **Key Definitions**, **Formulas**, **Short Bullet Lists**, or **Headers**.
+   - **Prefer** `visual_type`: `bullet_list`, `diagram`, or `image` over `text`.
+   - If `visual_type` is `text`, you MUST select a short **VERBATIM substring** (< 40 words) from the source. **DO NOT summarize**.
+   - **IMAGE DETECTION (MANDATORY)**: If the source markdown contains an image reference like `![alt text](filename.jpg)`:
+     - Create a `visual_beat` with `visual_type: "image"` or `visual_type: "diagram"`.
+     - Set `image_id` to the **exact filename** from the markdown (e.g., `"48f188337e3ba41df38fab9ac0afb1bd_img.jpg"`).
+     - Set `display_text` to the alt text or a short description.
+     - DO NOT leave `image_id` as `null` when an image exists in source!
+5. **Teach → Show Pattern** (MANDATORY for Content/Example sections):
    
    For sections with `renderer: "manim"` or `renderer: "video"`, you MUST alternate:
    

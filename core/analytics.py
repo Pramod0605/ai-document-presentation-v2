@@ -201,30 +201,30 @@ class AnalyticsTracker:
             
             # Content
             c = data.get("content", {})
-            self.analytics.content = ContentMetrics(**{k: v for k, v in c.items() if hasattr(ContentMetrics, k)})
+            self.analytics.content = ContentMetrics(**{k: v for k, v in c.items() if k in ContentMetrics.__annotations__})
             
             # TTS
             t = data.get("tts", {})
-            self.analytics.tts = TTSMetrics(**{k: v for k, v in t.items() if hasattr(TTSMetrics, k)})
+            self.analytics.tts = TTSMetrics(**{k: v for k, v in t.items() if k in TTSMetrics.__annotations__})
             
             # Renderer
             r = data.get("renderer", {})
-            self.analytics.renderer = RendererMetrics(**{k: v for k, v in r.items() if hasattr(RendererMetrics, k)})
+            self.analytics.renderer = RendererMetrics(**{k: v for k, v in r.items() if k in RendererMetrics.__annotations__})
             
             # Avatar
             a = data.get("avatar", {})
-            self.analytics.avatar = AvatarMetrics(**{k: v for k, v in a.items() if hasattr(AvatarMetrics, k)})
+            self.analytics.avatar = AvatarMetrics(**{k: v for k, v in a.items() if k in AvatarMetrics.__annotations__})
             
             # Phases
             self.analytics.phases = []
             for p in data.get("phases", []):
-                self.analytics.phases.append(PhaseMetrics(**{k: v for k, v in p.items() if hasattr(PhaseMetrics, k)}))
+                self.analytics.phases.append(PhaseMetrics(**{k: v for k, v in p.items() if k in PhaseMetrics.__annotations__}))
 
             # Progress Details (Enhanced)
             pd = data.get("progress_details", {})
             self.analytics.progress_details = {}
             for k, v in pd.items():
-                self.analytics.progress_details[k] = ProgressMetrics(**{pk: pv for pk, pv in v.items() if hasattr(ProgressMetrics, pk)})
+                self.analytics.progress_details[k] = ProgressMetrics(**{pk: pv for pk, pv in v.items() if pk in ProgressMetrics.__annotations__})
 
             # Timings
             self.analytics.timings = data.get("timings", {})
@@ -498,13 +498,14 @@ class AnalyticsTracker:
             issues.append("Missing recap section")
         
         # Audio generation (25 points)
-        if audio_rate < 100:
-            audio_penalty = int((100 - audio_rate) * 0.25)
-            score -= audio_penalty
-            if audio_rate == 0:
-                issues.append("No audio files generated")
-            else:
-                issues.append(f"Audio generation incomplete: {audio_generated}/{audio_expected}")
+        if audio_expected > 0:
+            if audio_rate < 100:
+                audio_penalty = int((100 - audio_rate) * 0.25)
+                score -= audio_penalty
+                if audio_rate == 0:
+                    issues.append("No audio files generated")
+                else:
+                    issues.append(f"Audio generation incomplete: {audio_generated}/{audio_expected}")
         
         # Video generation (25 points)
         if video_expected > 0 and video_rate < 100:

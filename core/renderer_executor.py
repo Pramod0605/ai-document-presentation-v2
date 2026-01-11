@@ -166,8 +166,11 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
                     topic["explanation_plan"]["video_prompts"] = video_prompts
                     print(f"  [OK] Using v1.2 video_prompts: {len(video_prompts)} beat prompts")
                     for i, p in enumerate(video_prompts):
-                        # DEFENSIVE FIX: Check multiple keys for prompt text
-                        prompt_text = p.get("prompt") or p.get("wan_prompt") or p.get("text") or p.get("video_prompt") or ""
+                        # DEFENSIVE FIX: Check multiple keys for prompt text, handle strings mixed in list
+                        if isinstance(p, str):
+                            prompt_text = p
+                        else:
+                            prompt_text = p.get("prompt") or p.get("wan_prompt") or p.get("text") or p.get("video_prompt") or ""
                         log_render_prompt(topic_id, i, "video", prompt_text)
                     
                     quality_summary = log_prompt_quality_summary(video_prompts, topic_id)
@@ -523,11 +526,17 @@ def _update_analytics_safely(analytics_path: Path, section_id: str, result: dict
         with open(analytics_path, "r", encoding="utf-8") as f:
             data = json.load(f)
             
-        # Update renderer metrics
-        if "renderer_metrics" not in data:
-            data["renderer_metrics"] = {"manim_videos": 0, "wan_videos": 0, "failed_renders": 0}
+        # Update renderer metrics (Standard Schema)
+        if "renderer" not in data:
+            data["renderer"] = {
+                "manim_videos": 0, 
+                "wan_videos": 0, 
+                "static_slides": 0, 
+                "failed_renders": 0,
+                "section_renders": []
+            }
             
-        metrics = data["renderer_metrics"]
+        metrics = data["renderer"]
         
         if result["status"] == "success":
              # Assuming WAN since this is the WAN BG job
@@ -535,22 +544,23 @@ def _update_analytics_safely(analytics_path: Path, section_id: str, result: dict
         else:
              metrics["failed_renders"] = metrics.get("failed_renders", 0) + 1
              
-        # Add detailed entry
-        if "detailed_renders" not in data:
-            data["detailed_renders"] = []
+        # Add detailed entry to 'section_renders' list
+        if "section_renders" not in metrics:
+            metrics["section_renders"] = []
             
         detail = {
             "section_id": section_id,
-            "status": result["status"],
-            "timestamp": datetime.now().isoformat(),
+            "section_type": result.get("section_type", "content"), # Capture type if available
             "renderer": "wan", # We know this is WAN context
-            "duration": result.get("duration_seconds", 0)
+            "duration_seconds": round(result.get("duration_seconds", 0), 2),
+            "status": result["status"],
+            "timestamp": datetime.utcnow().isoformat()
         }
         
         if result.get("error"):
-            detail["error"] = result["error"]
+            detail["metadata"] = {"error": result["error"]}
             
-        data["detailed_renders"].append(detail)
+        metrics["section_renders"].append(detail)
         
         with open(analytics_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4)

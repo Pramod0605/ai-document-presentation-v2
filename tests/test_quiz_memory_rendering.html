@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz &amp; Memory Rendering Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #64ffda;
+            margin-bottom: 15px;
+        }
+
+        /* Quiz Styles */
+        .quiz-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .quiz-card.quiz-hidden {
+            opacity: 0.3;
+        }
+
+        .quiz-question {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .quiz-choices {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .quiz-choice {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-choice.correct {
+            background: linear-gradient(90deg, #00c853, #00e676);
+            color: #000;
+        }
+
+        .quiz-choice.incorrect {
+            background: rgba(255, 0, 0, 0.3);
+            opacity: 0.6;
+        }
+
+        .choice-letter {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Memory Flashcard Styles */
+        .flashcard-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .flashcard {
+            width: 200px;
+            height: 150px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front,
+        .flashcard-back {
+            position: absolute;
+            width: calc(100% - 30px);
+            height: calc(100% - 30px);
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            border-radius: 12px;
+        }
+
+        /* Buttons */
+        .test-btn {
+            padding: 10px 20px;
+            background: #64ffda;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+
+        .test-btn:hover {
+            opacity: 0.9;
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+        }
+
+        .pass {
+            color: #00e676;
+        }
+
+        .fail {
+            color: #ff5252;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎓 Quiz &amp; Memory Rendering Test</h1>
+
+    <!-- Test 1: Quiz Rendering -->
+    <div class="test-section">
+        <h2>Test 1: Quiz Renderer</h2>
+        <p>Testing the Quiz 3-step dance: Introduce → Pause → Reveal</p>
+        <div id="quiz-content"></div>
+        <button class="test-btn" onclick="testQuizRender()">1. Render Quiz</button>
+        <button class="test-btn" onclick="testQuizReveal()">2. Reveal Answer</button>
+        <div id="quiz-status" class="status"></div>
+    </div>
+
+    <!-- Test 2: Memory Flashcards -->
+    <div class="test-section">
+        <h2>Test 2: Memory Flashcard Renderer</h2>
+        <p>Testing flashcard display with flip animation</p>
+        <div id="memory-content"></div>
+        <button class="test-btn" onclick="testMemoryRender()">1. Render Flashcards</button>
+        <button class="test-btn" onclick="testFlipCard(0)">2. Flip Card 1</button>
+        <div id="memory-status" class="status"></div>
+    </div>
+
+    <script>
+        // Mock slide data
+        const mockQuizSlide = {
+            section_type: 'quiz',
+            quiz_questions: [
+                {
+                    question: "What is the powerhouse of the cell?",
+                    options: ["Nucleus", "Mitochondria", "Ribosome", "Golgi Body"],
+                    correct_index: 1
+                },
+                {
+                    question: "Which planet is known as the Red Planet?",
+                    options: ["Venus", "Mars", "Jupiter", "Saturn"],
+                    correct_index: 1
+                }
+            ],
+            narration: {
+                segments: [
+                    { segment_id: "seg_1", purpose: "introduce", answer_revealed: false },
+                    { segment_id: "seg_2", purpose: "emphasize", answer_revealed: false },
+                    { segment_id: "seg_3", purpose: "explain", answer_revealed: true }
+                ]
+            }
+        };
+
+        const mockMemorySlide = {
+            section_type: 'memory',
+            flashcards: [
+                { front: "Photosynthesis", back: "Plants use sunlight to make food" },
+                { front: "Mitosis", back: "Cell division for growth" },
+                { front: "Osmosis", back: "Water moves from low to high concentration" }
+            ]
+        };
+
+        // Test Quiz Render
+        function testQuizRender() {
+            const container = document.getElementById('quiz-content');
+            container.innerHTML = '';
+
+            mockQuizSlide.quiz_questions.forEach((q, qIndex) => {
+                const quizCard = document.createElement('div');
+                quizCard.className = 'quiz-card quiz-hidden';
+                quizCard.id = `quiz-${qIndex}`;
+
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'quiz-question';
+                questionDiv.textContent = `Q${qIndex + 1}: ${q.question}`;
+                quizCard.appendChild(questionDiv);
+
+                const choicesDiv = document.createElement('div');
+                choicesDiv.className = 'quiz-choices';
+
+                q.options.forEach((opt, optIndex) => {
+                    const choiceDiv = document.createElement('div');
+                    choiceDiv.className = 'quiz-choice';
+                    choiceDiv.innerHTML = `
+                        <div class="choice-letter">${String.fromCharCode(65 + optIndex)}</div>
+                        <div class="choice-text">${opt}</div>
+                    `;
+                    choicesDiv.appendChild(choiceDiv);
+                });
+
+                quizCard.appendChild(choicesDiv);
+                container.appendChild(quizCard);
+            });
+
+            // Simulate Step 1: Introduce (show first question)
+            document.getElementById('quiz-0').classList.remove('quiz-hidden');
+
+            document.getElementById('quiz-status').innerHTML = '<span class="pass">✅ Quiz rendered. Question 1 is visible (Introduce step)</span>';
+        }
+
+        // Test Answer Reveal
+        function testQuizReveal() {
+            const quizCard = document.getElementById('quiz-0');
+            if (!quizCard) {
+                document.getElementById('quiz-status').innerHTML = '<span class="fail">❌ Render quiz first!</span>';
+                return;
+            }
+
+            const correctIndex = mockQuizSlide.quiz_questions[0].correct_index;
+            const choices = quizCard.querySelectorAll('.quiz-choice');
+
+            choices.forEach((choice, idx) => {
+                if (idx === correctIndex) {
+                    choice.classList.add('correct');
+                } else {
+                    choice.classList.add('incorrect');
+                }
+            });
+
+            document.getElementById('quiz-status').innerHTML = '<span class="pass">✅ Answer revealed! Correct: B (Mitochondria)</span>';
+        }
+
+        // Test Memory Render
+        function testMemoryRender() {
+            const container = document.getElementById('memory-content');
+            container.innerHTML = '';
+
+            const flashcardContainer = document.createElement('div');
+            flashcardContainer.className = 'flashcard-container';
+
+            mockMemorySlide.flashcards.forEach((card, index) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'flashcard';
+                cardDiv.id = `flashcard-${index}`;
+                cardDiv.onclick = () => testFlipCard(index);
+
+                const front = document.createElement('div');
+                front.className = 'flashcard-front';
+                front.innerHTML = `<div class="flashcard-title">${card.front}</div>`;
+
+                const back = document.createElement('div');
+                back.className = 'flashcard-back';
+                back.innerHTML = `<div class="flashcard-mnemonic">${card.back}</div>`;
+
+                cardDiv.appendChild(front);
+                cardDiv.appendChild(back);
+                flashcardContainer.appendChild(cardDiv);
+            });
+
+            container.appendChild(flashcardContainer);
+
+            document.getElementById('memory-status').innerHTML = '<span class="pass">✅ Flashcards rendered. Click a card to flip!</span>';
+        }
+
+        // Test Flip Card
+        function testFlipCard(index) {
+            const card = document.getElementById(`flashcard-${index}`);
+            if (!card) {
+                document.getElementById('memory-status').innerHTML = '<span class="fail">❌ Render flashcards first!</span>';
+                return;
+            }
+
+            card.classList.toggle('flipped');
+            const isFlipped = card.classList.contains('flipped');
+            document.getElementById('memory-status').innerHTML = `<span class="pass">✅ Card ${index + 1} ${isFlipped ? 'flipped to back' : 'flipped to front'}</span>`;
+        }
+    </script>
+</body>
+
+</html>

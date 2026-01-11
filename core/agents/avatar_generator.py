@@ -185,18 +185,10 @@ class AvatarGenerator:
                     updated = False
                     for section in pres_data.get("sections", []):
                         if section.get("section_id") == section_id:
-                            # Update video path (relative to output dir)
-                            # Video is in output_dir/video_filename.mp4 -> we want just filename or relative path
-                            if os.path.isabs(video_path):
-                                try:
-                                    rel_path = os.path.relpath(video_path, output_dir)
-                                except ValueError:
-                                    rel_path = os.path.basename(video_path)
-                            else:
-                                rel_path = os.path.basename(video_path)
-
-                            # Player expects 'avatar_video' or 'video'
-                            section["avatar_video"] = rel_path
+                            # Player expects 'avatar_video' relative to job root (e.g. avatars/filename.mp4)
+                            # We force this structure strictly
+                            avatar_filename = os.path.basename(video_path)
+                            section["avatar_video"] = f"avatars/{avatar_filename}"
                             section["avatar_status"] = "completed"
                             updated = True
                             break

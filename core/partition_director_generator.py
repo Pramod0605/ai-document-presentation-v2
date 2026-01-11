@@ -86,6 +86,36 @@ def inject_missing_image_ids(sections: List[Dict], images_list: str, source_cont
                             matched_image = filename
                             break
                 
+                # Strategy 4: Proximity Check (Look for images near the pointer in source content)
+                if not matched_image and source_content:
+                    # Find start_phrase location
+                    idx = source_content.find(start_phrase)
+                    if idx != -1:
+                        # Define scan window (e.g., +/- 500 chars)
+                        window_start = max(0, idx - 500)
+                        window_end = min(len(source_content), idx + 1000)
+                        window_text = source_content[window_start:window_end]
+                        
+                        # Find images in this window
+                        nearby_images = re.findall(r'!\[([^\]]*)\]\(([^)]+)\)', window_text)
+                        if nearby_images:
+                            # Use the first found image in proximity
+                            matched_image = nearby_images[0][1]
+                            logger.info(f"[ImageInjection] Strategy 4 (Proximity) found '{matched_image}' near pointer")
+
+                # Strategy 5: Single Image Fallback (If only 1 image provided, use it!)
+                if not matched_image:
+                     # Check if available_images has exactly 1 entry
+                     if isinstance(available_images, list) and len(available_images) == 1:
+                         # Check if this image looks like a diagram or relevant asset (simple heuristic)
+                         matched_image = available_images[0]
+                         logger.info(f"[ImageInjection] Strategy 5 (Fallback) used single available image '{matched_image}'")
+                     elif isinstance(available_images, dict) and len(available_images) == 1:
+                         key = list(available_images.keys())[0]
+                         val = available_images[key]
+                         matched_image = val.get("filename", str(val)) if isinstance(val, dict) else str(val)
+                         logger.info(f"[ImageInjection] Strategy 5 (Fallback) used single available image '{matched_image}'")
+
                 if matched_image:
                     beat["image_id"] = matched_image
                     injected_count += 1

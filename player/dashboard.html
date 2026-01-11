@@ -1321,7 +1321,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            ${(renderer.details || []).map(r => {
+                                            ${(renderer.section_renders || []).map(r => {
                                 const statusColor = r.status === 'success' ? '#4caf50' : r.status === 'skipped' ? '#aaa' : '#ff5252';
 
                                 let actionBtn = '-';
@@ -1333,7 +1333,7 @@
 
                                     const phaseToRetry = r.renderer === 'manim' ? 'manim_codegen' : 'video_render';
                                     actionBtn = `<button class="btn" style="padding: 2px 8px; font-size: 0.7rem; background: #9c27b0; color: #fff;" 
-                                                        onclick="openRetryForSection('${job_id}', '${phaseToRetry}', '${r.section_id}')">Retry</button>`;
+                                                        onclick="openRetryForSection('${jobId}', '${phaseToRetry}', '${r.section_id}')">Retry</button>`;
                                 }
 
                                 return `
@@ -1345,7 +1345,36 @@
                                                     <td style="padding: 8px; text-align: center;">${actionBtn}</td>
                                                 </tr>
                                             `}).join('')}
-                                            ${(!renderer.details || renderer.details.length === 0) ? '<tr><td colspan="5" style="padding: 15px; text-align: center; color: #666;">No renderer details recorded</td></tr>' : ''}
+                                            ${(!renderer.section_renders || renderer.section_renders.length === 0) ? '<tr><td colspan="5" style="padding: 15px; text-align: center; color: #666;">No renderer details recorded</td></tr>' : ''}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 20px;">
+                                <h4 style="color: #00d4ff; margin-bottom: 10px;">Avatar Status</h4>
+                                <div style="max-height: 200px; overflow-y: auto;">
+                                    <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse;">
+                                        <thead>
+                                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.2);">
+                                                <th style="text-align: left; padding: 8px; color: #888;">Section</th>
+                                                <th style="text-align: right; padding: 8px; color: #888;">Duration</th>
+                                                <th style="text-align: center; padding: 8px; color: #888;">Status</th>
+                                                <th style="text-align: right; padding: 8px; color: #888;">Timestamp</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${((a.avatar && a.avatar.section_details) || []).map(av => {
+                                    const avStatusColor = av.status === 'completed' ? '#4caf50' : av.status === 'processing' ? '#ff9800' : '#ff5252';
+                                    return `
+                                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                                    <td style="padding: 8px;">Section ${av.section_id}</td>
+                                                    <td style="padding: 8px; text-align: right;">${av.duration_seconds ? av.duration_seconds.toFixed(1) + 's' : '-'}</td>
+                                                    <td style="padding: 8px; text-align: center; color: ${avStatusColor};">${(av.status || 'unknown').toUpperCase()}</td>
+                                                    <td style="padding: 8px; text-align: right; color: #888; font-size: 0.75rem;">${av.timestamp || '-'}</td>
+                                                </tr>
+                                            `}).join('')}
+                                            ${(!a.avatar || !a.avatar.section_details || a.avatar.section_details.length === 0) ? '<tr><td colspan="4" style="padding: 15px; text-align: center; color: #666;">No avatar details recorded</td></tr>' : ''}
                                         </tbody>
                                     </table>
                                 </div>

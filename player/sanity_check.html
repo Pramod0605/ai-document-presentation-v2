@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Player V2.5 Sanity Checker</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 20px;
+        }
+
+        .pass {
+            color: #a6e3a1;
+            font-weight: bold;
+        }
+
+        .fail {
+            color: #f38ba8;
+            font-weight: bold;
+        }
+
+        .warn {
+            color: #f9e2af;
+            font-weight: bold;
+        }
+
+        .manim {
+            color: #89dceb;
+        }
+
+        .wan {
+            color: #cba6f7;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            border: 1px solid #45475a;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #313244;
+        }
+
+        h1 {
+            border-bottom: 2px solid #585b70;
+            padding-bottom: 10px;
+        }
+
+        .sub-item {
+            display: block;
+            margin-bottom: 4px;
+            border-bottom: 1px dashed #45475a;
+            padding-bottom: 2px;
+        }
+
+        a {
+            color: #89b4fa;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Player V2.5 Sanity Checker (Deep Check)</h1>
+    <div id="status">Loading...</div>
+    <table id="report">
+        <thead>
+            <tr>
+                <th>Sec ID</th>
+                <th>Type</th>
+                <th>Renderer</th>
+                <th>Avatar</th>
+                <th>Video</th>
+                <th>Images (Visual Beats)</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const JOB_ID = urlParams.get('job') || urlParams.get('job_id') || '0f1eaff8';
+        const BASE_PATH = `/player/jobs/${JOB_ID}/`;
+        const PRESENTATION_URL = `${BASE_PATH}presentation.json?t=${Date.now()}`;
+
+        async function checkUrl(url, type = 'misc') {
+            if (!url) return { status: 'N/A', valid: true };
+            try {
+                let fetchUrl = url;
+                if (fetchUrl.includes('\\')) fetchUrl = fetchUrl.replace(/\\/g, '/');
+                if (fetchUrl.includes(':')) {
+                    const parts = fetchUrl.split('/');
+                    fetchUrl = parts[parts.length - 1];
+                }
+                if (fetchUrl.startsWith('http')) {
+                } else {
+                    if (type === 'avatar' && !fetchUrl.includes('/')) fetchUrl = BASE_PATH + 'avatars/' + fetchUrl;
+                    else if (type === 'video' && !fetchUrl.includes('/')) fetchUrl = BASE_PATH + 'videos/' + fetchUrl;
+                    else if (type === 'image' && !fetchUrl.includes('/')) fetchUrl = BASE_PATH + 'images/' + fetchUrl;
+                    else if (!fetchUrl.startsWith('./') && !fetchUrl.startsWith('../') && !fetchUrl.startsWith('/')) fetchUrl = BASE_PATH + fetchUrl;
+                }
+
+                const response = await fetch(fetchUrl, { method: 'HEAD' });
+                return {
+                    status: response.status,
+                    valid: response.ok,
+                    url: fetchUrl,
+                    original: url
+                };
+            } catch (e) {
+                return { status: 'ERR', valid: false, error: e.message, original: url };
+            }
+        }
+
+        async function checkVideoIntegrity(url) {
+            return new Promise((resolve) => {
+                const v = document.createElement('video');
+                v.onloadedmetadata = () => resolve(true);
+                v.onerror = () => resolve(false);
+                v.src = url;
+            });
+        }
+
+        async function runCheck() {
+            const statusDiv = document.getElementById('status');
+            const tbody = document.querySelector('#report tbody');
+            statusDiv.innerHTML = `Checking Job: <strong>${JOB_ID}</strong><br>Fetching ${PRESENTATION_URL}...`;
+
+            try {
+                const res = await fetch(PRESENTATION_URL);
+                if (!res.ok) throw new Error(`Failed to load presentation.json: ${res.status}`);
+                const data = await res.json();
+                statusDiv.innerHTML += `<br>Found ${data.sections.length} sections. validating media integrity...`;
+
+                for (const section of data.sections) {
+                    const row = document.createElement('tr');
+
+                    const renderer = section.renderer || 'default';
+                    let rendererClass = '';
+                    if (renderer === 'manim') rendererClass = 'manim';
+                    if (renderer === 'wan' || renderer === 'video_generation') rendererClass = 'wan';
+
+                    // AVATAR
+                    const avatarPath = section.avatar_video || section.avatar_video_path;
+                    let avatarHtml = 'None';
+                    if (avatarPath) {
+                        const obj = await checkUrl(avatarPath, 'avatar');
+                        let statusText = obj.status;
+                        let statusClass = obj.valid ? 'pass' : 'fail';
+
+                        // Deep Check
+                        if (obj.valid) {
+                            const isGood = await checkVideoIntegrity(obj.url);
+                            if (!isGood) {
+                                statusText = 'CORRUPT';
+                                statusClass = 'fail';
+                            }
+                        }
+                        avatarHtml = `<a href="${obj.url}" target="_blank">${avatarPath}</a><br><span class="${statusClass}">[${statusText}]</span>`;
+                    }
+
+                    // VIDEO
+                    const videoPath = section.video_path || (section.beat_videos ? section.beat_videos[0] : null);
+                    let videoHtml = 'None';
+                    if (videoPath) {
+                        const obj = await checkUrl(videoPath, 'video');
+                        let statusText = obj.status;
+                        let statusClass = obj.valid ? 'pass' : 'fail';
+
+                        if (obj.valid) {
+                            const isGood = await checkVideoIntegrity(obj.url);
+                            if (!isGood) {
+                                statusText = 'CORRUPT';
+                                statusClass = 'fail';
+                            }
+                        }
+                        videoHtml = `<a href="${obj.url}" target="_blank">${videoPath}</a><br><span class="${statusClass}">[${statusText}]</span>`;
+                    } else if (renderer === 'manim') {
+                        videoHtml = '<span class="fail">MISSING MANIM</span>';
+                    }
+
+                    // IMAGES
+                    let imageHtml = '';
+                    if (section.visual_beats) {
+                        for (const beat of section.visual_beats) {
+                            if (beat.visual_type === 'image' || beat.visual_type === 'diagram') {
+                                const imgPath = beat.image_id || beat.image_path;
+                                if (imgPath) {
+                                    const imgCheck = await checkUrl(imgPath, 'image');
+                                    imageHtml += `
+                                        <div class="sub-item">
+                                            Beat ${beat.beat_id}: <a href="${imgCheck.url}" target="_blank">${imgPath}</a>
+                                            <span class="${imgCheck.valid ? 'pass' : 'fail'}">[${imgCheck.status}]</span>
+                                        </div>`;
+                                }
+                            }
+                        }
+                    }
+                    if (!imageHtml) imageHtml = '<span style="color:#666">No images</span>';
+
+                    row.innerHTML = `
+                        <td>${section.section_id}</td>
+                        <td>${section.section_type}</td>
+                        <td class="${rendererClass}">${renderer.toUpperCase()}</td>
+                        <td>${avatarHtml}</td>
+                        <td>${videoHtml}</td>
+                        <td>${imageHtml}</td>
+                    `;
+                    tbody.appendChild(row);
+                }
+                statusDiv.innerHTML += "<br><span class='pass'>Check Complete!</span>";
+            } catch (e) {
+                statusDiv.innerHTML += `<br><span class="fail">CRITICAL ERROR: ${e.message}</span>`;
+            }
+        }
+        runCheck();
+    </script>
+</body>
+
+</html>

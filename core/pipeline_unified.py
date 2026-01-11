@@ -471,7 +471,8 @@ def process_markdown_unified(
                             meta["job_status"] = "completed_with_errors"
 
                         if video_path:
-                            rel_path = Path(video_path).name if "/" in str(video_path) else video_path
+                            import os
+                            rel_path = os.path.basename(video_path)
                             section["video_path"] = f"videos/{rel_path}"
                         if beat_videos:
                             section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
@@ -605,7 +606,7 @@ def process_markdown_unified(
                     quiz_question_count=quiz_question_count,
                     flashcard_count=flashcard_count,
                     audio_generated=audio_generated,
-                    audio_expected=len(sections),
+                    audio_expected=len(sections) if generate_tts else 0,
                     video_generated=video_generated,
                     video_expected=manim_count + video_count,
                     manim_success=manim_success,

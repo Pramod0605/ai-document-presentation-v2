@@ -219,24 +219,8 @@ function setupEventListeners() {
 
   // Avatar video setup with chroma keying
   avatarVideo.onerror = (e) => {
-    console.error('[V2] Avatar video error (Global Handler):', avatarVideo.error);
+    console.error('[V2] Avatar video error:', avatarVideo.error);
     showAvatarPlaceholder();
-    // CRITICAL FALLBACK: If avatar dies, switch to Timer immediately
-    if (activeTimeSource === avatarVideo) {
-      console.warn('[V2.5] Switching to TIMER fallback due to avatar error (Global)');
-      useTimerFallback = true;
-      activeTimeSource = timerFallback;
-
-      // Ensure specific events are bound to the timer
-      bindTimeEvents(timerFallback);
-
-      // If we are mid-slide, we might want to sync the timer's currentTime 
-      // but usually avatar error happens at start (0).
-
-      if (isPlaying) {
-        timerFallback.play().catch(e => console.error(e));
-      }
-    }
   };
 
   avatarVideo.onloadeddata = () => {
@@ -372,12 +356,6 @@ function handleTimeUpdateMain() {
 
   // V2.5: Progressive reveal for Summary bullets
   updateSummaryProgressiveReveal();
-
-  // V2.5: Progressive reveal for Memory flashcards
-  updateMemoryFlip();
-
-  // V2.5: Progressive reveal for Content paragraphs
-  updateContentProgressiveReveal();
 }
 
 // V2.5: Progressive reveal for Summary section bullets
@@ -395,18 +373,7 @@ function updateSummaryProgressiveReveal() {
   const visualBeats = slide.visual_beats || [];
   if (visualBeats.length > 0) {
     for (let i = 0; i < Math.min(visualBeats.length, bulletCount); i++) {
-      // Ensure start_time exists and is valid (not 0 unless explicitly first beat)
-      // If start_time is 0 for ALL beats (which happens if not calculated), this strategy fails.
-      // We check if at least one beat has start_time > 0 to confirm valid timings exist.
-      const hasValidTimings = visualBeats.some(b => b.start_time && b.start_time > 0);
-
-      let beatStartTime = visualBeats[i].start_time || 0;
-
-      // If no valid timings in entire set, force fallback to Strategy 2 (Equal Distribution)
-      if (!hasValidTimings && i > 0) {
-        break; // Break loop to fall through to Strategy 2
-      }
-
+      const beatStartTime = visualBeats[i].start_time || 0;
       const bullet = document.getElementById(`summary-bullet-${i}`);
 
       if (bullet && currentTime >= beatStartTime && bullet.classList.contains('reveal-hidden')) {
@@ -415,13 +382,8 @@ function updateSummaryProgressiveReveal() {
         console.log(`[V2.5] Summary: Revealed bullet ${i + 1} at ${currentTime.toFixed(1)}s (beat start: ${beatStartTime}s)`);
       }
     }
+    return;
   }
-
-  // If we have valid timings, we return here. 
-  // If not (e.g. all start_times were 0), we continue to Strategy 2 below.
-  const hasValidTimings = visualBeats.some(b => b.start_time && b.start_time > 0);
-  if (hasValidTimings) return;
-
 
   // Strategy 2: Fallback to equal time distribution
   const totalDuration = getDuration() || 30;
@@ -485,70 +447,6 @@ function updateQuizProgressiveReveal(segmentIndex) {
       }
     });
   }
-}
-
-// V2.5: Memory Flashcard Flip - Progressive reveal based on timing
-function updateMemoryFlip() {
-  const slide = slides[currentSlideIndex];
-  if (!slide || slide.section_type !== 'memory') return;
-
-  const flashcards = slide.flashcards || slide.memory_items || [];
-  if (flashcards.length === 0) return;
-
-  const currentTime = getTime();
-  const totalDuration = getDuration() || 60;
-
-  // Each flashcard gets equal time: show front, then flip to back
-  const timePerCard = totalDuration / flashcards.length;
-  const flipDelay = timePerCard * 0.5; // Flip at 50% of each card's time
-
-  for (let i = 0; i < flashcards.length; i++) {
-    const card = document.getElementById(`flashcard-${i}`);
-    if (!card) continue;
-
-    const cardStartTime = i * timePerCard;
-    const cardFlipTime = cardStartTime + flipDelay;
-
-    // Show card (remove hidden) when its time starts
-    if (currentTime >= cardStartTime && !card.classList.contains('memory-visible')) {
-      card.classList.add('memory-visible');
-      // Play flip sound if desired
-      console.log(`[V2.5] Memory: Showing card ${i + 1}`);
-    }
-
-    // Flip card after delay
-    if (currentTime >= cardFlipTime && !card.classList.contains('flipped')) {
-      card.classList.add('flipped');
-      console.log(`[V2.5] Memory: Flipped card ${i + 1}`);
-    }
-  }
-}
-
-// V2.5: Progressive reveal for Content text items
-function updateContentProgressiveReveal() {
-  const slide = slides[currentSlideIndex];
-  if (!slide || (slide.section_type !== 'content' && slide.section_type !== 'example')) return;
-
-  const contentItems = document.querySelectorAll('.paragraph-block.reveal-hidden');
-  if (contentItems.length === 0) return;
-
-  const totalDuration = getDuration() || 30;
-  // Reveal items sequentially over the slide duration
-  // Logic: First 50% of slide is for teaching/reading, so reveal faster there
-  const timePerItem = (totalDuration * 0.8) / contentItems.length;
-
-  const currentTime = getTime();
-  const indexToShow = Math.floor(currentTime / timePerItem);
-
-  contentItems.forEach((item, i) => {
-    // Find the index embedded in ID "content-item-0-0" -> 0
-    // Actually we are iterating all items in DOM order which matches
-    if (i <= indexToShow && item.classList.contains('reveal-hidden')) {
-      item.classList.remove('reveal-hidden');
-      item.classList.add('reveal-visible');
-      console.log(`[V2.5] Content: Revealed item ${i}`);
-    }
-  });
 }
 
 function updateDisplayState() {
@@ -714,13 +612,13 @@ function parseSourceMarkdown(markdown) {
 
 async function loadPresentation() {
   try {
-    const response = await fetch(PRESENTATION_PATH + '?t=' + Date.now());
+    const response = await fetch(PRESENTATION_PATH);
     lessonData = await response.json();
     slides = lessonData.sections || [];
 
     // V2.5 Director Mode: Fetch source markdown and map to sections
     try {
-      const mdResponse = await fetch(SOURCE_MARKDOWN_PATH + '?t=' + Date.now());
+      const mdResponse = await fetch(SOURCE_MARKDOWN_PATH);
       if (mdResponse.ok) {
         sourceMarkdown = await mdResponse.text();
         console.log(`[V2.5] Source Markdown loaded: ${sourceMarkdown.length} chars`);
@@ -954,26 +852,9 @@ function setupMediaSource(slide) {
     avatarVideo.onpause = () => console.log('[V2] Avatar PAUSED');
 
     avatarVideo.onerror = (e) => {
-      console.error('[V2] Avatar video error:', avatarVideo.error);
-
-      // CRITICAL FALLBACK: If avatar dies, switch to Timer immediately
-      // This prevents the player from hanging if the video file is missing/corrupted
-      showAvatarPlaceholder();
-
-      if (activeTimeSource === avatarVideo) {
-        console.warn('[V2.5] Switching to TIMER fallback due to avatar error');
-        unbindTimeEvents(avatarVideo);
-
-        const duration = getTotalDuration(slide);
-        timerFallback.reset(duration);
-        activeTimeSource = timerFallback;
-        useTimerFallback = true;
-        bindTimeEvents(timerFallback);
-
-        if (isPlaying) {
-          timerFallback.play();
-        }
-      }
+      console.error('[V2] Avatar failed to load:', e);
+      // If avatar fails, we might need to fallback to timer logic dynamically
+      // But for now, let's just log it.
     };
 
   } else {
@@ -1196,17 +1077,7 @@ function renderContent(slide) {
 
             const img = document.createElement('img');
             img.className = 'content-image';
-
-            // Robust image resolution: try to handle extension mismatches if possible
-            // But main fix should be in the pipeline. Here we rely on correct JSON.
             img.src = resolveMediaPath(imgPath, 'image');
-            img.onerror = function () {
-              // Fallback attempt: switch jpg <-> png
-              if (this.src.endsWith('.jpg')) this.src = this.src.replace('.jpg', '.png');
-              else if (this.src.endsWith('.png')) this.src = this.src.replace('.png', '.jpg');
-              console.warn(`[V2.5] Image load error, trying extension swap: ${this.src}`);
-            };
-
             img.alt = beat.description || 'Visual beat image';
 
             imgContainer.appendChild(img);
@@ -1229,9 +1100,7 @@ function renderContent(slide) {
           texts.forEach(text => {
             if (!text) return;
             const p = document.createElement('div');
-            // Add reveal-hidden for progressive reveal
-            p.className = 'paragraph-block reveal-hidden';
-            p.id = `content-item-${i}-${texts.indexOf(text)}`;
+            p.className = 'paragraph-block';
             p.innerHTML = sanitizeMarkdown(text);
             beatDiv.appendChild(p);
           });

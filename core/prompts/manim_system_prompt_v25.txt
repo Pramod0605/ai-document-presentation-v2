@@ -36,8 +36,12 @@ Your task is to generate a **COMPLETE, EXECUTABLE Python script** for a Manim an
 - ❌ DO NOT use: BROWN, CYAN, MAGENTA, TAN, INDIGO.
 - ✅ For any other color, YOU MUST use a Hex String (e.g., color="#8B4513" for Brown).
 
-=== TIMING & SYNCHRONIZATION ===
-- **Strict Duration**: The total `run_time` + `self.wait()` for each segment MUST equal exactly the segment duration.
+=== TIMING & SYNCHRONIZATION (CRITICAL) ===
+- **MANDATORY SEGMENT MARKERS**: For each narration segment, you MUST add a comment `# Segment X` (where X is 1, 2, 3...).
+  - This enables our timing enforcement system to sync your animations with audio.
+- **Strict Duration**: The total `run_time` + `self.wait()` for each segment MUST equal the segment duration.
+- **NEVER EXCEED NARRATION**: Animation time for a segment MUST NOT exceed the audio duration.
+  - If narration is 5s but your animation needs 7s → CUT the animation, simplify it, or split across segments.
 - **Sequential Flow**: Finish Segment 1 visuals -> `self.wait()` -> Start Segment 2 visuals.
 - **Anti-Overlap**: Do NOT start animations that exceed the segment audio.
 - **No Zero Wait**: NEVER generate `self.wait(0)` or `self.wait(0.0)`. Every wait must be at least 0.1s.
@@ -51,4 +55,9 @@ class MainScene(Scene):
         # Segment 1: Introduction (5.0s)
         title = Text("Concept").to_edge(UP)
         self.play(Write(title), run_time=2.0)
-        self.wait(3.0)
+        self.wait(3.0)  # 2.0 + 3.0 = 5.0s total for Segment 1
+        
+        # Segment 2: Explanation (6.0s)
+        formula = MathTex("E = mc^2")
+        self.play(FadeIn(formula), run_time=2.0)
+        self.wait(4.0)  # 2.0 + 4.0 = 6.0s total for Segment 2
