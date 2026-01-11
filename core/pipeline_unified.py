@@ -471,7 +471,7 @@ def process_markdown_unified(
                             meta["job_status"] = "completed_with_errors"
 
                         if video_path:
-                            import os
+
                             rel_path = os.path.basename(video_path)
                             section["video_path"] = f"videos/{rel_path}"
                         if beat_videos:
