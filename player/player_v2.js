@@ -1008,32 +1008,77 @@ function renderContent(slide) {
         contentBox.appendChild(para);
       });
 
+    }
+    // [V2.5] VISUAL BEATS (Secondary Source - content area)
+    else if (slide.visual_beats && slide.visual_beats.length > 0) {
+      console.log(`[V2] ContentRenderer: Rendering from ${slide.visual_beats.length} visual beats`);
+
+      slide.visual_beats.forEach((beat, i) => {
+        const beatDiv = document.createElement('div');
+        beatDiv.className = 'beat-block';
+        beatDiv.id = `beat-${i}`;
+
+        // 1. Handle IMAGES (diagram, image)
+        // [V2.5] Added support for visual beats images
+        if (beat.visual_type === 'image' || beat.visual_type === 'diagram') {
+          const imgPath = beat.image_id || beat.image_path || beat.file_path;
+          if (imgPath) {
+            const imgContainer = document.createElement('div');
+            imgContainer.className = 'image-container';
+
+            const img = document.createElement('img');
+            img.className = 'content-image';
+            img.src = resolveMediaPath(imgPath, 'image');
+            img.alt = beat.description || 'Visual beat image';
+
+            imgContainer.appendChild(img);
+
+            if (beat.description) {
+              const cap = document.createElement('div');
+              cap.className = 'image-caption';
+              cap.textContent = beat.description;
+              imgContainer.appendChild(cap);
+            }
+            beatDiv.appendChild(imgContainer);
+          }
+        }
+
+        // 2. Handle TEXT (bullet_list, text_overlay, or fallback)
+        if (beat.display_text) {
+          // Handle array of strings or single string
+          const texts = Array.isArray(beat.display_text) ? beat.display_text : [beat.display_text];
+
+          texts.forEach(text => {
+            if (!text) return;
+            const p = document.createElement('div');
+            p.className = 'paragraph-block';
+            p.innerHTML = sanitizeMarkdown(text);
+            beatDiv.appendChild(p);
+          });
+        }
+
+        if (beatDiv.children.length > 0) {
+          contentBox.appendChild(beatDiv);
+        }
+      });
+
     } else if (segments.length > 0) {
       // Fallback to legacy segment-based rendering
       console.log(`[V2] ContentRenderer: Rendering ${segments.length} segments with visual_content`);
 
       segments.forEach((seg, i) => {
-        if (isThinkingSegment(seg)) {
-          const placeholder = document.createElement('div');
-          placeholder.id = `seg - ${i} `;
-          placeholder.style.display = 'none';
-          contentBox.appendChild(placeholder);
-          return;
-        }
+        if (isThinkingSegment(seg)) return;
 
         const segDiv = document.createElement('div');
         segDiv.className = 'segment-block';
-        segDiv.id = `seg - ${i} `;
+        segDiv.id = `seg-${i}`;
 
         const vc = seg.visual_content;
         if (vc) {
           renderVisualContent(vc, segDiv);
-        } else if (seg.text) {
-          const para = document.createElement('div');
-          para.className = 'paragraph-block';
-          para.innerHTML = sanitizeMarkdown(seg.text);
-          segDiv.appendChild(para);
         }
+        // [V2.5] CRITICAL: REMOVED seg.text fallback. 
+        // We never want to show raw narration script in the content area.
 
         if (segDiv.children.length > 0) {
           contentBox.appendChild(segDiv);
@@ -2247,7 +2292,8 @@ function setupContentSplitting(slide) {
   currentPageIndex = 0;
 
   // Get all direct children of content box that are content blocks
-  const contentElements = Array.from(contentBox.querySelectorAll('.segment-block, .summary-item, .bullet-item, .paragraph-block'));
+  // [V2.5] Updated selector to include beat-block and avoid nested paragraphs inside beats
+  const contentElements = Array.from(contentBox.querySelectorAll('.beat-block, .segment-block, .summary-item, .bullet-item, .paragraph-block:not(.beat-block .paragraph-block)'));
 
   if (contentElements.length <= 1) {
     console.log('[V2] Content splitting: Single element, no splitting needed');
@@ -2260,9 +2306,11 @@ function setupContentSplitting(slide) {
     return;
   }
 
-  // If no audio, show all content (no splitting without timing)
-  if (!slide.audio_path) {
-    console.log('[V2] Content splitting: No audio, showing all content');
+  // [V2.5] Timing Check: Use Duration, not just audio_path
+  // This ensures splitting works with Avatar video or Timer fallback
+  const totalDuration = getTotalDuration(slide);
+  if (totalDuration <= 0) {
+    console.log('[V2] Content splitting: No duration/timing, showing all content');
     return;
   }
 
