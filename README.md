@@ -210,6 +210,21 @@ player/jobs/{job_id}/
 - **Analyze Job Fidelity**:
   `python scripts/deep_fidelity_analysis.py <JOB_ID>`
 
+## Production Utilities
+
+Scripts are provided (Windows PowerShell) to help manage the production server without needing manual SSH commands:
+
+| Script | Description | Usage |
+|--------|-------------|-------|
+| `production_login.ps1` | Open full SSH shell | `.\production_login.ps1` |
+| `production_logs.ps1` | View live server logs | `.\production_logs.ps1` |
+| `production_docker_shell.ps1` | Open bash inside container | `.\production_docker_shell.ps1` |
+| `production_inspect_job.ps1` | View job files/content | `.\production_inspect_job.ps1 961f56e8 [file.json]` |
+
+### Sanity Check
+Access the visual sanity checker for any job:
+`http://69.197.145.4:5005/sanity_check.html?job=<JOB_ID>`
+
 ## License
 
 MIT License
