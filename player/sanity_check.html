@@ -80,6 +80,17 @@
 <body>
     <h1>Player V2.5 Sanity Checker (Deep Check)</h1>
     <div id="status">Loading...</div>
+    <div id="self-healing"
+        style="margin: 30px 0; padding: 20px; background: #313244; border-radius: 8px; display: none;">
+        <h2 style="margin-top:0">🛠️ Self-Healing: Missing Assets Detected</h2>
+        <p>The checker found media files on disk that are NOT linked in your <code>presentation.json</code>. You can
+            automatically stitch them back now.</p>
+        <button id="repair-btn"
+            style="background: #a6e3a1; color: #11111b; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 4px;">Stitch
+            Missing Assets</button>
+        <div id="repair-status" style="margin-top: 10px; font-weight: bold;"></div>
+    </div>
+
     <table id="report">
         <thead>
             <tr>
@@ -100,6 +111,8 @@
         const JOB_ID = urlParams.get('job') || urlParams.get('job_id') || '0f1eaff8';
         const BASE_PATH = `/player/jobs/${JOB_ID}/`;
         const PRESENTATION_URL = `${BASE_PATH}presentation.json?t=${Date.now()}`;
+
+        let orphanDetected = false;
 
         async function checkUrl(url, type = 'misc') {
             if (!url) return { status: 'N/A', valid: true };
@@ -150,6 +163,47 @@
             });
         }
 
+        async function scanForOrphans(section) {
+            const sid = section.section_id;
+
+            // Check Topic Video
+            if (!section.video_path && (section.renderer === 'wan' || section.renderer === 'video_generation')) {
+                const check = await checkUrl(`topic_${sid}.mp4`, 'video');
+                if (check.valid) orphanDetected = true;
+            }
+
+            // Check Avatar
+            if (!section.avatar_video) {
+                const check = await checkUrl(`section_${sid}_avatar.mp4`, 'avatar');
+                if (check.valid) orphanDetected = true;
+            }
+
+            // Check Recap Beats
+            if (section.section_type === 'recap' && (!section.recap_video_paths || section.recap_video_paths.length === 0)) {
+                const checkBeats = await checkUrl(`topic_${sid}_beat_0.mp4`, 'video');
+                if (checkBeats.valid) orphanDetected = true;
+            }
+        }
+
+        async function repairMetadata() {
+            const status = document.getElementById('repair-status');
+            status.innerHTML = "Stitching assets... please wait...";
+            try {
+                const res = await fetch(`/api/repair-metadata/${JOB_ID}`, { method: 'POST' });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    status.innerHTML = `<span class="pass">Success! ${data.updated_assets} assets stitched. Reloading...</span>`;
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    status.innerHTML = `<span class="fail">Error: ${data.error}</span>`;
+                }
+            } catch (e) {
+                status.innerHTML = `<span class="fail">Failed to connect to API: ${e.message}</span>`;
+            }
+        }
+
+        document.getElementById('repair-btn').onclick = repairMetadata;
+
         async function runCheck() {
             const statusDiv = document.getElementById('status');
             const tbody = document.querySelector('#report tbody');
@@ -163,6 +217,9 @@
 
                 for (const section of data.sections) {
                     const row = document.createElement('tr');
+
+                    // Deep Scan for Orphans
+                    await scanForOrphans(section);
 
                     const renderer = section.renderer || 'default';
                     let rendererClass = '';
@@ -261,7 +318,6 @@
                             logicHtml = `<span class="fail">FAIL (Bible Discrepancy)</span><br>Cards: ${cardCount} (Req: 5), Segs: ${segCount} (Req: 6)`;
                         }
                     } else if (section.section_type === 'recap') {
-                        // V2.5 Fix: Check logical segments (narration) instead of technical beats (splitter)
                         const narrSegCount = section.narration && section.narration.segments ? section.narration.segments.length : 0;
                         const isVideo = (renderer.toLowerCase() === 'video' || renderer.toLowerCase() === 'wan_video');
                         if (narrSegCount === 5 && isVideo) {
@@ -301,6 +357,11 @@
                     `;
                     tbody.appendChild(row);
                 }
+
+                if (orphanDetected) {
+                    document.getElementById('self-healing').style.display = 'block';
+                }
+
                 statusDiv.innerHTML += "<br><span class='pass'>Check Complete!</span>";
             } catch (e) {
                 statusDiv.innerHTML += `<br><span class="fail">CRITICAL ERROR: ${e.message}</span>`;

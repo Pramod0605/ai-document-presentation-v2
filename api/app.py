@@ -2914,6 +2914,79 @@ def run_avatar_sequential_task(job_id, jobs_root):
     finally:
         ACTIVE_AVATAR_JOBS.discard(job_id)
 
+@app.route("/api/repair-metadata/<job_id>", methods=["POST"])
+def repair_metadata(job_id):
+    """
+    Surgically repair presentation.json by scanning for orphaned assets.
+    """
+    from core.locks import presentation_lock, analytics_lock
+    
+    job_dir = JOBS_DIR / job_id
+    pres_path = job_dir / "presentation.json"
+    video_dir = job_dir / "videos"
+    avatar_dir = job_dir / "avatars"
+    
+    if not pres_path.exists():
+        return jsonify({"error": "Job presentation.json not found"}), 404
+        
+    try:
+        with presentation_lock:
+            with open(pres_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            
+            # Scan directories
+            found_videos = []
+            if video_dir.exists():
+                found_videos = [f.name for f in video_dir.iterdir() if f.is_file() and f.suffix == ".mp4"]
+                
+            found_avatars = []
+            if avatar_dir.exists():
+                found_avatars = [f.name for f in avatar_dir.iterdir() if f.is_file() and f.suffix == ".mp4"]
+                
+            updated_count = 0
+            # 1. Update Sections
+            for section in data.get("sections", []):
+                sid = str(section.get("section_id"))
+                
+                # Check for topic videos
+                topic_v = f"topic_{sid}.mp4"
+                if topic_v in found_videos and not section.get("video_path"):
+                    section["video_path"] = f"videos/{topic_v}"
+                    updated_count += 1
+                
+                # Check for recap beats (special case)
+                if section.get("section_type") == "recap":
+                    beats = [v for v in found_videos if v.startswith(f"topic_{sid}_beat_")]
+                    if beats and not section.get("recap_video_paths"):
+                        beats.sort() # Ensure order
+                        section["recap_video_paths"] = [f"videos/{b}" for b in beats]
+                        section["beat_videos"] = [f"videos/{b}" for b in beats]
+                        section["video_path"] = f"videos/{beats[0]}"
+                        updated_count += 1
+                
+                # Check for avatars
+                # Format section_1_avatar.mp4 or section_1.mp4? Let's check both patterns
+                avatar_patterns = [f"section_{sid}_avatar.mp4", f"section_{sid}.mp4"]
+                for p in avatar_patterns:
+                    if p in found_avatars and (not section.get("avatar_video") or "placeholder" in section.get("avatar_video", "")):
+                        section["avatar_video"] = f"avatars/{p}"
+                        section["avatar_status"] = "completed"
+                        updated_count += 1
+                        break
+            
+            if updated_count > 0:
+                with open(pres_path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=4)
+                    
+        return jsonify({
+            "status": "success",
+            "updated_assets": updated_count,
+            "message": f"Successfully stitched {updated_count} assets back into metadata."
+        })
+        
+    except Exception as e:
+        return jsonify({"status": "error", "error": str(e)}), 500
+
 if __name__ == "__main__":
     # Pre-flight check for LLM access
     try:
