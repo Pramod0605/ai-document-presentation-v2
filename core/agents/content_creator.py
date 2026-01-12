@@ -32,8 +32,9 @@ class ContentCreatorAgent(BaseAgent):
     """
     
     name = "ContentCreator"
-    system_prompt_file = "content_creator_system_v1.5.txt"
-    user_prompt_file = "content_creator_user_v1.5.txt"
+    previous_system_prompt_file = "content_creator_system_v1.5.txt"
+    system_prompt_file = "content_creator_system_v2.5.txt"
+    user_prompt_file = "content_creator_user_v2.5.txt"
     output_schema_file = "content_creator.schema.json"
     model = "google/gemini-2.5-flash"
     temperature = 0.5
@@ -45,7 +46,7 @@ class ContentCreatorAgent(BaseAgent):
         "summary": (60, 150),
         "content": (100, 300),
         "example": (100, 300),
-        "quiz": (80, 250),
+        "quiz": (80, 250), # Will likely increase dynamically
         "memory": (30, 100),
         "recap": (150, 350)
     }
@@ -55,7 +56,7 @@ class ContentCreatorAgent(BaseAgent):
         "summary": (1, 2),    # Brief overview only
         "content": (2, 6),    # Group 3-5 concepts per segment, max 6 segments
         "example": (2, 4),    # Group related examples, max 4 segments
-        "quiz": (2, 8),       # Group 3-5 Q&A per segment, max 8 segments
+        "quiz": (3, 30),      # UPDATED V2.5: dynamic lower bound will be qa_count * 3
         "memory": (3, 3),     # Fixed: 3 flashcards
         "recap": (5, 5)       # Fixed: 5 video scenes
     }
@@ -86,6 +87,15 @@ class ContentCreatorAgent(BaseAgent):
             segment_min, segment_max = self.SEGMENT_LIMITS.get(section_type, (2, 5))
             qa_count = 0
             concept_count = 0
+        
+        if section_type == "quiz" and qa_count > 0:
+            # V2.5: STRICT 3-Step Dance (Intro, Pause, Reveal) per question
+            # So segment count MUST be exactly qa_count * 3
+            segment_min = qa_count * 3
+            segment_max = qa_count * 3
+            # Allow slightly more words per question (intro + reveal explanation)
+            word_min = max(word_min, qa_count * 40)
+            word_max = max(word_max, qa_count * 80)
         
         kwargs["word_min"] = word_min
         kwargs["word_max"] = word_max

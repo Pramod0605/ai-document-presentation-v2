@@ -422,6 +422,35 @@ function updateSummaryProgressiveReveal() {
   const hasValidTimings = visualBeats.some(b => b.start_time && b.start_time > 0);
   if (hasValidTimings) return;
 
+  // Strategy 1.5: Narration-Linked Synchronization (V2.5 Compliance)
+  // Director Bible: "Concise list items" synced to narration.
+  // If visual beat timing is missing, use narration.segments durations (present in presentation.json).
+  // Assumes 1-to-1 mapping: 1 Bullet = 1 Segment (Sentence).
+  const segments = slide.narration?.segments || [];
+
+  if (segments.length > 0 && segments.length >= bulletCount) {
+    let cumulativeTime = 0;
+
+    // Calculate start times on the fly based on sum of previous durations
+    const segmentStartTimes = segments.map(seg => {
+      const start = cumulativeTime;
+      cumulativeTime += (seg.duration_seconds || 5); // Fallback to 5s
+      return start;
+    });
+
+    for (let i = 0; i < bulletCount; i++) {
+      const revealTime = segmentStartTimes[i];
+      const bullet = document.getElementById(`summary-bullet-${i}`);
+
+      if (bullet && currentTime >= revealTime && bullet.classList.contains('reveal-hidden')) {
+        bullet.classList.remove('reveal-hidden');
+        bullet.classList.add('reveal-visible');
+        console.log(`[V2.5] Summary: Revealed bullet ${i + 1}/${bulletCount} using Narration Segment ${i} timing (${revealTime.toFixed(1)}s)`);
+      }
+    }
+    return; // Success - skip Equal Distribution fallback
+  }
+
 
   // Strategy 2: Fallback to equal time distribution
   const totalDuration = getDuration() || 30;
@@ -1197,15 +1226,39 @@ function renderContent(slide) {
             const img = document.createElement('img');
             img.className = 'content-image';
 
-            // Robust image resolution: try to handle extension mismatches if possible
-            // But main fix should be in the pipeline. Here we rely on correct JSON.
-            img.src = resolveMediaPath(imgPath, 'image');
+            // V2.5: Robust Image Fallback Strategy (JPG <-> PNG)
+            // Fix race condition: Set onerror BEFORE src
             img.onerror = function () {
-              // Fallback attempt: switch jpg <-> png
-              if (this.src.endsWith('.jpg')) this.src = this.src.replace('.jpg', '.png');
-              else if (this.src.endsWith('.png')) this.src = this.src.replace('.png', '.jpg');
-              console.warn(`[V2.5] Image load error, trying extension swap: ${this.src}`);
+              // Prevent infinite loop
+              if (this.dataset.retry) {
+                console.warn(`[V2.5] Image failed to load after retry: ${this.src}`);
+                imgContainer.style.display = 'none';
+                return;
+              }
+
+              this.dataset.retry = 'true'; // Mark as retried
+              let currentSrc = this.src;
+              let newSrc = '';
+
+              if (currentSrc.includes('.jpg')) {
+                newSrc = currentSrc.replace('.jpg', '.png');
+                console.log(`[V2.5] Image 404 (JPG), trying PNG: ${newSrc}`);
+              } else if (currentSrc.includes('.png')) {
+                newSrc = currentSrc.replace('.png', '.jpg');
+                console.log(`[V2.5] Image 404 (PNG), trying JPG: ${newSrc}`);
+              } else if (currentSrc.includes('.jpeg')) {
+                newSrc = currentSrc.replace('.jpeg', '.png');
+                console.log(`[V2.5] Image 404 (JPEG), trying PNG: ${newSrc}`);
+              }
+
+              if (newSrc) {
+                this.src = newSrc;
+              } else {
+                imgContainer.style.display = 'none';
+              }
             };
+
+            img.src = resolveMediaPath(imgPath, 'image');
 
             img.alt = beat.description || 'Visual beat image';
 
@@ -1601,15 +1654,45 @@ function renderVisualContent(vc, container) {
     if (actualPath) {
       const img = document.createElement('img');
       img.className = 'content-image';
-      img.src = resolveMediaPath(actualPath, 'image');
       img.alt = vc.image_caption || vc.caption || vc.verbatim_content || 'Content image';
-      img.onerror = () => {
-        console.warn(`[V2] Image failed to load: ${actualPath} `);
-        imgContainer.style.display = 'none';
+
+      // V2.5: Robust Image Fallback Strategy (JPG <-> PNG)
+      img.onerror = function () {
+        // Prevent infinite loop
+        if (this.dataset.retry) {
+          console.warn(`[V2] Image failed to load after retry: ${this.src}`);
+          imgContainer.style.display = 'none';
+          return;
+        }
+
+        this.dataset.retry = 'true'; // Mark as retried
+
+        let currentSrc = this.src;
+        let newSrc = '';
+
+        if (currentSrc.includes('.jpg')) {
+          newSrc = currentSrc.replace('.jpg', '.png');
+          console.log(`[V2] Image 404 (JPG), trying PNG: ${newSrc}`);
+        } else if (currentSrc.includes('.png')) {
+          newSrc = currentSrc.replace('.png', '.jpg');
+          console.log(`[V2] Image 404 (PNG), trying JPG: ${newSrc}`);
+        } else if (currentSrc.includes('.jpeg')) {
+          newSrc = currentSrc.replace('.jpeg', '.png');
+          console.log(`[V2] Image 404 (JPEG), trying PNG: ${newSrc}`);
+        }
+
+        if (newSrc) {
+          this.src = newSrc;
+        } else {
+          imgContainer.style.display = 'none';
+        }
       };
+
       img.onload = () => {
-        console.log(`[V2] Image loaded successfully: ${actualPath} `);
+        console.log(`[V2] Image loaded successfully: ${img.src}`);
       };
+
+      img.src = resolveMediaPath(actualPath, 'image');
 
       imgContainer.appendChild(img);
 
@@ -2028,7 +2111,8 @@ function updateActiveSegment(currentTime) {
     currentSegmentIndex = activeIndex;
     displayDirectivesApplied = true;
 
-    console.log(`[V2.5] Segment changed to ${activeIndex}`);
+    // [V2.5] Update visual beats for this segment (Fixes Timer Fallback stagnation)
+    updateContentVisualsForSegment(slide, activeIndex);
   }
 
   // === CONTINUOUS LOGIC (Every timeupdate) ===
@@ -2052,6 +2136,43 @@ function updateActiveSegment(currentTime) {
     updateSubtitleText(currentSeg.text, progress);
   } else {
     updateSubtitleText("", 0);
+  }
+}
+
+/**
+ * [V2.5] Reveals visual beats associated with the current narration segment.
+ * Ensures visuals advance even in Timer Fallback mode.
+ */
+function updateContentVisualsForSegment(slide, segmentIndex) {
+  if (!slide || !slide.visual_beats) return;
+  const segments = slide.narration?.segments || [];
+  const currentSeg = segments[segmentIndex];
+  if (!currentSeg) return;
+
+  // Strategy A: Explicit linkage via segment_id
+  let matchFound = false;
+  slide.visual_beats.forEach((beat, beatIndex) => {
+    if (beat.segment_id && beat.segment_id === currentSeg.segment_id) {
+      revealBeatElements(beatIndex);
+      matchFound = true;
+    }
+  });
+
+  // Strategy B: Fallback 1-to-1 mapping (if IDs missing)
+  if (!matchFound && segmentIndex < slide.visual_beats.length) {
+    revealBeatElements(segmentIndex);
+  }
+
+  function revealBeatElements(beatIndex) {
+    // Selector matches content-item-{beatIndex}-{subIndex}
+    const items = document.querySelectorAll(`[id^="content-item-${beatIndex}-"]`);
+    items.forEach(el => {
+      if (el.classList.contains('reveal-hidden')) {
+        el.classList.remove('reveal-hidden');
+        el.classList.add('reveal-visible');
+        console.log(`[V2.5] Revealed Visual Beat ${beatIndex} for Segment ${segmentIndex}`);
+      }
+    });
   }
 }
 
@@ -2124,10 +2245,16 @@ function enforceTeachShowLogic(slide, segment, segmentIndex, currentTime = 0, se
 
   // Rule 2: TEACH Phase (Text Mode)
   // Trigger: Default if not Show Phase.
-  console.log(`[V2.5] Segment ${segmentIndex}: TEACH Phase (Text Mode)`);
 
   videoLayer.classList.add('hidden');
   contentLayer.classList.remove('hidden');
+
+  // [V2.5] CRITICAL FIX: explicit pause to prevent video desync
+  // The video must stop while we are teaching (text/diagrams) so it resumes correcty for next SHOW.
+  if (contentVideo && !contentVideo.paused) {
+    contentVideo.pause();
+    console.log(`[V2.5] Teach Phase: Paused video to prevent desync at ${contentVideo.currentTime.toFixed(2)}s`);
+  }
 
   // V2.5 Pointer Resolution (Dynamic Text Update)
   // If segment has a 'markdown_pointer', we MUST fetch strict text from sourceMarkdown.
@@ -2635,9 +2762,15 @@ function sanitizeMarkdown(text) {
   text = text.replace(/\\\[(.+?)\\\]/g, (match) => { latexPatterns.push(match); return `__LATEX_BRACKET_${placeholderIndex++}__`; });
 
   // 2. Markdown Images: ![alt](src)
+  // V2.5: Added inline onerror for robust JPG/PNG fallback
   text = text.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
     const fullSrc = resolveMediaPath(src, 'image');
-    return `<div class="image-container"><img src="${fullSrc}" alt="${alt}" class="content-image" /><div class="image-caption">${alt}</div></div>`;
+    return `<div class="image-container">
+      <img src="${fullSrc}" alt="${alt}" class="content-image" 
+        onerror="if(!this.dataset.retry){this.dataset.retry=true; if(this.src.includes('.jpg')){this.src=this.src.replace('.jpg','.png')}else if(this.src.includes('.png')){this.src=this.src.replace('.png','.jpg')}else if(this.src.includes('.jpeg')){this.src=this.src.replace('.jpeg','.png')} else {this.style.display='none'}}" 
+      />
+      <div class="image-caption">${alt}</div>
+    </div>`;
   });
 
   // 3. Markdown Tables

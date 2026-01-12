@@ -89,6 +89,7 @@
                 <th>Avatar</th>
                 <th>Video</th>
                 <th>Images (Visual Beats)</th>
+                <th>V2.5 Logic Check</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -215,6 +216,34 @@
                     }
                     if (!imageHtml) imageHtml = '<span style="color:#666">No images</span>';
 
+                    // V2.5 LOGIC CHECK (New Column)
+                    let logicHtml = '<span style="color:#666">N/A</span>';
+                    if (section.section_type === 'quiz') {
+                        const qCount = section.quiz_questions ? section.quiz_questions.length : 0;
+                        const segCount = section.narration.segments.length;
+                        const expected = qCount * 3;
+                        if (segCount >= expected) {
+                            logicHtml = `<span class="pass">PASS (3-Step Dance)</span><br>Segments: ${segCount} (Req: ${expected})`;
+                        } else {
+                            logicHtml = `<span class="fail">FAIL (Segment Mismatch)</span><br>Segments: ${segCount}, Expected: ${expected}`;
+                        }
+                    } else if (section.section_type === 'content') {
+                        const segCount = section.narration.segments.length;
+                        if (segCount > 1) {
+                            logicHtml = `<span class="pass">PASS (Sync Ready)</span><br>Segments: ${segCount}`;
+                        } else {
+                            logicHtml = `<span class="warn">WARN (Single Seg)</span><br>Segments: ${segCount}`;
+                        }
+                    } else if (section.section_type === 'summary') {
+                        const bCount = section.visual_beats ? section.visual_beats.length : 0;
+                        const sCount = section.narration.segments.length;
+                        if (sCount >= bCount) {
+                            logicHtml = `<span class="pass">PASS (Segments matched)</span><br>Bullets: ${bCount}, Segs: ${sCount}`;
+                        } else {
+                            logicHtml = `<span class="warn">WARN (Timing Risk)</span><br>Bullets: ${bCount}, Segs: ${sCount}`;
+                        }
+                    }
+
                     row.innerHTML = `
                         <td>${section.section_id}</td>
                         <td>${section.section_type}</td>
@@ -222,6 +251,7 @@
                         <td>${avatarHtml}</td>
                         <td>${videoHtml}</td>
                         <td>${imageHtml}</td>
+                        <td>${logicHtml}</td>
                     `;
                     tbody.appendChild(row);
                 }
