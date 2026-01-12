@@ -3,6 +3,9 @@ import os
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+import threading
+
+_trace_lock = threading.Lock()
 
 DEFAULT_TRACE_PATH = "player/assets/render_prompts.json"
 _current_trace_path = DEFAULT_TRACE_PATH
@@ -28,30 +31,31 @@ def log_render_prompt(section_id: int, section_title: str, renderer: str,
     trace_path = get_trace_path(trace_output_dir)
     os.makedirs(os.path.dirname(trace_path), exist_ok=True)
     
-    trace_data = []
-    if os.path.exists(trace_path):
-        try:
-            with open(trace_path, "r") as f:
-                trace_data = json.load(f)
-        except (json.JSONDecodeError, IOError):
-            trace_data = []
-    
-    entry = {
-        "timestamp": datetime.now().isoformat(),
-        "section_id": section_id,
-        "section_title": section_title,
-        "renderer": renderer,
-        "prompt": prompt,
-        "output_path": output_path
-    }
-    
-    if extra_data:
-        entry["extra"] = extra_data
-    
-    trace_data.append(entry)
-    
-    with open(trace_path, "w") as f:
-        json.dump(trace_data, f, indent=2)
+    with _trace_lock:
+        trace_data = []
+        if os.path.exists(trace_path):
+            try:
+                with open(trace_path, "r", encoding="utf-8") as f:
+                    trace_data = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                trace_data = []
+        
+        entry = {
+            "timestamp": datetime.now().isoformat(),
+            "section_id": section_id,
+            "section_title": section_title,
+            "renderer": renderer,
+            "prompt": prompt,
+            "output_path": output_path
+        }
+        
+        if extra_data:
+            entry["extra"] = extra_data
+        
+        trace_data.append(entry)
+        
+        with open(trace_path, "w", encoding="utf-8") as f:
+            json.dump(trace_data, f, indent=2)
     
     print(f"[RENDER TRACE] Logged {renderer} prompt for section {section_id}: {section_title}")
 
