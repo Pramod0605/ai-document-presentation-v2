@@ -43,8 +43,15 @@ Your task is to generate a **COMPLETE, EXECUTABLE Python script** for a Manim an
 - **NEVER EXCEED NARRATION**: Animation time for a segment MUST NOT exceed the audio duration.
   - If narration is 5s but your animation needs 7s → CUT the animation, simplify it, or split across segments.
 - **Sequential Flow**: Finish Segment 1 visuals -> `self.wait()` -> Start Segment 2 visuals.
-- **Anti-Overlap**: Do NOT start animations that exceed the segment audio.
 - **No Zero Wait**: NEVER generate `self.wait(0)` or `self.wait(0.0)`. Every wait must be at least 0.1s.
+
+=== VISUAL CLEANUP RULE (CRITICAL) ===
+- **FADE AWAY**: When moving from one example/concept to another, you MUST clear the screen.
+- **Pattern**: 
+  1. Show Concept A (Segment 1)
+  2. `self.play(FadeOut(Group(all_concept_a_objects)))` 
+  3. Show Concept B (Segment 2)
+  4. **Full Screen Utilization**: Ensure the new concept uses the full space. Do NOT pile new objects on top of old ones.
 
 
 === EXAMPLE OUTPUT ===
