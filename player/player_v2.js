@@ -1194,16 +1194,18 @@ function renderContent(slide) {
     // If we have parsed markdown content, use THAT for the visual text.
     // Narration segments are still valid for timing, but we decouple text display.
     if (slide.markdown_content && slide.markdown_content.length > 0) {
-      console.log(`[V2.5] Rendering from Markdown Source(${slide.markdown_content.length} lines)`);
+      console.log(`[V2.5] Rendering from Markdown Source(${slide.markdown_content.length} lines) - FULL BLOCK`);
 
-      slide.markdown_content.forEach((line, i) => {
-        const para = document.createElement('div');
-        para.className = 'paragraph-block';
-        para.id = `md - block - ${i} `; // Use md- prefix to avoid sync issues with segments for now
-        // Basic markdown sanitization/conversion could happen here
-        para.innerHTML = sanitizeMarkdown(line);
-        contentBox.appendChild(para);
-      });
+      // [V2.5] FIX: Join lines to support multiline constructs (Tables, Lists)
+      // The previous line-by-line rendering broke tables and lists.
+      const fullMarkdown = slide.markdown_content.join('\n');
+
+      const mdContainer = document.createElement('div');
+      mdContainer.className = 'markdown-content-container';
+      // Pass the FULL text to sanitizer so Table/List regex works
+      mdContainer.innerHTML = sanitizeMarkdown(fullMarkdown);
+
+      contentBox.appendChild(mdContainer);
 
     }
     // [V2.5] VISUAL BEATS (Secondary Source - content area)
@@ -2789,9 +2791,27 @@ function sanitizeMarkdown(text) {
     return `<div class="table-wrapper"><table class="md-table">${headerHtml}<tbody>${rows}</tbody></table></div>`;
   });
 
-  // 4. Basic Formatting
-  text = text
-    .replace(/^#{1,6}\s*/gm, '') // Remove headers (rendered semantically elsewhere usually, or just strip)
+    // 3.5 Markdown Lists (Unordered & Ordered)
+    // Basic support for bullets (*, -) and numbers (1.)
+
+    // Unordered Lists: * or - 
+    // We replace the entire block of list items wiht <ul>...</ul>
+    // Note: This regex matches the whole list block first
+    .replace(/^(\s*[\*\-]\s+.*(?:\n\s*[\*\-]\s+.*)*)/gm, (match) => {
+    const items = match.split('\n').filter(l => l.trim());
+    const listItems = items.map(item => `<li>${item.replace(/^\s*[\*\-]\s+/, '')}</li>`).join('');
+    return `<ul class="md-list">${listItems}</ul>`;
+  })
+
+    // Ordered Lists: 1. 2. 
+    .replace(/^(\s*\d+\.\s+.*(?:\n\s*\d+\.\s+.*)*)/gm, (match) => {
+      const items = match.split('\n').filter(l => l.trim());
+      const listItems = items.map(item => `<li>${item.replace(/^\s*\d+\.\s+/, '')}</li>`).join('');
+      return `<ol class="md-list">${listItems}</ol>`;
+    })
+
+    // 4. Basic Formatting
+    .replace(/^#{1,6}\s*(.+)$/gm, '<h3>$1</h3>') // Map all headers to H3 for slide consistency
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/__([^_]+)__/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>')
