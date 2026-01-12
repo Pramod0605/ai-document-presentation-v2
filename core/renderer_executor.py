@@ -16,9 +16,7 @@ from core.dry_run_validator import (
 )
 
 logger = logging.getLogger(__name__)
-import threading
-json_lock = threading.Lock()
-analytics_lock = threading.Lock()
+from core.locks import presentation_lock, analytics_lock
 
 TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory", "quiz"]
 
@@ -397,28 +395,39 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
         import time
         from render.wan.wan_runner import render_wan_video, reset_wan_session
         
+        print(f"[WAN-BG DEBUG] submit_wan_background_job ENTERED for job {job_id}")
+        
         # Reset session for this thread
         if not skip_wan:
             try:
                 reset_wan_session()
-            except:
-                pass
+                print(f"[WAN-BG DEBUG] Session reset complete")
+            except Exception as reset_err:
+                print(f"[WAN-BG DEBUG] Session reset failed: {reset_err}")
 
         topics = presentation.get("sections", presentation.get("topics", []))
+        print(f"[WAN-BG DEBUG] Found {len(topics)} total sections")
+        
         wan_topics = []
         
         # 1. Identify WAN topics
         for topic in topics:
             renderer = topic.get("renderer", "none")
-            # Strict filtering: Only process if renderer is explicitly generic video or wan
-            # We assume 'manim' was handled by the blocking phase
-            if renderer in ["wan", "wan_video"]:
+            section_id = topic.get("section_id", "?")
+            section_type = topic.get("section_type", "unknown")
+            # V2.5 FIX: Include "video" in the filter for recap sections (per V2.5 Bible)
+            if renderer in ["wan", "wan_video", "video"]:
                 wan_topics.append(topic)
+                print(f"[WAN-BG DEBUG] Section {section_id} ({section_type}): renderer='{renderer}' -> INCLUDED")
+            else:
+                print(f"[WAN-BG DEBUG] Section {section_id} ({section_type}): renderer='{renderer}' -> SKIPPED")
         
         if not wan_topics:
+            print(f"[WAN-BG DEBUG] No WAN topics found for job {job_id} - EXITING")
             logger.info(f"[WAN-BG] No WAN topics found for job {job_id}")
             return
 
+        print(f"[WAN-BG DEBUG] Starting background generation for {len(wan_topics)} topics")
         logger.info(f"[WAN-BG] Starting background generation for {len(wan_topics)} topics (Batch Size: {batch_size})")
 
         # 2. Process in Batches
@@ -486,7 +495,7 @@ def _update_presentation_safely(pres_path: Path, section_id: str, video_path: st
         import json
         
         # Use a global lock to prevent race conditions during parallel updates
-        with json_lock:
+        with presentation_lock:
             with open(pres_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 

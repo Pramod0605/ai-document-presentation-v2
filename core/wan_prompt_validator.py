@@ -147,15 +147,6 @@ def validate_wan_prompt(prompt: str, section_id: int = 0, beat_index: int = 0) -
     return result
 
 
-def _extract_prompt_text(vp) -> str:
-    """Helper to safely extract prompt text from various keys."""
-    if isinstance(vp, str):
-        return vp
-    if isinstance(vp, dict):
-        return vp.get("prompt") or vp.get("wan_prompt") or vp.get("text") or vp.get("video_prompt") or ""
-    return str(vp)
-
-
 def validate_video_prompts(video_prompts: List[Dict], section_id: int = 0, strict: bool = False) -> Tuple[bool, List[str], List[str]]:
     """Validate all video prompts for a section.
     
@@ -174,7 +165,7 @@ def validate_video_prompts(video_prompts: List[Dict], section_id: int = 0, stric
         return True, [], ["No video prompts to validate"]
     
     for i, vp in enumerate(video_prompts):
-        prompt = _extract_prompt_text(vp)
+        prompt = vp.get("prompt", "") if isinstance(vp, dict) else str(vp)
         result = validate_wan_prompt(prompt, section_id, i)
         
         all_errors.extend(result.errors)
@@ -203,7 +194,7 @@ def log_prompt_quality_summary(video_prompts: List[Dict], section_id: int = 0) -
     issues = []
     
     for i, vp in enumerate(video_prompts):
-        prompt = _extract_prompt_text(vp)
+        prompt = vp.get("prompt", "") if isinstance(vp, dict) else str(vp)
         result = validate_wan_prompt(prompt, section_id, i)
         total_quality += result.quality_score
         issues.extend(result.errors + result.warnings)
@@ -225,10 +216,8 @@ def truncate_wan_prompt(prompt: str, max_chars: int = MAX_PROMPT_LENGTH) -> str:
     if not prompt or len(prompt) <= max_chars:
         return prompt
     
-    # Only warn if significantly over limit (buffer zone)
-    if len(prompt) > max_chars + 20:
-        print(f"[WAN WARNING] LLM generated {len(prompt)} chars but limit is {max_chars}. "
-              f"LLM should generate within limits - applying safety truncation.")
+    print(f"[WAN WARNING] LLM generated {len(prompt)} chars but limit is {max_chars}. "
+          f"LLM should generate within limits - applying safety truncation.")
     
     truncated = prompt[:max_chars]
     
@@ -257,11 +246,9 @@ def truncate_video_prompts(video_prompts: List[Dict], max_chars: int = MAX_PROMP
     for vp in video_prompts:
         if isinstance(vp, dict):
             new_vp = vp.copy()
-            # Try to identify which key holds the prompt and allow modification
-            # If standard keys exist, update them. If not, it's tricky.
-            # We assume 'prompt' is the target or creating it is fine.
-            current_prompt = _extract_prompt_text(vp)
-            new_vp["prompt"] = truncate_wan_prompt(current_prompt, max_chars)
+            if "prompt" in new_vp:
+                original_len = len(new_vp["prompt"])
+                new_vp["prompt"] = truncate_wan_prompt(new_vp["prompt"], max_chars)
             truncated.append(new_vp)
         else:
             truncated.append({"prompt": truncate_wan_prompt(str(vp), max_chars)})
@@ -287,10 +274,6 @@ def expand_short_prompt(prompt: str, min_words: int = MIN_WAN_PROMPT_WORDS) -> s
     if word_count >= min_words:
         return prompt
     
-    # Don't expand empty prompts
-    if word_count == 0:
-        return prompt
-        
     words_needed = min_words - word_count + 5
     
     expansions = [
@@ -332,8 +315,8 @@ def expand_video_prompts(video_prompts: List[Dict], min_words: int = MIN_WAN_PRO
     for vp in video_prompts:
         if isinstance(vp, dict):
             new_vp = vp.copy()
-            current_prompt = _extract_prompt_text(vp)
-            new_vp["prompt"] = expand_short_prompt(current_prompt, min_words)
+            if "prompt" in new_vp:
+                new_vp["prompt"] = expand_short_prompt(new_vp["prompt"], min_words)
             expanded.append(new_vp)
         else:
             expanded.append({"prompt": expand_short_prompt(str(vp), min_words)})
@@ -358,14 +341,10 @@ def hard_fail_on_short_prompts(video_prompts: List[Dict], section_id: int, min_w
         WanPromptHardFailError: If any prompt fails validation
     """
     if not video_prompts:
-        # It's possible to have empty list if no video is needed, so maybe just return
-        # But if caller expects prompts, they should handle empty list before calling this.
-        # Strict mode: raise error
-        print(f"[WAN Validator] Section {section_id}: Warning - No video_prompts provided to validate")
-        return
+        raise WanPromptHardFailError(section_id, "No video_prompts provided")
     
     for i, vp in enumerate(video_prompts):
-        prompt = _extract_prompt_text(vp)
+        prompt = vp.get("prompt", "") if isinstance(vp, dict) else str(vp)
         word_count = len(prompt.split()) if prompt else 0
         char_count = len(prompt) if prompt else 0
         
