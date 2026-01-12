@@ -2810,8 +2810,8 @@ function sanitizeMarkdown(text) {
       return `<ol class="md-list">${listItems}</ol>`;
     })
 
-    // 4. Basic Formatting
-    .replace(/^#{1,6}\s*(.+)$/gm, '<h3>$1</h3>') // Map all headers to H3 for slide consistency
+  // 4. Basic Formatting
+  text = text.replace(/^#{1,6}\s*(.+)$/gm, '<h3>$1</h3>') // Map all headers to H3 for slide consistency
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/__([^_]+)__/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>')
