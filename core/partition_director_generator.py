@@ -308,6 +308,17 @@ class PartitionDirectorGenerator:
                 errors = V25Validator.validate_global_response(data)
                 
                 if not errors:
+                    # Map section IDs and apply splitter
+                    for key in ["intro", "summary", "memory", "recap", "quiz"]:
+                        if key in data:
+                            sec = data[key]
+                            # Ensure Recap is always 'video' renderer per Bible
+                            if key == "recap":
+                                sec["renderer"] = "video"
+                                
+                            # SYNC SPLITTER
+                            if sec.get("renderer") == "video":
+                                self._apply_wan_sync_splitter(sec)
                     return data
                     
                 # Validation Failed
@@ -382,11 +393,13 @@ class PartitionDirectorGenerator:
                         sections_result = data.get("sections", [])
                         # INJECT CONTENT FIDELITY (Restore source text)
                         if sections_result and chunk.get("content"):
-                            # Assign full chunk content to first section to ensure "content" field is populated
-                            # This overrides any empty/missing content from LLM
                             sections_result[0]["content"] = chunk.get("content")
-                            # If there are multiple sections, we only map to first for now (1:1 chunk mapping assumption)
-                            
+                        
+                        # Apply splitter to items with video renderer
+                        for sec in sections_result:
+                            if sec.get("renderer") == "video":
+                                self._apply_wan_sync_splitter(sec)
+                                
                         return sections_result
                     
                     # Validation Failed
@@ -412,6 +425,51 @@ class PartitionDirectorGenerator:
         except Exception as e:
             logger.error(f"Partition Worker {index} failed outer: {e}")
             return []
+
+    def _apply_wan_sync_splitter(self, section: dict):
+        """
+        V2.5 Sync Rule: If a narration segment is > 15s (40 words), 
+        split the video into multiple 15-second beats.
+        """
+        if "narration" not in section or "segments" not in section["narration"]:
+            return
+            
+        renderer = section.get("renderer")
+        if renderer != "video":
+            return
+
+        for seg in section["narration"]["segments"]:
+            text = seg.get("text", "")
+            words = text.split()
+            if len(words) > 40:
+                # Calculate number of beats (15s each)
+                num_beats = (len(words) // 40) + 1
+                logger.info(f"WAN Splitter: Splitting segment {seg.get('segment_id')} into {num_beats} beats ({len(words)} words)")
+                
+                base_prompt = section.get("video_prompt", "Cinematic educational visualization")
+                consistency_prefix = "Keeping the previous character and setting exactly the same, "
+                
+                video_prompts = []
+                for i in range(num_beats):
+                    video_prompts.append({
+                        "beat_id": f"{seg.get('segment_id')}_beat_{i+1}",
+                        "prompt": f"{consistency_prefix if i > 0 else ''}{base_prompt} (Step {i+1} of {num_beats})",
+                        "duration_hint": 15
+                    })
+                
+                # Attach to section
+                if "video_prompts" not in section:
+                    section["video_prompts"] = []
+                
+                # ISS-REC-FIX: If existing items are strings, convert to dicts to avoid mixed lists
+                existing = section["video_prompts"]
+                if existing and isinstance(existing[0], str):
+                    section["video_prompts"] = [{"beat_id": f"orig_{i}", "prompt": p} for i, p in enumerate(existing)]
+                
+                section["video_prompts"].extend(video_prompts)
+                
+                # Add beat mapping to segment so player knows to switch
+                seg["beat_videos"] = [p["beat_id"] for p in video_prompts]
 
 def generate_director_presentation(
     markdown_content: str,

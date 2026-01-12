@@ -251,7 +251,10 @@ def _render_visual_beats(
         # ISS-067: Use pre-compiled prompts if available, otherwise compile from visual_beats
         if use_precompiled:
             prompt_obj = video_prompts[beat_idx]
-            wan_prompt = prompt_obj.get("prompt") or prompt_obj.get("wan_prompt") or prompt_obj.get("text") or prompt_obj.get("video_prompt") or str(prompt_obj)
+            if isinstance(prompt_obj, str):
+                wan_prompt = prompt_obj
+            else:
+                wan_prompt = prompt_obj.get("prompt") or prompt_obj.get("wan_prompt") or prompt_obj.get("text") or prompt_obj.get("video_prompt") or str(prompt_obj)
             # ISS-199: Use per-prompt duration if available (set by narration sync)
             beat_duration = prompt_obj.get("duration_seconds", default_beat_duration)
             beat = visual_beats[beat_idx] if beat_idx < len(visual_beats) else {}
@@ -638,7 +641,10 @@ def render_from_video_prompts(
     
     for i, vp in enumerate(video_prompts):
         # Extract text from dict if needed
-        prompt = vp.get("prompt") or vp.get("wan_prompt") or vp.get("text") or vp.get("video_prompt") or ""
+        if isinstance(vp, str):
+            prompt = vp
+        else:
+            prompt = vp.get("prompt") or vp.get("wan_prompt") or vp.get("text") or vp.get("video_prompt") or ""
         duration = vp.get("duration_seconds", 8)
         beat_id = vp.get("beat_id", f"{section_id}_{i}")
         

@@ -55,11 +55,11 @@ def enforce_renderer_policy(presentation: dict) -> dict:
                 print(f"[RENDERER POLICY] Section {section.get('id')} ({section_type}): Forced to TEXT-ONLY")
         
         elif section_type == "recap":
-            if current_renderer != "wan_video" and current_renderer != "wan":
-                section["renderer"] = "wan_video"
-                section["renderer_override_reason"] = "Recap sections use WAN for storyboard visualization"
+            if current_renderer != "video":
+                section["renderer"] = "video"
+                section["renderer_override_reason"] = "V2.5 Bible: Recap sections strictly use 'video' renderer"
                 changes_made += 1
-                print(f"[RENDERER POLICY] Section {section.get('id')}: Forced to WAN (recap)")
+                print(f"[RENDERER POLICY] Section {section.get('id')}: Forced to 'video' (recap)")
     
     if changes_made > 0:
         print(f"[RENDERER POLICY] Applied {changes_made} renderer overrides")
@@ -159,7 +159,7 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
                 else:
                     # V1.2 Dict Mode
                     combined_prompts = "\n\n".join([
-                        f"[Beat {p.get('beat_id', i)}]: {p.get('prompt', '')}" 
+                        f"[Beat {p.get('beat_id', i) if isinstance(p, dict) else i}]: {p.get('prompt', p) if isinstance(p, dict) else p}" 
                         for i, p in enumerate(video_prompts)
                     ])
                     topic["explanation_plan"]["compiled_wan_prompt"] = combined_prompts

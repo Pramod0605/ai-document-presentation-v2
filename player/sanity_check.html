@@ -118,7 +118,18 @@
                     else if (!fetchUrl.startsWith('./') && !fetchUrl.startsWith('../') && !fetchUrl.startsWith('/')) fetchUrl = BASE_PATH + fetchUrl;
                 }
 
-                const response = await fetch(fetchUrl, { method: 'HEAD' });
+                let response = await fetch(fetchUrl, { method: 'HEAD' });
+
+                // ISS-IMG-FIX: If .jpg fails, try .png (Saved images use PNG)
+                if (!response.ok && (fetchUrl.toLowerCase().endsWith('.jpg') || fetchUrl.toLowerCase().endsWith('.jpeg'))) {
+                    const pngUrl = fetchUrl.replace(/\.jpe?g$/i, '.png');
+                    const pngResponse = await fetch(pngUrl, { method: 'HEAD' });
+                    if (pngResponse.ok) {
+                        response = pngResponse;
+                        fetchUrl = pngUrl;
+                    }
+                }
+
                 return {
                     status: response.status,
                     valid: response.ok,
@@ -234,13 +245,48 @@
                         } else {
                             logicHtml = `<span class="warn">WARN (Single Seg)</span><br>Segments: ${segCount}`;
                         }
+                    } else if (section.section_type === 'example') {
+                        const segCount = section.narration.segments.length;
+                        if (segCount >= 2) {
+                            logicHtml = `<span class="pass">PASS (Teach-Show possible)</span><br>Segments: ${segCount}`;
+                        } else {
+                            logicHtml = `<span class="warn">WARN (Single Seg Example)</span><br>Segments: ${segCount}`;
+                        }
+                    } else if (section.section_type === 'memory') {
+                        const cardCount = section.flashcards ? section.flashcards.length : 0;
+                        const segCount = section.narration.segments.length;
+                        if (cardCount === 5 && segCount >= 6) {
+                            logicHtml = `<span class="pass">PASS (Bible Compliant)</span><br>5 Cards, ${segCount} Segments`;
+                        } else {
+                            logicHtml = `<span class="fail">FAIL (Bible Discrepancy)</span><br>Cards: ${cardCount} (Req: 5), Segs: ${segCount} (Req: 6)`;
+                        }
+                    } else if (section.section_type === 'recap') {
+                        // V2.5 Fix: Check logical segments (narration) instead of technical beats (splitter)
+                        const narrSegCount = section.narration && section.narration.segments ? section.narration.segments.length : 0;
+                        const isVideo = (renderer.toLowerCase() === 'video' || renderer.toLowerCase() === 'wan_video');
+                        if (narrSegCount === 5 && isVideo) {
+                            logicHtml = `<span class="pass">PASS (Cinematic 5)</span><br>Segments: ${narrSegCount}`;
+                        } else {
+                            logicHtml = `<span class="fail">FAIL (Invalid Recap)</span><br>Segments: ${narrSegCount} (Req: 5), Renderer: ${renderer}`;
+                        }
                     } else if (section.section_type === 'summary') {
                         const bCount = section.visual_beats ? section.visual_beats.length : 0;
                         const sCount = section.narration.segments.length;
-                        if (sCount >= bCount) {
-                            logicHtml = `<span class="pass">PASS (Segments matched)</span><br>Bullets: ${bCount}, Segs: ${sCount}`;
+                        if (sCount >= bCount && sCount > 1) {
+                            logicHtml = `<span class="pass">PASS (Deep Sync)</span><br>Bullets: ${bCount}, Segs: ${sCount}`;
                         } else {
-                            logicHtml = `<span class="warn">WARN (Timing Risk)</span><br>Bullets: ${bCount}, Segs: ${sCount}`;
+                            logicHtml = `<span class="fail">FAIL (Lazy Summary)</span><br>Bullets: ${bCount}, Segs: ${sCount}`;
+                        }
+                    }
+
+                    // Global WAN 15s Check
+                    if (renderer === 'video' || renderer === 'wan') {
+                        const segments = section.narration.segments || [];
+                        for (const seg of segments) {
+                            const wordCount = (seg.text || "").split(' ').length;
+                            if (wordCount > 40 && !seg.beat_videos) {
+                                logicHtml += `<br><span class="fail">FAIL: Seg ${seg.segment_id} too long (${wordCount} words) & no beats!</span>`;
+                            }
                         }
                     }
 

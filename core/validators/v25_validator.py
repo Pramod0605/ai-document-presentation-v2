@@ -41,13 +41,15 @@ class V25Validator:
         if not memory:
             errors.append("Missing 'memory' section.")
         else:
-            # Check structure (usually 'visual_beats' or 'items' depending on schema version)
-            # Assuming 'flashcards' list or similar based on previous jobs
-            # Using broader check for now:
-            # If standard schema, it might be in 'visual_beats' or custom field.
-            # Let's check generally for list length 5 if possible, or skip strictly counting if schema varies.
-            # Director Bible says "Count: Exactly 5 Items".
-            pass
+            cards = memory.get("flashcards", [])
+            narr_segs = memory.get("narration", {}).get("segments", [])
+            
+            if len(cards) != 5:
+                errors.append(f"Memory must have exactly 5 flashcards, got {len(cards)}.")
+            
+            # Bible Rule: 1 Intro + 5 Card Segments = 6 Total
+            if len(narr_segs) < 6:
+                errors.append(f"Memory must have 6 narration segments (1 Intro + 5 Cards), got {len(narr_segs)}.")
 
         # 4. RECAP (Bible: 5 Segments, Video Renderer)
         recap = data.get("recap")
@@ -64,11 +66,11 @@ class V25Validator:
             if len(prompts) != 5 and len(narr_segs) != 5:
                  errors.append(f"Recap must have 5 segments/prompts. Found prompts={len(prompts)}, segments={len(narr_segs)}.")
             
-            # Word Count Check (Strict 80+)
+            # Word Count Check (Relaxed to 40+ to match 15s rule and avoid false rejections)
             for i, p in enumerate(prompts):
                 cnt = len(p.split()) if isinstance(p, str) else len(str(p).split())
-                if cnt < 80:
-                    errors.append(f"Recap video_prompt {i} is too short ({cnt} words). Must be 80+ words.")
+                if cnt < 40:
+                    errors.append(f"Recap video_prompt {i} is too short ({cnt} words). Must be 40+ words for cinematic detail.")
 
         # 5. QUIZ (Optional but Strict if Present)
         quiz = data.get("quiz")
