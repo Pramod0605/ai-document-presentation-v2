@@ -2791,36 +2791,31 @@ function sanitizeMarkdown(text) {
     return `<div class="table-wrapper"><table class="md-table">${headerHtml}<tbody>${rows}</tbody></table></div>`;
   });
 
-    // 3.5 Markdown Lists (Unordered & Ordered)
-    // Basic support for bullets (*, -) and numbers (1.)
-
-    // Unordered Lists: * or - 
-    // We replace the entire block of list items wiht <ul>...</ul>
-    // Note: This regex matches the whole list block first
-    .replace(/^(\s*[\*\-]\s+.*(?:\n\s*[\*\-]\s+.*)*)/gm, (match) => {
+  // 3.5 Markdown Lists (Unordered & Ordered)
+  // Unordered Lists: * or - 
+  text = text.replace(/^(\s*[\*\-]\s+.*(?:\n\s*[\*\-]\s+.*)*)/gm, (match) => {
     const items = match.split('\n').filter(l => l.trim());
     const listItems = items.map(item => `<li>${item.replace(/^\s*[\*\-]\s+/, '')}</li>`).join('');
     return `<ul class="md-list">${listItems}</ul>`;
-  })
+  });
 
-    // Ordered Lists: 1. 2. 
-    .replace(/^(\s*\d+\.\s+.*(?:\n\s*\d+\.\s+.*)*)/gm, (match) => {
-      const items = match.split('\n').filter(l => l.trim());
-      const listItems = items.map(item => `<li>${item.replace(/^\s*\d+\.\s+/, '')}</li>`).join('');
-      return `<ol class="md-list">${listItems}</ol>`;
-    })
+  // Ordered Lists: 1. 2. 
+  text = text.replace(/^(\s*\d+\.\s+.*(?:\n\s*\d+\.\s+.*)*)/gm, (match) => {
+    const items = match.split('\n').filter(l => l.trim());
+    const listItems = items.map(item => `<li>${item.replace(/^\s*\d+\.\s+/, '')}</li>`).join('');
+    return `<ol class="md-list">${listItems}</ol>`;
+  });
 
   // 4. Basic Formatting
-  text = text.replace(/^#{1,6}\s*(.+)$/gm, '<h3>$1</h3>') // Map all headers to H3 for slide consistency
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/__([^_]+)__/g, '<strong>$1</strong>')
-    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-    .replace(/_([^_]+)_/g, '<em>$1</em>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/^>\s*(.+)$/gm, '<blockquote>$1</blockquote>')
-    // Link support [text](url)
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
-    .trim();
+  text = text.replace(/^#{1,6}\s*(.+)$/gm, '<h3>$1</h3>');
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+  text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
+  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+  text = text.replace(/^>\s*(.+)$/gm, '<blockquote>$1</blockquote>');
+  text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+  text = text.trim();
 
   // 5. Restore LaTeX
   text = text.replace(/__LATEX_(BLOCK|INLINE|PAREN|BRACKET)_(\d+)__/g, (match, type, idx) => {
