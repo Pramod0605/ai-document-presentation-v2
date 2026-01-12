@@ -1,8 +1,8 @@
 # Player V2.js Technical Specification (V2.5 Compliant)
 
 **Document Version**: 2.5.0  
-**Last Updated**: 2026-01-10  
-**Status**: Ready for Implementation  
+**Last Updated**: 2026-01-12
+**Status**: Live / Production
 **Purpose**: Technical reference for player_v2.js V2.5 Director Bible compliance
 
 ---
@@ -12,12 +12,12 @@
 | Section Type | Bible Requirement | Implementation Status | `presentation.json` Fields |
 |--------------|-------------------|----------------------|---------------------------|
 | **INTRO** | Avatar ONLY (text_layer: HIDE, visual_layer: HIDE, avatar_layer: SHOW) | ✅ COMPLIANT | `section_type === 'intro'`, `avatar_video` |
-| **SUMMARY** | Bullet points, time-synced reveal (visual_type: bullet_list, text_layer: SHOW) | ⚠️ NEEDS FIX | `visual_beats[].display_text`, `narration.segments[].start_time_sec` |
-| **CONTENT** | Teach→Show toggle (Segment 1: text SHOW, visual HIDE; Segment 2: text HIDE, visual SHOW FULL) | ⚠️ NEEDS FIX | `video_path`, `flip_timing_sec`, `display_directives.action_type` |
-| **EXAMPLE** | Same as Content (step-by-step with Manim/Video) | ⚠️ NEEDS FIX | Same as Content |
-| **QUIZ** | 3-step dance (Introduce 15-20s → Pause 3-5s → Reveal 15-20s) | ❌ MISSING | `quiz_questions[]`, `display_directives.action_type === "pause"` |
-| **MEMORY** | Flashcard flip (Front 10s → Pause 2s → Back 10s), Exactly 5 items | ❌ MISSING | `flashcards[].front`, `.back`, `display_directives.action_type === "flip_card"` |
-| **RECAP** | Full-screen video ONLY (text: HIDE, visual: SHOW FULL, Exactly 5 segments) | ⚠️ NEEDS FIX | `section_type === 'recap'`, `beat_video_paths[]` |
+| **SUMMARY** | Bullet points, time-synced reveal (visual_type: bullet_list, text_layer: SHOW) | ✅ COMPLIANT | `visual_beats[].display_text`, `narration.segments[].start_time_sec` (Narration-Linked Sync) |
+| **CONTENT** | Teach→Show toggle (Segment 1: text SHOW, visual HIDE; Segment 2: text HIDE, visual SHOW FULL) | ✅ COMPLIANT | `display_directives.action_type`, `updateContentVisualsForSegment` |
+| **EXAMPLE** | Same as Content (step-by-step with Manim/Video) | ✅ COMPLIANT | Same as Content |
+| **QUIZ** | 3-step dance (Introduce 15-20s → Pause 3-5s → Reveal 15-20s) | ✅ COMPLIANT | `quiz_questions[]`, `display_directives.action_type === "pause"`, `qa_count * 3` segments |
+| **MEMORY** | Flashcard flip (Front 10s → Pause 2s → Back 10s), Exactly 5 items | ✅ COMPLIANT | `flashcards[].front`, `.back`, `display_directives.action_type === "flip_card"` |
+| **RECAP** | Full-screen video ONLY (text: HIDE, visual: SHOW FULL, Exactly 5 segments) | ✅ COMPLIANT | `section_type === 'recap'`, `beat_video_paths[]` |
 
 ### Bible Rule: Avatar Visibility
 **Comparison Table (Line 82)**: Avatar = **Show** for ALL section types  
@@ -127,19 +127,19 @@ if (avatarPath && avatarVideo.src) {
 
 ---
 
-## Implementation Plan Summary
+## Implemented Features (Resolution Log)
 
-### Issues to Fix (9 Total)
+### Core Logic Updates (Jan 2026)
 
-1. ❌ **Missing renderQuiz()** - Implement 3-step state machine
-2. ⚠️ **Teach→Show not enforced** - Add layer toggling based on `flip_timing_sec` / `display_directives`
-3. ⚠️ **Recap not full-screen** - Detect `section_type === 'recap'` and force video-only mode
-4. ⚠️ **Summary bullets all at once** - Add time-synced reveal based on `segments[].start_time_sec`
-5. ❌ **Missing renderMemory()** - Implement flashcard flip with CSS 3D transforms
-6. ⚠️ **Subtitle positioning** - Move to bottom (`position: fixed; bottom: 20px; background: transparent`)
-7. ✅ **Source markdown verification** - Verify `markdown_content` usage in `renderContent()`
-8. ❌ **No media preloading** - Implement `preloadNextSection()` to buffer next slide's video/audio/avatar
-9. ❌ **No fallback UI** - Add orange "Generating Video..." placeholder for missing media
+1. ✅ **Quiz State Machine**: Implemented `renderQuiz` with strict 3-step loop (Intro -> Pause -> Reveal).
+2. ✅ **Teach→Show Enforcement**: `enforceTeachShowLogic` now strictly regulates layer visibility (Text vs Video).
+3. ✅ **Recap Full-Screen**: `renderRecap` enforces `videoLayer` focus and hides `contentLayer`.
+4. ✅ **Summary Progressive Reveal**: Implemented Sync logic using `narration.segments` to reveal bullets line-by-line.
+5. ✅ **Memory Flashcards**: Implemented CSS 3D transforms (`rotateY`) for flip animation.
+6. ✅ **Subtitle Positioning**: Fixed to bottom with transparent background (`#subtitle-overlay`).
+7. ✅ **Source Verification**: `renderVisualContent` prioritizes `markdown_pointer` resolution strictly.
+8. ✅ **Media Preloading**: `preloadNextSection` added to buffer assets.
+9. ✅ **Fallback UI**: Orange "Generating..." placeholders added for missing assets.
 
 ### Sanity Checks Required
 

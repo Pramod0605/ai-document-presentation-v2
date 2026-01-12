@@ -164,6 +164,13 @@ ai-document-presentation-v2/
 | `v2-unified-single` | Legacy single-chunk Director |
 | `v1.5-legacy` | Original pipeline (deprecated) |
 
+## Technical Documentation
+For deep-dive architecture and implementation details:
+
+*   **[V2.5 Director Pipeline Spec](docs/v2.5_Director_Pipeline_Technical_Doc.md):** Full architecture, Data Flow, and Agent Logic.
+*   **[Player V2.5 Technical Spec](player_v2_technical.md):** Browser rendering logic, Compliance Matrix, and Features.
+
+
 ## Job Output
 
 Each job creates:
