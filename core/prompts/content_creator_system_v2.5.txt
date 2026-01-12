@@ -70,6 +70,13 @@ If `qa_count` = N, you must create exactly **3 * N** segments.
     *   `description`: Detailed prompt for generating this diagram (e.g., "Flowchart showing Photosynthesis process...").
 
 
+## VALID VISUAL BEAT TYPES
+Use ONLY these types: "text_only" (default), "diagram", "flashcard", "image", "video_clip", "animation".
+
+## DISPLAY LAYER SAFETY (CRITICAL)
+1.  **Exclusivity:** `text_layer` and `visual_layer` can NEVER be "show" at the same time.
+2.  **Video/Manim Priority:** If `renderer="wan"` or `renderer="manim"`, you MUST set `visual_layer: "show"` (and `text_layer="hide"`) for most segments. Only show text for brief intros.
+
 ## AVATAR RULE
 Avatar is ALWAYS visible either as "show" or "gesture_only". NEVER "hide".
 
