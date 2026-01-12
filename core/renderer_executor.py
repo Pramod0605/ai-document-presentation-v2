@@ -16,6 +16,9 @@ from core.dry_run_validator import (
 )
 
 logger = logging.getLogger(__name__)
+import threading
+json_lock = threading.Lock()
+analytics_lock = threading.Lock()
 
 TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory", "quiz"]
 
@@ -482,33 +485,34 @@ def _update_presentation_safely(pres_path: Path, section_id: str, video_path: st
             
         import json
         
-        # Simple R-M-W lock mechanism could be added here if concurrency is high, 
-        # but for now we rely on OS file locking or low probability of collision
-        with open(pres_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        # Use a global lock to prevent race conditions during parallel updates
+        with json_lock:
+            with open(pres_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                
+            updated = False
+            for section in data.get("sections", []):
+                # ISS-ID-FIX: Cast both to string to ensure matching regardless of type (int vs str)
+                if str(section.get("section_id")) == str(section_id):
+                    # Update paths
+                    rel_path = Path(video_path).name
+                    section["video_path"] = f"videos/{rel_path}"
+                    
+                    # Handle Recaps/Beats
+                    beat_videos = result.get("beat_videos", [])
+                    recap_video_paths = result.get("recap_video_paths", [])
+                    
+                    if beat_videos:
+                         section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
+                    if recap_video_paths:
+                         section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
+                    
+                    updated = True
+                    break
             
-        updated = False
-        for section in data.get("sections", []):
-            if section.get("section_id") == section_id:
-                # Update paths
-                rel_path = Path(video_path).name
-                section["video_path"] = f"videos/{rel_path}"
-                
-                # Handle Recaps/Beats
-                beat_videos = result.get("beat_videos", [])
-                recap_video_paths = result.get("recap_video_paths", [])
-                
-                if beat_videos:
-                     section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
-                if recap_video_paths:
-                     section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
-                
-                updated = True
-                break
-        
-        if updated:
-            with open(pres_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=4)
+            if updated:
+                with open(pres_path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=4)
                 
     except Exception as e:
         logger.error(f"Failed to update presentation.json: {e}")
@@ -523,47 +527,48 @@ def _update_analytics_safely(analytics_path: Path, section_id: str, result: dict
         import json
         from datetime import datetime
         
-        with open(analytics_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        with analytics_lock:
+            with open(analytics_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
             
-        # Update renderer metrics (Standard Schema)
-        if "renderer" not in data:
-            data["renderer"] = {
-                "manim_videos": 0, 
-                "wan_videos": 0, 
-                "static_slides": 0, 
-                "failed_renders": 0,
-                "section_renders": []
+            # Update renderer metrics (Standard Schema)
+            if "renderer" not in data:
+                data["renderer"] = {
+                    "manim_videos": 0, 
+                    "wan_videos": 0, 
+                    "static_slides": 0, 
+                    "failed_renders": 0,
+                    "section_renders": []
+                }
+                
+            metrics = data["renderer"]
+            
+            if result["status"] == "success":
+                 # Assuming WAN since this is the WAN BG job
+                 metrics["wan_videos"] = metrics.get("wan_videos", 0) + 1
+            else:
+                 metrics["failed_renders"] = metrics.get("failed_renders", 0) + 1
+                 
+            # Add detailed entry to 'section_renders' list
+            if "section_renders" not in metrics:
+                metrics["section_renders"] = []
+                
+            detail = {
+                "section_id": section_id,
+                "section_type": result.get("section_type", "content"), # Capture type if available
+                "renderer": "wan", # We know this is WAN context
+                "duration_seconds": round(result.get("duration_seconds", 0), 2),
+                "status": result["status"],
+                "timestamp": datetime.utcnow().isoformat()
             }
             
-        metrics = data["renderer"]
-        
-        if result["status"] == "success":
-             # Assuming WAN since this is the WAN BG job
-             metrics["wan_videos"] = metrics.get("wan_videos", 0) + 1
-        else:
-             metrics["failed_renders"] = metrics.get("failed_renders", 0) + 1
-             
-        # Add detailed entry to 'section_renders' list
-        if "section_renders" not in metrics:
-            metrics["section_renders"] = []
+            if result.get("error"):
+                detail["metadata"] = {"error": result["error"]}
+                
+            metrics["section_renders"].append(detail)
             
-        detail = {
-            "section_id": section_id,
-            "section_type": result.get("section_type", "content"), # Capture type if available
-            "renderer": "wan", # We know this is WAN context
-            "duration_seconds": round(result.get("duration_seconds", 0), 2),
-            "status": result["status"],
-            "timestamp": datetime.utcnow().isoformat()
-        }
-        
-        if result.get("error"):
-            detail["metadata"] = {"error": result["error"]}
-            
-        metrics["section_renders"].append(detail)
-        
-        with open(analytics_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=4)
+            with open(analytics_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=4)
             
     except Exception as e:
         logger.error(f"Failed to update analytics.json: {e}")

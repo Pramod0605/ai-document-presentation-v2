@@ -5,11 +5,11 @@
 # Usage: .\deploy_prod.ps1
 # Prerequisites: SSH access configured for the server
 
-# --- CONFIGURATION (EDIT THESE) ---
-$SERVER_IP = "YOUR_SERVER_IP"  # e.g., "192.168.1.100" or "myserver.com"
-$SERVER_USER = "Administrator" # Windows Server User or Linux User (e.g., "ubuntu")
-$PROJECT_DIR = "C:\ai-doc-presentation" # Directory on server where repo is cloned
-$CONTAINER_NAME = "ai-doc-app" # Name of your docker container (if applicable)
+# --- CONFIGURATION (UPDATED TO MATCH PRODUCTION) ---
+$SERVER_IP = "69.197.145.4"
+$SERVER_USER = "administrator"
+$PROJECT_DIR = "/nvme0n1-disk/nvme01/ai-document-presentation-v2"
+$CONTAINER_NAME = "ai-doc-app" # Adjust if your container name is different
 
 # --- SCRIPT ---
 
@@ -24,14 +24,9 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-# 2. Restart Docker (Optional - Adjust based on your setup)
-# Assuming a standard docker restart, or a python script restart
-Write-Host "[DEPLOY] Restarting Application..." -ForegroundColor Yellow
-# Example 1: If using Docker Compose
-# ssh $SERVER_USER@$SERVER_IP "cd $PROJECT_DIR && docker-compose restart"
-
-# Example 2: If just restarting a container
-# ssh $SERVER_USER@$SERVER_IP "docker restart $CONTAINER_NAME"
+# 2. Restart Docker
+Write-Host "[DEPLOY] Restarting Application Container..." -ForegroundColor Yellow
+ssh $SERVER_USER@$SERVER_IP "docker restart $CONTAINER_NAME"
 
 # Example 3: If running manual python script (Kill and Restart)
 # This is risky via SSH one-liner without nohup/Start-Process, but here's a pattern:
