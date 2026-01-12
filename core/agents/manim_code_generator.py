@@ -885,15 +885,9 @@ def integrate_manim_code_into_section(
     render_spec["manim_scene_spec"]["manim_code"] = manim_code
     render_spec["manim_scene_spec"]["code_type"] = "construct_body"
     
-    # RESET VISUAL LAYERS: Ensure player shows the video, not fallback text
-    # (Fixes issue where regenerating code didn't clear previous "hide" flags)
-    narration = section.get("narration", {})
-    for seg in narration.get("segments", []):
-        directives = seg.get("display_directives", {})
-        # If we have Manim code (and it's not an Intro/Summary which uses text), show it.
-        # We aggressively reset to "show" because if we generated code, we want to see it.
-        directives["visual_layer"] = "show"
-        directives["text_layer"] = "hide" # Enforce mutual exclusion
-        seg["display_directives"] = directives
+    # [V2.5 FIX] Removed destructive layer reset. 
+    # We now trust the Director's "Teach -> Show" pattern.
+    # The Director correctly sets text_layer="show" for Teach segments and "hide" for Show segments.
+    # Overwriting this here caused the "Missing Text" bug.
     
     return section

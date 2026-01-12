@@ -488,14 +488,48 @@ class DirectorGenerator:
         # Memory
         mem = context.get("memory_flashcards", [])
         if mem:
+            mem_segments = []
+            # Intro segment
+            mem_segments.append({
+                "segment_id": "mem_intro", 
+                "text": f"Let's review {len(mem)} key concepts to lock in your memory.",
+                "display_directives": {"text_layer": "show", "visual_layer": "hide", "avatar_layer": "show"}
+            })
+            
+            # Per-card segments
+            intros = ["First up", "Next", "Another key one", "And finally"]
+            
+            for i, card in enumerate(mem):
+                front = card.get("front", "Concept")
+                back = card.get("back", "Definition")
+                
+                # Pick a catchy intro phrase (rotate if more cards than phrases)
+                intro_phrase = intros[min(i, len(intros)-1)]
+                if i == 0: intro_phrase = "First up"
+                
+                # Create a catchy, conversational script
+                # "First up, [Front]? ... [Back]"
+                # The 'back' usually contains the Mnemonic ("Remember: ...") so we let it shine.
+                script = f"{intro_phrase}, {front}... {back}"
+                
+                mem_segments.append({
+                    "segment_id": f"mem_card_{i+1}",
+                    "text": script,
+                    "display_directives": {
+                        "text_layer": "show", 
+                        "visual_layer": "hide", 
+                        "avatar_layer": "show", 
+                        "action_type": "flip_card",
+                        "card_index": i
+                    }
+                })
+
             sections["memory"] = {
                 "section_type": "memory",
                 "title": "Flashcards",
                 "flashcards": mem,
-                "narration": {"segments": [{"segment_id": "mem_1", "text": "Review these terms."}]}
+                "narration": {"segments": mem_segments}
             }
-            
-        # Recap
         recap = context.get("recap_scenes", [])
         if recap:
              sections["recap"] = {
