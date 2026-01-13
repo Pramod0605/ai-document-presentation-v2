@@ -154,7 +154,8 @@ class PartitionDirectorGenerator:
         grade: str = "Grade 10",
         images_list: str = "None",
         update_status_callback=None,
-        generation_scope: str = "full" # New: "full", "global", "content"
+        generation_scope: str = "full", # New: "full", "global", "content"
+        output_dir: Optional[str] = None
     ) -> dict:
         
         # A. PARTITIONING (Skip if global-only)
@@ -184,7 +185,7 @@ class PartitionDirectorGenerator:
             # 1. Submit Global Worker (if needed)
             global_future = None
             if generation_scope in ["full", "global"]:
-                global_future = executor.submit(self._run_global_worker, markdown_content, subject, grade)
+                global_future = executor.submit(self._run_global_worker, markdown_content, subject, grade, output_dir)
             
             # 2. Submit Content Workers (if needed)
             future_to_index = {}
@@ -197,7 +198,8 @@ class PartitionDirectorGenerator:
                         markdown_content if generation_scope == "full" else "", 
                         subject, 
                         grade, 
-                        images_list
+                        images_list,
+                        output_dir
                     )
                     future_to_index[f] = i
                 
@@ -205,20 +207,17 @@ class PartitionDirectorGenerator:
 
             # 3. Collect Results
             if global_future:
-                try:
-                    global_results = global_future.result()
-                except Exception as e:
-                    logger.error(f"Global Worker failed: {e}")
-                    global_results = {}
+                global_results = global_future.result()
+                if not global_results:
+                    raise RuntimeError("Global Worker failed to return a valid result.")
 
             if future_to_index:
                 for future in as_completed(future_to_index):
                     i = future_to_index[future]
-                    try:
-                        content_results[i] = future.result()
-                    except Exception as e:
-                        logger.error(f"Worker {i} generated an exception: {e}")
-                        content_results[i] = []
+                    # This will raise if the worker thread raised
+                    content_results[i] = future.result()
+                    if not content_results[i]:
+                        raise RuntimeError(f"Content Worker for Chunk {i} failed to return a valid result.")
         
         # D. STITCHING
         msg = "Phase 4: Stitching Presentation..."
@@ -280,7 +279,7 @@ class PartitionDirectorGenerator:
                 
         return final_presentation
 
-    def _run_global_worker(self, full_md, subject, grade) -> dict:
+    def _run_global_worker(self, full_md, subject, grade, output_dir: Optional[str] = None) -> dict:
         """Generates Intro, Summary, Memory, Recap ONLY."""
         # Use existing 'director_global_prompt.txt' if available, or inline.
         # Strict Load of Global Prompt
@@ -302,8 +301,19 @@ class PartitionDirectorGenerator:
                 # VALIDATION GATE (GLOBAL)
                 # VALIDATION GATE (GLOBAL)
                 print(f"\n[PHASE 1 DEBUG] Global Worker Response ({subject}, {grade}):")
-                print(json.dumps(data, indent=2))
+                # print(json.dumps(data, indent=2))
                 print(f"[PHASE 1 DEBUG] --------------------------------------------------\n")
+                
+                # USER REQUEST: Save global debug dump
+                if output_dir:
+                    try:
+                        os.makedirs(output_dir, exist_ok=True)
+                        debug_path = os.path.join(output_dir, "debug_global_worker.json")
+                        with open(debug_path, "w", encoding="utf-8") as f:
+                            json.dump(data, f, indent=2)
+                        logger.info(f"Saved global worker debug to {debug_path}")
+                    except Exception as e:
+                        logger.warning(f"Failed to save global debug: {e}")
                 
                 errors = V25Validator.validate_global_response(data)
                 
@@ -318,7 +328,7 @@ class PartitionDirectorGenerator:
                                 
                             # SYNC SPLITTER
                             if sec.get("renderer") == "video":
-                                self._apply_wan_sync_splitter(sec)
+                                self._apply_sync_splitter(sec)
                     return data
                     
                 # Validation Failed
@@ -336,10 +346,9 @@ class PartitionDirectorGenerator:
                 logger.error(f"Global Worker Exception (Attempt {retries+1}): {e}")
                 retries += 1
                 
-        logger.error("Global Worker failed all validation attempts. Returning empty dict.")
-        return {}
+        raise RuntimeError(f"Global Worker failed all {max_retries} validation attempts.")
 
-    def _run_content_worker_sync(self, index, chunk, full_context, subject, grade, images_list):
+    def _run_content_worker_sync(self, index, chunk, full_context, subject, grade, images_list, output_dir: Optional[str] = None):
         """
         Sync Worker for Content chunks (for ThreadPoolExecutor).
         """
@@ -372,6 +381,10 @@ class PartitionDirectorGenerator:
                     # [DEBUG] Save Raw LLM Response to verify if it's String or Dict
                     try:
                         debug_file = f"debug_llm_chunk_{index}_attempt_{retries}.txt"
+                        if output_dir:
+                            os.makedirs(output_dir, exist_ok=True)
+                            debug_file = os.path.join(output_dir, debug_file)
+                            
                         with open(debug_file, "w", encoding="utf-8") as f:
                             f.write(response)
                         logger.info(f"Saved raw LLM response to {debug_file}")
@@ -398,7 +411,7 @@ class PartitionDirectorGenerator:
                         # Apply splitter to items with video renderer
                         for sec in sections_result:
                             if sec.get("renderer") == "video":
-                                self._apply_wan_sync_splitter(sec)
+                                self._apply_sync_splitter(sec)
                                 
                         return sections_result
                     
@@ -418,58 +431,102 @@ class PartitionDirectorGenerator:
                     logger.error(f"Worker {index} Exception (Attempt {retries+1}): {e}")
                     retries += 1
                     
-            # If all retries fail, log and return empty (or partial data)
-            logger.error(f"Worker {index} failed all {max_retries} attempts.")
-            return []
+            # If all retries fail, raise error to stop pipeline
+            raise RuntimeError(f"Content Worker {index} failed all {max_retries} attempts.")
             
         except Exception as e:
             logger.error(f"Partition Worker {index} failed outer: {e}")
-            return []
+            raise  # Re-raise to trigger failure in ThreadPoolExecutor result
 
-    def _apply_wan_sync_splitter(self, section: dict):
+    def _apply_sync_splitter(self, section: dict):
         """
         V2.5 Sync Rule: If a narration segment is > 15s (40 words), 
-        split the video into multiple 15-second beats.
+        split the video/animation into multiple 15-second beats.
+        
+        Supports both WAN ('video') and Manim ('manim') renderers.
+        Ensures EVERY segment has a mapping to a beat, even if not split.
         """
         if "narration" not in section or "segments" not in section["narration"]:
             return
             
         renderer = section.get("renderer")
-        if renderer != "video":
+        if renderer not in ["video", "manim"]:
             return
-
-        for seg in section["narration"]["segments"]:
+            
+        render_spec = section.get("render_spec", {})
+        
+        # Determine base prompts (video_prompts for WAN, manim_scene_spec for Manim)
+        # V2.5 Fix: Look for prompts in root (Recap) or render_spec (Content)
+        v_prompts = section.get("video_prompts", []) or render_spec.get("video_prompts", [])
+        manim_spec = render_spec.get("manim_scene_spec")
+        
+        # Build a complete list of video prompts for the entire section
+        # to ensure 1-to-1 mapping and no missing videos for any segment.
+        final_video_prompts = []
+        
+        for idx, seg in enumerate(section["narration"]["segments"]):
             text = seg.get("text", "")
             words = text.split()
+            
+            # Base prompt selection (use director's prompts if available, else default)
+            base_prompt = "Cinematic educational visualization, high quality, professional lighting, detailed 4k render." if renderer == "video" else "Mathematical conceptual animation, clear geometry, high contrast."
+            
+            if renderer == "video":
+                if isinstance(v_prompts, list) and v_prompts:
+                    base_prompt_obj = v_prompts[idx % len(v_prompts)]
+                    if isinstance(base_prompt_obj, dict):
+                        base_prompt = base_prompt_obj.get("prompt") or base_prompt_obj.get("text") or base_prompt_obj.get("wan_prompt") or "Cinematic visualization"
+                    else:
+                        base_prompt = str(base_prompt_obj)
+                elif section.get("video_prompt"):
+                    base_prompt = section.get("video_prompt")
+                elif section.get("video_prompts"): # Fallback for root list if list-proxy failed
+                    try:
+                        base_prompt = str(section.get("video_prompts")[0])
+                    except: pass
+            elif renderer == "manim":
+                # For manim, prioritize the section-level spec if it exists
+                if manim_spec:
+                    base_prompt = manim_spec
+                elif isinstance(v_prompts, list) and v_prompts:
+                    # Some directors might mistakenly put manim specs in video_prompts
+                    base_prompt_obj = v_prompts[idx % len(v_prompts)]
+                    base_prompt = base_prompt_obj.get("prompt") if isinstance(base_prompt_obj, dict) else str(base_prompt_obj)
+
             if len(words) > 40:
                 # Calculate number of beats (15s each)
                 num_beats = (len(words) // 40) + 1
-                logger.info(f"WAN Splitter: Splitting segment {seg.get('segment_id')} into {num_beats} beats ({len(words)} words)")
+                logger.info(f"Sync Splitter ({renderer}): Splitting segment {seg.get('segment_id')} into {num_beats} beats ({len(words)} words)")
                 
-                base_prompt = section.get("video_prompt", "Cinematic educational visualization")
-                consistency_prefix = "Keeping the previous character and setting exactly the same, "
+                # Consistency prefix helps the LLM maintain visual continuity across beats
+                consistency_prefix = "Keeping the previous character and setting exactly the same, " if renderer == "video" else ""
                 
-                video_prompts = []
+                seg_beats = []
                 for i in range(num_beats):
-                    video_prompts.append({
-                        "beat_id": f"{seg.get('segment_id')}_beat_{i+1}",
-                        "prompt": f"{consistency_prefix if i > 0 else ''}{base_prompt} (Step {i+1} of {num_beats})",
+                    beat_id = f"{seg.get('segment_id')}_beat_{i+1}"
+                    final_video_prompts.append({
+                        "beat_id": beat_id,
+                        "prompt": f"{consistency_prefix if i > 0 else ''}{base_prompt} (Part {i+1} of {num_beats})",
                         "duration_hint": 15
                     })
-                
-                # Attach to section
-                if "video_prompts" not in section:
-                    section["video_prompts"] = []
-                
-                # ISS-REC-FIX: If existing items are strings, convert to dicts to avoid mixed lists
-                existing = section["video_prompts"]
-                if existing and isinstance(existing[0], str):
-                    section["video_prompts"] = [{"beat_id": f"orig_{i}", "prompt": p} for i, p in enumerate(existing)]
-                
-                section["video_prompts"].extend(video_prompts)
+                    seg_beats.append(beat_id)
                 
                 # Add beat mapping to segment so player knows to switch
-                seg["beat_videos"] = [p["beat_id"] for p in video_prompts]
+                seg["beat_videos"] = seg_beats
+            else:
+                # Standard segment: still needs a video beat mapping
+                beat_id = f"{seg.get('segment_id')}_beat_1"
+                final_video_prompts.append({
+                    "beat_id": beat_id,
+                    "prompt": base_prompt,
+                    "duration_hint": 15
+                })
+                seg["beat_videos"] = [beat_id]
+        
+        # Replace section top-level video_prompts with the complete mapping
+        # For Manim, the runner will look for this 'video_prompts' key as well now.
+        section["video_prompts"] = final_video_prompts
+        logger.info(f"Sync Splitter ({renderer}): Generated {len(final_video_prompts)} total beats for section {section.get('section_id')}")
 
 def generate_director_presentation(
     markdown_content: str,

@@ -2322,10 +2322,21 @@ function seekTimeline(e) {
 }
 
 function onSlideEnd() {
+  const slide = slides[currentSlideIndex];
+
+  // =========================================
+  // V2.5 DIRECTOR — MANIM SAFETY GUARD
+  // Manim slides NEVER auto-advance.
+  // Narration / Timer controls progression.
+  // =========================================
+  if (slide && slide.renderer === 'manim') {
+    console.log('[V2.5] onSlideEnd ignored for Manim slide');
+    return;
+  }
+
   if (currentSlideIndex < slides.length - 1) {
     setTimeout(() => {
       loadSlide(currentSlideIndex + 1);
-      // Auto-play if we were playing
       if (isPlaying) {
         startPlayback();
       }

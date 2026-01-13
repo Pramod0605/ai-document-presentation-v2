@@ -28,7 +28,9 @@ def get_prompts():
         planner_system = f.read()
     with open(os.path.join(base, "prompts", "planner_bone_prompt.txt"), "r", encoding="utf-8") as f:
         planner_bone_system = f.read()
-    return director_system, director_user, planner_system, planner_bone_system
+    with open(os.path.join(base, "prompts", "director_global_prompt.txt"), "r", encoding="utf-8") as f:
+        director_global = f.read()
+    return director_system, director_user, planner_system, planner_bone_system, director_global
 
 class DirectorGenerator:
     """
@@ -58,12 +60,12 @@ class DirectorGenerator:
         
         if not director_system:
              # Fallback to default load
-             director_system, director_user_template, _, _ = get_prompts()
+             director_system, director_user_template, _, _, _ = get_prompts()
              director_user = director_user_template
 
         if not director_user:
              # Load user prompt template if we only passed system prompt (case for specialized topic prompt)
-             _, director_user_template, _, _ = get_prompts()
+             _, director_user_template, _, _, _ = get_prompts()
              director_user = director_user_template
         
         user_prompt = director_user.format(
@@ -124,7 +126,7 @@ class DirectorGenerator:
         2. Pass 2: Director executes each logical chunk in a loop.
         3. Merges results into final presentation.
         """
-        director_sys, director_usr, planner_sys, _ = get_prompts()
+        director_sys, director_usr, planner_sys, _, _ = get_prompts()
         
         # --- PASS 1: THE PLANNER ---
         msg = "Phase 1: Generating Lesson Blueprint..."
@@ -207,7 +209,7 @@ class DirectorGenerator:
                 continue
 
         # C. Add Summary, Memory, Recap (from Blueprint)
-        self._add_global_footer(final_presentation, globals)
+        self._add_global_footer(final_presentation, globals, subject, grade)
 
         final_presentation["_llm_usage"] = total_usage
         return final_presentation
@@ -226,41 +228,114 @@ class DirectorGenerator:
         # If not found, return full text
         return full_md
 
-    def _add_global_footer(self, presentation, globals):
-        """Add Summary, Memory, and Recap sections from the Planner blueprint."""
-        # Summary
+    def _add_global_footer(self, presentation, globals, subject="Science", grade="Grade 10"):
+        """Add Summary, Memory, and Recap sections using LLM for high fidelity."""
+        # V2.5: No more hardcoded strings. Use the Global Director!
+        logger.info("[Director] Using LLM to generate high-fidelity Global sections.")
+        
+        _, _, _, _, global_system = get_prompts()
+        
+        # Prepare context for LLM
+        # Use full presentation text if possible, or just the globals data
+        summary_raw = globals.get("summary", {})
+        memory_raw = globals.get("memory", [])
+        recap_raw = globals.get("recap", [])
+        
+        global_context = {
+            "presentation_title": presentation.get("presentation_title", "Lesson"),
+            "summary_points": summary_raw.get("bullets", []),
+            "memory_flashcards": memory_raw,
+            "recap_scenes": recap_raw
+        }
+        
+        user_prompt = f"Subject: {subject}\nGrade: {grade}\n\nDATA:\n{json.dumps(global_context, indent=2)}"
+        
+        try:
+            response, _ = call_openrouter_llm(global_system, user_prompt, self.config)
+            data = extract_json_from_response(response)
+            data = normalize_output(data)
+            
+            # Map LLM sections to presentation
+            for key in ["summary", "memory", "recap", "quiz"]:
+                if key in data:
+                    sec = data[key]
+                    # Ensure section_id is unique
+                    sec["section_id"] = f"{key}_global"
+                    
+                    # WAN SYNC SPLITTER: Check if WAN recap needs splitting (though usually small)
+                    if key == "recap" and sec.get("renderer") == "video":
+                        self._apply_sync_splitter(sec)
+                        
+                    presentation["sections"].append(sec)
+        except Exception as e:
+            logger.error(f"Failed to generate global footer via LLM: {e}. Falling back to basic structure.")
+            # Last resort fallback if even LLM fails
+            self._basic_global_footer_fallback(presentation, globals)
+
+    def _apply_sync_splitter(self, section):
+        """
+        V2.5 Sync Logic:
+        If a WAN segment has > 40 words (~15s), it MUST be split into multiple beats
+        to prevent the video from ending while narration is still playing.
+        """
+        segments = section.get("narration", {}).get("segments", [])
+        for seg in segments:
+            text = seg.get("text", "")
+            words = text.split()
+            if len(words) > 40:
+                logger.info(f"[Sync Splitter] Segment {seg.get('segment_id')} is too long ({len(words)} words). Splitting into beats.")
+                
+                # Calculate how many 15s beats we need
+                num_beats = max(2, (len(words) // 30) + 1) # ~120 wpm
+                
+                # Split text into chunks
+                chunk_len = len(words) // num_beats
+                
+                video_prompts = []
+                for i in range(num_beats):
+                    # Ensure character consistency by mentioning "Same character as before" in subsequent prompts
+                    consistency_prefix = "Keeping the previous character and setting exactly the same, " if i > 0 else ""
+                    
+                    # Fix: Look in root AND render_spec, handle strings vs dicts
+                    prompts_list = section.get("video_prompts", []) or section.get("render_spec", {}).get("video_prompts", [])
+                    base_prompt = "Cinematic educational visualization, high quality, professional lighting."
+                    if prompts_list and isinstance(prompts_list, list):
+                        obj = prompts_list[0]
+                        if isinstance(obj, dict):
+                            base_prompt = obj.get("prompt") or obj.get("text") or base_prompt
+                        else:
+                            base_prompt = str(obj)
+                    
+                    video_prompts.append({
+                        "beat_id": f"{seg.get('segment_id')}_beat_{i+1}",
+                        "prompt": f"{consistency_prefix}{base_prompt} (Step {i+1} of {num_beats})",
+                        "duration_hint": 15
+                    })
+                
+                # Attach to section
+                if "video_prompts" not in section:
+                    section["video_prompts"] = []
+                section["video_prompts"].extend(video_prompts)
+                
+                # Add beat mapping to segment so player knows to switch
+                seg["beat_videos"] = [p["beat_id"] for p in video_prompts]
+
+    def _basic_global_footer_fallback(self, presentation, globals):
+        """Minimal fallback if LLM global director fails."""
         summary_bullets = globals.get("summary", {}).get("bullets", [])
         if summary_bullets:
             presentation["sections"].append({
+                "section_id": "summary_fallback",
                 "section_type": "summary",
                 "title": "Lesson Summary",
                 "renderer": "none",
                 "visual_beats": [{"visual_type": "bullet_list", "display_text": "\n".join(f"• {b}" for b in summary_bullets)}],
-                "narration": {"segments": [{"segment_id": "summ_1", "text": "To summarize what we've learned today..."}]}
+                "narration": {"segments": [{"segment_id": "summ_1", "text": "To summarize, we've learned: " + ", ".join(summary_bullets)}]}
             })
 
-        # Memory (Flashcards)
-        memory_cards = globals.get("memory", [])
-        if memory_cards:
-            presentation["sections"].append({
-                "section_type": "memory",
-                "title": "Key Concept Review",
-                "flashcards": memory_cards,
-                "narration": {"segments": [{"segment_id": "mem_1", "text": "Let's review the key terms for your memory."}]}
-            })
-
-        # Recap (exactly 5 scenes)
-        recap_scenes = globals.get("recap", [])
-        if len(recap_scenes) >= 5:
-            presentation["sections"].append({
-                "section_type": "recap",
-                "title": "Visual Recap",
-                "renderer": "video",
-                "video_prompts": [
-                    {"segment_id": f"rec_{j+1}", "prompt": scene, "duration_hint": 10}
-                    for j, scene in enumerate(recap_scenes[:5])
-                ]
-            })
+    def _add_global_footer_LEGACY(self, presentation, globals):
+        # We'll keep the old name but it won't be used by the main flow
+        pass
 
     def _legacy_blind_loop(self, markdown_content, subject, grade, images_list, update_status_callback):
         """Character-based chunking fallback if planner fails."""
@@ -451,27 +526,52 @@ class DirectorGenerator:
 
     async def _generate_globals_worker(self, context, subject, grade):
         """
-        Async worker to generate Intro, Summary, Memory, Recap.
-        For V1, we simply construct them from the planner context to save tokens/time.
-        The Planner already gave us the bullets and scripts in 'global_context'.
+        Async worker to generate Intro, Summary, Memory, Recap via Global LLM.
         """
-        logger.info("[Global Worker] Constructing global sections...")
-        await asyncio.sleep(0.1) # Yield
+        logger.info("[Global Worker] Directing global sections via LLM...")
         
+        _, _, _, _, global_system = get_prompts()
+        
+        user_prompt = f"Subject: {subject}\nGrade: {grade}\n\nDATA:\n{json.dumps(context, indent=2)}"
+        
+        try:
+            # We use the same config but this is an async worker, 
+            # so we'll run the synchronous LLM call in a thread to not block.
+            loop = asyncio.get_event_loop()
+            response, _ = await loop.run_in_executor(None, lambda: call_openrouter_llm(global_system, user_prompt, self.config))
+            
+            data = extract_json_from_response(response)
+            data = normalize_output(data)
+            
+            # Extract sections
+            final_sections = {}
+            for key in ["intro", "summary", "memory", "recap", "quiz"]:
+                if key in data:
+                    sec = data[key]
+                    sec["section_id"] = f"{key}_global"
+                    
+                    # SYNC SPLITTER
+                    if sec.get("renderer") == "video":
+                        self._apply_sync_splitter(sec)
+                        
+                    final_sections[key] = sec
+            
+            return final_sections
+            
+        except Exception as e:
+            logger.error(f"[Global Worker] LLM failed: {e}. Falling back to basic construction.")
+            return self._LEGACY_globals_constructor(context)
+
+    def _LEGACY_globals_constructor(self, context):
+        """Backwards compatibility constructor if LLM fails."""
         sections = {}
         
         # Intro
-        intro_text = context.get("intro_narration_context", "Welcome to this lesson.")
-        # If it's just context, we might want to expand it, but for V2.5 speed, we use it directly 
-        # or assume the Planner gave us good text. 
-        # ideally we would run an LLM call here, but let's trust the "Bone" planner for now 
-        # or do a quick LLM call if needed. For now, Direct Construction.
-        
         sections["intro"] = {
             "section_type": "intro",
             "title": "Introduction",
             "renderer": "none",
-            "narration": {"segments": [{"segment_id": "intro_1", "text": intro_text}]}
+            "narration": {"segments": [{"segment_id": "intro_1", "text": context.get("intro_narration_context", "Welcome.")}]}
         }
         
         # Summary
@@ -481,65 +581,9 @@ class DirectorGenerator:
                 "section_type": "summary",
                 "title": "Summary",
                 "renderer": "none",
-                "visual_beats": [{"visual_type": "bullet_list", "display_text": "\n".join(f"• {p}" for p in summ_points)}],
-                "narration": {"segments": [{"segment_id": "summ_1", "text": "Let's summarize key points."}]}
+                "narration": {"segments": [{"segment_id": "summ_1", "text": "Summary: " + ", ".join(summ_points)}]}
             }
             
-        # Memory
-        mem = context.get("memory_flashcards", [])
-        if mem:
-            mem_segments = []
-            # Intro segment
-            mem_segments.append({
-                "segment_id": "mem_intro", 
-                "text": f"Let's review {len(mem)} key concepts to lock in your memory.",
-                "display_directives": {"text_layer": "show", "visual_layer": "hide", "avatar_layer": "show"}
-            })
-            
-            # Per-card segments
-            intros = ["First up", "Next", "Another key one", "And finally"]
-            
-            for i, card in enumerate(mem):
-                front = card.get("front", "Concept")
-                back = card.get("back", "Definition")
-                
-                # Pick a catchy intro phrase (rotate if more cards than phrases)
-                intro_phrase = intros[min(i, len(intros)-1)]
-                if i == 0: intro_phrase = "First up"
-                
-                # Create a catchy, conversational script
-                # "First up, [Front]? ... [Back]"
-                # The 'back' usually contains the Mnemonic ("Remember: ...") so we let it shine.
-                script = f"{intro_phrase}, {front}... {back}"
-                
-                mem_segments.append({
-                    "segment_id": f"mem_card_{i+1}",
-                    "text": script,
-                    "display_directives": {
-                        "text_layer": "show", 
-                        "visual_layer": "hide", 
-                        "avatar_layer": "show", 
-                        "action_type": "flip_card",
-                        "card_index": i
-                    }
-                })
-
-            sections["memory"] = {
-                "section_type": "memory",
-                "title": "Flashcards",
-                "flashcards": mem,
-                "narration": {"segments": mem_segments}
-            }
-        recap = context.get("recap_scenes", [])
-        if recap:
-             sections["recap"] = {
-                "section_type": "recap",
-                "title": "Visual Recap",
-                "renderer": "video",
-                "video_prompts": [{"segment_id": f"rec_{i}", "prompt": r, "duration_hint": 10} for i,r in enumerate(recap[:5])]
-            }
-            
-        logger.info("[Global Worker] Finished.")
         return sections
 
 def generate_director_presentation(

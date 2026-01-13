@@ -66,11 +66,12 @@ class V25Validator:
             if len(prompts) != 5 and len(narr_segs) != 5:
                  errors.append(f"Recap must have 5 segments/prompts. Found prompts={len(prompts)}, segments={len(narr_segs)}.")
             
-            # Word Count Check (Relaxed to 40+ to match 15s rule and avoid false rejections)
+            # Word Count Check (Fidelity to V2.5 Bible: 100 words recommended, 80 words strict minimum)
             for i, p in enumerate(prompts):
-                cnt = len(p.split()) if isinstance(p, str) else len(str(p).split())
-                if cnt < 40:
-                    errors.append(f"Recap video_prompt {i} is too short ({cnt} words). Must be 40+ words for cinematic detail.")
+                prompt_text = p if isinstance(p, str) else str(p)
+                cnt = len(prompt_text.split())
+                if cnt < 80:
+                    errors.append(f"Recap video_prompt {i} is too short ({cnt} words). Must be 80+ words for cinematic detail as per Bible.")
 
         # 5. QUIZ (Optional but Strict if Present)
         quiz = data.get("quiz")

@@ -70,6 +70,19 @@ QUALITY_INDICATORS = [
 MIN_PROMPT_LENGTH = 50
 MAX_PROMPT_LENGTH = 800  # ISS-120: Increased to match API limit
 
+# Generic expansion sentences used to pad short prompts
+WAN_GENERIC_EXPANSIONS = [
+    "The scene is rendered in high-definition cinematic quality with professional lighting.",
+    "Smooth camera movements guide the viewer through each visual element.",
+    "Colors are vibrant and carefully chosen to enhance educational clarity.",
+    "The animation uses clear visual hierarchy to maintain viewer focus.",
+    "Transitions between elements are fluid and professionally executed.",
+    "The overall aesthetic is modern, clean, and suitable for educational content.",
+    "Visual elements are precisely positioned for optimal comprehension.",
+    "The pacing allows viewers to absorb information naturally.",
+    "All textures and models are rendered with high accuracy to ensure professional results.",
+]
+
 
 class WanPromptValidationResult:
     def __init__(self):
@@ -208,19 +221,29 @@ def log_prompt_quality_summary(video_prompts: List[Dict], section_id: int = 0) -
 
 def truncate_wan_prompt(prompt: str, max_chars: int = MAX_PROMPT_LENGTH) -> str:
     """
-    SAFETY NET: Truncate WAN prompt if LLM exceeded character limit.
-    
-    ISS-158 FIX: LLM prompts now instruct 80-150 words / 800 chars.
-    This function is a fallback - if triggered, it means LLM didn't follow instructions.
+    Surgical Truncation: Prioritize removing generic filler before hacking the core prompt.
     """
     if not prompt or len(prompt) <= max_chars:
         return prompt
     
-    print(f"[WAN WARNING] LLM generated {len(prompt)} chars but limit is {max_chars}. "
-          f"LLM should generate within limits - applying safety truncation.")
+    original_prompt = prompt
+    
+    # Step 1: Try to remove generic expansions first if they exist
+    for expansion in reversed(WAN_GENERIC_EXPANSIONS):
+        if len(prompt) <= max_chars:
+            break
+        if expansion in prompt:
+            prompt = prompt.replace(" " + expansion, "").replace(expansion, "").strip()
+    
+    if len(prompt) <= max_chars:
+        print(f"[WAN WARNING] Prompt reduced from {len(original_prompt)} to {len(prompt)} chars by removing generic filler.")
+        return prompt
+
+    # Step 2: If still too long, apply sentence-aware truncation
+    print(f"[WAN WARNING] Surgical truncation failed to hit limit. Applying hard truncation to {len(prompt)} -> {max_chars} chars.")
+    print(f"  [CAUTION] This may affect visual quality. LLM should generate more concisely.")
     
     truncated = prompt[:max_chars]
-    
     last_period = truncated.rfind('.')
     last_exclaim = truncated.rfind('!')
     last_sentence_end = max(last_period, last_exclaim)
@@ -257,46 +280,37 @@ def truncate_video_prompts(video_prompts: List[Dict], max_chars: int = MAX_PROMP
 
 def expand_short_prompt(prompt: str, min_words: int = MIN_WAN_PROMPT_WORDS) -> str:
     """
-    Auto-expand short prompts to meet minimum word requirement.
-    
-    Adds cinematic details to make the prompt more specific and descriptive
-    without changing the core content.
-    
-    Args:
-        prompt: Original prompt text
-        min_words: Minimum words required (default 80)
-    
-    Returns:
-        Expanded prompt meeting minimum word count
+    SMART EXPANDER: Only pad generic one-liners. Trust detailed Director prompts.
     """
     word_count = len(prompt.split()) if prompt else 0
     
+    # Rule 1: Custom/Detailed prompts (>= 60 words) are trusted as-is even if < 80
+    if word_count >= 60:
+        return prompt
+    
+    # Rule 2: If it's already over the min, don't touch it
     if word_count >= min_words:
         return prompt
     
-    words_needed = min_words - word_count + 5
+    # Rule 3: Only expand very short or extremely generic prompts
+    # If it contains specific technical/subject terms, we lean towards trusting it
+    technical_indicators = ["eye", "medical", "physics", "math", "diagram", "process", "cycle", "formula", "equation", "scientific"]
+    has_specifics = any(term in prompt.lower() for term in technical_indicators)
     
-    expansions = [
-        "The scene is rendered in high-definition cinematic quality with professional lighting.",
-        "Smooth camera movements guide the viewer through each visual element.",
-        "Colors are vibrant and carefully chosen to enhance educational clarity.",
-        "The animation uses clear visual hierarchy to maintain viewer focus.",
-        "Transitions between elements are fluid and professionally executed.",
-        "The overall aesthetic is modern, clean, and suitable for educational content.",
-        "Visual elements are precisely positioned for optimal comprehension.",
-        "The pacing allows viewers to absorb information naturally.",
-    ]
+    if word_count >= 40 and has_specifics:
+        return prompt
     
+    # Expand generic prompts
     expanded = prompt.rstrip()
     if not expanded.endswith('.'):
         expanded += '.'
     
-    for expansion in expansions:
+    for expansion in WAN_GENERIC_EXPANSIONS:
         if len(expanded.split()) >= min_words:
             break
         expanded += " " + expansion
     
-    print(f"[WAN Expander] Expanded prompt from {word_count} to {len(expanded.split())} words")
+    print(f"[WAN Expander] Padding generic prompt: {word_count} -> {len(expanded.split())} words")
     return expanded
 
 
