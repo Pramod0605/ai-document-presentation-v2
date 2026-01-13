@@ -2948,20 +2948,36 @@ def repair_metadata(job_id):
             for section in data.get("sections", []):
                 sid = str(section.get("section_id"))
                 
-                # Check for topic videos
+                # Check for topic videos or beats (V2.5 WAN patterns)
                 topic_v = f"topic_{sid}.mp4"
+                topic_beat_0 = f"topic_{sid}_beat_0.mp4"
+                
                 if topic_v in found_videos and not section.get("video_path"):
                     section["video_path"] = f"videos/{topic_v}"
                     updated_count += 1
+                elif topic_beat_0 in found_videos and not section.get("video_path"):
+                    # Found beat 0 but no main path - stitch as a multi-beat section
+                    beats = sorted([v for v in found_videos if v.startswith(f"topic_{sid}_beat_")])
+                    section["video_path"] = f"videos/{topic_beat_0}"
+                    section["beat_videos"] = [f"videos/{b}" for b in beats]
+                    
+                    # For content/example, also attempt to repopulate visual_beats
+                    if section.get("section_type") in ["content", "example"]:
+                        v_beats = section.get("visual_beats", [])
+                        for i, b_path in enumerate(beats):
+                            if i < len(v_beats):
+                                v_beats[i]["video_asset"] = f"videos/{b_path}"
+                        section["visual_beats"] = v_beats
+                        
+                    updated_count += 1
                 
-                # Check for recap beats (special case)
-                if section.get("section_type") == "recap":
-                    beats = [v for v in found_videos if v.startswith(f"topic_{sid}_beat_")]
-                    if beats and not section.get("recap_video_paths"):
-                        beats.sort() # Ensure order
+                # Check for recap-specific paths if still missing
+                if section.get("section_type") == "recap" and not section.get("recap_video_paths"):
+                    beats = sorted([v for v in found_videos if v.startswith(f"topic_{sid}_beat_")])
+                    if beats:
                         section["recap_video_paths"] = [f"videos/{b}" for b in beats]
-                        section["beat_videos"] = [f"videos/{b}" for b in beats]
-                        section["video_path"] = f"videos/{beats[0]}"
+                        if not section.get("video_path"):
+                            section["video_path"] = f"videos/{beats[0]}"
                         updated_count += 1
                 
                 # Check for avatars

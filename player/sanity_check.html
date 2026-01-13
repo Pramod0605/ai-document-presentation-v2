@@ -167,7 +167,8 @@
             const sid = section.section_id;
 
             // Check Topic Video
-            if (!section.video_path && (section.renderer === 'wan' || section.renderer === 'video_generation')) {
+            const isWanStyle = section.renderer === 'wan' || section.renderer === 'video_generation' || section.renderer === 'VIDEO' || section.renderer === 'video';
+            if (!section.video_path && isWanStyle) {
                 // Try to find either the combined video OR the first beat
                 const check = await checkUrl(`topic_${sid}.mp4`, 'video');
                 if (check.valid) {
@@ -231,7 +232,7 @@
                     const renderer = section.renderer || 'default';
                     let rendererClass = '';
                     if (renderer === 'manim') rendererClass = 'manim';
-                    if (renderer === 'wan' || renderer === 'video_generation') rendererClass = 'wan';
+                    if (renderer === 'wan' || renderer === 'video_generation' || renderer === 'VIDEO' || renderer === 'video') rendererClass = 'wan';
 
                     // AVATAR
                     const avatarPath = section.avatar_video || section.avatar_video_path;
@@ -255,6 +256,7 @@
                     // VIDEO
                     const videoPath = section.video_path || (section.beat_videos ? section.beat_videos[0] : null);
                     let videoHtml = 'None';
+
                     if (videoPath) {
                         const obj = await checkUrl(videoPath, 'video');
                         let statusText = obj.status;
@@ -268,8 +270,19 @@
                             }
                         }
                         videoHtml = `<a href="${obj.url}" target="_blank">${videoPath}</a><br><span class="${statusClass}">[${statusText}]</span>`;
-                    } else if (renderer === 'manim') {
-                        videoHtml = '<span class="fail">MISSING MANIM</span>';
+                    } else {
+                        // Check for Orphans
+                        const sid = section.section_id;
+                        const checkDefault = await checkUrl(`topic_${sid}.mp4`, 'video');
+                        const checkBeat = await checkUrl(`topic_${sid}_beat_0.mp4`, 'video');
+
+                        if (checkDefault.valid) {
+                            videoHtml = `<span class="fail">FOUND ON DISK (UNSTITCHED): <a href="${checkDefault.url}" target="_blank">topic_${sid}.mp4</a></span>`;
+                        } else if (checkBeat.valid) {
+                            videoHtml = `<span class="fail">FOUND ON DISK (UNSTITCHED): <a href="${checkBeat.url}" target="_blank">topic_${sid}_beat_0.mp4</a></span>`;
+                        } else if (renderer === 'manim') {
+                            videoHtml = '<span class="fail">MISSING MANIM</span>';
+                        }
                     }
 
                     // IMAGES
