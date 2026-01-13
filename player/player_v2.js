@@ -864,22 +864,24 @@ function loadSlide(index) {
   console.log(`[V2] Loading slide ${index + 1}: ${sectionType} - ${slide.title || 'Untitled'}`);
 
   // Stop any playing media first
+  pauseAllMedia();
+
   if (activeTimeSource) {
-    activeTimeSource.pause();
+    // activeTimeSource.pause(); // Handled by pauseAllMedia
     activeTimeSource.currentTime = 0;
     unbindTimeEvents(activeTimeSource);
   }
 
   // CRITICAL: Prevent callbacks from previous slide from firing
   if (avatarVideo) {
-    avatarVideo.pause();
+    // avatarVideo.pause(); // Handled
     avatarVideo.onloadeddata = null;
     avatarVideo.onplay = null;
     avatarVideo.onpause = null;
     avatarVideo.onerror = null;
   }
   if (contentVideo) {
-    contentVideo.pause();
+    // contentVideo.pause(); // Handled
     contentVideo.src = '';
     contentVideo.onloadeddata = null;
     contentVideo.onerror = null;
@@ -1942,6 +1944,28 @@ function updatePlayButtonUI(playing) {
   }
 }
 
+// ================================
+// V2.5 GLOBAL MEDIA SYNC
+// ================================
+function pauseAllMedia() {
+  if (avatarVideo && !avatarVideo.paused) {
+    avatarVideo.pause();
+  }
+
+  if (contentVideo && !contentVideo.paused) {
+    contentVideo.pause();
+  }
+
+  if (typeof beatVideo !== 'undefined' && beatVideo && !beatVideo.paused) {
+    beatVideo.pause();
+  }
+
+  if (timerFallback && timerFallback._interval) {
+    clearInterval(timerFallback._interval);
+    timerFallback._interval = null;
+  }
+}
+
 function togglePlay() {
   isPlaying = !isPlaying;
   updatePlayButtonUI(isPlaying);
@@ -1966,9 +1990,7 @@ function togglePlay() {
     }
   } else {
     // PAUSE branch (CRITICAL FIX)
-    if (activeTimeSource) activeTimeSource.pause();
-    if (avatarVideo) avatarVideo.pause();
-    if (contentVideo) contentVideo.pause();
+    pauseAllMedia();
   }
 }
 
@@ -2377,6 +2399,7 @@ function onSlideEnd() {
     }, 500);
   } else {
     isPlaying = false;
+    pauseAllMedia();
     btnPlay.querySelector('.icon-play').classList.remove('hidden');
     btnPlay.querySelector('.icon-pause').classList.add('hidden');
   }
