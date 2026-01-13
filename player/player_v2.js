@@ -111,6 +111,7 @@ let devModeEnabled = false;
 
 // Time Source State (Avatar Video or Narration Audio)
 let activeTimeSource = null; // Will be set to narrationAudio or avatarVideo in loadSlide
+let displayDirectivesApplied = false; // V2.5: track if directives applied
 
 
 // ============================================
@@ -240,14 +241,9 @@ function setupEventListeners() {
   };
 
   avatarVideo.onloadeddata = () => {
-    console.log('[V2] Avatar video loaded, starting chroma key');
     syncCanvasSize();
-    // Try autoplay - if blocked, user will need to click play button
-    // DO NOT show placeholder - avatar will play when user clicks play
-    avatarVideo.play().catch(e => {
-      console.log('[V2] Avatar autoplay blocked (normal) - will play on user click:', e.name);
-      // Keep canvas visible, don't show placeholder
-    });
+    if (!isPlaying) return; // Guard avatar autoplay
+    avatarVideo.play().catch(() => { });
   };
 
   avatarVideo.addEventListener('play', startChromaKeyLoop);
@@ -342,8 +338,8 @@ function getDuration() {
 function bindTimeEvents(source) {
   if (!source) return;
 
-  // Unbind from previous source if needed (though listeners are specific to element)
-  // We just ensure we add to the new source
+  // HARD-PREVENT DOUBLE TIME LISTENERS
+  unbindTimeEvents(source);
 
   source.addEventListener('timeupdate', handleTimeUpdateMain);
   source.addEventListener('ended', onSlideEnd);
@@ -402,9 +398,10 @@ function updateSummaryProgressiveReveal() {
 
       let beatStartTime = visualBeats[i].start_time || 0;
 
-      // If no valid timings in entire set, force fallback to Strategy 2 (Equal Distribution)
-      if (!hasValidTimings && i > 0) {
-        break; // Break loop to fall through to Strategy 2
+      // FIX: If we only have 0s but beats exist, treat as equal distribution or immediate reveal?
+      // Let's use 0.5s offset per beat if all are 0
+      if (!hasValidTimings) {
+        beatStartTime = i * 2.0; // Artificial delay if missing timings
       }
 
       const bullet = document.getElementById(`summary-bullet-${i}`);
@@ -603,13 +600,13 @@ function updateDisplayState() {
     if (action === 'show_video') {
       videoLayer.classList.add('fullscreen');
       videoLayer.classList.remove('hidden');
-      contentLayer.style.opacity = '0';
+      contentLayer.style.display = 'none'; // HARD hide content
       // Ensure avatar is visible (overlay)
       if (avatarLayer) avatarLayer.style.opacity = '1';
     } else if (action === 'show_text') {
       videoLayer.classList.remove('fullscreen');
       videoLayer.classList.add('hidden');
-      contentLayer.style.opacity = '1';
+      contentLayer.style.display = 'block'; // HARD show content
     } else if (action === 'flip_card') {
       const cardIndex = data.card_index || 0;
       const card = document.getElementById(`flashcard-${cardIndex}`);
@@ -832,11 +829,19 @@ function populateSlidePicker() {
 function loadSlide(index) {
   if (index < 0 || index >= slides.length) return;
 
+  // V2.5: RESET isPlaying ON EVERY SLIDE LOAD
+  isPlaying = false;
+  updatePlayButtonUI(false);
+
   currentSlideIndex = index;
   currentSegmentIndex = 0;
   slidePicker.value = index;
   revealItems = []; // Reset reveal state
   displayDirectivesApplied = false; // Reset for new slide
+
+  // V2.5: Reset summary bullet state to prevent leakage from previous slides
+  window.summaryBulletCount = 0;
+  window.summaryBulletsRevealed = 0;
 
   // CRITICAL: Reset beat playlist to prevent Section N inheriting Section N-1's beats
   beatVideoPlaylist = [];
@@ -854,8 +859,21 @@ function loadSlide(index) {
     unbindTimeEvents(activeTimeSource);
   }
 
-  contentVideo.pause();
-  contentVideo.src = '';
+  // CRITICAL: Prevent callbacks from previous slide from firing
+  if (avatarVideo) {
+    avatarVideo.pause();
+    avatarVideo.onloadeddata = null;
+    avatarVideo.onplay = null;
+    avatarVideo.onpause = null;
+    avatarVideo.onerror = null;
+  }
+  if (contentVideo) {
+    contentVideo.pause();
+    contentVideo.src = '';
+    contentVideo.onloadeddata = null;
+    contentVideo.onerror = null;
+    contentVideo.onended = null;
+  }
 
   // Reset all layer states for new slide
   contentBox.innerHTML = '';
@@ -964,19 +982,15 @@ function setupMediaSource(slide) {
     avatarCanvas.style.display = 'block';
 
     avatarVideo.src = fullAvatarPath;
-    avatarVideo.muted = true; // CRITICAL for autoplay
+    avatarVideo.muted = false; // V2.5 Rule: Must be audible (Narration)
     avatarVideo.loop = false; // V2.5: Should not loop narration
     avatarVideo.playsInline = true;
     avatarVideo.load();
 
     avatarVideo.onloadeddata = () => {
-      console.log('[V2] Avatar loaded successfully');
       syncCanvasSize();
-      // Auto-play avatar (muted, so should work)
-      avatarVideo.play().catch(e => {
-        console.warn('[V2] Avatar autoplay failed (rare):', e);
-        // Don't show placeholder - video is loaded, user just needs to click play
-      });
+      if (!isPlaying) return; // Guard avatar autoplay
+      avatarVideo.play().catch(() => { });
     };
 
     avatarVideo.onplay = () => console.log('[V2] Avatar STARTED playing');
@@ -1016,7 +1030,7 @@ function setupMediaSource(slide) {
   if (avatarPath) {
     // PRIMARY: Use avatar video as time source (has embedded audio)
     activeTimeSource = avatarVideo;
-    useTimerFallback = false;
+    useTimerFallback = false; // V2.5 Rule: Prefer avatar as time source
     bindTimeEvents(avatarVideo);
     console.log('[V2.5] Using Avatar Video as Time Source');
   } else {
@@ -1372,7 +1386,7 @@ function renderContent(slide) {
       videoLayer.classList.add('hidden');
     }
 
-    contentVideo.muted = true;
+    contentVideo.muted = true; // Section Rule: Background only
     contentVideo.loop = true;
     contentVideo.playsInline = true;
     contentVideo.src = fullPath;
@@ -1380,7 +1394,7 @@ function renderContent(slide) {
     contentVideo.playbackRate = 1.0;
     contentVideo.onloadeddata = () => {
       console.log(`[V2] Content video loaded successfully: ${fullPath} `);
-      if (isPlaying && isRecap) {
+      if (isPlaying && (isRecap || videoLayer.classList.contains('fullscreen'))) {
         contentVideo.play().catch(e => console.warn('[V2] Content video play failed:', e));
       }
     };
@@ -1537,14 +1551,16 @@ function parseDisplayDirectives(slide) {
   const directives = [];
   const segments = slide.narration?.segments || [];
 
-  segments.forEach((seg, i) => {
+  let t = 0;
+  segments.forEach(seg => {
     if (seg.display_directives) {
       directives.push({
-        time: seg.start_time_sec || 0,
+        time: t,
         action: seg.display_directives.action_type,
         data: seg.display_directives
       });
     }
+    t += seg.duration_seconds || 5;
   });
 
   if (slide.flip_timing_sec) {
@@ -1879,147 +1895,24 @@ function syncBeatVideoToAudio(currentTime) {
   }
 }
 
-// ============================================
-// AUDIO & PLAYBACK
-// ============================================
-function setupMediaSource(slide) {
-  const hasAvatarVideo = !!slide.avatar_video;
-  const audioPath = slide.audio_path || '';
-
-  // Reset timer fallback state
-  useTimerFallback = false;
-  timerFallback.pause();
-
-  if (hasAvatarVideo) {
-    console.log('[V2] Using Avatar Video as Time Source');
-    activeTimeSource = avatarVideo;
-
-    const fullPath = resolveMediaPath(slide.avatar_video, 'video');
-    avatarVideo.src = fullPath;
-    avatarVideo.muted = false;
-    avatarVideo.loop = false;
-    avatarVideo.load();
-
-    // Ensure audio is cleared
-    narrationAudio.pause();
-    narrationAudio.src = '';
-  } else if (audioPath) {
-    // Has audio file - use audio as time source
-    console.log('[V2] Using Narration Audio as Time Source');
-    activeTimeSource = narrationAudio;
-
-    // Reset avatar to idle
-    if (!avatarVideo.src.includes('avatar_placeholder') && slide.section_type !== 'intro') {
-      avatarVideo.src = AVATAR_URL;
-      avatarVideo.muted = true;
-      avatarVideo.loop = true;
-      avatarVideo.load();
-    }
-
-    const fullPath = resolveMediaPath(audioPath, 'audio');
-    console.log(`[V2] Loading audio: ${fullPath}`);
-    narrationAudio.src = fullPath;
-    narrationAudio.load();
+function updatePlayButtonUI(playing) {
+  if (!btnPlay) return;
+  const iconPlay = btnPlay.querySelector('.icon-play');
+  const iconPause = btnPlay.querySelector('.icon-pause');
+  if (playing) {
+    iconPlay.classList.add('hidden');
+    iconPause.classList.remove('hidden');
   } else {
-    // NO MEDIA AVAILABLE - Use timer fallback with WPM-based duration
-    console.log('[V2] No audio/avatar available - Using Timer Fallback (WPM-based)');
-    useTimerFallback = true;
-
-    // Calculate duration from segments (already has WPM-based estimates)
-    const totalDuration = getTotalDuration(slide);
-    timerFallback.reset(totalDuration);
-    activeTimeSource = timerFallback;
-
-    // Reset avatar to idle placeholder
-    if (slide.section_type !== 'intro') {
-      avatarVideo.src = AVATAR_URL;
-      avatarVideo.muted = true;
-      avatarVideo.loop = true;
-      avatarVideo.load();
-    }
-
-    // Clear audio
-    narrationAudio.pause();
-    narrationAudio.src = '';
-
-    // Show "Silent Mode" indicator (audio not ready yet)
-    showSilentModeIndicator(true);
+    iconPlay.classList.remove('hidden');
+    iconPause.classList.add('hidden');
   }
-
-  // Hide silent mode indicator if we have media
-  if (!useTimerFallback) {
-    showSilentModeIndicator(false);
-  }
-
-  // Bind events to the chosen source
-  bindTimeEvents(activeTimeSource);
-
-  updateTimeDisplay(0, getTotalDuration(slide));
-}
-
-// Visual indicator for when audio is not available
-function showSilentModeIndicator(show) {
-  let indicator = document.getElementById('silent-mode-badge');
-
-  if (show) {
-    if (!indicator) {
-      indicator = document.createElement('div');
-      indicator.id = 'silent-mode-badge';
-      indicator.innerHTML = '🔇 Silent Mode (Audio generating...)';
-      indicator.style.cssText = `
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        background: rgba(255, 152, 0, 0.9);
-        color: #fff;
-        padding: 8px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        z-index: 1000;
-        animation: pulse 2s infinite;
-      `;
-      // Add pulse animation if not exists
-      if (!document.getElementById('silent-mode-style')) {
-        const style = document.createElement('style');
-        style.id = 'silent-mode-style';
-        style.textContent = `
-          @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-          }
-        `;
-        document.head.appendChild(style);
-      }
-      document.body.appendChild(indicator);
-    }
-    indicator.style.display = 'block';
-  } else if (indicator) {
-    indicator.style.display = 'none';
-  }
-}
-
-function getTotalDuration(slide) {
-  if (slide.audio_duration) return slide.audio_duration;
-
-  const segments = slide.narration?.segments || [];
-  let total = 0;
-  segments.forEach(seg => {
-    total += seg.duration_seconds || 5;
-  });
-  return total || 30;
 }
 
 function togglePlay() {
   isPlaying = !isPlaying;
-
-  const iconPlay = btnPlay.querySelector('.icon-play');
-  const iconPause = btnPlay.querySelector('.icon-pause');
+  updatePlayButtonUI(isPlaying);
 
   if (isPlaying) {
-    iconPlay.classList.add('hidden');
-    iconPause.classList.remove('hidden');
-
     if (activeTimeSource) {
       activeTimeSource.play().catch(() => { });
     }
@@ -2038,12 +1931,10 @@ function togglePlay() {
       contentVideo.play().catch(() => { });
     }
   } else {
-    iconPlay.classList.remove('hidden');
-    iconPause.classList.add('hidden');
-
+    // PAUSE branch (CRITICAL FIX)
     if (activeTimeSource) activeTimeSource.pause();
-    if (activeTimeSource !== avatarVideo) avatarVideo.pause();
-    contentVideo.pause();
+    if (avatarVideo) avatarVideo.pause();
+    if (contentVideo) contentVideo.pause();
   }
 }
 
@@ -2070,7 +1961,7 @@ function updateTimeDisplay(current, total) {
 }
 
 // Track if display_directives has been applied for current slide (reset on loadSlide)
-let displayDirectivesApplied = false;
+// Already declared globally
 
 function updateActiveSegment(currentTime) {
   // Guard against early calls before slides are loaded
@@ -2235,10 +2126,22 @@ function enforceTeachShowLogic(slide, segment, segmentIndex, currentTime = 0, se
       console.log(`[V2.5] Segment ${segmentIndex}: SHOW Phase requested but no video source available - falling back to TEACH`);
       // Fall through to TEACH phase below
     } else {
-      console.log(`[V2.5] Segment ${segmentIndex}: SHOW Phase (Video Mode)`);
+      // console.log(`[V2.5] Segment ${segmentIndex}: SHOW Phase (Video Mode)`);
       videoLayer.classList.remove('hidden');
       contentLayer.classList.add('hidden'); // Hide text layer
-      if (contentVideo.paused) {
+
+      // SYNC LOCK: Force video time to match narration word-for-word
+      const targetTime = currentTime - segmentStart;
+      const currentVidTime = contentVideo.currentTime;
+      const drift = Math.abs(currentVidTime - targetTime);
+
+      if (drift > 0.3) {
+        console.log(`[V2.5 Sync] Correction: Drift of ${drift.toFixed(2)}s detected. Syncing video to ${targetTime.toFixed(2)}s`);
+        contentVideo.currentTime = targetTime;
+      }
+
+      if (contentVideo.paused && isPlaying) {
+        contentVideo.currentTime = 0; // V2.5 Rule: Reset on entry to SHOW
         contentVideo.play().catch(e => console.warn('Video play failed', e));
       }
       return;
@@ -2247,12 +2150,11 @@ function enforceTeachShowLogic(slide, segment, segmentIndex, currentTime = 0, se
 
   // Rule 2: TEACH Phase (Text Mode)
   // Trigger: Default if not Show Phase.
-
   videoLayer.classList.add('hidden');
   contentLayer.classList.remove('hidden');
 
   // [V2.5] CRITICAL FIX: explicit pause to prevent video desync
-  // The video must stop while we are teaching (text/diagrams) so it resumes correcty for next SHOW.
+  // The video must stop while we are teaching (text/diagrams) so it resumes correctly for next SHOW.
   if (contentVideo && !contentVideo.paused) {
     contentVideo.pause();
     console.log(`[V2.5] Teach Phase: Paused video to prevent desync at ${contentVideo.currentTime.toFixed(2)}s`);
@@ -2487,14 +2389,12 @@ function onContentVideoEnd() {
 function prevSlide() {
   if (currentSlideIndex > 0) {
     loadSlide(currentSlideIndex - 1);
-    if (isPlaying) startPlayback();
   }
 }
 
 function nextSlide() {
   if (currentSlideIndex < slides.length - 1) {
     loadSlide(currentSlideIndex + 1);
-    if (isPlaying) startPlayback();
   }
 }
 
@@ -2541,15 +2441,7 @@ function setupProgressiveReveal(slide) {
 
   const totalDuration = getTotalDuration(slide);
 
-  // If no audio or very short duration, reveal all immediately
-  if (totalDuration <= 1 || !slide.audio_path) {
-    console.log('[V2] Progressive reveal: No audio, showing all items');
-    revealableElements.forEach(el => {
-      el.classList.remove('reveal-hidden');
-      el.classList.add('reveal-visible');
-    });
-    return;
-  }
+  // Reveal rules logic consolidated into timed reveal
 
   const timePerItem = Math.max(0.5, totalDuration / revealableElements.length); // Min 0.5s per item
 
@@ -2747,10 +2639,6 @@ async function typesetMath(element) {
  * Sanitize markdown while PRESERVING LaTeX expressions
  * LaTeX delimiters: $...$, $$...$$, \(...\), \[...\]
  */
-/**
- * Enhanced Markdown Sanitizer with Table & Image Support
- * PRESERVES LaTeX expressions
- */
 function sanitizeMarkdown(text) {
   if (!text || typeof text !== 'string') return text;
 
@@ -2766,7 +2654,7 @@ function sanitizeMarkdown(text) {
   // 2. Markdown Images: ![alt](src)
   // V2.5: Added inline onerror for robust JPG/PNG fallback
   text = text.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
-    const fullSrc = resolveMediaPath(src, 'image');
+    const fullSrc = sanitizeImageSrc(resolveMediaPath(src, 'image'));
     return `<div class="image-container">
       <img src="${fullSrc}" alt="${alt}" class="content-image" 
         onerror="if(!this.dataset.retry){this.dataset.retry=true; if(this.src.includes('.jpg')){this.src=this.src.replace('.jpg','.png')}else if(this.src.includes('.png')){this.src=this.src.replace('.png','.jpg')}else if(this.src.includes('.jpeg')){this.src=this.src.replace('.jpeg','.png')} else {this.style.display='none'}}" 
@@ -2963,16 +2851,33 @@ function updateDevInfo() {
 }
 
 function seekToSegment(segmentIndex) {
-  const slide = slides[currentSlideIndex];
-  const segments = slide.narration?.segments || [];
+  if (!slides || !slides[currentSlideIndex]) return;
+  const segments = slides[currentSlideIndex].narration?.segments || [];
+  if (segmentIndex < 0 || segmentIndex >= segments.length) return;
 
-  let cumTime = 0;
-  for (let i = 0; i < segmentIndex && i < segments.length; i++) {
-    cumTime += segments[i].duration_seconds || 5;
-  }
-
-  if (activeTimeSource) {
-    activeTimeSource.currentTime = cumTime;
-  }
+  const targetTime = segments.slice(0, segmentIndex).reduce((sum, seg) => sum + (seg.duration_seconds || 5), 0);
+  if (activeTimeSource) activeTimeSource.currentTime = targetTime;
 }
 
+function sanitizeImageSrc(src) {
+  if (!src) return "";
+  // Fix URL corruption from extra markdown tags or entities
+  return decodeURIComponent(src).replace(/<[^>]+>/g, '').trim();
+}
+
+// ============================================
+// FINAL V2.5 INVARIANT CHECK
+// ============================================
+setInterval(() => {
+  if (!isPlaying) {
+    if ((avatarVideo && !avatarVideo.paused) || (contentVideo && !contentVideo.paused)) {
+      console.error('[V2.5 FAIL] Media playing while paused');
+      if (avatarVideo) avatarVideo.pause();
+      if (contentVideo) contentVideo.pause();
+    }
+  }
+  if (useTimerFallback && activeTimeSource === avatarVideo) {
+    console.error('[V2.5 FAIL] Invalid fallback + avatar state');
+    useTimerFallback = false;
+  }
+}, 500);
