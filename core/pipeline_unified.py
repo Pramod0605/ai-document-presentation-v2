@@ -410,25 +410,6 @@ def process_markdown_unified(
                 renderer_filter="manim" # NEW: Only block for Manim
             )
             
-            # --- PART B: ASYNC WAN RENDERING (Batched) ---
-            log_status("wan_rendering", "Starting WAN video generation (Background)...")
-            try:
-                from core.renderer_executor import submit_wan_background_job
-                from threading import Thread
-                
-                # Submit to background thread (Fire-and-Forget)
-                wan_thread = Thread(
-                    target=submit_wan_background_job,
-                    args=(presentation, str(output_dir / "videos"), job_id, skip_wan, 5), # Batch size 5
-                    daemon=True
-                )
-                wan_thread.start()
-                logger.info(f"Pipeline: Triggered async WAN generation for job {job_id}")
-                
-            except Exception as e:
-                logger.error(f"Failed to trigger async WAN generation: {e}")
-            
-            tracker.end_phase("visual_rendering", 0, 0)
             logger.info(f"Manim Render results: {len(render_results)} videos processed")
             
             # ISS-FIX: Apply video paths from render results back to presentation sections!
@@ -489,14 +470,36 @@ def process_markdown_unified(
                             if not section.get("video_path") and recap_video_paths:
                                 section["video_path"] = f"videos/{Path(recap_video_paths[0]).name}"
                         break
+
+            # --- PHASE 5.5: Final State Save (CRITICAL) ---
+            # Must save BEFORE triggering async WAN job to avoid race condition where
+            # main thread overwrites async thread's updates.
+            if output_dir:
+                pres_path = os.path.join(output_dir, "presentation.json")
+                with open(pres_path, "w", encoding="utf-8") as f:
+                    json.dump(presentation, f, indent=4)
+                logger.info(f"Pipeline: Saved FINAL presentation to {pres_path}")
             
+            # --- PART B: ASYNC WAN RENDERING (Batched) ---
+            log_status("wan_rendering", "Starting WAN video generation (Background)...")
+            try:
+                from core.renderer_executor import submit_wan_background_job
+                from threading import Thread
+                
+                # Submit to background thread (Fire-and-Forget)
+                # Thread will safely read/update the file we just saved
+                wan_thread = Thread(
+                    target=submit_wan_background_job,
+                    args=(presentation, str(output_dir / "videos"), job_id, skip_wan, 5), # Batch size 5
+                    daemon=True
+                )
+                wan_thread.start()
+                logger.info(f"Pipeline: Triggered async WAN generation for job {job_id}")
+                
+            except Exception as e:
+                logger.error(f"Failed to trigger async WAN generation: {e}")
             
-        # --- PHASE 5.5: Final State Save (CRITICAL FOR CERTIFICATION) ---
-        if output_dir:
-            pres_path = os.path.join(output_dir, "presentation.json")
-            with open(pres_path, "w", encoding="utf-8") as f:
-                json.dump(presentation, f, indent=4)
-            logger.info(f"Pipeline: Saved FINAL presentation to {pres_path}")
+            tracker.end_phase("visual_rendering", 0, 0)
 
         # --- PHASE 5.6: SAVE COMPREHENSIVE ANALYTICS ---
         if output_dir:

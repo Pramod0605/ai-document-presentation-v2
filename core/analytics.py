@@ -9,6 +9,7 @@ import json
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field, asdict
+from core.locks import analytics_lock
 
 
 # Model pricing per 1M tokens (as of Dec 2024)
@@ -697,8 +698,9 @@ class AnalyticsTracker:
 
     def save_to_file(self, filepath: str) -> None:
         """Save analytics to a JSON file."""
-        with open(filepath, "w") as f:
-            f.write(self.analytics.to_json())
+        with analytics_lock:
+            with open(filepath, "w") as f:
+                f.write(self.analytics.to_json())
 
     def print_summary(self) -> None:
         """Print a formatted summary to console."""

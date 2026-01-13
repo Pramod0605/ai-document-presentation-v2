@@ -168,8 +168,15 @@
 
             // Check Topic Video
             if (!section.video_path && (section.renderer === 'wan' || section.renderer === 'video_generation')) {
+                // Try to find either the combined video OR the first beat
                 const check = await checkUrl(`topic_${sid}.mp4`, 'video');
-                if (check.valid) orphanDetected = true;
+                if (check.valid) {
+                    orphanDetected = true;
+                } else {
+                    // Also check for beat 0 (common for WAN content sections)
+                    const checkBeat = await checkUrl(`topic_${sid}_beat_0.mp4`, 'video');
+                    if (checkBeat.valid) orphanDetected = true;
+                }
             }
 
             // Check Avatar
