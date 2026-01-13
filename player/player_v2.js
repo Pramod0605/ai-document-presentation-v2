@@ -597,16 +597,27 @@ function updateDisplayState() {
     const action = activeDirective.action;
     const data = activeDirective.data;
 
-    if (action === 'show_video') {
+    // ================================
+    // V2.5 HARD VISUAL EXCLUSIVITY
+    // ================================
+    const videoVisible = (action === 'show_video');
+
+    if (videoVisible) {
       videoLayer.classList.add('fullscreen');
       videoLayer.classList.remove('hidden');
-      contentLayer.style.display = 'none'; // HARD hide content
+      contentLayer.style.display = 'none';
+
+      // HARD GUARANTEE: no hidden video playback
+      if (contentVideo && !contentVideo.paused) {
+        contentVideo.pause();
+      }
+
       // Ensure avatar is visible (overlay)
       if (avatarLayer) avatarLayer.style.opacity = '1';
     } else if (action === 'show_text') {
       videoLayer.classList.remove('fullscreen');
       videoLayer.classList.add('hidden');
-      contentLayer.style.display = 'block'; // HARD show content
+      contentLayer.style.display = 'block';
     } else if (action === 'flip_card') {
       const cardIndex = data.card_index || 0;
       const card = document.getElementById(`flashcard-${cardIndex}`);
@@ -1190,6 +1201,15 @@ function renderSummary(slide) {
 function renderContent(slide) {
   console.log('[V2] ContentRenderer: Paragraphs, bullets, formulas');
 
+  // ================================
+  // V2.5 CONTENT SOURCE GUARD
+  // If visual beats exist, markdown is NOT rendered
+  // ================================
+  if (slide.visual_beats && slide.visual_beats.length > 0) {
+    console.log('[V2.5] Skipping markdown render — visual beats present');
+    return;
+  }
+
   // Check if this slide has a Manim/WAN video to display
   const videoPath = slide.video_path || slide.content_video_path;
   const renderer = slide.renderer || 'none';
@@ -1220,6 +1240,20 @@ function renderContent(slide) {
       mdContainer.innerHTML = sanitizeMarkdown(fullMarkdown);
 
       contentBox.appendChild(mdContainer);
+
+      // ================================
+      // V2.5 IMAGE FORCE-INJECTION
+      // ================================
+      const images = contentBox.querySelectorAll('img');
+      images.forEach(img => {
+        img.style.display = 'block';
+        img.style.maxWidth = '100%';
+        img.style.margin = '16px auto';
+        img.onerror = () => {
+          console.warn('[V2.5] Image failed to load:', img.src);
+          img.style.display = 'none';
+        };
+      });
 
     }
     // [V2.5] VISUAL BEATS (Secondary Source - content area)
