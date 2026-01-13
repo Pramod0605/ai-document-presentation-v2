@@ -279,49 +279,57 @@ class DirectorGenerator:
         to prevent the video from ending while narration is still playing.
         """
         segments = section.get("narration", {}).get("segments", [])
-        for seg in segments:
+        final_video_prompts = []
+        for idx, seg in enumerate(segments):
             text = seg.get("text", "")
             words = text.split()
+            
+            # Fallback for missing segment_id to prevent "None_beat" issue
+            seg_id = seg.get('segment_id') or f"seg_{idx + 1}"
+            
+            # Fix: Look in root AND render_spec, handle strings vs dicts
+            prompts_list = section.get("video_prompts", []) or section.get("render_spec", {}).get("video_prompts", [])
+            base_prompt = "Cinematic educational visualization, high quality, professional lighting."
+            if prompts_list and isinstance(prompts_list, list) and len(prompts_list) > 0:
+                obj = prompts_list[idx % len(prompts_list)]
+                if isinstance(obj, dict):
+                    base_prompt = obj.get("prompt") or obj.get("text") or obj.get("wan_prompt") or base_prompt
+                else:
+                    base_prompt = str(obj)
+            
             if len(words) > 40:
-                # Fallback for missing segment_id to prevent "None_beat" issue
-                seg_id = seg.get('segment_id') or f"seg_{segments.index(seg) + 1}"
-                
                 logger.info(f"[Sync Splitter] Segment {seg_id} is too long ({len(words)} words). Splitting into beats.")
                 
                 # Calculate how many 15s beats we need
-                num_beats = max(2, (len(words) // 30) + 1) # ~120 wpm
+                num_beats = (len(words) // 40) + 1
                 
-                # Split text into chunks
-                chunk_len = len(words) // num_beats
-                
-                video_prompts = []
+                seg_beats = []
                 for i in range(num_beats):
                     # Ensure character consistency by mentioning "Same character as before" in subsequent prompts
                     consistency_prefix = "Keeping the previous character and setting exactly the same, " if i > 0 else ""
                     
-                    # Fix: Look in root AND render_spec, handle strings vs dicts
-                    prompts_list = section.get("video_prompts", []) or section.get("render_spec", {}).get("video_prompts", [])
-                    base_prompt = "Cinematic educational visualization, high quality, professional lighting."
-                    if prompts_list and isinstance(prompts_list, list):
-                        obj = prompts_list[0]
-                        if isinstance(obj, dict):
-                            base_prompt = obj.get("prompt") or obj.get("text") or base_prompt
-                        else:
-                            base_prompt = str(obj)
-                    
-                    video_prompts.append({
-                        "beat_id": f"{seg_id}_beat_{i+1}",
+                    beat_id = f"{seg_id}_beat_{i+1}"
+                    final_video_prompts.append({
+                        "beat_id": beat_id,
                         "prompt": f"{consistency_prefix}{base_prompt} (Step {i+1} of {num_beats})",
                         "duration_hint": 15
                     })
-                
-                # Attach to section
-                if "video_prompts" not in section:
-                    section["video_prompts"] = []
-                section["video_prompts"].extend(video_prompts)
+                    seg_beats.append(beat_id)
                 
                 # Add beat mapping to segment so player knows to switch
-                seg["beat_videos"] = [p["beat_id"] for p in video_prompts]
+                seg["beat_videos"] = seg_beats
+            else:
+                # Standard segment: still needs a video beat mapping
+                beat_id = f"{seg_id}_beat_1"
+                final_video_prompts.append({
+                    "beat_id": beat_id,
+                    "prompt": base_prompt,
+                    "duration_hint": 15
+                })
+                seg["beat_videos"] = [beat_id]
+        
+        # Replace section top-level video_prompts with the complete mapping
+        section["video_prompts"] = final_video_prompts
 
     def _basic_global_footer_fallback(self, presentation, globals):
         """Minimal fallback if LLM global director fails."""
