@@ -9,7 +9,7 @@
 $SERVER_IP = "69.197.145.4"
 $SERVER_USER = "administrator"
 $PROJECT_DIR = "/nvme0n1-disk/nvme01/ai-document-presentation-v2"
-$CONTAINER_NAME = "ai-doc-app" # Adjust if your container name is different
+$CONTAINER_NAME = "ai-document-presentation-v2-api-1" # Production container name
 
 # --- SCRIPT ---
 

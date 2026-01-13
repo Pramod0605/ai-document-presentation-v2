@@ -2713,7 +2713,7 @@ def run_avatar_generation_task(job_id, jobs_root):
                     
                     if generator.download_video(task_id, str(output_path)):
                         task["status"] = "downloaded"
-                        task["local_path"] = f"/jobs/{job_id}/avatars/{output_filename}"
+                        task["local_path"] = f"avatars/{output_filename}"
                         completed_tasks.append(task)
                         
                         # Track Analytics Detail
@@ -2883,7 +2883,7 @@ def run_avatar_sequential_task(job_id, jobs_root):
                         # 4. Download
                         if generator.download_video(task_id, str(output_path)):
                             print(f"[AVATAR-SEQ] Sec {sec_id} ready and downloaded.", flush=True)
-                            section["avatar_video"] = f"/jobs/{job_id}/avatars/{output_filename}"
+                            section["avatar_video"] = f"avatars/{output_filename}"
                             section["avatar_task_id"] = task_id
                             with open(presentation_file, "w") as f:
                                 json.dump(presentation, f, indent=2)
@@ -2952,10 +2952,18 @@ def repair_metadata(job_id):
                 topic_v = f"topic_{sid}.mp4"
                 topic_beat_0 = f"topic_{sid}_beat_0.mp4"
                 
-                if topic_v in found_videos and not section.get("video_path"):
+                # CRITICAL: Treat /jobs/... absolute paths as INVALID - must normalize to relative
+                current_video_path = section.get("video_path", "")
+                video_needs_update = (
+                    not current_video_path or 
+                    current_video_path.startswith("/jobs/") or
+                    "placeholder" in current_video_path
+                )
+                
+                if topic_v in found_videos and video_needs_update:
                     section["video_path"] = f"videos/{topic_v}"
                     updated_count += 1
-                elif topic_beat_0 in found_videos and not section.get("video_path"):
+                elif topic_beat_0 in found_videos and video_needs_update:
                     # Found beat 0 but no main path - stitch as a multi-beat section
                     beats = sorted([v for v in found_videos if v.startswith(f"topic_{sid}_beat_")])
                     section["video_path"] = f"videos/{topic_beat_0}"
@@ -2971,12 +2979,19 @@ def repair_metadata(job_id):
                         
                     updated_count += 1
                 
-                # Check for recap-specific paths if still missing
-                if section.get("section_type") == "recap" and not section.get("recap_video_paths"):
+                # Check for recap-specific paths if still missing or using wrong /jobs/... format
+                recap_video_paths = section.get("recap_video_paths", [])
+                recap_needs_update = (
+                    not recap_video_paths or 
+                    any(p.startswith("/jobs/") for p in recap_video_paths if p)
+                )
+                if section.get("section_type") == "recap" and recap_needs_update:
                     beats = sorted([v for v in found_videos if v.startswith(f"topic_{sid}_beat_")])
                     if beats:
                         section["recap_video_paths"] = [f"videos/{b}" for b in beats]
-                        if not section.get("video_path"):
+                        # Also update video_path if missing or using absolute format
+                        current_vp = section.get("video_path", "")
+                        if not current_vp or current_vp.startswith("/jobs/"):
                             section["video_path"] = f"videos/{beats[0]}"
                         updated_count += 1
                 
@@ -2984,11 +2999,31 @@ def repair_metadata(job_id):
                 # Format section_1_avatar.mp4 or section_1.mp4? Let's check both patterns
                 avatar_patterns = [f"section_{sid}_avatar.mp4", f"section_{sid}.mp4"]
                 for p in avatar_patterns:
-                    if p in found_avatars and (not section.get("avatar_video") or "placeholder" in section.get("avatar_video", "")):
-                        section["avatar_video"] = f"avatars/{p}"
-                        section["avatar_status"] = "completed"
-                        updated_count += 1
-                        break
+                    if p in found_avatars:
+                        current_path = section.get("avatar_video", "")
+                        
+                        # SCENARIO MATCH:
+                        # 1. current_path is empty (None/"") or missing
+                        # 2. current_path is a placeholder
+                        # 3. current_path points to a file that DOES NOT EXIST (broken link)
+                        
+                        current_file_valid = False
+                        if current_path and "placeholder" not in current_path:
+                             # CRITICAL: If path uses absolute /jobs/... format, it's INVALID
+                             # We MUST normalize to relative "avatars/..." format
+                             if current_path.startswith("/jobs/"):
+                                 # Force update - absolute paths are always wrong
+                                 current_file_valid = False
+                             else:
+                                 # Check if relative path points to existing file
+                                 full_check_path = job_dir / current_path.lstrip("/")
+                                 current_file_valid = full_check_path.exists()
+
+                        if not current_file_valid:
+                            section["avatar_video"] = f"avatars/{p}"
+                            section["avatar_status"] = "completed"
+                            updated_count += 1
+                            break
             
             if updated_count > 0:
                 with open(pres_path, "w", encoding="utf-8") as f:
