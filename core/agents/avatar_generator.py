@@ -9,6 +9,7 @@ from core.latex_to_speech import latex_to_speech
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from core.analytics import AnalyticsTracker
+from core.locks import presentation_lock, analytics_lock
 
 logger = logging.getLogger(__name__)
 
@@ -179,24 +180,25 @@ class AvatarGenerator:
             # 1. Update Presentation.json
             if pres_path.exists():
                 try:
-                    with open(pres_path, 'r', encoding='utf-8') as f:
-                        pres_data = json.load(f)
-                    
-                    updated = False
-                    for section in pres_data.get("sections", []):
-                        if section.get("section_id") == section_id:
-                            # Player expects 'avatar_video' relative to job root (e.g. avatars/filename.mp4)
-                            # We force this structure strictly
-                            avatar_filename = os.path.basename(video_path)
-                            section["avatar_video"] = f"avatars/{avatar_filename}"
-                            section["avatar_status"] = "completed"
-                            updated = True
-                            break
-                    
-                    if updated:
-                        with open(pres_path, 'w', encoding='utf-8') as f:
-                            json.dump(pres_data, f, indent=2)
-                        logger.info(f"[AVATAR] Updated presentation.json for Sec {section_id}")
+                    with presentation_lock:
+                        with open(pres_path, 'r', encoding='utf-8') as f:
+                            pres_data = json.load(f)
+                        
+                        updated = False
+                        for section in pres_data.get("sections", []):
+                            if str(section.get("section_id")) == str(section_id):
+                                # Player expects 'avatar_video' relative to job root (e.g. avatars/filename.mp4)
+                                # We force this structure strictly
+                                avatar_filename = os.path.basename(video_path)
+                                section["avatar_video"] = f"avatars/{avatar_filename}"
+                                section["avatar_status"] = "completed"
+                                updated = True
+                                break
+                        
+                        if updated:
+                            with open(pres_path, 'w', encoding='utf-8') as f:
+                                json.dump(pres_data, f, indent=2)
+                            logger.info(f"[AVATAR] Updated presentation.json for Sec {section_id}")
                 except Exception as e:
                     logger.error(f"[AVATAR] Failed to update presentation.json: {e}")
 
@@ -204,30 +206,31 @@ class AvatarGenerator:
             analytics_path = out_path / "analytics.json"
             if analytics_path.exists():
                 try:
-                    with open(analytics_path, 'r', encoding='utf-8') as f:
-                        analytics = json.load(f)
-                    
-                    # Update counts
-                    if "avatar" not in analytics:
-                        analytics["avatar"] = {"successful_sections": 0, "section_details": [], "failed_sections": 0, "total_sections": 0}
-                    
-                    avatar_metrics = analytics["avatar"]
-                    avatar_metrics["successful_sections"] = avatar_metrics.get("successful_sections", 0) + 1
-                    
-                    # Add detail
-                    detail = {
-                        "section_id": section_id,
-                        "duration_seconds": round(duration, 2),
-                        "status": "completed",
-                        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S")
-                    }
-                    if "section_details" not in avatar_metrics:
-                        avatar_metrics["section_details"] = []
-                    avatar_metrics["section_details"].append(detail)
-                    
-                    with open(analytics_path, 'w', encoding='utf-8') as f:
-                        json.dump(analytics, f, indent=2)
-                    logger.info(f"[AVATAR] Updated analytics.json for Sec {section_id}")
+                    with analytics_lock:
+                        with open(analytics_path, 'r', encoding='utf-8') as f:
+                            analytics = json.load(f)
+                        
+                        # Update counts
+                        if "avatar" not in analytics:
+                            analytics["avatar"] = {"successful_sections": 0, "section_details": [], "failed_sections": 0, "total_sections": 0}
+                        
+                        avatar_metrics = analytics["avatar"]
+                        avatar_metrics["successful_sections"] = avatar_metrics.get("successful_sections", 0) + 1
+                        
+                        # Add detail
+                        detail = {
+                            "section_id": section_id,
+                            "duration_seconds": round(duration, 2),
+                            "status": "completed",
+                            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S")
+                        }
+                        if "section_details" not in avatar_metrics:
+                            avatar_metrics["section_details"] = []
+                        avatar_metrics["section_details"].append(detail)
+                        
+                        with open(analytics_path, 'w', encoding='utf-8') as f:
+                            json.dump(analytics, f, indent=2)
+                        logger.info(f"[AVATAR] Updated analytics.json for Sec {section_id}")
                 except Exception as e:
                     logger.error(f"[AVATAR] Failed to update analytics.json: {e}")
 

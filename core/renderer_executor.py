@@ -240,7 +240,11 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
         # ISS-092 FIX: Capture recap video paths if they were set by WAN renderer
         if topic.get("_recap_video_paths"):
             result["recap_video_paths"] = topic["_recap_video_paths"]
-            print(f"[RENDER] Captured {len(result['recap_video_paths'])} recap video paths for section {topic_id}")
+        
+        # V2.5 FIX: Capture content beat paths if they were set by WAN renderer
+        if topic.get("_beat_video_paths"):
+            result["beat_video_paths"] = topic["_beat_video_paths"]
+            print(f"[RENDER] Captured {len(result['beat_video_paths'])} content beat paths for section {topic_id}")
     except Exception as e:
         result["status"] = "failed"
         result["error"] = str(e)
@@ -510,8 +514,31 @@ def _update_presentation_safely(pres_path: Path, section_id: str, video_path: st
                     # Handle Recaps/Beats
                     beat_videos = result.get("beat_videos", [])
                     recap_video_paths = result.get("recap_video_paths", [])
+                    content_beat_paths = result.get("beat_video_paths", [])
                     
-                    if beat_videos:
+                    # V2.5 Logic: If we have multiple content beats, map them back to segments
+                    if content_beat_paths:
+                        # Build a map of beat_id -> path using the section's video_prompts
+                        v_prompts = section.get("video_prompts", [])
+                        beat_id_to_path = {}
+                        for i, p_obj in enumerate(v_prompts):
+                            if i < len(content_beat_paths):
+                                b_id = p_obj.get("beat_id") if isinstance(p_obj, dict) else f"beat_{i}"
+                                b_path = f"videos/{Path(content_beat_paths[i]).name}"
+                                beat_id_to_path[b_id] = b_path
+                        
+                        # Now update each segment's beat_videos list with actual paths
+                        if "narration" in section and "segments" in section["narration"]:
+                            for seg in section["narration"]["segments"]:
+                                if "beat_videos" in seg:
+                                    # Convert IDs to Paths
+                                    seg["beat_videos"] = [beat_id_to_path.get(bid, bid) for bid in seg["beat_videos"]]
+                        
+                        # Also expose a flat flat list for compatibility
+                        section["beat_video_paths"] = [f"videos/{Path(p).name}" for p in content_beat_paths]
+                        print(f"  [BC-UPDATE] Mapped {len(beat_id_to_path)} beat videos to segments in section {section_id}")
+
+                    if beat_videos and not content_beat_paths:
                          section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
                     if recap_video_paths:
                          section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]

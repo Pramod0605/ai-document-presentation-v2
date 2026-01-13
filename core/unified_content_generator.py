@@ -292,7 +292,8 @@ def generate_presentation(
     subject: str = "Science",
     grade: str = "Grade 10",
     images_list: str = "None",
-    config: Optional[GeneratorConfig] = None
+    config: Optional[GeneratorConfig] = None,
+    output_dir: Optional[str] = None
 ) -> dict:
     """
     Generate complete presentation from raw markdown with retry.
@@ -345,9 +346,14 @@ def generate_presentation(
             
             # USER REQUEST: Dump raw output for inspection
             try:
-                with open("llm_debug_dump.json", "w", encoding="utf-8") as f:
+                debug_path = "llm_debug_dump.json"
+                if output_dir:
+                    os.makedirs(output_dir, exist_ok=True)
+                    debug_path = os.path.join(output_dir, debug_path)
+                
+                with open(debug_path, "w", encoding="utf-8") as f:
                     json.dump(output, f, indent=2)
-                print("[DEBUG] Saved raw LLM output to 'llm_debug_dump.json'")
+                print(f"[DEBUG] Saved raw LLM output to '{debug_path}'")
             except Exception as e:
                 print(f"[DEBUG] Failed to save dump: {e}")
 

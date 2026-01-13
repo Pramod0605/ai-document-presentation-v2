@@ -19,11 +19,7 @@ class SmartPartitioner:
         
         # 1. Get the Plan from LLM
         logger.info("SmartPartitioner: Requesting partition plan from LLM...")
-        try:
-            chunks_plan = self._get_partition_plan(markdown_content)
-        except Exception as e:
-            logger.error(f"Partitioner LLM failed: {e}. Falling back to simple split.")
-            return self._fallback_split(markdown_content)
+        chunks_plan = self._get_partition_plan(markdown_content)
 
         # 2. Slice the content
         logger.info(f"SmartPartitioner: Received plan with {len(chunks_plan)} chunks. Slicing...")

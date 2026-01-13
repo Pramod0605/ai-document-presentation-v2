@@ -146,6 +146,22 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
             trace_output_dir=trace_output_dir
         )
     
+    # NEW V2.5 SYNC: Check for sync-split beats in video_prompts (from Sync Splitter)
+    # This allows Manim to support the same 1-to-1 segment mapping as WAN
+    video_prompts = topic.get("video_prompts", [])
+    if video_prompts and isinstance(video_prompts, list) and len(video_prompts) > 0:
+        print(f"[MANIM V2.5] Section {topic_id}: Rendering {len(video_prompts)} sync-split beats")
+        # Reuse _render_all_beats logic but adapted for pre-split video_prompts
+        return _render_sync_split_manim_beats(
+            video_prompts=video_prompts,
+            topic_id=topic_id,
+            topic_title=topic_title,
+            section_type=section_type,
+            output_dir=output_dir,
+            dry_run=dry_run,
+            trace_output_dir=trace_output_dir
+        )
+    
     # Multi-beat rendering: each beat gets its own video file
     if len(visual_beats) > 1:
         return _render_all_beats(
@@ -665,6 +681,72 @@ def _render_all_beats(
                 print(f"[MANIM] Rendered beat {beat_index}: {result}")
     
     print(f"[MANIM] Completed {len(rendered_paths)} beat videos for section {topic_id}")
+    return rendered_paths
+
+
+def _render_sync_split_manim_beats(
+    video_prompts: list,
+    topic_id: int,
+    topic_title: str,
+    section_type: str,
+    output_dir: str,
+    dry_run: bool = False,
+    trace_output_dir: str | None = None
+) -> list[str]:
+    """
+    Render sync-split Manim beats from video_prompts.
+    
+    V2.5 Sync Flow: Each beat's 'prompt' is a high-level text description
+    (Manim spec) that needs to be converted to Python code via Claude.
+    """
+    from core.agents.manim_code_generator import ManimCodeGenerator
+    
+    generator = ManimCodeGenerator()
+    rendered_paths = []
+    
+    print(f"[MANIM V2.5] Rendering {len(video_prompts)} sync-split beats for section {topic_id}")
+    
+    for i, beat in enumerate(video_prompts):
+        prompt_string = beat.get("prompt", "")
+        duration = float(beat.get("duration_hint", 15.0))
+        output_path = str(Path(output_dir) / f"topic_{topic_id}_beat_{i}.mp4")
+        
+        # Prepare data for code generator
+        # We wrap the beat-specific prompt into a format the generator understands
+        beat_data = {
+            "section_title": f"{topic_title} (Part {i+1})",
+            "manim_spec": prompt_string,
+            "narration_segments": [{"text": "Visualizing synchronized beat", "duration": duration}],
+            "duration": duration
+        }
+        
+        print(f"  [MANIM V2.5] Coding beat {i+1}/{len(video_prompts)}: {len(prompt_string)} chars")
+        
+        if dry_run:
+            dry_marker = _create_dry_run_marker(f"{topic_id}_beat_{i}", output_path, duration, f"LLM Code Gen for: {prompt_string}")
+            rendered_paths.append(dry_marker)
+            continue
+
+        # Call the generator (performing the LLM compilation)
+        try:
+            manim_code, errors = generator.generate(beat_data)
+        except Exception as e:
+            raise ManimRenderError(f"Section {topic_id} beat {i+1} code gen failed with exception: {e}")
+            
+        if errors:
+            raise ManimRenderError(f"Section {topic_id} beat {i+1} code gen failed: {errors}")
+            
+        # Execute the render
+        result = _execute_spec_generated_render(
+            manim_code=manim_code,
+            duration=duration,
+            output_path=output_path,
+            topic_id=f"{topic_id}_beat_{i}"
+        )
+        
+        rendered_paths.append(result)
+        print(f"  [MANIM V2.5] Completed beat {i+1}: {result}")
+        
     return rendered_paths
 
 

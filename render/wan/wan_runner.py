@@ -51,7 +51,8 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     
     # For content/example sections, use visual beats (or pre-compiled video_prompts)
     if section_type in ["content", "example"] and (visual_beats or video_prompts):
-        return _render_visual_beats(
+        # ISS-200: Return all paths for content sections so each segment can find its video
+        recap_result = _render_visual_beats(
             topic_id=topic_id,
             topic_title=topic_title,
             section_type=section_type,
@@ -61,8 +62,12 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             skip_wan=skip_wan,
             trace_output_dir=trace_output_dir,
             duration=duration,
-            video_prompts=video_prompts
+            video_prompts=video_prompts,
+            return_all_paths=True
         )
+        # Store all paths on the topic for reconciliation (like recap does)
+        topic["_beat_video_paths"] = recap_result.get("all_paths", [])
+        return recap_result.get("first_path")
     
     # For recap sections, render each recap_scene as a separate video
     recap_scenes = topic.get("recap_scenes", [])
@@ -229,10 +234,17 @@ def _render_visual_beats(
     
     # ISS-158 FIX: Truncate prompts BEFORE validation (production mode only)
     if not dry_run and not skip_wan and use_precompiled:
-        original_lengths = [len(p.get("prompt", "")) for p in video_prompts]
+        print(f"[DEBUG] video_prompt[0] keys: {video_prompts[0].keys() if isinstance(video_prompts[0], dict) else 'Not a dict'}")
+        print(f"[DEBUG] video_prompt[0] raw: {str(video_prompts[0])[:200]}")
+        # Helper to safely extract prompt text from various keys
+        def _get_p_text(p):
+            if isinstance(p, str): return p
+            return p.get("prompt") or p.get("wan_prompt") or p.get("text") or p.get("video_prompt") or ""
+
+        original_lengths = [len(_get_p_text(p)) for p in video_prompts]
         print(f"[WAN] video_prompts BEFORE truncation: {original_lengths} chars")
         video_prompts = truncate_video_prompts(video_prompts)
-        truncated_lengths = [len(p.get("prompt", "")) for p in video_prompts]
+        truncated_lengths = [len(_get_p_text(p)) for p in video_prompts]
         print(f"[WAN] video_prompts AFTER truncation: {truncated_lengths} chars (max 800)")
         
         # Auto-expand short prompts before validation

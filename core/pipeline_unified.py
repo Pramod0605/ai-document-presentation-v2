@@ -149,7 +149,8 @@ def process_markdown_unified(
                 grade=grade,
                 images_list=images_list,
                 update_status_callback=log_status,
-                generation_scope=generation_scope
+                generation_scope=generation_scope,
+                output_dir=str(output_dir)
             )
             
             tracker.end_phase(
@@ -189,7 +190,8 @@ def process_markdown_unified(
                 markdown_content=markdown_content,
                 subject=subject,
                 grade=grade,
-                images_list=images_list
+                images_list=images_list,
+                output_dir=str(output_dir)
             )
             
             # 2. Transform to Player Schema
@@ -214,6 +216,16 @@ def process_markdown_unified(
         # --- PHASE 2: Validation & Policy ---
         log_status("validation", "Enforcing renderer policies...")
         presentation = enforce_renderer_policy(presentation)
+        
+        # --- PHASE 2.5: Duration Estimation (CRITICAL for Manim Timing) ---
+        # ISS-FIX: Apply word-count estimates BEFORE Manim Codegen so validator has budgets.
+        log_status("tts_estimation", "Calculating narration durations (Estimates)...")
+        try:
+            from core.tts_duration import _apply_estimates
+            presentation = _apply_estimates(presentation)
+            logger.info("Pipeline: Applied early duration estimates for validator budgets")
+        except Exception as e:
+            logger.warning(f"Early duration estimation failed: {e}")
         
         # --- PHASE 3: MANIM CODE BRIDGING (Crucial Step) ---
         # The Unified LLM outputs 'manim_spec' (text) but no code.
@@ -328,15 +340,8 @@ def process_markdown_unified(
                 logger.error(f"Avatar Generation Trigger Failed: {e}")
                 log_status("avatar_generation", f"Error triggering avatars: {e}")
         
-        # --- PHASE 4b: TTS Duration Estimation (FAST, Non-blocking) ---
-        # Step 1: Apply instant word-count based estimates (always needed for rendering)
-        log_status("tts_estimation", "Calculating narration durations...")
-        try:
-            from core.tts_duration import _apply_estimates
-            presentation = _apply_estimates(presentation)
-            logger.info("Pipeline: Applied instant duration estimates from word count")
-        except Exception as e:
-            logger.warning(f"Duration estimation failed: {e}")
+        # --- PHASE 4b: TTS Audio Generation (Background) ---
+        # Step 1: Skip estimates (already applied in Phase 2.5)
         
         # Step 2: Fire off TTS audio generation in background (LOW PRIORITY - doesn't block)
         tts_thread = None

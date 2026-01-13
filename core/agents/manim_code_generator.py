@@ -390,7 +390,8 @@ class ManimCodeGenerator:
         
         errors.extend(self._check_placeholders(code))
         
-        errors.extend(self._check_timing(code, section_data))
+        # V2.5 HARD SYNC: Granular Segment Timing & Cleanup Validation
+        errors.extend(self._check_granular_timing(code, section_data))
         
         errors.extend(self._check_variable_overwrites(code))
         
@@ -631,42 +632,58 @@ class ManimCodeGenerator:
         
         return errors
     
-    def _check_timing(self, code: str, section_data: Dict[str, Any]) -> List[str]:
-        """Check if animation timing matches narration segments."""
-        # ISS-Relax: We want to be lenient here. 
-        # A 2-second difference on a 60s video is fine.
+    def _check_granular_timing(self, code: str, section_data: Dict[str, Any]) -> List[str]:
+        """
+        V2.5 Specialized Validator: Timing, Pacing, and Cleanup.
+        Uses manim_timing_validator.py to perform segment-level checks.
+        """
+        import tempfile
+        import os
+        from core.manim_timing_validator import validate_manim_timing
+        
         errors = []
         
-        segments = section_data.get("narration_segments", [])
-        if not segments:
-            return []
-        
-        total_expected = sum(seg.get("duration_seconds") or seg.get("duration", 5.0) for seg in segments)
-        
-        run_times = re.findall(r'run_time\s*=\s*([\d.]+)', code)
-        waits = re.findall(r'self\.wait\s*\(\s*([\d.]+)\s*\)', code)
-        
-        total_animation = sum(float(t) for t in run_times) + sum(float(w) for w in waits)
-        
-        # INCREASED TOLERANCE: 
-        # 1. Base tolerance proportional to segments
-        # 2. Percentage-based tolerance (10%)
-        # 3. Minimum absolute tolerance (3s)
-        base_tolerance = 1.0 * len(segments)
-        percent_tolerance = 0.10 * total_expected
-        max_tolerance = max(base_tolerance, percent_tolerance, 3.0)
-        
-        diff = abs(total_animation - total_expected)
-        
-        if diff > max_tolerance:
-            errors.append(
-                f"Timing mismatch: animation total {total_animation:.1f}s vs expected {total_expected:.1f}s "
-                f"(tolerance ±{max_tolerance:.1f}s). Please adjust self.wait() or run_time."
-            )
-        elif diff > 0.5:
-            # Minor mismatch - just log it but don't block
-            logger.info(f"[MANIM GEN] Minor timing mismatch ({diff:.1f}s) - allowing it.")
-        
+        # We need a temp file with the code to run the validator
+        with tempfile.NamedTemporaryFile(suffix=".py", mode="w", delete=False, encoding="utf-8") as tmp:
+            tmp.write(code)
+            tmp_path = tmp.name
+            
+        try:
+            # Capture print output from the validator if it fails
+            from io import StringIO
+            import sys
+            
+            old_stdout = sys.stdout
+            sys.stdout = StringIO()
+            
+            # Prepare external budgets for the validator
+            budgets = {}
+            narration_segments = section_data.get("narration_segments", [])
+            for i, seg in enumerate(narration_segments, 1):
+                # ISS-FIX: Support both 'duration' (LLM) and 'duration_seconds' (Pipeline) keys
+                dur = seg.get("duration") or seg.get("duration_seconds") or 0.0
+                budgets[i] = float(dur)
+                
+            success = validate_manim_timing(tmp_path, external_budgets=budgets)
+            
+            output = sys.stdout.getvalue()
+            sys.stdout = old_stdout
+            
+            if not success:
+                # Extract [FAIL] lines from output
+                fail_lines = [line for line in output.split("\n") if "[FAIL]" in line]
+                if fail_lines:
+                    errors.extend(fail_lines)
+                else:
+                    errors.append("Manim timing validation failed (segments mismatched or cleanup violated)")
+            
+        except Exception as e:
+            logger.error(f"[MANIM GEN] Granular validation error: {e}")
+            errors.append(f"Internal validation error: {e}")
+        finally:
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
+                
         return errors
     
     def _check_variable_overwrites(self, code: str) -> List[str]:
