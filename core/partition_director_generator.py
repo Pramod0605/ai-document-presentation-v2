@@ -493,17 +493,20 @@ class PartitionDirectorGenerator:
                     base_prompt_obj = v_prompts[idx % len(v_prompts)]
                     base_prompt = base_prompt_obj.get("prompt") if isinstance(base_prompt_obj, dict) else str(base_prompt_obj)
 
+            # Fallback for missing segment_id to prevent "None_beat" issue
+            seg_id = seg.get('segment_id') or f"seg_{idx + 1}"
+            
             if len(words) > 40:
                 # Calculate number of beats (15s each)
                 num_beats = (len(words) // 40) + 1
-                logger.info(f"Sync Splitter ({renderer}): Splitting segment {seg.get('segment_id')} into {num_beats} beats ({len(words)} words)")
+                logger.info(f"Sync Splitter ({renderer}): Splitting segment {seg_id} into {num_beats} beats ({len(words)} words)")
                 
                 # Consistency prefix helps the LLM maintain visual continuity across beats
                 consistency_prefix = "Keeping the previous character and setting exactly the same, " if renderer == "video" else ""
                 
                 seg_beats = []
                 for i in range(num_beats):
-                    beat_id = f"{seg.get('segment_id')}_beat_{i+1}"
+                    beat_id = f"{seg_id}_beat_{i+1}"
                     final_video_prompts.append({
                         "beat_id": beat_id,
                         "prompt": f"{consistency_prefix if i > 0 else ''}{base_prompt} (Part {i+1} of {num_beats})",
@@ -515,7 +518,7 @@ class PartitionDirectorGenerator:
                 seg["beat_videos"] = seg_beats
             else:
                 # Standard segment: still needs a video beat mapping
-                beat_id = f"{seg.get('segment_id')}_beat_1"
+                beat_id = f"{seg_id}_beat_1"
                 final_video_prompts.append({
                     "beat_id": beat_id,
                     "prompt": base_prompt,

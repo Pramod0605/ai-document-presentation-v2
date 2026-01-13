@@ -283,7 +283,10 @@ class DirectorGenerator:
             text = seg.get("text", "")
             words = text.split()
             if len(words) > 40:
-                logger.info(f"[Sync Splitter] Segment {seg.get('segment_id')} is too long ({len(words)} words). Splitting into beats.")
+                # Fallback for missing segment_id to prevent "None_beat" issue
+                seg_id = seg.get('segment_id') or f"seg_{segments.index(seg) + 1}"
+                
+                logger.info(f"[Sync Splitter] Segment {seg_id} is too long ({len(words)} words). Splitting into beats.")
                 
                 # Calculate how many 15s beats we need
                 num_beats = max(2, (len(words) // 30) + 1) # ~120 wpm
@@ -307,7 +310,7 @@ class DirectorGenerator:
                             base_prompt = str(obj)
                     
                     video_prompts.append({
-                        "beat_id": f"{seg.get('segment_id')}_beat_{i+1}",
+                        "beat_id": f"{seg_id}_beat_{i+1}",
                         "prompt": f"{consistency_prefix}{base_prompt} (Step {i+1} of {num_beats})",
                         "duration_hint": 15
                     })
