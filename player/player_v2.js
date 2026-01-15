@@ -55,18 +55,29 @@ function resolveMediaPath(path, type = 'audio') {
     return path;
   }
 
-  // If path contains subfolder structure, prepend BASE_PATH
-  if (path.includes('avatars/') || path.includes('videos/') || path.includes('audio/') || path.includes('images/')) {
+  // IDEMPOTENT FIX: If path already contains subfolder, don't re-prefix
+  const hasSubfolder = path.includes('avatars/') || path.includes('videos/') || path.includes('audio/') || path.includes('images/');
+
+  if (hasSubfolder) {
+    // Ensure .mp4 for videos if missing
+    if (type === 'video' && !path.toLowerCase().endsWith('.mp4')) {
+      path += '.mp4';
+    }
     return BASE_PATH + path;
   }
 
   // Simple filename - prepend BASE_PATH + appropriate folder
-  if (type === 'avatar') return BASE_PATH + 'avatars/' + path;
-  if (type === 'video') return BASE_PATH + 'videos/' + path;
-  if (type === 'image') return BASE_PATH + 'images/' + path;
-  if (type === 'audio') return BASE_PATH + 'audio/' + path;
+  let finalPath = path;
+  if (type === 'video' && !finalPath.toLowerCase().endsWith('.mp4')) {
+    finalPath += '.mp4';
+  }
 
-  return BASE_PATH + path;
+  if (type === 'avatar') return BASE_PATH + 'avatars/' + finalPath;
+  if (type === 'video') return BASE_PATH + 'videos/' + finalPath;
+  if (type === 'image') return BASE_PATH + 'images/' + finalPath;
+  if (type === 'audio') return BASE_PATH + 'audio/' + finalPath;
+
+  return BASE_PATH + finalPath;
 }
 
 // ============================================
@@ -101,6 +112,7 @@ let useTimerFallback = false;
 // Beat video playlist for multi-segment videos
 let beatVideoPlaylist = [];
 let currentBeatIndex = -1;
+let activeBeatIndex = 0;
 
 // Timer fallback object
 const timerFallback = {
@@ -307,7 +319,9 @@ function setupEventListeners() {
   btnPlay.addEventListener('click', togglePlay);
   btnPrev.addEventListener('click', prevSlide);
   btnNext.addEventListener('click', nextSlide);
-  slidePicker.addEventListener('change', (e) => loadSlide(parseInt(e.target.value)));
+  slidePicker.addEventListener('change', (e) => {
+    loadSlide(parseInt(e.target.value))
+  });
 
   // Content video ended handler
   contentVideo.addEventListener('ended', onContentVideoEnd);
@@ -433,7 +447,10 @@ function loadSlide(index) {
   currentSegmentIndex = 0;
   currentBeatIndex = -1;
   beatVideoPlaylist = [];
+  activeBeatIndex = 0;
 
+  contentBox = document.getElementById('content-box');
+  contentBox.innerHTML = '';
   // Update UI
   slidePicker.value = index;
   const slide = slides[index];
@@ -683,7 +700,7 @@ function renderSummary(slide) {
 
   const allBulletsArray = Array.from(collectedBullets);
   const list = document.createElement('ul');
-  list.className = 'summary-list';
+  list.className = 'summary-list'; // Don't hide the list, only hide items
 
   allBulletsArray.forEach((text, i) => {
     const item = document.createElement('li');
@@ -705,7 +722,10 @@ function renderContent(slide) {
 
   const videoPath = slide.video_path || slide.content_video_path;
   const beatVideoPaths = slide.beat_video_paths || [];
-  const hasVideo = videoPath || beatVideoPaths.length > 0;
+  // NEW V2.5 FIX: Also check for segment videos
+  const segments = slide.narration?.segments || [];
+  const hasSegmentVideos = segments.some(seg => seg.beat_videos && seg.beat_videos.length > 0);
+  const hasVideo = videoPath || beatVideoPaths.length > 0 || hasSegmentVideos;
 
   // Render text content first (TEACH phase)
   if (slide.markdown_content && slide.markdown_content.length > 0) {
@@ -731,6 +751,8 @@ function renderContent(slide) {
   } else if (slide.visual_beats && slide.visual_beats.length > 0) {
     console.log(`[V2.5] Rendering ${slide.visual_beats.length} visual beats`);
 
+
+
     slide.visual_beats.forEach((beat, i) => {
       const beatDiv = document.createElement('div');
       beatDiv.className = 'beat-block reveal-hidden'; // Add reveal-hidden for progressive reveal
@@ -745,46 +767,49 @@ function renderContent(slide) {
           const img = document.createElement('img');
           img.className = 'content-image';
 
+          //Replace JPG,JPEG image to .png
+          const newImgPath = imgPath.replace(/\.(jpg|jpeg)$/i, '.png');
+
           // V2.5: Comprehensive image format fallback
-          img.onerror = function () {
-            const currentSrc = this.src;
+          // img.onerror = function () {
+          //   const currentSrc = this.src;
 
-            // Already tried all formats?
-            if (this.dataset.retryCount && parseInt(this.dataset.retryCount) >= 3) {
-              console.warn(`[V2.5] Image failed after all retries: ${imgPath}`);
-              imgContainer.style.display = 'none';
-              return;
-            }
+          //   // Already tried all formats?
+          //   if (this.dataset.retryCount && parseInt(this.dataset.retryCount) >= 3) {
+          //     console.warn(`[V2.5] Image failed after all retries: ${imgPath}`);
+          //     imgContainer.style.display = 'none';
+          //     return;
+          //   }
 
-            // Track retry count
-            const retryCount = parseInt(this.dataset.retryCount || '0') + 1;
-            this.dataset.retryCount = retryCount;
+          //   // Track retry count
+          //   const retryCount = parseInt(this.dataset.retryCount || '0') + 1;
+          //   this.dataset.retryCount = retryCount;
 
-            let newSrc = '';
+          //   let newSrc = '';
 
-            // Try format sequence: original → .png → .jpg → .jpeg
-            if (retryCount === 1) {
-              // First retry: try PNG
-              newSrc = currentSrc.replace(/\.(jpg|jpeg)$/i, '.png');
-              console.log(`[V2.5] Image retry ${retryCount}: Trying PNG - ${newSrc}`);
-            } else if (retryCount === 2) {
-              // Second retry: try JPG
-              newSrc = currentSrc.replace(/\.(png|jpeg)$/i, '.jpg');
-              console.log(`[V2.5] Image retry ${retryCount}: Trying JPG - ${newSrc}`);
-            } else if (retryCount === 3) {
-              // Third retry: try JPEG
-              newSrc = currentSrc.replace(/\.(png|jpg)$/i, '.jpeg');
-              console.log(`[V2.5] Image retry ${retryCount}: Trying JPEG - ${newSrc}`);
-            }
+          //   // Try format sequence: original → .png → .jpg → .jpeg
+          //   if (retryCount === 1) {
+          //     // First retry: try PNG
+          //     newSrc = currentSrc.replace(/\.(jpg|jpeg)$/i, '.png');
+          //     console.log(`[V2.5] Image retry ${retryCount}: Trying PNG - ${newSrc}`);
+          //   } else if (retryCount === 2) {
+          //     // Second retry: try JPG
+          //     newSrc = currentSrc.replace(/\.(png|jpeg)$/i, '.jpg');
+          //     console.log(`[V2.5] Image retry ${retryCount}: Trying JPG - ${newSrc}`);
+          //   } else if (retryCount === 3) {
+          //     // Third retry: try JPEG
+          //     newSrc = currentSrc.replace(/\.(png|jpg)$/i, '.jpeg');
+          //     console.log(`[V2.5] Image retry ${retryCount}: Trying JPEG - ${newSrc}`);
+          //   }
 
-            if (newSrc && newSrc !== currentSrc) {
-              this.src = newSrc;
-            } else {
-              imgContainer.style.display = 'none';
-            }
-          };
+          //   if (newSrc && newSrc !== currentSrc) {
+          //     this.src = newSrc;
+          //   } else {
+          //     imgContainer.style.display = 'none';
+          //   }
+          // };
 
-          img.src = resolveMediaPath(imgPath, 'image');
+          img.src = resolveMediaPath(newImgPath, 'image');
           img.alt = beat.description || 'Visual beat image';
           imgContainer.appendChild(img);
 
@@ -818,15 +843,21 @@ function renderContent(slide) {
   }
 
   // Setup video for SHOW phase (triggered by segments)
-  if (hasVideo) {
-    if (beatVideoPaths.length > 1) {
+  // NEW V2.5 FIX: segments variable already declared above, just check for videos
+  // const segments already defined at line 715
+
+  if (hasVideo || hasSegmentVideos) {
+    if (beatVideoPaths.length > 1 || hasSegmentVideos) {
       beatVideoPlaylist = buildBeatPlaylistWithTiming(slide);
       if (beatVideoPlaylist.length > 0) {
         loadBeatVideo(0);
+        console.log(`[V2.5] Beat playlist loaded with ${beatVideoPlaylist.length} videos`);
       }
     } else if (videoPath) {
       const fullPath = resolveMediaPath(videoPath, 'video');
       contentVideo.src = fullPath;
+      contentVideo.muted = true;  // ← ADD THIS LINE
+
       console.log(`[V2.5] Video loaded for SHOW phase: ${fullPath}`);
     }
   }
@@ -841,19 +872,30 @@ function renderRecap(slide) {
   const videoPath = slide.video_path || slide.content_video_path;
   const beatVideoPaths = slide.beat_video_paths || [];
 
-  if (beatVideoPaths.length > 0) {
+  // NEW V2.5 FIX: Check segments for beat videos
+  const segments = slide.narration?.segments || [];
+  const hasSegmentVideos = segments.some(seg => seg.beat_videos && seg.beat_videos.length > 0);
+
+  if (beatVideoPaths.length > 0 || hasSegmentVideos) {
+    // Build playlist (function will extract from segments if needed)
     beatVideoPlaylist = buildBeatPlaylistWithTiming(slide);
     if (beatVideoPlaylist.length > 0) {
       videoLayer.classList.remove('hidden');
       videoLayer.classList.add('fullscreen');
       loadBeatVideo(0);
+      console.log(`[V2.5] RECAP: Beat playlist with ${beatVideoPlaylist.length} videos`);
+    } else {
+      console.warn('[V2.5] RECAP: Beat videos expected but playlist is empty');
     }
   } else if (videoPath) {
     const fullPath = resolveMediaPath(videoPath, 'video');
     contentVideo.src = fullPath;
+    contentVideo.muted = true; // V2.5: Content videos are always muted (only avatar has audio)
     videoLayer.classList.remove('hidden');
     videoLayer.classList.add('fullscreen');
     console.log(`[V2.5] RECAP video: ${fullPath}`);
+  } else {
+    console.warn('[V2.5] RECAP: No videos found!');
   }
 }
 
@@ -954,7 +996,7 @@ function setupMediaSource(slide) {
     avatarLayer.style.display = 'block';
     avatarVideo.src = avatarPath;
     avatarVideo.muted = false;
-
+    avatarVideo.loop = false; //To stop the loop play
     useTimerFallback = false;
     activeTimeSource = avatarVideo;
     bindTimeEvents(avatarVideo);
@@ -1087,17 +1129,21 @@ function updateSummaryProgressiveReveal() {
     cumulativeTime += (seg.duration_seconds || 5);
   });
 
+
   // Reveal bullets based on their segment indices mapped to actual time
   visualBeats.forEach((beat, beatIndex) => {
     const segmentIndex = beat.start_time; // This is actually a segment index (0, 1, 2, 3...)
     const segmentTiming = segmentTimeMap[segmentIndex];
 
+    // DEFENSIVE FIX: If segment mapping fails, use sequential reveal (every 3 seconds)
+    let actualStartTime;
     if (!segmentTiming) {
-      console.warn(`[V2.5] Beat ${beatIndex}: segment ${segmentIndex} not found`);
-      return;
+      // Fallback: Sequential reveal (beatIndex * 3 seconds)
+      actualStartTime = beatIndex * 3;
+    } else {
+      actualStartTime = segmentTiming.startTime;
     }
 
-    const actualStartTime = segmentTiming.startTime;
     const bullet = document.getElementById(`summary-bullet-${beatIndex}`);
 
     if (bullet && currentTime >= actualStartTime && bullet.classList.contains('reveal-hidden')) {
@@ -1233,8 +1279,12 @@ function updateContentProgressiveReveal() {
 
   // Reveal beats progressively
   let newlyRevealed = false;
+
+
   visualBeats.forEach((beat, beatIndex) => {
     const beatDiv = document.getElementById(`beat-${beatIndex}`);
+
+
     if (!beatDiv) return;
 
     let revealTime = 0;
@@ -1253,15 +1303,32 @@ function updateContentProgressiveReveal() {
       const teachDuration = totalDuration * 0.7; // 70% is teach, 30% is video
       const timePerBeat = teachDuration / visualBeats.length;
       revealTime = beatIndex * timePerBeat;
+
     }
 
     // Reveal when time is reached
     if (currentTime >= revealTime && beatDiv.classList.contains('reveal-hidden')) {
+
       beatDiv.classList.remove('reveal-hidden');
       beatDiv.classList.add('reveal-visible');
+      activeBeatIndex = beatIndex;
+
+
+
       newlyRevealed = true;
       console.log(`[V2.5] ✓ Revealed beat ${beatIndex} at ${currentTime.toFixed(1)}s (target: ${revealTime.toFixed(1)}s)`);
     }
+
+    if (beatIndex == activeBeatIndex) {
+      beatDiv.style.display = 'block';
+    }
+    else {
+      beatDiv.style.display = 'none';
+    }
+
+
+
+
   });
 
   // Typeset math when new content is revealed
@@ -1350,9 +1417,29 @@ function updateContentTeachShowPhase() {
 // BEAT VIDEO HANDLING
 // ============================================
 function buildBeatPlaylistWithTiming(slide) {
-  const beatVideoPaths = slide.beat_video_paths || [];
   const segments = slide.narration?.segments || [];
   const playlist = [];
+
+  // Try section-level beat_video_paths first (old format - backward compatibility)
+  let beatVideoPaths = slide.beat_video_paths || [];
+
+  // NEW V2.5 FIX: Extract from segments if not at section level
+  if (beatVideoPaths.length === 0) {
+    console.log('[V2.5 FIX] Extracting beat videos from segments');
+    beatVideoPaths = segments.map(seg => {
+      const beatVids = seg.beat_videos || [];
+      if (beatVids.length > 0) {
+        // IDEMPOTENT FIX: Just pass the ID/path to resolveMediaPath later
+        const videoId = beatVids[0]; // Take first if multiple
+        const videoPath = videoId;
+        console.log(`[V2.5 FIX] Segment ${seg.segment_id}: ${videoId}`);
+        return videoPath;
+      }
+      return null;
+    }).filter(Boolean);
+
+    console.log(`[V2.5 FIX] Extracted ${beatVideoPaths.length} videos from segments`);
+  }
 
   let accumulatedTime = 0;
   segments.forEach((seg, i) => {
@@ -1371,6 +1458,7 @@ function buildBeatPlaylistWithTiming(slide) {
     accumulatedTime += duration;
   });
 
+  console.log(`[V2.5 FIX] Built playlist with ${playlist.length} videos`);
   return playlist;
 }
 
@@ -1381,6 +1469,8 @@ function loadBeatVideo(index) {
   currentBeatIndex = index;
 
   contentVideo.src = beat.videoPath;
+  contentVideo.muted = true;  // ← ADD THIS LINE
+
   contentVideo.onloadeddata = () => {
     console.log(`[V2.5] Beat video ${index + 1}/${beatVideoPlaylist.length} loaded`);
   };
@@ -1666,7 +1756,7 @@ function fitContentToContainer(element, options = {}) {
   }
 
   if (checkOverflow()) {
-    element.style.overflowY = 'auto';
+    // element.style.overflowY = 'auto';
   }
 
   console.log(`[V2.5] Content scaled to ${(scale * 100).toFixed(0)}%`);

@@ -65,6 +65,7 @@ class AvatarGenerator:
                     if response.status_code in [200, 202]:
                         data = response.json()
                         task_id = data.get("task_id")
+                        print(f"[AVATAR-API] Success! Task ID: {task_id}", flush=True)
                         logger.info(f"[AVATAR] Task queued successfully: {task_id}")
                         return {
                             "task_id": task_id,
@@ -102,6 +103,7 @@ class AvatarGenerator:
         """
         try:
             url = f"{self.api_url}/status/{task_id}"
+            print(f"[AVATAR-API] Checking status: {url}", flush=True)
             response = requests.get(url, timeout=10)
             
             if response.status_code == 200:
@@ -168,9 +170,9 @@ class AvatarGenerator:
             logger.error(f"[AVATAR] Download failed: {e}")
             return False
 
-    def _update_artifacts(self, output_dir: str, section_id: int, video_path: str, duration: float = 0.0):
+    def _update_artifacts(self, output_dir: str, section_id: int, video_path: str, duration: float = 0.0, vimeo_url: Optional[str] = None):
         """
-        Live-patch presentation.json and analytics.json with the new avatar video.
+        Live-patch presentation.json and analytics.json with the new avatar video and Vimeo info.
         This is crucial for "Fire-and-Forget" mode where the main pipeline has already exited.
         """
         try:
@@ -188,10 +190,16 @@ class AvatarGenerator:
                         for section in pres_data.get("sections", []):
                             if str(section.get("section_id")) == str(section_id):
                                 # Player expects 'avatar_video' relative to job root (e.g. avatars/filename.mp4)
-                                # We force this structure strictly
                                 avatar_filename = os.path.basename(video_path)
                                 section["avatar_video"] = f"avatars/{avatar_filename}"
                                 section["avatar_status"] = "completed"
+                                
+                                # ISS-VIMEO: store vimeo details
+                                if vimeo_url:
+                                    section["vimeo_url"] = vimeo_url
+                                    section["vimeo_uploaded"] = True
+                                    logger.info(f"[AVATAR] Added Vimeo URL for Sec {section_id}: {vimeo_url}")
+                                
                                 updated = True
                                 break
                         
@@ -222,6 +230,7 @@ class AvatarGenerator:
                             "section_id": section_id,
                             "duration_seconds": round(duration, 2),
                             "status": "completed",
+                            "vimeo_url": vimeo_url,
                             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S")
                         }
                         if "section_details" not in avatar_metrics:
@@ -300,7 +309,7 @@ class AvatarGenerator:
             print(f"[AVATAR] Warning: No sections found in presentation to process.")
             return results
 
-        BATCH_SIZE = 2
+        BATCH_SIZE = 3
         section_batches = [sections[i:i + BATCH_SIZE] for i in range(0, len(sections), BATCH_SIZE)]
         
         print(f"[AVATAR] Initiating synchronous processing in {len(section_batches)} batches...")
@@ -417,16 +426,20 @@ class AvatarGenerator:
                     status_res = self.check_status(tid)
                     status = status_res.get("status")
                     
-                    if status == "completed":
+                    # Support both 'completed' and 'success'
+                    is_success = (status == "completed" or (status_res.get("result", {}).get("success") is True))
+                    
+                    if is_success:
                         print(f"[AVATAR] Task {tid} COMPLETED. Downloading...")
                         # Download immediately
                         out_path = active_map[tid]["output_path"]
                         success = self.download_video(tid, out_path)
                         
+                        # Extract Vimeo URL if available
+                        vimeo_url = status_res.get("raw_response", {}).get("vimeo_url")
+
                         # Get duration from status if available
                         duration = 0.0
-                        # Try to find duration in status_res
-                        # status_res['raw_response']['result']['data']['video_duration']
                         try:
                             raw = status_res.get("raw_response", {})
                             duration = float(raw.get("result", {}).get("data", {}).get("video_duration", 0.0))
@@ -436,7 +449,7 @@ class AvatarGenerator:
                         if success:
                             results["completed"].append(active_map[tid])
                             completed_in_batch.add(tid)
-                            self._update_artifacts(output_dir, active_map[tid]["section_id"], out_path, duration)
+                            self._update_artifacts(output_dir, active_map[tid]["section_id"], out_path, duration, vimeo_url=vimeo_url)
                             
                             if tracker:
                                 tracker.update_progress(
@@ -451,8 +464,8 @@ class AvatarGenerator:
                             # Treat as completed (but failed download) to stop polling
                             completed_in_batch.add(tid) 
                             
-                    elif status == "failed":
-                        print(f"[AVATAR] Task {tid} FAILED on server.")
+                    elif status == "failed" or status == "not_found":
+                        print(f"[AVATAR] Task {tid} {status.upper()} on server.")
                         results["failed"].append(active_map[tid])
                         completed_in_batch.add(tid)
                         
@@ -476,3 +489,151 @@ class AvatarGenerator:
         logger.info(final_msg)
         print(final_msg)
         return results
+
+    def submit_all_jobs(self, presentation: Dict[str, Any], job_id: str, output_dir: str, target_sections: Optional[List[str]] = None, force: bool = False, tracker: Optional[AnalyticsTracker] = None) -> Dict[str, Any]:
+        """
+        New "Submit All" strategy:
+        - target_sections: List of section_ids to process (None = all)
+        - force: If True, bypasses existence check and re-submits
+        """
+        logger.info(f"[AVATAR-ALL] Starting 'Submit All' strategy for Job {job_id} (Target: {target_sections}, Force: {force})")
+        sections = presentation.get("sections", [])
+        job_path = Path(output_dir)
+        state_file = job_path / "avatar_analysis.json"
+        save_dir = job_path / "avatars"
+        save_dir.mkdir(parents=True, exist_ok=True)
+
+        # 1. Recover state if exists (Reset if force is global?)
+        state = {"job_id": job_id, "tasks": {}}
+        if state_file.exists():
+            try:
+                state = json.loads(state_file.read_text())
+                logger.info(f"[AVATAR-ALL] Recovered {len(state['tasks'])} tasks from state file.")
+            except Exception as e:
+                logger.error(f"[AVATAR-ALL] Failed to load state file: {e}")
+
+        # 2. Submit sections
+        submitted_now = 0
+        for section in sections:
+            sec_id = str(section.get("section_id"))
+            
+            # Scope check
+            if target_sections and sec_id not in [str(s) for s in target_sections]:
+                continue
+            
+            # Check if already completed in state (Honor force)
+            output_filename = f"section_{sec_id}_avatar.mp4"
+            output_path = save_dir / output_filename
+            
+            task_entry = None
+            for tid, tinfo in list(state["tasks"].items()):
+                if str(tinfo.get("section_id")) == sec_id:
+                    # If forcing this section, remove it from state so it re-submits
+                    if force:
+                        del state["tasks"][tid]
+                    else:
+                        task_entry = tid
+                    break
+            
+            if task_entry:
+                continue # Already tracking
+
+            # SMART CHECK: If file is missing or corrupt, we MUST generate/submit (Unless forcing)
+            file_missing = not output_path.exists() or output_path.stat().st_size < 1000
+            
+            if file_missing or force:
+                # Extract Text
+                narration_text = ""
+                if "narration_segments" in section:
+                    narration_text = " ".join([str(seg.get("text", "") or "") for seg in section["narration_segments"]])
+                elif "narration" in section:
+                    narr = section["narration"]
+                    if isinstance(narr, dict):
+                        narration_text = narr.get("full_text", "") or " ".join([str(s.get("text", "") or "") for s in narr.get("segments", [])])
+                    else:
+                        narration_text = str(narr)
+                
+                if not narration_text.strip():
+                    continue
+
+                res = self.generate_avatar_video(narration_text, job_id, int(sec_id))
+                if "task_id" in res:
+                    tid = res["task_id"]
+                    state["tasks"][tid] = {
+                        "section_id": int(sec_id),
+                        "task_id": tid,
+                        "output_path": str(output_path),
+                        "status": "queued"
+                    }
+                    submitted_now += 1
+                    logger.info(f"[AVATAR-ALL] Submitted Sec {sec_id} -> Task {tid}")
+                else:
+                    logger.error(f"[AVATAR-ALL] Failed to submit Sec {sec_id}: {res.get('error')}")
+
+        if submitted_now > 0:
+            state_file.write_text(json.dumps(state, indent=2))
+            logger.info(f"[AVATAR-ALL] Saved state for {submitted_now} new tasks.")
+
+        # 3. Polling Loop
+        active_tasks = [tid for tid, info in state["tasks"].items() if info.get("status") != "completed"]
+        if not active_tasks:
+            logger.info("[AVATAR-ALL] No active tasks to poll.")
+            return state
+
+        logger.info(f"[AVATAR-ALL] Entering polling loop for {len(active_tasks)} tasks (Interval: 30s)")
+        start_time = time.time()
+        timeout = 3600 # 1 hour global timeout
+        
+        while active_tasks and (time.time() - start_time < timeout):
+            print(f"\n[AVATAR-ALL] Polling {len(active_tasks)} active tasks. Elapsed: {int(time.time() - start_time)}s", flush=True)
+            still_active = []
+            for tid in active_tasks:
+                try:
+                    status_res = self.check_status(tid)
+                    status = status_res.get("status")
+                    print(f"[AVATAR-ALL] Task {tid} status: {status}", flush=True)
+                    
+                    # API returns 'completed' or 'success' depending on version/path
+                    if status == "completed" or (status_res.get("result", {}).get("success") is True):
+                        print(f"[AVATAR-ALL] Task {tid} COMPLETED. Downloading...", flush=True)
+                        info = state["tasks"][tid]
+                        if self.download_video(tid, info["output_path"]):
+                            # Extract Vimeo details
+                            vimeo_url = None
+                            try:
+                                raw = status_res.get("raw_response", {})
+                                vimeo_url = raw.get("vimeo_url")
+                                duration = float(raw.get("result", {}).get("data", {}).get("video_duration", 0.0))
+                            except:
+                                duration = 0.0
+                                
+                            self._update_artifacts(output_dir, info["section_id"], info["output_path"], duration, vimeo_url)
+                            info["status"] = "completed"
+                            info["vimeo_url"] = vimeo_url
+                            logger.info(f"[AVATAR-ALL] Sec {info['section_id']} DONE.")
+                        else:
+                            still_active.append(tid) # Retry download next loop
+                    elif status == "failed" or status == "not_found":
+                        logger.error(f"[AVATAR-ALL] Task {tid} {status.upper()} on server.")
+                        state["tasks"][tid]["status"] = "failed"
+                        # No need to keep polling a terminal failure
+                    else:
+                        still_active.append(tid)
+                except Exception as e:
+                    logger.error(f"[AVATAR-ALL] Error checking task {tid}: {e}")
+                    still_active.append(tid)
+
+            active_tasks = still_active
+            if active_tasks:
+                state_file.write_text(json.dumps(state, indent=2))
+                time.sleep(30) # User requested 30s poll
+
+        # Cleanup if all done
+        if not active_tasks:
+            logger.info("[AVATAR-ALL] All tasks finished. Cleaning up state file.")
+            try: state_file.unlink()
+            except: pass
+        else:
+            logger.warning(f"[AVATAR-ALL] Polling timed out with {len(active_tasks)} tasks still active.")
+
+        return state

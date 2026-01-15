@@ -112,8 +112,21 @@ Return a JSON object with this exact structure:
         }
       ],
       "render_spec": {
-        "manim_scene_spec": "Detailed string (80+ words)...",
-        "video_prompts": ["Detailed cinematic prompt (80+ words)..."]
+        "segment_specs": [
+          {
+            "segment_id": "seg_2",
+            "renderer": "manim|video",
+            "manim_scene_spec": "For manim: 80+ word description...",
+            "video_prompt": "For WAN: 80+ word cinematic prompt...",
+            "beats": [
+              {
+                "beat_id": "seg_2_beat_1",
+                "duration": 12.5,
+                "prompt": "For segments > 15s, split into multiple UNIQUE beats (80+ words each)..."
+              }
+            ]
+          }
+        ]
       }
     }
   ]
@@ -122,11 +135,25 @@ Return a JSON object with this exact structure:
 **CRITICAL**: Every content/example section MUST include `renderer` field. Valid values: "manim", "video", "none".
 
 ## VISUAL GUIDELINES (MANDATORY) "TEACH AND SHOW"
-### A. INTELLIGENT RENDERER SELECTION
+
+### 1. UNIQUE PROMPTS PER SHOW SEGMENT (MANDATORY)
+You MUST generate ONE entry in `segment_specs` for EACH SHOW segment (visual_layer = "show").
+- **DO NOT** reuse the same prompt for multiple segments.
+- **DO NOT** generate a single prompt for the entire section.
+- **COUNT** your SHOW segments (e.g., seg_2, seg_4) and match the count in `segment_specs`.
+
+### 2. WAN VIDEO LIMITS & BEATS (15s Max)
+WAN 2.6 API produces 15s videos maximum.
+- If a segment duration is **16-30s**: Provide 2 `beats` in that `segment_spec`.
+- If a segment duration is **31-45s**: Provide 3 `beats`.
+- For Beats 2+: Use prefix "Keeping the previous scene exactly the same, continue showing..."
+- Each beat prompt MUST be 80+ words.
+
+### 3. RENDERER SELECTION
 1. **MATH / PHYSICS** -> **MANIM** (`renderer: "manim"`)
-   - Mandatory `render_spec.manim_scene_spec` (80+ words).
+   - 1 `manim_scene_spec` per segment (NO 15s limit for Manim).
 2. **BIOLOGY / HISTORY** -> **VIDEO** (`renderer: "video"`)
-   - Mandatory `render_spec.video_prompts` (80+ words).
+   - Uses WAN Video. Match beat count to narration duration (1 beat per 15s).
 3. **STANDARD** -> **NONE** (`renderer: "none"`)
 
 ### B. PROMPT QUALITY CHECKLIST

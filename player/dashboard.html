@@ -456,8 +456,10 @@
                     Retry</label>
                 <select id="retryPhaseSelect"
                     style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(0,0,0,0.3); color: #fff; font-size: 1rem;">
-                    <option value="manim_codegen">Manim Code Generation</option>
-                    <option value="video_render">Video Rendering (Manim + WAN)</option>
+                    <option value="wan_render">🎬 WAN Video Rendering (AI Videos)</option>
+                    <option value="manim_render">📐 Manim Video Rendering (Math Animations)</option>
+                    <option value="manim_codegen">⚙️ Manim Code Generation</option>
+                    <option value="avatar_generation">🧑 Avatar Generation</option>
                 </select>
             </div>
 
@@ -703,10 +705,32 @@
             }
         }
 
-        function openPlayer() {
-            if (currentJobId) {
-                window.open(`/player_v2/?job=${currentJobId}`, '_blank');
+        function openPlayer(jobId) {
+            const jid = jobId || currentJobId;
+            if (jid) {
+                window.open(`/player_v2/?job=${jid}`, '_blank');
             }
+        }
+
+        function retryFailedAvatars(jobId) {
+            if (!confirm(`Retry ${jobId} failed avatars?`)) return;
+
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = "Triggering...";
+
+            fetch(`/job/${jobId}/regenerate_failed_avatars`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) throw new Error(data.error);
+                    alert(`Avatar retry started for ${data.failed_sections_detected?.length || 0} sections!`);
+                    loadJobHistory();
+                })
+                .catch(err => {
+                    alert('Error: ' + err.message);
+                    btn.disabled = false;
+                    btn.textContent = "Retry Failed";
+                });
         }
 
         let historyPollInterval = null;
@@ -936,20 +960,23 @@
 
                             if (failedCount > 0 && successCount === 0) {
                                 // All failed
-                                btn.textContent = "Avatar Gen Failed (0/" + (failedCount) + ")";
+                                btn.textContent = "Retry All Failed (" + (failedCount) + ")";
                                 btn.style.background = "#f44336";
+                                btn.onclick = () => retryFailedAvatars(jobId);
                                 window.avatarStates[jobId] = 'failed';
                                 alert(`Avatar generation failed!\n\nAll ${failedCount} sections failed.`);
                             } else if (failedCount > 0) {
                                 // Partial success
-                                btn.textContent = `Avatars Partial (${successCount}/${successCount + failedCount})`;
+                                btn.textContent = `Retry Failed (${failedCount})`;
                                 btn.style.background = "#ff9800";
+                                btn.onclick = () => retryFailedAvatars(jobId);
                                 window.avatarStates[jobId] = 'completed_with_errors';
                                 alert(`Avatar generation completed with errors.\n\nSuccess: ${successCount}\nFailed: ${failedCount}`);
                             } else {
                                 // All success
                                 btn.textContent = "Avatars Ready!";
                                 btn.style.background = "#4caf50";
+                                btn.onclick = () => openPlayer(jobId);
                                 window.avatarStates[jobId] = 'completed';
                                 alert("Avatar generation complete!");
                             }
@@ -1035,18 +1062,21 @@
                             }
 
                             if (failedCount > 0 && successCount === 0) {
-                                btn.textContent = "Avatar Gen Failed (0/" + failedCount + ")";
+                                btn.textContent = "Retry All Failed (" + failedCount + ")";
                                 btn.style.background = "#f44336";
+                                btn.onclick = (e) => { e.stopPropagation(); retryFailedAvatars(jobId); };
                                 window.avatarStates[jobId] = 'failed';
                                 alert(`Avatar generation failed!\n\nAll ${failedCount} sections failed.`);
                             } else if (failedCount > 0) {
-                                btn.textContent = `Avatars Partial (${successCount}/${successCount + failedCount})`;
+                                btn.textContent = `Retry Failed (${failedCount})`;
                                 btn.style.background = "#ff9800";
+                                btn.onclick = (e) => { e.stopPropagation(); retryFailedAvatars(jobId); };
                                 window.avatarStates[jobId] = 'completed_with_errors';
                                 alert(`Avatar generation completed with errors.\n\nSuccess: ${successCount}\nFailed: ${failedCount}`);
                             } else {
                                 btn.textContent = "Avatars Ready!";
                                 btn.style.background = "#4caf50";
+                                btn.onclick = (e) => { e.stopPropagation(); openPlayer(jobId); };
                                 window.avatarStates[jobId] = 'completed';
                                 alert("Avatar generation complete!");
                             }
@@ -1065,6 +1095,32 @@
                         btn.textContent = "Status Error";
                     });
             }, 5000);
+        }
+
+        function retryFailedAvatars(jobId) {
+            if (!confirm(`Retry ${jobId} failed avatars?`)) return;
+
+            // Find the button (might be passed as event target if called from listener)
+            const btn = event?.target || document.querySelector(`button[onclick*="generateAvatar('${jobId}'"]`);
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = "Triggering...";
+            }
+
+            fetch(`/job/${jobId}/regenerate_failed_avatars`, { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) throw new Error(data.error);
+                    alert(`Avatar retry started for ${data.failed_sections_detected?.length || 0} sections!`);
+                    loadJobHistory();
+                })
+                .catch(err => {
+                    alert('Error: ' + err.message);
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = "Retry Failed";
+                    }
+                });
         }
 
 

@@ -495,7 +495,7 @@ def process_markdown_unified(
                 # Thread will safely read/update the file we just saved
                 wan_thread = Thread(
                     target=submit_wan_background_job,
-                    args=(presentation, str(output_dir / "videos"), job_id, skip_wan, 5), # Batch size 5
+                    args=(presentation, str(output_dir / "videos"), job_id, skip_wan),
                     daemon=True
                 )
                 wan_thread.start()

@@ -704,6 +704,34 @@ def cancel_job(job_id):
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/job/<job_id>/regenerate_failed", methods=["POST"])
+def regenerate_failed_videos(job_id):
+    try:
+        from core.video_regenerator import VideoRegenerator
+        job_folder = Path(JOBS_DIR) / job_id
+        if not job_folder.exists():
+            return jsonify({"error": "Job folder not found"}), 404
+            
+        reg = VideoRegenerator(str(job_folder))
+        result = reg.regenerate_failed()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/job/<job_id>/regenerate_section/<section_id>", methods=["POST"])
+def regenerate_section_videos(job_id, section_id):
+    try:
+        from core.video_regenerator import VideoRegenerator
+        job_folder = Path(JOBS_DIR) / job_id
+        if not job_folder.exists():
+            return jsonify({"error": "Job folder not found"}), 404
+            
+        reg = VideoRegenerator(str(job_folder))
+        result = reg.regenerate_section(section_id)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/job/<job_id>/retry_phase", methods=["POST"])
 def retry_phase(job_id):
     """
@@ -741,10 +769,14 @@ def retry_phase(job_id):
             result = _retry_manim_codegen(job_id, job_folder, presentation, section_ids)
         elif phase == "video_render":
             result = _retry_video_render(job_id, job_folder, presentation, section_ids)
-        elif phase == "tts_generation":
-            result = _retry_tts_generation(job_id, job_folder, presentation, section_ids)
+        elif phase == "wan_render":
+            result = _retry_wan_render(job_id, job_folder, presentation, section_ids)
+        elif phase == "manim_render":
+            result = _retry_manim_render(job_id, job_folder, presentation, section_ids)
+        elif phase == "avatar_generation":
+            result = _retry_avatar_generation(job_id, job_folder, presentation, section_ids)
         else:
-            return jsonify({"error": f"Unknown phase: {phase}. Valid: manim_codegen, video_render, tts_generation"}), 400
+            return jsonify({"error": f"Unknown phase: {phase}. Valid: manim_codegen, wan_render, manim_render, avatar_generation"}), 400
         
         with open(presentation_path, 'w') as f:
             json.dump(presentation, f, indent=2)
@@ -881,6 +913,204 @@ def _retry_video_render(job_id: str, job_folder: Path, presentation: dict, secti
         except Exception as e:
             results["failed"].append({"section_id": section_id, "error": str(e)})
             print(f"[RETRY] Video render error for section {section_id}: {e}")
+    
+    return results
+
+
+def _retry_wan_render(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
+    """Retry WAN video rendering for sections with renderer='video'."""
+    from core.renderer_executor import execute_renderer
+    
+    videos_dir = job_folder / "videos"
+    videos_dir.mkdir(parents=True, exist_ok=True)
+    
+    results = {"success": [], "failed": [], "skipped": []}
+    
+    for section in presentation.get("sections", []):
+        section_id = section.get("section_id")
+        renderer = section.get("renderer", "none")
+        
+        # Only process WAN/video sections
+        if renderer not in ["video", "wan"]:
+            continue
+        
+        if section_ids and section_id not in section_ids:
+            results["skipped"].append({"section_id": section_id, "reason": "Not in retry list"})
+            continue
+        
+        try:
+            print(f"[RETRY-WAN] Re-rendering WAN video for section {section_id}")
+            
+            result = execute_renderer(
+                topic=section,
+                output_dir=str(videos_dir),
+                dry_run=False,
+                skip_wan=False,
+                trace_output_dir=str(job_folder),
+                strict_mode=True
+            )
+            
+            if result.get("status") == "success":
+                video_path = result.get("video_path")
+                if video_path:
+                    rel_path = Path(video_path).name
+                    section["video_path"] = f"videos/{rel_path}"
+                results["success"].append({"section_id": section_id, "video_path": video_path})
+            else:
+                results["failed"].append({"section_id": section_id, "error": result.get("error")})
+        except Exception as e:
+            results["failed"].append({"section_id": section_id, "error": str(e)})
+    
+    return results
+
+
+def _retry_manim_render(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
+    """Retry Manim video rendering for sections with renderer='manim'."""
+    from core.renderer_executor import execute_renderer
+    
+    videos_dir = job_folder / "videos"
+    videos_dir.mkdir(parents=True, exist_ok=True)
+    
+    results = {"success": [], "failed": [], "skipped": []}
+    
+    for section in presentation.get("sections", []):
+        section_id = section.get("section_id")
+        renderer = section.get("renderer", "none")
+        
+        # Only process Manim sections
+        if renderer != "manim":
+            continue
+        
+        if section_ids and section_id not in section_ids:
+            results["skipped"].append({"section_id": section_id, "reason": "Not in retry list"})
+            continue
+        
+        try:
+            print(f"[RETRY-MANIM] Re-rendering Manim video for section {section_id}")
+            
+            result = execute_renderer(
+                topic=section,
+                output_dir=str(videos_dir),
+                dry_run=False,
+                skip_wan=True,  # Skip WAN for Manim sections
+                trace_output_dir=str(job_folder),
+                strict_mode=True
+            )
+            
+            if result.get("status") == "success":
+                video_path = result.get("video_path")
+                if video_path:
+                    rel_path = Path(video_path).name
+                    section["video_path"] = f"videos/{rel_path}"
+                results["success"].append({"section_id": section_id, "video_path": video_path})
+            else:
+                results["failed"].append({"section_id": section_id, "error": result.get("error")})
+        except Exception as e:
+            results["failed"].append({"section_id": section_id, "error": str(e)})
+    
+    return results
+
+
+
+def _retry_avatar_generation(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
+    """Retry avatar generation for specific sections or all failed."""
+    from core.agents.avatar_generator import AvatarGenerator
+    
+    avatars_dir = job_folder / "avatars"
+    avatars_dir.mkdir(parents=True, exist_ok=True)
+    
+    results = {"success": [], "failed": [], "skipped": []}
+    generator = AvatarGenerator()
+    
+    # If no section_ids provided, find failed sections from status
+    if section_ids is None:
+        status_file = job_folder / "avatar_status.json"
+        if status_file.exists():
+            try:
+                status_data = json.loads(status_file.read_text())
+                section_ids = status_data.get("details", {}).get("failed_sections", [])
+            except:
+                section_ids = []
+    
+    if not section_ids:
+        # Fallback: check all segments that don't have a valid avatar
+        section_ids = []
+        for section in presentation.get("sections", []):
+            sec_id = section.get("section_id")
+            avatar_path = avatars_dir / f"section_{sec_id}_avatar.mp4"
+            if not avatar_path.exists() or avatar_path.stat().st_size < 10000:
+                section_ids.append(sec_id)
+
+    if not section_ids:
+        return {"message": "No sections to retry", "success": [], "failed": [], "skipped": []}
+    
+    for section in presentation.get("sections", []):
+        sec_id = section.get("section_id")
+        
+        if sec_id not in section_ids:
+            continue
+        
+        # Extract narration text
+        narration = section.get("narration", {})
+        full_text = ""
+        if isinstance(narration, dict):
+             full_text = narration.get("full_text", "") or " ".join([str(s.get("text", "") or "") for s in narration.get("segments", [])])
+        else:
+             full_text = str(narration)
+             
+        if not full_text.strip():
+            results["skipped"].append({"section_id": sec_id, "reason": "No narration text"})
+            continue
+        
+        try:
+            output_filename = f"section_{sec_id}_avatar.mp4"
+            output_path = avatars_dir / output_filename
+            
+            # Submit and poll
+            print(f"[RETRY-AVATAR] Submitting Sec {sec_id}...", flush=True)
+            response = generator.generate_avatar_video(full_text, job_id, sec_id)
+            task_id = response.get("task_id")
+            
+            if not task_id:
+                results["failed"].append({"section_id": sec_id, "error": response.get("error", "No task_id returned")})
+                continue
+            
+            # Poll for completion (max 5 minutes per section)
+            start_poll = time.time()
+            success = False
+            while time.time() - start_poll < 300:
+                status_resp = generator.check_status(task_id)
+                status = status_resp.get("status")
+                print(f"[RETRY-AVATAR] Sec {sec_id} polling: {status}", flush=True)
+                
+                if status == "completed" or status == "success":
+                    if generator.download_video(task_id, str(output_path)):
+                        section["avatar_path"] = f"avatars/{output_filename}"
+                        results["success"].append({"section_id": sec_id, "task_id": task_id})
+                        print(f"[RETRY-AVATAR] Sec {sec_id} DONE! Saved to {output_path}", flush=True)
+                        
+                        # Save presentation immediately so we don't lose progress
+                        try:
+                            with open(job_folder / "presentation.json", "w", encoding="utf-8") as f:
+                                json.dump(presentation, f, indent=2)
+                        except Exception as save_err:
+                            print(f"[RETRY-AVATAR] Warning: Failed to save presentation.json: {save_err}")
+                    else:
+                        results["failed"].append({"section_id": sec_id, "error": "Download failed"})
+                    
+                    success = True
+                    break
+                elif status == "failed" or status == "not_found":
+                    results["failed"].append({"section_id": sec_id, "error": status_resp.get("message", f"Task {status}")})
+                    success = True # Marked as handled
+                    break
+                time.sleep(5)
+            
+            if not success:
+                results["failed"].append({"section_id": sec_id, "error": "Timeout after 5 minutes"})
+                
+        except Exception as e:
+            results["failed"].append({"section_id": sec_id, "error": str(e)})
     
     return results
 
@@ -2566,6 +2796,51 @@ def get_avatar_status(job_id):
     except Exception as e:
         return jsonify({"state": "error", "error": str(e)}), 500
 
+@app.route("/job/<job_id>/regenerate_failed_avatars", methods=["POST"])
+def regenerate_failed_avatars(job_id):
+    """Regenerate only the avatars that previously failed or are missing."""
+    job_dir = JOBS_DIR / job_id
+    if not job_dir.exists():
+        return jsonify({"error": "Job not found"}), 404
+        
+    # Check if already running in memory
+    if job_id in ACTIVE_AVATAR_JOBS:
+        return jsonify({"status": "already_running", "message": "Avatar generation in progress"}), 409
+            
+    # Parse failed sections from status file if it exists
+    status_file = job_dir / "avatar_status.json"
+    failed_sections = None
+    if status_file.exists():
+        try:
+            status_data = json.loads(status_file.read_text())
+            failed_sections = status_data.get("details", {}).get("failed_sections", [])
+        except: pass
+        
+    # Start async task with force=True for the specified sections
+    ACTIVE_AVATAR_JOBS.add(job_id)
+    thread = Thread(target=run_avatar_sequential_task, args=(job_id, str(JOBS_DIR), failed_sections, True))
+    thread.daemon = True
+    thread.start()
+    
+    return jsonify({"status": "queued", "message": "Avatar retry started", "failed_sections_detected": failed_sections})
+
+@app.route("/job/<job_id>/regenerate_avatar/<section_id>", methods=["POST"])
+def regenerate_section_avatar(job_id, section_id):
+    """Regenerate avatar for a specific section (force overwrite)."""
+    job_dir = JOBS_DIR / job_id
+    if not job_dir.exists():
+        return jsonify({"error": "Job not found"}), 404
+        
+    if job_id in ACTIVE_AVATAR_JOBS:
+        return jsonify({"status": "already_running", "message": "Avatar generation in progress"}), 409
+    
+    ACTIVE_AVATAR_JOBS.add(job_id)
+    thread = Thread(target=run_avatar_sequential_task, args=(job_id, str(JOBS_DIR), [section_id], True))
+    thread.daemon = True
+    thread.start()
+    
+    return jsonify({"status": "queued", "section_id": section_id})
+
 def run_avatar_generation_task(job_id, jobs_root):
     """
     Background worker to handle avatar generation workflow:
@@ -2770,149 +3045,52 @@ def run_avatar_generation_task(job_id, jobs_root):
         import traceback
         traceback.print_exc()
         update_status("failed", f"Internal error: {str(e)}")
+        print(f"[AVATAR-SEQ] Fatal error: {e}", flush=True)
+        update_status("failed", str(e))
     finally:
         ACTIVE_AVATAR_JOBS.discard(job_id)
-
-def run_avatar_sequential_task(job_id, jobs_root):
+def run_avatar_sequential_task(job_id, jobs_root, target_sections=None, force=False):
     """
-    Background worker to handle avatar generation workflow SEQUENTIALLY:
-    1. Read presentation.json
-    2. For each section:
-       a. Submit to API
-       b. Poll status until complete
-       c. Download video
-       d. Update presentation.json
+    Background worker to handle avatar generation:
+    Now uses the refactored 'Submit All' strategy from AvatarGenerator.
     """
     from core.agents.avatar_generator import AvatarGenerator
     import time
     
-    print(f"[AVATAR-SEQ] Starting sequential task for job {job_id}", flush=True)
+    print(f"[AVATAR-TASK] Initiating generation for job {job_id}", flush=True)
     job_dir = Path(jobs_root) / job_id
-    status_file = job_dir / "avatar_status.json"
     presentation_file = job_dir / "presentation.json"
-    avatar_dir = job_dir / "avatars"
     
     try:
-        os.makedirs(avatar_dir, exist_ok=True)
-    except Exception as e:
-        print(f"[AVATAR-SEQ] Error creating dir: {e}", flush=True)
-        return
-
-    def update_status(state, message, progress=0, details=None):
-        data = {
-            "state": state, "message": message, "progress": progress,
-            "updated_at": time.time(), "details": details or {}
-        }
-        try:
-            with open(status_file, "w") as f:
-                json.dump(data, f)
-        except: pass
-
-    try:
         if not presentation_file.exists():
-            update_status("failed", "presentation.json not found")
+            print(f"[AVATAR-TASK] Error: presentation.json not found for {job_id}")
             return
             
         with open(presentation_file, "r") as f:
             presentation = json.load(f)
             
         generator = AvatarGenerator()
-        sections = presentation.get("sections", [])
-        total_sections = len(sections)
         
-        # Initialize Analytics
-        from core.analytics import create_tracker
-        tracker = create_tracker(job_id)
-        analytics_file = job_dir / "analytics.json"
+        # Use the new high-performance "Submit All" method
+        # This handles its own persistence, polling (30s), and Vimeo metadata
+        generator.submit_all_jobs(
+            presentation=presentation,
+            job_id=job_id,
+            output_dir=str(job_dir),
+            target_sections=target_sections,
+            force=force
+        )
         
-        completed_count = 0
-        failed_count = 0
-        skipped_count = 0
-        
-        for idx, section in enumerate(sections):
-            sec_id = section.get("section_id")
-            
-            # Progress calculation - show X/Y format
-            progress = 10 + int(((idx + 1) / total_sections) * 80)
-            done_count = completed_count + failed_count + skipped_count
-            status_msg = f"Processing {idx+1}/{total_sections} sections ({completed_count} done, {failed_count} failed)"
-            update_status("processing", status_msg, progress)
-            
-            # 1. Extract context/text
-            narration_text = ""
-            if "narration_segments" in section:
-                narration_text = " ".join([str(seg.get("text", "") or "") for seg in section["narration_segments"]])
-            elif "narration" in section:
-                narr = section["narration"]
-                if isinstance(narr, dict):
-                    narration_text = narr.get("full_text", "") or " ".join([str(s.get("text", "") or "") for s in narr.get("segments", [])])
-                else:
-                    narration_text = str(narr)
-            
-            if not narration_text or not narration_text.strip():
-                print(f"[AVATAR-SEQ] Skipping Sec {sec_id} (No text)", flush=True)
-                skipped_count += 1
-                continue
-
-            # Check if exists
-            output_filename = f"section_{sec_id}_avatar.mp4"
-            output_path = avatar_dir / output_filename
-            if output_path.exists() and output_path.stat().st_size > 1000:
-                print(f"[AVATAR-SEQ] Sec {sec_id} exists. Skipping.", flush=True)
-                skipped_count += 1
-                continue
-
-            # 2. Submit
-            print(f"[AVATAR-SEQ] Submitting Sec {sec_id}...", flush=True)
-            res = generator.generate_avatar_video(narration_text, job_id, sec_id)
-            task_id = res.get("task_id")
-            
-            if not task_id:
-                print(f"[AVATAR-SEQ] Submission failed for Sec {sec_id}: {res.get('error')}", flush=True)
-                failed_count += 1
-                continue
-            
-            # 3. Poll
-            start_poll = time.time()
-            success = False
-            while time.time() - start_poll < 600: # 10 min per section
-                try:
-                    status_res = generator.check_status(task_id)
-                    api_status = status_res.get("status")
-                    if api_status == "completed":
-                        # 4. Download
-                        if generator.download_video(task_id, str(output_path)):
-                            print(f"[AVATAR-SEQ] Sec {sec_id} ready and downloaded.", flush=True)
-                            section["avatar_video"] = f"avatars/{output_filename}"
-                            section["avatar_task_id"] = task_id
-                            with open(presentation_file, "w") as f:
-                                json.dump(presentation, f, indent=2)
-                            success = True
-                        break
-                    elif api_status == "failed":
-                        print(f"[AVATAR-SEQ] Sec {sec_id} API failed.", flush=True)
-                        break
-                except Exception as e:
-                    print(f"[AVATAR-SEQ] Poll error: {e}", flush=True)
-                
-                time.sleep(10)
-            
-            if success:
-                completed_count += 1
-            else:
-                failed_count += 1
-            
-            # Update status after each section completes
-            done_count = completed_count + failed_count + skipped_count
-            update_status("processing", f"Completed {done_count}/{total_sections} sections ({completed_count} success, {failed_count} failed)", progress)
-
-        update_status("completed", f"Sequential processing complete. Success: {completed_count}, Failed: {failed_count}", 100)
+        print(f"[AVATAR-TASK] Background task completed for job {job_id}")
         
     except Exception as e:
-        print(f"[AVATAR-SEQ] Fatal error: {e}", flush=True)
-        update_status("failed", str(e))
+        print(f"[AVATAR-TASK] Fatal error: {e}", flush=True)
+        import traceback
+        traceback.print_exc()
     finally:
-        ACTIVE_AVATAR_JOBS.discard(job_id)
+        if job_id in ACTIVE_AVATAR_JOBS:
+            ACTIVE_AVATAR_JOBS.remove(job_id)
+
 
 @app.route("/api/repair-metadata/<job_id>", methods=["POST"])
 def repair_metadata(job_id):

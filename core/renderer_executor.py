@@ -387,108 +387,57 @@ def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False
     return rendered_videos
 
 
-def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, skip_wan: bool = False, batch_size: int = 5):
+def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, skip_wan: bool = False):
     """
-    Submits WAN video generation tasks to a background thread.
-    Features:
-    - Batches requests (default 5 at a time) to respect parallelism limits
-    - Updates presentation.json and analytics.json in real-time
-    - Fire-and-Forget from the main pipeline's perspective
+    Submits WAN video generation tasks to Kie.ai using KieBatchGenerator.
+    - Respects 15-concurrency and 15s interval limits.
+    - Updates presentation.json and analytics.json in real-time.
     """
     try:
-        import time
-        from render.wan.wan_runner import render_wan_video, reset_wan_session
+        from render.wan.kie_batch_generator import KieBatchGenerator
         
-        print(f"[WAN-BG DEBUG] submit_wan_background_job ENTERED for job {job_id}")
+        print(f"[WAN-BG] Starting batch generation for job {job_id}")
         
-        # Reset session for this thread
-        if not skip_wan:
-            try:
-                reset_wan_session()
-                print(f"[WAN-BG DEBUG] Session reset complete")
-            except Exception as reset_err:
-                print(f"[WAN-BG DEBUG] Session reset failed: {reset_err}")
-
-        topics = presentation.get("sections", presentation.get("topics", []))
-        print(f"[WAN-BG DEBUG] Found {len(topics)} total sections")
+        topics = presentation.get("sections", [])
+        wan_beats = [] # Flat list of all beats to generate
+        topic_id_to_beats = {} # Track which beats belong to which topic
         
-        wan_topics = []
-        
-        # 1. Identify WAN topics
         for topic in topics:
             renderer = topic.get("renderer", "none")
-            section_id = topic.get("section_id", "?")
-            section_type = topic.get("section_type", "unknown")
-            # V2.5 FIX: Include "video" in the filter for recap sections (per V2.5 Bible)
+            # Bible: Recaps and SHOW segments use 'video'/'wan_video'
             if renderer in ["wan", "wan_video", "video"]:
-                wan_topics.append(topic)
-                print(f"[WAN-BG DEBUG] Section {section_id} ({section_type}): renderer='{renderer}' -> INCLUDED")
-            else:
-                print(f"[WAN-BG DEBUG] Section {section_id} ({section_type}): renderer='{renderer}' -> SKIPPED")
+                beats = topic.get("video_prompts", [])
+                if beats:
+                    wan_beats.extend(beats)
+                    topic_id_to_beats[topic.get("section_id")] = [b.get("beat_id") for b in beats]
         
-        if not wan_topics:
-            print(f"[WAN-BG DEBUG] No WAN topics found for job {job_id} - EXITING")
-            logger.info(f"[WAN-BG] No WAN topics found for job {job_id}")
+        if not wan_beats:
+            logger.info(f"[WAN-BG] No WAN beats found for job {job_id}")
             return
 
-        print(f"[WAN-BG DEBUG] Starting background generation for {len(wan_topics)} topics")
-        logger.info(f"[WAN-BG] Starting background generation for {len(wan_topics)} topics (Batch Size: {batch_size})")
+        if skip_wan:
+            logger.info(f"[WAN-BG] WAN skipped per request for job {job_id}")
+            return
 
-        # 2. Process in Batches
-        # Group topics into batches
-        batches = [wan_topics[i:i + batch_size] for i in range(0, len(wan_topics), batch_size)]
+        # 1. Generate in Batches
+        batch_gen = KieBatchGenerator()
+        results = batch_gen.generate_batch(wan_beats, output_dir)
         
-        topic_map = {t.get("section_id", t.get("id")): t for t in wan_topics}
-        output_dir_path = Path(output_dir)
-        pres_path = output_dir_path.parent / "presentation.json" # output_dir is usually .../videos
-
-        for batch_idx, batch in enumerate(batches):
-            logger.info(f"[WAN-BG] Processing Batch {batch_idx + 1}/{len(batches)} ({len(batch)} videos)...")
-            
-            with concurrent.futures.ThreadPoolExecutor(max_workers=batch_size) as executor:
-                future_to_topic = {
-                    executor.submit(
-                        execute_renderer, 
-                        topic, 
-                        output_dir, 
-                        False, # dry_run
-                        skip_wan, 
-                        str(output_dir_path.parent), # trace_dir
-                        True # strict_mode
-                    ): topic for topic in batch
-                }
+        # 2. Update Files
+        pres_path = Path(output_dir).parent / "presentation.json"
+        
+        for topic_id, beat_ids in topic_id_to_beats.items():
+            # For each topic, find the corresponding results
+            topic_results = {bid: results.get(bid) for bid in beat_ids if bid in results}
+            if topic_results:
+                _update_presentation_safely(pres_path, topic_id, list(topic_results.values())[0], {"status": "success", "beat_video_paths": list(topic_results.values()), "topic_results": topic_results})
+                _update_analytics_safely(pres_path.parent / "analytics.json", topic_id, {"status": "success", "duration_seconds": 0}) # Logic needs adjustment for batch duration
                 
-                for future in concurrent.futures.as_completed(future_to_topic):
-                    topic = future_to_topic[future]
-                    topic_id = topic.get("section_id", topic.get("id"))
-                    
-                    try:
-                        result = future.result()
-                        status = result.get("status")
-                        video_path = result.get("video_path")
-                        
-                        if status == "success" and video_path:
-                            # REAL-TIME UPDATE of presentation.json
-                            _update_presentation_safely(pres_path, topic_id, video_path, result)
-                            
-                            # REAL-TIME UPDATE of analytics.json
-                            _update_analytics_safely(pres_path.parent / "analytics.json", topic_id, result)
-                            
-                            logger.info(f"[WAN-BG] Saved video for {topic_id}")
-                        else:
-                            logger.warning(f"[WAN-BG] Failed/Skipped {topic_id}: {result.get('error')}")
-                            
-                    except Exception as e:
-                        logger.error(f"[WAN-BG] Error in batch processing topic {topic_id}: {e}")
-
-            # Optional: Small cooldown between batches to let GPU cool?
-            # time.sleep(2) 
-            
         logger.info(f"[WAN-BG] All batches complete for job {job_id}")
 
     except Exception as e:
         logger.error(f"[WAN-BG] Fatal error in background thread: {e}")
-
+        traceback.print_exc()
 
 def _update_presentation_safely(pres_path: Path, section_id: str, video_path: str, result: dict):
     """Helper to safely update presentation.json with new video paths."""
@@ -527,15 +476,28 @@ def _update_presentation_safely(pres_path: Path, section_id: str, video_path: st
                                 b_path = f"videos/{Path(content_beat_paths[i]).name}"
                                 beat_id_to_path[b_id] = b_path
                         
-                        # Now update each segment's beat_videos list with actual paths
+                        # Ensure strict alignment with segments for Player V2 compatibility
+                        aligned_paths = []
                         if "narration" in section and "segments" in section["narration"]:
                             for seg in section["narration"]["segments"]:
+                                seg_path = None
                                 if "beat_videos" in seg:
-                                    # Convert IDs to Paths
-                                    seg["beat_videos"] = [beat_id_to_path.get(bid, bid) for bid in seg["beat_videos"]]
+                                    # Convert IDs to Paths and pull the first one for the segment-level alignment list
+                                    resolved_paths = []
+                                    for bid in seg["beat_videos"]:
+                                        p = beat_id_to_path.get(bid)
+                                        if p:
+                                            resolved_paths.append(p)
+                                        else:
+                                            resolved_paths.append(bid) # Keep ID if not found
+                                    
+                                    seg["beat_videos"] = resolved_paths
+                                    if resolved_paths and resolved_paths[0].startswith("videos/"):
+                                        seg_path = resolved_paths[0]
+                                
+                                aligned_paths.append(seg_path)
                         
-                        # Also expose a flat flat list for compatibility
-                        section["beat_video_paths"] = [f"videos/{Path(p).name}" for p in content_beat_paths]
+                        section["beat_video_paths"] = aligned_paths
                         print(f"  [BC-UPDATE] Mapped {len(beat_id_to_path)} beat videos to segments in section {section_id}")
 
                     if beat_videos and not content_beat_paths:
@@ -581,7 +543,8 @@ def _update_analytics_safely(analytics_path: Path, section_id: str, result: dict
             
             if result["status"] == "success":
                  # Assuming WAN since this is the WAN BG job
-                 metrics["wan_videos"] = metrics.get("wan_videos", 0) + 1
+                 beat_count = len(result.get("beat_video_paths", [])) or 1
+                 metrics["wan_videos"] = metrics.get("wan_videos", 0) + beat_count
             else:
                  metrics["failed_renders"] = metrics.get("failed_renders", 0) + 1
                  

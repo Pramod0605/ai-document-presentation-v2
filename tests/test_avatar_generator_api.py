@@ -113,60 +113,86 @@ class TestAvatarGenerator(unittest.TestCase):
     @patch('core.agents.avatar_generator.AvatarGenerator.check_status')
     @patch('core.agents.avatar_generator.AvatarGenerator.download_video')
     @patch('core.agents.avatar_generator.AvatarGenerator.generate_avatar_video')
-    def test_submit_parallel_job_batch_logic(self, mock_generate, mock_download, mock_status):
+    @patch('core.agents.avatar_generator.AvatarGenerator._update_artifacts')
+    def test_submit_all_jobs_flow(self, mock_update, mock_generate, mock_download, mock_status):
         """
-        Verify that submit_parallel_job:
-        1. Submitted 2 tasks (batch size 2).
-        2. Waited for them to complete.
-        3. Downloaded them.
+        Verify the new Submit All strategy:
+        1. Submits all 3 sections immediately.
+        2. Polls/Checks status.
+        3. Captures Vimeo URL.
+        4. Updates state file.
         """
-        # Setup Mock Data
         mock_presentation = {
             "sections": [
-                {"section_id": 1, "narration": "Narration 1"},
-                {"section_id": 2, "narration": "Narration 2"},
-                # Just 2 for this test to match one batch
+                {"section_id": 1, "narration": "Text 1"},
+                {"section_id": 2, "narration": "Text 2"},
+                {"section_id": 3, "narration": "Text 3"},
             ]
         }
         
-        # Mock Generation: Success for both
+        # Mock Generation: Success for all
         mock_generate.side_effect = [
-            {"task_id": "task_1", "status": "queued"},
-            {"task_id": "task_2", "status": "queued"}
+            {"task_id": "task_a", "status": "queued"},
+            {"task_id": "task_b", "status": "queued"},
+            {"task_id": "task_c", "status": "queued"}
         ]
         
-        # Mock Status: 
-        # Call 1 (task_1): processing
-        # Call 2 (task_2): processing
-        # Call 3 (task_1): completed
-        # Call 4 (task_2): completed
+        # Mock Status:
+        # Loop 1: task_a, task_b, task_c all "processing"
+        # Loop 2: task_a "completed", task_b "completed", task_c "processing"
+        # Loop 3: task_c "completed"
         mock_status.side_effect = [
+            {"status": "processing"}, {"status": "processing"}, {"status": "processing"},
+            {
+                "status": "completed", 
+                "raw_response": {
+                    "vimeo_url": "https://vimeo.com/a",
+                    "result": {"data": {"video_duration": 10.5}}
+                }
+            },
+            {
+                "status": "completed", 
+                "result": {"success": True}, # Alternate success check
+                "raw_response": {
+                    "vimeo_url": "https://vimeo.com/b",
+                    "result": {"data": {"video_duration": 12.0}}
+                }
+            },
             {"status": "processing"},
-            {"status": "processing"},
-            {"status": "completed", "output_url": "http://vid1"},
-            {"status": "completed", "output_url": "http://vid2"}
+            {
+                "status": "completed",
+                "raw_response": {
+                    "vimeo_url": "https://vimeo.com/c",
+                    "result": {"data": {"video_duration": 8.0}}
+                }
+            }
         ]
         
-        # Mock Download: Success
         mock_download.return_value = True
         
         with patch.dict(os.environ, {"AVATAR_API_URL": self.mock_api_url}):
-            with patch('time.sleep') as mock_sleep: # Skip waiting
+            with patch('time.sleep') as mock_sleep:
                 ag = AvatarGenerator()
-                # Mock output dir creation
-                with patch('pathlib.Path.mkdir'):
-                     results = ag.submit_parallel_job(mock_presentation, "TEST_JOB", "dummy_out")
+                # Mock Path and mkdir
+                with patch('pathlib.Path.mkdir'), patch('pathlib.Path.write_text') as mock_write:
+                    results = ag.submit_all_jobs(mock_presentation, "JOB_ALL", "dummy_out")
         
         # Assertions
-        self.assertEqual(len(results["queued"]), 2)
-        self.assertEqual(len(results["completed"]), 2)
+        # 3 submit calls
+        self.assertEqual(mock_generate.call_count, 3)
+        # 7 status checks (3 + 3 + 1)
+        self.assertEqual(mock_status.call_count, 7)
+        # 3 artifacts updates
+        self.assertEqual(mock_update.call_count, 3)
         
-        # Verify call order implicitly via effects, but mainly just success count
-        self.assertEqual(mock_generate.call_count, 2)
-        # 4 status checks (2 processing + 2 completed)
-        self.assertEqual(mock_status.call_count, 4) 
-        # 2 downloads
-        self.assertEqual(mock_download.call_count, 2)
+        # Verify Vimeo URL was passed to artifacts update
+        update_calls = mock_update.call_args_list
+        self.assertIn("https://vimeo.com/a", str(update_calls[0]))
+        self.assertIn("https://vimeo.com/b", str(update_calls[1]))
+        self.assertIn("https://vimeo.com/c", str(update_calls[2]))
+
+        # Verify state file was written (at least once for submission and then after updates)
+        self.assertTrue(mock_write.called)
 
 
 def run_live_tests():

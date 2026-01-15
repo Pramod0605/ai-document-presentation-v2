@@ -131,54 +131,76 @@ class V25Validator:
                              errors.append(f"Quiz '{title}' Q{q_idx+1} Pause segment must contain <pause duration='3'/> tag.")
 
             if stype in ["content", "example"]:
-                # Renderer Check
+                # 2. RENDERER & SEGMENT SPECS CHECK
                 renderer = sec.get("renderer")
                 if not renderer:
                     errors.append(f"Section '{title}' ({stype}) is MISSING 'renderer' key.")
                 
+                # Check for segment_specs (V2.5 requirement)
+                render_spec = sec.get("render_spec", {})
+                segment_specs = render_spec.get("segment_specs", [])
+                
+                # Identify SHOW segments
+                segments = sec.get("narration", {}).get("segments", [])
+                show_seg_ids = {seg["segment_id"] for seg in segments if seg.get("display_directives", {}).get("visual_layer") == "show"}
+                
+                if show_seg_ids and not segment_specs:
+                    # Legacy fallback check
+                    v_prompts = render_spec.get("video_prompts", [])
+                    m_spec = render_spec.get("manim_scene_spec")
+                    if not v_prompts and not m_spec:
+                         errors.append(f"Section '{title}': Missing 'segment_specs' for SHOW segments {show_seg_ids}.")
+                
+                # Verify each SHOW segment has a spec
+                spec_ids = {spec.get("segment_id") for spec in segment_specs if spec.get("segment_id")}
+                missing_specs = show_seg_ids - spec_ids
+                if missing_specs:
+                    errors.append(f"Section '{title}': Missing segment_specs for {missing_specs}.")
+
+                # DUPLICATE PROMPT DETECTION (THE BUG FIX)
+                all_prompts = []
+                for spec in segment_specs:
+                    p = spec.get("video_prompt") or spec.get("manim_scene_spec")
+                    if p: all_prompts.append(str(p).strip()[:100].lower()) # Check first 100 chars
+                
+                if len(all_prompts) > 1 and len(set(all_prompts)) < len(all_prompts):
+                    errors.append(f"Section '{title}': DUPLICATE PROMPTS DETECTED! Ensure each segment has a unique visual description.")
+
                 # Manim Spec Check
                 if renderer == "manim":
-                    spec = sec.get("render_spec", {}).get("manim_scene_spec")
-                    if not spec:
-                        errors.append(f"Section '{title}' has renderer='manim' but missing 'manim_scene_spec'.")
-                    elif isinstance(spec, dict):
-                         # If it's a dict, it's either legacy V1.2 or empty fallback. 
-                         # V2.5 Director Prompt demands a STRING. Check if it's empty.
-                         if not spec:
-                             errors.append(f"Section '{title}' manim_scene_spec is EMPTY DICT {{}}. Expected String Prompt.")
-                         else:
-                             # Legacy support fallback? Or strict fail?
-                             # Let's fail with clear message:
-                             errors.append(f"Section '{title}' manim_scene_spec is a DICT, expected STRING (80+ words). Keys found: {list(spec.keys())}")
-                    elif len(spec.split()) < 80:
-                        errors.append(f"Section '{title}' manim_scene_spec is too short ({len(spec.split())} words). Must be 80+ words.")
+                    # Check individual specs if available, else root spec
+                    if segment_specs:
+                        for spec in segment_specs:
+                            if spec.get("segment_id") in show_seg_ids:
+                                p = spec.get("manim_scene_spec", "")
+                                if not p or len(str(p).split()) < 80:
+                                    errors.append(f"Section '{title}' Manim spec for {spec.get('segment_id')} is too short or missing.")
+                    else:
+                        spec = render_spec.get("manim_scene_spec")
+                        if not spec or len(str(spec).split()) < 80:
+                            errors.append(f"Section '{title}' root manim_scene_spec is too short or missing.")
                         
                 # Video Prompt Check
                 if renderer == "video":
-                    v_prompts = sec.get("render_spec", {}).get("video_prompts", [])
-                    if not v_prompts:
-                         errors.append(f"Section '{title}' has renderer='video' but MISSING 'video_prompts'.")
+                    if segment_specs:
+                        for spec in segment_specs:
+                            if spec.get("segment_id") in show_seg_ids:
+                                p = spec.get("video_prompt", "")
+                                # If beat-based, check beats
+                                beats = spec.get("beats", [])
+                                if beats:
+                                    for b in beats:
+                                        if len(str(b.get("prompt", "")).split()) < 80:
+                                            errors.append(f"Section '{title}' WAN Beat {b.get('beat_id')} prompt too short.")
+                                elif not p or len(str(p).split()) < 80:
+                                    errors.append(f"Section '{title}' WAN prompt for {spec.get('segment_id')} is too short or missing.")
                     else:
-                        for idx, vp in enumerate(v_prompts):
-                            prompt_text = vp if isinstance(vp, str) else str(vp)
-                            wc = len(prompt_text.split())
-                            if wc < 80:
-                                errors.append(f"Section '{title}' video_prompt {idx} is too short ({wc} words). Must be 80+ words.")
-
-                # VERBATIM POINTER CHECK - DISABLED PER USER FEEDBACK (Trust LLM)
-                # if source_text:
-                #    visual_beats = sec.get("visual_beats", [])
-                #    for beat in visual_beats:
-                #        ptr = beat.get("markdown_pointer")
-                #        if ptr:
-                #            start = ptr.get("start_phrase", "").strip()
-                #            end = ptr.get("end_phrase", "").strip()
-                #            
-                #            if start and start not in source_text:
-                #                errors.append(f"Section '{title}': Pointer start_phrase '{start[:20]}...' NOT FOUND in source text.")
-                #            if end and end not in source_text:
-                #                errors.append(f"Section '{title}': Pointer end_phrase '{end[:20]}...' NOT FOUND in source text.")
-                
-                pass
+                        v_prompts = render_spec.get("video_prompts", [])
+                        if not v_prompts:
+                             errors.append(f"Section '{title}' missing video_prompts.")
+                        else:
+                            for idx, vp in enumerate(v_prompts):
+                                if len(str(vp).split()) < 80:
+                                    errors.append(f"Section '{title}' video_prompt {idx} too short.")
 
         return errors

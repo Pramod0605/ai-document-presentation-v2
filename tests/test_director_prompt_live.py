@@ -12,16 +12,16 @@ from core.unified_content_generator import call_openrouter_llm, extract_json_fro
 load_dotenv(override=True)
 
 def test_director_prompt():
-    print("🚀 Starting Director Prompt Test (Live LLM Call)...")
+    print("Starting Director Prompt Test (Live LLM Call)...")
     
     # 1. Load the Updated Prompt
     prompt_path = "core/prompts/director_partition_prompt.txt"
     try:
         with open(prompt_path, "r", encoding="utf-8") as f:
             system_prompt = f.read()
-        print(f"✅ Loaded System Prompt from {prompt_path}")
+        print(f"Loaded System Prompt from {prompt_path}")
     except FileNotFoundError:
-        print(f"❌ Error: Could not find {prompt_path}")
+        print(f"Error: Could not find {prompt_path}")
         return
 
     # 2. Define the "Problematic" Narrative Input (Section 3 Intro)
@@ -46,7 +46,7 @@ In this chapter, we apply the ideas of refraction of light (studied in the previ
         f"Instructions: Create slides for the TARGET CHUNK only. Use images from the list above."
     )
 
-    print("\n📝 Sending Request to LLM... (This may take 10-20s)")
+    print("\nSending Request to LLM... (This may take 10-20s)")
     
     # 3. Call LLM
     config = GeneratorConfig()
@@ -57,13 +57,13 @@ In this chapter, we apply the ideas of refraction of light (studied in the previ
         response, _ = call_openrouter_llm(system_prompt, user_prompt, config)
         data = extract_json_from_response(response)
         
-        print("\n✅ LLM Response Received!")
+        print("\nLLM Response Received!")
         print("-" * 50)
         
         # 4. Analyze Visual Beats
         sections = data.get("sections", [])
         if not sections:
-            print("❌ No sections generated.")
+            print("No sections generated.")
             return
 
         for sec in sections:
@@ -82,14 +82,14 @@ In this chapter, we apply the ideas of refraction of light (studied in the previ
                 print(f"      Display Text: {d_text[:100]}..." if len(d_text) > 100 else f"      Display Text: {d_text}")
                 
                 if len(d_text) > 200 and v_type == "text":
-                     print("      ⚠️  WARNING: Long text detected! (Potential Wall of Text)")
+                     print("      WARNING: Long text detected! (Potential Wall of Text)")
                 elif v_type in ["bullet_list", "image", "diagram"]:
-                     print("      ✨ GOOD: Structured Visual Beat")
+                     print("      GOOD: Structured Visual Beat")
                 elif len(d_text) < 100:
-                     print("      ✨ GOOD: Concise Text")
+                     print("      GOOD: Concise Text")
 
     except Exception as e:
-        print(f"❌ LLM Call Failed: {e}")
+        print(f"LLM Call Failed: {e}")
 
 if __name__ == "__main__":
     test_director_prompt()

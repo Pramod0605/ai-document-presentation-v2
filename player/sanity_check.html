@@ -99,6 +99,7 @@
                 <th>Renderer</th>
                 <th>Avatar</th>
                 <th>Video</th>
+                <th>Prompts vs Disk</th>
                 <th>Images (Visual Beats)</th>
                 <th>V2.5 Logic Check</th>
             </tr>
@@ -285,6 +286,47 @@
                         }
                     }
 
+                    // PROMPTS VS DISK (New V2.5 Check)
+                    let promptHtml = '<span style="color:#666">N/A</span>';
+                    if (renderer === 'video' || renderer === 'wan') {
+                        const prompts = section.video_prompts || (section.render_spec && section.render_spec.video_prompts) || [];
+                        const promptCount = prompts.length;
+                        let diskCount = 0;
+                        let missingList = [];
+                        let foundLinks = [];
+
+                        if (promptCount > 0) {
+                            for (const p of prompts) {
+                                const bid = p.beat_id;
+                                if (bid) {
+                                    const check = await checkUrl(`${bid}.mp4`, 'video');
+                                    if (check.valid) {
+                                        diskCount++;
+                                        foundLinks.push(`<a href="${check.url}" target="_blank" style="font-size:10px; color:#a6e3a1;">${bid}</a>`);
+                                    } else {
+                                        missingList.push(bid);
+                                    }
+                                }
+                            }
+
+                            const statusClass = diskCount === promptCount ? 'pass' : (diskCount > 0 ? 'warn' : 'fail');
+                            promptHtml = `<span class="${statusClass}">Files: ${diskCount}/${promptCount}</span>`;
+
+                            // Show found links (Request 3)
+                            if (foundLinks.length > 0) {
+                                promptHtml += `<div style="max-height:100px; overflow-y:auto; margin-top:5px; border-top:1px dashed #444; padding-top:2px;">
+                                    ${foundLinks.join(', ')}
+                                </div>`;
+                            }
+
+                            if (missingList.length > 0) {
+                                promptHtml += `<br><span class="fail" style="font-size:10px">Missing: ${missingList.slice(0, 3).join(', ')}${missingList.length > 3 ? '...' : ''}</span>`;
+                            }
+                        } else {
+                            promptHtml = '<span class="fail">No Video Prompts Found</span>';
+                        }
+                    }
+
                     // IMAGES
                     let imageHtml = '';
                     if (section.visual_beats) {
@@ -372,6 +414,7 @@
                         <td class="${rendererClass}">${renderer.toUpperCase()}</td>
                         <td>${avatarHtml}</td>
                         <td>${videoHtml}</td>
+                        <td>${promptHtml}</td>
                         <td>${imageHtml}</td>
                         <td>${logicHtml}</td>
                     `;

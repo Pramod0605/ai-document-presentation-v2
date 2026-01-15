@@ -267,6 +267,14 @@ def _render_visual_beats(
                 wan_prompt = prompt_obj
             else:
                 wan_prompt = prompt_obj.get("prompt") or prompt_obj.get("wan_prompt") or prompt_obj.get("text") or prompt_obj.get("video_prompt") or str(prompt_obj)
+            
+            # V2.5 DOUBLE-RESILIENT FIX: Skip if this is a known garbage fallback prompt 
+            # (Ensures old jobs benefit from the fix even without regenerating the plan)
+            if wan_prompt.strip() == "Cinematic educational visualization.":
+                print(f"  [Beat {beat_idx}] SKIP: Detected garbage fallback prompt for hidden segment.")
+                video_paths.append(None)
+                continue
+
             # ISS-199: Use per-prompt duration if available (set by narration sync)
             beat_duration = prompt_obj.get("duration_seconds", default_beat_duration)
             beat = visual_beats[beat_idx] if beat_idx < len(visual_beats) else {}
@@ -721,7 +729,7 @@ def _stitch_beat_videos(video_paths: list, output_path: str) -> str:
         
         clips = []
         for vp in video_paths:
-            if vp.endswith('.mp4') and Path(vp).exists():
+            if vp and vp.endswith('.mp4') and Path(vp).exists():
                 clips.append(VideoFileClip(vp))
         
         if clips:

@@ -146,8 +146,20 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
             trace_output_dir=trace_output_dir
         )
     
-    # NEW V2.5 SYNC: Check for sync-split beats in video_prompts (from Sync Splitter)
-    # This allows Manim to support the same 1-to-1 segment mapping as WAN
+    # NEW V2.5 SYNC: Check for per-segment Manim specs
+    manim_segment_specs = topic.get("_manim_segment_specs", [])
+    if manim_segment_specs:
+        print(f"[MANIM V2.5] Section {topic_id}: Rendering {len(manim_segment_specs)} per-segment videos")
+        return _render_manim_segment_specs(
+            specs=manim_segment_specs,
+            topic_id=topic_id,
+            topic_title=topic_title,
+            output_dir=output_dir,
+            dry_run=dry_run,
+            trace_output_dir=trace_output_dir
+        )
+    
+    # NEW V2.5 SYNC: Check for sync-split beats (fallback for older code)
     video_prompts = topic.get("video_prompts", [])
     if video_prompts and isinstance(video_prompts, list) and len(video_prompts) > 0:
         print(f"[MANIM V2.5] Section {topic_id}: Rendering {len(video_prompts)} sync-split beats")
@@ -684,6 +696,66 @@ def _render_all_beats(
     return rendered_paths
 
 
+def _render_manim_segment_specs(
+    specs: list,
+    topic_id: int,
+    topic_title: str,
+    output_dir: str,
+    dry_run: bool = False,
+    trace_output_dir: str | None = None
+) -> list[str]:
+    """
+    Render per-segment Manim videos.
+    Each spec has: segment_id, duration_seconds, manim_scene_spec
+    """
+    from core.agents.manim_code_generator import ManimCodeGenerator
+    
+    generator = ManimCodeGenerator()
+    rendered_paths = []
+    
+    for spec in specs:
+        seg_id = spec["segment_id"]
+        # Filename format: topic_{topic_id}_{seg_id}.mp4
+        output_path = str(Path(output_dir) / f"topic_{topic_id}_{seg_id}.mp4")
+        duration = spec["duration_seconds"]
+        manim_spec = spec["manim_scene_spec"]
+        
+        # Prepare data for code generator
+        beat_data = {
+            "section_title": f"{topic_title} - {seg_id}",
+            "manim_spec": manim_spec,
+            "narration_segments": [{"text": "Visualizing segment content", "duration": duration}],
+            "duration": duration
+        }
+        
+        if dry_run:
+            dry_marker = _create_dry_run_marker(f"{topic_id}_{seg_id}", output_path, duration, f"Manim Spec: {manim_spec}")
+            rendered_paths.append(dry_marker)
+            continue
+            
+        try:
+            # Generate code
+            manim_code, errors = generator.generate(beat_data)
+            if errors:
+                raise ManimRenderError(f"Segment {seg_id} code gen failed: {errors}")
+                
+            # Execute render
+            result = _execute_spec_generated_render(
+                manim_code=manim_code,
+                duration=duration,
+                output_path=output_path,
+                topic_id=f"{topic_id}_{seg_id}"
+            )
+            rendered_paths.append(result)
+        except Exception as e:
+            print(f"  [MANIM FAIL] Segment {seg_id}: {e}")
+            # In V2.5 we don't fallback to placeholder usually, but for segments we might want to continue
+            # For now, let's keep it strict or raise
+            raise
+            
+    return rendered_paths
+
+
 def _render_sync_split_manim_beats(
     video_prompts: list,
     topic_id: int,
@@ -947,6 +1019,13 @@ def _sanitize_manim_code(manim_code: str) -> str:
                  continue # Strip entirely if it's the whole line
             else:
                  line = re.sub(r'self\.wait\(\s*0?\.?0\s*\)', '', line)
+        
+        # Fix zero run_time in self.play() calls - Manim requires run_time > 0
+        # LLM sometimes generates run_time=0.0 for instant transitions, replace with minimum 0.1
+        if 'run_time=0.0' in line or 'run_time=0)' in line or 'run_time= 0' in line:
+            line = re.sub(r'run_time\s*=\s*0\.0', 'run_time=0.1', line)
+            line = re.sub(r'run_time\s*=\s*0([,\)])', r'run_time=0.1\1', line)
+            print(f"[MANIM SANITIZER] Fixed zero run_time: {line.strip()[:60]}...")
         
         fixed_lines.append(line)
     

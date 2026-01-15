@@ -257,6 +257,10 @@ class PartitionDirectorGenerator:
                     # Ensure visual_beats is not empty for player compatibility
                     if not sec.get("visual_beats"):
                         sec["visual_beats"] = []
+                    
+                    # SYNC SPLITTER (V2.5 Fix: Apply after global section_id is assigned)
+                    if sec.get("renderer") in ["video", "wan_video", "wan"]:
+                        self._apply_sync_splitter(sec)
                 final_presentation["sections"].extend(chunk_res)
         
         # 3.5 IMAGE INJECTION FIX (Pipeline-level)
@@ -275,6 +279,11 @@ class PartitionDirectorGenerator:
                 sec = global_results[key]
                 sec["section_id"] = current_id
                 current_id += 1
+                
+                # SYNC SPLITTER (V2.5 Fix: Apply after global section_id is assigned)
+                if sec.get("renderer") in ["video", "wan_video", "wan"]:
+                    self._apply_sync_splitter(sec)
+                    
                 final_presentation["sections"].append(sec)
                 
         return final_presentation
@@ -325,10 +334,6 @@ class PartitionDirectorGenerator:
                             # Ensure Recap is always 'video' renderer per Bible
                             if key == "recap":
                                 sec["renderer"] = "video"
-                                
-                            # SYNC SPLITTER
-                            if sec.get("renderer") == "video":
-                                self._apply_sync_splitter(sec)
                     return data
                     
                 # Validation Failed
@@ -408,11 +413,7 @@ class PartitionDirectorGenerator:
                         if sections_result and chunk.get("content"):
                             sections_result[0]["content"] = chunk.get("content")
                         
-                        # Apply splitter to items with video renderer
-                        for sec in sections_result:
-                            if sec.get("renderer") == "video":
-                                self._apply_sync_splitter(sec)
-                                
+                        # Apply splitter to items with video renderer - MOVED TO STITCHING
                         return sections_result
                     
                     # Validation Failed
@@ -440,11 +441,10 @@ class PartitionDirectorGenerator:
 
     def _apply_sync_splitter(self, section: dict):
         """
-        V2.5 Sync Rule: If a narration segment is > 15s (40 words), 
-        split the video/animation into multiple 15-second beats.
-        
-        Supports both WAN ('video') and Manim ('manim') renderers.
-        Ensures EVERY segment has a mapping to a beat, even if not split.
+        V2.5 Sync Rule: Map SHOW segments to render specs.
+        - Manim: 1 spec per segment (no 15s limit).
+        - WAN: Multiple beats if segment > 15s.
+        - Prioritizes 'segment_specs' array for 1-to-1 mapping.
         """
         if "narration" not in section or "segments" not in section["narration"]:
             return
@@ -454,82 +454,106 @@ class PartitionDirectorGenerator:
             return
             
         render_spec = section.get("render_spec", {})
+        segment_specs = render_spec.get("segment_specs", [])
         
-        # Determine base prompts (video_prompts for WAN, manim_scene_spec for Manim)
-        # V2.5 Fix: Look for prompts in root (Recap) or render_spec (Content)
+        # Build segment_id -> spec map
+        spec_map = {spec["segment_id"]: spec for spec in segment_specs if "segment_id" in spec}
+        
+        # Legacy fallbacks
         v_prompts = section.get("video_prompts", []) or render_spec.get("video_prompts", [])
-        manim_spec = render_spec.get("manim_scene_spec")
+        manim_spec_legacy = render_spec.get("manim_scene_spec")
         
-        # Build a complete list of video prompts for the entire section
-        # to ensure 1-to-1 mapping and no missing videos for any segment.
         final_video_prompts = []
+        final_manim_specs = []  # Specific for manim renderer output
         
         for idx, seg in enumerate(section["narration"]["segments"]):
-            text = seg.get("text", "")
-            words = text.split()
-            
-            # Base prompt selection (use director's prompts if available, else default)
-            base_prompt = "Cinematic educational visualization, high quality, professional lighting, detailed 4k render." if renderer == "video" else "Mathematical conceptual animation, clear geometry, high contrast."
-            
-            if renderer == "video":
-                if isinstance(v_prompts, list) and v_prompts:
-                    base_prompt_obj = v_prompts[idx % len(v_prompts)]
-                    if isinstance(base_prompt_obj, dict):
-                        base_prompt = base_prompt_obj.get("prompt") or base_prompt_obj.get("text") or base_prompt_obj.get("wan_prompt") or "Cinematic visualization"
-                    else:
-                        base_prompt = str(base_prompt_obj)
-                elif section.get("video_prompt"):
-                    base_prompt = section.get("video_prompt")
-                elif section.get("video_prompts"): # Fallback for root list if list-proxy failed
-                    try:
-                        base_prompt = str(section.get("video_prompts")[0])
-                    except: pass
-            elif renderer == "manim":
-                # For manim, prioritize the section-level spec if it exists
-                if manim_spec:
-                    base_prompt = manim_spec
-                elif isinstance(v_prompts, list) and v_prompts:
-                    # Some directors might mistakenly put manim specs in video_prompts
-                    base_prompt_obj = v_prompts[idx % len(v_prompts)]
-                    base_prompt = base_prompt_obj.get("prompt") if isinstance(base_prompt_obj, dict) else str(base_prompt_obj)
-
-            # Fallback for missing segment_id to prevent "None_beat" issue
             seg_id = seg.get('segment_id') or f"seg_{idx + 1}"
             
-            if len(words) > 40:
-                # Calculate number of beats (15s each)
-                num_beats = (len(words) // 40) + 1
-                logger.info(f"Sync Splitter ({renderer}): Splitting segment {seg_id} into {num_beats} beats ({len(words)} words)")
+            # GAP FIX: Verify if visuals are actually required
+            # If visual_layer is 'hide' (Teach Segment), do NOT generate a video prompt (saves $ and fixes garbage)
+            directives = seg.get("display_directives", {})
+            if directives.get("visual_layer") == "hide":
+                continue
                 
-                # Consistency prefix helps the LLM maintain visual continuity across beats
-                consistency_prefix = "Keeping the previous character and setting exactly the same, " if renderer == "video" else ""
+            text = seg.get("text", "")
+            duration = seg.get("duration_seconds", 15) # Should be updated by tts_duration
+            
+            # Map spec to segment
+            spec = spec_map.get(seg_id)
+            
+            if renderer == "manim":
+                # Manim: 1 spec per segment (no 15s limit)
+                manim_code_spec = ""
+                if spec:
+                    manim_code_spec = spec.get("manim_scene_spec", "")
+                else:
+                    manim_code_spec = manim_spec_legacy or "Mathematical conceptual animation."
                 
-                seg_beats = []
-                for i in range(num_beats):
-                    beat_id = f"{seg_id}_beat_{i+1}"
-                    final_video_prompts.append({
-                        "beat_id": beat_id,
-                        "prompt": f"{consistency_prefix if i > 0 else ''}{base_prompt} (Part {i+1} of {num_beats})",
-                        "duration_hint": 15
-                    })
-                    seg_beats.append(beat_id)
-                
-                # Add beat mapping to segment so player knows to switch
-                seg["beat_videos"] = seg_beats
-            else:
-                # Standard segment: still needs a video beat mapping
-                beat_id = f"{seg_id}_beat_1"
-                final_video_prompts.append({
-                    "beat_id": beat_id,
-                    "prompt": base_prompt,
-                    "duration_hint": 15
+                final_manim_specs.append({
+                    "segment_id": seg_id,
+                    "duration_seconds": duration,
+                    "manim_scene_spec": manim_code_spec
                 })
-                seg["beat_videos"] = [beat_id]
+                # Link segment to its manim video (per-segment filename)
+                seg["video_file"] = f"topic_{section.get('section_id')}_{seg_id}.mp4"
+                
+            else:  # video/wan
+                # Check for explicit beats provided by LLM
+                llm_beats = spec.get("beats", []) if spec else []
+                
+                if llm_beats:
+                    # Use LLM-provided beats and ensure unique naming
+                    beat_ids = []
+                    section_prefix = f"topic_{section.get('section_id')}_"
+                    
+                    for beat in llm_beats:
+                        original_id = beat.get("beat_id", "")
+                        # Ensure ID is unique by prepending section if not already present
+                        # (Assume seg_id in beat_id might collide, so we enforce prefix)
+                        if not original_id.startswith("topic_"):
+                            beat["beat_id"] = f"{section_prefix}{original_id}"
+                        
+                        beat["segment_id"] = seg_id
+                        final_video_prompts.append(beat)
+                        beat_ids.append(beat["beat_id"])
+                        
+                    seg["beat_videos"] = beat_ids
+                else:
+                    # Auto-split if > 15s or no beats provided
+                    video_prompt = ""
+                    if spec:
+                        video_prompt = spec.get("video_prompt", "")
+                    elif v_prompts:
+                        # Fallback to cycling through legacy prompts
+                        base_obj = v_prompts[idx % len(v_prompts)]
+                        video_prompt = base_obj.get("prompt", str(base_obj)) if isinstance(base_obj, dict) else str(base_obj)
+                    else:
+                        video_prompt = "Cinematic educational visualization."
+                        
+                    num_beats = max(1, int((duration + 1) // 15)) # Ceiling-ish
+                    if duration > 15:
+                        logger.info(f"Sync Splitter (WAN): Auto-splitting segment {seg_id} ({duration}s) into {num_beats} beats")
+                    
+                    beat_ids = []
+                    for i in range(num_beats):
+                        # V2.5 Fix: Unique Naming to prevent collisions between sections
+                        beat_id = f"topic_{section.get('section_id')}_{seg_id}_beat_{i+1}"
+                        prefix = "" if i == 0 else "Keeping the previous scene exactly the same, continue showing: "
+                        suffix = f" (Part {i+1} of {num_beats})" if num_beats > 1 else ""
+                        
+                        final_video_prompts.append({
+                            "beat_id": beat_id,
+                            "segment_id": seg_id,
+                            "prompt": prefix + video_prompt + suffix,
+                            "duration_hint": min(15, duration / num_beats)
+                        })
+                        beat_ids.append(beat_id)
+                    seg["beat_videos"] = beat_ids
         
-        # Replace section top-level video_prompts with the complete mapping
-        # For Manim, the runner will look for this 'video_prompts' key as well now.
+        # Store for downstream processing
         section["video_prompts"] = final_video_prompts
-        logger.info(f"Sync Splitter ({renderer}): Generated {len(final_video_prompts)} total beats for section {section.get('section_id')}")
+        section["_manim_segment_specs"] = final_manim_specs
+        logger.info(f"Sync Splitter ({renderer}): Generated {len(final_video_prompts)} WAN beats / {len(final_manim_specs)} Manim specs for section {section.get('section_id')}")
 
 def generate_director_presentation(
     markdown_content: str,

@@ -68,7 +68,7 @@ class JobCertifier:
             try:
                 recap = next(s for s in sections if s['section_type'] == 'recap')
                 prompts = recap.get("video_prompts", [])
-                long_prompts = sum(1 for p in prompts if len(p.split()) > 70)
+                long_prompts = sum(1 for p in prompts if len((p.get("prompt", "") if isinstance(p, dict) else str(p)).split()) > 70)
                 report_lines.append(f"Recap 5-Scene Story: {len(prompts)}/5 Scenes {'✅' if len(prompts)==5 else '❌'}")
                 report_lines.append(f"Cinematic Detail (>70 words): {long_prompts}/{len(prompts)}")
             except:

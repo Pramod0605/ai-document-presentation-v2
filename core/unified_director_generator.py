@@ -281,6 +281,11 @@ class DirectorGenerator:
         segments = section.get("narration", {}).get("segments", [])
         final_video_prompts = []
         for idx, seg in enumerate(segments):
+            # GAP FIX: Verify if visuals are actually required
+            directives = seg.get("display_directives", {})
+            if directives.get("visual_layer") == "hide":
+                continue
+
             text = seg.get("text", "")
             words = text.split()
             
