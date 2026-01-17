@@ -47,7 +47,8 @@ def process_markdown_unified(
     images_dict: Optional[dict] = None,
     pipeline_version: str = "v15_v2",
     generation_scope: str = "full",
-    model: Optional[str] = None
+    model: Optional[str] = None,
+    video_provider: str = "ltx"
 ) -> Tuple[Dict, AnalyticsTracker]:
     """
     Execute the True Unified Pipeline (Single LLM Call).
@@ -412,7 +413,8 @@ def process_markdown_unified(
                 dry_run=dry_run,
                 skip_wan=skip_wan,
                 output_dir_base=str(output_dir),
-                renderer_filter="manim" # NEW: Only block for Manim
+                renderer_filter="manim", # NEW: Only block for Manim
+                video_provider=video_provider
             )
             
             logger.info(f"Manim Render results: {len(render_results)} videos processed")
@@ -495,7 +497,7 @@ def process_markdown_unified(
                 # Thread will safely read/update the file we just saved
                 wan_thread = Thread(
                     target=submit_wan_background_job,
-                    args=(presentation, str(output_dir / "videos"), job_id, skip_wan),
+                    args=(presentation, str(output_dir / "videos"), job_id, skip_wan, video_provider),
                     daemon=True
                 )
                 wan_thread.start()

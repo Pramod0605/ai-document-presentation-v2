@@ -308,19 +308,8 @@
                 <input type="hidden" id="subject" name="subject" value="General Science">
                 <input type="hidden" id="grade" name="grade" value="12">
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="tts_provider">TTS Voice Provider</label>
-                        <select id="tts_provider" name="tts_provider"
-                            style="width: 100%; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; background: rgba(0, 0, 0, 0.3); color: #fff; font-size: 1rem;">
-                            <option value="our_tts" selected>Our TTS (Custom API - Recommended)</option>
-                            <option value="pyttsx3">pyttsx3 (Local - For Duration Testing)</option>
-                            <option value="edge_tts">Edge TTS (Indian Male Voice - Free)</option>
-                            <option value="narakeet">Narakeet (Premium - Costs Money)</option>
-                            <option value="estimate">Estimate Only (Fastest - No Audio)</option>
-                        </select>
-                    </div>
-                </div>
+                <!-- Hidden TTS Provider (Default to Our TTS) -->
+                <input type="hidden" id="tts_provider" name="tts_provider" value="our_tts">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="pipeline_version">Pipeline Version</label>
@@ -334,27 +323,22 @@
                     </div>
                 </div>
 
+                <!-- Hidden Generation Scope (Default to Full) -->
+                <input type="hidden" id="generation_scope" name="generation_scope" value="full">
+
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="generation_scope">Generation Scope (Manual Architecture)</label>
-                        <select id="generation_scope" name="generation_scope"
+                        <label for="video_provider">Video Generation Provider</label>
+                        <select id="video_provider" name="video_provider"
                             style="width: 100%; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; background: rgba(0, 0, 0, 0.3); color: #fff; font-size: 1rem;">
-                            <option value="full" selected>Full Generation (Automated Chunks)</option>
-                            <option value="global">Global Only (Intro/Summary/Memory/Recap)</option>
-                            <option value="content">Content Only (Target Text Only)</option>
+                            <option value="kie" selected>Kie.ai (WAN - High Quality)</option>
+                            <option value="ltx">LTX Video (Fast/Experimental)</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="model">LLM Model Override (Optional)</label>
-                        <input type="text" id="model" name="model"
-                            placeholder="e.g. google/gemini-1.5-pro or google/gemini-2.5-flash"
-                            style="width: 100%; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; background: rgba(0, 0, 0, 0.3); color: #fff; font-size: 1rem;">
-                        <small style="color: #666; font-size: 0.75rem;">Leave blank to use default from .env</small>
-                    </div>
-                </div>
+                <!-- Hidden Model Override (Empty default) -->
+                <input type="hidden" id="model" name="model" value="">
 
                 <div class="checkbox-group">
                     <div class="checkbox-item">
@@ -363,7 +347,7 @@
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="skip_wan" name="skip_wan">
-                        <label for="skip_wan">Skip WAN Videos</label>
+                        <label for="skip_wan">Skip AI Video Gen</label>
                     </div>
                     <div class="checkbox-item">
                         <input type="checkbox" id="skip_avatar" name="skip_avatar">
@@ -526,7 +510,7 @@
         const optionDescriptions = {
             none: "Select options to customize the job processing.",
             dry_run: "Dry Run: Skip actual video/audio generation, only log prompts to render_prompts.json",
-            skip_wan: "Skip WAN: Use placeholder videos instead of kie.ai video generation",
+            skip_wan: "Skip Video Gen: Use placeholder videos instead of AI video generation",
             skip_avatar: "Skip Avatar: Disable avatar overlay in the player"
         };
 
@@ -569,6 +553,7 @@
             formData.append('tts_provider', document.getElementById('tts_provider').value);
             formData.append('pipeline_version', document.getElementById('pipeline_version').value);
             formData.append('generation_scope', document.getElementById('generation_scope').value);
+            formData.append('video_provider', document.getElementById('video_provider').value);
             const modelOverride = document.getElementById('model').value.trim();
             if (modelOverride) {
                 formData.append('model', modelOverride);
@@ -797,7 +782,7 @@
                         `;
                     }
 
-                    if (job.status === 'running') {
+                    if (job.status === 'running' || job.status === 'processing') {
                         const progress = job.progress || 0;
                         const statusMsg = job.status_message || job.message || 'Processing...';
                         progressBar = `

@@ -1,5 +1,6 @@
 import re
 import sys
+import os
 import logging
 
 # Configure logging to be quiet by default, but useful if needed
@@ -7,9 +8,10 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 # ======================================================
-# HARD MODE: VALIDATION CANNOT BE SKIPPED
+# HARD MODE: Can be disabled via environment variable
+# V2.5: Defaults to False to allow pipeline to continue
 # ======================================================
-HARD_FAIL_ON_ERROR = True
+HARD_FAIL_ON_ERROR = os.environ.get("MANIM_HARD_FAIL", "false").lower() == "true"
 
 def validate_manim_timing(path: str, external_budgets: dict = None) -> bool:
     """

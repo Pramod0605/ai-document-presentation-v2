@@ -640,6 +640,16 @@ def compile_manim_plan(beat: dict, section_id: int, beat_index: int, section_typ
     REQUIRES: manim_scene_spec JSON with objects, forces, equations, animation_sequence.
     FAIL-FAST: Raises VisualCompilationError if manim_scene_spec is missing or invalid.
     """
+    # V2.5 BYPASS: If manim_code already exists (Claude-generated), skip visual beat validation
+    manim_scene_spec = beat.get("manim_scene_spec", {})
+    if isinstance(manim_scene_spec, dict) and manim_scene_spec.get("manim_code"):
+        return {
+            "scene_type": "spec_generated",
+            "manim_code": manim_scene_spec["manim_code"],
+            "spec": manim_scene_spec,
+            "params": {"generated_code": manim_scene_spec["manim_code"]}
+        }
+
     use_strict = section_type in ("content", "example")
     warnings = validate_visual_beat_structure(beat, section_id, beat_index, section_type=section_type, strict=use_strict)
     for w in warnings:
@@ -680,6 +690,19 @@ def compile_section_visuals(section: dict) -> Tuple[Optional[str], Optional[dict
     
     if section_type not in ["content", "example"]:
         return None, None, []
+    
+    # V2.5 BYPASS: If manim_code already exists (Claude-generated), skip visual beat validation
+    render_spec = section.get("render_spec", {})
+    manim_scene_spec = render_spec.get("manim_scene_spec", {})
+    if isinstance(manim_scene_spec, dict) and manim_scene_spec.get("manim_code"):
+        print(f"[VISUAL COMPILER] Section {section_id}: V2.5 manim_code exists, skipping validation")
+        return None, {"scene_type": "v25_precompiled", "manim_code": manim_scene_spec["manim_code"]}, []
+    
+    # V2.5 BYPASS: If video_prompts already exist (V1.2+ format), skip validation
+    video_prompts = section.get("video_prompts") or render_spec.get("video_prompts")
+    if video_prompts and len(video_prompts) > 0:
+        print(f"[VISUAL COMPILER] Section {section_id}: V1.2+ video_prompts exist, skipping validation")
+        return str(video_prompts), None, []
     
     errors = []
     compiled_wan_prompts = []

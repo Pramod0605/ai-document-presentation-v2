@@ -116,10 +116,27 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
     # Get narration_segments for per-beat duration lookup
     narration_segments = topic.get("narration_segments", [])
     
-    # v1.5 MODE: Check for pre-generated Python manim_code (bypasses translation step)
-    v15_manim_code = explanation_plan.get("v15_manim_code")
+    # v1.5/V2.5 MODE: Check for pre-generated Python manim_code (bypasses translation step)
+    # Check V2.5 location first (render_spec)
+    render_spec = topic.get("render_spec", {})
+    manim_scene_spec = render_spec.get("manim_scene_spec", {})
+    
+    # STRICT V2.5 CHECK: If we have a render_spec but no code, something went wrong in generation
+    if render_spec and not manim_scene_spec.get("manim_code"):
+        # We might have video_prompts instead, checking...
+        if not render_spec.get("video_prompts"):
+             print(f"[MANIM V2.5] WARNING: render_spec present but no manim_code found for section {topic_id}")
+
+    if isinstance(manim_scene_spec, dict) and manim_scene_spec.get("manim_code"):
+         v15_manim_code = manim_scene_spec.get("manim_code")
+         print(f"[MANIM V2.5] Section {topic_id}: Using pre-generated Python manim_code from render_spec ({len(v15_manim_code)} chars)")
+    # Fallback to V1.5 location (explanation_plan) - ONLY for legacy jobs
+    else:
+        v15_manim_code = explanation_plan.get("v15_manim_code")
+        if v15_manim_code:
+            print(f"[MANIM v1.5] Section {topic_id}: Using pre-generated Python manim_code from explanation_plan ({len(v15_manim_code)} chars)")
+
     if v15_manim_code:
-        print(f"[MANIM v1.5] Section {topic_id}: Using pre-generated Python manim_code ({len(v15_manim_code)} chars)")
         return _render_v15_manim_code(
             manim_code=v15_manim_code,
             topic_id=topic_id,
@@ -174,6 +191,17 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
             trace_output_dir=trace_output_dir
         )
     
+    # STRICT V2.5 GUARD: If we are in V2.5 mode (render_spec exists), DO NOT FALLBACK to V1.x visual beats
+    # This ensures we fail fast if code generation failed, rather than producing broken legacy visualizations.
+    if topic.get("render_spec") and not topic.get("video_prompts"):
+        # Exception: if video_prompts exist, we handled them above (or should have).
+        # Double check if we missed them.
+        raise ManimRenderError(
+            f"Section {topic_id}: Strict V2.5 Check Failed. "
+            f"renderer='manim' but no valid manim_code found in render_spec. "
+            f"Fallback to legacy visual_beats is FORBIDDEN."
+        )
+
     # Multi-beat rendering: each beat gets its own video file
     if len(visual_beats) > 1:
         return _render_all_beats(

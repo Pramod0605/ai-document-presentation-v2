@@ -4,27 +4,21 @@ import logging
 import traceback
 import concurrent.futures
 from pathlib import Path
+from core.dry_run_validator import DryRunValidationResult, validate_presentation_dry_run, format_validation_report
 from render.wan.wan_runner import render_wan_video
 from render.manim.manim_runner import render_manim_video
-from core.visual_compiler import compile_section_visuals, VisualCompilationError
-from core.traceability import log_render_prompt
-from core.wan_prompt_validator import validate_video_prompts, log_prompt_quality_summary
-from core.dry_run_validator import (
-    validate_presentation_dry_run,
-    format_validation_report,
-    DryRunValidationResult
-)
 
 logger = logging.getLogger(__name__)
+
+try:
+    from render.ltx.ltx_runner import render_ltx_video
+except ImportError:
+    render_ltx_video = None
+
 from core.locks import presentation_lock, analytics_lock
 
+
 TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory", "quiz"]
-
-
-class DryRunValidationError(Exception):
-    """Raised when dry run validation fails."""
-    pass
-
 
 def enforce_renderer_policy(presentation: dict) -> dict:
     """Enforce renderer selection based on section type.
@@ -68,7 +62,7 @@ def enforce_renderer_policy(presentation: dict) -> dict:
     return presentation
 
 
-def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, trace_output_dir: str = "", strict_mode: bool = True) -> dict:
+def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, trace_output_dir: str = "", strict_mode: bool = True, video_provider: str = "ltx") -> dict:
     os.makedirs(output_dir, exist_ok=True)
     
     topic_id = topic.get("section_id", topic.get("id", 1))
@@ -79,11 +73,8 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     manim_scene_spec = topic.get("manim_scene_spec") or (topic.get("render_spec") or {}).get("manim_scene_spec")
     video_prompts = topic.get("video_prompts") or (topic.get("render_spec") or {}).get("video_prompts")
     
-    # DEEP DIVE FIX: For V2.5, Manim Spec String is a Prompt (needs compiling), NOT a pre-compiled spec.
-    # So valid "specs" to bypass compiler are: Dict (V1.2/V1.5 Code) for Manim, OR Any truthy Video Prompts (WAN takes strings/dicts)
     is_valid_manim_spec = isinstance(manim_scene_spec, dict) 
     is_valid_wan_spec = bool(video_prompts)
-    
     has_v12_specs = is_valid_manim_spec or is_valid_wan_spec
     
     # V2.5 FIX: Auto-detect renderer if LLM provided content but forgot to set flag
@@ -128,89 +119,6 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     
     if has_v12_specs:
         print(f"[v1.2 MODE] Section {topic_id} has pre-compiled renderer specs - bypassing Visual Compiler")
-        if "explanation_plan" not in topic:
-            topic["explanation_plan"] = {}
-        
-        if manim_scene_spec and renderer == "manim":
-            if manim_scene_spec.get("manim_code"):
-                topic["explanation_plan"]["v15_manim_code"] = manim_scene_spec.get("manim_code")
-                print(f"  [OK] Using v1.5 manim_code: {len(manim_scene_spec.get('manim_code', ''))} chars")
-                log_render_prompt(topic_id, 0, "manim", manim_scene_spec.get("manim_code", "")[:500])
-            else:
-                topic["explanation_plan"]["v12_manim_scene_spec"] = manim_scene_spec
-                print(f"  [OK] Using v1.2 manim_scene_spec: {len(manim_scene_spec.get('objects', []))} objects, {len(manim_scene_spec.get('animation_sequence', []))} animations")
-                log_render_prompt(topic_id, 0, "manim", json.dumps(manim_scene_spec, indent=2))
-        elif video_prompts:
-            if isinstance(video_prompts, list):
-                # V2.5 Check: List of strings?
-                is_string_list = video_prompts and isinstance(video_prompts[0], str)
-                
-                if is_string_list:
-                    # V2.5 Director Mode
-                    combined_prompts = "\n\n".join([
-                        f"[Scene {i+1}]: {p}" 
-                        for i, p in enumerate(video_prompts)
-                    ])
-                    topic["explanation_plan"]["compiled_wan_prompt"] = combined_prompts
-                    # Wrap in V1.2 struct for compatibility if needed, or just store as is
-                    topic["explanation_plan"]["video_prompts"] = [{"beat_id": i, "prompt": p} for i, p in enumerate(video_prompts)]
-                    print(f"  [OK] Using v2.5 video_prompts: {len(video_prompts)} scenes")
-                    for i, p in enumerate(video_prompts):
-                        log_render_prompt(topic_id, i, "video", p)
-                else:
-                    # V1.2 Dict Mode
-                    combined_prompts = "\n\n".join([
-                        f"[Beat {p.get('beat_id', i) if isinstance(p, dict) else i}]: {p.get('prompt', p) if isinstance(p, dict) else p}" 
-                        for i, p in enumerate(video_prompts)
-                    ])
-                    topic["explanation_plan"]["compiled_wan_prompt"] = combined_prompts
-                    topic["explanation_plan"]["video_prompts"] = video_prompts
-                    print(f"  [OK] Using v1.2 video_prompts: {len(video_prompts)} beat prompts")
-                    for i, p in enumerate(video_prompts):
-                        # DEFENSIVE FIX: Check multiple keys for prompt text, handle strings mixed in list
-                        if isinstance(p, str):
-                            prompt_text = p
-                        else:
-                            prompt_text = p.get("prompt") or p.get("wan_prompt") or p.get("text") or p.get("video_prompt") or ""
-                        log_render_prompt(topic_id, i, "video", prompt_text)
-                    
-                    quality_summary = log_prompt_quality_summary(video_prompts, topic_id)
-                    if quality_summary["issues"]:
-                        print(f"  [QUALITY] Avg score: {quality_summary['avg_quality']}, Issues: {len(quality_summary['issues'])}")
-                        for issue in quality_summary["issues"][:3]:
-                            print(f"    - {issue}")
-            elif isinstance(video_prompts, dict):
-                prompt_text = video_prompts.get("prompt") or video_prompts.get("wan_prompt") or video_prompts.get("text") or video_prompts.get("video_prompt") or ""
-                topic["explanation_plan"]["compiled_wan_prompt"] = prompt_text
-                print(f"  [OK] Using v1.2 video_prompts: {len(prompt_text)} chars")
-                log_render_prompt(topic_id, 0, "video", prompt_text)
-            else:
-                topic["explanation_plan"]["compiled_wan_prompt"] = str(video_prompts)
-                print(f"  [OK] Using v1.2 video_prompts: {len(str(video_prompts))} chars")
-                log_render_prompt(topic_id, 0, "video", str(video_prompts))
-    
-    elif section_type in ["content", "example"] and visual_beats and strict_mode:
-        print(f"[VISUAL COMPILER] Compiling {len(visual_beats)} visual beats for section {topic_id}")
-        
-        wan_prompt, manim_plan, compilation_errors = compile_section_visuals(topic)
-        
-        if compilation_errors:
-            error_messages = [str(e) for e in compilation_errors]
-            result["status"] = "compilation_failed"
-            result["error"] = f"Visual compilation failed: {len(compilation_errors)} errors"
-            result["compilation_errors"] = error_messages
-            
-            for err in compilation_errors:
-                print(f"  [FAIL] {err}")
-            
-            return result
-        
-        if renderer == "manim" and manim_plan:
-            topic["explanation_plan"]["compiled_manim_plan"] = manim_plan
-            print(f"  [OK] Compiled Manim plan: {manim_plan.get('scene_type', 'unknown')}")
-        elif wan_prompt:
-            topic["explanation_plan"]["compiled_wan_prompt"] = wan_prompt
-            print(f"  [OK] Compiled WAN prompt: {len(wan_prompt)} chars")
     
     import time
     render_start = time.time()
@@ -218,30 +126,34 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
         if renderer == "manim":
             video_path = render_manim_video(topic, output_dir, dry_run=dry_run, trace_output_dir=trace_output_dir)
         else:
-            video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)
+            # Route based on video_provider
+            if video_provider == "ltx":
+                if render_ltx_video is None:
+                    raise ImportError("LTX runner could not be imported")
+                print(f"[RENDER] Section {topic_id}: Using LTX provider")
+                video_path = render_ltx_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)
+            else:
+                # Default to Kie/WAN
+                print(f"[RENDER] Section {topic_id}: Using Kie/WAN provider")
+                video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)
         
         result["status"] = "success"
         
         # ISS-093 FIX: Handle different return types from renderers
         if isinstance(video_path, list):
-            # Manim multi-beat returns a list of paths
             result["video_path"] = video_path[0] if video_path else None
             result["beat_videos"] = video_path
             print(f"[RENDER] Manim multi-beat: {len(video_path)} beat videos for section {topic_id}")
         elif isinstance(video_path, dict):
-            # WAN recap returns a dict with first_path and all_paths
             result["video_path"] = video_path.get("first_path")
             result["recap_video_paths"] = video_path.get("all_paths", [])
             print(f"[RENDER] WAN recap: {len(result['recap_video_paths'])} videos for section {topic_id}")
         else:
-            # Standard single video path (string)
             result["video_path"] = video_path
         
-        # ISS-092 FIX: Capture recap video paths if they were set by WAN renderer
         if topic.get("_recap_video_paths"):
             result["recap_video_paths"] = topic["_recap_video_paths"]
         
-        # V2.5 FIX: Capture content beat paths if they were set by WAN renderer
         if topic.get("_beat_video_paths"):
             result["beat_video_paths"] = topic["_beat_video_paths"]
             print(f"[RENDER] Captured {len(result['beat_video_paths'])} content beat paths for section {topic_id}")
@@ -253,6 +165,8 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     
     result["duration_seconds"] = round(time.time() - render_start, 2)
     return result
+
+
 
 
 def validate_before_render(presentation: dict, output_dir: str, strict_v13: bool = True) -> DryRunValidationResult:
@@ -289,7 +203,7 @@ def validate_before_render(presentation: dict, output_dir: str, strict_v13: bool
     return result
 
 
-def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, output_dir_base: str = "", strict_mode: bool = True, renderer_filter: str = None) -> list:
+def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, output_dir_base: str = "", strict_mode: bool = True, renderer_filter: str = None, video_provider: str = "ltx") -> list:
     os.makedirs(output_dir, exist_ok=True)
     
     # Reset WAN hash cache at start of each render job to prevent cross-job duplicate detection
@@ -331,9 +245,6 @@ def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False
         filtered_topics = []
         for t in topics:
             r = t.get("renderer", "none")
-            # If logic:
-            # filter="manim" -> include only "manim"
-            # filter="wan" -> include ["wan", "wan_video"]
             if renderer_filter == "manim" and r == "manim":
                 filtered_topics.append(t)
             elif renderer_filter == "wan" and r in ["wan", "wan_video"]:
@@ -344,8 +255,6 @@ def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False
     import concurrent.futures
     rendered_videos = [None] * len(topics)
     
-    # We use ThreadPoolExecutor for concurrent rendering. 
-    # WAN (network) is perfect for this. Manim (local CPU) is also fine for 2-3 concurrent runs.
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         future_to_idx = {
             executor.submit(
@@ -355,7 +264,8 @@ def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False
                 dry_run, 
                 skip_wan, 
                 trace_output_dir, 
-                strict_mode
+                strict_mode,
+                video_provider
             ): i for i, topic in enumerate(topics)
         }
         
@@ -387,20 +297,20 @@ def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False
     return rendered_videos
 
 
-def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, skip_wan: bool = False):
+
+def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, skip_wan: bool = False, video_provider: str = "ltx"):
     """
-    Submits WAN video generation tasks to Kie.ai using KieBatchGenerator.
-    - Respects 15-concurrency and 15s interval limits.
-    - Updates presentation.json and analytics.json in real-time.
+    Submits video generation tasks to Kie.ai or LTX.
     """
     try:
         from render.wan.kie_batch_generator import KieBatchGenerator
         
-        print(f"[WAN-BG] Starting batch generation for job {job_id}")
+        print(f"[BG-JOB] Starting background generation for job {job_id} using {video_provider}")
         
+        # ... (collect beats logic) ...
         topics = presentation.get("sections", [])
-        wan_beats = [] # Flat list of all beats to generate
-        topic_id_to_beats = {} # Track which beats belong to which topic
+        wan_beats = [] 
+        topic_id_to_beats = {}
         
         for topic in topics:
             renderer = topic.get("renderer", "none")
@@ -411,21 +321,62 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
                     wan_beats.extend(beats)
                     topic_id_to_beats[topic.get("section_id")] = [b.get("beat_id") for b in beats]
         
-        print(f"[WAN-BG] Found {len(wan_beats)} total WAN beats across {len(topic_id_to_beats)} topics.")
+        print(f"[BG-JOB] Found {len(wan_beats)} total video beats across {len(topic_id_to_beats)} topics.")
         
         if not wan_beats:
-            logger.info(f"[WAN-BG] No WAN beats found for job {job_id}")
+            logger.info(f"[BG-JOB] No beats found for job {job_id}")
             return
-
+            
         if skip_wan:
-            logger.info(f"[WAN-BG] WAN skipped per request for job {job_id}")
+            logger.info(f"[BG-JOB] Video generation skipped per request")
             return
 
-        # 1. Generate in Batches
-        batch_gen = KieBatchGenerator()
-        results = batch_gen.generate_batch(wan_beats, output_dir)
+        if video_provider == "ltx":
+            # LTX Background Logic (Sequential loop for MVP)
+            from render.ltx.ltx_client import LtxClient
+            client = LtxClient()
+            results = {} # map beat_id -> path
+            
+            logger.info(f"[LTX-BG] Starting processing of {len(wan_beats)} beats...")
+            for i, beat_obj in enumerate(wan_beats):
+                prompt = beat_obj.get("prompt") or beat_obj.get("wan_prompt") or ""
+                beat_id = beat_obj.get("beat_id", f"beat_{i}")
+                
+                # Check if file already exists (resume capability)
+                vid_filename = f"ltx_{job_id}_{beat_id}.mp4"
+                out_path = Path(output_dir) / vid_filename
+                
+                if out_path.exists():
+                     print(f"[LTX-BG] Skipping existing: {out_path}")
+                     results[beat_id] = str(out_path)
+                     continue
+                     
+                try:
+                    print(f"[LTX-BG] ▶ Processing beat {i+1}/{len(wan_beats)}: {beat_id}")
+                    print(f"[LTX-BG]   Prompt: {prompt[:80]}...")
+                    p = client.generate_video(prompt, output_path=str(out_path))
+                    results[beat_id] = p
+                    print(f"[LTX-BG] ✓ Beat {beat_id} complete: {p}")
+                    
+                    # Update presentation immediately for this beat's topic
+                    # Find which topic owns this beat
+                    for tid, bids in topic_id_to_beats.items():
+                        if beat_id in bids:
+                            # We can trigger partial update here or wait for topic completion
+                            # For MVP simplicity, update files after each beat (robustness)
+                            pass 
+                except Exception as e:
+                    logger.error(f"[LTX-BG] ✗ Error generating beat {beat_id}: {e}")
+            
+            logger.info(f"[LTX-BG] All beats processed.")
+
+        else:
+            # Existing Kie Logic
+            # 1. Generate in Batches
+            batch_gen = KieBatchGenerator()
+            results = batch_gen.generate_batch(wan_beats, output_dir)
         
-        # 2. Update Files
+        # 2. Update Files (Shared Logic)
         pres_path = Path(output_dir).parent / "presentation.json"
         
         for topic_id, beat_ids in topic_id_to_beats.items():
@@ -433,12 +384,12 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
             topic_results = {bid: results.get(bid) for bid in beat_ids if bid in results}
             if topic_results:
                 _update_presentation_safely(pres_path, topic_id, list(topic_results.values())[0], {"status": "success", "beat_video_paths": list(topic_results.values()), "topic_results": topic_results})
-                _update_analytics_safely(pres_path.parent / "analytics.json", topic_id, {"status": "success", "duration_seconds": 0}) # Logic needs adjustment for batch duration
+                _update_analytics_safely(pres_path.parent / "analytics.json", topic_id, {"status": "success", "duration_seconds": 0}) 
                 
-        logger.info(f"[WAN-BG] All batches complete for job {job_id}")
+        logger.info(f"[BG-JOB] All tasks complete for job {job_id}")
 
     except Exception as e:
-        logger.error(f"[WAN-BG] Fatal error in background thread: {e}")
+        logger.error(f"[BG-JOB] Fatal error in background thread: {e}")
         traceback.print_exc()
 
 def _update_presentation_safely(pres_path: Path, section_id: str, video_path: str, result: dict):

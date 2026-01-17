@@ -213,6 +213,7 @@ def submit_job():
         pipeline_version = request.form.get("pipeline_version", "v15_v2_director")
         generation_scope = request.form.get("generation_scope", "full")
         model = request.form.get("model")
+        video_provider = request.form.get("video_provider", "kie")
         print(f"=" * 80)
         print(f"[ROUTING DEBUG] Received pipeline_version from form: '{pipeline_version}'")
         print(f"=" * 80)
@@ -263,7 +264,8 @@ def submit_job():
                 "tts_provider": tts_provider,
                 "pipeline_version": pipeline_version,
                 "generation_scope": generation_scope,
-                "model": model
+                "model": model,
+                "video_provider": video_provider
             })
             
             job_output_dir = JOBS_DIR / job_id
@@ -299,7 +301,8 @@ def submit_job():
                     tts_provider=tts_provider,
                     pipeline_version=pipeline_version,
                     generation_scope=generation_scope,
-                    model=model
+                    model=model,
+                    video_provider=video_provider
                 )
             else:
                 with open(temp_file, "r", encoding="utf-8") as f:
@@ -352,6 +355,7 @@ def submit_job():
             pipeline_version = data.get("pipeline_version", "v15_v2_director")
             generation_scope = data.get("generation_scope", "full")
             model = data.get("model")
+            video_provider = data.get("video_provider", "kie")
             
             if not markdown_content:
                 return jsonify({"error": "Markdown content is required"}), 400
@@ -376,7 +380,8 @@ def submit_job():
                 "pipeline_version": pipeline_version,
                 "generation_scope": generation_scope,
                 "model": model,
-                "content_preview": content_preview
+                "content_preview": content_preview,
+                "video_provider": video_provider
             })
             
             job_output_dir = JOBS_DIR / job_id
@@ -401,7 +406,8 @@ def submit_job():
                 tts_provider=tts_provider,
                 pipeline_version=pipeline_version,
                 generation_scope=generation_scope,
-                model=model
+                model=model,
+                video_provider=video_provider
             )
         
         else:
@@ -419,6 +425,7 @@ def submit_job():
             "dry_run": dry_run,
             "skip_wan": skip_wan,
             "skip_avatar": skip_avatar,
+            "video_provider": video_provider,
             "content_preview": content_preview,
             "message": f"Job submitted successfully{mode_msg}. Poll /job/<job_id>/status for progress."
         })
@@ -1380,7 +1387,7 @@ def process_pdf_job(job_id: str, pdf_path: str, subject: str, grade: str, output
             os.unlink(pdf_path)
 
 
-def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts") -> dict:
+def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", video_provider: str = "kie") -> dict:
     """Legacy wrapper - redirects to process_document_job_v15."""
     return process_document_job_v15(
         job_id=job_id,
@@ -1392,11 +1399,12 @@ def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, ou
         skip_wan=skip_wan,
         skip_avatar=skip_avatar,
         source_file=source_file,
-        tts_provider=tts_provider
+        tts_provider=tts_provider,
+        video_provider=video_provider
     )
 
 
-def process_document_job_v15(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts") -> dict:
+def process_document_job_v15(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", video_provider: str = "kie") -> dict:
     """ISS-206/207: Process PDF/DOC/DOCX/ODT using V1.5 Optimized pipeline.
     
     1. Convert document to Markdown using Datalab API (supports PDF, DOC, DOCX, ODT)
@@ -1455,7 +1463,8 @@ def process_document_job_v15(job_id: str, document_path: str, subject: str, grad
             output_dir=output_path,
             tts_provider=tts_provider,
             dry_run=dry_run,
-            skip_wan=skip_wan
+            skip_wan=skip_wan,
+            video_provider=video_provider
         )
         
         pres_path = output_path / "presentation.json"
@@ -1483,7 +1492,7 @@ def process_document_job_v15(job_id: str, document_path: str, subject: str, grad
             os.unlink(document_path)
 
 
-def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", pipeline_version: str = "v15_v2_director", generation_scope: str = "full", model: Optional[str] = None) -> dict:
+def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", pipeline_version: str = "v15_v2_director", generation_scope: str = "full", model: Optional[str] = None, video_provider: str = "kie") -> dict:
     """Process PDF/DOC/DOCX/ODT using V1.5 V2 Unified pipeline with image handling.
     
     1. Convert document to Markdown using Datalab API (captures images)
@@ -1526,7 +1535,8 @@ def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, g
             tts_provider=tts_provider,
             images_dict=images_dict,
             pipeline_version=pipeline_version,
-            generation_scope=generation_scope
+            generation_scope=generation_scope,
+            video_provider=video_provider
         )
     except DatalabConversionError as e:
         raise RuntimeError(f"Document conversion failed: {e}")
@@ -1552,7 +1562,7 @@ def process_markdown_job(job_id: str, markdown_content: str, subject: str, grade
     return result
 
 
-def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts") -> dict:
+def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", video_provider: str = "kie") -> dict:
     """Process markdown using V1.5 Optimized pipeline (combined agents, ~50% fewer LLM calls)."""
     from pathlib import Path
     
@@ -1582,7 +1592,8 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
         output_dir=output_path,
         tts_provider=tts_provider,
         dry_run=dry_run,
-        skip_wan=skip_wan
+        skip_wan=skip_wan,
+        video_provider=video_provider
     )
     
     pres_path = output_path / "presentation.json"
@@ -1600,7 +1611,7 @@ def process_markdown_job_v15(job_id: str, markdown_content: str, subject: str, g
     }
 
 
-def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", images_dict: dict = None, pipeline_version: str = "v15_v2_director", generation_scope: str = "full", model: Optional[str] = None) -> dict:
+def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", images_dict: dict = None, pipeline_version: str = "v15_v2_director", generation_scope: str = "full", model: Optional[str] = None, video_provider: str = "kie") -> dict:
     """Process markdown using V1.5 V2 Unified pipeline (single LLM call).
     
     Routes to core.pipeline_unified.process_markdown_unified which handles:
@@ -1640,7 +1651,8 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             skip_wan=skip_wan,
             images_dict=images_dict,
             pipeline_version=pipeline_version,
-            generation_scope=generation_scope
+            generation_scope=generation_scope,
+            video_provider=video_provider
         )
         
         pres_path = output_path / "presentation.json"

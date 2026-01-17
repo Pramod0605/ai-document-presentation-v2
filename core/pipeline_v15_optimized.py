@@ -781,7 +781,8 @@ def process_markdown_optimized(
     tts_provider: TTSProvider = "edge_tts",
     dry_run: bool = False,
     skip_wan: bool = False,
-    parallel_execution: bool = True
+    parallel_execution: bool = True,
+    video_provider: str = "kie"
 ) -> Tuple[Dict, AnalyticsTracker]:
     """
     V1.5 Optimized Pipeline: Process markdown using combined agents.
@@ -1103,7 +1104,8 @@ def process_markdown_optimized(
                 output_dir=str(videos_dir),
                 dry_run=dry_run,
                 skip_wan=skip_wan,
-                output_dir_base=str(output_dir)
+                output_dir_base=str(output_dir),
+                video_provider=video_provider
             )
             render_duration = time.time() - render_start
             
