@@ -411,6 +411,8 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
                     wan_beats.extend(beats)
                     topic_id_to_beats[topic.get("section_id")] = [b.get("beat_id") for b in beats]
         
+        print(f"[WAN-BG] Found {len(wan_beats)} total WAN beats across {len(topic_id_to_beats)} topics.")
+        
         if not wan_beats:
             logger.info(f"[WAN-BG] No WAN beats found for job {job_id}")
             return

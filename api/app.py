@@ -269,6 +269,14 @@ def submit_job():
             job_output_dir = JOBS_DIR / job_id
             setup_job_folder(job_output_dir)
             
+            # ISS-SAVE-UPLOAD: Save a copy of the original uploaded file to the job folder
+            try:
+                upload_backup_path = job_output_dir / f"source_document{suffix}"
+                shutil.copy2(str(temp_file), str(upload_backup_path))
+                print(f"[JOB] Saved original upload to {upload_backup_path}")
+            except Exception as e:
+                print(f"[JOB] WARNING: Failed to save original upload backup: {e}")
+            
             if job_type == "document":
                 # ISS-206: Handle PDF, DOC, DOCX, ODT via Datalab
                 if pipeline_version in ["v15_v2", "v15_v2_director"]:
@@ -285,6 +293,7 @@ def submit_job():
                     grade=grade,
                     output_dir=str(job_output_dir),
                     dry_run=dry_run,
+                    skip_wan=skip_wan,
                     skip_avatar=skip_avatar,
                     source_file=original_filename,
                     tts_provider=tts_provider,

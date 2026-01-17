@@ -63,26 +63,24 @@ def extract_images_from_markdown(md_content: str, output_dir: str) -> dict:
 
 def apply_green_background(img: Image.Image) -> Image.Image:
     """
-    Apply green background for chroma key effect.
-    If rembg available, remove existing background first.
+    Process image for player display.
+    
+    CHANGED (2026-01-17): Removed rembg background removal as it was
+    destroying diagram content. Images are now saved as-is without
+    any destructive processing.
+    
+    If you need chroma key in the future, enable it explicitly via parameter.
     """
-    GREEN = (0, 177, 64, 255)
+    # Just convert to RGB if needed (for PNG with transparency)
+    if img.mode == 'RGBA':
+        # Create white background for transparent images
+        white_bg = Image.new('RGB', img.size, (255, 255, 255))
+        white_bg.paste(img, mask=img.split()[3])  # Use alpha channel as mask
+        return white_bg
+    elif img.mode != 'RGB':
+        return img.convert('RGB')
     
-    if img.mode != 'RGBA':
-        img = img.convert('RGBA')
-    
-    if HAS_REMBG:
-        try:
-            img = remove_bg(img)
-            print("[ImageProcessor] Background removed with rembg")
-        except Exception as e:
-            print(f"[ImageProcessor] rembg failed, using original: {e}")
-    
-    green_bg = Image.new('RGBA', img.size, GREEN)
-    
-    composite = Image.alpha_composite(green_bg, img)
-    
-    return composite.convert('RGB')
+    return img
 
 
 def strip_base64_from_markdown(md_content: str) -> str:

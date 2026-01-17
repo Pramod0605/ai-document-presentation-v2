@@ -308,10 +308,9 @@ class PartitionDirectorGenerator:
                 data = extract_json_from_response(r)
                 
                 # VALIDATION GATE (GLOBAL)
-                # VALIDATION GATE (GLOBAL)
-                print(f"\n[PHASE 1 DEBUG] Global Worker Response ({subject}, {grade}):")
+                # print(f"\n[PHASE 1 DEBUG] Global Worker Response ({subject}, {grade}):")
                 # print(json.dumps(data, indent=2))
-                print(f"[PHASE 1 DEBUG] --------------------------------------------------\n")
+                # print(f"[PHASE 1 DEBUG] --------------------------------------------------\n")
                 
                 # USER REQUEST: Save global debug dump
                 if output_dir:
@@ -397,11 +396,10 @@ class PartitionDirectorGenerator:
                         logger.warning(f"Failed to save debug LLM response: {e}")
                     data = extract_json_from_response(response)
                     
-                    # VALIDATION GATE (PARTITION)
-                    # VALIDATION GATE (PARTITION)
-                    print(f"\n[PHASE 1 DEBUG] Content Worker Response (Chunk {index}):")
-                    print(json.dumps(data, indent=2))
-                    print(f"[PHASE 1 DEBUG] --------------------------------------------------\n")
+                # VALIDATION GATE (PARTITION)
+                # print(f"\n[PHASE 1 DEBUG] Content Worker Response (Chunk {index}):")
+                # print(json.dumps(data, indent=2))
+                # print(f"[PHASE 1 DEBUG] --------------------------------------------------\n")
                     
                     # Validation with Source Text for Pointer Check
                     errors = V25Validator.validate_content_chunk(data, source_text=chunk.get("content", ""))

@@ -94,13 +94,13 @@ def call_openrouter_llm(
     }
     
     # DEBUG AUTH (Stderr for immediate visibility)
-    import sys
-    safe_key = f"{api_key[:10]}...{api_key[-5:]}" if api_key else "None"
-    sys.stderr.write(f"\n[DEBUG] call_openrouter_llm\n")
-    sys.stderr.write(f"[DEBUG] Key: {safe_key}\n")
-    sys.stderr.write(f"[DEBUG] Model: {config.model}\n")
-    sys.stderr.write(f"[DEBUG] Env Matches: {api_key == os.environ.get('OPENROUTER_API_KEY')}\n")
-    sys.stderr.flush()
+    # import sys
+    # safe_key = f"{api_key[:10]}...{api_key[-5:]}" if api_key else "None"
+    # sys.stderr.write(f"\n[DEBUG] call_openrouter_llm\n")
+    # sys.stderr.write(f"[DEBUG] Key: {safe_key}\n")
+    # sys.stderr.write(f"[DEBUG] Model: {config.model}\n")
+    # sys.stderr.write(f"[DEBUG] Env Matches: {api_key == os.environ.get('OPENROUTER_API_KEY')}\n")
+    # sys.stderr.flush()
     
     
     payload = {
@@ -353,7 +353,7 @@ def generate_presentation(
                 
                 with open(debug_path, "w", encoding="utf-8") as f:
                     json.dump(output, f, indent=2)
-                print(f"[DEBUG] Saved raw LLM output to '{debug_path}'")
+                # print(f"[DEBUG] Saved raw LLM output to '{debug_path}'")
             except Exception as e:
                 print(f"[DEBUG] Failed to save dump: {e}")
 

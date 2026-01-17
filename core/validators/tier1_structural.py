@@ -140,9 +140,23 @@ def _check_section_structure(section: Dict) -> List[StructuralError]:
 
 
 def _check_display_directives(section: Dict) -> List[StructuralError]:
-    """Check display_directives exist INSIDE each narration segment (v1.3 per-segment format)."""
+    """Check display_directives exist INSIDE each narration segment (v1.3 per-segment format).
+    
+    BIBLE ALIGNMENT (v2.5):
+    - Intro: text_layer=HIDE, visual_layer=HIDE, avatar=SHOW (Fixed defaults, no per-segment directives needed)
+    - Summary: text_layer=SHOW (Fixed, bullet list display)
+    - Memory: Flashcard behavior is fixed (Front -> Pause -> Back)
+    - Recap: visual_layer=SHOW, text_layer=HIDE (Full screen video, fixed)
+    - Content/Example: REQUIRE per-segment display_directives (Teach->Show toggle)
+    """
     errors = []
     section_id = section.get("section_id") or section.get("id", 0)
+    section_type = section.get("section_type", "")
+    
+    # BIBLE: Only Content and Example sections require per-segment display_directives
+    # Other section types have fixed defaults that the player knows
+    if section_type not in ["content", "example"]:
+        return errors  # Skip validation for intro, summary, memory, recap, quiz
     
     narration = section.get("narration", {})
     narration_segments = []
@@ -166,6 +180,7 @@ def _check_display_directives(section: Dict) -> List[StructuralError]:
                 f"Segment {seg_id} missing display_directives (must be inside each segment)"
             ))
             continue
+
         
         if not isinstance(dd, dict):
             errors.append(StructuralError(
@@ -248,7 +263,10 @@ def _check_layer_logic(section: Dict) -> List[StructuralError]:
                 f"Segment {seg_id}: text_layer=show + visual_layer={visual_layer} violates mutual exclusion"
             ))
         
-        if text_layer == "show" and section_type in ["content", "example", "intro", "summary"]:
+        # BIBLE: Only content/example sections need visual_content when text_layer=show
+        # Intro/Summary have fixed defaults and don't need this validation
+        if text_layer == "show" and section_type in ["content", "example"]:
+
             visual_content = seg.get("visual_content")
             has_content = False
             if isinstance(visual_content, dict):
