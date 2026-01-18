@@ -143,6 +143,17 @@ Rules you MUST follow:
 5. If a visual (text, title, shape, equation) appears again later, you MUST:
    - Fade it out completely
    - Re-create it from scratch in the new segment
+
+=== TEXT READABILITY (NON-NEGOTIABLE) ===
+1. NEVER use .rotate() on Text or MathTex objects.
+2. For labels on angled lines:
+   - Place BESIDE the line using next_to()
+   - NEVER attach labels directly ON rotated lines
+
+=== ANIMATION PACING (REQUIRED) ===
+- Maximum single self.wait(): 5.0 seconds
+- For segments > 5s, distribute animations (Indicate, Circumscribe, animate.scale) to keep the video alive.
+
 6. The screen MUST be completely empty at the start of every segment.
 7. Leaving visuals on screen across segment boundaries is INVALID.
 
