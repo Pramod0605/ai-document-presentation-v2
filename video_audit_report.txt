@@ -1,0 +1,75 @@
+====================================================================================================
+JOB 48808436 COMPREHENSIVE VIDEO AUDIT
+====================================================================================================
+
+Total Physical Video Files in /videos/: 51
+
+SEC  TYPE       RENDERER SEGS   PROMPTS  EXPECTED   DOWNLOADED   STATUS
+----------------------------------------------------------------------------------------------------
+1    intro      none     1      0        0          0            N/A (No Video)
+2    summary    none     5      0        0          0            N/A (No Video)
+3    content    video    6      6        6          6            ✅ COMPLETE
+4    content    video    5      5        5          5            ✅ COMPLETE
+5    content    video    5      5        5          5            ✅ COMPLETE
+6    content    video    10     12       12         12           ✅ COMPLETE
+7    content    video    22     22       22         22           ✅ COMPLETE
+8    content    manim    7      0        1          1            ✅ COMPLETE
+9    content    none     2      0        0          0            N/A (No Video)
+10   content    video    5      5        5          5            ✅ COMPLETE
+11   content    manim    4      0        1          1            ✅ COMPLETE
+12   content    video    28     30       30         29           ⚠️ PARTIAL (1 missing)
+13   quiz       none     66     0        0          0            N/A (No Video)
+14   content    manim    11     0        1          1            ✅ COMPLETE
+15   quiz       none     15     0        0          0            N/A (No Video)
+16   content    video    16     16       16         16           ✅ COMPLETE
+17   content    manim    20     0        1          1            ✅ COMPLETE
+18   content    manim    16     0        1          1            ✅ COMPLETE
+19   content    video    12     12       12         12           ✅ COMPLETE
+20   memory     none     6      0        0          0            N/A (No Video)
+21   recap      video    5      5        5          5            ✅ COMPLETE
+----------------------------------------------------------------------------------------------------
+TOTAL                     267    118      123        122         
+
+====================================================================================================
+EXPLANATION: ODD/EVEN SEGMENT PATTERN
+====================================================================================================
+
+Per V2.5 Director Bible, Content sections follow a "Teach -> Show" pattern:
+  - Segment 1 (Odd): "Teach" - Avatar explains. Visual = Text/Diagram. NO VIDEO NEEDED.
+  - Segment 2 (Even): "Show" - Video demonstrates. Visual = Full Video. VIDEO PROMPT REQUIRED.
+  - Segment 3 (Odd): "Teach" - Avatar explains next point. NO VIDEO NEEDED.
+  - Segment 4 (Even): "Show" - Video demonstrates. VIDEO PROMPT REQUIRED.
+  ... and so on.
+
+The LLM generates "Cinematic educational visualization" (a placeholder) for "Teach" segments
+because per the Bible, the visual layer should be HIDDEN during "Teach" (avatar only).
+However, the current code still generates a WAN prompt for ALL segments, leading to
+placeholder prompts for odd segments.
+
+CONCLUSION: This is a DESIGN ISSUE in the pipeline, not a generation failure.
+"Teach" segments should NOT generate WAN videos at all. They should use static visuals (text/diagram).
+
+====================================================================================================
+PHYSICAL VIDEO FILES LIST (First 20)
+====================================================================================================
+  topic_11.mp4
+  topic_14.mp4
+  topic_17.mp4
+  topic_18.mp4
+  topic_8.mp4
+  topic_recap_1_seg_1_beat_1.mp4
+  topic_recap_1_seg_2_beat_1.mp4
+  topic_recap_1_seg_3_beat_1.mp4
+  topic_recap_1_seg_4_beat_1.mp4
+  topic_recap_1_seg_5_beat_1.mp4
+  topic_section_1_seg_10_beat_1.mp4
+  topic_section_1_seg_10_beat_2.mp4
+  topic_section_1_seg_11_beat_1.mp4
+  topic_section_1_seg_12_beat_1.mp4
+  topic_section_1_seg_13_beat_1.mp4
+  topic_section_1_seg_14_beat_1.mp4
+  topic_section_1_seg_15_beat_1.mp4
+  topic_section_1_seg_16_beat_1.mp4
+  topic_section_1_seg_17_beat_1.mp4
+  topic_section_1_seg_18_beat_1.mp4
+  ... and 31 more

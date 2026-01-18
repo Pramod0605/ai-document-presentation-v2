@@ -1289,21 +1289,31 @@ function updateContentProgressiveReveal() {
 
     let revealTime = 0;
 
-    // Strategy 1: Use beat.start_time if present (segment index)
+    // Strategy 1: Use beat.start_time if present (segment index or timestamp)
     if (beat.start_time !== null && beat.start_time !== undefined) {
-      const timing = segmentTimeMap[beat.start_time];
-      if (timing) {
-        revealTime = timing.startTime;
+      if (typeof beat.start_time === 'number' && beat.start_time < 100 && segmentTimeMap[beat.start_time]) {
+        // It's likely a segment index
+        revealTime = segmentTimeMap[beat.start_time].startTime;
+      } else {
+        // It's a raw timestamp (seconds)
+        revealTime = beat.start_time;
       }
     }
-    // Strategy 2: Infer timing - distribute beats evenly across TEACH segments
+    // Strategy 1.5: Match by segment_id (V2.5 FIX)
+    else if (beat.segment_id) {
+      const segIndex = segments.findIndex(s => s.segment_id === beat.segment_id);
+      if (segIndex !== -1 && segmentTimeMap[segIndex]) {
+        revealTime = segmentTimeMap[segIndex].startTime;
+        // console.log(`[V2.5] Mapped beat ${beat.beat_id} to segment ${beat.segment_id} (Idx ${segIndex}) -> ${revealTime}s`);
+      }
+    }
+    // Strategy 2: Infer timing - distribute beats evenly across TEACH segments (Fallback)
     else {
       // Calculate total teach duration (before video trigger)
       const totalDuration = getDuration();
       const teachDuration = totalDuration * 0.7; // 70% is teach, 30% is video
       const timePerBeat = teachDuration / visualBeats.length;
       revealTime = beatIndex * timePerBeat;
-
     }
 
     // Reveal when time is reached
@@ -1680,41 +1690,24 @@ function sanitizeMarkdown(text) {
     return `<<<LATEX-INLINE-${latexPatterns.length - 1}>>>`;
   });
 
-  // Markdown Tables
-  text = text.replace(/\|(.+)\|\n\s*\|[-:| ]+\|\s*\n((?:\|.*\|\n?)+)/g, (match, headerLine, bodyLines) => {
-    const headers = headerLine.split('|').filter(c => c.trim()).map(c => c.trim());
-    const headerHtml = '<thead><tr>' + headers.map(h => `<th>${h}</th>`).join('') + '</tr></thead>';
+  // USE MARKED.JS
+  if (typeof marked !== 'undefined') {
+    try {
+      // Parse markdown
+      text = marked.parse(text);
 
-    const rows = bodyLines.trim().split('\n').map(row => {
-      const cells = row.split('|').filter(c => c.trim() !== '').map(c => c.trim());
-      return '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
-    }).join('');
+      // Add class to tables for styling
+      text = text.replace(/<table>/g, '<div class="table-wrapper"><table class="md-table">');
+      text = text.replace(/<\/table>/g, '</table></div>');
 
-    return `<div class="table-wrapper"><table class="md-table">${headerHtml}<tbody>${rows}</tbody></table></div>`;
-  });
-
-  // Markdown Lists
-  text = text.replace(/^(\s*[\*\-]\s+.*(?:\n\s*[\*\-]\s+.*)*)/gm, (match) => {
-    const items = match.split('\n').filter(l => l.trim());
-    const listItems = items.map(item => `<li>${item.replace(/^\s*[\*\-]\s+/, '')}</li>`).join('');
-    return `<ul class="md-list">${listItems}</ul>`;
-  });
-
-  text = text.replace(/^(\s*\d+\.\s+.*(?:\n\s*\d+\.\s+.*)*)/gm, (match) => {
-    const items = match.split('\n').filter(l => l.trim());
-    const listItems = items.map(item => `<li>${item.replace(/^\s*\d+\.\s+/, '')}</li>`).join('');
-    return `<ol class="md-list">${listItems}</ol>`;
-  });
-
-  // Basic Formatting
-  text = text.replace(/^#{1,6}\s*(.+)$/gm, '<h3>$1</h3>');
-  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  text = text.replace(/__([^_]+)__/g, '<strong>$1</strong>');
-  text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-  text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
-  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-  text = text.replace(/^>\s*(.+)$/gm, '<blockquote>$1</blockquote>');
-  text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    } catch (e) {
+      console.error('[V2.5] Marked.js parsing error:', e);
+    }
+  } else {
+    console.warn('[V2.5] Marked.js not found! Markdown rendering will be limited.');
+    // Fallback: Basic line breaks if marked is missing
+    text = text.replace(/\n/g, '<br>');
+  }
 
   // Restore LaTeX (use different marker that won't be affected by markdown)
   text = text.replace(/<<<LATEX-(BLOCK|INLINE)-(\d+)>>>/g, (match, type, idx) => {

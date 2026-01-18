@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Player V2.5 Sanity Checker</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 20px;
+        }
+
+        .pass {
+            color: #a6e3a1;
+            font-weight: bold;
+        }
+
+        .fail {
+            color: #f38ba8;
+            font-weight: bold;
+        }
+
+        .warn {
+            color: #f9e2af;
+            font-weight: bold;
+        }
+
+        .manim {
+            color: #89dceb;
+        }
+
+        .wan {
+            color: #cba6f7;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            border: 1px solid #45475a;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #313244;
+        }
+
+        h1 {
+            border-bottom: 2px solid #585b70;
+            padding-bottom: 10px;
+        }
+
+        .sub-item {
+            display: block;
+            margin-bottom: 4px;
+            border-bottom: 1px dashed #45475a;
+            padding-bottom: 2px;
+        }
+
+        a {
+            color: #89b4fa;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Player V2.5 Sanity Checker (Deep Check)</h1>
+    <div id="status">Loading...</div>
+    <div id="self-healing"
+        style="margin: 30px 0; padding: 20px; background: #313244; border-radius: 8px; display: none;">
+        <h2 style="margin-top:0">🛠️ Self-Healing: Missing Assets Detected</h2>
+        <p>The checker found media files on disk that are NOT linked in your <code>presentation.json</code>. You can
+            automatically stitch them back now.</p>
+        <button id="repair-btn"
+            style="background: #a6e3a1; color: #11111b; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 4px;">Stitch
+            Missing Assets</button>
+        <div id="repair-status" style="margin-top: 10px; font-weight: bold;"></div>
+    </div>
+
+    <table id="report">
+        <thead>
+            <tr>
+                <th>Sec ID</th>
+                <th>Type</th>
+                <th>Renderer</th>
+                <th>Avatar</th>
+                <th>Video</th>
+                <th>Images (Visual Beats)</th>
+                <th>V2.5 Logic Check</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const JOB_ID = urlParams.get('job') || urlParams.get('job_id') || '0f1eaff8';
+        const BASE_PATH = `/player/jobs/${JOB_ID}/`;
+        const PRESENTATION_URL = `${BASE_PATH}presentation.json?t=${Date.now()}`;
+
+        let orphanDetected = false;
+
+        async function checkUrl(url, type = 'misc') {
+            if (!url) return { status: 'N/A', valid: true };
+            try {
+                let fetchUrl = url;
+                if (fetchUrl.includes('\\')) fetchUrl = fetchUrl.replace(/\\/g, '/');
+                if (fetchUrl.includes(':')) {
+                    const parts = fetchUrl.split('/');
+                    fetchUrl = parts[parts.length - 1];
+                }
+                if (fetchUrl.startsWith('http')) {
+                } else {
+                    if (type === 'avatar' && !fetchUrl.includes('/')) fetchUrl = BASE_PATH + 'avatars/' + fetchUrl;
+                    else if (type === 'video' && !fetchUrl.includes('/')) fetchUrl = BASE_PATH + 'videos/' + fetchUrl;
+                    else if (type === 'image' && !fetchUrl.includes('/')) fetchUrl = BASE_PATH + 'images/' + fetchUrl;
+                    else if (!fetchUrl.startsWith('./') && !fetchUrl.startsWith('../') && !fetchUrl.startsWith('/')) fetchUrl = BASE_PATH + fetchUrl;
+                }
+
+                let response = await fetch(fetchUrl, { method: 'HEAD' });
+
+                // ISS-IMG-FIX: If .jpg fails, try .png (Saved images use PNG)
+                if (!response.ok && (fetchUrl.toLowerCase().endsWith('.jpg') || fetchUrl.toLowerCase().endsWith('.jpeg'))) {
+                    const pngUrl = fetchUrl.replace(/\.jpe?g$/i, '.png');
+                    const pngResponse = await fetch(pngUrl, { method: 'HEAD' });
+                    if (pngResponse.ok) {
+                        response = pngResponse;
+                        fetchUrl = pngUrl;
+                    }
+                }
+
+                return {
+                    status: response.status,
+                    valid: response.ok,
+                    url: fetchUrl,
+                    original: url
+                };
+            } catch (e) {
+                return { status: 'ERR', valid: false, error: e.message, original: url };
+            }
+        }
+
+        async function checkVideoIntegrity(url) {
+            return new Promise((resolve) => {
+                const v = document.createElement('video');
+                v.onloadedmetadata = () => resolve(true);
+                v.onerror = () => resolve(false);
+                v.src = url;
+            });
+        }
+
+        async function scanForOrphans(section) {
+            const sid = section.section_id;
+
+            // Check Topic Video
+            const isWanStyle = section.renderer === 'wan' || section.renderer === 'video_generation' || section.renderer === 'VIDEO' || section.renderer === 'video';
+            if (!section.video_path && isWanStyle) {
+                // Try to find either the combined video OR the first beat
+                const check = await checkUrl(`topic_${sid}.mp4`, 'video');
+                if (check.valid) {
+                    orphanDetected = true;
+                } else {
+                    // Also check for beat 0 (common for WAN content sections)
+                    const checkBeat = await checkUrl(`topic_${sid}_beat_0.mp4`, 'video');
+                    if (checkBeat.valid) orphanDetected = true;
+                }
+            }
+
+            // Check Avatar
+            if (!section.avatar_video) {
+                const check = await checkUrl(`section_${sid}_avatar.mp4`, 'avatar');
+                if (check.valid) orphanDetected = true;
+            }
+
+            // Check Recap Beats
+            if (section.section_type === 'recap' && (!section.recap_video_paths || section.recap_video_paths.length === 0)) {
+                const checkBeats = await checkUrl(`topic_${sid}_beat_0.mp4`, 'video');
+                if (checkBeats.valid) orphanDetected = true;
+            }
+        }
+
+        async function repairMetadata() {
+            const status = document.getElementById('repair-status');
+            status.innerHTML = "Stitching assets... please wait...";
+            try {
+                const res = await fetch(`/api/repair-metadata/${JOB_ID}`, { method: 'POST' });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    status.innerHTML = `<span class="pass">Success! ${data.updated_assets} assets stitched. Reloading...</span>`;
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    status.innerHTML = `<span class="fail">Error: ${data.error}</span>`;
+                }
+            } catch (e) {
+                status.innerHTML = `<span class="fail">Failed to connect to API: ${e.message}</span>`;
+            }
+        }
+
+        document.getElementById('repair-btn').onclick = repairMetadata;
+
+        async function runCheck() {
+            const statusDiv = document.getElementById('status');
+            const tbody = document.querySelector('#report tbody');
+            statusDiv.innerHTML = `Checking Job: <strong>${JOB_ID}</strong><br>Fetching ${PRESENTATION_URL}...`;
+
+            try {
+                const res = await fetch(PRESENTATION_URL);
+                if (!res.ok) throw new Error(`Failed to load presentation.json: ${res.status}`);
+                const data = await res.json();
+                statusDiv.innerHTML += `<br>Found ${data.sections.length} sections. validating media integrity...`;
+
+                for (const section of data.sections) {
+                    const row = document.createElement('tr');
+
+                    // Deep Scan for Orphans
+                    await scanForOrphans(section);
+
+                    const renderer = section.renderer || 'default';
+                    let rendererClass = '';
+                    if (renderer === 'manim') rendererClass = 'manim';
+                    if (renderer === 'wan' || renderer === 'video_generation' || renderer === 'VIDEO' || renderer === 'video') rendererClass = 'wan';
+
+                    // AVATAR
+                    const avatarPath = section.avatar_video || section.avatar_video_path;
+                    let avatarHtml = 'None';
+                    if (avatarPath) {
+                        const obj = await checkUrl(avatarPath, 'avatar');
+                        let statusText = obj.status;
+                        let statusClass = obj.valid ? 'pass' : 'fail';
+
+                        // Deep Check
+                        if (obj.valid) {
+                            const isGood = await checkVideoIntegrity(obj.url);
+                            if (!isGood) {
+                                statusText = 'CORRUPT';
+                                statusClass = 'fail';
+                            }
+                        }
+                        avatarHtml = `<a href="${obj.url}" target="_blank">${avatarPath}</a><br><span class="${statusClass}">[${statusText}]</span>`;
+                    }
+
+                    // VIDEO
+                    const videoPath = section.video_path || (section.beat_videos ? section.beat_videos[0] : null);
+                    let videoHtml = 'None';
+
+                    if (videoPath) {
+                        const obj = await checkUrl(videoPath, 'video');
+                        let statusText = obj.status;
+                        let statusClass = obj.valid ? 'pass' : 'fail';
+
+                        if (obj.valid) {
+                            const isGood = await checkVideoIntegrity(obj.url);
+                            if (!isGood) {
+                                statusText = 'CORRUPT';
+                                statusClass = 'fail';
+                            }
+                        }
+                        videoHtml = `<a href="${obj.url}" target="_blank">${videoPath}</a><br><span class="${statusClass}">[${statusText}]</span>`;
+                    } else {
+                        // Check for Orphans
+                        const sid = section.section_id;
+                        const checkDefault = await checkUrl(`topic_${sid}.mp4`, 'video');
+                        const checkBeat = await checkUrl(`topic_${sid}_beat_0.mp4`, 'video');
+
+                        if (checkDefault.valid) {
+                            videoHtml = `<span class="fail">FOUND ON DISK (UNSTITCHED): <a href="${checkDefault.url}" target="_blank">topic_${sid}.mp4</a></span>`;
+                        } else if (checkBeat.valid) {
+                            videoHtml = `<span class="fail">FOUND ON DISK (UNSTITCHED): <a href="${checkBeat.url}" target="_blank">topic_${sid}_beat_0.mp4</a></span>`;
+                        } else if (renderer === 'manim') {
+                            videoHtml = '<span class="fail">MISSING MANIM</span>';
+                        }
+                    }
+
+                    // IMAGES
+                    let imageHtml = '';
+                    if (section.visual_beats) {
+                        for (const beat of section.visual_beats) {
+                            if (beat.visual_type === 'image' || beat.visual_type === 'diagram') {
+                                const imgPath = beat.image_id || beat.image_path;
+                                if (imgPath) {
+                                    const imgCheck = await checkUrl(imgPath, 'image');
+                                    imageHtml += `
+                                        <div class="sub-item">
+                                            Beat ${beat.beat_id}: <a href="${imgCheck.url}" target="_blank">${imgPath}</a>
+                                            <span class="${imgCheck.valid ? 'pass' : 'fail'}">[${imgCheck.status}]</span>
+                                        </div>`;
+                                }
+                            }
+                        }
+                    }
+                    if (!imageHtml) imageHtml = '<span style="color:#666">No images</span>';
+
+                    // V2.5 LOGIC CHECK (New Column)
+                    let logicHtml = '<span style="color:#666">N/A</span>';
+                    if (section.section_type === 'quiz') {
+                        const qCount = section.quiz_questions ? section.quiz_questions.length : 0;
+                        const segCount = section.narration.segments.length;
+                        const expected = qCount * 3;
+                        if (segCount >= expected) {
+                            logicHtml = `<span class="pass">PASS (3-Step Dance)</span><br>Segments: ${segCount} (Req: ${expected})`;
+                        } else {
+                            logicHtml = `<span class="fail">FAIL (Segment Mismatch)</span><br>Segments: ${segCount}, Expected: ${expected}`;
+                        }
+                    } else if (section.section_type === 'content') {
+                        const segCount = section.narration.segments.length;
+                        if (segCount > 1) {
+                            logicHtml = `<span class="pass">PASS (Sync Ready)</span><br>Segments: ${segCount}`;
+                        } else {
+                            logicHtml = `<span class="warn">WARN (Single Seg)</span><br>Segments: ${segCount}`;
+                        }
+                    } else if (section.section_type === 'example') {
+                        const segCount = section.narration.segments.length;
+                        if (segCount >= 2) {
+                            logicHtml = `<span class="pass">PASS (Teach-Show possible)</span><br>Segments: ${segCount}`;
+                        } else {
+                            logicHtml = `<span class="warn">WARN (Single Seg Example)</span><br>Segments: ${segCount}`;
+                        }
+                    } else if (section.section_type === 'memory') {
+                        const cardCount = section.flashcards ? section.flashcards.length : 0;
+                        const segCount = section.narration.segments.length;
+                        if (cardCount === 5 && segCount >= 6) {
+                            logicHtml = `<span class="pass">PASS (Bible Compliant)</span><br>5 Cards, ${segCount} Segments`;
+                        } else {
+                            logicHtml = `<span class="fail">FAIL (Bible Discrepancy)</span><br>Cards: ${cardCount} (Req: 5), Segs: ${segCount} (Req: 6)`;
+                        }
+                    } else if (section.section_type === 'recap') {
+                        const narrSegCount = section.narration && section.narration.segments ? section.narration.segments.length : 0;
+                        const isVideo = (renderer.toLowerCase() === 'video' || renderer.toLowerCase() === 'wan_video');
+                        if (narrSegCount === 5 && isVideo) {
+                            logicHtml = `<span class="pass">PASS (Cinematic 5)</span><br>Segments: ${narrSegCount}`;
+                        } else {
+                            logicHtml = `<span class="fail">FAIL (Invalid Recap)</span><br>Segments: ${narrSegCount} (Req: 5), Renderer: ${renderer}`;
+                        }
+                    } else if (section.section_type === 'summary') {
+                        const bCount = section.visual_beats ? section.visual_beats.length : 0;
+                        const sCount = section.narration.segments.length;
+                        if (sCount >= bCount && sCount > 1) {
+                            logicHtml = `<span class="pass">PASS (Deep Sync)</span><br>Bullets: ${bCount}, Segs: ${sCount}`;
+                        } else {
+                            logicHtml = `<span class="fail">FAIL (Lazy Summary)</span><br>Bullets: ${bCount}, Segs: ${sCount}`;
+                        }
+                    }
+
+                    // Global WAN 15s Check
+                    if (renderer === 'video' || renderer === 'wan') {
+                        const segments = section.narration.segments || [];
+                        for (const seg of segments) {
+                            const wordCount = (seg.text || "").split(' ').length;
+                            if (wordCount > 40 && !seg.beat_videos) {
+                                logicHtml += `<br><span class="fail">FAIL: Seg ${seg.segment_id} too long (${wordCount} words) & no beats!</span>`;
+                            }
+                        }
+                    }
+
+                    row.innerHTML = `
+                        <td>${section.section_id}</td>
+                        <td>${section.section_type}</td>
+                        <td class="${rendererClass}">${renderer.toUpperCase()}</td>
+                        <td>${avatarHtml}</td>
+                        <td>${videoHtml}</td>
+                        <td>${imageHtml}</td>
+                        <td>${logicHtml}</td>
+                    `;
+                    tbody.appendChild(row);
+                }
+
+                if (orphanDetected) {
+                    document.getElementById('self-healing').style.display = 'block';
+                }
+
+                statusDiv.innerHTML += "<br><span class='pass'>Check Complete!</span>";
+            } catch (e) {
+                statusDiv.innerHTML += `<br><span class="fail">CRITICAL ERROR: ${e.message}</span>`;
+            }
+        }
+        runCheck();
+    </script>
+</body>
+
+</html>

@@ -5,8 +5,13 @@ Generate a complete, executable Manim script for the following section.
 === NARRATION SCHEDULE (Use strictly for timing) ===
 {narration_segments}
 
-=== VISUAL PLAN ===
+=== VISUAL SCENE DESCRIPTION (MATCH THIS CLOSELY) ===
 {visual_description}
+
+You MUST include the key visual elements described above.
+- If the description mentions "labeled", add Text/MathTex labels
+- If the description mentions "highlight" or "glow", use Indicate() or SurroundingRectangle
+- If the description mentions "animation" or "movement", use .animate or Transform
 
 === MATHEMATICAL CONTENT ===
 - Main formulas: {formulas}
@@ -19,20 +24,18 @@ from manim import *
 
 class MainScene(Scene):
     def construct(self):
-        # Segment 1
+        # Segment 1 (X.Xs)
         # ... your code here ...
+        self.play(FadeOut(*self.mobjects), run_time=0.5)
         
-        # Segment 2
+        # Segment 2 (X.Xs)
         # ... your code here ...
+        self.play(FadeOut(*self.mobjects), run_time=0.5)
 
 === GENERATION CONSTRAINTS ===
 1. **Timing**: `run_time` + `wait` MUST equal Segment Duration exactly.
-2. **Anti-Overlap**: Use `FadeOut` to clear old objects before new ones.
-3. **Encoding**: Use ASCII text only (Rs., -, " "). NO Unicode symbols.
-4. **Output**: Return PURE PYTHON CODE ONLY. No markdown (```), no explanations.
-5. **Complexity Cap (CRITICAL)**: 
-   - ❌ NO custom `Polygon` with manual coordinates (e.g., drawing a beaker vertex-by-vertex).
-   - ✅ USE standard shapes: `Square()`, `Circle()`, `Rectangle()`. 
-   - ❌ NO "Particle Systems": Do not generate lists of >5 small objects (like bubbles or atoms). 
-   - ✅ Abstract concepts: Represent "Heat" with a red tint or a text label, NOT 50 moving dots.
-   - **Limit**: If a Segment requires >20 lines of code, SIMPLIFY the visuals immediately.
+2. **Max Wait**: Single self.wait() MUST NOT exceed 5 seconds. Fill long segments with Indicate/Circumscribe.
+3. **Text Labels**: All text must remain horizontal. NEVER use .rotate() on Text objects.
+4. **Anti-Overlap**: Use `FadeOut(*self.mobjects)` at end of EVERY segment.
+5. **Encoding**: Use ASCII text only. NO Unicode symbols.
+6. **Output**: Return PURE PYTHON CODE ONLY. No markdown, no explanations.

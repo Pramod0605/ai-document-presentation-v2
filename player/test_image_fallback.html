@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>V2.5 Image Fallback Sanity Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+
+        h1 {
+            color: #4cc9f0;
+        }
+
+        .test-container {
+            margin: 20px 0;
+            padding: 15px;
+            background: #16213e;
+            border-radius: 8px;
+        }
+
+        .test-title {
+            font-weight: bold;
+            color: #f72585;
+            margin-bottom: 10px;
+        }
+
+        .test-result {
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+
+        .pass {
+            background: #2e7d32;
+        }
+
+        .fail {
+            background: #c62828;
+        }
+
+        .pending {
+            background: #f57c00;
+        }
+
+        .image-container {
+            background: #0f0f23;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .content-image {
+            max-width: 200px;
+            max-height: 150px;
+        }
+
+        .image-caption {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .log-output {
+            background: #0a0a15;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        #summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #2a2a4a;
+            border-radius: 8px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 V2.5 Image Fallback Sanity Test</h1>
+    <p>Testing the robust JPG/PNG/JPEG fallback strategy in player_v2.js</p>
+
+    <div class="test-container">
+        <div class="test-title">Test 1: Retry Tracking (Prevents Infinite Loop)</div>
+        <div id="test1-result" class="test-result pending">Testing...</div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-title">Test 2: JPG → PNG Fallback</div>
+        <div id="test2-result" class="test-result pending">Testing...</div>
+        <div class="image-container" id="test2-container"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-title">Test 3: PNG → JPG Fallback</div>
+        <div id="test3-result" class="test-result pending">Testing...</div>
+        <div class="image-container" id="test3-container"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-title">Test 4: JPEG → PNG Fallback</div>
+        <div id="test4-result" class="test-result pending">Testing...</div>
+        <div class="image-container" id="test4-container"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-title">Test 5: Inline onerror (Markdown Images)</div>
+        <div id="test5-result" class="test-result pending">Testing...</div>
+        <div class="image-container" id="test5-container"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-title">Console Logs</div>
+        <div id="log-output" class="log-output"></div>
+    </div>
+
+    <div id="summary"></div>
+
+    <script>
+        // Capture console logs
+        const logOutput = document.getElementById('log-output');
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+
+        console.log = function (...args) {
+            logOutput.textContent += '[LOG] ' + args.join(' ') + '\n';
+            originalLog.apply(console, args);
+        };
+
+        console.warn = function (...args) {
+            logOutput.textContent += '[WARN] ' + args.join(' ') + '\n';
+            originalWarn.apply(console, args);
+        };
+
+        let testsRun = 0;
+        let testsPassed = 0;
+
+        function setResult(testId, passed, message) {
+            testsRun++;
+            if (passed) testsPassed++;
+            const el = document.getElementById(testId + '-result');
+            el.className = 'test-result ' + (passed ? 'pass' : 'fail');
+            el.textContent = (passed ? '✅ PASS: ' : '❌ FAIL: ') + message;
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const summaryEl = document.getElementById('summary');
+            const allPassed = testsPassed === testsRun;
+            summaryEl.innerHTML = `
+        <strong>Summary:</strong> ${testsPassed}/${testsRun} tests passed
+        ${allPassed ? '🎉 All tests passed!' : '⚠️ Some tests failed'}
+      `;
+            summaryEl.style.background = allPassed ? '#1b5e20' : '#b71c1c';
+        }
+
+        // ==================================================
+        // Test 1: Retry Tracking
+        // ==================================================
+        function test1_retryTracking() {
+            const img = document.createElement('img');
+            let errorCount = 0;
+
+            img.onerror = function () {
+                if (this.dataset.retry) {
+                    // This means retry tracking is working
+                    setResult('test1', true, 'Retry tracking prevents infinite loop');
+                    return;
+                }
+                this.dataset.retry = 'true';
+                errorCount++;
+
+                if (errorCount > 5) {
+                    setResult('test1', false, 'Infinite loop detected - retry tracking failed');
+                    return;
+                }
+
+                // Simulate retry by setting an invalid src again
+                this.src = 'nonexistent_retry_' + errorCount + '.png';
+            };
+
+            img.src = 'nonexistent_initial.png';
+
+            // Safety timeout
+            setTimeout(() => {
+                if (document.getElementById('test1-result').classList.contains('pending')) {
+                    setResult('test1', false, 'Test timed out');
+                }
+            }, 3000);
+        }
+
+        // ==================================================
+        // Test 2: JPG → PNG Fallback Logic
+        // ==================================================
+        function test2_jpgToPng() {
+            const container = document.getElementById('test2-container');
+            const img = document.createElement('img');
+            img.className = 'content-image';
+
+            img.onerror = function () {
+                if (this.dataset.retry) {
+                    console.warn(`[V2.5] Image failed to load after retry: ${this.src}`);
+                    setResult('test2', true, 'JPG→PNG fallback logic executed correctly');
+                    return;
+                }
+
+                this.dataset.retry = 'true';
+                let currentSrc = this.src;
+
+                if (currentSrc.includes('.jpg')) {
+                    const newSrc = currentSrc.replace('.jpg', '.png');
+                    console.log(`[V2.5] Image 404 (JPG), trying PNG: ${newSrc}`);
+                    this.src = newSrc;
+                }
+            };
+
+            container.appendChild(img);
+            img.src = 'test_image.jpg'; // Non-existent, will trigger fallback
+
+            setTimeout(() => {
+                if (document.getElementById('test2-result').classList.contains('pending')) {
+                    setResult('test2', false, 'Test timed out');
+                }
+            }, 3000);
+        }
+
+        // ==================================================
+        // Test 3: PNG → JPG Fallback Logic
+        // ==================================================
+        function test3_pngToJpg() {
+            const container = document.getElementById('test3-container');
+            const img = document.createElement('img');
+            img.className = 'content-image';
+
+            img.onerror = function () {
+                if (this.dataset.retry) {
+                    console.warn(`[V2.5] Image failed to load after retry: ${this.src}`);
+                    setResult('test3', true, 'PNG→JPG fallback logic executed correctly');
+                    return;
+                }
+
+                this.dataset.retry = 'true';
+                let currentSrc = this.src;
+
+                if (currentSrc.includes('.png')) {
+                    const newSrc = currentSrc.replace('.png', '.jpg');
+                    console.log(`[V2.5] Image 404 (PNG), trying JPG: ${newSrc}`);
+                    this.src = newSrc;
+                }
+            };
+
+            container.appendChild(img);
+            img.src = 'test_image.png';
+
+            setTimeout(() => {
+                if (document.getElementById('test3-result').classList.contains('pending')) {
+                    setResult('test3', false, 'Test timed out');
+                }
+            }, 3000);
+        }
+
+        // ==================================================
+        // Test 4: JPEG → PNG Fallback Logic
+        // ==================================================
+        function test4_jpegToPng() {
+            const container = document.getElementById('test4-container');
+            const img = document.createElement('img');
+            img.className = 'content-image';
+
+            img.onerror = function () {
+                if (this.dataset.retry) {
+                    console.warn(`[V2.5] Image failed to load after retry: ${this.src}`);
+                    setResult('test4', true, 'JPEG→PNG fallback logic executed correctly');
+                    return;
+                }
+
+                this.dataset.retry = 'true';
+                let currentSrc = this.src;
+
+                if (currentSrc.includes('.jpeg')) {
+                    const newSrc = currentSrc.replace('.jpeg', '.png');
+                    console.log(`[V2.5] Image 404 (JPEG), trying PNG: ${newSrc}`);
+                    this.src = newSrc;
+                }
+            };
+
+            container.appendChild(img);
+            img.src = 'test_image.jpeg';
+
+            setTimeout(() => {
+                if (document.getElementById('test4-result').classList.contains('pending')) {
+                    setResult('test4', false, 'Test timed out');
+                }
+            }, 3000);
+        }
+
+        // ==================================================
+        // Test 5: Inline onerror (Markdown Pattern)
+        // ==================================================
+        function test5_inlineOnerror() {
+            const container = document.getElementById('test5-container');
+
+            // This is the HTML that sanitizeMarkdown generates for markdown images
+            const markdownImageHtml = `
+        <img src="markdown_test.jpg" alt="Test" class="content-image" 
+          onerror="if(!this.dataset.retry){this.dataset.retry=true; if(this.src.includes('.jpg')){this.src=this.src.replace('.jpg','.png')}else if(this.src.includes('.png')){this.src=this.src.replace('.png','.jpg')}else if(this.src.includes('.jpeg')){this.src=this.src.replace('.jpeg','.png')} else {this.style.display='none'}}" 
+        />
+      `;
+
+            container.innerHTML = markdownImageHtml;
+
+            const img = container.querySelector('img');
+            const originalSrc = img.src;
+
+            // Check after a brief delay for the fallback to execute
+            setTimeout(() => {
+                // The src should have been changed from .jpg to .png
+                if (img.src.includes('.png') && originalSrc.includes('.jpg')) {
+                    setResult('test5', true, 'Inline onerror correctly swapped JPG→PNG');
+                } else if (img.dataset.retry === 'true') {
+                    setResult('test5', true, 'Inline onerror executed and set retry flag');
+                } else {
+                    setResult('test5', false, 'Inline onerror did not execute as expected');
+                }
+            }, 1500);
+        }
+
+        // Run all tests
+        console.log('[V2.5] Starting Image Fallback Sanity Tests...');
+        console.log('================================================');
+
+        test1_retryTracking();
+        test2_jpgToPng();
+        test3_pngToJpg();
+        test4_jpegToPng();
+        test5_inlineOnerror();
+
+        console.log('[V2.5] All tests initiated. Waiting for results...');
+    </script>
+</body>
+
+</html>

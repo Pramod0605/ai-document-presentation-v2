@@ -1,0 +1,38 @@
+Generate a complete, executable Manim script for the following section.
+
+**Section Title**: Introduction to Trigonometry and Ratios
+
+=== NARRATION SCHEDULE (Use strictly for timing) ===
+Segment 1 (0.0s - 11.7s, duration 11.7s):
+  Narration: "Now, watch this. See how as the angle changes, the lengths of the sides also change? This relationship is the heart of trigonometry."
+
+Segment 2 (11.7s - 39.1s, duration 27.4s):
+  Narration: "Here we see a right-angled triangle. The longest side, always opposite the 90-degree angle, is the Hypotenuse. Relative to our angle, which we'll call A, the side directly across from it is the Opposite side, and the side right next to it is the Adjacent side. Remember these three names, they are very important!"
+
+Segment 3 (39.1s - 63.0s, duration 23.9s):
+  Narration: "Let's see how these ratios are formed. For Sin A, we take the Opposite and divide by the Hypotenuse. For Cos A, it's the Adjacent over the Hypotenuse. And for Tan A, it's the Opposite over the Adjacent. The other three are just the reciprocals of these!"
+
+
+=== VISUAL SCENE DESCRIPTION (MATCH THIS CLOSELY) ===
+Segment 1: On a dark background, a right-angled triangle appears. The vertices are labeled A, B, and C, with the right angle at B. The angle at vertex A is highlighted with a yellow arc. As the animation progresses, show how changing the angle affects the side lengths - create subtle pulsing or scaling effects to demonstrate the relationship.
+
+Segment 2: Display a bright yellow right-angled triangle, clearly labeled. The right angle is marked. The label 'Hypotenuse' appears next to the longest side with a highlight effect. Then 'Opposite side' label appears with the matching side glowing. Finally 'Adjacent side' is labeled. Use surrounding rectangles or glows to emphasize each label as it appears.
+
+Segment 3: Show a triangle with the formulas appearing one by one. For sin A = Opposite/Hypotenuse, highlight the Opposite side when showing the numerator, then the Hypotenuse for denominator. Repeat for cos A and tan A, each time highlighting the relevant sides of the triangle to reinforce the visual connection.
+
+You MUST include the key visual elements described above.
+- If the description mentions "labeled", add Text/MathTex labels
+- If the description mentions "highlight" or "glow", use Indicate() or SurroundingRectangle
+- If the description mentions "animation" or "movement", use .animate or Transform
+- If the description mentions "calculation" or "step", use TransformMatchingTex
+
+=== MATHEMATICAL CONTENT ===
+- Main formulas: sin A = Opposite/Hypotenuse, cos A = Adjacent/Hypotenuse, tan A = Opposite/Adjacent
+- Key terms: Hypotenuse, Opposite, Adjacent, Trigonometric Ratios
+
+=== GENERATION CONSTRAINTS ===
+1. **Timing**: Total run_time + wait MUST equal Segment Duration exactly (±0.5s).
+2. **Distribution**: Do NOT have wait() > 10 seconds. Fill time with Indicate(), subtle .animate movements.
+3. **Cleanup**: End EVERY segment with FadeOut(*self.mobjects) or self.clear().
+4. **Encoding**: Use ASCII text only. NO Unicode symbols.
+5. **Output**: Return PURE PYTHON CODE ONLY. No markdown, no explanations.

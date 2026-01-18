@@ -1,0 +1,55 @@
+Generate a complete, executable Manim script for the following section.
+
+**Section Title**: Introduction to Trigonometry and Ratios
+
+=== NARRATION SCHEDULE (Use strictly for timing) ===
+Segment 1 (0.0s - 11.7s, duration 11.7s):
+  Narration: "Now, watch this. See how as the angle changes, the lengths of the sides also change? This relationship is the heart of trigonometry."
+
+Segment 2 (11.7s - 39.1s, duration 27.4s):
+  Narration: "Here we see a right-angled triangle. The longest side, always opposite the 90-degree angle, is the Hypotenuse. Relative to our angle, which we'll call A, the side directly across from it is the Opposite side, and the side right next to it is the Adjacent side."
+
+Segment 3 (39.1s - 63.0s, duration 23.9s):
+  Narration: "Let's see how these ratios are formed. For Sin A, we take the Opposite and divide by the Hypotenuse. For Cos A, it's the Adjacent over the Hypotenuse. And for Tan A, it's the Opposite over the Adjacent."
+
+
+=== VISUAL SCENE DESCRIPTION (MATCH THIS CLOSELY) ===
+
+Segment 1: Display a right-angled triangle with vertices labeled A, B, C. The right angle is at B. Show angle A with a yellow arc. Create subtle pulsing or scaling effects to demonstrate the relationship between angle and sides.
+
+Segment 2: Display a bright yellow right-angled triangle clearly labeled. Mark the right angle. Show the labels 'Hypotenuse', 'Opposite side', and 'Adjacent side' appearing one by one with highlight effects on each corresponding side.
+
+Segment 3: Show the triangle with formulas appearing one by one. For sin A = Opposite/Hypotenuse, highlight the Opposite side for numerator, then Hypotenuse for denominator. Repeat for cos A and tan A.
+
+
+You MUST include the key visual elements described above.
+- If the description mentions "labeled", add Text/MathTex labels
+- If the description mentions "highlight" or "glow", use Indicate() or SurroundingRectangle
+- If the description mentions "animation" or "movement", use .animate or Transform
+
+=== MATHEMATICAL CONTENT ===
+- Main formulas: sin A = Opposite/Hypotenuse, cos A = Adjacent/Hypotenuse, tan A = Opposite/Adjacent
+- Key terms: Hypotenuse, Opposite, Adjacent, Trigonometric Ratios
+
+=== MANDATORY SKELETON (Copy this structure EXACTLY) ===
+You must output the code following this exact pattern. Do not change the class name.
+
+from manim import *
+
+class MainScene(Scene):
+    def construct(self):
+        # Segment 1 (X.Xs)
+        # ... your code here ...
+        self.play(FadeOut(*self.mobjects), run_time=0.5)
+        
+        # Segment 2 (X.Xs)
+        # ... your code here ...
+        self.play(FadeOut(*self.mobjects), run_time=0.5)
+
+=== GENERATION CONSTRAINTS ===
+1. **Timing**: `run_time` + `wait` MUST equal Segment Duration exactly.
+2. **Max Wait**: Single self.wait() MUST NOT exceed 5 seconds. Fill long segments with Indicate/Circumscribe.
+3. **Text Labels**: All text must remain horizontal. NEVER use .rotate() on Text objects.
+4. **Anti-Overlap**: Use `FadeOut(*self.mobjects)` at end of EVERY segment.
+5. **Encoding**: Use ASCII text only. NO Unicode symbols.
+6. **Output**: Return PURE PYTHON CODE ONLY. No markdown, no explanations.

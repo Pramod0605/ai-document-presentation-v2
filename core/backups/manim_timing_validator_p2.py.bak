@@ -1,0 +1,133 @@
+import re
+import sys
+import logging
+
+# Configure logging to be quiet by default, but useful if needed
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logger = logging.getLogger(__name__)
+
+def validate_manim_timing(path: str) -> bool:
+    """
+    V2.5 Manim Timing & Cleanup Validator.
+    
+    Checks:
+    1. Segment-level timing (Sum of run_time + wait == duration)
+    2. Pacing Rule (Segments >= 1.0s must have self.wait(0.5))
+    3. Cleanup Rule (Objects created in Segment N must not appear in Segment N+1)
+    """
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+    except Exception as e:
+        print(f"[ERROR] Could not read file {path}: {e}")
+        return False
+
+    segments = {}
+    current_seg = None
+    
+    # Track variables assigned in each segment for Cleanup Rule
+    seg_vars = {} 
+
+    # Regex patterns
+    # Matches: # Segment 1: Title (5.0s) OR # Segment 1 (5.0s)
+    seg_header_pattern = re.compile(r"#\s*Segment\s*(\d+).*?([\d.]+)\s*s", re.IGNORECASE)
+    
+    rt_pattern = re.compile(r"run_time\s*=\s*([\d.]+)")
+    wait_pattern = re.compile(r"self\.wait\(([\d.]+)\)")
+    
+    # Matches simple variable assignments: obj = Dot()
+    assign_pattern = re.compile(r"^\s*(\w+)\s*=")
+
+    for line_num, line in enumerate(lines, 1):
+        # 1. Detect Segment Start
+        seg_match = seg_header_pattern.search(line)
+        if seg_match:
+            current_seg = int(seg_match.group(1))
+            duration = float(seg_match.group(2))
+            segments[current_seg] = {
+                "duration": duration,
+                "total_time": 0.0,
+                "waits": [],
+                "line_start": line_num
+            }
+            seg_vars[current_seg] = set()
+            continue
+
+        if current_seg is None:
+            continue
+
+        # 2. Extract Timing
+        rt_matches = rt_pattern.findall(line)
+        for rt in rt_matches:
+            segments[current_seg]["total_time"] += float(rt)
+
+        wait_matches = wait_pattern.findall(line)
+        for w in wait_matches:
+            wait_val = float(w)
+            segments[current_seg]["total_time"] += wait_val
+            segments[current_seg]["waits"].append(wait_val)
+
+        # 3. Track Variable Assignments (for Cleanup Rule)
+        assign_match = assign_pattern.search(line)
+        if assign_match:
+            var_name = assign_match.group(1)
+            # Ignore common Manim keywords or self
+            if var_name not in ["self", "axes", "graph", "curve"]:
+                seg_vars[current_seg].add(var_name)
+
+    # Validation Phase
+    failed = False
+    
+    for seg_id, data in segments.items():
+        duration = data["duration"]
+        actual = data["total_time"]
+        
+        # A. Hard Timing Budget
+        if abs(actual - duration) > 0.15: # 0.1s tolerance + slight buffer
+            print(f"[FAIL] Segment {seg_id}: Timing mismatch. Budget={duration}s, Actual={actual:.2f}s")
+            failed = True
+        
+        # B. Pacing Rule
+        if duration >= 1.0:
+            has_pacing_wait = any(w >= 0.49 for w in data["waits"]) # 0.5s with float tolerance
+            if not has_pacing_wait:
+                print(f"[FAIL] Segment {seg_id}: Pacing Rule violated. Duration >= 1.0s but no self.wait(0.5) found.")
+                failed = True
+
+        # C. Cleanup Rule (Simple overlap check)
+        if seg_id > 1:
+            prev_seg = seg_id - 1
+            if prev_seg in seg_vars:
+                # Get segment text and STRIP COMMENTS to avoid false positives in cleanup rule
+                seg_lines = lines[data["line_start"]:segments.get(seg_id + 1, {"line_start": len(lines)})["line_start"]]
+                seg_text_clean = ""
+                for sl in seg_lines:
+                    # Remove everything after #
+                    clean_line = sl.split("#")[0]
+                    seg_text_clean += clean_line + "\n"
+                
+                for var in seg_vars[prev_seg]:
+                    # Search for variable usage (not an assignment) in cleaned text
+                    if re.search(rf"\b{var}\b", seg_text_clean) and not re.search(rf"^\s*{var}\s*=", seg_text_clean, re.MULTILINE):
+                        # EXCEPTION: If the user explicitly wants persistence, they should clear it or we should have a 'persistent' marker
+                        # For now, following user's "Simple cleanup enforcement"
+                        print(f"[FAIL] Segment {seg_id}: Cleanup Rule violated. Object '{var}' from Segment {prev_seg} appears here.")
+                        failed = True
+
+    if not segments:
+        print("[WARN] No segments found to validate. Ensure # Segment X (Duration s) format is used.")
+        return True # Don't fail if no segments (might be a global script)
+
+    if not failed:
+        print("[PASS] Manim Timing, Pacing, and Cleanup rules satisfied.")
+        return True
+    
+    return False
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python manim_timing_validator.py <path_to_manim_file>")
+        sys.exit(1)
+        
+    success = validate_manim_timing(sys.argv[1])
+    sys.exit(0 if success else 1)

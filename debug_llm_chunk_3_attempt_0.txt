@@ -4,85 +4,205 @@
     {
       "section_id": "section_1",
       "section_type": "content",
-      "title": "Exercise 5.2: Applying the Nth Term Formula",
+      "title": "Sum of First n Terms Formula and Examples",
       "renderer": "manim",
       "narration": {
-        "full_text": "Chalo bachho, let's put our knowledge to the test with Exercise 5.2. Our first task is to complete this table. We are given some values for an AP and we need to find the missing piece. The key to solving all of these is our trusted formula for the nth term. For our first problem, we have a=7, d=3, and n=8. We just need to find the 8th term. In the second case, we know the 10th term is 0 and the first term is -18. We need to find the common difference, 'd'. Third, we are missing the first term 'a'. We know the 18th term is -5 and the common difference is -3. Fourth, we need to find 'n', the term number. We're given a, d, and the value of that nth term. And finally, what happens when the common difference is zero? The AP is just the same number repeated, like a boat gently floating on the Kerala backwaters... it's not really progressing! So the 105th term is the same as the first. Now, let's watch how these calculations come to life.",
+        "full_text": "Now, let's learn how to find the sum of terms in an Arithmetic Progression. Imagine you are saving money for Diwali. You save 10 rupees on day one, 15 on day two, 20 on day three, and so on. How much will you have after 30 days? Instead of adding each day's savings one by one, we can use a handy formula! We have two main formulas to find the sum, which we call 'S'. The first formula is S equals n by 2, times the quantity 2a plus (n minus 1)d. We use this when we know the first term 'a', the common difference 'd', and the number of terms 'n'. The second formula is simpler: S equals n by 2, times (a plus l). This one is perfect when you know the first term 'a', the last term 'l', and the number of terms 'n'. Let's see these formulas in action with our first example. We need to find the sum of the first 22 terms of the AP: 8, 3, -2, and so on. Here, the first term 'a' is 8, the common difference 'd' is -5, and 'n' is 22. We use our first formula. S equals 22 divided by 2, times [2 times 8, plus (22 minus 1) times -5]. This simplifies to 11 times [16 plus 21 times -5], which is 11 times [16 minus 105]. Finally, we get our sum, which is -979. Now for another one. If the sum of the first 14 terms is 1050, and the first term is 10, we need to find the 20th term. Here, we know S14, n, and a. We can use the sum formula to find 'd'. 1050 equals 14 by 2, times [2 times 10 plus (14 minus 1)d]. This boils down to 1050 equals 7 times [20 plus 13d]. After some calculation, we find that the common difference 'd' is 10. Now that we have 'a' and 'd', we can find any term! To find the 20th term, we use the formula a20 equals a plus (20 minus 1)d. Substituting the values, we get 10 plus 19 times 10, which equals 200. Let's look at a slightly different problem. How many terms of the AP: 24, 21, 18, and so on, must be taken so their sum is 78? Here we know 'a' is 24, 'd' is -3, and the sum Sn is 78. We need to find 'n'. We set up the equation: 78 equals n by 2, times [2 times 24 plus (n minus 1) times -3]. This simplifies to a quadratic equation: n-squared minus 17n plus 52 equals 0. When we factor this, we get (n minus 13) times (n minus 4) equals 0. So, 'n' can be either 4 or 13. Both are correct! The sum of the first 4 terms is 78, and because the terms eventually become negative, the sum of the first 13 terms also happens to be 78. Here's a classic! Let's find the sum of the first 1000 positive integers. That's 1 plus 2 plus 3, all the way to 1000. Using our formula, the sum is 500,500. Now let's generalize this to find the sum of the first 'n' positive integers. The formula simplifies beautifully to S equals n times (n plus 1) all divided by 2. A very useful formula to remember! Let's try another one. Find the sum of the first 24 terms for a list where the nth term is given by a_n equals 3 plus 2n. First, let's find the first few terms to confirm it's an AP. a1 is 5, a2 is 7, a3 is 9. Yes, it's an AP with a=5 and d=2. Now we find the sum of 24 terms using our formula. After substituting the values and calculating, we find the sum is 672. Finally, let's solve a real-world problem. A TV manufacturer produced 600 sets in the third year and 700 in the seventh year. The production increases uniformly, so it's an AP. First, let's find the production in the first year and the rate of increase. We set up two equations: a plus 2d equals 600, and a plus 6d equals 700. Solving these, we find the common difference 'd' is 25, and the first term 'a' is 550. So, the production in the first year was 550 sets. To find the production in the 10th year, we calculate a10, which is 550 plus 9 times 25, giving us 775 sets. Lastly, to find the total production in the first 7 years, we calculate S7. This comes out to be 4375 sets in total. You see how powerful these formulas are!",
         "segments": [
           {
             "segment_id": "seg_1",
-            "text": "Chalo bachho, let's put our knowledge to the test with Exercise 5.2. Our first task is to complete this table. We are given some values for an AP and we need to find the missing piece.",
+            "text": "Now, let's learn how to find the sum of terms in an Arithmetic Progression. Imagine you are saving money for Diwali. You save 10 rupees on day one, 15 on day two, 20 on day three, and so on. How much will you have after 30 days? Instead of adding each day's savings one by one, we can use a handy formula!",
             "purpose": "introduce",
             "display_directives": {
               "text_layer": "show",
-              "visual_layer": "show",
+              "visual_layer": "hide",
               "avatar_layer": "show"
             }
           },
           {
             "segment_id": "seg_2",
-            "text": "The key to solving all of these is our trusted formula for the nth term.",
+            "text": "We have two main formulas to find the sum, which we call 'S'. The first formula is S equals n by 2, times the quantity 2a plus (n minus 1)d. We use this when we know the first term 'a', the common difference 'd', and the number of terms 'n'.",
             "purpose": "explain",
             "display_directives": {
               "text_layer": "show",
-              "visual_layer": "show",
+              "visual_layer": "hide",
               "avatar_layer": "show"
             }
           },
           {
             "segment_id": "seg_3",
-            "text": "For our first problem, we have a=7, d=3, and n=8. We just need to find the 8th term.",
+            "text": "The second formula is simpler: S equals n by 2, times (a plus l). This one is perfect when you know the first term 'a', the last term 'l', and the number of terms 'n'.",
             "purpose": "explain",
             "display_directives": {
               "text_layer": "show",
-              "visual_layer": "show",
+              "visual_layer": "hide",
               "avatar_layer": "show"
             }
           },
           {
             "segment_id": "seg_4",
-            "text": "In the second case, we know the 10th term is 0 and the first term is -18. We need to find the common difference, 'd'.",
+            "text": "Let's see these formulas in action with our first example. We need to find the sum of the first 22 terms of the AP: 8, 3, -2, and so on.",
             "purpose": "explain",
             "display_directives": {
               "text_layer": "show",
-              "visual_layer": "show",
+              "visual_layer": "hide",
               "avatar_layer": "show"
             }
           },
           {
             "segment_id": "seg_5",
-            "text": "Third, we are missing the first term 'a'. We know the 18th term is -5 and the common difference is -3.",
+            "text": "Here, the first term 'a' is 8, the common difference 'd' is -5, and 'n' is 22. We use our first formula. S equals 22 divided by 2, times [2 times 8, plus (22 minus 1) times -5].",
             "purpose": "explain",
             "display_directives": {
-              "text_layer": "show",
+              "text_layer": "hide",
               "visual_layer": "show",
               "avatar_layer": "show"
             }
           },
           {
             "segment_id": "seg_6",
-            "text": "Fourth, we need to find 'n', the term number. We're given a, d, and the value of that nth term.",
+            "text": "This simplifies to 11 times [16 plus 21 times -5], which is 11 times [16 minus 105]. Finally, we get our sum, which is -979.",
             "purpose": "explain",
             "display_directives": {
-              "text_layer": "show",
+              "text_layer": "hide",
               "visual_layer": "show",
               "avatar_layer": "show"
             }
           },
           {
             "segment_id": "seg_7",
-            "text": "And finally, what happens when the common difference is zero? The AP is just the same number repeated, like a boat gently floating on the Kerala backwaters... it's not really progressing! So the 105th term is the same as the first.",
+            "text": "Now for another one. If the sum of the first 14 terms is 1050, and the first term is 10, we need to find the 20th term.",
             "purpose": "explain",
             "display_directives": {
               "text_layer": "show",
-              "visual_layer": "show",
+              "visual_layer": "hide",
               "avatar_layer": "show"
             }
           },
           {
             "segment_id": "seg_8",
-            "text": "Now, let's watch how these calculations come to life.",
-            "purpose": "transition",
+            "text": "Here, we know S14, n, and a. We can use the sum formula to find 'd'. 1050 equals 14 by 2, times [2 times 10 plus (14 minus 1)d]. This boils down to 1050 equals 7 times [20 plus 13d]. After some calculation, we find that the common difference 'd' is 10.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_9",
+            "text": "Now that we have 'a' and 'd', we can find any term! To find the 20th term, we use the formula a20 equals a plus (20 minus 1)d. Substituting the values, we get 10 plus 19 times 10, which equals 200.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_10",
+            "text": "Let's look at a slightly different problem. How many terms of the AP: 24, 21, 18, and so on, must be taken so their sum is 78?",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_11",
+            "text": "Here we know 'a' is 24, 'd' is -3, and the sum Sn is 78. We need to find 'n'. We set up the equation: 78 equals n by 2, times [2 times 24 plus (n minus 1) times -3].",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_12",
+            "text": "This simplifies to a quadratic equation: n-squared minus 17n plus 52 equals 0. When we factor this, we get (n minus 13) times (n minus 4) equals 0. So, 'n' can be either 4 or 13. Both are correct! The sum of the first 4 terms is 78, and because the terms eventually become negative, the sum of the first 13 terms also happens to be 78.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_13",
+            "text": "Here's a classic! Let's find the sum of the first 1000 positive integers. That's 1 plus 2 plus 3, all the way to 1000. Using our formula, the sum is 500,500.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_14",
+            "text": "Now let's generalize this to find the sum of the first 'n' positive integers. The formula simplifies beautifully to S equals n times (n plus 1) all divided by 2. A very useful formula to remember!",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_15",
+            "text": "Let's try another one. Find the sum of the first 24 terms for a list where the nth term is given by a_n equals 3 plus 2n.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_16",
+            "text": "First, let's find the first few terms to confirm it's an AP. a1 is 5, a2 is 7, a3 is 9. Yes, it's an AP with a=5 and d=2. Now we find the sum of 24 terms using our formula. After substituting the values and calculating, we find the sum is 672.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_17",
+            "text": "Finally, let's solve a real-world problem. A TV manufacturer produced 600 sets in the third year and 700 in the seventh year. The production increases uniformly, so it's an AP.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "show",
+              "visual_layer": "hide",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_18",
+            "text": "First, let's find the production in the first year and the rate of increase. We set up two equations: a plus 2d equals 600, and a plus 6d equals 700. Solving these, we find the common difference 'd' is 25, and the first term 'a' is 550. So, the production in the first year was 550 sets.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_19",
+            "text": "To find the production in the 10th year, we calculate a10, which is 550 plus 9 times 25, giving us 775 sets.",
+            "purpose": "explain",
+            "display_directives": {
+              "text_layer": "hide",
+              "visual_layer": "show",
+              "avatar_layer": "show"
+            }
+          },
+          {
+            "segment_id": "seg_20",
+            "text": "Lastly, to find the total production in the first 7 years, we calculate S7. This comes out to be 4375 sets in total. You see how powerful these formulas are!",
+            "purpose": "explain",
             "display_directives": {
               "text_layer": "hide",
               "visual_layer": "show",
@@ -97,10 +217,10 @@
           "segment_id": "seg_1",
           "visual_type": "text",
           "markdown_pointer": {
-            "start_phrase": "1. Fill in the blanks in the",
-            "end_phrase": "| 3.5    |"
+            "start_phrase": "## Sum of First n Terms",
+            "end_phrase": "of an AP"
           },
-          "display_text": "1. Fill in the blanks in the following table, given that a is the first term, d the common difference and an the n th term of the AP: v\n\n| | a | d | n | an |\n|---|---|---|---|---|\n| (i) | 7 | 3 | 8 | - |\n| (ii) | -18 | - | 10 | 0 |\n| (iii) | - | -3 | 18 | -5 |\n| (iv) | -18.9 | 2.5 | - | 3.6 |\n| (v) | 3.5 | 0 | 105 | - |\n\n| answer |\n|---|\n| 28 |\n| 2 |\n| 46 |\n| 10 |\n| 3.5 |",
+          "display_text": "Sum of First n Terms of an AP",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
@@ -110,11 +230,11 @@
           "segment_id": "seg_2",
           "visual_type": "equation",
           "markdown_pointer": {
-            "start_phrase": "$$a_n = a + (n - 1)d$$",
-            "end_phrase": "$$a_n = a + (n - 1)d$$"
+            "start_phrase": "$$S = \\frac{n}{2}[2a + (n",
+            "end_phrase": "Common difference - } d]$$"
           },
-          "display_text": "$$a_n = a + (n - 1)d$$",
-          "latex_content": "a_n = a + (n - 1)d",
+          "display_text": "S = n/2[2a + (n-1)d]",
+          "latex_content": "S = \\frac{n}{2}[2a + (n - 1)d]",
           "image_id": null,
           "answer_revealed": false
         },
@@ -123,24 +243,24 @@
           "segment_id": "seg_3",
           "visual_type": "equation",
           "markdown_pointer": {
-            "start_phrase": "$$(i) a_8 = 7 + (8 - 1)3$$",
-            "end_phrase": "$$= 28$$"
+            "start_phrase": "$$S = \\frac{n}{2}[a + l]",
+            "end_phrase": "last term - } l]$$"
           },
-          "display_text": "$$(i) a_8 = 7 + (8 - 1)3\n\n= 7 + 7 \\times 3\n\n= 7 + 21\n\n= 28$$",
-          "latex_content": "a_8 = 7 + (8 - 1)3 = 7 + 7 \\times 3 = 7 + 21 = 28",
+          "display_text": "S = n/2[a + l]",
+          "latex_content": "S = \\frac{n}{2}[a + l]",
           "image_id": null,
           "answer_revealed": false
         },
         {
           "beat_id": "beat_4",
           "segment_id": "seg_4",
-          "visual_type": "equation",
+          "visual_type": "text",
           "markdown_pointer": {
-            "start_phrase": "$$(ii) 0 = -18 + (10 - 1)d$$",
-            "end_phrase": "$$\\Rightarrow d = 2$$"
+            "start_phrase": "Example 11: Find the sum of",
+            "end_phrase": "the AP: 8, 3, -2, ..."
           },
-          "display_text": "$$(ii) 0 = -18 + (10 - 1)d\n\n= -18 + 9d\n\n\\Rightarrow 9d = 18\n\n\\Rightarrow d = 2$$",
-          "latex_content": "0 = -18 + (10 - 1)d = -18 + 9d \\Rightarrow 9d = 18 \\Rightarrow d = 2",
+          "display_text": "Example 11: Find the sum of the first 22 terms of the AP: 8, 3, -2, ...",
+          "latex_content": null,
           "image_id": null,
           "answer_revealed": false
         },
@@ -149,11 +269,11 @@
           "segment_id": "seg_5",
           "visual_type": "equation",
           "markdown_pointer": {
-            "start_phrase": "$$(iii) -5 = a + (18 - 1)(-3)$$",
-            "end_phrase": "$$\\Rightarrow a = 46$$"
+            "start_phrase": "Here  $a = 8$ , ",
+            "end_phrase": "S &= \\frac{22}{2}[2 \\times 8 + (22 - 1)(-5)]"
           },
-          "display_text": "$$(iii) -5 = a + (18 - 1)(-3)\n\n-5 = a - 17 \\times 3\n\n\\Rightarrow -5 = a - 51\n\n\\Rightarrow a = 46$$",
-          "latex_content": "-5 = a + (18 - 1)(-3) \\Rightarrow -5 = a - 51 \\Rightarrow a = 46",
+          "display_text": "Given a=8, d=-5, n=22. We calculate S = 22/2 [2*8 + (22-1)(-5)]",
+          "latex_content": null,
           "image_id": null,
           "answer_revealed": false
         },
@@ -162,93 +282,49 @@
           "segment_id": "seg_6",
           "visual_type": "equation",
           "markdown_pointer": {
-            "start_phrase": "$$(iv) 3.6 = -18.9 + (n - 1)(2.5)$$",
-            "end_phrase": "$$\\Rightarrow n = 10$$"
+            "start_phrase": "S &= 11[16 + 21(-5)]",
+            "end_phrase": "S &= 11 \\times -89 = -979\\end{aligned}$$"
           },
-          "display_text": "$$(iv) 3.6 = -18.9 + (n - 1)(2.5)\n\n\\Rightarrow 3.6 = -18.9 + 2.5n - 2.5\n\n\\Rightarrow 3.6 = -21.4 + 2.5n\n\n\\Rightarrow 2.5n = 3.6 + 21.4\n\n\\Rightarrow n = \\frac{25}{2.5} = \\frac{250}{25}\n\n\\Rightarrow n = 10$$",
-          "latex_content": "3.6 = -18.9 + (n - 1)(2.5) \\Rightarrow 3.6 = -18.9 + 2.5n - 2.5 \\Rightarrow 3.6 = -21.4 + 2.5n \\Rightarrow 2.5n = 3.6 + 21.4 \\Rightarrow n = \\frac{25}{2.5} = 10",
+          "display_text": "S = 11[16 + 21(-5)] = 11[16 - 105] = 11 * -89 = -979",
+          "latex_content": null,
           "image_id": null,
           "answer_revealed": false
         },
         {
           "beat_id": "beat_7",
           "segment_id": "seg_7",
-          "visual_type": "equation",
+          "visual_type": "text",
           "markdown_pointer": {
-            "start_phrase": "$$\\begin{aligned}(v) a_n &= 3.5 + (105 - 1)(0)",
-            "end_phrase": "a_n = 3.5\\end{aligned}$$"
+            "start_phrase": "Example 12: If the sum of",
+            "end_phrase": "10, find the 20th term."
           },
-          "display_text": "$$\\begin{aligned}(v) a_n &= 3.5 + (105 - 1)(0) \\&= 3.5 + 104 \\times 0 \\\\&\\Rightarrow a_n = 3.5\\end{aligned}$$",
-          "latex_content": "(v) a_n = 3.5 + (105 - 1)(0) = 3.5 + 104 \\times 0 \\Rightarrow a_n = 3.5",
+          "display_text": "Example 12: If the sum of the first 14 terms of an AP is 1050 and its first term is 10, find the 20th term.",
+          "latex_content": null,
           "image_id": null,
           "answer_revealed": false
         },
         {
           "beat_id": "beat_8",
           "segment_id": "seg_8",
-          "visual_type": "text",
-          "markdown_pointer": null,
-          "display_text": " ",
+          "visual_type": "equation",
+          "markdown_pointer": {
+            "start_phrase": "Solution: Here, $$S_{14} = 1050, n",
+            "end_phrase": "d &= \\frac{910}{91} = 10"
+          },
+          "display_text": "Given S_14=1050, n=14, a=10. We solve for d to get d=10.",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
-        }
-      ],
-      "render_spec": {
-        "manim_scene_spec": "Create a Manim scene with a vibrant, educational theme using a pleasing color palette like deep blue and gold. Scene 1: Display the formula `a_n = a + (n - 1)d` at the top. Animate the table from the problem, showing the blanks. Part (i): Focus on the first row. The values a=7, d=3, n=8 fly from the table into the formula. The calculation `7 + (8-1)*3` animates, simplifying to `7 + 7*3`, then `7 + 21`, and finally `28`. The result `28` flies back to fill the blank in the table, which glows green. Part (ii): Focus on the second row. Values a=-18, n=10, a_n=0 plug in. Show the equation `0 = -18 + (10-1)d`. Animate the algebraic steps to solve for `d`, `18 = 9d`, `d = 2`. The result `2` fills the blank. Part (iii): Similar animation for the third row, solving for `a`. Show `-5 = a + (18-1)(-3)`, simplifying to `-5 = a - 51`, then `a = 46`. Part (iv): Animate solving for `n`. Show `3.6 = -18.9 + (n-1)2.5`. Isolate `(n-1)` to get `25 = (n-1)2.5`, then `n-1=10`, and `n=10`. Part (v): Show `a_n = 3.5 + (105-1)*0`. The `(104)*0` term visibly turns to `0`, leaving `a_n = 3.5`. Each solution should be clearly labeled (i) through (v) with smooth transitions between each part.",
-        "video_prompts": []
-      }
-    },
-    {
-      "section_id": "section_2",
-      "section_type": "quiz",
-      "title": "Quiz: Finding the 30th Term",
-      "renderer": "manim",
-      "narration": {
-        "full_text": "Time for a quick check! Here's your first question. Choose the correct option. <pause duration='4'/> Got it? The correct answer is C, -77! Let's see why. The first term 'a' is 10. The common difference 'd' is 7 minus 10, which is -3. We plug these into our formula for the 30th term.",
-        "segments": [
-          {
-            "segment_id": "seg_9",
-            "text": "Time for a quick check! Here's your first question. Choose the correct option.",
-            "purpose": "introduce",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_10",
-            "text": "<pause duration='4'/>",
-            "purpose": "emphasize",
-            "display_directives": {
-              "text_layer": "hide",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_11",
-            "text": "Got it? The correct answer is C, -77! Let's see why. The first term 'a' is 10. The common difference 'd' is 7 minus 10, which is -3. We plug these into our formula for the 30th term.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          }
-        ]
-      },
-      "visual_beats": [
+        },
         {
           "beat_id": "beat_9",
           "segment_id": "seg_9",
-          "visual_type": "text",
+          "visual_type": "equation",
           "markdown_pointer": {
-            "start_phrase": "2. Choose the correct choice in the",
-            "end_phrase": "(D) -87"
+            "start_phrase": "a_n &= a + (n-1)d",
+            "end_phrase": "a_{20} &= 200\\end{aligned}$$"
           },
-          "display_text": "2. Choose the correct choice in the following and justify :\n\n(i) 30th term of the AP: 10, 7, 4, ..., is\n\n(A)\n\n97\n\n(B) 77\n\n(C) -77\n\n(D) -87",
+          "display_text": "a_20 = 10 + (20-1)10 = 10 + 190 = 200",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
@@ -256,9 +332,12 @@
         {
           "beat_id": "beat_10",
           "segment_id": "seg_10",
-          "visual_type": "diagram",
-          "markdown_pointer": null,
-          "display_text": "Thinking Indicator",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "Example 13 : How many terms",
+            "end_phrase": "their sum is 78 ?"
+          },
+          "display_text": "Example 13 : How many terms of the AP: 24, 21, 18, ... must be taken so that their sum is 78 ?",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
@@ -268,70 +347,23 @@
           "segment_id": "seg_11",
           "visual_type": "equation",
           "markdown_pointer": {
-            "start_phrase": "$$\\begin{aligned}a_n &= a + (n - 1)d; d",
-            "end_phrase": "a_{30} = -77\\end{aligned}$$"
+            "start_phrase": "Solution:  $a = 24, d",
+            "end_phrase": "78 &= \\frac{n}{2}[48 - 3n + 3]"
           },
-          "display_text": "$$\\begin{aligned}a_n &= a + (n - 1)d; d = a_2 - a_1 = 7 - 10 = -3 \\\\a_{30} &= 10 + (30 - 1)(-3) \\\\&= 10 + (29)(-3) \\\\&= 10 - 87 \\\\&\\Rightarrow a_{30} = -77\\end{aligned}$$",
-          "latex_content": "a_n = a + (n - 1)d; d = a_2 - a_1 = 7 - 10 = -3 \\a_{30} = 10 + (30 - 1)(-3) = 10 + (29)(-3) = 10 - 87 \\Rightarrow a_{30} = -77",
+          "display_text": "Given a=24, d=-3, S_n=78. We set up the equation: 78 = n/2 [2*24 + (n-1)(-3)]",
+          "latex_content": null,
           "image_id": null,
-          "answer_revealed": true
-        }
-      ],
-      "render_spec": {
-        "manim_scene_spec": "Animate the calculation for the 30th term of the AP: 10, 7, 4... First, show the sequence and highlight `a=10`. Then show the calculation `d = 7 - 10 = -3` with numbers sliding. Display the formula `a_n = a + (n - 1)d`. Substitute the values: `a_30 = 10 + (30 - 1)(-3)`. The calculation proceeds step-by-step with smooth transformations: `10 + (29)(-3)`, then `10 - 87`, finally resolving to `-77`. The final answer `-77` is highlighted in a bright color, and a checkmark appears next to option (C).",
-        "video_prompts": []
-      }
-    },
-    {
-      "section_id": "section_3",
-      "section_type": "quiz",
-      "title": "Quiz: Finding the 11th Term",
-      "renderer": "manim",
-      "narration": {
-        "full_text": "Ready for another one? Find the 11th term of this AP. <pause duration='4'/> The correct answer is B, 22. Let's break it down. Our first term 'a' is -3. The common difference 'd' is minus half minus minus 3, which simplifies to 5 by 2. Now we put it all together in the formula to find the 11th term.",
-        "segments": [
-          {
-            "segment_id": "seg_12",
-            "text": "Ready for another one? Find the 11th term of this AP.",
-            "purpose": "introduce",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_13",
-            "text": "<pause duration='4'/>",
-            "purpose": "emphasize",
-            "display_directives": {
-              "text_layer": "hide",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_14",
-            "text": "The correct answer is B, 22. Let's break it down. Our first term 'a' is -3. The common difference 'd' is minus half minus minus 3, which simplifies to 5 by 2. Now we put it all together in the formula to find the 11th term.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          }
-        ]
-      },
-      "visual_beats": [
+          "answer_revealed": false
+        },
         {
           "beat_id": "beat_12",
           "segment_id": "seg_12",
-          "visual_type": "text",
+          "visual_type": "equation",
           "markdown_pointer": {
-            "start_phrase": "(ii) 11<sup>th</sup> term of an AP:  $-3, -\\frac{1}{2}, 2, \\dots$  is",
-            "end_phrase": "$-48\\frac{1}{2}$"
+            "start_phrase": "156 &= n[48 - 3n",
+            "end_phrase": "n &= 13 \\text{ OR } n = 4\\end{aligned}$$"
           },
-          "display_text": "(ii) 11th term of an AP: -3, -1/2, 2, ... is\n\n(A) 28\n\n(B) 22\n\n(C) -38\n\n(D) -48 1/2",
+          "display_text": "This simplifies to the quadratic equation n^2 - 17n + 52 = 0, which gives the solutions n=13 or n=4.",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
@@ -339,9 +371,12 @@
         {
           "beat_id": "beat_13",
           "segment_id": "seg_13",
-          "visual_type": "diagram",
-          "markdown_pointer": null,
-          "display_text": "Thinking Indicator",
+          "visual_type": "text",
+          "markdown_pointer": {
+            "start_phrase": "Example 14 : Find the sum",
+            "end_phrase": "(i) the first **1000** positive integers"
+          },
+          "display_text": "Example 14: Find the sum of the first 1000 positive integers.",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
@@ -351,60 +386,23 @@
           "segment_id": "seg_14",
           "visual_type": "equation",
           "markdown_pointer": {
-            "start_phrase": "$$a_n = a + (n - 1)d; d = a_2",
-            "end_phrase": "a_{11} = 22\\end{aligned}$$"
+            "start_phrase": "(ii) Let  $S = 1",
+            "end_phrase": "S = \\frac{n}{2}[n + 1]$$"
           },
-          "display_text": "$$a_n = a + (n - 1)d; d = a_2 - a_1 = -\\frac{1}{2} - (-3) = -\\frac{1}{2} + 3 = \\frac{5}{2}\n\n\\begin{aligned}a_{11} &= -3 + (11 - 1) \\left[\\frac{5}{2}\\right] \\\\&= -3 + (10) \\left[\\frac{5}{2}\\right] \\\\&= -3 + 25 \\\\&\\Rightarrow a_{11} = 22\\end{aligned}$$",
-          "latex_content": "a_n = a + (n - 1)d; d = a_2 - a_1 = -\\frac{1}{2} - (-3) = -\\frac{1}{2} + 3 = \\frac{5}{2} \\ a_{11} = -3 + (11 - 1) [\\frac{5}{2}] = -3 + (10) [\\frac{5}{2}] = -3 + 25 \\Rightarrow a_{11} = 22",
+          "display_text": "The sum of the first n positive integers is given by the formula S = n(n+1)/2.",
+          "latex_content": "S = \\frac{n(n+1)}{2}",
           "image_id": null,
-          "answer_revealed": true
-        }
-      ],
-      "render_spec": {
-        "manim_scene_spec": "Animate the calculation for the 11th term. Show the AP and highlight `a=-3`. Calculate the common difference `d = -1/2 - (-3)`, showing the steps to get `5/2`. Bring in the formula `a_n = a + (n - 1)d`. Substitute the values: `a_11 = -3 + (11 - 1) * 5/2`. Animate the simplification: `-3 + (10) * 5/2`, then `-3 + 25`, and finally `22`. The result `22` is highlighted, and a checkmark appears next to option (B), confirming the correct answer with clean, engaging visuals.",
-        "video_prompts": []
-      }
-    },
-    {
-      "section_id": "section_4",
-      "section_type": "content",
-      "title": "Finding the Term Number",
-      "renderer": "manim",
-      "narration": {
-        "full_text": "Next question! We have an AP: 3, 8, 13, 18 and so on. We need to find out which term in this sequence is the number 78. This is like searching for a specific house in a colony where you know the first house number is 3 and every next house number increases by 5. Let's find out how far down the lane this house is! Here, 'a' is 3, 'd' is 5, and the term we are looking for, 'a_n', is 78. We need to find 'n'. Let's set up our equation and solve it.",
-        "segments": [
-          {
-            "segment_id": "seg_15",
-            "text": "Next question! We have an AP: 3, 8, 13, 18 and so on. We need to find out which term in this sequence is the number 78. This is like searching for a specific house in a colony where you know the first house number is 3 and every next house number increases by 5. Let's find out how far down the lane this house is!",
-            "purpose": "introduce",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_16",
-            "text": "Here, 'a' is 3, 'd' is 5, and the term we are looking for, 'a_n', is 78. We need to find 'n'. Let's set up our equation and solve it.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          }
-        ]
-      },
-      "visual_beats": [
+          "answer_revealed": false
+        },
         {
           "beat_id": "beat_15",
           "segment_id": "seg_15",
           "visual_type": "text",
           "markdown_pointer": {
-            "start_phrase": "4. Which term of the AP 3,",
-            "end_phrase": "13, 18 ... is 78 ?"
+            "start_phrase": "Example 15: Find the sum of",
+            "end_phrase": "given by  $a_n = 3 + 2n$ ."
           },
-          "display_text": "4. Which term of the AP 3, 8, 13, 18 ... is 78 ?",
+          "display_text": "Example 15: Find the sum of first 24 terms of the list of numbers whose nth term is given by a_n = 3 + 2n.",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
@@ -414,70 +412,23 @@
           "segment_id": "seg_16",
           "visual_type": "equation",
           "markdown_pointer": {
-            "start_phrase": "$$\\begin{aligned}\\text{Solution: } a_n &= a + (n - 1)d",
-            "end_phrase": "\\Rightarrow n = 16\\end{aligned}$$"
+            "start_phrase": "There for AP is : 5,",
+            "end_phrase": "S = 672$$"
           },
-          "display_text": "$$\\begin{aligned}\\text{Solution: } a_n &= a + (n - 1)d \\\\d &= 5; a = 3; a_n = 78; n = ? \\\\78 &= 3 + (n - 1)5 \\\\&= 3 + 5n - 5 \\\\&\\Rightarrow 78 = 5n - 2 \\\\&\\Rightarrow 5n = 78 + 2 \\\\&\\Rightarrow 5n = 80 \\\\&\\Rightarrow n = 16\\end{aligned}$$",
-          "latex_content": "\\text{Solution: } a_n = a + (n - 1)d \\ d = 5; a = 3; a_n = 78; n = ? \\ 78 = 3 + (n - 1)5 = 3 + 5n - 5 \\Rightarrow 78 = 5n - 2 \\Rightarrow 5n = 78 + 2 \\Rightarrow 5n = 80 \\Rightarrow n = 16",
+          "display_text": "AP is: 5, 7, 9,... with a=5, d=2, n=24. The sum S = 672.",
+          "latex_content": null,
           "image_id": null,
           "answer_revealed": false
-        }
-      ],
-      "render_spec": {
-        "manim_scene_spec": "Visually represent the AP 3, 8, 13, 18... as a series of numbered blocks extending into the distance. The number 78 appears on the side with a question mark. Bring up the formula `a_n = a + (n-1)d`. Show `a=3`, `d=5`, and `a_n=78` being substituted into the formula: `78 = 3 + (n-1)5`. Animate the algebraic solution with clear, step-by-step transformations: `78 = 3 + 5n - 5`, which simplifies to `78 = 5n - 2`. Then `80 = 5n`, and finally `n = 16`. The animation concludes by showing that the 16th block in the sequence has the number 78, which lights up.",
-        "video_prompts": []
-      }
-    },
-    {
-      "section_id": "section_5",
-      "section_type": "content",
-      "title": "Finding the Number of Terms",
-      "renderer": "manim",
-      "narration": {
-        "full_text": "In this problem, we need to find the total number of terms in a couple of finite APs. For the first AP, it starts at 7 and ends at 205. We can see the common difference is 6. We use our formula to find 'n'. For the second AP, starting at 18 and ending at -47, the common difference is a fraction, minus 5 by 2. The process is exactly the same, just with a bit more care for the calculations.",
-        "segments": [
-          {
-            "segment_id": "seg_17",
-            "text": "In this problem, we need to find the total number of terms in a couple of finite APs.",
-            "purpose": "introduce",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_18",
-            "text": "For the first AP, it starts at 7 and ends at 205. We can see the common difference is 6. We use our formula to find 'n'.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_19",
-            "text": "For the second AP, starting at 18 and ending at -47, the common difference is a fraction, minus 5 by 2. The process is exactly the same, just with a bit more care for the calculations.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          }
-        ]
-      },
-      "visual_beats": [
+        },
         {
           "beat_id": "beat_17",
           "segment_id": "seg_17",
           "visual_type": "text",
           "markdown_pointer": {
-            "start_phrase": "5. Find the number of terms in",
-            "end_phrase": "13 ___ -4"
+            "start_phrase": "Example 16: A manufacturer of TV",
+            "end_phrase": "number every year, find"
           },
-          "display_text": "5. Find the number of terms in each of the following APs :\n\ni) 7, 13, 19 ___ 205\n\n(ii) 18, 15  $\\frac{1}{2}$\n\n13 ___ -4",
+          "display_text": "Example 16: A manufacturer of TV sets produced 600 sets in the third year and 700 sets in the seventh year. Assuming that the production increases uniformly by a fixed number every year, find the production details.",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
@@ -487,11 +438,11 @@
           "segment_id": "seg_18",
           "visual_type": "equation",
           "markdown_pointer": {
-            "start_phrase": "i) 7, 13, 19 ..... 205",
-            "end_phrase": "$$\\Rightarrow \\mathbf{n = 34}$$"
+            "start_phrase": "a_3 = 600, a_7 = 700,$$",
+            "end_phrase": "d = 25 \\text{ and } a = 550$$"
           },
-          "display_text": "i) 7, 13, 19 ..... 205\n\n205\n\n$$a_n = a + (n - 1)d$$\n\n$$d = 6; a = 7; a_n = 205; n = ?$$\n\n$$205 = 7 + (n - 1)6$$\n\n$$205 = 7 + 6n - 6$$\n\n$$205 = 6n + 1$$\n\n$$6n = 205 - 1$$\n\n$$6n = 204$$\n\n$$\\Rightarrow n = \\frac{204}{6}$$\n\n$$\\Rightarrow \\mathbf{n = 34}$$",
-          "latex_content": "a_n = a + (n - 1)d \\ d = 6; a = 7; a_n = 205; n = ? \\ 205 = 7 + (n - 1)6 \\ 205 = 7 + 6n - 6 \\ 205 = 6n + 1 \\ 6n = 204 \\ n = 34",
+          "display_text": "From a_3=600 and a_7=700, we solve the equations to find d=25 and a=550.",
+          "latex_content": null,
           "image_id": null,
           "answer_revealed": false
         },
@@ -500,619 +451,30 @@
           "segment_id": "seg_19",
           "visual_type": "equation",
           "markdown_pointer": {
-            "start_phrase": "$$\\text{(ii) } 18, 15\\frac{1}{2}, 13, \\dots, -47$$",
-            "end_phrase": "$$\\Rightarrow n = 27$$"
+            "start_phrase": "(ii) Production of TV sets in",
+            "end_phrase": "a_{10} = 550 + 9 \\times 25 = 550 + 225 = 775$$"
           },
-          "display_text": "$$\\text{(ii) } 18, 15\\frac{1}{2}, 13, \\dots, -47$$\n\n$$a_n = a + (n - 1)d$$\n\n$$d = -\\frac{5}{2}; a = 18; a_n = -47; n = ?$$\n\n$$-47 = 18 + (n - 1) \\left[ -\\frac{5}{2} \\right]$$\n\n$$-47 = 18 - \\frac{5}{2}n + \\frac{5}{2} = \\frac{36 - 5n + 5}{2}$$\n\n$$\\Rightarrow -47 = \\frac{41 - 5n}{2}$$\n\n$$\\Rightarrow -94 = 41 - 5n$$\n\n$$-5n = -94 - 41 = -135$$\n\n$$\\Rightarrow n = 27$$",
-          "latex_content": "d = -\\frac{5}{2}; a = 18; a_n = -47; n = ? \\ -47 = 18 + (n - 1) [ -\\frac{5}{2} ] \\ -47 = \\frac{36 - 5n + 5}{2} \\ -94 = 41 - 5n \\ -5n = -135 \\ n = 27",
+          "display_text": "Production in the 10th year: a_10 = 550 + 9 * 25 = 775",
+          "latex_content": null,
           "image_id": null,
           "answer_revealed": false
-        }
-      ],
-      "render_spec": {
-        "manim_scene_spec": "Create a split-screen animation. On the left, solve problem (i). Show the AP 7, 13, 19...205. The values `a=7`, `l=205`, `d=6` are extracted. The equation `205 = 7 + (n-1)6` is formed and solved, with each algebraic step animated, leading to `n=34`. On the right, solve problem (ii). Show the AP 18, 15.5, 13...-47. Extract `a=18`, `l=-47`, `d=-2.5`. Form the equation `-47 = 18 + (n-1)(-2.5)`. Animate the careful solution, showing multiplication by 2 to clear the fraction, leading to `-94 = 41 - 5n`, and finally `n=27`. Both final answers should be highlighted.",
-        "video_prompts": []
-      }
-    },
-    {
-      "section_id": "section_6",
-      "section_type": "content",
-      "title": "Checking for a Term in an AP",
-      "renderer": "manim",
-      "narration": {
-        "full_text": "Here's an interesting one. We need to check if -150 is a term of the AP 11, 8, 5, 2, and so on. We'll assume it is a term, and try to find its position 'n'. If we get a positive whole number for 'n', then it is a term. If not, it can't be. Just like you can't have half a person in a queue for a Diwali sale, 'n' must be a whole number for a term to exist at that position. And as you can see, we get a fraction. So, -150 is not a term in this AP.",
-        "segments": [
-          {
-            "segment_id": "seg_20",
-            "text": "Here's an interesting one. We need to check if -150 is a term of the AP 11, 8, 5, 2, and so on. We'll assume it is a term, and try to find its position 'n'.",
-            "purpose": "introduce",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_21",
-            "text": "If we get a positive whole number for 'n', then it is a term. If not, it can't be. Just like you can't have half a person in a queue for a Diwali sale, 'n' must be a whole number for a term to exist at that position.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_22",
-            "text": "And as you can see, we get a fraction. So, -150 is not a term in this AP.",
-            "purpose": "conclude",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          }
-        ]
-      },
-      "visual_beats": [
+        },
         {
           "beat_id": "beat_20",
           "segment_id": "seg_20",
-          "visual_type": "text",
-          "markdown_pointer": {
-            "start_phrase": "6. Check whether **-150** is a term",
-            "end_phrase": "AP: 11, 8, 5, 2 ..."
-          },
-          "display_text": "6. Check whether **-150** is a term of the AP: 11, 8, 5, 2 ...",
-          "latex_content": null,
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_21",
-          "segment_id": "seg_21",
           "visual_type": "equation",
           "markdown_pointer": {
-            "start_phrase": "$$\\text{Solution: } a_n = a + (n - 1)d$$",
-            "end_phrase": "$$n = \\frac{164}{3}$$"
+            "start_phrase": "(iii) The total production of TV",
+            "end_phrase": "S &= 4375\\end{aligned}$$"
           },
-          "display_text": "$$\\text{Solution: } a_n = a + (n - 1)d$$\n\n$$d = a_2 - a_1 = -3; a = 11; a_n = 150; n = ?$$\n\n$$-150 = 11 + (n - 1)(-3)$$\n\n$$-150 = 11 - 3n + 3$$\n\n$$-150 = 14 - 3n$$\n\n$$-3n = -150 - 14 = -164$$\n\n$$n = \\frac{164}{3}$$",
-          "latex_content": "a_n = a + (n - 1)d \\ d = a_2 - a_1 = -3; a = 11; a_n = 150; n = ? \\ -150 = 11 + (n - 1)(-3) \\ -150 = 11 - 3n + 3 \\ -150 = 14 - 3n \\ -3n = -150 - 14 = -164 \\ n = \\frac{164}{3}",
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_22",
-          "segment_id": "seg_22",
-          "visual_type": "text",
-          "markdown_pointer": {
-            "start_phrase": "'n' is not an integer. So, **-150**",
-            "end_phrase": "AP: 11, 8, 5, 2, ..."
-          },
-          "display_text": "'n' is not an integer. So, **-150** is not a term of the AP: 11, 8, 5, 2, ...",
+          "display_text": "Total production in first 7 years: S_7 = 7/2 [2*550 + (7-1)25] = 4375",
           "latex_content": null,
           "image_id": null,
           "answer_revealed": false
         }
       ],
       "render_spec": {
-        "manim_scene_spec": "Animate the process of checking if -150 is a term. Show the AP 11, 8, 5, 2... and extract `a=11`, `d=-3`. Set up the equation `-150 = 11 + (n-1)(-3)`. Solve for `n` step-by-step: `-161 = (n-1)(-3)`, then `-164 = -3n`, leading to `n = 164/3`. As the fractional result appears, show a large red 'X' over it and display the text 'n must be a positive integer'. Conclude by showing the number -150 being crossed out from a hypothetical list of the AP's terms, visually confirming it doesn't belong.",
-        "video_prompts": []
-      }
-    },
-    {
-      "section_id": "section_7",
-      "section_type": "content",
-      "title": "Finding a Term from Other Terms",
-      "renderer": "manim",
-      "narration": {
-        "full_text": "In this problem, we need to find the 31st term, but we don't know 'a' or 'd' directly. Instead, we are given the 11th and 16th terms. This gives us two linear equations with two variables, 'a' and 'd'. We can solve them simultaneously. First, we subtract one equation from the other to find 'd'. Once we have 'd', we substitute it back into one of the original equations to find 'a'. With 'a' and 'd' in hand, finding the 31st term is straightforward. Alternatively, there is a faster way using this nifty formula for 'd'. Then we can use another formula to find any term using a known term. Both methods give the same answer, 178.",
-        "segments": [
-          {
-            "segment_id": "seg_23",
-            "text": "In this problem, we need to find the 31st term, but we don't know 'a' or 'd' directly. Instead, we are given the 11th and 16th terms. This gives us two linear equations with two variables, 'a' and 'd'.",
-            "purpose": "introduce",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_24",
-            "text": "We can solve them simultaneously. First, we subtract one equation from the other to find 'd'. Once we have 'd', we substitute it back into one of the original equations to find 'a'.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_25",
-            "text": "With 'a' and 'd' in hand, finding the 31st term is straightforward.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_26",
-            "text": "Alternatively, there is a faster way using this nifty formula for 'd'. Then we can use another formula to find any term using a known term. Both methods give the same answer, 178.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          }
-        ]
-      },
-      "visual_beats": [
-        {
-          "beat_id": "beat_23",
-          "segment_id": "seg_23",
-          "visual_type": "text",
-          "markdown_pointer": {
-            "start_phrase": "7. Find the 31st term of an",
-            "end_phrase": "the 16th term is 73."
-          },
-          "display_text": "7. Find the 31st term of an AP whose 11th term is 38 and the 16th term is 73.",
-          "latex_content": null,
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_24",
-          "segment_id": "seg_24",
-          "visual_type": "equation",
-          "markdown_pointer": {
-            "start_phrase": "$$\\text{Solution: } a_n = a + (n - 1)d$$",
-            "end_phrase": "$$\\Rightarrow a = -32$$"
-          },
-          "display_text": "$$\\text{Solution: } a_n = a + (n - 1)d...$$",
-          "latex_content": "a_n = a + (n - 1)d \\ a_{11} = 38, a_{16} = 73, a_{31} = ? \\ a + 10d = 38 \\ a + 15d = 73 \\ -5d = -35 \\ d=7 \\ a+70=38 \\ a=-32",
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_25",
-          "segment_id": "seg_25",
-          "visual_type": "equation",
-          "markdown_pointer": {
-            "start_phrase": "$$a_{31} = -32 + (31 - 1)7$$",
-            "end_phrase": "$$\\mathbf{a_{31} = 178}$$"
-          },
-          "display_text": "$$a_{31} = -32 + (31 - 1)7 \\dots \\mathbf{a_{31} = 178}$$",
-          "latex_content": "a_{31} = -32 + (31 - 1)7 = -32 + (30)7 = -32 + 210 = 178",
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_26",
-          "segment_id": "seg_26",
-          "visual_type": "equation",
-          "markdown_pointer": {
-            "start_phrase": "### **Alternate Method:**",
-            "end_phrase": "$$= 178$$"
-          },
-          "display_text": "### **Alternate Method:**\n\n$$d = \\frac{a_p - a_q}{p - q} \\dots = 178$$",
-          "latex_content": "d = \\frac{a_p - a_q}{p - q} = \\frac{73 - 38}{16 - 11} = 7 \\ a_n = a_p + (n - p)d \\ a_{31} = a_{16} + (31 - 16)7 = 73 + 105 = 178",
-          "image_id": null,
-          "answer_revealed": false
-        }
-      ],
-      "render_spec": {
-        "manim_scene_spec": "Visually represent the problem as two equations: `a + 10d = 38` and `a + 15d = 73`. Animate these two equations aligning vertically. Show the subtraction process, with the 'a' terms canceling out, leading to `5d = 35` and then `d = 7`. Animate this value of `d` being substituted back into the first equation: `a + 10(7) = 38`, which solves to `a = -32`. Finally, use `a` and `d` in the main formula `a_31 = -32 + (31-1)7` to calculate the final answer, 178. Then, transition to the alternate method, showing the shortcut formulas and how they quickly lead to the same result, highlighting the efficiency.",
-        "video_prompts": []
-      }
-    },
-    {
-      "section_id": "section_8",
-      "section_type": "content",
-      "title": "Finding a Term in a Finite AP",
-      "renderer": "manim",
-      "narration": {
-        "full_text": "This problem is similar to the last one. An AP has 50 terms. We know the 3rd term is 12 and the last term, which is the 50th term, is 106. We need to find the 29th term. Again, we set up two equations and solve for 'a' and 'd'. Then we find a_29. Or we can use the quick alternate method. Both roads lead to the same destination: 64.",
-        "segments": [
-          {
-            "segment_id": "seg_27",
-            "text": "This problem is similar to the last one. An AP has 50 terms. We know the 3rd term is 12 and the last term, which is the 50th term, is 106. We need to find the 29th term.",
-            "purpose": "introduce",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_28",
-            "text": "Again, we set up two equations and solve for 'a' and 'd'. Then we find a_29.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_29",
-            "text": "Or we can use the quick alternate method. Both roads lead to the same destination: 64.",
-            "purpose": "conclude",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          }
-        ]
-      },
-      "visual_beats": [
-        {
-          "beat_id": "beat_27",
-          "segment_id": "seg_27",
-          "visual_type": "text",
-          "markdown_pointer": {
-            "start_phrase": "8. An AP consists of 50 terms",
-            "end_phrase": "Find the 29th term. 50"
-          },
-          "display_text": "8. An AP consists of 50 terms of which 3rd term is 12 and the last term is 106. Find the 29th term. 50",
-          "latex_content": null,
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_28",
-          "segment_id": "seg_28",
-          "visual_type": "equation",
-          "markdown_pointer": {
-            "start_phrase": "$$a + (n - 1)d = a_n$$",
-            "end_phrase": "$$a_{29} = 64$$"
-          },
-          "display_text": "$$a + (n - 1)d = a_n \\dots a_{29} = 64$$",
-          "latex_content": "n = 50, a_3 = 12, a_{50} = 106 \\ a + 49d = 106 \\ a + 2d = 12 \\ 47d = 94 \\ d=2 \\ a+4=12 \\ a=8 \\ a_{29} = 8 + (28)2 = 64",
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_29",
-          "segment_id": "seg_29",
-          "visual_type": "equation",
-          "markdown_pointer": {
-            "start_phrase": "### **Alternate Method:**",
-            "end_phrase": "$$a_{29} = 64$$"
-          },
-          "display_text": "### **Alternate Method:**\n\n$$d = \\frac{a_p - a_q}{p - q}; a_p = a_{50}; a_q = a_3 \\dots a_{29} = 64$$",
-          "latex_content": "d = \\frac{a_{50} - a_3}{50 - 3} = \\frac{106 - 12}{47} = 2 \\ a_{29} = a_3 + (29 - 3)2 = 12 + 52 = 64",
-          "image_id": null,
-          "answer_revealed": false
-        }
-      ],
-      "render_spec": {
-        "manim_scene_spec": "Animate the two key pieces of information: `a_3 = 12` and `a_50 = 106`. Transform these into their formula representations: `a + 2d = 12` and `a + 49d = 106`. Show the subtraction of these equations, visually cancelling out 'a' and solving `47d = 94` to get `d=2`. Substitute `d=2` back into `a + 2d = 12` to find `a=8`. With `a` and `d` known, animate the final calculation `a_29 = 8 + (29-1)2`, which elegantly simplifies to 64. A box highlights the final answer.",
-        "video_prompts": []
-      }
-    },
-    {
-      "section_id": "section_9",
-      "section_type": "content",
-      "title": "Finding the Zero Term",
-      "renderer": "manim",
-      "narration": {
-        "full_text": "If the 3rd and 9th terms of an AP are 4 and -8, which term is zero? This is a great question. We follow the same process: create two equations to find 'a' and 'd'. Then, we set our nth term formula, a_n, equal to zero and solve for 'n'. As you can see, 'n' comes out to be 5. So, the 5th term of this AP is zero. The alternate method also works perfectly here to find 'a' and 'd' first.",
-        "segments": [
-          {
-            "segment_id": "seg_30",
-            "text": "If the 3rd and 9th terms of an AP are 4 and -8, which term is zero? This is a great question. We follow the same process: create two equations to find 'a' and 'd'.",
-            "purpose": "introduce",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_31",
-            "text": "Then, we set our nth term formula, a_n, equal to zero and solve for 'n'. As you can see, 'n' comes out to be 5. So, the 5th term of this AP is zero.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_32",
-            "text": "The alternate method also works perfectly here to find 'a' and 'd' first.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          }
-        ]
-      },
-      "visual_beats": [
-        {
-          "beat_id": "beat_30",
-          "segment_id": "seg_30",
-          "visual_type": "text",
-          "markdown_pointer": {
-            "start_phrase": "9. If the 3rd and the 9th",
-            "end_phrase": "this AP is zero?"
-          },
-          "display_text": "9. If the 3rd and the 9th terms of an AP are 4 and -8 respectively, which term of this AP is zero?",
-          "latex_content": null,
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_31",
-          "segment_id": "seg_31",
-          "visual_type": "equation",
-          "markdown_pointer": {
-            "start_phrase": "Solution:  $a_3 = 4, a_9 = -8$",
-            "end_phrase": "So, the 5<sup>th</sup> term is 0"
-          },
-          "display_text": "Solution:  $a_3 = 4, a_9 = -8 \\dots n=5$. So, the 5th term is 0",
-          "latex_content": "a_3 = 4, a_9 = -8 \\ a+2d=4 \\ a+8d=-8 \\ 6d=-12 \\ d=-2 \\ a=8 \\ 0 = 8 + (n-1)(-2) \\ 2n=10 \\ n=5",
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_32",
-          "segment_id": "seg_32",
-          "visual_type": "equation",
-          "markdown_pointer": {
-            "start_phrase": "### Alternate method:",
-            "end_phrase": "$$a = -8 + 16 = 8$$"
-          },
-          "display_text": "### Alternate method:\n\n$$d = \\frac{a_p - a_q}{p - q} \\dots a = -8 + 16 = 8$$",
-          "latex_content": "d = \\frac{a_9 - a_3}{9 - 3} = \\frac{-8 - 4}{6} = -2 \\ a = a_9 - (9 - 1)(-2) = -8 - (8)(-2) = -8 + 16 = 8",
-          "image_id": null,
-          "answer_revealed": false
-        }
-      ],
-      "render_spec": {
-        "manim_scene_spec": "Animate the two equations `a + 2d = 4` and `a + 8d = -8` being solved simultaneously to find `d = -2` and `a = 8`. Then, write the AP: 8, 6, 4, 2, 0, -2... to visually show the progression. Focus on the equation `a_n = 0`. Substitute the known values: `0 = 8 + (n-1)(-2)`. Animate the solving process: `0 = 8 - 2n + 2`, `2n = 10`, `n = 5`. As the answer `n=5` appears, highlight the 5th term '0' in the visualized AP sequence.",
-        "video_prompts": []
-      }
-    },
-    {
-      "section_id": "section_10",
-      "section_type": "content",
-      "title": "Finding the Common Difference",
-      "renderer": "manim",
-      "narration": {
-        "full_text": "This is a very straightforward problem. The 17th term of an AP is 7 more than its 10th term. We just write this out as an equation: a_17 - a_10 = 7. When we substitute the formulas for a_17 and a_10, the 'a' terms cancel out beautifully, leaving a simple equation to find 'd'. And the common difference is 1.",
-        "segments": [
-          {
-            "segment_id": "seg_33",
-            "text": "This is a very straightforward problem. The 17th term of an AP is 7 more than its 10th term. We just write this out as an equation: a_17 - a_10 = 7.",
-            "purpose": "introduce",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_34",
-            "text": "When we substitute the formulas for a_17 and a_10, the 'a' terms cancel out beautifully, leaving a simple equation to find 'd'. And the common difference is 1.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          }
-        ]
-      },
-      "visual_beats": [
-        {
-          "beat_id": "beat_33",
-          "segment_id": "seg_33",
-          "visual_type": "text",
-          "markdown_pointer": {
-            "start_phrase": "10. The 17<sup>th</sup> term of an AP",
-            "end_phrase": "Find the common difference."
-          },
-          "display_text": "10. The 17th term of an AP exceeds its 10th term by 7. Find the common difference.",
-          "latex_content": null,
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_34",
-          "segment_id": "seg_34",
-          "visual_type": "equation",
-          "markdown_pointer": {
-            "start_phrase": "Solution:",
-            "end_phrase": "$$d = 1$$"
-          },
-          "display_text": "Solution:\n\n$$a_n = a + (n - 1)d... d=1$$",
-          "latex_content": "a_{17} = a + 16d \\ a_{10} = a + 9d \\ a_{17} - a_{10} = 7 \\ (a + 16d) - (a + 9d) = 7 \\ 7d = 7 \\ d = 1",
-          "image_id": null,
-          "answer_revealed": false
-        }
-      ],
-      "render_spec": {
-        "manim_scene_spec": "Display the core statement `a_17 - a_10 = 7`. Below this, show the expansion `(a + 16d) - (a + 9d) = 7`. Animate the brackets fading away. Then, show the `a` and `-a` terms highlighting in red and cancelling each other out with a flash. The equation simplifies to `16d - 9d = 7`. The terms `16d` and `-9d` merge to form `7d`. The final equation `7d = 7` solves to `d = 1`, which is displayed prominently. The animation should be quick and satisfying, emphasizing the cancellation.",
-        "video_prompts": []
-      }
-    },
-    {
-      "section_id": "section_11",
-      "section_type": "content",
-      "title": "Advanced Term Finding",
-      "renderer": "manim",
-      "narration": {
-        "full_text": "This question is a bit of a puzzle! Which term of the AP 3, 15, 27, 39... is 132 more than its 54th term? First, we need to find the 54th term. With a=3 and d=12, we calculate a_54 to be 639. Then, we add 132 to this value, which gives us 771. Now, our problem reduces to finding which term 'n' has the value 771. We solve for 'n' and find it is the 65th term. The 'Or' method shows a clever shortcut to get there in fewer steps!",
-        "segments": [
-          {
-            "segment_id": "seg_35",
-            "text": "This question is a bit of a puzzle! Which term of the AP 3, 15, 27, 39... is 132 more than its 54th term? First, we need to find the 54th term.",
-            "purpose": "introduce",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_36",
-            "text": "With a=3 and d=12, we calculate a_54 to be 639. Then, we add 132 to this value, which gives us 771. Now, our problem reduces to finding which term 'n' has the value 771.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_37",
-            "text": "We solve for 'n' and find it is the 65th term. The 'Or' method shows a clever shortcut to get there in fewer steps!",
-            "purpose": "conclude",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          }
-        ]
-      },
-      "visual_beats": [
-        {
-          "beat_id": "beat_35",
-          "segment_id": "seg_35",
-          "visual_type": "text",
-          "markdown_pointer": {
-            "start_phrase": "11. Which term of the AP: 3,",
-            "end_phrase": "more than its 54<sup>th</sup> term?"
-          },
-          "display_text": "11. Which term of the AP: 3, 15, 27, 39, ... will be 132 more than its 54th term?",
-          "latex_content": null,
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_36",
-          "segment_id": "seg_36",
-          "visual_type": "equation",
-          "markdown_pointer": {
-            "start_phrase": "Solution: AP: 3, 15, 27, 39...",
-            "end_phrase": "than } 5^{\\text{th}} \\text{ term.}\\end{aligned}$$"
-          },
-          "display_text": "Solution: AP: 3, 15, 27, 39...\\begin{aligned}a_{54} &= 3 + 636 = 639 \\\\132 + 639 &= 771 \\\\ \\text{Now, } a_n &= 771. \\\\a_n &= a + (n - 1)d \\\\771 &= 3 + (n - 1)12 \\\\768 &= (n - 1)12 \\\\(n - 1) &= 64 \\\\n &= 65 \\\\ \\therefore 65^{\\text{th}} \\text{ term is } 132 \\text{ more than } 5^{\\text{th}} \\text{ term.}\\end{aligned}",
-          "latex_content": "a = 3, d = 12 \\ a_{54} = 3 + (53)(12) = 639 \\ 132 + 639 = 771 \\ a_n = 771 \\ 771 = 3 + (n-1)12 \\ 768 = (n-1)12 \\ n-1 = 64 \\ n=65",
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_37",
-          "segment_id": "seg_37",
-          "visual_type": "equation",
-          "markdown_pointer": {
-            "start_phrase": "Or",
-            "end_phrase": "65^{\\text{th}} \\text{ term.}\\end{aligned}$$"
-          },
-          "display_text": "Or\n\n$n^{\\text{th}}$  term is 132 more than  $54^{\\text{th}}$  term.\n\n$$\\begin{aligned}n &= 54 + \\frac{132}{12} \\\\&= 54 + 11 = 65^{\\text{th}} \\text{ term.}\\end{aligned}$$",
-          "latex_content": "n = 54 + \\frac{132}{12} = 54 + 11 = 65",
-          "image_id": null,
-          "answer_revealed": false
-        }
-      ],
-      "render_spec": {
-        "manim_scene_spec": "This animation has two parts. First, calculate `a_54`. Show `a=3, d=12` and plug into `a_54 = 3 + (53)12`, solving to get 639. Second, show `639 + 132 = 771`. Now, the main problem: `771 = 3 + (n-1)12`. Elegantly animate the steps: `768 = (n-1)12`, `64 = n-1`, and `n=65`. For the 'Or' part, show the equation `a_n - a_54 = 132`. Expand it to `(a + (n-1)d) - (a + 53d) = 132`. The 'a's cancel, leaving `(n-1-53)d = 132`. Substitute `d=12` to get `(n-54)12 = 132`, then `n-54=11`, and `n=65`.",
-        "video_prompts": []
-      }
-    },
-    {
-      "section_id": "section_12",
-      "section_type": "content",
-      "title": "Comparing Two APs",
-      "renderer": "manim",
-      "narration": {
-        "full_text": "Here is a fascinating concept. We have two different APs, but they share the same common difference, 'd'. Imagine two different local trains in Mumbai, one starting from Churchgate and another from CST. They start at different 'first terms', but the time between their stops, the 'common difference', is the same. The problem says the difference between their 100th terms is 100. What is the difference between their 1000th terms? Let's write it out. For the first AP, the 100th term is a+99d. For the second, it's b+99d. Their difference is simply a-b, which is 100. Now look at the 1000th terms. It's a+999d and b+999d. The difference is again just a-b! So the answer is also 100.",
-        "segments": [
-          {
-            "segment_id": "seg_38",
-            "text": "Here is a fascinating concept. We have two different APs, but they share the same common difference, 'd'. Imagine two different local trains in Mumbai, one starting from Churchgate and another from CST. They start at different 'first terms', but the time between their stops, the 'common difference', is the same.",
-            "purpose": "introduce",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_39",
-            "text": "The problem says the difference between their 100th terms is 100. What is the difference between their 1000th terms? Let's write it out. For the first AP, the 100th term is a+99d. For the second, it's b+99d. Their difference is simply a-b, which is 100.",
-            "purpose": "explain",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          },
-          {
-            "segment_id": "seg_40",
-            "text": "Now look at the 1000th terms. It's a+999d and b+999d. The difference is again just a-b! So the answer is also 100.",
-            "purpose": "conclude",
-            "display_directives": {
-              "text_layer": "show",
-              "visual_layer": "show",
-              "avatar_layer": "show"
-            }
-          }
-        ]
-      },
-      "visual_beats": [
-        {
-          "beat_id": "beat_38",
-          "segment_id": "seg_38",
-          "visual_type": "text",
-          "markdown_pointer": {
-            "start_phrase": "12. Two APs have the same common",
-            "end_phrase": "between their 1000 th terms?"
-          },
-          "display_text": "12. Two APs have the same common difference. The difference between their **100** th terms is **100**, what is the difference between their 1000 th terms?",
-          "latex_content": null,
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_39",
-          "segment_id": "seg_39",
-          "visual_type": "equation",
-          "markdown_pointer": {
-            "start_phrase": "Solution: Let the first terms of",
-            "end_phrase": "$$a - b = 100$$"
-          },
-          "display_text": "Solution: Let the first terms of an AP's be a' and b' . Common difference - d... (a + 99d) - (b + 99d) = 100, a - b = 100",
-          "latex_content": "a_{100} = a + 99d \\ b_{100} = b + 99d \\ (a + 99d) - (b + 99d) = 100 \\ a-b=100",
-          "image_id": null,
-          "answer_revealed": false
-        },
-        {
-          "beat_id": "beat_40",
-          "segment_id": "seg_40",
-          "visual_type": "equation",
-          "markdown_pointer": {
-            "start_phrase": "The difference of 1000<sup>th</sup> terms is ?",
-            "end_phrase": "1000<sup>th</sup> terms is 100."
-          },
-          "display_text": "The difference of 1000th terms is ? (a + 999d) - (b + 999d) = a - b... So, the difference of 1000th terms is 100.",
-          "latex_content": "(a + 999d) - (b + 999d) = a - b = 100",
-          "image_id": null,
-          "answer_revealed": false
-        }
-      ],
-      "render_spec": {
-        "manim_scene_spec": "Create a split-screen animation. Left side: AP 1, Right side: AP 2. Show AP 1 starting with 'a' and AP 2 with 'b'. Both have common difference 'd'. Animate the equation for the 100th terms: `(a + 99d) - (b + 99d) = 100`. The `99d` terms should glow and cancel out, leaving `a - b = 100`, which gets boxed. Then, animate the equation for the 1000th terms: `(a + 999d) - (b + 999d) = ?`. Again, the `999d` terms cancel, leaving `a - b`. The boxed value `100` from the previous step flies in to replace `a-b`, revealing the answer is 100.",
+        "manim_scene_spec": "The scene starts with the title 'Sum of First n Terms of an AP'. The two main formulas, S = n/2[2a + (n-1)d] and S = n/2[a+l], appear below the title with clean, modern typography. For each example, the scene transitions to a new slate. For Example 11, the AP '8, 3, -2, ...' is shown. The values 'a=8', 'd=-5', and 'n=22' are extracted and colored. These values are then substituted into the first sum formula, with each substitution animated smoothly. The calculation unfolds step-by-step: 22/2 becomes 11, the bracketed expression is simplified, and the final multiplication reveals the answer -979, which glows briefly. For Example 12, the knowns 'S14=1050' and 'a=10' are displayed. The sum formula is written, and the values are plugged in. The animation shows the algebraic steps to isolate 'd', with terms moving across the equals sign and changing sign, ultimately showing 'd=10'. Then, the nth term formula appears, and the values for a20 are substituted to arrive at '200'. For Example 13, the animation shows the formula being populated and simplified into the quadratic equation n^2 - 17n + 52 = 0. The equation then visually splits into its factors, (n-13) and (n-4), which then solve to show the two possible answers for n. For Example 16, the two initial conditions 'a3=600' and 'a7=700' are presented as a system of linear equations. The animation shows one equation sliding under the other, followed by a subtraction operation that cancels 'a' and solves for 'd'. The value of 'd' is then substituted back to solve for 'a'. Finally, the calculated values for a10 and S7 are displayed clearly.",
         "video_prompts": []
       }
     }

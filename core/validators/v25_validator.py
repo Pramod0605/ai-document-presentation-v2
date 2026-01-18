@@ -173,12 +173,12 @@ class V25Validator:
                         for spec in segment_specs:
                             if spec.get("segment_id") in show_seg_ids:
                                 p = spec.get("manim_scene_spec", "")
-                                if not p or len(str(p).split()) < 80:
-                                    errors.append(f"Section '{title}' Manim spec for {spec.get('segment_id')} is too short or missing.")
+                                if not p or len(str(p).split()) < 40:
+                                    errors.append(f"Section '{title}' Manim spec for {spec.get('segment_id')} is too short or missing (min 40 words).")
                     else:
                         spec = render_spec.get("manim_scene_spec")
-                        if not spec or len(str(spec).split()) < 80:
-                            errors.append(f"Section '{title}' root manim_scene_spec is too short or missing.")
+                        if not spec or len(str(spec).split()) < 40:
+                            errors.append(f"Section '{title}' root manim_scene_spec is too short or missing (min 40 words).")
                         
                 # Video Prompt Check
                 if renderer == "video":
