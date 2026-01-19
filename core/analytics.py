@@ -55,9 +55,14 @@ class RendererMetrics:
     """Metrics for visual rendering."""
     manim_videos: int = 0
     wan_videos: int = 0
+    ltx_videos: int = 0  # V2.6: Added LTX tracking
     static_slides: int = 0
     total_render_time_seconds: float = 0.0
     failed_renders: int = 0
+    # V2.6: Beat video tracking
+    manim_beat_videos: int = 0
+    wan_beat_videos: int = 0
+    ltx_beat_videos: int = 0
     section_renders: List[Dict[str, Any]] = field(default_factory=list)
 
 @dataclass
@@ -124,6 +129,14 @@ class ValidationMetrics:
     manim_failed_count: int = 0
     wan_success_count: int = 0
     wan_failed_count: int = 0
+    ltx_success_count: int = 0  # V2.6: Added LTX tracking
+    ltx_failed_count: int = 0
+    
+    # Beat video sync validation (V2.6)
+    beat_videos_expected: int = 0
+    beat_videos_linked: int = 0
+    beat_videos_on_disk: int = 0
+    beat_sync_valid: bool = False
     
     # Avatar validation
     avatar_success_count: int = 0
@@ -347,16 +360,24 @@ class AnalyticsTracker:
         self,
         manim_videos: int = 0,
         wan_videos: int = 0,
+        ltx_videos: int = 0,
         static_slides: int = 0,
         render_time: float = 0.0,
-        failed_renders: int = 0
+        failed_renders: int = 0,
+        manim_beat_videos: int = 0,
+        wan_beat_videos: int = 0,
+        ltx_beat_videos: int = 0
     ) -> None:
         """Set visual rendering metrics."""
         self.analytics.renderer.manim_videos = manim_videos
         self.analytics.renderer.wan_videos = wan_videos
+        self.analytics.renderer.ltx_videos = ltx_videos
         self.analytics.renderer.static_slides = static_slides
         self.analytics.renderer.total_render_time_seconds = render_time
         self.analytics.renderer.failed_renders = failed_renders
+        self.analytics.renderer.manim_beat_videos = manim_beat_videos
+        self.analytics.renderer.wan_beat_videos = wan_beat_videos
+        self.analytics.renderer.ltx_beat_videos = ltx_beat_videos
 
     def add_render_detail(self, section_id: str, section_type: str, renderer: str, duration: float, status: str, metadata: Optional[Dict] = None, retry_action: Optional[str] = None) -> None:
         """Add detail for a single section render."""
@@ -455,8 +476,13 @@ class AnalyticsTracker:
         manim_failed: int = 0,
         wan_success: int = 0,
         wan_failed: int = 0,
+        ltx_success: int = 0,
+        ltx_failed: int = 0,
         avatar_success: int = 0,
-        avatar_failed: int = 0
+        avatar_failed: int = 0,
+        beat_videos_expected: int = 0,
+        beat_videos_linked: int = 0,
+        beat_videos_on_disk: int = 0
     ) -> None:
         """Set comprehensive validation metrics for the job.
         
@@ -528,6 +554,11 @@ class AnalyticsTracker:
         
         score = max(0, score)
         
+        # Beat sync validation
+        beat_sync_valid = (beat_videos_expected == beat_videos_linked == beat_videos_on_disk) if beat_videos_expected > 0 else True
+        if not beat_sync_valid:
+            issues.append(f"Beat video sync mismatch: expected={beat_videos_expected}, linked={beat_videos_linked}, on_disk={beat_videos_on_disk}")
+        
         self.analytics.validation = ValidationMetrics(
             has_intro=has_intro,
             has_summary=has_summary,
@@ -547,6 +578,12 @@ class AnalyticsTracker:
             manim_failed_count=manim_failed,
             wan_success_count=wan_success,
             wan_failed_count=wan_failed,
+            ltx_success_count=ltx_success,
+            ltx_failed_count=ltx_failed,
+            beat_videos_expected=beat_videos_expected,
+            beat_videos_linked=beat_videos_linked,
+            beat_videos_on_disk=beat_videos_on_disk,
+            beat_sync_valid=beat_sync_valid,
             avatar_success_count=avatar_success,
             avatar_failed_count=avatar_failed,
             avatar_success_rate=round(avatar_rate, 1),
@@ -674,7 +711,15 @@ class AnalyticsTracker:
                     "manim_success": self.analytics.validation.manim_success_count,
                     "manim_failed": self.analytics.validation.manim_failed_count,
                     "wan_success": self.analytics.validation.wan_success_count,
-                    "wan_failed": self.analytics.validation.wan_failed_count
+                    "wan_failed": self.analytics.validation.wan_failed_count,
+                    "ltx_success": self.analytics.validation.ltx_success_count,
+                    "ltx_failed": self.analytics.validation.ltx_failed_count
+                },
+                "beat_sync": {
+                    "expected": self.analytics.validation.beat_videos_expected,
+                    "linked": self.analytics.validation.beat_videos_linked,
+                    "on_disk": self.analytics.validation.beat_videos_on_disk,
+                    "valid": self.analytics.validation.beat_sync_valid
                 },
                 "avatar": {
                     "success": self.analytics.validation.avatar_success_count,

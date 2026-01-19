@@ -47,6 +47,50 @@ def validate_beat_segment_sync(
     return len(errors) == 0, errors
 
 
+def validate_manim_beat_videos(section: Dict) -> Tuple[bool, List[str]]:
+    """
+    V2.6: Validate that Manim sections have segment-level beat_videos.
+    
+    For Manim sections with segment_specs, each segment where visual_layer='show'
+    should have a beat_videos entry linking to the rendered video.
+    
+    Args:
+        section: Section object
+        
+    Returns:
+        Tuple of (is_valid, error_messages)
+    """
+    errors = []
+    
+    renderer = section.get("renderer", "")
+    if renderer != "manim":
+        return True, []  # Only applies to Manim
+    
+    render_spec = section.get("render_spec", {})
+    segment_specs = render_spec.get("segment_specs", [])
+    manim_specs = [s for s in segment_specs if s.get("renderer") == "manim"]
+    
+    if not manim_specs:
+        return True, []  # No per-segment specs, legacy mode
+    
+    segments = section.get("narration", {}).get("segments", [])
+    
+    for spec in manim_specs:
+        seg_id = spec.get("segment_id")
+        # Find matching narration segment
+        matched_seg = next((s for s in segments if s.get("segment_id") == seg_id), None)
+        
+        if not matched_seg:
+            errors.append(f"Manim spec for {seg_id}: No matching narration segment")
+            continue
+        
+        beat_videos = matched_seg.get("beat_videos", [])
+        if not beat_videos:
+            errors.append(f"Segment {seg_id}: Missing beat_videos link (Manim video not rendered?)")
+    
+    return len(errors) == 0, errors
+
+
 def validate_display_directives(segments: List[Dict]) -> Tuple[bool, List[str]]:
     """
     Validate that all segments have display_directives (post-merge).
@@ -131,6 +175,11 @@ def validate_section_sync(section: Dict) -> Tuple[bool, List[str]]:
         all_errors.extend(errors)
     
     valid, errors = validate_display_directives(segments)
+    if not valid:
+        all_errors.extend(errors)
+    
+    # V2.6: Validate Manim beat_videos linking
+    valid, errors = validate_manim_beat_videos(section)
     if not valid:
         all_errors.extend(errors)
     

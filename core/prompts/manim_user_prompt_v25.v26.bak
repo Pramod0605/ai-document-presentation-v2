@@ -33,7 +33,7 @@ class MainScene(Scene):
         self.play(FadeOut(*self.mobjects), run_time=0.5)
 
 === GENERATION CONSTRAINTS ===
-1. **Timing**: Handled automatically. Focus on visual content.
+1. **Timing**: `run_time` + `wait` MUST equal Segment Duration exactly.
 2. **Max Wait**: Single self.wait() MUST NOT exceed 5 seconds. Fill long segments with Indicate/Circumscribe.
 3. **Text Labels**: All text must remain horizontal. NEVER use .rotate() on Text objects.
 4. **Anti-Overlap**: Use `FadeOut(*self.mobjects)` at end of EVERY segment.

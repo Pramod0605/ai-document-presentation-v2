@@ -11,18 +11,22 @@ Write-Host "[DEPLOY] Connecting to $SERVER_IP (Retrying with SUDO)..." -Foregrou
 # 2. Construct the compound remote command
 #    Using sudo for the copy loop to overcome permission denied errors
 $REMOTE_CMD = "cd $PROJECT_DIR && " +
-              "echo '--- GIT PULL ---' && " +
-              "git pull origin main && " +
-              "echo '--- PROPAGATING PATCH (sudo) ---' && " +
-              "count=0; for dir in player/jobs/*/; do sudo cp player/player_v2.js `"`$dir`"`; ((count++)); done; echo `"Patched `$count job folders.`" && " +
-              "echo '--- RESTARTING DOCKER ---' && " +
-              "docker restart $CONTAINER_NAME"
+"echo '--- RESETTING LOCAL CHANGES ---' && " +
+"git reset --hard && " +
+"git clean -fd && " +
+"echo '--- GIT PULL ---' && " +
+"git pull origin main && " +
+"echo '--- PROPAGATING PATCH (sudo) ---' && " +
+"count=0; for dir in player/jobs/*/; do sudo cp player/player_v2.js `"`$dir`"`; ((count++)); done; echo `"Patched `$count job folders.`" && " +
+"echo '--- RESTARTING DOCKER ---' && " +
+"docker restart $CONTAINER_NAME"
 
 # 3. Execute SSH
 ssh $SERVER_USER@$SERVER_IP $REMOTE_CMD
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "[SUCCESS] Server updated and patched successfully." -ForegroundColor Green
-} else {
+}
+else {
     Write-Host "[ERROR] SSH Command Failed. Exit Code: $LASTEXITCODE" -ForegroundColor Red
 }

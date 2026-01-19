@@ -397,6 +397,61 @@
                         }
                     }
 
+                    // V2.6 MANIM BEAT VIDEO CHECK
+                    if (renderer === 'manim') {
+                        const segmentSpecs = (section.render_spec && section.render_spec.segment_specs) || [];
+                        const manimSpecs = segmentSpecs.filter(s => s.renderer === 'manim');
+
+                        if (manimSpecs.length > 0) {
+                            let linkedCount = 0;
+                            let diskCount = 0;
+                            let missingLinks = [];
+                            let missingDisk = [];
+
+                            for (let i = 0; i < manimSpecs.length; i++) {
+                                const spec = manimSpecs[i];
+                                const segId = spec.segment_id;
+                                const beatFileName = `topic_${section.section_id}_beat_${i}.mp4`;
+
+                                // Check disk
+                                const diskCheck = await checkUrl(beatFileName, 'video');
+                                if (diskCheck.valid) {
+                                    diskCount++;
+                                } else {
+                                    missingDisk.push(beatFileName);
+                                }
+
+                                // Check linking in segments
+                                const matchingSeg = section.narration.segments.find(s => s.segment_id === segId);
+                                if (matchingSeg && matchingSeg.beat_videos && matchingSeg.beat_videos.length > 0) {
+                                    linkedCount++;
+                                } else {
+                                    missingLinks.push(segId);
+                                }
+                            }
+
+                            const allGood = diskCount === manimSpecs.length && linkedCount === manimSpecs.length;
+                            logicHtml = `<span class="${allGood ? 'pass' : 'fail'}">${allGood ? 'PASS' : 'FAIL'} (Manim V2.6)</span>`;
+                            logicHtml += `<br>Specs: ${manimSpecs.length}, Disk: ${diskCount}, Linked: ${linkedCount}`;
+
+                            if (missingDisk.length > 0) {
+                                logicHtml += `<br><span class="fail" style="font-size:10px">Missing on Disk: ${missingDisk.slice(0, 2).join(', ')}${missingDisk.length > 2 ? '...' : ''}</span>`;
+                            }
+                            if (missingLinks.length > 0) {
+                                logicHtml += `<br><span class="fail" style="font-size:10px">Unlinked Segs: ${missingLinks.slice(0, 2).join(', ')}${missingLinks.length > 2 ? '...' : ''}</span>`;
+                            }
+                        } else {
+                            // Legacy Manim (monolithic)
+                            const vid = section.video_path;
+                            if (vid) {
+                                const check = await checkUrl(vid, 'video');
+                                logicHtml = `<span class="${check.valid ? 'pass' : 'fail'}">${check.valid ? 'PASS' : 'FAIL'} (Legacy Manim)</span>`;
+                            } else {
+                                logicHtml = `<span class="warn">WARN (No Video Path)</span>`;
+                            }
+                        }
+                    }
+
                     // Global WAN 15s Check
                     if (renderer === 'video' || renderer === 'wan') {
                         const segments = section.narration.segments || [];

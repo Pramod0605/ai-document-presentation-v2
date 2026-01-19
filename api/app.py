@@ -809,17 +809,26 @@ def retry_phase(job_id):
 
 
 def _retry_manim_codegen(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
-    """Retry Manim code generation for specific sections."""
+    """Retry Manim code generation for specific sections.
+    
+    V2.6 FIX: After regenerating code, this function now:
+    1. Deletes existing .mp4 files for the section
+    2. Calls _retry_manim_render to generate new videos with the new code
+    """
     from core.agents.manim_code_generator import ManimCodeGenerator, build_manim_section_data, integrate_manim_code_into_section
+    import glob
     
     manim_generator = ManimCodeGenerator()
     results = {"success": [], "failed": [], "skipped": []}
+    sections_to_render = []  # V2.6: Track sections that need re-rendering
     
     failed_sections_path = job_folder / "manim_failed_sections.json"
     if failed_sections_path.exists() and section_ids is None:
         with open(failed_sections_path, 'r') as f:
             failed_data = json.load(f)
         section_ids = [s["section_id"] for s in failed_data.get("sections", [])]
+    
+    videos_dir = job_folder / "videos"
     
     for section in presentation.get("sections", []):
         section_id = section.get("section_id")
@@ -864,6 +873,21 @@ def _retry_manim_codegen(job_id: str, job_folder: Path, presentation: dict, sect
                 section = integrate_manim_code_into_section(section, manim_code)
                 results["success"].append({"section_id": section_id, "code_length": len(manim_code)})
                 print(f"[RETRY] Manim code regenerated for section {section_id}: {len(manim_code)} chars")
+                
+                # V2.6 FIX: Delete old video files for this section
+                if videos_dir.exists():
+                    # Use set to avoid duplicate deletion attempts
+                    old_videos = set(videos_dir.glob(f"topic_{section_id}_*.mp4"))
+                    for old_video in old_videos:
+                        print(f"[RETRY] Deleting old video: {old_video.name}")
+                        try:
+                            old_video.unlink()
+                        except FileNotFoundError:
+                            pass  # Already deleted, ignore
+
+                
+                # Mark this section for re-rendering
+                sections_to_render.append(section_id)
             else:
                 results["failed"].append({"section_id": section_id, "errors": validation_errors})
                 print(f"[RETRY] Manim code regeneration failed for section {section_id}")
@@ -873,6 +897,12 @@ def _retry_manim_codegen(job_id: str, job_folder: Path, presentation: dict, sect
     
     if failed_sections_path.exists() and results["success"]:
         failed_sections_path.unlink()
+    
+    # V2.6 FIX: Automatically trigger Manim render for sections with new code
+    if sections_to_render:
+        print(f"[RETRY] Triggering Manim render for sections: {sections_to_render}")
+        render_results = _retry_manim_render(job_id, job_folder, presentation, sections_to_render)
+        results["render_results"] = render_results
     
     return results
 

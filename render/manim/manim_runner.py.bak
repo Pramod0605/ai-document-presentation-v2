@@ -119,22 +119,22 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
     # v1.5/V2.5 MODE: Check for pre-generated Python manim_code (bypasses translation step)
     # Check V2.5 location first (render_spec)
     render_spec = topic.get("render_spec", {})
-
-    # NEW V2.5 SYNC: Check for per-segment Manim specs FIRST
-    segment_specs = render_spec.get("segment_specs", [])
-    manim_segment_specs = [s for s in segment_specs if s.get("renderer") == "manim"]
+    manim_scene_spec = render_spec.get("manim_scene_spec", {})
     
-    if manim_segment_specs:
-        print(f"[MANIM V2.5] Section {topic_id}: Rendering {len(manim_segment_specs)} per-segment videos")
-        return _render_manim_segment_specs(
-            specs=manim_segment_specs,
-            topic_id=topic_id,
-            topic_title=topic_title,
-            output_dir=output_dir,
-            dry_run=dry_run,
-            trace_output_dir=trace_output_dir,
-            topic=topic  # Pass topic to allow updating seg.beat_videos
-        )
+    # STRICT V2.5 CHECK: If we have a render_spec but no code, something went wrong in generation
+    if render_spec and not manim_scene_spec.get("manim_code"):
+        # We might have video_prompts instead, checking...
+        if not render_spec.get("video_prompts"):
+             print(f"[MANIM V2.5] WARNING: render_spec present but no manim_code found for section {topic_id}")
+
+    if isinstance(manim_scene_spec, dict) and manim_scene_spec.get("manim_code"):
+         v15_manim_code = manim_scene_spec.get("manim_code")
+         print(f"[MANIM V2.5] Section {topic_id}: Using pre-generated Python manim_code from render_spec ({len(v15_manim_code)} chars)")
+    # Fallback to V1.5 location (explanation_plan) - ONLY for legacy jobs
+    else:
+        v15_manim_code = explanation_plan.get("v15_manim_code")
+        if v15_manim_code:
+            print(f"[MANIM v1.5] Section {topic_id}: Using pre-generated Python manim_code from explanation_plan ({len(v15_manim_code)} chars)")
 
     if v15_manim_code:
         return _render_v15_manim_code(
@@ -163,17 +163,17 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
             trace_output_dir=trace_output_dir
         )
     
-    internal_segment_specs = topic.get("_manim_segment_specs", [])
-    if internal_segment_specs:
-        print(f"[MANIM V2.5] Section {topic_id}: Rendering {len(internal_segment_specs)} per-segment videos (internal)")
+    # NEW V2.5 SYNC: Check for per-segment Manim specs
+    manim_segment_specs = topic.get("_manim_segment_specs", [])
+    if manim_segment_specs:
+        print(f"[MANIM V2.5] Section {topic_id}: Rendering {len(manim_segment_specs)} per-segment videos")
         return _render_manim_segment_specs(
-            specs=internal_segment_specs,
+            specs=manim_segment_specs,
             topic_id=topic_id,
             topic_title=topic_title,
             output_dir=output_dir,
             dry_run=dry_run,
-            trace_output_dir=trace_output_dir,
-            topic=topic
+            trace_output_dir=trace_output_dir
         )
     
     # NEW V2.5 SYNC: Check for sync-split beats (fallback for older code)
@@ -730,8 +730,7 @@ def _render_manim_segment_specs(
     topic_title: str,
     output_dir: str,
     dry_run: bool = False,
-    trace_output_dir: str | None = None,
-    topic: dict | None = None
+    trace_output_dir: str | None = None
 ) -> list[str]:
     """
     Render per-segment Manim videos.
@@ -742,76 +741,45 @@ def _render_manim_segment_specs(
     generator = ManimCodeGenerator()
     rendered_paths = []
     
-    for idx, spec in enumerate(specs):
-        seg_id = spec.get("segment_id", f"beat_{idx}")
-        # Filename format: topic_{topic_id}_beat_{idx}.mp4 (Aligned with WAN)
-        output_path = str(Path(output_dir) / f"topic_{topic_id}_beat_{idx}.mp4")
-        
-        # Look up duration and text from narration segments if missing in spec
-        duration = spec.get("duration_seconds")
-        seg_text = "Visualizing segment content"
-        
-        if topic:
-             narration_segs = topic.get("narration", {}).get("segments", [])
-             for seg in narration_segs:
-                 if seg.get("segment_id") == seg_id:
-                     if not duration:
-                         duration = seg.get("duration_seconds")
-                     seg_text = seg.get("text", seg_text)
-                     break
-        
-        if not duration:
-            duration = 15.0 # Fallback
-            
+    for spec in specs:
+        seg_id = spec["segment_id"]
+        # Filename format: topic_{topic_id}_{seg_id}.mp4
+        output_path = str(Path(output_dir) / f"topic_{topic_id}_{seg_id}.mp4")
+        duration = spec["duration_seconds"]
         manim_spec = spec["manim_scene_spec"]
         
         # Prepare data for code generator
-        # V2.5: Inject target_duration_seconds for strict timing
         beat_data = {
             "section_title": f"{topic_title} - {seg_id}",
             "manim_spec": manim_spec,
-            "narration_segments": [{"text": seg_text, "duration": duration}],
-            "duration": duration,
-            "target_duration_seconds": duration
+            "narration_segments": [{"text": "Visualizing segment content", "duration": duration}],
+            "duration": duration
         }
         
         if dry_run:
-            result = _create_dry_run_marker(f"{topic_id}_{idx}", output_path, duration, f"Manim Spec: {manim_spec}")
-        else:
-            try:
-                # Check for existing file (idempotent retry)
-                if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
-                    print(f"  [MANIM] Skipping existing beat: {output_path}")
-                    result = output_path
-                else:
-                    # Generate code
-                    manim_code = generator.generate_code(beat_data)
-                    if not manim_code:
-                        raise ManimRenderError(f"Segment {seg_id} code gen returned empty code")
-                        
-                    # Execute render
-                    result = _execute_spec_generated_render(
-                        manim_code=manim_code,
-                        duration=duration,
-                        output_path=output_path,
-                        topic_id=f"{topic_id}_{idx}"
-                    )
-            except Exception as e:
-                print(f"  [MANIM FAIL] Segment {seg_id}: {e}")
-                raise
-        
-        rendered_paths.append(result)
-        
-        # CRITICAL: Update segment-level beat_videos for player sync
-        if topic:
-            narration_segs = topic.get("narration", {}).get("segments", [])
-            for seg in narration_segs:
-                if seg.get("segment_id") == seg_id:
-                    seg["beat_videos"] = [result]
-                    print(f"  [MANIM] Linked beat {idx} to segment {seg_id}")
-                    break
-                    
-        print(f"  [MANIM] Finalized beat {idx} ({seg_id}): {result}")
+            dry_marker = _create_dry_run_marker(f"{topic_id}_{seg_id}", output_path, duration, f"Manim Spec: {manim_spec}")
+            rendered_paths.append(dry_marker)
+            continue
+            
+        try:
+            # Generate code
+            manim_code, errors = generator.generate(beat_data)
+            if errors:
+                raise ManimRenderError(f"Segment {seg_id} code gen failed: {errors}")
+                
+            # Execute render
+            result = _execute_spec_generated_render(
+                manim_code=manim_code,
+                duration=duration,
+                output_path=output_path,
+                topic_id=f"{topic_id}_{seg_id}"
+            )
+            rendered_paths.append(result)
+        except Exception as e:
+            print(f"  [MANIM FAIL] Segment {seg_id}: {e}")
+            # In V2.5 we don't fallback to placeholder usually, but for segments we might want to continue
+            # For now, let's keep it strict or raise
+            raise
             
     return rendered_paths
 

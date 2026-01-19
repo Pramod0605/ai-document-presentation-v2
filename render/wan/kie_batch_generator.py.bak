@@ -43,13 +43,6 @@ class KieBatchGenerator:
                 duration = int(beat.get("duration_hint", 15))
                 output_path = os.path.join(output_dir, f"{beat_id}.mp4")
                 
-                # GRANULAR RETRY: Check if file exists and is valid (>0 bytes)
-                if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
-                    print(f"[WAN] Skipping existing beat: {beat_id}")
-                    # Pre-populate result immediately so it's returned at the end
-                    results[beat_id] = output_path 
-                    continue
-                
                 print(f"[WAN] Submitting Beat: {beat_id} | Prompt: {prompt[:60]}... | Duration: {duration}s")
                 try:
                     # We use a modified client or just extract the create logic
@@ -75,12 +68,8 @@ class KieBatchGenerator:
                 time.sleep(self.BATCH_INTERVAL)
         
         # 2. Polling Phase
-        if self.pending_tasks:
-            logger.info(f"[KieBatch] Polling {len(self.pending_tasks)} tasks...")
-            polled_results = self._poll_all_tasks()
-            results.update(polled_results)
-        else:
-            logger.info("[KieBatch] No pending tasks to poll.")
+        logger.info(f"[KieBatch] Polling {len(self.pending_tasks)} tasks...")
+        results = self._poll_all_tasks()
         
         return results
 

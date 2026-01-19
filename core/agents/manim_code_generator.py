@@ -183,10 +183,13 @@ class ManimCodeGenerator:
 
             # HARD SYNC ENFORCEMENT (V2 Feature)
             # We programmatically inject self.wait() to match narration timing perfectly
+            # V2.6: Also injects FadeOut to ensure clean screen between segments
+            has_sync = False
             if code and "# Segment" in code:
                 try:
                     logger.info("[MANIM GEN] Applying Hard Sync timing enforcement...")
                     code = self._enforce_timing(code, section_data)
+                    has_sync = True
                     with open("debug_gen.log", "a", encoding="utf-8") as f:
                         f.write("HARD SYNC APPLIED\n")
                 except Exception as e:
@@ -199,8 +202,8 @@ class ManimCodeGenerator:
                         f.write("HARD SYNC SKIPPED: No '# Segment' markers\n")
 
             # Final Validation Phase
-            # 1. Structural Validation
-            structural_errors = self.validate_code(code, section_data)
+            # 1. Structural Validation (V2.6: Skip timing check if Hard Sync was applied)
+            structural_errors = self.validate_code(code, section_data, skip_timing=has_sync)
             if structural_errors:
                 logger.warning(f"[MANIM GEN] Final validation failed: {structural_errors}")
                 section_data["previous_errors"] = "\n".join(structural_errors)
@@ -372,14 +375,14 @@ class ManimCodeGenerator:
         
         return code.strip()
     
-    def validate_code(self, code: str, section_data: Dict[str, Any]) -> List[str]:
+    def validate_code(self, code: str, section_data: Dict[str, Any], skip_timing: bool = False) -> List[str]:
         """
         Validate generated Manim code.
         
         Checks:
         1. Syntax validity (compile test)
         2. No Dot() placeholders
-        3. Timing matches segment durations (±0.5s tolerance)
+        3. Timing matches segment durations (±0.5s tolerance) - Opt-out via skip_timing
         4. No variable overwrites (e.g., axes = axes.plot())
         5. No common runtime error patterns
         6. Code completeness
@@ -391,7 +394,11 @@ class ManimCodeGenerator:
         errors.extend(self._check_placeholders(code))
         
         # V2.5 HARD SYNC: Granular Segment Timing & Cleanup Validation
-        errors.extend(self._check_granular_timing(code, section_data))
+        # V2.6: Skip if programmatically enforced
+        if not skip_timing:
+            errors.extend(self._check_granular_timing(code, section_data))
+        else:
+            logger.info("[MANIM GEN] Skipping timing validation (Hard Sync applied)")
         
         errors.extend(self._check_variable_overwrites(code))
         
@@ -756,11 +763,24 @@ class ManimCodeGenerator:
                     break
             
             # Injection Logic
+            # V2.6: Strict Transition Cleanup (FadeOut)
+            # We always inject a FadeOut if not present, and then adjust the wait
+            has_fadeout = "FadeOut(" in block_content and "run_time=" in block_content
+            
+            # Recalculate duration including injected FadeOut if needed
+            fadeout_duration = 0.5
+            if not has_fadeout:
+                lines_in_block.append(f"{indent}# V2.6: Clear screen for clean transition")
+                lines_in_block.append(f"{indent}self.play(FadeOut(*self.mobjects), run_time={fadeout_duration})")
+                actual_duration += fadeout_duration
+            
+            deficit = target_duration - actual_duration
+            
+            # Injection Logic for Remaining Deficit
             if deficit > 0.05: # Use 0.05 as threshold to avoid tiny waits
                 lines_in_block.append(f"{indent}# Hard Sync: Injected wait to match audio ({actual_duration:.2f}s -> {target_duration:.2f}s)")
                 lines_in_block.append(f"{indent}self.wait({deficit:.3f})")
             elif deficit < -0.5:
-
                  lines_in_block.append(f"{indent}# Hard Sync WARNING: Animation exceeds audio by {abs(deficit):.2f}s")
             
             return lines_in_block

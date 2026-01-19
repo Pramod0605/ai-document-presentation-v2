@@ -85,20 +85,23 @@ The following patterns WILL crash. NEVER use them:
    BAD: self.camera.frame.animate.shift(...)
    GOOD: Move the objects (VGroup) instead, or don't move camera.
 
-=== TIMING (HANDLED AUTOMATICALLY) ===
-You do NOT need to calculate exact timing or provide `self.wait()` durations that sum to a specific value.
-The system will programmatically inject `self.wait()` calls to match Director's exact `duration_seconds` using Hard Sync.
-Focus on creating high-quality visual content. Timing is handled for you.
+=== HARD TIMING ENFORCEMENT (NON-NEGOTIABLE) ===
 
-=== DISPLAY AREA CONSTRAINTS (MANDATORY) ===
-1. ALL mobjects must fit within the visible frame (-6 to +6 on X, -3.5 to +3.5 on Y).
-2. Use `.scale()` or `.scale_to_fit_width(12)` to ensure content fits the screen width.
-3. NO overlapping text or shapes - use `.arrange()` or `.next_to()` with proper spacing (buff=0.5).
-4. For multiple items along one axis, use `VGroup(m1, m2, m3).arrange(DOWN, buff=0.5)`.
+For EACH narration segment:
 
-=== SEGMENT TRANSITIONS (MANDATORY) ===
-5. End EVERY segment with: `self.play(FadeOut(*self.mobjects), run_time=0.5)`
-6. This ensures the screen is clean before the next segment video loads.
+1. You MUST budget time explicitly.
+   - Let D = segment duration.
+   - Sum of all run_time + wait MUST equal D exactly (plus or minus 0.5s).
+
+2. You are FORBIDDEN from exceeding narration time.
+   - If visuals do not fit, DELETE visuals.
+   - Do NOT exceed time.
+
+3. At the END of each segment you MUST include:
+   # Segment X (Y.Ys)
+   - Use the EXACT Y.Ys provided in the narration.
+
+If this condition is not met, you MUST FIX IT before output.
 
 === ANIMATION DISTRIBUTION (REQUIRED FOR SEGMENTS > 5s) ===
 
