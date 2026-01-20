@@ -1318,27 +1318,41 @@ function updateContentProgressiveReveal() {
 
     // Reveal when time is reached
     if (currentTime >= revealTime && beatDiv.classList.contains('reveal-hidden')) {
-
       beatDiv.classList.remove('reveal-hidden');
       beatDiv.classList.add('reveal-visible');
       activeBeatIndex = beatIndex;
-
-
-
       newlyRevealed = true;
-      console.log(`[V2.5] ✓ Revealed beat ${beatIndex} at ${currentTime.toFixed(1)}s (target: ${revealTime.toFixed(1)}s)`);
+      console.log(`[V2.6] ✓ Revealed beat ${beatIndex} at ${currentTime.toFixed(1)}s (target: ${revealTime.toFixed(1)}s)`);
     }
 
-    if (beatIndex == activeBeatIndex) {
-      beatDiv.style.display = 'block';
+    // V2.6 FIX: Determine if we're in TEACH or SHOW phase based on current segment
+    // During TEACH: Show active beat (which may contain text OR image)
+    // During SHOW: Hide all beats (video layer is visible instead)
+    let currentSegmentIndex = 0;
+    let accTime = 0;
+    for (let i = 0; i < segments.length; i++) {
+      const segDur = segments[i].duration_seconds || 5;
+      if (currentTime < accTime + segDur) {
+        currentSegmentIndex = i;
+        break;
+      }
+      accTime += segDur;
     }
-    else {
-      beatDiv.style.display = 'none';
+
+    const currentSegment = segments[currentSegmentIndex];
+    const visualLayer = currentSegment?.display_directives?.visual_layer || 'hide';
+    const isShowPhase = (visualLayer === 'show');
+
+    // Display logic:
+    // - SHOW phase: Hide ALL beats (video is playing fullscreen)
+    // - TEACH phase: Show only the active beat
+    if (isShowPhase) {
+      beatDiv.style.display = 'none';  // Hide during video playback
+    } else if (beatIndex === activeBeatIndex) {
+      beatDiv.style.display = 'block'; // Show active beat during Teach
+    } else {
+      beatDiv.style.display = 'none';  // Hide non-active beats
     }
-
-
-
-
   });
 
   // Typeset math when new content is revealed
@@ -1430,47 +1444,58 @@ function buildBeatPlaylistWithTiming(slide) {
   const segments = slide.narration?.segments || [];
   const playlist = [];
 
-  // Try section-level beat_video_paths first (old format - backward compatibility)
-  let beatVideoPaths = slide.beat_video_paths || [];
-
-  // NEW V2.5 FIX: Extract from segments if not at section level
-  if (beatVideoPaths.length === 0) {
-    console.log('[V2.5 FIX] Extracting beat videos from segments');
-    beatVideoPaths = segments.map(seg => {
-      const beatVids = seg.beat_videos || [];
-      if (beatVids.length > 0) {
-        // IDEMPOTENT FIX: Just pass the ID/path to resolveMediaPath later
-        const videoId = beatVids[0]; // Take first if multiple
-        const videoPath = videoId;
-        console.log(`[V2.5 FIX] Segment ${seg.segment_id}: ${videoId}`);
-        return videoPath;
-      }
-      return null;
-    }).filter(Boolean);
-
-    console.log(`[V2.5 FIX] Extracted ${beatVideoPaths.length} videos from segments`);
-  }
-
+  // V2.6 FIX: Build playlist by iterating segments and mapping videos to ACTUAL segment times
   let accumulatedTime = 0;
-  segments.forEach((seg, i) => {
-    const duration = seg.duration_seconds || 5;
-    const videoPath = beatVideoPaths[i];
+  let beatIndex = 0;
 
-    if (videoPath) {
+  segments.forEach((seg, segIdx) => {
+    const duration = seg.duration_seconds || 5;
+    const segStartTime = accumulatedTime;
+    const segEndTime = accumulatedTime + duration;
+
+    // Check if THIS segment has beat_videos
+    const beatVids = seg.beat_videos || [];
+    if (beatVids.length > 0) {
+      const videoPath = beatVids[0]; // Take first if multiple
       playlist.push({
         videoPath: resolveMediaPath(videoPath, 'video'),
-        startTime: accumulatedTime,
-        endTime: accumulatedTime + duration,
-        segmentIndex: i
+        startTime: segStartTime,
+        endTime: segEndTime,
+        segmentIndex: segIdx,
+        beatIndex: beatIndex
       });
+      console.log(`[V2.6] Beat ${beatIndex} → Segment ${segIdx} (${segStartTime.toFixed(1)}s - ${segEndTime.toFixed(1)}s): ${videoPath}`);
+      beatIndex++;
     }
 
     accumulatedTime += duration;
   });
 
-  console.log(`[V2.5 FIX] Built playlist with ${playlist.length} videos`);
+  // Fallback: If no segment-level videos, try section-level beat_video_paths (backward compatibility)
+  if (playlist.length === 0 && slide.beat_video_paths?.length > 0) {
+    console.log('[V2.6] Fallback: Using section-level beat_video_paths');
+    const beatVideoPaths = slide.beat_video_paths;
+    accumulatedTime = 0;
+
+    segments.forEach((seg, i) => {
+      const duration = seg.duration_seconds || 5;
+      if (i < beatVideoPaths.length) {
+        playlist.push({
+          videoPath: resolveMediaPath(beatVideoPaths[i], 'video'),
+          startTime: accumulatedTime,
+          endTime: accumulatedTime + duration,
+          segmentIndex: i,
+          beatIndex: i
+        });
+      }
+      accumulatedTime += duration;
+    });
+  }
+
+  console.log(`[V2.6] Built playlist: ${playlist.length} videos mapped to correct segment times`);
   return playlist;
 }
+
 
 function loadBeatVideo(index) {
   if (index < 0 || index >= beatVideoPlaylist.length) return;
@@ -1479,13 +1504,44 @@ function loadBeatVideo(index) {
   currentBeatIndex = index;
 
   contentVideo.src = beat.videoPath;
-  contentVideo.muted = true;  // ← ADD THIS LINE
+  contentVideo.muted = true;
 
   contentVideo.onloadeddata = () => {
-    console.log(`[V2.5] Beat video ${index + 1}/${beatVideoPlaylist.length} loaded`);
+    console.log(`[V2.6] Beat video ${index + 1}/${beatVideoPlaylist.length} loaded`);
+    // V2.6: Preload next video for seamless transition
+    preloadNextBeatVideo(index);
   };
 
-  console.log(`[V2.5] Loading beat video ${index + 1}: ${beat.videoPath}`);
+  console.log(`[V2.6] Loading beat video ${index + 1}: ${beat.videoPath}`);
+}
+
+// V2.6: Preload next beat video to eliminate buffer delay
+function preloadNextBeatVideo(currentIndex) {
+  const nextIndex = currentIndex + 1;
+  if (nextIndex >= beatVideoPlaylist.length) return;
+
+  const nextBeat = beatVideoPlaylist[nextIndex];
+  if (!nextBeat) return;
+
+  // Create hidden preload element
+  const preloadVideo = document.createElement('video');
+  preloadVideo.preload = 'auto';
+  preloadVideo.src = nextBeat.videoPath;
+  preloadVideo.style.display = 'none';
+  preloadVideo.muted = true;
+
+  // Remove after preload completes
+  preloadVideo.onloadeddata = () => {
+    console.log(`[V2.6] Preloaded next video: ${nextBeat.videoPath}`);
+    preloadVideo.remove();
+  };
+
+  preloadVideo.onerror = () => {
+    console.warn(`[V2.6] Failed to preload: ${nextBeat.videoPath}`);
+    preloadVideo.remove();
+  };
+
+  document.body.appendChild(preloadVideo);
 }
 
 function checkBeatVideoSwitch() {
