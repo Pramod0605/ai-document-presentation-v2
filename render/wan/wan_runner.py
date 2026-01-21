@@ -339,6 +339,13 @@ def _render_visual_beats(
             video_paths.append(beat_output_path)
             continue
         
+        # V2.6 IDEMPOTENT: Skip if valid file already exists (like Avatar)
+        beat_file = Path(beat_output_path)
+        if beat_file.exists() and beat_file.stat().st_size > 10000:
+            print(f"  [Beat {beat_idx}] SKIP: Valid file exists ({beat_file.stat().st_size // 1024}KB)")
+            video_paths.append(beat_output_path)
+            continue
+        
         # Generate actual video
         result_path = client.generate_video(
             prompt=wan_prompt,
@@ -465,6 +472,13 @@ def _render_recap_scenes(
         
         if skip_wan:
             _create_recap_placeholder(scene_num, topic_id, concept_title, scene_output_path, scene_duration)
+            video_paths.append(scene_output_path)
+            continue
+        
+        # V2.6 IDEMPOTENT: Skip if valid file already exists (like Avatar)
+        scene_file = Path(scene_output_path)
+        if scene_file.exists() and scene_file.stat().st_size > 10000:
+            print(f"  [Recap Scene {scene_num}] SKIP: Valid file exists ({scene_file.stat().st_size // 1024}KB)")
             video_paths.append(scene_output_path)
             continue
         
