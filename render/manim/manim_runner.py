@@ -807,7 +807,9 @@ def _render_manim_segment_specs(
             narration_segs = topic.get("narration", {}).get("segments", [])
             for seg in narration_segs:
                 if seg.get("segment_id") == seg_id:
-                    seg["beat_videos"] = [result]
+                    # V2.6 FIX: Store relative path like Avatar does (not Docker absolute)
+                    video_filename = os.path.basename(result)
+                    seg["beat_videos"] = [f"videos/{video_filename}"]
                     print(f"  [MANIM] Linked beat {idx} to segment {seg_id}")
                     break
                     

@@ -45,8 +45,13 @@ function resolveMediaPath(path, type = 'audio') {
     console.log(`[V2.5] Extracted filename from Windows path: ${path}`);
   }
 
-  // If path starts with /jobs/, return as-is
-  if (path.startsWith('/jobs/') || path.startsWith('/player/jobs/')) {
+  // If path starts with /jobs/, return as-is (after Docker path fix)
+  if (path.startsWith('/jobs/') || path.startsWith('/player/') || path.startsWith('/app/')) {
+    // V2.6 FIX: Strip Docker container prefix if present
+    if (path.startsWith('/app/player/jobs/')) {
+      path = path.replace('/app/player/jobs/', '/player/jobs/');
+      console.log(`[V2.6] Fixed Docker container path: ${path}`);
+    }
     return path;
   }
 
