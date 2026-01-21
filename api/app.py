@@ -914,6 +914,11 @@ def _retry_video_render(job_id: str, job_folder: Path, presentation: dict, secti
     videos_dir = job_folder / "videos"
     videos_dir.mkdir(parents=True, exist_ok=True)
     
+    # V2.6 FIX: Read video_provider from job params (set from Dashboard)
+    job = job_manager.get_job(job_id)
+    params = job.get("params", {}) if job else {}
+    video_provider = params.get("video_provider", "kie")  # Default to Kie if not set
+    
     results = {"success": [], "failed": [], "skipped": []}
     
     for section in presentation.get("sections", []):
@@ -943,7 +948,8 @@ def _retry_video_render(job_id: str, job_folder: Path, presentation: dict, secti
                 dry_run=False,
                 skip_wan=False,
                 trace_output_dir=str(job_folder),
-                strict_mode=True
+                strict_mode=True,
+                video_provider=video_provider
             )
             
             if result.get("status") == "success":
@@ -970,6 +976,12 @@ def _retry_wan_render(job_id: str, job_folder: Path, presentation: dict, section
     videos_dir = job_folder / "videos"
     videos_dir.mkdir(parents=True, exist_ok=True)
     
+    # V2.6 FIX: Read video_provider from job params (set from Dashboard)
+    job = job_manager.get_job(job_id)
+    params = job.get("params", {}) if job else {}
+    video_provider = params.get("video_provider", "kie")  # Default to Kie if not set
+    print(f"[RETRY-WAN] Using video_provider: {video_provider}")
+    
     results = {"success": [], "failed": [], "skipped": []}
     
     for section in presentation.get("sections", []):
@@ -993,7 +1005,8 @@ def _retry_wan_render(job_id: str, job_folder: Path, presentation: dict, section
                 dry_run=False,
                 skip_wan=False,
                 trace_output_dir=str(job_folder),
-                strict_mode=True
+                strict_mode=True,
+                video_provider=video_provider
             )
             
             if result.get("status") == "success":
