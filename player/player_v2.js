@@ -1189,8 +1189,11 @@ function updateQuizProgressiveReveal() {
       console.log(`[V2.5] QUIZ: Revealed step ${beatIndex} at ${currentTime.toFixed(1)}s`);
     }
 
-    // Display logic: For Quizzes, we stack the beats (persistent context)
-    if (beatIndex <= activeBeatIndex || currentTime >= revealTime) {
+    // Display logic: Only show the current question group (3 beats per question)
+    const currentGroup = Math.floor(activeBeatIndex / 3);
+    const beatGroup = Math.floor(beatIndex / 3);
+
+    if (beatGroup === currentGroup && (beatIndex <= activeBeatIndex || currentTime >= revealTime)) {
       beatDiv.style.display = 'block';
       if (currentTime >= revealTime) activeBeatIndex = Math.max(activeBeatIndex, beatIndex);
     } else {
@@ -1334,8 +1337,11 @@ function updateContentProgressiveReveal() {
     if (isShowPhase) {
       beatDiv.style.display = 'none';  // Hide during video playback
     } else if (isQuiz) {
-      // QUIZ optimization: Show all beats up to activeBeatIndex to maintain context
-      if (beatIndex <= activeBeatIndex) {
+      // QUIZ: Only show the current question group (3 beats per question)
+      const currentGroup = Math.floor(activeBeatIndex / 3);
+      const beatGroup = Math.floor(beatIndex / 3);
+
+      if (beatGroup === currentGroup && beatIndex <= activeBeatIndex) {
         beatDiv.style.display = 'block';
       } else {
         beatDiv.style.display = 'none';
