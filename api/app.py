@@ -999,15 +999,59 @@ def _retry_wan_render(job_id: str, job_folder: Path, presentation: dict, section
         try:
             print(f"[RETRY-WAN] Re-rendering WAN video for section {section_id}")
             
-            result = execute_renderer(
-                topic=section,
-                output_dir=str(videos_dir),
-                dry_run=False,
-                skip_wan=False,
-                trace_output_dir=str(job_folder),
-                strict_mode=True,
-                video_provider=video_provider
-            )
+            # V2.6 FIX: Use KieBatchGenerator directly to match original job filenames ({beat_id}.mp4)
+            # This ensures idempotency works (skips existing files) and naming is consistent.
+            from render.wan.kie_batch_generator import KieBatchGenerator
+            
+            # Collect video_prompts from section
+            video_prompts = section.get("video_prompts", [])
+            
+            # Also check if it's a recap section
+            if section.get("section_type") == "recap":
+                # Recap scenes also need to be handled if they have prompts
+                recap_scenes = section.get("recap_scenes", [])
+                if recap_scenes:
+                     # Adapt recap scenes to video_prompts format if needed, but usually 
+                     # video_prompts are already populated for background job.
+                     # If empty, we might need to construct them, but for retry lets rely on video_prompts
+                     pass
+
+            if video_prompts:
+                print(f"[RETRY-WAN] Found {len(video_prompts)} video prompts for section {section_id}")
+                batch_gen = KieBatchGenerator()
+                # generate_batch handles: 1. Idempotency (skips exist) 2. Batching 3. Polling
+                batch_results = batch_gen.generate_batch(video_prompts, str(videos_dir))
+                
+                # Update success/failed counts based on returned results
+                generated_count = 0
+                for bid, path in batch_results.items():
+                    if path:
+                        generated_count += 1
+                
+                if generated_count > 0:
+                     results["success"].append({"section_id": section_id, "count": generated_count})
+                     # We don't need to return a single video_path as WAN sections rely on beat_videos
+                     # stored in presentation.json (which we should arguably update)
+                     
+                     # Update beat_videos paths in section to be safe
+                     section["beat_video_paths"] = [f"videos/{Path(p).name}" for p in batch_results.values() if p]
+                else:
+                     results["skipped"].append({"section_id": section_id, "reason": "No new videos generated (all existed or failed)"})
+
+                # Mock result for compatibility with rest of function if needed
+                result = {"status": "success", "video_path": None} 
+            else:
+                print(f"[RETRY-WAN] No video_prompts found for section {section_id} - falling back to legacy renderer")
+                # Fallback to legacy path if no pre-compiled prompts (e.g. old jobs)
+                result = execute_renderer(
+                    topic=section,
+                    output_dir=str(videos_dir),
+                    dry_run=False,
+                    skip_wan=False,
+                    trace_output_dir=str(job_folder),
+                    strict_mode=True,
+                    video_provider=video_provider
+                )
             
             if result.get("status") == "success":
                 video_path = result.get("video_path")

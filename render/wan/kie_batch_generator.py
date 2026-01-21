@@ -40,7 +40,9 @@ class KieBatchGenerator:
             for beat in batch:
                 beat_id = beat.get("beat_id")
                 prompt = beat.get("prompt")
-                duration = int(beat.get("duration_hint", 15))
+                # V2.5 FIX: Support both legacy 'duration_hint' and new 'duration' key
+                # This ensures we respect the synced duration (5/10/15s) instead of defaulting to 15s
+                duration = int(beat.get("duration_hint") or beat.get("duration") or 15)
                 output_path = os.path.join(output_dir, f"{beat_id}.mp4")
                 
                 # GRANULAR RETRY: Check if file exists and is valid (>0 bytes)
