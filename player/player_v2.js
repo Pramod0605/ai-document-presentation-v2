@@ -905,58 +905,38 @@ function renderRecap(slide) {
 }
 
 function renderQuiz(slide) {
-  // V2.5: QUIZ = 3-Step Dance (Introduce → Pause → Reveal)
-  console.log('[V2.5] QUIZ: Rendering questions with 3-step choreography');
+  // V2.5: QUIZ = 3-Step Dance per Bible
+  console.log('[V2.5] QUIZ: 3-step choreography (Introduce → Pause → Reveal)');
 
   contentBox.innerHTML = '';
 
-  const questions = slide.quiz_questions || [];
+  const beats = slide.visual_beats || [];
 
-  questions.forEach((q, i) => {
+  beats.forEach((beat, i) => {
     const card = document.createElement('div');
-    card.className = 'quiz-card quiz-hidden';
-    card.id = `quiz-${i}`;
+    // V2.6: Use beat-block for styles and beat-${i} for reveal loop match
+    card.className = 'beat-block quiz-beat reveal-hidden';
+    card.id = `beat-${i}`;
+    card.dataset.segmentId = beat.segment_id || '';
 
-    const questionDiv = document.createElement('div');
-    questionDiv.className = 'quiz-question';
-    questionDiv.textContent = q.question || q.question_text || '';
-    card.appendChild(questionDiv);
-
-    const choices = q.choices || q.options || [];
-    const choicesDiv = document.createElement('div');
-    choicesDiv.className = 'quiz-choices';
-
-    choices.forEach((choice, j) => {
-      const choiceDiv = document.createElement('div');
-      choiceDiv.className = 'quiz-choice';
-
-      const letter = document.createElement('div');
-      letter.className = 'choice-letter';
-      letter.textContent = String.fromCharCode(65 + j);
-      choiceDiv.appendChild(letter);
-
-      const text = document.createElement('div');
-      text.className = 'choice-text';
-      text.textContent = typeof choice === 'string' ? choice : choice.text || '';
-      choiceDiv.appendChild(text);
-
-      choicesDiv.appendChild(choiceDiv);
-    });
-
-    card.appendChild(choicesDiv);
-
-    if (q.explanation) {
-      const explanation = document.createElement('div');
-      explanation.className = 'quiz-explanation';
-      explanation.style.display = 'none';
-      explanation.textContent = q.explanation;
-      card.appendChild(explanation);
+    // Visual styling based on answer_revealed flag
+    if (beat.answer_revealed) {
+      card.classList.add('quiz-answer');
+    } else if (beat.display_text === '🤔') {
+      card.classList.add('quiz-pause');
+    } else {
+      card.classList.add('quiz-question');
     }
 
+    const content = document.createElement('div');
+    content.className = 'quiz-content';
+    content.innerHTML = sanitizeMarkdown(beat.display_text || '');
+
+    card.appendChild(content);
     contentBox.appendChild(card);
   });
 
-  console.log(`[V2.5] QUIZ: ${questions.length} questions rendered`);
+  console.log(`[V2.5] QUIZ: ${beats.length} beats ready for reveal`);
 }
 
 function renderMemory(slide) {
@@ -1160,65 +1140,63 @@ function updateSummaryProgressiveReveal() {
 }
 
 function updateQuizProgressiveReveal() {
-  // V2.5: Quiz 3-Step Dance
-  // Step 1 (Introduce): Show question + options
-  // Step 2 (Pause): Thinking time (3-5s)
-  // Step 3 (Reveal): Highlight correct answer
-
+  // V2.5: Quiz 3-Step Dance (Introduce → Pause → Reveal)
+  // Uses the same progressive reveal logic as content beats
   const slide = slides[currentSlideIndex];
-  if (!slide) return;
+  if (!slide || slide.section_type !== 'quiz') return;
 
-  const currentTime = getTime();
+  const visualBeats = slide.visual_beats || [];
+  if (visualBeats.length === 0) return;
+
   const segments = slide.narration?.segments || [];
-  const questions = slide.quiz_questions || [];
+  const currentTime = getTime();
 
-  // Find current segment
-  let segmentIndex = 0;
-  let accumulatedTime = 0;
-  for (let i = 0; i < segments.length; i++) {
-    const segDuration = segments[i].duration_seconds || 5;
-    if (currentTime < accumulatedTime + segDuration) {
-      segmentIndex = i;
-      break;
-    }
-    accumulatedTime += segDuration;
-  }
+  // Build segment time map
+  const segmentTimeMap = {};
+  let cumulativeTime = 0;
+  segments.forEach((seg, index) => {
+    segmentTimeMap[index] = {
+      startTime: cumulativeTime,
+      endTime: cumulativeTime + (seg.duration_seconds || 5)
+    };
+    cumulativeTime += (seg.duration_seconds || 5);
+  });
 
-  // Quiz segments pattern: Q1-Introduce, Q1-Pause, Q1-Reveal, Q2-Introduce, etc.
-  const questionIndex = Math.floor(segmentIndex / 3);
-  const stepInQuestion = segmentIndex % 3;
+  // Reveal beats progressively
+  visualBeats.forEach((beat, beatIndex) => {
+    const beatDiv = document.getElementById(`beat-${beatIndex}`);
+    if (!beatDiv) return;
 
-  const quizCard = document.getElementById(`quiz-${questionIndex}`);
-  if (!quizCard) return;
+    let revealTime = 0;
 
-  // Step 1: Introduce (show question)
-  if (quizCard.classList.contains('quiz-hidden')) {
-    quizCard.classList.remove('quiz-hidden');
-    quizCard.classList.add('quiz-active');
-    console.log(`[V2.5] QUIZ: Showing Q${questionIndex + 1}`);
-  }
-
-  // Step 3: Reveal (show answer)
-  if (stepInQuestion === 2) {
-    const question = questions[questionIndex];
-    if (!question) return;
-
-    const correctIndex = question.correct_index ?? question.answer_index ?? 0;
-    const choices = quizCard.querySelectorAll('.quiz-choice');
-
-    choices.forEach((choice, idx) => {
-      if (idx === correctIndex) {
-        choice.classList.add('correct-revealed');
-        const letter = choice.querySelector('.choice-letter');
-        if (letter) letter.classList.add('correct');
-        console.log(`[V2.5] QUIZ: Revealed answer Q${questionIndex + 1} - Option ${String.fromCharCode(65 + correctIndex)}`);
+    // Match by segment_id (V2.5 Standard)
+    if (beat.segment_id) {
+      const segIndex = segments.findIndex(s => s.segment_id === beat.segment_id);
+      if (segIndex !== -1 && segmentTimeMap[segIndex]) {
+        revealTime = segmentTimeMap[segIndex].startTime;
       }
-    });
+    } else {
+      // Fallback: Infer timing
+      const totalDuration = getDuration();
+      const timePerBeat = totalDuration / visualBeats.length;
+      revealTime = beatIndex * timePerBeat;
+    }
 
-    // Show explanation
-    const explanation = quizCard.querySelector('.quiz-explanation');
-    if (explanation) explanation.style.display = 'block';
-  }
+    // Reveal when time is reached
+    if (currentTime >= revealTime && beatDiv.classList.contains('reveal-hidden')) {
+      beatDiv.classList.remove('reveal-hidden');
+      beatDiv.classList.add('reveal-visible');
+      console.log(`[V2.5] QUIZ: Revealed step ${beatIndex} at ${currentTime.toFixed(1)}s`);
+    }
+
+    // Display logic: For Quizzes, we stack the beats (persistent context)
+    if (beatIndex <= activeBeatIndex || currentTime >= revealTime) {
+      beatDiv.style.display = 'block';
+      if (currentTime >= revealTime) activeBeatIndex = Math.max(activeBeatIndex, beatIndex);
+    } else {
+      beatDiv.style.display = 'none';
+    }
+  });
 }
 
 function updateMemoryFlip() {
@@ -1350,9 +1328,18 @@ function updateContentProgressiveReveal() {
 
     // Display logic:
     // - SHOW phase: Hide ALL beats (video is playing fullscreen)
-    // - TEACH phase: Show only the active beat
+    // - TEACH phase: Show the current beat. For QUIZZES, we allow stacking/persistence of previous beats.
+    const isQuiz = (slides[currentSlideIndex]?.section_type === 'quiz');
+
     if (isShowPhase) {
       beatDiv.style.display = 'none';  // Hide during video playback
+    } else if (isQuiz) {
+      // QUIZ optimization: Show all beats up to activeBeatIndex to maintain context
+      if (beatIndex <= activeBeatIndex) {
+        beatDiv.style.display = 'block';
+      } else {
+        beatDiv.style.display = 'none';
+      }
     } else if (beatIndex === activeBeatIndex) {
       beatDiv.style.display = 'block'; // Show active beat during Teach
     } else {
