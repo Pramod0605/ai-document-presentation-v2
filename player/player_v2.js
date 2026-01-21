@@ -1140,8 +1140,10 @@ function updateSummaryProgressiveReveal() {
 }
 
 function updateQuizProgressiveReveal() {
-  // V2.5: Quiz 3-Step Dance (Introduce → Pause → Reveal)
-  // Uses the same progressive reveal logic as content beats
+  // V2.5 QUIZ: Strict Segment-Timed Display
+  // Shows ONE beat at a time, following JSON segment timing exactly.
+  // Question beat persists through Pause and Answer until the NEXT question starts.
+
   const slide = slides[currentSlideIndex];
   if (!slide || slide.section_type !== 'quiz') return;
 
@@ -1151,51 +1153,78 @@ function updateQuizProgressiveReveal() {
   const segments = slide.narration?.segments || [];
   const currentTime = getTime();
 
-  // Build segment time map
+  // Build segment time map with start and end times
   const segmentTimeMap = {};
   let cumulativeTime = 0;
   segments.forEach((seg, index) => {
-    segmentTimeMap[index] = {
+    const duration = seg.duration_seconds || 5;
+    segmentTimeMap[seg.segment_id] = {
+      index: index,
       startTime: cumulativeTime,
-      endTime: cumulativeTime + (seg.duration_seconds || 5)
+      endTime: cumulativeTime + duration,
+      purpose: seg.purpose
     };
-    cumulativeTime += (seg.duration_seconds || 5);
+    cumulativeTime += duration;
   });
 
-  // Reveal beats progressively
+  // Find the currently active segment based on currentTime
+  let activeSegmentId = null;
+  for (const seg of segments) {
+    const timing = segmentTimeMap[seg.segment_id];
+    if (currentTime >= timing.startTime && currentTime < timing.endTime) {
+      activeSegmentId = seg.segment_id;
+      break;
+    }
+  }
+
+  // If past all segments, use the last one
+  if (!activeSegmentId && segments.length > 0) {
+    activeSegmentId = segments[segments.length - 1].segment_id;
+  }
+
+  // Find the index of the active segment
+  const activeSegmentIndex = segments.findIndex(s => s.segment_id === activeSegmentId);
+
+  // Determine which "question group" we're in (every 3 segments = 1 question)
+  const activeQuestionGroup = Math.floor(activeSegmentIndex / 3);
+
+  // Display logic: Show beats based on segment timing
   visualBeats.forEach((beat, beatIndex) => {
     const beatDiv = document.getElementById(`beat-${beatIndex}`);
     if (!beatDiv) return;
 
-    let revealTime = 0;
+    const beatSegmentId = beat.segment_id;
+    const beatTiming = segmentTimeMap[beatSegmentId];
+    const beatQuestionGroup = Math.floor(beatIndex / 3);
 
-    // Match by segment_id (V2.5 Standard)
-    if (beat.segment_id) {
-      const segIndex = segments.findIndex(s => s.segment_id === beat.segment_id);
-      if (segIndex !== -1 && segmentTimeMap[segIndex]) {
-        revealTime = segmentTimeMap[segIndex].startTime;
+    // Determine if this beat should be visible
+    let shouldShow = false;
+
+    if (beatQuestionGroup === activeQuestionGroup) {
+      // We're in the correct question group
+      const beatSegmentIndex = beatIndex % 3; // 0=Question, 1=Pause, 2=Answer
+      const activeStepInGroup = activeSegmentIndex % 3; // 0=Introduce, 1=Pause, 2=Reveal
+
+      if (beatSegmentIndex === 0) {
+        // Question beat: Always show during this question group
+        shouldShow = true;
+      } else if (beatSegmentIndex === 1) {
+        // Pause beat: Show only during Pause step
+        shouldShow = (activeStepInGroup === 1);
+      } else if (beatSegmentIndex === 2) {
+        // Answer beat: Show during Answer step (and hide Pause)
+        shouldShow = (activeStepInGroup === 2);
       }
-    } else {
-      // Fallback: Infer timing
-      const totalDuration = getDuration();
-      const timePerBeat = totalDuration / visualBeats.length;
-      revealTime = beatIndex * timePerBeat;
     }
 
-    // Reveal when time is reached
-    if (currentTime >= revealTime && beatDiv.classList.contains('reveal-hidden')) {
-      beatDiv.classList.remove('reveal-hidden');
-      beatDiv.classList.add('reveal-visible');
-      console.log(`[V2.5] QUIZ: Revealed step ${beatIndex} at ${currentTime.toFixed(1)}s`);
-    }
-
-    // Display logic: Only show the current question group (3 beats per question)
-    const currentGroup = Math.floor(activeBeatIndex / 3);
-    const beatGroup = Math.floor(beatIndex / 3);
-
-    if (beatGroup === currentGroup && (beatIndex <= activeBeatIndex || currentTime >= revealTime)) {
+    // Apply visibility with reveal animation
+    if (shouldShow) {
+      if (beatDiv.classList.contains('reveal-hidden')) {
+        beatDiv.classList.remove('reveal-hidden');
+        beatDiv.classList.add('reveal-visible');
+        console.log(`[V2.5] QUIZ: Revealed beat ${beatIndex} (seg: ${beatSegmentId}) at ${currentTime.toFixed(1)}s`);
+      }
       beatDiv.style.display = 'block';
-      if (currentTime >= revealTime) activeBeatIndex = Math.max(activeBeatIndex, beatIndex);
     } else {
       beatDiv.style.display = 'none';
     }
