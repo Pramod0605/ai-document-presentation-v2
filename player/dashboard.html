@@ -488,6 +488,30 @@
         </div>
     </div>
 
+    <!-- Review Modal -->
+    <div id="reviewModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center;">
+        <div
+            style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; max-width: 1200px; width: 95%; height: 90vh; display: flex; flex-direction: column; position: relative; border: 1px solid rgba(255,255,255,0.2);">
+            <div
+                style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="color: #ff6b35; margin: 0;">Review & Edit - <span id="reviewJobId"></span></h3>
+                <button onclick="closeReviewModal()"
+                    style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <div id="reviewSectionsList" style="flex: 1; overflow-y: auto; padding: 20px;">
+                <div style="color: #888; text-align: center; padding: 40px;">Loading sections...</div>
+            </div>
+            <div
+                style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="submitReview()" class="btn"
+                    style="background: #ff6b35; color: #fff; padding: 12px 24px;">Submit Review & Regenerate</button>
+                <button onclick="closeReviewModal()" class="btn btn-secondary"
+                    style="padding: 12px 24px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentJobId = null;
         let pollInterval = null;
@@ -755,8 +779,10 @@
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showLlmOutputs('${job.job_id}')">LLM Outputs</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showAnalytics('${job.job_id}')">Analytics</button>
                             <button class="btn" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px; background: #9c27b0; color: #fff;" onclick="showRetryPhaseModal('${job.job_id}')">Retry Phase</button>
+                            <button class="btn" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px; background: #ff6b35; color: #fff;" onclick="showReviewModal('${job.job_id}')">Review</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="window.open('/player_v2/?job=${job.job_id}', '_blank')">Play</button>
                         `;
+
                     } else if (job.status === 'failed') {
                         actions = `
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="showJobError('${job.job_id}')">View Error</button>
@@ -1721,6 +1747,356 @@
             document.getElementById('retryPhaseModal').style.display = 'flex';
             document.getElementById('retryPhaseSelect').value = phase;
             document.getElementById('retrySectionIds').value = sectionId;
+        }
+
+        // Review Modal Functions
+        let currentReviewJobId = null;
+        let reviewSectionsData = [];
+
+        async function showReviewModal(jobId) {
+            currentReviewJobId = jobId;
+            document.getElementById('reviewJobId').textContent = jobId;
+            document.getElementById('reviewModal').style.display = 'flex';
+
+            // Load presentation data
+            try {
+                const response = await fetch(`/job/${jobId}/presentation_for_review`);
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Error loading presentation: ' + data.error);
+                    closeReviewModal();
+                    return;
+                }
+
+                reviewSectionsData = data.sections;
+                renderReviewSections(data.sections);
+            } catch (err) {
+                alert('Error loading presentation: ' + err.message);
+                closeReviewModal();
+            }
+        }
+
+        function renderReviewSections(sections) {
+            const container = document.getElementById('reviewSectionsList');
+
+            container.innerHTML = sections.map((section, idx) => {
+                const content = section.content || {};
+                let contentHtml = '';
+
+                // Render Explanation Plan
+                if (content.explanation_plan) {
+                    contentHtml += `
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: #ffa726; font-size: 0.9rem; margin-bottom: 5px; font-weight: 600;">📋 Explanation Plan:</label>
+                            <textarea id="plan_${section.section_id}" 
+                                style="width: 100%; min-height: 60px; padding: 10px; border: 1px solid rgba(255,167,38,0.3); border-radius: 6px; background: rgba(255,167,38,0.05); color: #fff; font-family: inherit; font-size: 0.85rem;"
+                                placeholder="Edit explanation plan...">${escapeHtml(content.explanation_plan)}</textarea>
+                        </div>
+                    `;
+                }
+
+                // Render Visual Beats
+                if (content.visual_beats && content.visual_beats.length > 0) {
+                    contentHtml += `
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: #9c27b0; font-size: 0.9rem; margin-bottom: 8px; font-weight: 600;">🎬 Visual Beats (${content.visual_beats.length}):</label>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                ${content.visual_beats.map((beat, beatIdx) => `
+                                    <div style="background: rgba(156,39,176,0.1); border-left: 3px solid #9c27b0; padding: 10px; border-radius: 4px;">
+                                        <div style="color: #888; font-size: 0.75rem; margin-bottom: 5px;">Beat ${beatIdx + 1}</div>
+                                        
+                                        ${beat.video_asset ? `
+                                            <div style="margin-bottom: 10px; text-align: center;">
+                                                <video controls 
+                                                    style="max-width: 100%; max-height: 200px; border-radius: 4px; border: 1px solid rgba(156,39,176,0.3);"
+                                                    src="/player/jobs/${currentReviewJobId}/${beat.video_asset}">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                                <div style="font-size: 0.7rem; color: #888; margin-top: 2px;">${escapeHtml(beat.video_asset)}</div>
+                                            </div>
+                                        ` : ''}
+
+                                        <textarea id="beat_${section.section_id}_${beatIdx}" 
+                                            style="width: 100%; min-height: 50px; padding: 8px; border: 1px solid rgba(156,39,176,0.3); border-radius: 4px; background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; font-size: 0.85rem;"
+                                            placeholder="Edit beat description...">${escapeHtml(beat.description || '')}</textarea>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Render Bullet Items
+                if (content.bullet_items && content.bullet_items.length > 0) {
+                    contentHtml += `
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: #4caf50; font-size: 0.9rem; margin-bottom: 8px; font-weight: 600;">📌 Learning Points (${content.bullet_items.length}):</label>
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                ${content.bullet_items.map((item, itemIdx) => `
+                                    <div style="display: flex; align-items: start; gap: 8px; background: rgba(76,175,80,0.05); padding: 8px; border-radius: 4px; border-left: 2px solid #4caf50;">
+                                        <span style="color: #4caf50; font-size: 1.2rem; line-height: 1;">•</span>
+                                        <input type="text" id="bullet_${section.section_id}_${itemIdx}" 
+                                            value="${escapeHtml(String(item))}"
+                                            style="flex: 1; padding: 6px 10px; border: 1px solid rgba(76,175,80,0.3); border-radius: 4px; background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; font-size: 0.85rem;"
+                                            placeholder="Edit bullet point..." />
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Render Images
+                if (content.images && content.images.length > 0) {
+                    contentHtml += `
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: #ff9800; font-size: 0.9rem; margin-bottom: 8px; font-weight: 600;">🖼️ Images (${content.images.length}):</label>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                ${content.images.map((img, imgIdx) => `
+                                    <div style="background: rgba(255,152,0,0.1); border-left: 3px solid #ff9800; padding: 12px; border-radius: 4px;">
+                                        <div style="color: #ff9800; font-size: 0.85rem; margin-bottom: 5px; font-weight: 600;">Image ID: ${escapeHtml(img.image_id)}</div>
+                                        <div style="margin-bottom: 10px; text-align: center;">
+                                            <img src="/player/jobs/${currentReviewJobId}/images/${img.image_id.replace('.jpg', '.png')}" 
+                                                 onerror="this.onerror=null; this.src='/player/jobs/${currentReviewJobId}/images/${img.image_id}'"
+                                                 style="max-width: 100%; max-height: 200px; border-radius: 4px; border: 1px solid rgba(255,152,0,0.3);" 
+                                                 alt="Image preview" />
+                                        </div>
+                                        <textarea id="img_desc_${section.section_id}_${imgIdx}" 
+                                            style="width: 100%; min-height: 50px; padding: 8px; border: 1px solid rgba(255,152,0,0.3); border-radius: 4px; background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; font-size: 0.85rem;"
+                                            placeholder="Edit image description...">${escapeHtml(img.description || '')}</textarea>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Render Quiz Data
+                if (content.quiz_data) {
+                    const quiz = content.quiz_data;
+                    contentHtml += `
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: #e91e63; font-size: 0.9rem; margin-bottom: 8px; font-weight: 600;">❓ Quiz Questions:</label>
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                ${(quiz.questions || []).map((q, qIdx) => `
+                                    <div style="background: rgba(233,30,99,0.1); border-left: 3px solid #e91e63; padding: 12px; border-radius: 4px;">
+                                        <div style="color: #888; font-size: 0.75rem; margin-bottom: 5px;">Question ${qIdx + 1}</div>
+                                        <textarea id="quiz_q_${section.section_id}_${qIdx}" 
+                                            style="width: 100%; min-height: 50px; padding: 8px; border: 1px solid rgba(233,30,99,0.3); border-radius: 4px; background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; font-size: 0.85rem; margin-bottom: 8px;"
+                                            placeholder="Edit question...">${escapeHtml(q.question || '')}</textarea>
+                                        
+                                        <div style="margin-left: 15px;">
+                                            <div style="color: #aaa; font-size: 0.8rem; margin-bottom: 5px;">Options:</div>
+                                            ${(q.options || []).map((opt, optIdx) => `
+                                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
+                                                    <input type="radio" name="quiz_correct_${section.section_id}_${qIdx}" 
+                                                        ${q.correct_answer === opt ? 'checked' : ''}
+                                                        id="quiz_correct_${section.section_id}_${qIdx}_${optIdx}"
+                                                        style="margin: 0;" />
+                                                    <input type="text" id="quiz_opt_${section.section_id}_${qIdx}_${optIdx}" 
+                                                        value="${escapeHtml(String(opt))}"
+                                                        style="flex: 1; padding: 6px 10px; border: 1px solid rgba(233,30,99,0.3); border-radius: 4px; background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; font-size: 0.8rem;"
+                                                        placeholder="Edit option..." />
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                        
+                                        ${q.explanation ? `
+                                            <div style="margin-top: 8px;">
+                                                <label style="color: #aaa; font-size: 0.8rem;">Explanation:</label>
+                                                <textarea id="quiz_exp_${section.section_id}_${qIdx}" 
+                                                    style="width: 100%; min-height: 40px; padding: 6px; border: 1px solid rgba(233,30,99,0.3); border-radius: 4px; background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; font-size: 0.8rem;"
+                                                    placeholder="Edit explanation...">${escapeHtml(q.explanation)}</textarea>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Render Flashcards
+                if (content.flashcards && content.flashcards.length > 0) {
+                    contentHtml += `
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: #00bcd4; font-size: 0.9rem; margin-bottom: 8px; font-weight: 600;">🃏 Flashcards (${content.flashcards.length}):</label>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                ${content.flashcards.map((card, cardIdx) => `
+                                    <div style="background: rgba(0,188,212,0.1); border-left: 3px solid #00bcd4; padding: 12px; border-radius: 4px;">
+                                        <div style="color: #888; font-size: 0.75rem; margin-bottom: 5px;">Card ${cardIdx + 1}</div>
+                                        <div style="margin-bottom: 8px;">
+                                            <label style="color: #aaa; font-size: 0.8rem;">Front:</label>
+                                            <textarea id="flash_front_${section.section_id}_${cardIdx}" 
+                                                style="width: 100%; min-height: 40px; padding: 8px; border: 1px solid rgba(0,188,212,0.3); border-radius: 4px; background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; font-size: 0.85rem;"
+                                                placeholder="Edit front...">${escapeHtml(card.front || '')}</textarea>
+                                        </div>
+                                        <div>
+                                            <label style="color: #aaa; font-size: 0.8rem;">Back:</label>
+                                            <textarea id="flash_back_${section.section_id}_${cardIdx}" 
+                                                style="width: 100%; min-height: 40px; padding: 8px; border: 1px solid rgba(0,188,212,0.3); border-radius: 4px; background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; font-size: 0.85rem;"
+                                                placeholder="Edit back...">${escapeHtml(card.back || '')}</textarea>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);">
+                        <h4 style="color: #00d4ff; margin-bottom: 15px;">
+                            Section ${section.section_id}: ${section.title}
+                            <span style="font-size: 0.8rem; color: #888; margin-left: 10px;">(${section.section_type})</span>
+                        </h4>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: #aaa; font-size: 0.9rem; margin-bottom: 5px; font-weight: 600;">🎙️ Narration Text:</label>
+                            <textarea id="narration_${section.section_id}" 
+                                style="width: 100%; min-height: 100px; padding: 10px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; background: rgba(0,0,0,0.3); color: #fff; font-family: inherit; font-size: 0.9rem;"
+                                placeholder="Edit narration text...">${section.narration_text || ''}</textarea>
+                        </div>
+                        
+                        ${contentHtml}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function closeReviewModal() {
+            document.getElementById('reviewModal').style.display = 'none';
+            currentReviewJobId = null;
+            reviewSectionsData = [];
+        }
+
+        async function submitReview() {
+            if (!currentReviewJobId) return;
+
+            // Collect edits from all fields
+            const edits = reviewSectionsData.map(section => {
+                const content = section.content || {};
+                const edit = {
+                    section_id: section.section_id,
+                    narration_text: null,
+                    content: {}
+                };
+
+                // Narration text
+                const narrationEl = document.getElementById(`narration_${section.section_id}`);
+                if (narrationEl) {
+                    edit.narration_text = narrationEl.value;
+                }
+
+                // Explanation plan
+                const planEl = document.getElementById(`plan_${section.section_id}`);
+                if (planEl) {
+                    edit.content.explanation_plan = planEl.value;
+                }
+
+                // Visual beats
+                if (content.visual_beats && content.visual_beats.length > 0) {
+                    edit.content.visual_beats = content.visual_beats.map((beat, beatIdx) => {
+                        const beatEl = document.getElementById(`beat_${section.section_id}_${beatIdx}`);
+                        return {
+                            description: beatEl ? beatEl.value : beat.description
+                        };
+                    });
+                }
+
+                // Bullet items
+                if (content.bullet_items && content.bullet_items.length > 0) {
+                    edit.content.bullet_items = content.bullet_items.map((item, itemIdx) => {
+                        const bulletEl = document.getElementById(`bullet_${section.section_id}_${itemIdx}`);
+                        return bulletEl ? bulletEl.value : item;
+                    });
+                }
+
+                // Images
+                if (content.images && content.images.length > 0) {
+                    edit.content.images = content.images.map((img, imgIdx) => {
+                        const imgDescEl = document.getElementById(`img_desc_${section.section_id}_${imgIdx}`);
+                        return {
+                            image_id: img.image_id,
+                            description: imgDescEl ? imgDescEl.value : img.description
+                        };
+                    });
+                }
+
+                // Quiz data
+                if (content.quiz_data) {
+                    const quiz = content.quiz_data;
+                    edit.content.quiz_data = {
+                        questions: (quiz.questions || []).map((q, qIdx) => {
+                            const questionEl = document.getElementById(`quiz_q_${section.section_id}_${qIdx}`);
+                            const explanationEl = document.getElementById(`quiz_exp_${section.section_id}_${qIdx}`);
+
+                            // Collect options
+                            const options = (q.options || []).map((opt, optIdx) => {
+                                const optEl = document.getElementById(`quiz_opt_${section.section_id}_${qIdx}_${optIdx}`);
+                                return optEl ? optEl.value : opt;
+                            });
+
+                            // Determine correct answer from radio buttons
+                            let correctAnswer = q.correct_answer;
+                            for (let optIdx = 0; optIdx < options.length; optIdx++) {
+                                const radioEl = document.getElementById(`quiz_correct_${section.section_id}_${qIdx}_${optIdx}`);
+                                if (radioEl && radioEl.checked) {
+                                    correctAnswer = options[optIdx];
+                                    break;
+                                }
+                            }
+
+                            return {
+                                question: questionEl ? questionEl.value : q.question,
+                                options: options,
+                                correct_answer: correctAnswer,
+                                explanation: explanationEl ? explanationEl.value : q.explanation
+                            };
+                        })
+                    };
+                }
+
+                // Flashcards
+                if (content.flashcards && content.flashcards.length > 0) {
+                    edit.content.flashcards = content.flashcards.map((card, cardIdx) => {
+                        const frontEl = document.getElementById(`flash_front_${section.section_id}_${cardIdx}`);
+                        const backEl = document.getElementById(`flash_back_${section.section_id}_${cardIdx}`);
+                        return {
+                            front: frontEl ? frontEl.value : card.front,
+                            back: backEl ? backEl.value : card.back
+                        };
+                    });
+                }
+
+                return edit;
+            });
+
+            if (!confirm(`Submit edits for ${edits.length} section(s) and trigger regeneration?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/job/${currentReviewJobId}/submit_review`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ edits })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Error submitting review: ' + data.error);
+                    return;
+                }
+
+                alert(data.message || 'Review submitted successfully!');
+                closeReviewModal();
+                loadJobHistory(); // Refresh job list
+            } catch (err) {
+                alert('Error submitting review: ' + err.message);
+            }
         }
 
     </script>

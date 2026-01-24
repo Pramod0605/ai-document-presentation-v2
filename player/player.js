@@ -25,7 +25,7 @@ class SlideValidator {
 
     const narration = slide.narration || {};
     const segments = narration.segments || slide.narration_segments || [];
-    
+
     if (segments.length === 0 && !['recap'].includes(sectionType)) {
       this.addWarning(`Slide ${slideIndex}: No narration segments`);
     }
@@ -47,14 +47,14 @@ class SlideValidator {
         slide.visual_content.bullet_points?.length > 0 ||
         slide.visual_content.formula
       );
-      
-      const hasSegmentVisualContent = segments.some(seg => 
+
+      const hasSegmentVisualContent = segments.some(seg =>
         seg.visual_content && (
           seg.visual_content.bullet_points?.length > 0 ||
           seg.visual_content.formula
         )
       );
-      
+
       if (!hasVisualContent && !hasSegmentVisualContent) {
         this.addWarning(`Slide ${slideIndex}: No visual_content - text display may fall back to narration`);
       }
@@ -154,7 +154,7 @@ class LayerController {
     if (!segment || !segment.display_directives) {
       return;
     }
-    
+
     if (segmentIndex === this.lastSegmentIndex) {
       return;
     }
@@ -177,14 +177,14 @@ class LayerController {
       this.videoReadyHandler = null;
     }
 
-    const needsVideoGating = (textLayer === 'hide' || textLayer === 'swap') && 
-                              (visualLayer === 'show' || visualLayer === 'replace') &&
-                              !this.isVideoReady();
+    const needsVideoGating = (textLayer === 'hide' || textLayer === 'swap') &&
+      (visualLayer === 'show' || visualLayer === 'replace') &&
+      !this.isVideoReady();
 
     if (needsVideoGating) {
       console.log(`[LayerController] Segment ${segmentIndex}: Waiting for video ready before hiding text...`);
       this.pendingDirectives = { textLayer, visualLayer, avatarLayer, sectionType, segmentIndex };
-      
+
       const inlineVideo = document.getElementById('inline-video');
       if (inlineVideo) {
         this.videoReadyHandler = () => {
@@ -194,7 +194,7 @@ class LayerController {
           this.videoReadyHandler = null;
         };
         inlineVideo.addEventListener('canplay', this.videoReadyHandler, { once: true });
-        
+
         setTimeout(() => {
           if (this.pendingDirectives && this.pendingDirectives.segmentIndex === segmentIndex) {
             console.log(`[LayerController] Video timeout - applying directives anyway for segment ${segmentIndex}`);
@@ -203,7 +203,7 @@ class LayerController {
           }
         }, 2000);
       }
-      
+
       this.applyAvatarDirectives(avatarLayer, sectionType);
       return;
     }
@@ -280,7 +280,7 @@ class LayerController {
     this.currentVisualState = 'hide';
     this.currentAvatarState = 'show';
     this.lastSegmentIndex = -1;
-    
+
     const avatarCanvas = document.getElementById('avatar-canvas');
     if (avatarCanvas) {
       avatarCanvas.style.opacity = '1';
@@ -315,12 +315,12 @@ class LayerController {
     }
 
     this.applyAvatarLayout(avatarCanvas, position, widthPercent);
-    
+
     // ISS-176: Apply content-box positioning for non-intro sections
     // Content: L:61px T:13px (from user specs)
     this.applyContentLayout(sectionType);
   }
-  
+
   /**
    * Apply content-box layout - fixed position for all non-intro sections
    * ISS-176: User-specified defaults: L:61px T:13px, ~45% width
@@ -329,13 +329,13 @@ class LayerController {
     const contentBox = document.getElementById('content-box');
     const contentWrapper = document.getElementById('content-wrapper');
     if (!contentWrapper) return;
-    
+
     if (sectionType === 'intro') {
       // Intro: content hidden
       contentWrapper.style.opacity = '0';
       return;
     }
-    
+
     // All other sections: content visible on left side
     contentWrapper.style.cssText = `
       position: absolute !important;
@@ -346,7 +346,7 @@ class LayerController {
       opacity: 1 !important;
       z-index: 25 !important;
     `;
-    
+
     console.log(`[LayerController] Content layout: L:61px T:13px, width:45%`);
   }
 
@@ -384,10 +384,10 @@ class LayerController {
     const stage = document.getElementById('stage');
     const stageWidth = stage ? stage.clientWidth : 1280;
     const stageHeight = stage ? stage.clientHeight : 720;
-    
+
     // Reset ALL styles first
     avatarCanvas.removeAttribute('style');
-    
+
     // Apply base styles
     const s = avatarCanvas.style;
     s.setProperty('position', 'absolute', 'important');
@@ -403,20 +403,20 @@ class LayerController {
     if (position === 'center') {
       // INTRO: 80% width, centered, bottom aligned
       const avatarWidthPx = Math.round(stageWidth * (widthPercent / 100));
-      const avatarHeightPx = Math.round(avatarWidthPx * (9/16));
+      const avatarHeightPx = Math.round(avatarWidthPx * (9 / 16));
       const leftPos = Math.round((stageWidth - avatarWidthPx) / 2);
-      
+
       s.setProperty('width', `${avatarWidthPx}px`, 'important');
       s.setProperty('height', `${avatarHeightPx}px`, 'important');
       s.setProperty('left', `${leftPos}px`, 'important');
       s.setProperty('right', 'auto', 'important');
       s.setProperty('bottom', '0', 'important');
       s.setProperty('transform-origin', 'bottom center', 'important');
-      
+
       // ISS-179d: Store base position for Dev offset slider
       avatarCanvas.dataset.baseLeft = leftPos;
       avatarCanvas.dataset.isIntro = 'true';
-      
+
       console.log(`[LayerController] Avatar INTRO: center, ${widthPercent}% = ${avatarWidthPx}x${avatarHeightPx}px, L:${leftPos}px B:0`);
     } else {
       // ALL OTHER SECTIONS: Fixed 810x455px at R:182px B:1px
@@ -424,18 +424,18 @@ class LayerController {
       const avatarHeightPx = 455;
       const rightPos = 182;
       const bottomPos = 1;
-      
+
       s.setProperty('width', `${avatarWidthPx}px`, 'important');
       s.setProperty('height', `${avatarHeightPx}px`, 'important');
       s.setProperty('right', `${rightPos}px`, 'important');
       s.setProperty('left', 'auto', 'important');
       s.setProperty('bottom', `${bottomPos}px`, 'important');
       s.setProperty('transform-origin', 'bottom right', 'important');
-      
+
       // ISS-179d: Store base position for Dev offset slider
       avatarCanvas.dataset.baseRight = rightPos;
       avatarCanvas.dataset.isIntro = 'false';
-      
+
       console.log(`[LayerController] Avatar CONTENT: right, ${avatarWidthPx}x${avatarHeightPx}px, R:${rightPos}px B:${bottomPos}px`);
     }
   }
@@ -450,7 +450,7 @@ const layerController = new LayerController();
  */
 function sanitizeMarkdown(text) {
   if (!text || typeof text !== 'string') return text;
-  
+
   // Remove ALL markdown header variations
   let cleaned = text
     // Standard headers: # Title, ## Title, ### Title (with or without space)
@@ -469,7 +469,7 @@ function sanitizeMarkdown(text) {
     .replace(/`([^`]+)`/g, '$1')
     // Clean up extra whitespace
     .trim();
-  
+
   return cleaned;
 }
 
@@ -481,34 +481,34 @@ function sanitizeMarkdown(text) {
  */
 function fitContentToContainer(element, options = {}) {
   const { minScale = 0.65, maxScale = 1.0, step = 0.05 } = options;
-  
+
   if (!element || !element.parentElement) return;
-  
+
   const container = element.parentElement;
   let scale = maxScale;
-  
+
   // Reset to base size
   element.style.fontSize = '';
   element.style.lineHeight = '';
-  
+
   // Check if content overflows
   const checkOverflow = () => {
-    return element.scrollHeight > container.clientHeight || 
-           element.scrollWidth > container.clientWidth;
+    return element.scrollHeight > container.clientHeight ||
+      element.scrollWidth > container.clientWidth;
   };
-  
+
   // Progressively reduce scale until content fits
   while (checkOverflow() && scale > minScale) {
     scale -= step;
     element.style.fontSize = `${scale}em`;
     element.style.lineHeight = `${1.3 + (1 - scale) * 0.3}`;  // Adjust line-height proportionally
   }
-  
+
   // If still overflowing at minimum scale, enable scroll as fallback
   if (checkOverflow()) {
     element.style.overflowY = 'auto';
   }
-  
+
   console.log(`[ISS-185] Font scaled to ${(scale * 100).toFixed(0)}% for element`);
 }
 
@@ -518,7 +518,7 @@ function fitContentToContainer(element, options = {}) {
  */
 function renderFormattedContent(visualContent, sectionType, narrationText) {
   const container = document.createElement('div');
-  
+
   // Handle Memory section - show narration as key concept card
   if (sectionType === 'memory' && narrationText) {
     const card = document.createElement('div');
@@ -530,77 +530,77 @@ function renderFormattedContent(visualContent, sectionType, narrationText) {
     container.appendChild(card);
     return container;
   }
-  
+
   // No visual content - return empty
   if (!visualContent) return container;
-  
+
   const contentType = visualContent.content_type;
   const bulletPoints = visualContent.bullet_points || [];
   // ISS-181: Sanitize markdown from verbatim_text
   const verbatimText = sanitizeMarkdown(visualContent.verbatim_text || '');
-  
+
   // ISS-182 + ISS-186: For Summary sections, ONLY show level 1 bullet_points (no sub-bullets)
   if (sectionType === 'summary' && bulletPoints.length > 0) {
     const block = document.createElement('div');
     block.className = 'formatted-content-block summary-block';
-    
+
     const bulletList = document.createElement('div');
     bulletList.className = 'formatted-bullet-list';
-    
+
     // ISS-186: Filter to level 1 only (main bullets, no sub-bullets)
     const mainBullets = bulletPoints.filter(bp => !bp.level || bp.level === 1);
-    
+
     mainBullets.forEach((bp) => {
       const item = document.createElement('div');
       item.className = 'formatted-bullet-item';
-      
+
       const marker = document.createElement('span');
       marker.className = 'bullet-marker';
       marker.textContent = '✓';  // Use checkmark for summary learning objectives
-      
+
       const text = document.createElement('span');
       text.className = 'bullet-text';
       text.innerHTML = sanitizeMarkdown(bp.text || bp);
-      
+
       item.appendChild(marker);
       item.appendChild(text);
       bulletList.appendChild(item);
     });
-    
+
     block.appendChild(bulletList);
     container.appendChild(block);
     return container;
   }
-  
+
   // Check if this is a quiz question (level 1 = question, level 2 = choices)
-  const isQuizQuestion = bulletPoints.length > 0 && 
-    bulletPoints.some(bp => bp.level === 1) && 
+  const isQuizQuestion = bulletPoints.length > 0 &&
+    bulletPoints.some(bp => bp.level === 1) &&
     bulletPoints.some(bp => bp.level === 2);
-  
+
   if (isQuizQuestion) {
     // Render as quiz card
     const quizCard = document.createElement('div');
     quizCard.className = 'quiz-card';
-    
+
     // Extract question (level 1) and choices (level 2)
     const question = bulletPoints.find(bp => bp.level === 1);
     const choices = bulletPoints.filter(bp => bp.level === 2);
-    
+
     if (question) {
       const questionDiv = document.createElement('div');
       questionDiv.className = 'quiz-question-text';
       questionDiv.innerHTML = question.text.replace(/^Question\s*\d+:\s*/i, '');
       quizCard.appendChild(questionDiv);
     }
-    
+
     if (choices.length > 0) {
       const choicesList = document.createElement('div');
       choicesList.className = 'quiz-choices-list';
-      
+
       choices.forEach((choice) => {
         const choiceItem = document.createElement('div');
         choiceItem.className = 'quiz-choice-item';
-        
+
         // Extract letter from text (e.g., "A) $1/2$" -> letter: "A", text: "$1/2$")
         const match = choice.text.match(/^([A-D])\)\s*(.+)$/i);
         if (match) {
@@ -611,70 +611,70 @@ function renderFormattedContent(visualContent, sectionType, narrationText) {
         } else {
           choiceItem.innerHTML = `<span class="choice-text">${choice.text}</span>`;
         }
-        
+
         choicesList.appendChild(choiceItem);
       });
-      
+
       quizCard.appendChild(choicesList);
     }
-    
+
     container.appendChild(quizCard);
     return container;
   }
-  
+
   // Create formatted content block for regular content
   const block = document.createElement('div');
   block.className = 'formatted-content-block';
-  
+
   // Has both paragraph and bullets - show both
   const hasParagraph = verbatimText && verbatimText.length > 0;
   const hasBullets = bulletPoints.length > 0;
-  
+
   if (hasParagraph) {
     const para = document.createElement('div');
     para.className = 'formatted-paragraph';
     para.innerHTML = verbatimText;
     block.appendChild(para);
   }
-  
+
   if (hasParagraph && hasBullets) {
     const divider = document.createElement('div');
     divider.className = 'content-divider';
     block.appendChild(divider);
   }
-  
+
   if (hasBullets) {
     const bulletList = document.createElement('div');
     bulletList.className = 'formatted-bullet-list';
-    
+
     bulletPoints.forEach((bp) => {
       const item = document.createElement('div');
       item.className = 'formatted-bullet-item';
       if (bp.level && bp.level > 1) {
         item.classList.add(`level-${bp.level}`);
       }
-      
+
       const marker = document.createElement('span');
       marker.className = 'bullet-marker';
       marker.textContent = '•';
-      
+
       const text = document.createElement('span');
       text.className = 'bullet-text';
       text.innerHTML = bp.text || bp;
-      
+
       item.appendChild(marker);
       item.appendChild(text);
       bulletList.appendChild(item);
     });
-    
+
     block.appendChild(bulletList);
   }
-  
+
   // If we have content, add it
   if (hasParagraph || hasBullets) {
     container.appendChild(block);
   }
-  
+
   return container;
 }
 
@@ -707,7 +707,7 @@ class VideoBufferManager {
   preloadVideo(videoPath) {
     if (!this.preload || !videoPath) return;
     if (this.nextVideoPath === videoPath) return;
-    
+
     console.log(`[VideoBuffer] Preloading: ${videoPath}`);
     this.nextVideoPath = videoPath;
     this.preloadReady = false;
@@ -717,20 +717,20 @@ class VideoBufferManager {
 
   switchTo(inlineVideo, videoPath, playbackRate = 1.0) {
     if (!inlineVideo || !videoPath) return;
-    
+
     // ISS-088 FIX: Clear video-ready class immediately so LayerController knows video is not ready yet
     const videoBox = document.getElementById('video-box');
     if (videoBox) {
       videoBox.classList.remove('video-ready');
     }
-    
+
     // Setup canplay listener to mark video ready when new video is actually playable
     const markVideoReady = () => {
       if (videoBox) videoBox.classList.add('video-ready');
       inlineVideo.removeEventListener('canplay', markVideoReady);
     };
     inlineVideo.addEventListener('canplay', markVideoReady);
-    
+
     if (this.preload && this.nextVideoPath === videoPath && this.preloadReady) {
       console.log(`[VideoBuffer] Instant switch to preloaded: ${videoPath}`);
       inlineVideo.src = videoPath;
@@ -741,7 +741,7 @@ class VideoBufferManager {
     } else {
       this.pendingSwitch = { video: inlineVideo, path: videoPath, rate: playbackRate };
       this.preloadVideo(videoPath);
-      
+
       setTimeout(() => {
         if (this.pendingSwitch && this.pendingSwitch.path === videoPath) {
           console.log(`[VideoBuffer] Fallback load: ${videoPath}`);
@@ -779,21 +779,21 @@ function getBasePath() {
   const path = window.location.pathname;
   const params = new URLSearchParams(window.location.search);
   const jobParam = params.get('job');
-  
+
   if (jobParam) {
     return `/player/jobs/${jobParam}/`;
   }
-  
+
   const newJobMatch = path.match(/\/jobs\/([^\/]+)\//);
   if (newJobMatch) {
     return `/player/jobs/${newJobMatch[1]}/`;
   }
-  
+
   const legacyJobMatch = path.match(/\/player\/jobs\/([^\/]+)\//);
   if (legacyJobMatch) {
     return `/player/jobs/${legacyJobMatch[1]}/`;
   }
-  
+
   return '/player/assets/';
 }
 
@@ -813,7 +813,7 @@ async function detectBeatVideos(sectionId) {
   if (videoDetectionCache[sectionId]) {
     return videoDetectionCache[sectionId];
   }
-  
+
   const beats = [];
   for (let i = 0; i < 20; i++) {
     const path = BASE_PATH + `videos/topic_${sectionId}_beat_${i}.mp4`;
@@ -835,7 +835,7 @@ async function detectBeatVideos(sectionId) {
 async function detectVideosForSlide(slide) {
   const sectionId = slide.section_id || slide.id;
   if (!sectionId || slide._videoDetected) return;
-  
+
   try {
     // ISS-061 FIX: Prefer video_path metadata from presentation if available
     if (slide.video_path) {
@@ -846,25 +846,25 @@ async function detectVideosForSlide(slide) {
       slide._videoDetected = true;
       return;
     }
-    
+
     // ISS-134 FIX: Only check for videos if renderer indicates video content
     const renderer = slide.renderer || 'none';
     const sectionType = slide.section_type || slide.slide_type || 'content';
-    
+
     // Skip video detection for text-only sections (intro, summary, memory, quiz with no video renderer)
     if (renderer === 'none' && ['intro', 'summary', 'memory', 'quiz'].includes(sectionType)) {
       slide._videoDetected = true;
       slide.has_content_video = false;
       return;
     }
-    
+
     // Only check for videos if renderer is manim, video, or wan_video
     if (!['manim', 'video', 'wan_video', 'remotion'].includes(renderer)) {
       slide._videoDetected = true;
       slide.has_content_video = false;
       return;
     }
-    
+
     // Fallback: Check for beat videos (silently, no console errors)
     const beats = await detectBeatVideos(sectionId);
     if (beats.length > 0) {
@@ -911,22 +911,22 @@ let currentVisibleImage = null;
 function updateSlideImages(slide, currentTime) {
   const imageLayer = document.getElementById('image-display-layer');
   if (!imageLayer) return;
-  
+
   const sectionType = slide.section_type || slide.slide_type || 'content';
   if (sectionType === 'intro' || sectionType === 'memory' || sectionType === 'recap' || sectionType === 'summary' || sectionType === 'quiz') {
     imageLayer.innerHTML = '';
     currentVisibleImage = null;
     return;
   }
-  
+
   if (!slide.images || slide.images.length === 0) {
     if (!slide.visual_beats) return;
     const hasImages = slide.visual_beats.some(vb => vb.image_ref || vb.image_filename);
     if (!hasImages) return;
   }
-  
+
   let imagesToShow = [];
-  
+
   if (slide.images && slide.images.length > 0) {
     slide.images.forEach((img, i) => {
       const appearTime = img.appear_time || (slide.timed_segments?.[i]?.start_time) || 0;
@@ -939,14 +939,14 @@ function updateSlideImages(slide, currentTime) {
       }
     });
   }
-  
+
   if (slide.visual_beats) {
     slide.visual_beats.forEach((vb, i) => {
       if (vb.image_ref && vb.image_filename) {
         const segStart = slide.timed_segments?.[i]?.start_time || 0;
         const appearOffset = vb.image_appear_time || 0;
         const appearTime = segStart + appearOffset;
-        
+
         if (currentTime >= appearTime) {
           imagesToShow.push({
             src: `${BASE_PATH}images/${vb.image_filename}`,
@@ -957,15 +957,15 @@ function updateSlideImages(slide, currentTime) {
       }
     });
   }
-  
+
   const latestImage = imagesToShow.length > 0 ? imagesToShow[imagesToShow.length - 1] : null;
-  
+
   if (latestImage && latestImage.id !== currentVisibleImage) {
     currentVisibleImage = latestImage.id;
-    
+
     const existingImgs = imageLayer.querySelectorAll('.slide-image');
     existingImgs.forEach(img => img.classList.remove('visible'));
-    
+
     let imgEl = imageLayer.querySelector(`img[data-id="${latestImage.id}"]`);
     if (!imgEl) {
       imgEl = document.createElement('img');
@@ -975,7 +975,7 @@ function updateSlideImages(slide, currentTime) {
       imgEl.dataset.id = latestImage.id;
       imageLayer.appendChild(imgEl);
     }
-    
+
     setTimeout(() => imgEl.classList.add('visible'), 50);
   } else if (!latestImage && currentVisibleImage) {
     currentVisibleImage = null;
@@ -987,13 +987,13 @@ function updateSlideImages(slide, currentTime) {
 function setupContentOverflowHandler() {
   const contentWrapper = document.getElementById('content-wrapper');
   if (!contentBox || !contentWrapper) return;
-  
+
   const resizeObserver = new ResizeObserver(() => {
     adjustContentScale();
   });
-  
+
   resizeObserver.observe(contentBox);
-  
+
   const mutationObserver = new MutationObserver(() => {
     setTimeout(adjustContentScale, 100);
   });
@@ -1004,10 +1004,10 @@ function adjustContentScale() {
   const contentWrapper = document.getElementById('content-wrapper');
   const segmentsList = document.getElementById('segments-list');
   if (!contentBox || !contentWrapper || !segmentsList) return;
-  
+
   const maxHeight = contentBox.clientHeight - 80;
   const currentHeight = segmentsList.scrollHeight;
-  
+
   if (currentHeight > maxHeight && maxHeight > 0) {
     const scale = Math.max(0.65, maxHeight / currentHeight);
     segmentsList.style.transform = `scale(${scale})`;
@@ -1043,9 +1043,9 @@ function updateVisuals() {
     updateDevStats();
     return;
   }
-  
+
   const isIntro = avatarCanvas.dataset.isIntro === 'true';
-  
+
   if (isIntro) {
     // Intro: offset adjusts left position (positive = move right)
     const baseLeft = parseInt(avatarCanvas.dataset.baseLeft, 10) || 128;
@@ -1059,7 +1059,7 @@ function updateVisuals() {
     avatarCanvas.style.setProperty('right', `${newRight}px`, 'important');
     console.log(`[updateVisuals] CONTENT: baseRight=${baseRight}, offset=${aX}, newRight=${newRight}`);
   }
-  
+
   contentBox.style.transform = `scale(${cScale})`;
   updateDevStats();
 }
@@ -1067,12 +1067,12 @@ function updateVisuals() {
 function updateDevStats() {
   const overlay = document.getElementById('dev-stats-overlay');
   if (!overlay || !overlay.classList.contains('visible')) return;
-  
+
   const avatar = document.getElementById('avatar-canvas');
   const content = document.getElementById('content-box');
   const videoBox = document.getElementById('video-box');
   const stageEl = document.getElementById('stage');
-  
+
   const modeClasses = ['mode-intro', 'mode-center', 'mode-side', 'mode-khan', 'mode-content-video', 'mode-image'];
   let currentMode = 'unknown';
   for (const mode of modeClasses) {
@@ -1081,13 +1081,13 @@ function updateDevStats() {
       break;
     }
   }
-  
+
   const slide = lessonData?.slides?.[currentSlideIndex];
   const sectionType = slide?.section_type || slide?.slide_type || '-';
-  
+
   document.getElementById('stat-mode').textContent = currentMode;
   document.getElementById('stat-section').textContent = sectionType;
-  
+
   if (avatar) {
     const rect = avatar.getBoundingClientRect();
     const stageRect = stageEl.getBoundingClientRect();
@@ -1098,7 +1098,7 @@ function updateDevStats() {
     const aspect = rect.height > 0 ? (rect.width / rect.height).toFixed(2) : '-';
     document.getElementById('stat-avatar-aspect').textContent = aspect;
   }
-  
+
   if (content) {
     const rect = content.getBoundingClientRect();
     const stageRect = stageEl.getBoundingClientRect();
@@ -1107,7 +1107,7 @@ function updateDevStats() {
     document.getElementById('stat-content-pos').textContent = `L:${relLeft}px T:${relTop}px`;
     document.getElementById('stat-content-size').textContent = `${Math.round(rect.width)}x${Math.round(rect.height)}`;
   }
-  
+
   if (videoBox) {
     const rect = videoBox.getBoundingClientRect();
     const isVisible = stageEl.classList.contains('mode-content-video') && rect.width > 0;
@@ -1162,12 +1162,12 @@ function loadSlide(index) {
   currentSlideIndex = index;
   currentBeatIndex = 0;
   const slide = lessonData.slides[index];
-  
+
   slideValidator.validateSlide(slide, index);
   if (slideValidator.validationErrors.filter(e => e.level === 'error').length > 0) {
     slideValidator.showValidationOverlay(index);
   }
-  
+
   const sectionType = slide.section_type || slide.slide_type || 'content';
   layerController.applySectionAvatarRules(sectionType, slide);
 
@@ -1195,12 +1195,12 @@ function loadSlide(index) {
     const quiz = slide.quiz;
     const container = document.createElement('div');
     container.className = 'quiz-container';
-    
+
     const questionDiv = document.createElement('div');
     questionDiv.className = 'quiz-question';
     questionDiv.innerHTML = `<span class="quiz-q-mark">Q:</span> ${quiz.question?.text || quiz.question || ''}`;
     container.appendChild(questionDiv);
-    
+
     const choicesDiv = document.createElement('div');
     choicesDiv.className = 'quiz-choices';
     (quiz.choices || []).forEach((choice, i) => {
@@ -1212,7 +1212,7 @@ function loadSlide(index) {
       choicesDiv.appendChild(choiceEl);
     });
     container.appendChild(choicesDiv);
-    
+
     if (quiz.answer_reveal && quiz.answer_reveal.reveal_steps) {
       const revealDiv = document.createElement('div');
       revealDiv.className = 'quiz-reveal-steps';
@@ -1225,21 +1225,21 @@ function loadSlide(index) {
         revealDiv.appendChild(stepEl);
       });
       container.appendChild(revealDiv);
-      
+
       slide.quizData = {
         correctChoiceId: quiz.correct_choice_id,
         revealStepCount: quiz.answer_reveal.reveal_steps.length,
         choices: quiz.choices || []
       };
     }
-    
+
     document.querySelectorAll('.quiz-choice').forEach(ch => {
       ch.classList.remove('correct', 'incorrect', 'active');
     });
-    
+
     list.appendChild(container);
     document.getElementById('content-box').style.width = '75%';
-    
+
     const quizNarrationSegs = slide.narration?.segments || slide.narration_segments;
     if (quizNarrationSegs && quizNarrationSegs.length > 0) {
       let cumulativeTime = 0;
@@ -1268,14 +1268,14 @@ function loadSlide(index) {
         // ISS-063 FIX: Parse flashcard description to extract question and answer
         let question = fc.concept_title || fc.title || '';
         let answer = fc.description || '';
-        
+
         // Parse description pattern: "Flashcard front shows 'X'. Flips to reveal 'Y'."
         const descMatch = (fc.description || '').match(/front shows ['"]([^'"]+)['"]\. Flips to reveal ['"]([^'"]+)['"]/i);
         if (descMatch) {
           question = descMatch[1];
           answer = descMatch[2];
         }
-        
+
         card.className = 'flashcard flip-card';
         card.innerHTML = `
           <div class="flip-card-inner">
@@ -1350,42 +1350,42 @@ function loadSlide(index) {
 
     let displayItems = [];
     const narrationSegs = slide.narration?.segments || slide.narration_segments;
-    
+
     const specVersion = lessonData.spec_version || '';
     const legacyVersions = ['', 'v1.0', 'v1.1', 'v1.2'];
     const isLegacy = legacyVersions.includes(specVersion);
-    
+
     // ISS-180: Enhanced content rendering with formatted blocks
     const sectionType = slide.section_type || slide.slide_type || 'content';
     const contentType = slide.visual_content?.content_type;
     let contentRendered = false; // Flag to prevent duplicate rendering
-    
+
     // ISS-180: V1.5 per-segment visual_content rendering
     if (!isLegacy && narrationSegs && narrationSegs.length > 0 && narrationSegs[0]?.visual_content) {
       console.log(`[ISS-180] Slide ${slide.slide_number}: Rendering ${narrationSegs.length} segments with formatted content`);
-      
+
       narrationSegs.forEach((seg, i) => {
         const segDiv = document.createElement('div');
         segDiv.className = 'segment-item';
         segDiv.id = `seg-${i}`;
-        
+
         // Use enhanced rendering for this segment
         const formattedContent = renderFormattedContent(
-          seg.visual_content, 
-          sectionType, 
+          seg.visual_content,
+          sectionType,
           seg.text // narration text for memory sections
         );
-        
+
         if (formattedContent.children.length > 0) {
           segDiv.appendChild(formattedContent);
         } else {
           // Fallback to simple text
           segDiv.innerHTML = seg.visual_content?.verbatim_text || seg.text || '';
         }
-        
+
         list.appendChild(segDiv);
       });
-      
+
       // Build timed_segments from narration
       let cumulativeTime = 0;
       slide.timed_segments = narrationSegs.map((seg, i) => {
@@ -1398,12 +1398,12 @@ function loadSlide(index) {
           end_time: cumulativeTime
         };
       });
-      
+
       const firstSeg = document.getElementById('seg-0');
       if (firstSeg) firstSeg.classList.add('active');
-      
+
       contentRendered = true; // Mark as rendered to skip legacy block
-      
+
     } else if (contentType === 'paragraph' && slide.visual_content?.verbatim_text) {
       // ISS-160: Paragraph mode - display as prose text (not bullets)
       const paragraphDiv = document.createElement('div');
@@ -1438,19 +1438,11 @@ function loadSlide(index) {
       console.log(`[ISS-160] Slide ${slide.slide_number}: Rendering formula mode`);
     } else if (slide.visual_content && slide.visual_content.bullet_points && slide.visual_content.bullet_points.length > 0) {
       displayItems = slide.visual_content.bullet_points;
-    } else if (isLegacy && narrationSegs && narrationSegs.length > 0) {
-      displayItems = narrationSegs.map(seg => seg.text || '');
-      console.warn(`[Legacy Mode] Slide ${slide.slide_number}: Using narration text as display (${specVersion || 'unversioned'} content)`);
-    } else if (!isLegacy && narrationSegs && narrationSegs.length > 0) {
-      const textLayerShowSegs = narrationSegs.filter(seg => 
-        seg.display_directives && seg.display_directives.text_layer === 'show'
-      );
-      if (textLayerShowSegs.length > 0) {
-        console.error(`[v1.3+ VIOLATION] Slide ${slide.slide_number}: text_layer=show segments exist but no visual_content provided.`);
-        displayItems = [{ level: 1, text: '[Missing display content - visual_content required]' }];
-      }
     } else if (slide.visual_beats && slide.visual_beats.length > 0) {
       displayItems = slide.visual_beats.map(vb => {
+        // ISS-FIX: Prioritize display_text if present (e.g. Memory/Summary sections)
+        if (vb.display_text) return vb.display_text;
+
         const lt = vb.labels_and_text || '';
         const quoted = lt.match(/'([^']+)'/g);
         if (quoted && quoted.length > 0) {
@@ -1458,6 +1450,17 @@ function loadSlide(index) {
         }
         return vb.purpose || vb.pedagogical_focus || lt || '';
       });
+    } else if (isLegacy && narrationSegs && narrationSegs.length > 0) {
+      displayItems = narrationSegs.map(seg => seg.text || '');
+      console.warn(`[Legacy Mode] Slide ${slide.slide_number}: Using narration text as display (${specVersion || 'unversioned'} content)`);
+    } else if (!isLegacy && narrationSegs && narrationSegs.length > 0) {
+      const textLayerShowSegs = narrationSegs.filter(seg =>
+        seg.display_directives && seg.display_directives.text_layer === 'show'
+      );
+      if (textLayerShowSegs.length > 0) {
+        console.error(`[v1.3+ VIOLATION] Slide ${slide.slide_number}: text_layer=show segments exist but no visual_content provided.`);
+        displayItems = [{ level: 1, text: '[Missing display content - visual_content required]' }];
+      }
     } else if (slide.segments && slide.segments.length > 0) {
       displayItems = slide.segments.map(s => s.visual || s.text || '');
     }
@@ -1472,7 +1475,15 @@ function loadSlide(index) {
           div.classList.add(`bullet-level-${item.level}`);
           div.innerHTML = item.text || '';
         } else {
-          div.innerHTML = typeof item === 'string' ? item : (item.visual || item.text || '');
+          // ISS-FIX: Auto-style summary items as list
+          if (sectionType === 'summary') {
+            div.classList.add('bullet-level-1');
+            const content = typeof item === 'string' ? item : (item.visual || item.text || '');
+            // Add checkmark if not present
+            div.innerHTML = content.startsWith('✓') ? content : `<span style="color:#00ff88;margin-right:10px">✓</span>${content}`;
+          } else {
+            div.innerHTML = typeof item === 'string' ? item : (item.visual || item.text || '');
+          }
         }
         list.appendChild(div);
       });
@@ -1491,7 +1502,7 @@ function loadSlide(index) {
           };
         });
       }
-      
+
       const firstSeg = document.getElementById('seg-0');
       if (firstSeg) firstSeg.classList.add('active');
     }
@@ -1499,7 +1510,7 @@ function loadSlide(index) {
 
   const firstFlashcard = document.querySelector('.flashcard');
   if (firstFlashcard) firstFlashcard.classList.add('active');
-  
+
   // Toggle text-visible class based on whether content-box has visible content
   const stageForText = document.getElementById('stage');
   const segmentsList = document.getElementById('segments-list');
@@ -1507,7 +1518,7 @@ function loadSlide(index) {
     const hasSegments = segmentsList && segmentsList.children.length > 0;
     const hasFlashcards = document.querySelector('.flashcard') !== null;
     const hasQuiz = document.querySelector('.quiz-container') !== null;
-    
+
     if (hasSegments || hasFlashcards || hasQuiz) {
       stageForText.classList.add('text-visible');
     } else {
@@ -1516,7 +1527,7 @@ function loadSlide(index) {
   }
 
   if (window.MathJax) MathJax.typesetPromise();
-  
+
   // ISS-185: Apply dynamic font scaling to prevent text overflow
   const contentBox = document.getElementById('content-box');
   if (contentBox && segmentsList && segmentsList.children.length > 0) {
@@ -1618,18 +1629,18 @@ function loadSlide(index) {
 
   const bgVideo = document.getElementById('scene-video');
   const bgVidPath = slide.background_video;
-  
+
   const hasBeatVideos = slide.beat_videos && slide.beat_videos.length > 0;
   const contentVidPath = hasBeatVideos ? slide.beat_videos[0] : slide.content_video_path;
 
   const inlineVideo = document.getElementById('inline-video');
   const videoBox = document.getElementById('video-box');
-  
-  const showVideoBox = (sectionType !== 'intro' && sectionType !== 'memory') || 
-                       (sectionType === 'recap' && (slide.has_content_video || slide.content_video_path));
+
+  const showVideoBox = (sectionType !== 'intro' && sectionType !== 'memory') ||
+    (sectionType === 'recap' && (slide.has_content_video || slide.content_video_path));
 
   const hasValidVideoAsset = contentVidPath && slide.has_content_video;
-  
+
   if (showVideoBox && (hasValidVideoAsset || hasBeatVideos)) {
     stage.classList.remove('mode-khan');
     stage.classList.remove('mode-side');
@@ -1637,10 +1648,10 @@ function loadSlide(index) {
     stage.classList.add('mode-content-video');
     stage.classList.remove('video-swap');
     stage.classList.remove('video-focus');
-    
+
     const firstBeat = slide.visual_beats && slide.visual_beats[0];
     const displayMode = firstBeat?.display_mode || 'video_primary';
-    
+
     if (hasValidVideoAsset || hasBeatVideos) {
       if (displayMode === 'video_only') {
         stage.classList.add('video-focus');
@@ -1648,9 +1659,9 @@ function loadSlide(index) {
         stage.classList.add('video-swap');
       }
     }
-    
+
     console.log(`Loading video for section ${slide.id}: ${contentVidPath}, display_mode: ${displayMode}`);
-    
+
     if (videoBox) {
       videoBox.classList.remove('video-ready');
     }
@@ -1665,7 +1676,7 @@ function loadSlide(index) {
       const renderer = slide.renderer || 'none';
       const isManim = renderer === 'manim';
       inlineVideo.playbackRate = isManim ? 1.0 : 0.7;
-      
+
       inlineVideo.oncanplay = () => {
         if (videoBox) videoBox.classList.add('video-ready');
         inlineVideo.oncanplay = null;
@@ -1675,21 +1686,21 @@ function loadSlide(index) {
       }
       setTimeout(() => {
         if (inlineVideo.paused) {
-          inlineVideo.play().catch(e => {});
+          inlineVideo.play().catch(e => { });
         }
         // ISS-184: Ensure audio is playing when video starts
         if (audio.src && audio.paused && isPlaying) {
           audio.play().catch(e => console.log("[ISS-184] Audio play fail", e));
         }
       }, 100);
-      
+
       // ISS-089 FIX: Preload second recap video at slide start (before first switch)
       if (sectionType === 'recap' && slide.recap_video_paths && slide.recap_video_paths.length > 1) {
         console.log(`[ISS-089] Preloading second recap video at slide start`);
         videoBufferManager.preloadVideo(slide.recap_video_paths[1]);
       }
     }
-    
+
     // ISS-174 FIX: Fully hide and clear scene-video when using inline video
     bgVideo.pause();
     bgVideo.style.opacity = '0';
@@ -1735,11 +1746,11 @@ function loadSlide(index) {
 
   adjustContentScale();
   renderAvatar();
-  
+
   // ISS-171 FIX: Re-apply avatar rules AFTER all mode changes to ensure avatar is always visible
   // This overrides any CSS mode-specific settings that might hide or reposition the avatar
   layerController.applySectionAvatarRules(sectionType, slide);
-  
+
   if (!slide._videoDetected) {
     detectVideosForSlide(slide).then(() => {
       if (currentSlideIndex === index && slide.has_content_video) {
@@ -1772,19 +1783,19 @@ function handleTimeUpdate(e) {
   }
 
   const inlineVideo = document.getElementById('inline-video');
-  
+
   if (stage.classList.contains('mode-content-video')) {
     if (inlineVideo) {
-      if (isPlaying && inlineVideo.paused) inlineVideo.play().catch(e => {});
+      if (isPlaying && inlineVideo.paused) inlineVideo.play().catch(e => { });
       if (!isPlaying && !inlineVideo.paused) inlineVideo.pause();
-      
+
       if (!slide.beat_videos || slide.beat_videos.length <= 1) {
         const singleBeat = slide.visual_beats && slide.visual_beats[0];
         const singleDisplayMode = singleBeat?.display_mode || 'video_primary';
-        
+
         stage.classList.remove('video-swap');
         stage.classList.remove('video-focus');
-        
+
         if (singleDisplayMode === 'video_only') {
           stage.classList.add('video-focus');
         } else if (singleDisplayMode === 'text_primary') {
@@ -1792,10 +1803,10 @@ function handleTimeUpdate(e) {
         }
       }
     }
-    
+
     if (slide.beat_videos && slide.beat_videos.length > 1) {
       let targetBeatIndex = 0;
-      
+
       if (slide.timed_segments && slide.timed_segments.length === slide.beat_videos.length) {
         for (let i = 0; i < slide.timed_segments.length; i++) {
           const seg = slide.timed_segments[i];
@@ -1810,7 +1821,7 @@ function handleTimeUpdate(e) {
         const beatDuration = duration / slide.beat_videos.length;
         targetBeatIndex = Math.min(Math.floor(t / beatDuration), slide.beat_videos.length - 1);
       }
-      
+
       if (targetBeatIndex !== currentBeatIndex && inlineVideo) {
         currentBeatIndex = targetBeatIndex;
         const newBeatPath = slide.beat_videos[targetBeatIndex];
@@ -1818,13 +1829,13 @@ function handleTimeUpdate(e) {
         videoBufferManager.switchTo(inlineVideo, newBeatPath, 0.7);
         videoBufferManager.preloadNext(targetBeatIndex, slide.beat_videos);
       }
-      
+
       const activeBeat = slide.visual_beats && slide.visual_beats[targetBeatIndex];
       const beatDisplayMode = activeBeat?.display_mode || 'video_primary';
-      
+
       stage.classList.remove('video-swap');
       stage.classList.remove('video-focus');
-      
+
       if (beatDisplayMode === 'video_only') {
         stage.classList.add('video-focus');
       } else if (beatDisplayMode === 'text_primary') {
@@ -1834,23 +1845,23 @@ function handleTimeUpdate(e) {
         if (activeSeg) {
           const timeIntoSegment = t - activeSeg.start_time;
           const textShowDuration = 3.0;
-          
+
           if (timeIntoSegment > textShowDuration) {
             stage.classList.add('video-focus');
           }
         }
       }
     }
-    
+
     // Handle recap video sequencing - switch between 5 recap scene videos
     const sectionType = slide.section_type || slide.slide_type || 'content';
     if (sectionType === 'recap' && slide.recap_video_paths && slide.recap_video_paths.length > 1) {
       const recapScenes = (slide.visual_beats && slide.visual_beats.length > 0) ? slide.visual_beats : (slide.recap_scenes || []);
       const numScenes = slide.recap_video_paths.length;
       const sceneDuration = duration / numScenes;
-      
+
       let targetRecapIndex = Math.min(Math.floor(t / sceneDuration), numScenes - 1);
-      
+
       if (targetRecapIndex !== currentBeatIndex && inlineVideo) {
         currentBeatIndex = targetRecapIndex;
         const newRecapPath = slide.recap_video_paths[targetRecapIndex];
@@ -1859,7 +1870,7 @@ function handleTimeUpdate(e) {
           videoBufferManager.switchTo(inlineVideo, newRecapPath, 1.0);
           videoBufferManager.preloadNext(targetRecapIndex, slide.recap_video_paths);
         }
-        
+
         // Update the displayed scene info if we have scene data
         if (recapScenes[targetRecapIndex]) {
           const scene = recapScenes[targetRecapIndex];
@@ -1890,23 +1901,23 @@ function handleTimeUpdate(e) {
       }
     });
   }
-  
+
   // ISS-160: Handle flip_timing_sec - flip from text to video mid-segment
   const activeNarrSegs = slide.narration?.segments || slide.narration_segments;
   if (activeSegmentIndex >= 0 && activeNarrSegs && activeNarrSegs[activeSegmentIndex]) {
     const activeSeg = activeNarrSegs[activeSegmentIndex];
     const flipTiming = activeSeg.display_directives?.flip_timing_sec;
-    
+
     if (flipTiming !== null && flipTiming !== undefined && flipTiming >= 0) {
       const segStartTime = slide.timed_segments?.[activeSegmentIndex]?.start_time || 0;
       const elapsedInSeg = t - segStartTime;
-      
+
       if (elapsedInSeg >= flipTiming && !slide._flippedSegments?.[activeSegmentIndex]) {
         // Time to flip from text to video
         slide._flippedSegments = slide._flippedSegments || {};
         slide._flippedSegments[activeSegmentIndex] = true;
         console.log(`[ISS-160] Segment ${activeSegmentIndex}: Flip triggered at ${flipTiming}s (elapsed: ${elapsedInSeg.toFixed(1)}s)`);
-        
+
         // Apply flip: hide text, show video
         layerController.applyDirectivesImmediate({
           textLayer: 'hide',
@@ -1918,7 +1929,7 @@ function handleTimeUpdate(e) {
       }
     }
   }
-  
+
   const activeNarrationSegs = slide.narration?.segments || slide.narration_segments;
   if (activeSegmentIndex >= 0 && activeNarrationSegs && activeNarrationSegs[activeSegmentIndex]) {
     const sType = slide.section_type || slide.slide_type || 'content';
@@ -1938,12 +1949,12 @@ function handleTimeUpdate(e) {
       });
     }
   }
-  
+
   const sType = slide.section_type || slide.slide_type || 'content';
   if (sType === 'quiz' && slide.quizData && slide.timed_segments) {
     const totalSteps = slide.quizData.revealStepCount || 3;
     const correctId = slide.quizData.correctChoiceId;
-    
+
     let activeStep = -1;
     slide.timed_segments.forEach((seg, i) => {
       const stepEl = document.getElementById(`reveal-step-${i}`);
@@ -1960,7 +1971,7 @@ function handleTimeUpdate(e) {
         }
       }
     });
-    
+
     document.querySelectorAll('.quiz-choice').forEach(ch => {
       ch.classList.remove('active');
     });
@@ -1971,7 +1982,7 @@ function handleTimeUpdate(e) {
         if (activeChoice) activeChoice.classList.add('active');
       }
     }
-    
+
     const lastSeg = slide.timed_segments[totalSteps - 1];
     if (lastSeg && t >= lastSeg.start_time && correctId) {
       const correctChoice = document.getElementById(`choice-${correctId}`);
@@ -1987,17 +1998,17 @@ function handleTimeUpdate(e) {
       });
     }
   }
-  
+
   if (stage.classList.contains('mode-content-video') && (!slide.beat_videos || slide.beat_videos.length <= 1)) {
     const singleBeat = slide.visual_beats && slide.visual_beats[0];
     const mode = singleBeat?.display_mode || 'video_primary';
-    
+
     if (mode === 'video_primary' && slide.timed_segments) {
       const activeSeg = slide.timed_segments.find(seg => t >= seg.start_time && t < seg.end_time);
       if (activeSeg) {
         const timeIntoSegment = t - activeSeg.start_time;
         const textShowDuration = 3.0;
-        
+
         stage.classList.remove('video-focus');
         if (timeIntoSegment > textShowDuration) {
           stage.classList.add('video-focus');
@@ -2061,12 +2072,12 @@ function formatTime(s) {
 
 function togglePlay() {
   const bgVideo = document.getElementById('scene-video');
-  
+
   if (currentMedia.paused) {
     currentMedia.play();
     if (currentMedia === audio) video.play();
     if (bgVideo && bgVideo.src && (stage.classList.contains('mode-khan') || stage.classList.contains('mode-content-video'))) {
-      bgVideo.play().catch(e => {});
+      bgVideo.play().catch(e => { });
     }
 
     isPlaying = true;
@@ -2137,7 +2148,7 @@ function buildSlideList() {
   const container = document.getElementById('slide-list');
   container.innerHTML = '';
   if (!lessonData || !lessonData.slides) return;
-  
+
   lessonData.slides.forEach((slide, i) => {
     const div = document.createElement('div');
     const sectionType = slide.section_type || slide.slide_type || 'content';
@@ -2153,12 +2164,12 @@ async function checkExistingPresentation() {
     const response = await fetch(BASE_PATH + 'presentation.json');
     if (response.ok) {
       lessonData = await response.json();
-      
+
       if (!lessonData.slides) {
         if (lessonData.sections) {
           lessonData.slides = lessonData.sections.map(section => {
             const sectionId = section.section_id || section.id;
-            
+
             const narrationSegs = section.narration?.segments || section.narration_segments || [];
             let timed_segments = null;
             if (narrationSegs.length > 0) {
@@ -2174,10 +2185,10 @@ async function checkExistingPresentation() {
                 };
               });
             }
-            
+
             const recapScenes = (section.visual_beats && section.visual_beats.length > 0) ? section.visual_beats : (section.recap_scenes || []);
             const memoryCards = (section.visual_beats && section.visual_beats.length > 0) ? section.visual_beats : section.flashcards;
-            
+
             const aggregatedVisualContent = section.visual_content || {};
             if (narrationSegs && narrationSegs.length > 0) {
               const allBullets = [];
@@ -2190,21 +2201,21 @@ async function checkExistingPresentation() {
                 aggregatedVisualContent.bullet_points = allBullets;
               }
             }
-            
+
             // ISS-061/ISS-064 FIX: Prefer video_path metadata, fallback to pattern-based detection
             let contentVideoPath = null;
             let hasContentVideo = false;
             let recapVideoPaths = [];
-            
+
             // Priority 1: Use video_path metadata from pipeline if available
             if (section.video_path) {
               contentVideoPath = section.video_path.startsWith('/') ? section.video_path : BASE_PATH + section.video_path;
               hasContentVideo = true;
-            } 
+            }
             // Priority 2: For recap sections - ISS-069 FIX: prefer section-level recap_video_paths first
             else if (section.section_type === 'recap') {
               hasContentVideo = true;
-              
+
               // ISS-069: Check section-level recap_video_paths FIRST (from pipeline)
               if (section.recap_video_paths && section.recap_video_paths.length > 0) {
                 recapVideoPaths = section.recap_video_paths.map(p => {
@@ -2219,7 +2230,7 @@ async function checkExistingPresentation() {
                   if (s.video_path) {
                     return s.video_path.startsWith('/') ? s.video_path : BASE_PATH + s.video_path;
                   }
-                  return BASE_PATH + `videos/recap_${sectionId}_scene_${s.scene_id || s.scene || i+1}.mp4`;
+                  return BASE_PATH + `videos/recap_${sectionId}_scene_${s.scene_id || s.scene || i + 1}.mp4`;
                 });
                 contentVideoPath = recapVideoPaths[0];
               }
@@ -2234,7 +2245,7 @@ async function checkExistingPresentation() {
               contentVideoPath = BASE_PATH + `videos/topic_${sectionId}.mp4`;
               hasContentVideo = true;
             }
-            
+
             // ISS-093 FIX: Use beat_videos from presentation.json if available
             let beatVideos = [];
             if (section.beat_videos && section.beat_videos.length > 0) {
@@ -2251,7 +2262,7 @@ async function checkExistingPresentation() {
                 hasContentVideo = true;
               }
             }
-            
+
             return {
               slide_number: sectionId,
               section_type: section.section_type || 'content',
@@ -2298,20 +2309,20 @@ async function checkExistingPresentation() {
           }));
         }
       }
-      
+
       if (lessonData.slides && lessonData.slides.length > 0) {
         document.getElementById('upload-overlay').classList.add('hidden');
         buildSlideList();
-        
+
         let startSlide = 0;
         const hashMatch = window.location.hash.match(/#slide(\d+)/);
         if (hashMatch) {
           startSlide = Math.max(0, Math.min(parseInt(hashMatch[1]) - 1, lessonData.slides.length - 1));
         }
-        
+
         loadSlide(startSlide);
         updateVisuals();
-        
+
         detectRemainingVideosInBackground(startSlide);
       } else {
         document.getElementById('upload-overlay').classList.remove('hidden');
@@ -2388,7 +2399,7 @@ function updateProgress(status) {
   const progressBar = document.getElementById('job-progress');
   const progressText = document.getElementById('progress-text');
   const stepIndicator = document.getElementById('step-indicator');
-  
+
   if (progressBar) progressBar.style.width = status.progress + '%';
   if (progressText) progressText.textContent = status.current_step || 'Processing...';
   if (stepIndicator) stepIndicator.textContent = `Step ${status.steps_completed + 1} of ${status.total_steps}`;
@@ -2396,14 +2407,14 @@ function updateProgress(status) {
 
 function startPolling(jobId) {
   if (pollInterval) clearInterval(pollInterval);
-  
+
   pollInterval = setInterval(async () => {
     try {
       const response = await fetch(`/job/${jobId}/status`);
       const status = await response.json();
-      
+
       updateProgress(status);
-      
+
       if (status.status === 'completed') {
         clearInterval(pollInterval);
         pollInterval = null;
@@ -2475,12 +2486,12 @@ document.getElementById('fileInput').addEventListener('change', handleFileUpload
 function showNewContentOverlay() {
   lessonData = null;
   currentSlideIndex = 0;
-  
+
   if (pollInterval) {
     clearInterval(pollInterval);
     pollInterval = null;
   }
-  
+
   document.getElementById('upload-box').innerHTML = `
     <h2>AI Animated Education</h2>
     <p>Upload PDF or Markdown file to generate educational videos</p>
@@ -2505,9 +2516,9 @@ function showNewContentOverlay() {
     </div>
     <p style="color:#666; font-size:0.8rem; margin-top:15px;">Supports: .pdf, .md, .markdown, .txt files</p>
   `;
-  
+
   document.getElementById('fileInput').addEventListener('change', handleFileUpload);
-  
+
   document.getElementById('upload-overlay').classList.remove('hidden');
 }
 

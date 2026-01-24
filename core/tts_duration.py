@@ -160,8 +160,16 @@ def update_durations_simplified(
                     duration = _generate_narakeet(clean_text, audio_path)
                 elif production_provider == "our_tts":
                     wav_path = audio_dir / f"{audio_path.stem}.wav"
-                    duration = _generate_our_tts(clean_text, wav_path)
-                    if wav_path.exists(): audio_path = wav_path
+                    try:
+                        duration = _generate_our_tts(clean_text, wav_path)
+                        if wav_path.exists(): audio_path = wav_path
+                    except Exception as try_fallback_err:
+                        logger.warning(f"[TTS] our_tts failed ({try_fallback_err}), falling back to edge_tts")
+                        if EDGE_TTS_AVAILABLE:
+                            audio_path = audio_dir / f"{audio_path.stem}.mp3" # Reset to mp3
+                            duration = _generate_edge_tts(clean_text, audio_path)
+                        else:
+                            raise try_fallback_err
                 elif pyttsx3_engine:
                     wav_path = audio_dir / f"{audio_path.stem}.wav"
                     duration = _generate_pyttsx3(text, wav_path, pyttsx3_engine)

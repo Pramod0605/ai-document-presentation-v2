@@ -14,7 +14,7 @@ load_dotenv(override=True)
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from flask import Flask, request, jsonify, send_from_directory, redirect
+from flask import Flask, request, jsonify, send_from_directory, redirect, make_response
 from flask_cors import CORS
 
 from core.pipeline import process_pdf_to_videos
@@ -91,11 +91,95 @@ def health_check():
     })
 
 
-"""
-Add this as a NEW endpoint at the end of api/app.py (before if __name__ == '__main__')
 
-This adds a /regenerate_manim/<job_id> endpoint without modifying any existing code.
-"""
+@app.route("/submit_review", methods=["POST"])
+def submit_review_endpoint():
+    """
+    Submit a review for a specific job section.
+    Saves the review to a reviews.json file in the job directory.
+    """
+    try:
+        data = request.json
+        job_id = data.get("job_id")
+        section_id = data.get("section_id")
+        review_text = data.get("review")
+        rating = data.get("rating") # Optional
+
+        if not job_id or not section_id or not review_text:
+            return jsonify({"error": "Missing job_id, section_id, or review text"}), 400
+
+        job_dir = JOBS_DIR / job_id
+        if not job_dir.exists():
+            return jsonify({"error": "Job not found"}), 404
+
+        reviews_path = job_dir / "reviews.json"
+        reviews = []
+        if reviews_path.exists():
+            try:
+                with open(reviews_path, "r", encoding="utf-8") as f:
+                    reviews = json.load(f)
+            except json.JSONDecodeError:
+                pass # Start fresh if corrupt
+
+        # Check if review for this section already exists, update if so
+        existing_review_index = next((i for i, r in enumerate(reviews) if r["section_id"] == section_id), -1)
+        
+        new_review = {
+            "section_id": section_id,
+            "review": review_text,
+            "rating": rating,
+            "timestamp": __import__('datetime').datetime.utcnow().isoformat()
+        }
+
+        if existing_review_index != -1:
+            reviews[existing_review_index] = new_review
+        else:
+            reviews.append(new_review)
+
+        with open(reviews_path, "w", encoding="utf-8") as f:
+            json.dump(reviews, f, indent=2)
+
+        return jsonify({"status": "success", "message": "Review saved", "reviews": reviews})
+
+    except Exception as e:
+        return jsonify({"status": "error", "error": str(e)}), 500
+
+
+@app.route("/recreate_job_from_review", methods=["POST"])
+def recreate_job_from_review():
+    """
+    Trigger regeneration of a job (or specific sections) based on submitted reviews.
+    Currently, this is a stub that acknowledges the request. 
+    Real implementation would parse reviews and adjust generation parameters.
+    """
+    try:
+        data = request.json
+        job_id = data.get("job_id")
+
+        if not job_id:
+            return jsonify({"error": "Missing job_id"}), 400
+
+        job_dir = JOBS_DIR / job_id
+        reviews_path = job_dir / "reviews.json"
+        
+        if not reviews_path.exists():
+             return jsonify({"error": "No reviews found for this job"}), 400
+
+        # TODO: Implement actual regeneration logic using the reviews.
+        # For now, we will just return a success message simulating the start of the process.
+        # Ideally this would call something like `job_manager.create_job(..., parent_job_id=job_id, ...)`
+        
+        print(f"[Review] Triggering regeneration for Job {job_id} based on reviews.")
+        
+        return jsonify({
+            "status": "accepted", 
+            "message": "Regeneration based on reviews initiated (Stub)",
+            "job_id": job_id
+        })
+
+    except Exception as e:
+        return jsonify({"status": "error", "error": str(e)}), 500
+
 
 @app.route('/regenerate_manim/<job_id>', methods=['POST'])
 def regenerate_manim(job_id):
@@ -2814,7 +2898,11 @@ Cells are complex structures with specialized components working together to mai
 @app.route("/dashboard")
 @app.route("/dashboard/")
 def serve_dashboard():
-    return send_from_directory(PLAYER_DIR, "dashboard.html")
+    response = make_response(send_from_directory(PLAYER_DIR, "dashboard.html"))
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 @app.route("/player/")
 @app.route("/player/<path:filename>")
@@ -3323,6 +3411,184 @@ def repair_metadata(job_id):
         
     except Exception as e:
         return jsonify({"status": "error", "error": str(e)}), 500
+
+
+@app.route('/job/<job_id>/presentation_for_review', methods=['GET'])
+def get_presentation_for_review(job_id):
+    """Get presentation data formatted for review UI."""
+    try:
+        job_folder = JOBS_DIR / job_id
+        presentation_path = job_folder / "presentation.json"
+        
+        if not presentation_path.exists():
+            return jsonify({"error": "Presentation not found"}), 404
+        
+        with open(presentation_path, 'r', encoding='utf-8') as f:
+            presentation = json.load(f)
+        
+        # Format sections for review UI
+        sections_for_review = []
+        for section in presentation.get("sections", []):
+            section_data = {
+                "section_id": section.get("section_id"),
+                "section_type": section.get("section_type"),
+                "title": section.get("title"),
+                "narration_text": "",
+                "content": {
+                    "bullet_items": [],
+                    "quiz_data": None,
+                    "flashcards": [],
+                    "images": [],
+                    "explanation_plan": "",
+                    "visual_beats": []
+                }
+            }
+            
+            # Extract narration text
+            narration = section.get("narration", {})
+            segments = narration.get("segments", [])
+            if segments:
+                section_data["narration_text"] = " ".join([seg.get("text", "") for seg in segments])
+            
+            # Handle Explanation Plan
+            plan = section.get("explanation_plan")
+            if isinstance(plan, (dict, list)):
+                # If plan is an object (common in newer jobs), serialize it nicely
+                # or extract just the 'visual_beats' text if appropriate.
+                # For editing purposes, JSON string is safest.
+                section_data["content"]["explanation_plan"] = json.dumps(plan, indent=2)
+            elif plan:
+                section_data["content"]["explanation_plan"] = str(plan)
+
+            # Extract structured content
+            # Sources: 
+            # 1. narration.segments.visual_content (legacy/unified format)
+            # 2. visual_beats (display_text/description)
+            
+            # Helper to deduplicate images
+            seen_image_ids = set()
+
+            # 1. From Narration Segments
+            for seg in segments:
+                vc = seg.get("visual_content", {})
+                if isinstance(vc, dict):
+                    items = vc.get("items", [])
+                    if items:
+                        section_data["content"]["bullet_items"].extend(items)
+                    
+                    image_id = vc.get("image_id")
+                    if image_id and image_id not in seen_image_ids:
+                        seen_image_ids.add(image_id)
+                        section_data["content"]["images"].append({
+                            "image_id": image_id,
+                            "description": vc.get("verbatim_content", "")
+                        })
+            
+            # 2. From Visual Beats (Primary source for newer jobs)
+            visual_beats = section.get("visual_beats", [])
+            if visual_beats:
+                for b in visual_beats:
+                    # Description/Display Text
+                    desc = b.get("description") or b.get("display_text", "")
+                    beat_data = {"description": desc}
+                    
+                    # Video Asset
+                    video_asset = b.get("video_asset")
+                    if video_asset:
+                        beat_data["video_asset"] = video_asset
+
+                    if desc or video_asset:
+                        section_data["content"]["visual_beats"].append(beat_data)
+                    
+                    # Images in visual beats
+                    image_id = b.get("image_id")
+                    if image_id and image_id not in seen_image_ids:
+                        seen_image_ids.add(image_id)
+                        section_data["content"]["images"].append({
+                            "image_id": image_id,
+                            "description": desc # Use beat description for image if available
+                        })
+
+                    # Bullet items (if visual_type is bullet_list and we haven't found items in segments)
+                    if b.get("visual_type") == "bullet_list" and not section_data["content"]["bullet_items"]:
+                        # If display_text looks like a list or we want to treat the beat as a point
+                        # Sometimes display_text is just one bullet point. 
+                        # We can treat each such beat as an item if the section type suggests it.
+                        if desc:
+                             section_data["content"]["bullet_items"].append(desc)
+
+            # 3. Quiz data
+            quiz_data = section.get("quiz_data")
+            if quiz_data:
+                section_data["content"]["quiz_data"] = quiz_data
+            
+            # 4. Flashcards
+            flashcards = section.get("flashcards", [])
+            if flashcards:
+                section_data["content"]["flashcards"] = flashcards
+            
+            sections_for_review.append(section_data)
+        
+        return jsonify({
+            "job_id": job_id,
+            "title": presentation.get("title", ""),
+            "sections": sections_for_review
+        })
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/job/<job_id>/submit_review', methods=['POST'])
+def submit_review(job_id):
+    """Submit review edits and trigger regeneration."""
+    try:
+        from core.review_handler import ReviewHandler
+        
+        job_folder = JOBS_DIR / job_id
+        if not job_folder.exists():
+            return jsonify({"error": "Job not found"}), 404
+        
+        data = request.get_json()
+        edits = data.get("edits", [])
+        
+        if not edits:
+            return jsonify({"error": "No edits provided"}), 400
+        
+        # Process review
+        handler = ReviewHandler(job_folder)
+        presentation = handler.load_presentation()
+        
+        # Apply edits
+        presentation = handler.apply_review_edits(presentation, edits)
+        handler.save_presentation(presentation)
+        
+        # Get sections needing regeneration
+        sections_to_regenerate = handler.get_sections_needing_regeneration(presentation)
+        
+        # Trigger regeneration in background
+        if sections_to_regenerate:
+            result = handler.trigger_regeneration(sections_to_regenerate)
+            return jsonify({
+                "status": "success",
+                "message": f"Review submitted. Regenerating {len(sections_to_regenerate)} sections.",
+                "sections_regenerated": sections_to_regenerate,
+                "regeneration_result": result
+            })
+        else:
+            return jsonify({
+                "status": "success",
+                "message": "Review submitted but no sections needed regeneration.",
+                "sections_regenerated": []
+            })
+    
+    except Exception as e:
+        import traceback
+        return jsonify({
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
+
 
 if __name__ == "__main__":
     # Pre-flight check for LLM access
