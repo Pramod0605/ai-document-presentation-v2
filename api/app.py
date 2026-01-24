@@ -2931,12 +2931,23 @@ def serve_job_player(job_id):
     if not job_dir.exists():
         return jsonify({"error": "Job not found"}), 404
     # Serve index.html from job folder (copied during job creation)
-    if (job_dir / "index.html").exists():
-        return send_from_directory(job_dir, "index.html")
-    # Fallback to main player if not copied yet
-    return send_from_directory(PLAYER_DIR, "index.html")
+        return send_from_directory(PLAYER_DIR, "index.html")
+
+@app.route('/assets/<job_id>/<path:filename>')
+def serve_job_asset(job_id, filename):
+    """Serve any asset from the job directory."""
+    try:
+        job_folder = JOBS_DIR / job_id
+        print(f"DEBUG: Serving {filename} from {job_folder}", flush=True)
+        full_path = job_folder / filename
+        print(f"DEBUG: Full path: {full_path} Exists: {full_path.exists()}", flush=True)
+        return send_from_directory(job_folder, filename)
+    except Exception as e:
+        print(f"Error serving asset: {e}", flush=True)
+        return jsonify({"error": "Asset not found"}), 404
 
 @app.route("/jobs/<job_id>/<path:filename>")
+@app.route("/player/jobs/<job_id>/<path:filename>")
 def serve_job_assets(job_id, filename):
     """Serve all job assets from job folder"""
     job_dir = JOBS_DIR / job_id
@@ -3586,6 +3597,9 @@ def submit_review(job_id):
         }), 500
 
 
+
+
+
 if __name__ == "__main__":
     # Pre-flight check for LLM access
     try:
@@ -3599,4 +3613,5 @@ if __name__ == "__main__":
     except ImportError:
         print("⚠️ Could not import validation module")
         
-    app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+
