@@ -330,11 +330,25 @@ function setupEventListeners() {
 
   // Content video ended handler
   contentVideo.addEventListener('ended', onContentVideoEnd);
+
+  // V2.6: Failsafe - ensure we transition when video actually ends
+  contentVideo.addEventListener('ended', () => {
+    console.log('[V2.6] Video ended event - forcing transition to TEACH');
+
+    // If we're still in SHOW mode, force the transition
+    if (!videoLayer.classList.contains('hidden')) {
+      videoLayer.classList.add('hidden');
+      videoLayer.classList.remove('fullscreen');
+      contentLayer.classList.remove('hidden');
+    }
+  });
+
   contentVideo.onerror = (e) => {
     if (contentVideo.src && !contentVideo.src.includes('player_v2')) {
       console.error('[V2.5] Content video error:', contentVideo.error);
     }
   };
+
 
   document.getElementById('timeline-track').addEventListener('click', seekTimeline);
   document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
@@ -1122,28 +1136,41 @@ function updateSummaryProgressiveReveal() {
   });
 
 
-  // Reveal bullets based on their segment indices mapped to actual time
+  // Reveal AND Highlight bullets
+  let activeBulletIndex = -1;
   visualBeats.forEach((beat, beatIndex) => {
-    const segmentIndex = beat.start_time; // This is actually a segment index (0, 1, 2, 3...)
+    const segmentIndex = beat.start_time;
     const segmentTiming = segmentTimeMap[segmentIndex];
-
-    // DEFENSIVE FIX: If segment mapping fails, use sequential reveal (every 3 seconds)
-    let actualStartTime;
-    if (!segmentTiming) {
-      // Fallback: Sequential reveal (beatIndex * 3 seconds)
-      actualStartTime = beatIndex * 3;
-    } else {
-      actualStartTime = segmentTiming.startTime;
-    }
+    const actualStartTime = segmentTiming ? segmentTiming.startTime : beatIndex * 3;
+    const actualEndTime = segmentTiming ? segmentTiming.endTime : (beatIndex + 1) * 3;
 
     const bullet = document.getElementById(`summary-bullet-${beatIndex}`);
+    if (!bullet) return;
 
-    if (bullet && currentTime >= actualStartTime && bullet.classList.contains('reveal-hidden')) {
+    // 1. Progress Reveal (Keep previously revealed)
+    if (currentTime >= actualStartTime && bullet.classList.contains('reveal-hidden')) {
       bullet.classList.remove('reveal-hidden');
       bullet.classList.add('reveal-visible');
-      console.log(`[V2.5] ✓ Revealed bullet ${beatIndex + 1} at ${currentTime.toFixed(1)}s (segment ${segmentIndex} @ ${actualStartTime.toFixed(1)}s)`);
+      console.log(`[V2.5] ✓ Revealed bullet ${beatIndex + 1} at ${currentTime.toFixed(1)}s`);
     }
+
+    // 2. Active Highlighting (Only one at a time)
+    if (currentTime >= actualStartTime && currentTime < actualEndTime) {
+      activeBulletIndex = beatIndex;
+      bullet.classList.add('beat-active');
+
+      // V2.6: Auto-scroll to active bullet
+      bullet.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
+    } else {
+      bullet.classList.remove('beat-active');
+    }
+
   });
+
 }
 
 function updateQuizProgressiveReveal() {
@@ -1339,13 +1366,16 @@ function updateContentProgressiveReveal() {
     }
 
     // Reveal when time is reached
-    if (currentTime >= revealTime && beatDiv.classList.contains('reveal-hidden')) {
-      beatDiv.classList.remove('reveal-hidden');
-      beatDiv.classList.add('reveal-visible');
-      activeBeatIndex = beatIndex;
-      newlyRevealed = true;
-      console.log(`[V2.6] ✓ Revealed beat ${beatIndex} at ${currentTime.toFixed(1)}s (target: ${revealTime.toFixed(1)}s)`);
+    if (currentTime >= revealTime) {
+      activeBeatIndex = beatIndex; // Track most recently started beat for highlighting
+      if (beatDiv.classList.contains('reveal-hidden')) {
+        beatDiv.classList.remove('reveal-hidden');
+        beatDiv.classList.add('reveal-visible');
+        newlyRevealed = true;
+        console.log(`[V2.6] ✓ Revealed beat ${beatIndex} at ${currentTime.toFixed(1)}s (target: ${revealTime.toFixed(1)}s)`);
+      }
     }
+
 
     // V2.6 FIX: Determine if we're in TEACH or SHOW phase based on current segment
     // During TEACH: Show active beat (which may contain text OR image)
@@ -1370,6 +1400,21 @@ function updateContentProgressiveReveal() {
     // - TEACH phase: Show the current beat. For QUIZZES, we allow stacking/persistence of previous beats.
     const isQuiz = (slides[currentSlideIndex]?.section_type === 'quiz');
 
+    // V2.6: Active Highlighting Logic
+    if (beatIndex === activeBeatIndex && !isShowPhase) {
+      beatDiv.classList.add('beat-active');
+
+      // V2.6: Auto-scroll to active beat
+      beatDiv.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
+    } else {
+      beatDiv.classList.remove('beat-active');
+    }
+
+
     if (isShowPhase) {
       beatDiv.style.display = 'none';  // Hide during video playback
     } else if (isQuiz) {
@@ -1382,10 +1427,29 @@ function updateContentProgressiveReveal() {
       } else {
         beatDiv.style.display = 'none';
       }
-    } else if (beatIndex <= activeBeatIndex) {
-      beatDiv.style.display = 'block'; // Show active beat (and previous ones) during Teach
+    } else {
+      // V2.6: Section-type-aware display logic
+      const sectionType = slides[currentSlideIndex]?.section_type;
+
+      if (sectionType === 'summary') {
+        // SUMMARY: Progressive reveal (accumulate bullets)
+        if (beatIndex <= activeBeatIndex) {
+          beatDiv.style.display = 'block';
+        } else {
+          beatDiv.style.display = 'none';
+        }
+      } else {
+        // CONTENT/EXAMPLE: Current-only display (no scrolling needed)
+        if (beatIndex === activeBeatIndex) {
+          beatDiv.style.display = 'block';
+        } else {
+          beatDiv.style.display = 'none';
+        }
+      }
     }
+
   });
+
 
   // Typeset math when new content is revealed
   if (newlyRevealed && typeof MathJax !== 'undefined') {
@@ -1455,7 +1519,20 @@ function updateContentTeachShowPhase() {
       contentVideo.play().catch(e => console.log('[V2.5] Video play failed:', e));
     }
   } else {
-    // TEACH phase: hide video
+    // TEACH phase: hide video - BUT check if video is actually done first
+
+    // V2.6: Check if we have an active video that's still playing
+    const videoExists = contentVideo && contentVideo.src;
+    const videoStillPlaying = videoExists && !contentVideo.paused && !contentVideo.ended;
+    const videoHasMoreContent = videoExists && (contentVideo.currentTime < contentVideo.duration - 0.5);
+
+    // CRITICAL: If video is still running and has content, DELAY the transition
+    if (videoStillPlaying && videoHasMoreContent) {
+      console.log(`[V2.6] Delaying TEACH transition: video has ${(contentVideo.duration - contentVideo.currentTime).toFixed(1)}s remaining`);
+      return; // Exit early - don't hide video yet
+    }
+
+    // Video is done (or doesn't exist) - proceed with transition to TEACH
     if (!videoLayer.classList.contains('hidden')) {
       videoLayer.classList.add('hidden');
       videoLayer.classList.remove('fullscreen');
@@ -1463,10 +1540,11 @@ function updateContentTeachShowPhase() {
       // CRITICAL: Pause video when switching back to teach
       if (contentVideo && !contentVideo.paused) {
         contentVideo.pause();
-        console.log(`[V2.5] Segment ${currentSegmentIndex}: VIDEO PAUSE (Show→Teach)`);
+        console.log(`[V2.6] Segment ${currentSegmentIndex}: VIDEO→TEACH (video complete)`);
       }
     }
   }
+
 }
 
 // ============================================
@@ -1778,16 +1856,18 @@ function sanitizeMarkdown(text) {
   // Preserve LaTeX expressions FIRST (before any markdown processing)
   const latexPatterns = [];
 
+  // V2.6 FIX: Use HTML comments instead of brackets (marked.js preserves these)
+
   // Block LaTeX: $$...$$
   text = text.replace(/\$\$([^$]+)\$\$/g, (match, latex) => {
     latexPatterns.push(match);
-    return `<<<LATEX-BLOCK-${latexPatterns.length - 1}>>>`;
+    return `<!--LATEX-BLOCK-${latexPatterns.length - 1}-->`;
   });
 
   // Inline LaTeX: $...$
   text = text.replace(/\$([^$]+)\$/g, (match, latex) => {
     latexPatterns.push(match);
-    return `<<<LATEX-INLINE-${latexPatterns.length - 1}>>>`;
+    return `<!--LATEX-INLINE-${latexPatterns.length - 1}-->`;
   });
 
   // USE MARKED.JS
@@ -1809,13 +1889,14 @@ function sanitizeMarkdown(text) {
     text = text.replace(/\n/g, '<br>');
   }
 
-  // Restore LaTeX (use different marker that won't be affected by markdown)
-  text = text.replace(/<<<LATEX-(BLOCK|INLINE)-(\d+)>>>/g, (match, type, idx) => {
+  // V2.6 FIX: Restore LaTeX from HTML comments (marked.js preserves these)
+  text = text.replace(/<!--LATEX-(BLOCK|INLINE)-(\d+)-->/g, (match, type, idx) => {
     return latexPatterns[parseInt(idx)] || match;
   });
 
   return text.trim();
 }
+
 
 async function typesetMath(element) {
   if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {

@@ -1490,6 +1490,42 @@ mjx-container[jax="CHTML"][display="true"] {
   display: block;
 }
 
+/* Highlighting Logic - Shared Rules */
+.beat-block,
+.summary-item,
+.paragraph-block,
+.bullet-item,
+.ordered-item {
+  transition: opacity 0.5s ease, filter 0.5s ease, transform 0.3s ease;
+  opacity: 0.7;
+}
+
+/* Active Highlight Class */
+.beat-active {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 12px rgba(0, 255, 255, 0.5));
+  transform: scale(1.015);
+  border-left-color: #00ffff !important;
+  z-index: 5;
+  position: relative;
+}
+
+/* Specific background enhancements for active states */
+.beat-block.beat-active {
+  background: rgb(40 40 95) !important;
+}
+
+.summary-item.beat-active {
+  background: rgba(0, 255, 255, 0.1) !important;
+}
+
+.paragraph-block.beat-active {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+
+
+
 /* .beat-block:hover {
   background: rgba(255, 255, 255, 0.04);
 } */
