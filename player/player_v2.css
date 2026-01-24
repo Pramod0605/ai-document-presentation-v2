@@ -74,10 +74,32 @@ body {
 #content-box {
   width: 100%;
   max-height: calc(100% - 80px);
-  overflow: hidden;
+  overflow-y: auto;
+  /* V2.6 FIX: Enable scrolling when beats stack */
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+}
+
+/* Custom scrollbar for content-box */
+#content-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+#content-box::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+#content-box::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.5);
+  border-radius: 4px;
+}
+
+#content-box::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.7);
 }
 
 /* Section Title */
@@ -1465,9 +1487,7 @@ mjx-container[jax="CHTML"][display="true"] {
   background: rgb(32 32 72);
   border-radius: 8px;
   border-left: 4px solid #6366f1;
-  display: grid;
-  row-gap: 1rem;
-  overflow-y: auto !important;
+  display: block;
 }
 
 /* .beat-block:hover {

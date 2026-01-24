@@ -405,6 +405,13 @@ function play() {
     contentVideo.play().catch(e => console.log('[V2.5] Content video play failed:', e));
   }
 
+  // V2.6 FIX: Auto-play content video for Recap sections
+  const currentSlide = slides[currentSlideIndex];
+  if (currentSlide?.section_type === 'recap' && contentVideo?.src && contentVideo.paused) {
+    contentVideo.play().catch(e => console.log('[V2.6] Recap content video play failed:', e));
+    console.log('[V2.6] RECAP: Auto-started content video on Play');
+  }
+
   console.log('[V2.5] Playback started');
 }
 
@@ -772,47 +779,47 @@ function renderContent(slide) {
           const img = document.createElement('img');
           img.className = 'content-image';
 
-          //Replace JPG,JPEG image to .png
-          const newImgPath = imgPath.replace(/\.(jpg|jpeg)$/i, '.png');
+          // V2.6 FIX: Trust presentation.json, use path as-is (ISS-002)
+          const newImgPath = imgPath;
 
           // V2.5: Comprehensive image format fallback
-          // img.onerror = function () {
-          //   const currentSrc = this.src;
+          img.onerror = function () {
+            const currentSrc = this.src;
 
-          //   // Already tried all formats?
-          //   if (this.dataset.retryCount && parseInt(this.dataset.retryCount) >= 3) {
-          //     console.warn(`[V2.5] Image failed after all retries: ${imgPath}`);
-          //     imgContainer.style.display = 'none';
-          //     return;
-          //   }
+            // Already tried all formats?
+            if (this.dataset.retryCount && parseInt(this.dataset.retryCount) >= 3) {
+              console.warn(`[V2.5] Image failed after all retries: ${imgPath}`);
+              imgContainer.style.display = 'none';
+              return;
+            }
 
-          //   // Track retry count
-          //   const retryCount = parseInt(this.dataset.retryCount || '0') + 1;
-          //   this.dataset.retryCount = retryCount;
+            // Track retry count
+            const retryCount = parseInt(this.dataset.retryCount || '0') + 1;
+            this.dataset.retryCount = retryCount;
 
-          //   let newSrc = '';
+            let newSrc = '';
 
-          //   // Try format sequence: original → .png → .jpg → .jpeg
-          //   if (retryCount === 1) {
-          //     // First retry: try PNG
-          //     newSrc = currentSrc.replace(/\.(jpg|jpeg)$/i, '.png');
-          //     console.log(`[V2.5] Image retry ${retryCount}: Trying PNG - ${newSrc}`);
-          //   } else if (retryCount === 2) {
-          //     // Second retry: try JPG
-          //     newSrc = currentSrc.replace(/\.(png|jpeg)$/i, '.jpg');
-          //     console.log(`[V2.5] Image retry ${retryCount}: Trying JPG - ${newSrc}`);
-          //   } else if (retryCount === 3) {
-          //     // Third retry: try JPEG
-          //     newSrc = currentSrc.replace(/\.(png|jpg)$/i, '.jpeg');
-          //     console.log(`[V2.5] Image retry ${retryCount}: Trying JPEG - ${newSrc}`);
-          //   }
+            // Try format sequence: .png → .jpg → .jpeg
+            if (retryCount === 1) {
+              // First retry: try PNG
+              newSrc = currentSrc.replace(/\.(jpg|jpeg|gif|webp)$/i, '.png');
+              console.log(`[V2.5] Image retry ${retryCount}: Trying PNG - ${newSrc}`);
+            } else if (retryCount === 2) {
+              // Second retry: try JPG
+              newSrc = currentSrc.replace(/\.(png|jpeg|gif|webp)$/i, '.jpg');
+              console.log(`[V2.5] Image retry ${retryCount}: Trying JPG - ${newSrc}`);
+            } else if (retryCount === 3) {
+              // Third retry: try JPEG
+              newSrc = currentSrc.replace(/\.(png|jpg|gif|webp)$/i, '.jpeg');
+              console.log(`[V2.5] Image retry ${retryCount}: Trying JPEG - ${newSrc}`);
+            }
 
-          //   if (newSrc && newSrc !== currentSrc) {
-          //     this.src = newSrc;
-          //   } else {
-          //     imgContainer.style.display = 'none';
-          //   }
-          // };
+            if (newSrc && newSrc !== currentSrc) {
+              this.src = newSrc;
+            } else {
+              imgContainer.style.display = 'none';
+            }
+          };
 
           img.src = resolveMediaPath(newImgPath, 'image');
           img.alt = beat.description || 'Visual beat image';
@@ -1375,10 +1382,8 @@ function updateContentProgressiveReveal() {
       } else {
         beatDiv.style.display = 'none';
       }
-    } else if (beatIndex === activeBeatIndex) {
-      beatDiv.style.display = 'block'; // Show active beat during Teach
-    } else {
-      beatDiv.style.display = 'none';  // Hide non-active beats
+    } else if (beatIndex <= activeBeatIndex) {
+      beatDiv.style.display = 'block'; // Show active beat (and previous ones) during Teach
     }
   });
 
@@ -1482,18 +1487,24 @@ function buildBeatPlaylistWithTiming(slide) {
 
     // Check if THIS segment has beat_videos
     const beatVids = seg.beat_videos || [];
-    if (beatVids.length > 0) {
-      const videoPath = beatVids[0]; // Take first if multiple
-      playlist.push({
-        videoPath: resolveMediaPath(videoPath, 'video'),
-        startTime: segStartTime,
-        endTime: segEndTime,
-        segmentIndex: segIdx,
-        beatIndex: beatIndex
-      });
+    const videoPath = beatVids.length > 0 ? beatVids[0] : null;
+
+    // V2.6 FIX: Always add entry (even for null videos) to maintain timing sync
+    playlist.push({
+      videoPath: videoPath ? resolveMediaPath(videoPath, 'video') : null,
+      startTime: segStartTime,
+      endTime: segEndTime,
+      segmentIndex: segIdx,
+      beatIndex: beatIndex,
+      hasVideo: !!videoPath
+    });
+
+    if (videoPath) {
       console.log(`[V2.6] Beat ${beatIndex} → Segment ${segIdx} (${segStartTime.toFixed(1)}s - ${segEndTime.toFixed(1)}s): ${videoPath}`);
-      beatIndex++;
+    } else {
+      console.log(`[V2.6] Segment ${segIdx} (${segStartTime.toFixed(1)}s - ${segEndTime.toFixed(1)}s): No video (text only)`);
     }
+    beatIndex++;
 
     accumulatedTime += duration;
   });
@@ -1529,6 +1540,12 @@ function loadBeatVideo(index) {
 
   const beat = beatVideoPlaylist[index];
   currentBeatIndex = index;
+
+  if (!beat.videoPath) {
+    console.log(`[V2.6] Beat ${index}: No video for segment ${beat.segmentIndex}, clearing src`);
+    contentVideo.src = '';
+    return;
+  }
 
   contentVideo.src = beat.videoPath;
   contentVideo.muted = true;
@@ -1582,8 +1599,8 @@ function checkBeatVideoSwitch() {
       if (currentBeatIndex !== i) {
         loadBeatVideo(i);
 
-        // Auto-play if currently playing
-        if (isPlaying && contentVideo.paused) {
+        // Auto-play if currently playing and there's a video
+        if (isPlaying && beat.videoPath && contentVideo.paused) {
           contentVideo.play().catch(e => console.log('[V2.5] Beat video play failed:', e));
         }
       }

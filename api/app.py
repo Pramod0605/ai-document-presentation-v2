@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import shutil
+import time
 import tempfile
 from pathlib import Path
 from typing import Optional
@@ -1116,106 +1117,101 @@ def _retry_manim_render(job_id: str, job_folder: Path, presentation: dict, secti
 
 
 def _retry_avatar_generation(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
-    """Retry avatar generation for specific sections or all failed."""
+    """Retry avatar generation - uses same parallel logic as new jobs."""
     from core.agents.avatar_generator import AvatarGenerator
+    import time
     
     avatars_dir = job_folder / "avatars"
     avatars_dir.mkdir(parents=True, exist_ok=True)
     
-    results = {"success": [], "failed": [], "skipped": []}
     generator = AvatarGenerator()
     
-    # If no section_ids provided, find failed sections from status
-    if section_ids is None:
-        status_file = job_folder / "avatar_status.json"
-        if status_file.exists():
+    # Filter presentation to only include sections we want to retry
+    if section_ids:
+        filtered_presentation = {
+            "sections": [s for s in presentation.get("sections", []) if s.get("section_id") in section_ids]
+        }
+    else:
+        filtered_presentation = presentation
+    
+    print(f"[RETRY-AVATAR] Using parallel submit for {len(filtered_presentation['sections'])} sections", flush=True)
+    
+    # Use the SAME parallel submit that new jobs use
+    submit_results = generator.submit_parallel_job(filtered_presentation, job_id, str(job_folder))
+    
+    tasks = submit_results.get("queued", [])
+    if not tasks:
+        return {
+            "success": [],
+            "failed": submit_results.get("failed", []),
+            "skipped": submit_results.get("skipped", [])
+        }
+    
+    print(f"[RETRY-AVATAR] Submitted {len(tasks)} tasks. Polling...", flush=True)
+    
+    # Poll ALL tasks in parallel (same as new jobs)
+    active_tasks = list(tasks)
+    results = {"success": [], "failed": [], "skipped": submit_results.get("skipped", [])}
+    start_time = time.time()
+    max_wait = 1800  # 30 min
+    
+    while active_tasks and (time.time() - start_time < max_wait):
+        still_active = []
+        
+        for task in active_tasks:
+            section_id = task["section_id"]
+            task_id = task["task_id"]
+            
             try:
-                status_data = json.loads(status_file.read_text())
-                section_ids = status_data.get("details", {}).get("failed_sections", [])
-            except:
-                section_ids = []
-    
-    if not section_ids:
-        # Fallback: check all segments that don't have a valid avatar
-        section_ids = []
-        for section in presentation.get("sections", []):
-            sec_id = section.get("section_id")
-            avatar_path = avatars_dir / f"section_{sec_id}_avatar.mp4"
-            if not avatar_path.exists() or avatar_path.stat().st_size < 10000:
-                section_ids.append(sec_id)
-
-    if not section_ids:
-        return {"message": "No sections to retry", "success": [], "failed": [], "skipped": []}
-    
-    for section in presentation.get("sections", []):
-        sec_id = section.get("section_id")
-        
-        if sec_id not in section_ids:
-            continue
-        
-        # Extract narration text
-        narration = section.get("narration", {})
-        full_text = ""
-        if isinstance(narration, dict):
-             full_text = narration.get("full_text", "") or " ".join([str(s.get("text", "") or "") for s in narration.get("segments", [])])
-        else:
-             full_text = str(narration)
-             
-        if not full_text.strip():
-            results["skipped"].append({"section_id": sec_id, "reason": "No narration text"})
-            continue
-        
-        try:
-            output_filename = f"section_{sec_id}_avatar.mp4"
-            output_path = avatars_dir / output_filename
-            
-            # Submit and poll
-            print(f"[RETRY-AVATAR] Submitting Sec {sec_id}...", flush=True)
-            response = generator.generate_avatar_video(full_text, job_id, sec_id)
-            task_id = response.get("task_id")
-            
-            if not task_id:
-                results["failed"].append({"section_id": sec_id, "error": response.get("error", "No task_id returned")})
-                continue
-            
-            # Poll for completion (max 5 minutes per section)
-            start_poll = time.time()
-            success = False
-            while time.time() - start_poll < 300:
                 status_resp = generator.check_status(task_id)
                 status = status_resp.get("status")
-                print(f"[RETRY-AVATAR] Sec {sec_id} polling: {status}", flush=True)
                 
-                if status == "completed" or status == "success":
-                    if generator.download_video(task_id, str(output_path)):
-                        section["avatar_path"] = f"avatars/{output_filename}"
-                        results["success"].append({"section_id": sec_id, "task_id": task_id})
-                        print(f"[RETRY-AVATAR] Sec {sec_id} DONE! Saved to {output_path}", flush=True)
-                        
-                        # Save presentation immediately so we don't lose progress
-                        try:
-                            with open(job_folder / "presentation.json", "w", encoding="utf-8") as f:
-                                json.dump(presentation, f, indent=2)
-                        except Exception as save_err:
-                            print(f"[RETRY-AVATAR] Warning: Failed to save presentation.json: {save_err}")
-                    else:
-                        results["failed"].append({"section_id": sec_id, "error": "Download failed"})
+                if status in ["completed", "success", "done"]:
+                    output_path = avatars_dir / f"section_{section_id}_avatar.mp4"
                     
-                    success = True
-                    break
-                elif status == "failed" or status == "not_found":
-                    results["failed"].append({"section_id": sec_id, "error": status_resp.get("message", f"Task {status}")})
-                    success = True # Marked as handled
-                    break
-                time.sleep(5)
-            
-            if not success:
-                results["failed"].append({"section_id": sec_id, "error": "Timeout after 5 minutes"})
+                    if generator.download_video(task_id, str(output_path)):
+                        # Update presentation.json
+                        for sec in presentation["sections"]:
+                            if sec["section_id"] == section_id:
+                                sec["avatar_path"] = f"avatars/section_{section_id}_avatar.mp4"
+                                sec["avatar_video"] = f"avatars/section_{section_id}_avatar.mp4"
+                                sec["avatar_status"] = "completed"
+                                break
+                        
+                        results["success"].append({"section_id": section_id, "task_id": task_id})
+                        print(f"[RETRY-AVATAR] ✓ Sec {section_id} downloaded", flush=True)
+                        
+                        # Save progress
+                        with open(job_folder / "presentation.json", "w", encoding="utf-8") as f:
+                            json.dump(presentation, f, indent=2)
+                    else:
+                        results["failed"].append({"section_id": section_id, "error": "Download failed"})
                 
-        except Exception as e:
-            results["failed"].append({"section_id": sec_id, "error": str(e)})
+                elif status in ["failed", "error", "not_found"]:
+                    results["failed"].append({"section_id": section_id, "error": status})
+                    print(f"[RETRY-AVATAR] ✗ Sec {section_id} failed: {status}", flush=True)
+                
+                else:
+                    # Still processing
+                    still_active.append(task)
+            
+            except Exception as e:
+                still_active.append(task)  # Keep retrying
+        
+        active_tasks = still_active
+        
+        if active_tasks:
+            print(f"[RETRY-AVATAR] {len(active_tasks)} active, {len(results['success'])} done", flush=True)
+            time.sleep(10)
     
+    # Timeout handling
+    for task in active_tasks:
+        results["failed"].append({"section_id": task["section_id"], "error": "Timeout"})
+    
+    print(f"[RETRY-AVATAR] Complete: {len(results['success'])} success, {len(results['failed'])} failed", flush=True)
     return results
+
+
 
 
 def _retry_tts_generation(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
