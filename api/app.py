@@ -441,6 +441,9 @@ def submit_job():
             generation_scope = data.get("generation_scope", "full")
             model = data.get("model")
             video_provider = data.get("video_provider", "kie")
+            # Capture images from JSON payload (critical for external API usage)
+            images_dict = data.get("images", data.get("images_dict"))
+            title = data.get("title", f"Presentation {int(time.time())}")
             
             if not markdown_content:
                 return jsonify({"error": "Markdown content is required"}), 400
@@ -492,7 +495,9 @@ def submit_job():
                 pipeline_version=pipeline_version,
                 generation_scope=generation_scope,
                 model=model,
-                video_provider=video_provider
+                video_provider=video_provider,
+                review_mode=review_mode,
+                images_dict=images_dict
             )
         
         else:

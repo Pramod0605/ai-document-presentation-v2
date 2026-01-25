@@ -1758,19 +1758,83 @@
             document.getElementById('reviewJobId').textContent = jobId;
             document.getElementById('reviewModal').style.display = 'flex';
 
-            // Load presentation data
+            // Load presentation data (User Requested: Static Fetch + Client-side Transform)
             try {
-                const response = await fetch(`/job/${jobId}/presentation_for_review`);
-                const data = await response.json();
+                // FIXED: Fetch raw JSON directly as requested
+                // const response = await fetch(`/job/${jobId}/presentation_for_review`);
+                const response = await fetch(`/player/jobs/${jobId}/presentation.json`);
 
-                if (data.error) {
-                    alert('Error loading presentation: ' + data.error);
-                    closeReviewModal();
-                    return;
+                if (!response.ok) {
+                    throw new Error(`Failed to load presentation.json (Status ${response.status})`);
                 }
 
-                reviewSectionsData = data.sections;
-                renderReviewSections(data.sections);
+                const rawPresentation = await response.json();
+
+                // Client-side transformation to match Review UI expected format
+                // (Replicates logic from app.py:get_presentation_for_review)
+                const sections = (rawPresentation.sections || []).map(section => {
+                    const content = {
+                        bullet_items: [],
+                        quiz_data: section.quiz_data || null,
+                        flashcards: section.flashcards || [],
+                        images: [],
+                        explanation_plan: "",
+                        visual_beats: []
+                    };
+
+                    // Narration Text
+                    const segments = section.narration?.segments || [];
+                    const narration_text = segments.map(s => s.text || "").join(" ");
+
+                    // Explanation Plan
+                    if (section.explanation_plan) {
+                        content.explanation_plan = typeof section.explanation_plan === 'object' ?
+                            JSON.stringify(section.explanation_plan, null, 2) : String(section.explanation_plan);
+                    }
+
+                    // Visual Beats & Images logic
+                    const seenImageIds = new Set();
+
+                    // 1. From Segments (Legacy)
+                    segments.forEach(seg => {
+                        const vc = seg.visual_content || {};
+                        if (vc.items) content.bullet_items.push(...vc.items);
+                        if (vc.image_id && !seenImageIds.has(vc.image_id)) {
+                            seenImageIds.add(vc.image_id);
+                            content.images.push({ image_id: vc.image_id, description: vc.verbatim_content || "" });
+                        }
+                    });
+
+                    // 2. From Visual Beats (Primary)
+                    (section.visual_beats || []).forEach(b => {
+                        const desc = b.description || b.display_text || "";
+                        const beatData = { description: desc };
+                        if (b.video_asset) beatData.video_asset = b.video_asset;
+
+                        if (desc || b.video_asset) content.visual_beats.push(beatData);
+
+                        if (b.image_id && !seenImageIds.has(b.image_id)) {
+                            seenImageIds.add(b.image_id);
+                            content.images.push({ image_id: b.image_id, description: desc });
+                        }
+
+                        if (b.visual_type === 'bullet_list' && content.bullet_items.length === 0 && desc) {
+                            content.bullet_items.push(desc);
+                        }
+                    });
+
+                    return {
+                        section_id: section.section_id,
+                        section_type: section.section_type,
+                        title: section.title,
+                        narration_text: narration_text,
+                        content: content
+                    };
+                });
+
+                reviewSectionsData = sections;
+                renderReviewSections(sections);
+
             } catch (err) {
                 alert('Error loading presentation: ' + err.message);
                 closeReviewModal();
