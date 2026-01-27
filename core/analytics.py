@@ -102,6 +102,30 @@ class ContentMetrics:
 
 
 @dataclass
+class ContentCompletenessMetrics:
+    """Metrics for Content Completeness Validator."""
+    validator_executed: bool = False
+    validation_status: str = "not_run"  # not_run, passed, failed, skipped
+    execution_time_seconds: float = 0.0
+    
+    # Validation checks
+    word_count_ratio: float = 0.0
+    topics_covered: int = 0
+    topics_total: int = 0
+    topics_coverage_ratio: float = 0.0
+    images_referenced: int = 0
+    images_total: int = 0
+    
+    # Retry information
+    retry_attempted: bool = False
+    retry_success: bool = False
+    missing_content_summary: str = ""
+    
+    # Error tracking
+    error: Optional[str] = None
+
+
+@dataclass
 class ValidationMetrics:
     """Validation results for the generated presentation."""
     # Mandatory sections (V2.5 Bible)
@@ -164,6 +188,7 @@ class PipelineAnalytics:
     renderer: RendererMetrics = field(default_factory=RendererMetrics)
     avatar: AvatarMetrics = field(default_factory=AvatarMetrics)
     content: ContentMetrics = field(default_factory=ContentMetrics)
+    content_completeness: ContentCompletenessMetrics = field(default_factory=ContentCompletenessMetrics)
     validation: ValidationMetrics = field(default_factory=ValidationMetrics)
     decisions: List[Dict[str, Any]] = field(default_factory=list)
     
@@ -463,6 +488,40 @@ class AnalyticsTracker:
             image_count=image_count
         )
 
+    def set_content_completeness_metrics(
+        self,
+        executed: bool,
+        validation_status: str,
+        execution_time: float,
+        word_count_ratio: float = 0.0,
+        topics_covered: int = 0,
+        topics_total: int = 0,
+        images_referenced: int = 0,
+        images_total: int = 0,
+        retry_attempted: bool = False,
+        retry_success: bool = False,
+        missing_content: str = "",
+        error: Optional[str] = None
+    ) -> None:
+        """Set Content Completeness Validator metrics."""
+        topics_ratio = (topics_covered / topics_total) if topics_total > 0 else 1.0
+        
+        self.analytics.content_completeness = ContentCompletenessMetrics(
+            validator_executed=executed,
+            validation_status=validation_status,
+            execution_time_seconds=execution_time,
+            word_count_ratio=word_count_ratio,
+            topics_covered=topics_covered,
+            topics_total=topics_total,
+            topics_coverage_ratio=topics_ratio,
+            images_referenced=images_referenced,
+            images_total=images_total,
+            retry_attempted=retry_attempted,
+            retry_success=retry_success,
+            missing_content_summary=missing_content,
+            error=error
+        )
+
     def set_validation_metrics(
         self,
         section_types: Dict[str, int],
@@ -690,6 +749,24 @@ class AnalyticsTracker:
                 "table_count": self.analytics.content.table_count,
                 "image_count": self.analytics.content.image_count
             } if self.analytics.content else {},
+            "content_completeness": {
+                "executed": self.analytics.content_completeness.validator_executed,
+                "status": self.analytics.content_completeness.validation_status,
+                "execution_time_seconds": round(self.analytics.content_completeness.execution_time_seconds, 2),
+                "word_count_ratio": round(self.analytics.content_completeness.word_count_ratio, 2),
+                "topics_coverage": {
+                    "covered": self.analytics.content_completeness.topics_covered,
+                    "total": self.analytics.content_completeness.topics_total,
+                    "ratio": round(self.analytics.content_completeness.topics_coverage_ratio, 2)
+                },
+                "images": {
+                    "referenced": self.analytics.content_completeness.images_referenced,
+                    "total": self.analytics.content_completeness.images_total
+                },
+                "retry_attempted": self.analytics.content_completeness.retry_attempted,
+                "retry_success": self.analytics.content_completeness.retry_success,
+                "error": self.analytics.content_completeness.error
+            } if self.analytics.content_completeness.validator_executed else {"executed": False},
             "validation": {
                 "mandatory_sections_valid": self.analytics.validation.mandatory_sections_valid,
                 "has_intro": self.analytics.validation.has_intro,

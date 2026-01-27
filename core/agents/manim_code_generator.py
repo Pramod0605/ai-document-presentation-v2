@@ -88,7 +88,7 @@ class ManimCodeGenerator:
         x_max = section_data.get("x_max", 5)
 
         assert self._user_template is not None, "User template not loaded"
-        return self._user_template.format(
+        user_prompt = self._user_template.format(
             section_title=section_data.get("section_title", "Educational Section"),
             narration_segments=narration_segments_text,
             visual_description=visual_description,
@@ -97,6 +97,21 @@ class ManimCodeGenerator:
             total_duration=f"{total_duration:.1f}",
             special_requirements=special_requirements
         )
+        
+        # NEW FEATURE: User feedback for regeneration
+        user_feedback = section_data.get("user_feedback", "")
+        if user_feedback:
+            user_prompt += f"""
+
+---
+USER'S IMPROVEMENT REQUEST:
+{user_feedback}
+
+IMPORTANT: The user has specifically requested the above improvements. Please revise the animation to incorporate this feedback while maintaining all technical requirements and narration timing.
+---
+"""
+        
+        return user_prompt
     
     def _format_segments(self, segments: List[Dict]) -> str:
         """Format narration segments for the prompt."""
@@ -190,16 +205,11 @@ class ManimCodeGenerator:
                     logger.info("[MANIM GEN] Applying Hard Sync timing enforcement...")
                     code = self._enforce_timing(code, section_data)
                     has_sync = True
-                    with open("debug_gen.log", "a", encoding="utf-8") as f:
-                        f.write("HARD SYNC APPLIED\n")
+                    logger.debug("[MANIM GEN] Hard Sync applied successfully")
                 except Exception as e:
                     logger.warning(f"[MANIM GEN] Hard Sync failed (proceeding with raw code): {e}")
-                    with open("debug_gen.log", "a", encoding="utf-8") as f:
-                        f.write(f"HARD SYNC FAILED: {e}\n")
             else:
                  logger.debug("[MANIM GEN] Skipping Hard Sync: No '# Segment' markers found.")
-                 with open("debug_gen.log", "a", encoding="utf-8") as f:
-                        f.write("HARD SYNC SKIPPED: No '# Segment' markers\n")
 
             # Final Validation Phase
             # 1. Structural Validation (V2.6: Skip timing check if Hard Sync was applied)
@@ -353,10 +363,9 @@ class ManimCodeGenerator:
     
     def _scrub_invalid_waits(self, code: str) -> str:
         """Remove self.wait(0) and self.wait(0.0) which cause Manim crashes."""
-        # Remove lines that are exactly self.wait(0) or self.wait(0.0) with optional indentation
-        cleaned = re.sub(r'^\s*self\.wait\(\s*0?\.?0\s*\)\s*$', '', code, flags=re.MULTILINE)
-        # Also handle inline ones cautiously
-        cleaned = re.sub(r'self\.wait\(\s*0?\.?0\s*\)', '', cleaned)
+        # Match wait(0) or wait(0.0) with optional whitespace
+        # More explicit regex than before
+        cleaned = re.sub(r'self\.wait\(\s*0(?:\.0)?\s*\)', '', code)
         return cleaned
 
     def _extract_python_code(self, response: str) -> str:
@@ -469,69 +478,43 @@ class ManimCodeGenerator:
         return errors
     
     def _check_completeness(self, code: str) -> List[str]:
-        """Check if code is complete (not truncated mid-statement)."""
+        """
+        Check if code is complete (not truncated mid-statement).
+        
+        SIMPLIFIED: Trust Python's compile() for syntax validation.
+        Only check for obviously incomplete code that compile() might not catch.
+        """
         errors = []
         
         lines = code.strip().split('\n')
         if not lines:
             return ["Empty code"]
         
-        # ISS-151 FIX: Ignore comments when checking for last-line completeness
-        # We use a simple heuristic: if a line ends with # preceded by space, or consists only of #
-        logical_lines = []
-        for line in lines:
-            stripped = line.strip()
-            if not stripped: continue
-            if stripped.startswith('#'): continue
-            # Split on ' #' but keep the part before
-            if ' #' in line:
-                logic_part = line.split(' #')[0].strip()
-            else:
-                logic_part = stripped
-                
-            if logic_part:
-                logical_lines.append(logic_part)
+        # SIMPLIFIED: Remove fragile checks that cause false positives
+        # - Removed "ends with comma" check (valid in lists/dicts)
+        # - Removed comment stripping (fails on # in strings)
+        # - Trust compile() to catch real syntax errors
         
-        if not logical_lines:
-            return ["No logical code found (only comments or empty)"]
-        
-        last_line = logical_lines[-1]
-        
-        # Check for incomplete statements
-        if last_line.endswith(','):
-            errors.append("Code appears truncated - ends with comma")
-        if last_line.endswith('('):
-            errors.append("Code appears truncated - ends with open paren")
-        if last_line.endswith('='):
-            errors.append("Code appears truncated - ends with assignment")
-        if last_line.endswith('+') or last_line.endswith('-') or last_line.endswith('*'):
-            errors.append("Code appears truncated - ends with operator")
-        if last_line.endswith(':'):
-            errors.append("Code appears truncated - ends with colon (incomplete block)")
-        
-        # Check for unclosed brackets
-        open_parens = code.count('(') - code.count(')')
-        open_brackets = code.count('[') - code.count(']')
-        open_braces = code.count('{') - code.count('}')
-        
-        if open_parens > 0:
-            errors.append(f"Unclosed parentheses: {open_parens} unmatched '('")
-        if open_brackets > 0:
-            errors.append(f"Unclosed brackets: {open_brackets} unmatched '['")
-        if open_braces > 0:
-            errors.append(f"Unclosed braces: {open_braces} unmatched '{{'")
-        
-        # Check for incomplete control structures (for, if, while, with, def, class ending with :)
+        # Only check for truly incomplete control structures
+        # (Where a block has no body at all - compile() might not catch this cleanly)
         for i, line in enumerate(lines):
             stripped = line.strip()
-            if stripped.endswith(':') and i == len(lines) - 1:
-                # Last line ends with colon - definitely incomplete
-                errors.append(f"Incomplete control structure at line {i+1}: '{stripped[:50]}...'")
-            elif stripped.endswith(':'):
-                # Check if there's a body after this line
-                next_lines = [l for l in lines[i+1:] if l.strip()]
-                if not next_lines:
-                    errors.append(f"Control structure at line {i+1} has no body: '{stripped[:50]}...'")
+            # Skip empty lines and comments
+            if not stripped or stripped.startswith('#'):
+                continue
+                
+            # Check if line ends with colon (control structure) but has no body
+            if stripped.endswith(':'):
+                # Look ahead for any non-empty, non-comment line
+                has_body = False
+                for next_line in lines[i+1:]:
+                    next_stripped = next_line.strip()
+                    if next_stripped and not next_stripped.startswith('#'):
+                        has_body = True
+                        break
+                
+                if not has_body:
+                    errors.append(f"Control structure at line {i+1} has no body: '{stripped[:60]}...'")
         
         return errors
     

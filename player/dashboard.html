@@ -456,6 +456,16 @@
                     for this phase</div>
             </div>
 
+            <div style="margin-bottom: 20px;" id="userFeedbackGroup">
+                <label style="display: block; color: #aaa; font-size: 0.9rem; margin-bottom: 6px;">User Feedback for
+                    Manim Regeneration (Optional)</label>
+                <textarea id="userFeedbackText" rows="4"
+                    placeholder="e.g., Make animations slower, use brighter colors, add more examples..."
+                    style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(0,0,0,0.3); color: #fff; font-size: 0.9rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; resize: vertical;"></textarea>
+                <div style="color: #888; font-size: 0.75rem; margin-top: 5px;">💡 Provide specific feedback to improve
+                    Manim animations (colors, speed, complexity, etc.)</div>
+            </div>
+
             <div style="display: flex; gap: 10px;">
                 <button id="retryPhaseBtn" onclick="executePhaseRetry()" class="btn"
                     style="flex: 1; background: #9c27b0; color: #fff; padding: 12px;">Retry Phase</button>
@@ -908,8 +918,19 @@
         function showRetryPhaseModal(jobId) {
             currentRetryJobId = jobId;
             document.getElementById('retryPhaseJobId').textContent = jobId;
-            document.getElementById('retryPhaseModal').style.display = 'flex';
             document.getElementById('retrySectionIds').value = '';
+            document.getElementById('userFeedbackText').value = '';
+
+            // Check initial phase and set visibility
+            const phase = document.getElementById('retryPhaseSelect').value;
+            const feedbackGroup = document.getElementById('userFeedbackGroup');
+            if (phase === 'manim_codegen' || phase === 'manim_render') {
+                feedbackGroup.style.display = 'block';
+            } else {
+                feedbackGroup.style.display = 'none';
+            }
+
+            document.getElementById('retryPhaseModal').style.display = 'flex';
         }
 
         function closeRetryPhaseModal() {
@@ -1140,6 +1161,7 @@
 
             const phase = document.getElementById('retryPhaseSelect').value;
             const sectionIdsInput = document.getElementById('retrySectionIds').value.trim();
+            const userFeedback = document.getElementById('userFeedbackText').value.trim();
 
             let payload = { phase };
             if (sectionIdsInput) {
@@ -1150,6 +1172,11 @@
                 if (sectionIds.length > 0) {
                     payload.section_ids = sectionIds;
                 }
+            }
+
+            // Add user feedback for Manim phases
+            if ((phase === 'manim_codegen' || phase === 'manim_render') && userFeedback) {
+                payload.user_feedback = userFeedback;
             }
 
             document.getElementById('retryPhaseBtn').disabled = true;

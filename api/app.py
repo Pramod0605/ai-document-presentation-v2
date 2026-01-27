@@ -187,6 +187,10 @@ def regenerate_manim(job_id):
     """
     Regenerate Manim code for all manim sections in a job.
     Uses the V2.5 Director data mapping fix.
+    
+    POST body (optional):
+    - user_feedback: String with user's improvement requests (optional)
+    - section_id: Specific section to regenerate (optional, regenerates all if not provided)
     """
     from core.agents.manim_code_generator import ManimCodeGenerator, integrate_manim_code_into_section
     
@@ -197,6 +201,11 @@ def regenerate_manim(job_id):
         return jsonify({"error": "Job not found"}), 404
     
     try:
+        # Get optional parameters from request body
+        data = request.get_json() or {}
+        user_feedback = data.get("user_feedback", "")
+        target_section_id = data.get("section_id")
+        
         # Load presentation
         with open(pres_path, "r", encoding="utf-8") as f:
             presentation = json.load(f)
@@ -210,6 +219,14 @@ def regenerate_manim(job_id):
                 continue
             
             section_id = section.get("section_id")
+            
+            # If target_section_id specified, only regenerate that section
+            if target_section_id and section_id != target_section_id:
+                results["skipped"].append({
+                    "section_id": section_id,
+                    "reason": "Not the target section"
+                })
+                continue
             
             # Transform V2.5 Director data (same as pipeline fix)
             nar = section.get("narration", {})
@@ -228,6 +245,11 @@ def regenerate_manim(job_id):
                 "formulas": [],
                 "key_terms": []
             }
+            
+            # FEATURE: Inject user feedback if provided
+            if user_feedback:
+                section_data["user_feedback"] = user_feedback
+                print(f"[Manim Regen] Applying user feedback to section {section_id}")
             
             try:
                 code = manim_gen.generate_code(section_data, style_config={"style": "standard"})
@@ -254,7 +276,8 @@ def regenerate_manim(job_id):
                     "section_id": section_id,
                     "title": section.get("title"),
                     "code_length": len(code),
-                    "segments": len(segments)
+                    "segments": len(segments),
+                    "user_feedback_applied": bool(user_feedback)
                 })
                 
             except Exception as e:
@@ -270,6 +293,7 @@ def regenerate_manim(job_id):
         return jsonify({
             "status": "complete",
             "job_id": job_id,
+            "user_feedback_provided": bool(user_feedback),
             "results": results
         })
         
