@@ -276,7 +276,7 @@ List all jobs with their status.
 ---
 
 #### `GET /job/<job_id>/analytics`
-Get detailed analytics for a completed job.
+Get detailed analytics for a completed job including LLM costs, Content Completeness Validator metrics, and timing breakdown.
 
 **Response (200):**
 ```json
@@ -284,22 +284,57 @@ Get detailed analytics for a completed job.
   "job_id": "a1b2c3d4",
   "has_analytics": true,
   "analytics": {
-    "timings": {
-      "total_duration_seconds": 890.5,
-      "llm_phase": 120.3,
-      "tts_phase": 45.2,
-      "video_render_phase": 650.0
+    "total_cost_usd": 0.018,
+    "total_duration_seconds": 155.23,
+    "total_tokens": 2000,
+    "phases": [
+      {
+        "phase_name": "llm_generation",
+        "model": "google/gemini-2.5-flash",
+        "duration_seconds": 106.62,
+        "input_tokens": 1000,
+        "output_tokens": 1000,
+        "cost_usd": 0.0018,
+        "status": "completed"
+      }
+    ],
+    "content_completeness": {
+      "executed": true,
+      "status": "passed",
+      "execution_time_seconds": 0.42,
+      "word_count_ratio": 0.85,
+      "topics_coverage": {
+        "covered": 8,
+        "total": 10,
+        "ratio": 0.80
+      },
+      "images": {
+        "referenced": 3,
+        "total": 3
+      },
+      "retry_attempted": false,
+      "retry_success": false,
+      "error": null
     },
-    "token_usage": {
-      "input_tokens": 50000,
-      "output_tokens": 25000
+    "validation": {
+      "mandatory_sections_valid": true,
+      "quality_score": 95,
+      "manim_success_count": 1,
+      "wan_success_count": 0
     },
-    "section_count": 18,
-    "video_count": 15,
-    "avatar_count": 18
+    "renderer": {
+      "manim_videos": 1,
+      "wan_videos": 1,
+      "total_render_time_seconds": 0.67
+    }
   }
 }
 ```
+
+**New in v2.5:**
+- `content_completeness`: Validator execution metrics (word count, topic coverage, image references)
+- `total_cost_usd`: Aggregate LLM cost across all phases
+- Per-phase cost breakdown with model-specific pricing
 
 ---
 
@@ -340,9 +375,17 @@ Retry a specific phase for specific sections.
 ```json
 {
   "phase": "manim_codegen",
-  "section_ids": [3, 6, 11]
+  "section_ids": [3, 6, 11],
+  "user_feedback": "Make animations slower and use brighter colors"
 }
 ```
+
+**Parameters:**
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `phase` | string | Yes | Phase to retry (see valid phases below) |
+| `section_ids` | array | No | Specific sections (default: all failed sections) |
+| `user_feedback` | string | No | Improvement instructions (Manim phases only) |
 
 **Valid Phases:**
 | Phase | Description |
@@ -448,7 +491,21 @@ Regenerate avatar for a specific section.
 ### Manim Regeneration
 
 #### `POST /regenerate_manim/<job_id>`
-Regenerate Manim code for all manim sections.
+Regenerate Manim code for specific sections with optional user feedback.
+
+**Request (JSON - Optional):**
+```json
+{
+  "section_id": 3,
+  "user_feedback": "Make animations slower, use brighter colors, add more step-by-step examples"
+}
+```
+
+**Parameters:**
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `section_id` | integer | No | Specific section to regenerate (default: all Manim sections) |
+| `user_feedback` | string | No | Specific improvement instructions for LLM |
 
 **Response (200):**
 ```json
@@ -458,6 +515,11 @@ Regenerate Manim code for all manim sections.
   "sections": [3, 6, 9, 12, 15]
 }
 ```
+
+**Use Case:**
+- Provide targeted feedback to improve specific Manim animations
+- LLM uses feedback to enhance code quality (speed, colors, complexity, etc.)
+- Accessible via Dashboard "Retry Phase" modal with feedback textarea
 
 ---
 
