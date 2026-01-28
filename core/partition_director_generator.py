@@ -155,7 +155,8 @@ class PartitionDirectorGenerator:
         images_list: str = "None",
         update_status_callback=None,
         generation_scope: str = "full", # New: "full", "global", "content"
-        output_dir: Optional[str] = None
+        output_dir: Optional[str] = None,
+        missing_content_hint: Optional[str] = None  # NEW: For validation retry
     ) -> dict:
         
         # A. PARTITIONING (Skip if global-only)
@@ -185,7 +186,7 @@ class PartitionDirectorGenerator:
             # 1. Submit Global Worker (if needed)
             global_future = None
             if generation_scope in ["full", "global"]:
-                global_future = executor.submit(self._run_global_worker, markdown_content, subject, grade, output_dir)
+                global_future = executor.submit(self._run_global_worker, markdown_content, subject, grade, output_dir, missing_content_hint)
             
             # 2. Submit Content Workers (if needed)
             future_to_index = {}
@@ -288,12 +289,16 @@ class PartitionDirectorGenerator:
                 
         return final_presentation
 
-    def _run_global_worker(self, full_md, subject, grade, output_dir: Optional[str] = None) -> dict:
+    def _run_global_worker(self, full_md, subject, grade, output_dir: Optional[str] = None, missing_content_hint: Optional[str] = None) -> dict:
         """Generates Intro, Summary, Memory, Recap ONLY."""
         # Use existing 'director_global_prompt.txt' if available, or inline.
         # Strict Load of Global Prompt
         with open("core/prompts/director_global_prompt.txt", "r", encoding="utf-8") as f:
             sys_p = f.read()
+        
+        # Inject validation feedback if retrying
+        if missing_content_hint:
+            sys_p += f"\n\n{missing_content_hint}\n"
              
         usr_p = f"Subject: {subject}\nGrade: {grade}\nCONTENT:\n{full_md}" # Full context - let the LLM see everything
         from core.validators.v25_validator import V25Validator

@@ -406,6 +406,23 @@ def call_smart_chunker(
             content_blocks = parse_content_blocks(markdown_content)
             result["content_blocks"] = content_blocks
             
+            # ISS-ValidationMetadata: Add validation metadata for Content Completeness Validator
+            topics = result.get("topics", [])
+            all_key_terms = []
+            for topic in topics:
+                all_key_terms.extend(topic.get("key_terms", []))
+            
+            result["validation_metadata"] = {
+                "total_topics": len(topics),
+                "topic_ids": [t.get("topic_id") for t in topics if t.get("topic_id")],
+                "topic_titles": [t.get("title") for t in topics if t.get("title")],
+                "all_key_terms": list(set(all_key_terms)),  # Unique terms
+                "source_word_count": len(markdown_content.split()),
+                "total_images": len([b for b in content_blocks if b.get("block_type") == "image"]),
+                "total_formulas": len([b for b in content_blocks if b.get("block_type") == "formula"]),
+                "total_tables": len([b for b in content_blocks if b.get("block_type") == "table"])
+            }
+            
             logger.info(f"[Smart Chunker] Successfully extracted {len(result.get('topics', []))} topics, {len(content_blocks)} content blocks")
             return result
             
