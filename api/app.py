@@ -2920,6 +2920,242 @@ Cells are complex structures with specialized components working together to mai
         }), 500
 
 
+# ============================================
+# ADMIN PANEL ROUTES
+# ============================================
+
+def require_admin_key(f):
+    """Decorator to enforce admin API key authentication"""
+    from functools import wraps
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        api_key = request.headers.get('X-Admin-Key')
+        expected_key = os.getenv('ADMIN_API_KEY')
+        
+        if not expected_key:
+            return jsonify({'error': 'Admin API key not configured in .env'}), 500
+        
+        if api_key != expected_key:
+            return jsonify({'error': 'Unauthorized - Invalid admin key'}), 401
+        
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/admin')
+def admin_panel():
+    """Serve admin panel HTML"""
+    admin_html_path = Path(__file__).parent.parent / 'admin_panel' / 'index.html'
+    if admin_html_path.exists():
+        return send_from_directory(admin_html_path.parent, 'index.html')
+    return "Admin panel not found", 404
+
+@app.route('/admin/assets/<path:filename>')
+def admin_assets(filename):
+    """Serve admin panel assets (CSS, JS)"""
+    admin_dir = Path(__file__).parent.parent / 'admin_panel'
+    return send_from_directory(admin_dir, filename)
+
+@app.route('/admin/api/prompts', methods=['GET'])
+@require_admin_key
+def list_prompts():
+    """List all prompt files in core/prompts/"""
+    try:
+        prompts_dir = Path(__file__).parent.parent / 'core' / 'prompts'
+        prompt_files = []
+        
+        for file_path in prompts_dir.glob('*.txt'):
+            stat = file_path.stat()
+            prompt_files.append({
+                'filename': file_path.name,
+                'size': stat.st_size,
+                'modified': stat.st_mtime
+            })
+        
+        return jsonify({'prompts': sorted(prompt_files, key=lambda x: x['filename'])})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/admin/api/prompts/<filename>', methods=['GET', 'PUT'])
+@require_admin_key
+def manage_prompt(filename):
+    """Read or update a prompt file"""
+    try:
+        prompts_dir = Path(__file__).parent.parent / 'core' / 'prompts'
+        file_path = prompts_dir / filename
+        
+        # Security: Prevent directory traversal
+        if not str(file_path.resolve()).startswith(str(prompts_dir.resolve())):
+            return jsonify({'error': 'Invalid file path'}), 400
+        
+        if request.method == 'GET':
+            if not file_path.exists():
+                return jsonify({'error': 'File not found'}), 404
+            
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            return jsonify({
+                'filename': filename,
+                'content': content,
+                'size': file_path.stat().st_size
+            })
+        
+        elif request.method == 'PUT':
+            data = request.json
+            new_content = data.get('content', '')
+            
+            # Create backup before modifying
+            if file_path.exists():
+                backup_path = file_path.with_suffix('.txt.backup_admin')
+                shutil.copy2(file_path, backup_path)
+            
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+            
+            return jsonify({
+                'success': True,
+                'message': f'Prompt {filename} updated successfully',
+                'size': len(new_content)
+            })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/admin/api/config', methods=['GET', 'PUT'])
+@require_admin_key
+def manage_config():
+    """Read or update .env configuration"""
+    try:
+        env_path = Path(__file__).parent.parent / '.env'
+        
+        if request.method == 'GET':
+            if not env_path.exists():
+                return jsonify({'error': '.env file not found'}), 404
+            
+            config = {}
+            with open(env_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        key, value = line.split('=', 1)
+                        config[key.strip()] = value.strip()
+            
+            return jsonify({'config': config})
+        
+        elif request.method == 'PUT':
+            data = request.json
+            new_config = data.get('config', {})
+            
+            # Create backup
+            if env_path.exists():
+                backup_path = env_path.with_suffix('.env.backup_admin')
+                shutil.copy2(env_path, backup_path)
+            
+            # Write new config
+            with open(env_path, 'w', encoding='utf-8') as f:
+                for key, value in new_config.items():
+                    f.write(f"{key}={value}\n")
+            
+            # Reload environment variables
+            load_dotenv(override=True)
+            
+            return jsonify({
+                'success': True,
+                'message': '.env configuration updated successfully'
+            })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/admin/api/restart', methods=['POST'])
+@require_admin_key
+def restart_server():
+    """Restart Docker container"""
+    try:
+        import subprocess
+        
+        # Get container name from environment or use default
+        container_name = os.getenv('DOCKER_CONTAINER_NAME', 'ai-document-presentation-v2-api-1')
+        
+        # Execute restart command
+        result = subprocess.run(
+            ['docker', 'restart', container_name],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+        
+        if result.returncode == 0:
+            return jsonify({
+                'success': True,
+                'message': f'Container {container_name} restarted successfully',
+                'output': result.stdout
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': result.stderr
+            }), 500
+    
+    except subprocess.TimeoutExpired:
+        return jsonify({'error': 'Restart command timed out'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/admin/api/logs', methods=['GET'])
+@require_admin_key
+def get_logs():
+    """Get recent Docker logs"""
+    try:
+        import subprocess
+        
+        container_name = os.getenv('DOCKER_CONTAINER_NAME', 'ai-document-presentation-v2-api-1')
+        tail_lines = request.args.get('lines', '100')
+        
+        result = subprocess.run(
+            ['docker', 'logs', '--tail', tail_lines, container_name],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        
+        if result.returncode == 0:
+            return jsonify({
+                'logs': result.stdout + result.stderr,
+                'container': container_name
+            })
+        else:
+            return jsonify({'error': result.stderr}), 500
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/admin/api/system-info', methods=['GET'])
+@require_admin_key
+def get_system_info():
+    """Get system information"""
+    try:
+        import platform
+        from datetime import datetime
+        
+        # Get recent jobs count
+        recent_jobs = len(list(JOBS_DIR.glob('*'))) if JOBS_DIR.exists() else 0
+        
+        return jsonify({
+            'python_version': platform.python_version(),
+            'platform': platform.platform(),
+            'pipeline_version': 'v2.5_director',
+            'total_jobs': recent_jobs,
+            'server_time': datetime.now().isoformat()
+        })
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# ============================================
+# PLAYER & DASHBOARD ROUTES
+# ============================================
+
 @app.route("/dashboard")
 @app.route("/dashboard/")
 def serve_dashboard():

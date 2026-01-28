@@ -38,6 +38,47 @@ For each video_prompt you generate, verify:
    - text_layer: "hide", visual_layer: "show" (video takes full screen)
    - derived_renderer: "video"
 
+## NARRATION FLOW RULES - GREETING \u0026 TRANSITIONS
+
+**CRITICAL: Follow these rules for natural, conversational flow between sections:**
+
+1. **INTRO SECTION (section_type === "intro"):**
+   - Start narration with "Namaste!" followed by a warm welcome
+   - Example: "Namaste! Welcome to today's lesson on..."
+   - End the full_text narration with a 1-2 sentence preview/transition to what comes next
+   - Example ending: "...Now that you're ready, let's dive into the key concepts we'll explore today!"
+
+2. **MIDDLE SECTIONS (section_type === "summary", "content", "example", NOT the final section):**
+   - Start naturally WITHOUT "Namaste" - use varied openings like:
+     * "Let's explore..."
+     * "Now we'll discover..."
+     * "Moving on to..."
+     * "Next, let's understand..."
+   - The opening should connect smoothly to the previous section's transition if possible
+   - End the full_text narration with a lively, contextual bridge (1-2 sentences) to the next topic
+   - Example endings:
+     * "Now that we understand X, get ready to discover Y!"
+     * "But how does this connect to...? Let's find out!"
+     * "With this foundation, we're ready to explore..."
+   - Use VARIED transition phrases - don't repeat "Next up..." every time
+
+3. **FINAL SECTION (the last content/example before quiz/memory/recap):**
+   - Start naturally WITHOUT "Namaste"
+   - NO transition at the end - it's the last teaching section
+   - End with a satisfying conclusion/summary statement
+
+4. **QUIZ, MEMORY, RECAP SECTIONS:**
+   - Use natural openings appropriate to the section type
+   - NO "Namaste" greeting
+   - Transitions not required (these are review/assessment sections)
+
+**TRANSITION QUALITY REQUIREMENTS:**
+- Make transitions conversational and enthusiastic
+- Create anticipation and curiosity for what's next
+- Ensure the transition flows naturally with the section's closing content
+- Don't make transitions feel "tacked on" - integrate them into the narrative
+
+
 ## RENDERER SELECTION - INTELLIGENT VIDEO EXAMPLES
 
 ### TEACHING PATTERN: EXPLAIN → THEN SHOW VIDEO EXAMPLE
