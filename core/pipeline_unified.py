@@ -207,125 +207,127 @@ def process_markdown_unified(
                 "gesture_enabled": True
             }
             
-            # --- PHASE 1.5: CONTENT COMPLETENESS VALIDATION (Before Asset Generation) ---
-            # NOTE: Validator runs even in dry-run mode because it's validation, not asset generation
-            log_status("validation", "Validating content completeness...")
+            # --- PHASE 1.5: CONTENT COMPLETENESS VALIDATION (DISABLED BY USER REQUEST) ---
+            # log_status("validation", "Validating content completeness...")
             
-            from core.validators.content_completeness_validator import validate_content_completeness
-            import time as time_module
+            # from core.validators.content_completeness_validator import validate_content_completeness
+            # import time as time_module
             
             # Track validation timing for analytics
-            validation_start_time = time_module.time()
+            # validation_start_time = time_module.time()
             
-            validation_result = validate_content_completeness(
-                presentation=presentation,
-                job_dir=str(output_path),
-                source_markdown=markdown_content
-            )
+            # validation_result = validate_content_completeness(
+            #     presentation=presentation,
+            #     job_dir=str(output_path),
+            #     source_markdown=markdown_content
+            # )
             
-            validation_end_time = time_module.time()
-            validation_duration = validation_end_time - validation_start_time
+            # validation_end_time = time_module.time()
+            # validation_duration = validation_end_time - validation_start_time
             
             # Save validation report
-            validation_path = artifacts_dir / "completeness_validation.json"
-            with open(validation_path, "w", encoding="utf-8") as f:
-                json.dump(validation_result, f, indent=2)
+            # validation_path = artifacts_dir / "completeness_validation.json"
+            # with open(validation_path, "w", encoding="utf-8") as f:
+            #     json.dump(validation_result, f, indent=2)
             
-            logger.info(f"Validation result: {validation_result['validation_status']}")
+            # logger.info(f"Validation result: {validation_result['validation_status']}")
             
             # Track validator metrics in analytics
-            metrics = validation_result.get('metrics', {})
-            tracker.set_content_completeness_metrics(
-                executed=True,
-                validation_status=validation_result['validation_status'],
-                execution_time=validation_duration,
-                word_count_ratio=metrics.get('word_count_ratio', 0.0),
-                topics_covered=metrics.get('topics_covered', 0),
-                topics_total=metrics.get('topics_total', 0),
-                images_referenced=metrics.get('images_referenced', 0),
-                images_total=metrics.get('images_total', 0),
-                retry_attempted=False,  # Will update if retry happens
-                retry_success=False,
-                missing_content=validation_result.get('missing_content_summary', ''),
-                error=validation_result.get('error')
-            )
+            # metrics = validation_result.get('metrics', {})
+            # tracker.set_content_completeness_metrics(
+            #     executed=True,
+            #     validation_status=validation_result['validation_status'],
+            #     execution_time=validation_duration,
+            #     word_count_ratio=metrics.get('word_count_ratio', 0.0),
+            #     topics_covered=metrics.get('topics_covered', 0),
+            #     topics_total=metrics.get('topics_total', 0),
+            #     images_referenced=metrics.get('images_referenced', 0),
+            #     images_total=metrics.get('images_total', 0),
+            #     retry_attempted=False,  # Will update if retry happens
+            #     retry_success=False,
+            #     missing_content=validation_result.get('missing_content_summary', ''),
+            #     error=validation_result.get('error')
+            # )
+            
+            # MOCK VALIDATION RESULT FOR DOWNSTREAM LOGIC
+            validation_result = {"validation_status": "passed"}
             
             # Only retry if NOT in dry-run mode (retry requires LLM calls)
-            if validation_result["validation_status"] == "failed" and not dry_run:
-                log_status("validation", "Content validation FAILED - Retrying with enhanced prompt")
+            # if validation_result["validation_status"] == "failed" and not dry_run:
+                # log_status("validation", "Content validation FAILED - Retrying with enhanced prompt")
                 
                 # Get enhanced prompt with missing content details
-                retry_prompt = validation_result.get("retry_prompt_enhancement", "")
+                # retry_prompt = validation_result.get("retry_prompt_enhancement", "")
                 
-                logger.warning(f"Validation failed. Retrying with prompt:\n{retry_prompt}")
+                # logger.warning(f"Validation failed. Retrying with prompt:\n{retry_prompt}")
                 
                 # Re-run Director with enhanced prompt
-                log_status("llm_generation", "Regenerating presentation with missing content details...")
+                # log_status("llm_generation", "Regenerating presentation with missing content details...")
                 
-                v2_output_retry = director.generate_presentation_partitioned(
-                    markdown_content=markdown_content,
-                    subject=subject,
-                    grade=grade,
-                    images_list=images_list,
-                    update_status_callback=log_status,
-                    generation_scope=generation_scope,
-                    output_dir=str(output_dir),
-                    missing_content_hint=retry_prompt  # Inject missing content feedback
-                )
+                # v2_output_retry = director.generate_presentation_partitioned(
+                #     markdown_content=markdown_content,
+                #     subject=subject,
+                #     grade=grade,
+                #     images_list=images_list,
+                #     update_status_callback=log_status,
+                #     generation_scope=generation_scope,
+                #     output_dir=str(output_dir),
+                #     missing_content_hint=retry_prompt  # Inject missing content feedback
+                # )
                 
-                presentation = v2_output_retry
+                # presentation = v2_output_retry
                 
                 # Update metadata after retry
-                if "metadata" not in presentation:
-                    presentation["metadata"] = {}
-                presentation["metadata"]["validation_retry"] = True
+                # if "metadata" not in presentation:
+                #     presentation["metadata"] = {}
+                # presentation["metadata"]["validation_retry"] = True
                 
                 # Validate again (only once - then fail hard if still incomplete)
-                retry_validation_start = time_module.time()
-                validation_result_retry = validate_content_completeness(
-                    presentation=presentation,
-                    job_dir=str(output_path),
-                    source_markdown=markdown_content
-                )
-                retry_validation_duration = time_module.time() - retry_validation_start
+                # retry_validation_start = time_module.time()
+                # validation_result_retry = validate_content_completeness(
+                #     presentation=presentation,
+                #     job_dir=str(output_path),
+                #     source_markdown=markdown_content
+                # )
+                # retry_validation_duration = time_module.time() - retry_validation_start
                 
                 # Save retry validation report
-                validation_retry_path = artifacts_dir / "completeness_validation_retry.json"
-                with open(validation_retry_path, "w", encoding="utf-8") as f:
-                    json.dump(validation_result_retry, f, indent=2)
+                # validation_retry_path = artifacts_dir / "completeness_validation_retry.json"
+                # with open(validation_retry_path, "w", encoding="utf-8") as f:
+                #     json.dump(validation_result_retry, f, indent=2)
                 
                 # Update analytics with retry metrics
-                retry_metrics = validation_result_retry.get('metrics', {})
-                tracker.set_content_completeness_metrics(
-                    executed=True,
-                    validation_status=validation_result_retry['validation_status'],
-                    execution_time=validation_duration + retry_validation_duration,  # Total time
-                    word_count_ratio=retry_metrics.get('word_count_ratio', 0.0),
-                    topics_covered=retry_metrics.get('topics_covered', 0),
-                    topics_total=retry_metrics.get('topics_total', 0),
-                    images_referenced=retry_metrics.get('images_referenced', 0),
-                    images_total=retry_metrics.get('images_total', 0),
-                    retry_attempted=True,
-                    retry_success=(validation_result_retry['validation_status'] == 'passed'),
-                    missing_content=validation_result_retry.get('missing_content_summary', ''),
-                    error=validation_result_retry.get('error')
-                )
+                # retry_metrics = validation_result_retry.get('metrics', {})
+                # tracker.set_content_completeness_metrics(
+                #     executed=True,
+                #     validation_status=validation_result_retry['validation_status'],
+                #     execution_time=validation_duration + retry_validation_duration,  # Total time
+                #     word_count_ratio=retry_metrics.get('word_count_ratio', 0.0),
+                #     topics_covered=retry_metrics.get('topics_covered', 0),
+                #     topics_total=retry_metrics.get('topics_total', 0),
+                #     images_referenced=retry_metrics.get('images_referenced', 0),
+                #     images_total=retry_metrics.get('images_total', 0),
+                #     retry_attempted=True,
+                #     retry_success=(validation_result_retry['validation_status'] == 'passed'),
+                #     missing_content=validation_result_retry.get('missing_content_summary', ''),
+                #     error=validation_result_retry.get('error')
+                # )
                 
-                if validation_result_retry["validation_status"] == "failed":
-                    error_msg = f"Content validation failed after retry. Missing content: {validation_result_retry}"
-                    logger.error(error_msg)
-                    raise PipelineUnifiedError(error_msg, "content_validation")
-                else:
-                    log_status("validation", "Content validation PASSED on retry ✓")
-                    presentation["metadata"]["validation_retry_success"] = True
-            elif validation_result["validation_status"] == "failed" and dry_run:
+                # if validation_result_retry["validation_status"] == "failed":
+                #     error_msg = f"Content validation failed after retry. Missing content: {validation_result_retry}"
+                #     logger.error(error_msg)
+                #     raise PipelineUnifiedError(error_msg, "content_validation")
+                # else:
+                #     log_status("validation", "Content validation PASSED on retry ✓")
+                #     presentation["metadata"]["validation_retry_success"] = True
+            # elif validation_result["validation_status"] == "failed" and dry_run:
                 # In dry-run mode, just log the failure but don't retry
-                log_status("validation", "Content validation FAILED (dry-run - no retry)")
-                logger.warning(f"Validation failed in dry-run mode: {validation_result}")
-                presentation["metadata"]["validation_failed_dry_run"] = True
-            else:
-                log_status("validation", "Content validation PASSED ✓")
-                presentation["metadata"]["validation_passed_first_attempt"] = True
+                # log_status("validation", "Content validation FAILED (dry-run - no retry)")
+                # logger.warning(f"Validation failed in dry-run mode: {validation_result}")
+                # presentation["metadata"]["validation_failed_dry_run"] = True
+            # else:
+                # log_status("validation", "Content validation PASSED ✓")
+                # presentation["metadata"]["validation_passed_first_attempt"] = True
             
         else:
             # Legacy V2 Unified

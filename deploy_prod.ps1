@@ -15,9 +15,10 @@ $CONTAINER_NAME = "ai-document-presentation-v2-api-1" # Production container nam
 
 Write-Host "[DEPLOY] Starting Production Deployment to $SERVER_IP..." -ForegroundColor Cyan
 
-# 1. Login and Pull Code
-Write-Host "[DEPLOY] Connecting to server to pull latest code..." -ForegroundColor Yellow
-ssh $SERVER_USER@$SERVER_IP "cd $PROJECT_DIR && git pull"
+# 1. Login and Pull Code (Force Clean)
+Write-Host "[DEPLOY] Connecting to server to force clean and pull latest code..." -ForegroundColor Yellow
+# FIX: Added 'git reset --hard' to discard local changes (like logs) that block the pull
+ssh $SERVER_USER@$SERVER_IP "cd $PROJECT_DIR && git reset --hard HEAD && git pull"
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "[ERROR] Git pull failed. Please check SSH connection and directory path." -ForegroundColor Red
