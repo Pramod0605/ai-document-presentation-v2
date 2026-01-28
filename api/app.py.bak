@@ -1,8 +1,7 @@
-﻿import os
+import os
 import sys
 import json
 import shutil
-import time
 import tempfile
 from pathlib import Path
 from typing import Optional
@@ -15,7 +14,7 @@ load_dotenv(override=True)
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from flask import Flask, request, jsonify, send_from_directory, redirect, make_response
+from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 
 from core.pipeline import process_pdf_to_videos
@@ -40,19 +39,9 @@ class PollingLogFilter(logging.Filter):
         return True
 
 # Apply to werkzeug and root loggers to be sure
-# Apply to werkzeug and root loggers to be sure
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
 logging.getLogger("werkzeug").addFilter(PollingLogFilter())
 logging.getLogger("flask.app").addFilter(PollingLogFilter())
-
-# ADDED: File Logging for Admin Panel
-try:
-    file_handler = logging.FileHandler("app.log", encoding='utf-8')
-    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-    logging.getLogger().addHandler(file_handler)
-    logging.getLogger().setLevel(logging.INFO)
-except Exception as e:
-    print(f"Failed to setup file logging: {e}")
 
 PLAYER_DIR = Path(__file__).parent.parent / "player"
 ASSETS_DIR = PLAYER_DIR / "assets"
@@ -102,105 +91,17 @@ def health_check():
     })
 
 
+"""
+Add this as a NEW endpoint at the end of api/app.py (before if __name__ == '__main__')
 
-@app.route("/submit_review", methods=["POST"])
-def submit_review_endpoint():
-    """
-    Submit a review for a specific job section.
-    Saves the review to a reviews.json file in the job directory.
-    """
-    try:
-        data = request.json
-        job_id = data.get("job_id")
-        section_id = data.get("section_id")
-        review_text = data.get("review")
-        rating = data.get("rating") # Optional
-
-        if not job_id or not section_id or not review_text:
-            return jsonify({"error": "Missing job_id, section_id, or review text"}), 400
-
-        job_dir = JOBS_DIR / job_id
-        if not job_dir.exists():
-            return jsonify({"error": "Job not found"}), 404
-
-        reviews_path = job_dir / "reviews.json"
-        reviews = []
-        if reviews_path.exists():
-            try:
-                with open(reviews_path, "r", encoding="utf-8") as f:
-                    reviews = json.load(f)
-            except json.JSONDecodeError:
-                pass # Start fresh if corrupt
-
-        # Check if review for this section already exists, update if so
-        existing_review_index = next((i for i, r in enumerate(reviews) if r["section_id"] == section_id), -1)
-        
-        new_review = {
-            "section_id": section_id,
-            "review": review_text,
-            "rating": rating,
-            "timestamp": __import__('datetime').datetime.utcnow().isoformat()
-        }
-
-        if existing_review_index != -1:
-            reviews[existing_review_index] = new_review
-        else:
-            reviews.append(new_review)
-
-        with open(reviews_path, "w", encoding="utf-8") as f:
-            json.dump(reviews, f, indent=2)
-
-        return jsonify({"status": "success", "message": "Review saved", "reviews": reviews})
-
-    except Exception as e:
-        return jsonify({"status": "error", "error": str(e)}), 500
-
-
-@app.route("/recreate_job_from_review", methods=["POST"])
-def recreate_job_from_review():
-    """
-    Trigger regeneration of a job (or specific sections) based on submitted reviews.
-    Currently, this is a stub that acknowledges the request. 
-    Real implementation would parse reviews and adjust generation parameters.
-    """
-    try:
-        data = request.json
-        job_id = data.get("job_id")
-
-        if not job_id:
-            return jsonify({"error": "Missing job_id"}), 400
-
-        job_dir = JOBS_DIR / job_id
-        reviews_path = job_dir / "reviews.json"
-        
-        if not reviews_path.exists():
-             return jsonify({"error": "No reviews found for this job"}), 400
-
-        # TODO: Implement actual regeneration logic using the reviews.
-        # For now, we will just return a success message simulating the start of the process.
-        # Ideally this would call something like `job_manager.create_job(..., parent_job_id=job_id, ...)`
-        
-        print(f"[Review] Triggering regeneration for Job {job_id} based on reviews.")
-        
-        return jsonify({
-            "status": "accepted", 
-            "message": "Regeneration based on reviews initiated (Stub)",
-            "job_id": job_id
-        })
-
-    except Exception as e:
-        return jsonify({"status": "error", "error": str(e)}), 500
-
+This adds a /regenerate_manim/<job_id> endpoint without modifying any existing code.
+"""
 
 @app.route('/regenerate_manim/<job_id>', methods=['POST'])
 def regenerate_manim(job_id):
     """
     Regenerate Manim code for all manim sections in a job.
     Uses the V2.5 Director data mapping fix.
-    
-    POST body (optional):
-    - user_feedback: String with user's improvement requests (optional)
-    - section_id: Specific section to regenerate (optional, regenerates all if not provided)
     """
     from core.agents.manim_code_generator import ManimCodeGenerator, integrate_manim_code_into_section
     
@@ -211,11 +112,6 @@ def regenerate_manim(job_id):
         return jsonify({"error": "Job not found"}), 404
     
     try:
-        # Get optional parameters from request body
-        data = request.get_json() or {}
-        user_feedback = data.get("user_feedback", "")
-        target_section_id = data.get("section_id")
-        
         # Load presentation
         with open(pres_path, "r", encoding="utf-8") as f:
             presentation = json.load(f)
@@ -229,14 +125,6 @@ def regenerate_manim(job_id):
                 continue
             
             section_id = section.get("section_id")
-            
-            # If target_section_id specified, only regenerate that section
-            if target_section_id and section_id != target_section_id:
-                results["skipped"].append({
-                    "section_id": section_id,
-                    "reason": "Not the target section"
-                })
-                continue
             
             # Transform V2.5 Director data (same as pipeline fix)
             nar = section.get("narration", {})
@@ -255,11 +143,6 @@ def regenerate_manim(job_id):
                 "formulas": [],
                 "key_terms": []
             }
-            
-            # FEATURE: Inject user feedback if provided
-            if user_feedback:
-                section_data["user_feedback"] = user_feedback
-                print(f"[Manim Regen] Applying user feedback to section {section_id}")
             
             try:
                 code = manim_gen.generate_code(section_data, style_config={"style": "standard"})
@@ -286,8 +169,7 @@ def regenerate_manim(job_id):
                     "section_id": section_id,
                     "title": section.get("title"),
                     "code_length": len(code),
-                    "segments": len(segments),
-                    "user_feedback_applied": bool(user_feedback)
+                    "segments": len(segments)
                 })
                 
             except Exception as e:
@@ -303,7 +185,6 @@ def regenerate_manim(job_id):
         return jsonify({
             "status": "complete",
             "job_id": job_id,
-            "user_feedback_provided": bool(user_feedback),
             "results": results
         })
         
@@ -475,9 +356,6 @@ def submit_job():
             generation_scope = data.get("generation_scope", "full")
             model = data.get("model")
             video_provider = data.get("video_provider", "kie")
-            # Capture images from JSON payload (critical for external API usage)
-            images_dict = data.get("images", data.get("images_dict"))
-            title = data.get("title", f"Presentation {int(time.time())}")
             
             if not markdown_content:
                 return jsonify({"error": "Markdown content is required"}), 400
@@ -529,9 +407,7 @@ def submit_job():
                 pipeline_version=pipeline_version,
                 generation_scope=generation_scope,
                 model=model,
-                video_provider=video_provider,
-                review_mode=review_mode,
-                images_dict=images_dict
+                video_provider=video_provider
             )
         
         else:
@@ -1123,59 +999,15 @@ def _retry_wan_render(job_id: str, job_folder: Path, presentation: dict, section
         try:
             print(f"[RETRY-WAN] Re-rendering WAN video for section {section_id}")
             
-            # V2.6 FIX: Use KieBatchGenerator directly to match original job filenames ({beat_id}.mp4)
-            # This ensures idempotency works (skips existing files) and naming is consistent.
-            from render.wan.kie_batch_generator import KieBatchGenerator
-            
-            # Collect video_prompts from section
-            video_prompts = section.get("video_prompts", [])
-            
-            # Also check if it's a recap section
-            if section.get("section_type") == "recap":
-                # Recap scenes also need to be handled if they have prompts
-                recap_scenes = section.get("recap_scenes", [])
-                if recap_scenes:
-                     # Adapt recap scenes to video_prompts format if needed, but usually 
-                     # video_prompts are already populated for background job.
-                     # If empty, we might need to construct them, but for retry lets rely on video_prompts
-                     pass
-
-            if video_prompts:
-                print(f"[RETRY-WAN] Found {len(video_prompts)} video prompts for section {section_id}")
-                batch_gen = KieBatchGenerator()
-                # generate_batch handles: 1. Idempotency (skips exist) 2. Batching 3. Polling
-                batch_results = batch_gen.generate_batch(video_prompts, str(videos_dir))
-                
-                # Update success/failed counts based on returned results
-                generated_count = 0
-                for bid, path in batch_results.items():
-                    if path:
-                        generated_count += 1
-                
-                if generated_count > 0:
-                     results["success"].append({"section_id": section_id, "count": generated_count})
-                     # We don't need to return a single video_path as WAN sections rely on beat_videos
-                     # stored in presentation.json (which we should arguably update)
-                     
-                     # Update beat_videos paths in section to be safe
-                     section["beat_video_paths"] = [f"videos/{Path(p).name}" for p in batch_results.values() if p]
-                else:
-                     results["skipped"].append({"section_id": section_id, "reason": "No new videos generated (all existed or failed)"})
-
-                # Mock result for compatibility with rest of function if needed
-                result = {"status": "success", "video_path": None} 
-            else:
-                print(f"[RETRY-WAN] No video_prompts found for section {section_id} - falling back to legacy renderer")
-                # Fallback to legacy path if no pre-compiled prompts (e.g. old jobs)
-                result = execute_renderer(
-                    topic=section,
-                    output_dir=str(videos_dir),
-                    dry_run=False,
-                    skip_wan=False,
-                    trace_output_dir=str(job_folder),
-                    strict_mode=True,
-                    video_provider=video_provider
-                )
+            result = execute_renderer(
+                topic=section,
+                output_dir=str(videos_dir),
+                dry_run=False,
+                skip_wan=False,
+                trace_output_dir=str(job_folder),
+                strict_mode=True,
+                video_provider=video_provider
+            )
             
             if result.get("status") == "success":
                 video_path = result.get("video_path")
@@ -1240,101 +1072,106 @@ def _retry_manim_render(job_id: str, job_folder: Path, presentation: dict, secti
 
 
 def _retry_avatar_generation(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
-    """Retry avatar generation - uses same parallel logic as new jobs."""
+    """Retry avatar generation for specific sections or all failed."""
     from core.agents.avatar_generator import AvatarGenerator
-    import time
     
     avatars_dir = job_folder / "avatars"
     avatars_dir.mkdir(parents=True, exist_ok=True)
     
+    results = {"success": [], "failed": [], "skipped": []}
     generator = AvatarGenerator()
     
-    # Filter presentation to only include sections we want to retry
-    if section_ids:
-        filtered_presentation = {
-            "sections": [s for s in presentation.get("sections", []) if s.get("section_id") in section_ids]
-        }
-    else:
-        filtered_presentation = presentation
-    
-    print(f"[RETRY-AVATAR] Using parallel submit for {len(filtered_presentation['sections'])} sections", flush=True)
-    
-    # Use the SAME parallel submit that new jobs use
-    submit_results = generator.submit_parallel_job(filtered_presentation, job_id, str(job_folder))
-    
-    tasks = submit_results.get("queued", [])
-    if not tasks:
-        return {
-            "success": [],
-            "failed": submit_results.get("failed", []),
-            "skipped": submit_results.get("skipped", [])
-        }
-    
-    print(f"[RETRY-AVATAR] Submitted {len(tasks)} tasks. Polling...", flush=True)
-    
-    # Poll ALL tasks in parallel (same as new jobs)
-    active_tasks = list(tasks)
-    results = {"success": [], "failed": [], "skipped": submit_results.get("skipped", [])}
-    start_time = time.time()
-    max_wait = 1800  # 30 min
-    
-    while active_tasks and (time.time() - start_time < max_wait):
-        still_active = []
-        
-        for task in active_tasks:
-            section_id = task["section_id"]
-            task_id = task["task_id"]
-            
+    # If no section_ids provided, find failed sections from status
+    if section_ids is None:
+        status_file = job_folder / "avatar_status.json"
+        if status_file.exists():
             try:
+                status_data = json.loads(status_file.read_text())
+                section_ids = status_data.get("details", {}).get("failed_sections", [])
+            except:
+                section_ids = []
+    
+    if not section_ids:
+        # Fallback: check all segments that don't have a valid avatar
+        section_ids = []
+        for section in presentation.get("sections", []):
+            sec_id = section.get("section_id")
+            avatar_path = avatars_dir / f"section_{sec_id}_avatar.mp4"
+            if not avatar_path.exists() or avatar_path.stat().st_size < 10000:
+                section_ids.append(sec_id)
+
+    if not section_ids:
+        return {"message": "No sections to retry", "success": [], "failed": [], "skipped": []}
+    
+    for section in presentation.get("sections", []):
+        sec_id = section.get("section_id")
+        
+        if sec_id not in section_ids:
+            continue
+        
+        # Extract narration text
+        narration = section.get("narration", {})
+        full_text = ""
+        if isinstance(narration, dict):
+             full_text = narration.get("full_text", "") or " ".join([str(s.get("text", "") or "") for s in narration.get("segments", [])])
+        else:
+             full_text = str(narration)
+             
+        if not full_text.strip():
+            results["skipped"].append({"section_id": sec_id, "reason": "No narration text"})
+            continue
+        
+        try:
+            output_filename = f"section_{sec_id}_avatar.mp4"
+            output_path = avatars_dir / output_filename
+            
+            # Submit and poll
+            print(f"[RETRY-AVATAR] Submitting Sec {sec_id}...", flush=True)
+            response = generator.generate_avatar_video(full_text, job_id, sec_id)
+            task_id = response.get("task_id")
+            
+            if not task_id:
+                results["failed"].append({"section_id": sec_id, "error": response.get("error", "No task_id returned")})
+                continue
+            
+            # Poll for completion (max 5 minutes per section)
+            start_poll = time.time()
+            success = False
+            while time.time() - start_poll < 300:
                 status_resp = generator.check_status(task_id)
                 status = status_resp.get("status")
+                print(f"[RETRY-AVATAR] Sec {sec_id} polling: {status}", flush=True)
                 
-                if status in ["completed", "success", "done"]:
-                    output_path = avatars_dir / f"section_{section_id}_avatar.mp4"
-                    
+                if status == "completed" or status == "success":
                     if generator.download_video(task_id, str(output_path)):
-                        # Update presentation.json
-                        for sec in presentation["sections"]:
-                            if sec["section_id"] == section_id:
-                                sec["avatar_path"] = f"avatars/section_{section_id}_avatar.mp4"
-                                sec["avatar_video"] = f"avatars/section_{section_id}_avatar.mp4"
-                                sec["avatar_status"] = "completed"
-                                break
+                        section["avatar_path"] = f"avatars/{output_filename}"
+                        results["success"].append({"section_id": sec_id, "task_id": task_id})
+                        print(f"[RETRY-AVATAR] Sec {sec_id} DONE! Saved to {output_path}", flush=True)
                         
-                        results["success"].append({"section_id": section_id, "task_id": task_id})
-                        print(f"[RETRY-AVATAR] âœ“ Sec {section_id} downloaded", flush=True)
-                        
-                        # Save progress
-                        with open(job_folder / "presentation.json", "w", encoding="utf-8") as f:
-                            json.dump(presentation, f, indent=2)
+                        # Save presentation immediately so we don't lose progress
+                        try:
+                            with open(job_folder / "presentation.json", "w", encoding="utf-8") as f:
+                                json.dump(presentation, f, indent=2)
+                        except Exception as save_err:
+                            print(f"[RETRY-AVATAR] Warning: Failed to save presentation.json: {save_err}")
                     else:
-                        results["failed"].append({"section_id": section_id, "error": "Download failed"})
-                
-                elif status in ["failed", "error", "not_found"]:
-                    results["failed"].append({"section_id": section_id, "error": status})
-                    print(f"[RETRY-AVATAR] âœ— Sec {section_id} failed: {status}", flush=True)
-                
-                else:
-                    # Still processing
-                    still_active.append(task)
+                        results["failed"].append({"section_id": sec_id, "error": "Download failed"})
+                    
+                    success = True
+                    break
+                elif status == "failed" or status == "not_found":
+                    results["failed"].append({"section_id": sec_id, "error": status_resp.get("message", f"Task {status}")})
+                    success = True # Marked as handled
+                    break
+                time.sleep(5)
             
-            except Exception as e:
-                still_active.append(task)  # Keep retrying
-        
-        active_tasks = still_active
-        
-        if active_tasks:
-            print(f"[RETRY-AVATAR] {len(active_tasks)} active, {len(results['success'])} done", flush=True)
-            time.sleep(10)
+            if not success:
+                results["failed"].append({"section_id": sec_id, "error": "Timeout after 5 minutes"})
+                
+        except Exception as e:
+            results["failed"].append({"section_id": sec_id, "error": str(e)})
     
-    # Timeout handling
-    for task in active_tasks:
-        results["failed"].append({"section_id": task["section_id"], "error": "Timeout"})
-    
-    print(f"[RETRY-AVATAR] Complete: {len(results['success'])} success, {len(results['failed'])} failed", flush=True)
     return results
-
-
 
 
 def _retry_tts_generation(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
@@ -1875,10 +1712,7 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
                 json.dump(analytics_full, f, indent=2)
         
         # Auto-trigger Avatar Polling & Download
-        # Check explicit dry_run arg or params
-        is_dry_run_job = locals().get('dry_run', False) or presentation.get('params', {}).get('dry_run', False)
-        
-        if not skip_avatar and not is_dry_run_job:
+        if not skip_avatar:
             print(f"[AVATAR] Auto-triggering background generation task for Job {job_id}", flush=True)
             from threading import Thread
             if job_id not in ACTIVE_AVATAR_JOBS:
@@ -2651,14 +2485,14 @@ def get_v15_pipeline_info():
             {"name": "RecapScene", "output_fields": "5"}
         ],
         "flow": [
-            "SmartChunker â†’ topics",
-            "SectionPlanner(topics) â†’ section_blueprints",
-            "FOR EACH blueprint: NarrationWriter â†’ VisualSpecArtist â†’ RendererSpec",
-            "MemoryFlashcardAgent â†’ memory_section",
-            "RecapSceneAgent â†’ recap_section",
-            "MergeStep â†’ presentation.json",
-            "TTS â†’ audio + durations",
-            "Renderers â†’ video files"
+            "SmartChunker → topics",
+            "SectionPlanner(topics) → section_blueprints",
+            "FOR EACH blueprint: NarrationWriter → VisualSpecArtist → RendererSpec",
+            "MemoryFlashcardAgent → memory_section",
+            "RecapSceneAgent → recap_section",
+            "MergeStep → presentation.json",
+            "TTS → audio + durations",
+            "Renderers → video files"
         ],
         "improvements": [
             "5-15 fields per agent (vs 50+ in V1.4)",
@@ -2933,210 +2767,10 @@ Cells are complex structures with specialized components working together to mai
         }), 500
 
 
-# ============================================
-# ADMIN PANEL ROUTES
-# ============================================
-
-from functools import wraps
-
-def require_admin_key(f):
-    """Decorator to require X-Admin-Key header"""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        admin_key = os.environ.get('ADMIN_KEY') or os.environ.get('ADMIN_API_KEY')
-        if not admin_key:
-             return jsonify({'error': 'ADMIN_KEY not configured in .env'}), 500
-             
-        request_key = request.headers.get('X-Admin-Key')
-        if not request_key or request_key != admin_key:
-            return jsonify({'error': 'Invalid Admin Key'}), 401
-            
-        return f(*args, **kwargs)
-    return decorated_function
-
-ADMIN_PANEL_DIR = Path(__file__).parent.parent / "admin_panel"
-
-@app.route('/admin')
-def serve_admin_panel():
-    if not ADMIN_PANEL_DIR.exists():
-        return "Admin Panel directory not found", 404
-    return send_from_directory(ADMIN_PANEL_DIR, "index.html")
-
-@app.route('/admin/assets/<path:filename>')
-def serve_admin_assets(filename):
-    return send_from_directory(ADMIN_PANEL_DIR, filename)
-
-@app.route('/admin/api/restart', methods=['POST'])
-@require_admin_key
-def restart_server():
-    """Restart the server (Docker or Local)"""
-    try:
-        def restart_thread():
-            time.sleep(1)
-            print("[ADMIN] Restart triggered by admin user.", flush=True)
-            # Use os._exit to force kill (Docker restarts it; Local requires manual start)
-            os._exit(1)
-            
-        Thread(target=restart_thread).start()
-        return jsonify({'success': True, 'message': 'Server restarting...'})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/admin/api/logs', methods=['GET'])
-@require_admin_key
-def get_server_logs():
-    """Get recent logs"""
-    try:
-        lines = int(request.args.get('lines', 100))
-        log_file = Path("app.log")
-        
-        # Primary: Read from log file
-        if log_file.exists():
-            with open(log_file, "r", encoding="utf-8") as f:
-                all_lines = f.readlines()
-                return jsonify({'logs': "".join(all_lines[-lines:])})
-        
-        # Fallback: Docker Logs (if available)
-        import subprocess
-        try:
-             container_id = os.environ.get("HOSTNAME") or "ai-doc-presentation-prod"
-             # Only try if looks like we might be in docker or have docker cli
-             res = subprocess.run(["docker", "logs", "--tail", str(lines), container_id], capture_output=True, text=True)
-             if res.returncode == 0:
-                 return jsonify({'logs': res.stdout})
-        except Exception:
-             pass
-
-        return jsonify({'logs': "Log file (app.log) not found. console logs not available."})
-            
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/admin/api/config', methods=['GET', 'PUT'])
-@require_admin_key
-def handle_config():
-    """Get or Update .env configuration"""
-    env_path = Path(__file__).parent.parent / ".env"
-    
-    if request.method == 'GET':
-        try:
-            config = {}
-            if env_path.exists():
-                with open(env_path, "r", encoding="utf-8") as f:
-                    for line in f:
-                        if "=" in line and not line.startswith("#"):
-                            k, v = line.strip().split("=", 1)
-                            config[k] = v
-            return jsonify({'config': config})
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
-            
-    elif request.method == 'PUT':
-        try:
-            new_config = request.json.get('config', {})
-            lines = []
-            if env_path.exists():
-                with open(env_path, "r", encoding="utf-8") as f:
-                    lines = f.readlines()
-            
-            updated_lines = []
-            seen_keys = set()
-            for line in lines:
-                if "=" in line and not line.startswith("#"):
-                    k, v = line.strip().split("=", 1)
-                    if k in new_config:
-                        updated_lines.append(f"{k}={new_config[k]}\n")
-                        seen_keys.add(k)
-                    else:
-                        updated_lines.append(line)
-                else:
-                    updated_lines.append(line)
-            for k, v in new_config.items():
-                if k not in seen_keys:
-                    updated_lines.append(f"{k}={v}\n")
-            
-            with open(env_path, "w", encoding="utf-8") as f:
-                f.writelines(updated_lines)
-            return jsonify({'success': True})
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
-
-@app.route('/admin/api/prompts', methods=['GET'])
-@require_admin_key
-def list_prompts():
-    """List available prompt files"""
-    try:
-        prompts_dir = Path(__file__).parent.parent / "core" / "prompts"
-        files = []
-        if prompts_dir.exists():
-            for f in prompts_dir.glob("*.txt"):
-                files.append({
-                    'filename': f.name,
-                    'size': f.stat().st_size,
-                    'modified': f.stat().st_mtime
-                })
-        return jsonify({'prompts': files})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/admin/api/prompts/<filename>', methods=['GET', 'PUT'])
-@require_admin_key
-def handle_prompt_file(filename):
-    """Read or Update a prompt file"""
-    try:
-        prompts_dir = Path(__file__).parent.parent / "core" / "prompts"
-        file_path = prompts_dir / filename
-        
-        # Security check
-        if not file_path.resolve().is_relative_to(prompts_dir.resolve()):
-             return jsonify({'error': 'Invalid file path'}), 403
-             
-        if request.method == 'GET':
-            if not file_path.exists():
-                return jsonify({'error': 'File not found'}), 404
-            with open(file_path, "r", encoding="utf-8") as f:
-                return jsonify({'content': f.read()})
-                
-        elif request.method == 'PUT':
-            content = request.json.get('content', '')
-            if file_path.exists():
-                backup_path = file_path.parent / "unused" / f"{filename}.bak"
-                os.makedirs(backup_path.parent, exist_ok=True)
-                shutil.copy(str(file_path), str(backup_path))
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write(content)
-            return jsonify({'success': True})
-            
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/admin/api/system-info', methods=['GET'])
-@require_admin_key
-def get_system_info():
-    """Get system information"""
-    try:
-        import platform
-        from datetime import datetime
-        recent_jobs = len(list(JOBS_DIR.glob('*'))) if JOBS_DIR.exists() else 0
-        return jsonify({
-            'python_version': platform.python_version(),
-            'platform': platform.platform(),
-            'pipeline_version': 'v2.5_director',
-            'total_jobs': recent_jobs,
-            'server_time': datetime.now().isoformat()
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
 @app.route("/dashboard")
 @app.route("/dashboard/")
 def serve_dashboard():
-    response = make_response(send_from_directory(PLAYER_DIR, "dashboard.html"))
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "0"
-    return response
+    return send_from_directory(PLAYER_DIR, "dashboard.html")
 
 @app.route("/player/")
 @app.route("/player/<path:filename>")
@@ -3169,23 +2803,12 @@ def serve_job_player(job_id):
     if not job_dir.exists():
         return jsonify({"error": "Job not found"}), 404
     # Serve index.html from job folder (copied during job creation)
-        return send_from_directory(PLAYER_DIR, "index.html")
-
-@app.route('/assets/<job_id>/<path:filename>')
-def serve_job_asset(job_id, filename):
-    """Serve any asset from the job directory."""
-    try:
-        job_folder = JOBS_DIR / job_id
-        print(f"DEBUG: Serving {filename} from {job_folder}", flush=True)
-        full_path = job_folder / filename
-        print(f"DEBUG: Full path: {full_path} Exists: {full_path.exists()}", flush=True)
-        return send_from_directory(job_folder, filename)
-    except Exception as e:
-        print(f"Error serving asset: {e}", flush=True)
-        return jsonify({"error": "Asset not found"}), 404
+    if (job_dir / "index.html").exists():
+        return send_from_directory(job_dir, "index.html")
+    # Fallback to main player if not copied yet
+    return send_from_directory(PLAYER_DIR, "index.html")
 
 @app.route("/jobs/<job_id>/<path:filename>")
-@app.route("/player/jobs/<job_id>/<path:filename>")
 def serve_job_assets(job_id, filename):
     """Serve all job assets from job folder"""
     job_dir = JOBS_DIR / job_id
@@ -3657,199 +3280,17 @@ def repair_metadata(job_id):
     except Exception as e:
         return jsonify({"status": "error", "error": str(e)}), 500
 
-
-@app.route('/job/<job_id>/presentation_for_review', methods=['GET'])
-def get_presentation_for_review(job_id):
-    """Get presentation data formatted for review UI."""
-    try:
-        job_folder = JOBS_DIR / job_id
-        presentation_path = job_folder / "presentation.json"
-        
-        if not presentation_path.exists():
-            return jsonify({"error": "Presentation not found"}), 404
-        
-        with open(presentation_path, 'r', encoding='utf-8') as f:
-            presentation = json.load(f)
-        
-        # Format sections for review UI
-        sections_for_review = []
-        for section in presentation.get("sections", []):
-            section_data = {
-                "section_id": section.get("section_id"),
-                "section_type": section.get("section_type"),
-                "title": section.get("title"),
-                "narration_text": "",
-                "content": {
-                    "bullet_items": [],
-                    "quiz_data": None,
-                    "flashcards": [],
-                    "images": [],
-                    "explanation_plan": "",
-                    "visual_beats": []
-                }
-            }
-            
-            # Extract narration text
-            narration = section.get("narration", {})
-            segments = narration.get("segments", [])
-            if segments:
-                section_data["narration_text"] = " ".join([seg.get("text", "") for seg in segments])
-            
-            # Handle Explanation Plan
-            plan = section.get("explanation_plan")
-            if isinstance(plan, (dict, list)):
-                # If plan is an object (common in newer jobs), serialize it nicely
-                # or extract just the 'visual_beats' text if appropriate.
-                # For editing purposes, JSON string is safest.
-                section_data["content"]["explanation_plan"] = json.dumps(plan, indent=2)
-            elif plan:
-                section_data["content"]["explanation_plan"] = str(plan)
-
-            # Extract structured content
-            # Sources: 
-            # 1. narration.segments.visual_content (legacy/unified format)
-            # 2. visual_beats (display_text/description)
-            
-            # Helper to deduplicate images
-            seen_image_ids = set()
-
-            # 1. From Narration Segments
-            for seg in segments:
-                vc = seg.get("visual_content", {})
-                if isinstance(vc, dict):
-                    items = vc.get("items", [])
-                    if items:
-                        section_data["content"]["bullet_items"].extend(items)
-                    
-                    image_id = vc.get("image_id")
-                    if image_id and image_id not in seen_image_ids:
-                        seen_image_ids.add(image_id)
-                        section_data["content"]["images"].append({
-                            "image_id": image_id,
-                            "description": vc.get("verbatim_content", "")
-                        })
-            
-            # 2. From Visual Beats (Primary source for newer jobs)
-            visual_beats = section.get("visual_beats", [])
-            if visual_beats:
-                for b in visual_beats:
-                    # Description/Display Text
-                    desc = b.get("description") or b.get("display_text", "")
-                    beat_data = {"description": desc}
-                    
-                    # Video Asset
-                    video_asset = b.get("video_asset")
-                    if video_asset:
-                        beat_data["video_asset"] = video_asset
-
-                    if desc or video_asset:
-                        section_data["content"]["visual_beats"].append(beat_data)
-                    
-                    # Images in visual beats
-                    image_id = b.get("image_id")
-                    if image_id and image_id not in seen_image_ids:
-                        seen_image_ids.add(image_id)
-                        section_data["content"]["images"].append({
-                            "image_id": image_id,
-                            "description": desc # Use beat description for image if available
-                        })
-
-                    # Bullet items (if visual_type is bullet_list and we haven't found items in segments)
-                    if b.get("visual_type") == "bullet_list" and not section_data["content"]["bullet_items"]:
-                        # If display_text looks like a list or we want to treat the beat as a point
-                        # Sometimes display_text is just one bullet point. 
-                        # We can treat each such beat as an item if the section type suggests it.
-                        if desc:
-                             section_data["content"]["bullet_items"].append(desc)
-
-            # 3. Quiz data
-            quiz_data = section.get("quiz_data")
-            if quiz_data:
-                section_data["content"]["quiz_data"] = quiz_data
-            
-            # 4. Flashcards
-            flashcards = section.get("flashcards", [])
-            if flashcards:
-                section_data["content"]["flashcards"] = flashcards
-            
-            sections_for_review.append(section_data)
-        
-        return jsonify({
-            "job_id": job_id,
-            "title": presentation.get("title", ""),
-            "sections": sections_for_review
-        })
-    
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route('/job/<job_id>/submit_review', methods=['POST'])
-def submit_review(job_id):
-    """Submit review edits and trigger regeneration."""
-    try:
-        from core.review_handler import ReviewHandler
-        
-        job_folder = JOBS_DIR / job_id
-        if not job_folder.exists():
-            return jsonify({"error": "Job not found"}), 404
-        
-        data = request.get_json()
-        edits = data.get("edits", [])
-        
-        if not edits:
-            return jsonify({"error": "No edits provided"}), 400
-        
-        # Process review
-        handler = ReviewHandler(job_folder)
-        presentation = handler.load_presentation()
-        
-        # Apply edits
-        presentation = handler.apply_review_edits(presentation, edits)
-        handler.save_presentation(presentation)
-        
-        # Get sections needing regeneration
-        sections_to_regenerate = handler.get_sections_needing_regeneration(presentation)
-        
-        # Trigger regeneration in background
-        if sections_to_regenerate:
-            result = handler.trigger_regeneration(sections_to_regenerate)
-            return jsonify({
-                "status": "success",
-                "message": f"Review submitted. Regenerating {len(sections_to_regenerate)} sections.",
-                "sections_regenerated": sections_to_regenerate,
-                "regeneration_result": result
-            })
-        else:
-            return jsonify({
-                "status": "success",
-                "message": "Review submitted but no sections needed regeneration.",
-                "sections_regenerated": []
-            })
-    
-    except Exception as e:
-        import traceback
-        return jsonify({
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }), 500
-
-
-
-
-
 if __name__ == "__main__":
     # Pre-flight check for LLM access
     try:
         from core.llm_config import validate_model_access
         is_valid, msg = validate_model_access()
         if is_valid:
-            print(f"âœ… LLM Pre-flight check passed: {msg}")
+            print(f"✅ LLM Pre-flight check passed: {msg}")
         else:
-            print(f"âš ï¸ LLM Pre-flight check FAILED: {msg}")
+            print(f"⚠️ LLM Pre-flight check FAILED: {msg}")
             # We don't exit to allow the app to start and show dashboard, but logs will show the issue
     except ImportError:
-        print("âš ï¸ Could not import validation module")
+        print("⚠️ Could not import validation module")
         
-    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
-
+    app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)

@@ -1,0 +1,284 @@
+{
+  "job_id": "b09c1953",
+  "pipeline_version": "1.5",
+  "started_at": null,
+  "completed_at": "2026-01-20T13:23:34.439171",
+  "total_duration_seconds": 0.0,
+  "total_cost_usd": 0.018,
+  "total_input_tokens": 1000,
+  "total_output_tokens": 1000,
+  "phases": [
+    {
+      "phase_name": "llm_generation",
+      "model": "default",
+      "started_at": "2026-01-20T13:17:34.497181",
+      "completed_at": "2026-01-20T13:19:18.199283",
+      "duration_seconds": 103.70206880569458,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "cost_usd": 0.0,
+      "status": "completed",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "phase_name": "manim_codegen",
+      "model": "anthropic/claude-sonnet-4",
+      "started_at": "2026-01-20T13:19:18.293850",
+      "completed_at": "2026-01-20T13:20:21.546721",
+      "duration_seconds": 63.252878189086914,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "cost_usd": 0.0,
+      "status": "completed",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "phase_name": "ManimCodeGenerator",
+      "model": "anthropic/claude-sonnet-4",
+      "started_at": "2026-01-20T13:20:21.501208",
+      "completed_at": "2026-01-20T13:20:21.501225",
+      "duration_seconds": 0.0,
+      "input_tokens": 1000,
+      "output_tokens": 1000,
+      "total_tokens": 2000,
+      "cost_usd": 0.018,
+      "status": "completed",
+      "error": null,
+      "metadata": {}
+    },
+    {
+      "phase_name": "visual_rendering",
+      "model": "renderer",
+      "started_at": "2026-01-20T13:20:21.745764",
+      "completed_at": "2026-01-20T13:23:34.439084",
+      "duration_seconds": 192.69330501556396,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "cost_usd": 0.0,
+      "status": "completed",
+      "error": null,
+      "metadata": {}
+    }
+  ],
+  "tts": {
+    "provider": "unknown",
+    "voice": "unknown",
+    "total_segments": 0,
+    "total_duration_seconds": 0.0,
+    "total_characters": 0,
+    "estimated_cost_usd": 0.0
+  },
+  "renderer": {
+    "manim_videos": 1,
+    "wan_videos": 6,
+    "ltx_videos": 0,
+    "static_slides": 4,
+    "total_render_time_seconds": 0.0,
+    "failed_renders": 0,
+    "manim_beat_videos": 0,
+    "wan_beat_videos": 0,
+    "ltx_beat_videos": 0,
+    "section_renders": [
+      {
+        "section_id": "3",
+        "section_type": "content",
+        "renderer": "manim",
+        "duration_seconds": 0.0,
+        "status": "success",
+        "timestamp": "2026-01-20T13:23:34.383245"
+      },
+      {
+        "section_id": 4,
+        "section_type": "content",
+        "renderer": "wan",
+        "duration_seconds": 0,
+        "status": "success",
+        "timestamp": "2026-01-20T13:36:36.783681"
+      },
+      {
+        "section_id": 5,
+        "section_type": "content",
+        "renderer": "wan",
+        "duration_seconds": 0,
+        "status": "success",
+        "timestamp": "2026-01-20T13:36:36.804428"
+      },
+      {
+        "section_id": 8,
+        "section_type": "content",
+        "renderer": "wan",
+        "duration_seconds": 0,
+        "status": "success",
+        "timestamp": "2026-01-20T13:36:36.824579"
+      }
+    ]
+  },
+  "avatar": {
+    "provider": "IndianAvatar",
+    "total_sections": 0,
+    "successful_sections": 11,
+    "failed_sections": 0,
+    "total_duration_seconds": 0.0,
+    "section_details": [
+      {
+        "section_id": 2,
+        "duration_seconds": 23786.0,
+        "status": "completed",
+        "vimeo_url": null,
+        "timestamp": "2026-01-20T13:23:46"
+      },
+      {
+        "section_id": 2,
+        "duration_seconds": 25729.0,
+        "status": "completed",
+        "vimeo_url": "https://vimeo.com/1156482573",
+        "timestamp": "2026-01-20T13:36:47"
+      },
+      {
+        "section_id": 4,
+        "duration_seconds": 43383.0,
+        "status": "completed",
+        "vimeo_url": "https://vimeo.com/1156483755",
+        "timestamp": "2026-01-20T13:36:59"
+      },
+      {
+        "section_id": 4,
+        "duration_seconds": 0.0,
+        "status": "completed",
+        "vimeo_url": null,
+        "timestamp": "2026-01-20T13:40:26"
+      },
+      {
+        "section_id": 3,
+        "duration_seconds": 232932.0,
+        "status": "completed",
+        "vimeo_url": "https://vimeo.com/1156488188",
+        "timestamp": "2026-01-20T13:46:56"
+      },
+      {
+        "section_id": 5,
+        "duration_seconds": 145440.0,
+        "status": "completed",
+        "vimeo_url": "https://vimeo.com/1156488280",
+        "timestamp": "2026-01-20T13:47:06"
+      },
+      {
+        "section_id": 7,
+        "duration_seconds": 74241.0,
+        "status": "completed",
+        "vimeo_url": null,
+        "timestamp": "2026-01-20T13:54:54"
+      },
+      {
+        "section_id": 8,
+        "duration_seconds": 88294.0,
+        "status": "completed",
+        "vimeo_url": "https://vimeo.com/1156490860",
+        "timestamp": "2026-01-20T13:57:26"
+      },
+      {
+        "section_id": 7,
+        "duration_seconds": 0.0,
+        "status": "completed",
+        "vimeo_url": null,
+        "timestamp": "2026-01-20T14:00:30"
+      },
+      {
+        "section_id": 8,
+        "duration_seconds": 0.0,
+        "status": "completed",
+        "vimeo_url": null,
+        "timestamp": "2026-01-20T14:00:30"
+      },
+      {
+        "section_id": 6,
+        "duration_seconds": 183119.0,
+        "status": "completed",
+        "vimeo_url": "https://vimeo.com/1156491874",
+        "timestamp": "2026-01-20T14:02:37"
+      }
+    ]
+  },
+  "content": {
+    "total_sections": 8,
+    "total_segments": 49,
+    "total_slides": 8,
+    "section_types": {
+      "intro": 1,
+      "summary": 1,
+      "content": 3,
+      "quiz": 1,
+      "memory": 1,
+      "recap": 1
+    },
+    "page_count": 0,
+    "qa_pair_count": 0,
+    "table_count": 0,
+    "image_count": 0
+  },
+  "validation": {
+    "has_intro": true,
+    "has_summary": true,
+    "has_quiz": true,
+    "has_memory": true,
+    "has_recap": true,
+    "mandatory_sections_valid": true,
+    "quiz_question_count": 0,
+    "flashcard_count": 5,
+    "audio_files_generated": 0,
+    "audio_files_expected": 0,
+    "audio_success_rate": 0.0,
+    "video_files_generated": 5,
+    "video_files_expected": 4,
+    "video_success_rate": 125.0,
+    "manim_success_count": 1,
+    "manim_failed_count": 0,
+    "wan_success_count": 0,
+    "wan_failed_count": 0,
+    "ltx_success_count": 0,
+    "ltx_failed_count": 0,
+    "beat_videos_expected": 0,
+    "beat_videos_linked": 0,
+    "beat_videos_on_disk": 0,
+    "beat_sync_valid": true,
+    "avatar_success_count": 0,
+    "avatar_failed_count": 0,
+    "avatar_success_rate": 0.0,
+    "quality_score": 100,
+    "issues": []
+  },
+  "decisions": [
+    {
+      "timestamp": "2026-01-20T13:19:18.199340",
+      "agent_name": "UnifiedContentGenerator",
+      "decision_type": "structure",
+      "options": [
+        "sections"
+      ],
+      "selected": "8 sections",
+      "reason": "Review complete"
+    }
+  ],
+  "progress_details": {
+    "avatar_generation": {
+      "total": 8,
+      "completed": 1,
+      "failed": 0,
+      "pending": 7,
+      "message": "Completed Section 1",
+      "estimated_remaining_seconds": 0.0
+    }
+  },
+  "timings": {
+    "llm_generation": 103.70206880569458,
+    "manim_codegen": 63.252878189086914,
+    "visual_rendering": 192.69330501556396
+  },
+  "status": "completed",
+  "error": null
+}

@@ -9,6 +9,9 @@ You have access to the FULL DOCUMENT for context, but you must ONLY visualize th
 3. **Schema**: Output MUST be valid JSON matching the schema below exactly.
 4. **Narration**: You MUST generate the `narration` object with `segments`.
 5. **Visuals**: `visual_beats` MUST NOT BE EMPTY. 
+6. **Narration Flow**:
+   - **NO GREETINGS**: Do NOT start with \"Namaste\", \"Hello\", or \"Welcome\". (These are handled globally).
+   - **TRANSITIONS**: Start with a bridging phrase connecting to the previous chunk/topic (e.g., \"Now that we understand [concept], let's look at...\").
 
 ### STRICTURE: VERBATIM INDEXING & POINTER INTEGRITY
 You are a "Surveyor" of text. Every word in the provided Target Chunk must be accounted for.

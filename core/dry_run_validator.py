@@ -151,6 +151,10 @@ def validate_manim_scene_spec(section: dict, result: DryRunValidationResult):
              result.add_error(section_id, "manim_scene_spec", f"Manim spec is too short ({word_count} words). Minimum 80.")
         return # Skip structure checks for string mode
         
+    # V2.5 Generated Code Mode -> If we have manim_code, we are good!
+    if isinstance(manim_spec, dict) and (manim_spec.get("manim_code") or manim_spec.get("code")):
+        return
+        
     # V1.2 Dict Mode -> Check keys
     objects = manim_spec.get("objects", [])
     equations = manim_spec.get("equations", [])
