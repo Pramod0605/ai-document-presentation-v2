@@ -173,7 +173,7 @@ Open [http://localhost:5000/dashboard](http://localhost:5000/dashboard)
 
 ## API Endpoints Reference
 
-### Job Submission & Status
+### 📋 Job Submission & Status
 
 #### `POST /submit_job`
 Submit a new presentation job.
@@ -202,15 +202,6 @@ Submit a new presentation job.
 }
 ```
 
-**Response (409 - Busy):**
-```json
-{
-  "status": "busy",
-  "message": "A job is already running. Please wait for it to complete.",
-  "current_job_id": "existing_id"
-}
-```
-
 ---
 
 #### `GET /job/<job_id>/status`
@@ -228,47 +219,32 @@ Get processing status for a job.
   "steps_completed": 9,
   "total_steps": 20,
   "created_at": "2026-01-23T10:00:00Z",
-  "started_at": "2026-01-23T10:00:05Z",
   "completed_at": null,
-  "error": null,
-  "progress_details": {...},
-  "timings": {...}
+  "error": null
 }
 ```
 
 **Status Values:**
-| Status | Description |
-|--------|-------------|
-| `pending` | Job queued, waiting to start |
-| `processing` | Job actively running |
-| `completed` | Job finished successfully |
-| `failed` | Job encountered an error |
+- `pending` - Job queued, waiting to start
+- `processing` - Job actively running
+- `completed` - Job finished successfully
+- `failed` - Job encountered an error
 
 ---
 
 #### `GET /jobs`
 List all jobs with their status.
 
-**Response (200):**
+**Response:**
 ```json
 {
-  "jobs": [
-    {
-      "job_id": "a1b2c3d4",
-      "type": "v15_v2_pipeline",
-      "status": "completed",
-      "progress": 100,
-      "status_message": "Completed successfully",
-      "created_at": "2026-01-23T10:00:00Z",
-      "completed_at": "2026-01-23T10:15:00Z",
-      "error": null,
-      "params": {
-        "subject": "Biology",
-        "grade": "10",
-        "dry_run": false
-      }
-    }
-  ],
+  "jobs": [{
+    "job_id": "a1b2c3d4",
+    "status": "completed",
+    "progress": 100,
+    "created_at": "2026-01-23T10:00:00Z",
+    "params": {...}
+  }],
   "total": 1
 }
 ```
@@ -276,9 +252,9 @@ List all jobs with their status.
 ---
 
 #### `GET /job/<job_id>/analytics`
-Get detailed analytics for a completed job including LLM costs, Content Completeness Validator metrics, and timing breakdown.
+Get detailed analytics for a completed job (LLM costs, timing breakdown, content completeness metrics).
 
-**Response (200):**
+**Response:**
 ```json
 {
   "job_id": "a1b2c3d4",
@@ -286,85 +262,25 @@ Get detailed analytics for a completed job including LLM costs, Content Complete
   "analytics": {
     "total_cost_usd": 0.018,
     "total_duration_seconds": 155.23,
-    "total_tokens": 2000,
-    "phases": [
-      {
-        "phase_name": "llm_generation",
-        "model": "google/gemini-2.5-flash",
-        "duration_seconds": 106.62,
-        "input_tokens": 1000,
-        "output_tokens": 1000,
-        "cost_usd": 0.0018,
-        "status": "completed"
-      }
-    ],
-    "content_completeness": {
-      "executed": true,
-      "status": "passed",
-      "execution_time_seconds": 0.42,
-      "word_count_ratio": 0.85,
-      "topics_coverage": {
-        "covered": 8,
-        "total": 10,
-        "ratio": 0.80
-      },
-      "images": {
-        "referenced": 3,
-        "total": 3
-      },
-      "retry_attempted": false,
-      "retry_success": false,
-      "error": null
-    },
-    "validation": {
-      "mandatory_sections_valid": true,
-      "quality_score": 95,
-      "manim_success_count": 1,
-      "wan_success_count": 0
-    },
-    "renderer": {
-      "manim_videos": 1,
-      "wan_videos": 1,
-      "total_render_time_seconds": 0.67
-    }
+    "phases": [...],
+    "content_completeness": {...},
+    "validation": {...},
+    "renderer": {...}
   }
 }
 ```
 
-**New in v2.5:**
-- `content_completeness`: Validator execution metrics (word count, topic coverage, image references)
-- `total_cost_usd`: Aggregate LLM cost across all phases
-- Per-phase cost breakdown with model-specific pricing
-
 ---
 
-### Job Control
+### 🔄 Job Control
 
 #### `POST /job/<job_id>/retry`
 Retry a failed job from point of failure or fresh start.
-
-**Response (200):**
-```json
-{
-  "status": "started",
-  "job_id": "a1b2c3d4",
-  "message": "Retry started from section 12",
-  "mode": "resume"
-}
-```
 
 ---
 
 #### `POST /job/<job_id>/cancel`
 Force cancel a running job.
-
-**Response (200):**
-```json
-{
-  "status": "cancelled",
-  "job_id": "a1b2c3d4"
-}
-```
 
 ---
 
@@ -380,63 +296,26 @@ Retry a specific phase for specific sections.
 }
 ```
 
-**Parameters:**
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `phase` | string | Yes | Phase to retry (see valid phases below) |
-| `section_ids` | array | No | Specific sections (default: all failed sections) |
-| `user_feedback` | string | No | Improvement instructions (Manim phases only) |
-
 **Valid Phases:**
-| Phase | Description |
-|-------|-------------|
-| `manim_codegen` | Regenerate Manim Python code |
-| `manim_render` | Re-render Manim videos |
-| `wan_render` | Re-render WAN/Kie videos |
-| `avatar_generation` | Regenerate avatar videos |
-| `tts_generation` | Regenerate TTS audio |
-
-**Response (200):**
-```json
-{
-  "status": "success",
-  "phase": "manim_codegen",
-  "result": {
-    "sections_processed": [3, 6, 11],
-    "success_count": 3
-  }
-}
-```
+- `manim_codegen` - Regenerate Manim Python code
+- `manim_render` - Re-render Manim videos
+- `wan_render` - Re-render WAN/Kie videos
+- `avatar_generation` - Regenerate avatar videos
+- `tts_generation` - Regenerate TTS audio
 
 ---
 
-### Avatar Generation
+### 🧑 Avatar Generation
 
 #### `POST /job/<job_id>/generate_avatar`
 Trigger AI Avatar generation for a job.
-
-**Response (200):**
-```json
-{
-  "status": "queued",
-  "message": "Avatar generation started"
-}
-```
-
-**Response (409):**
-```json
-{
-  "status": "already_running",
-  "message": "Avatar generation in progress (Active Thread)"
-}
-```
 
 ---
 
 #### `GET /job/<job_id>/avatar_status`
 Get avatar generation progress.
 
-**Response (200):**
+**Response:**
 ```json
 {
   "state": "processing",
@@ -450,64 +329,32 @@ Get avatar generation progress.
 }
 ```
 
-**State Values:**
-| State | Description |
-|-------|-------------|
-| `idle` | Not started |
-| `processing` | Generation in progress |
-| `completed` | All avatars generated |
-| `error` | Generation failed |
-| `not_found` | Job doesn't exist |
-
 ---
 
 #### `POST /job/<job_id>/regenerate_failed_avatars`
 Regenerate only failed/missing avatars.
-
-**Response (200):**
-```json
-{
-  "status": "queued",
-  "message": "Avatar retry started",
-  "failed_sections_detected": [5, 12]
-}
-```
 
 ---
 
 #### `POST /job/<job_id>/regenerate_avatar/<section_id>`
 Regenerate avatar for a specific section.
 
-**Response (200):**
-```json
-{
-  "status": "queued",
-  "section_id": "5"
-}
-```
-
 ---
 
-### Manim Regeneration
+### 📐 Manim Regeneration
 
 #### `POST /regenerate_manim/<job_id>`
 Regenerate Manim code for specific sections with optional user feedback.
 
-**Request (JSON - Optional):**
+**Request (JSON):**
 ```json
 {
   "section_id": 3,
-  "user_feedback": "Make animations slower, use brighter colors, add more step-by-step examples"
+  "user_feedback": "Make animations slower, use brighter colors"
 }
 ```
 
-**Parameters:**
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `section_id` | integer | No | Specific section to regenerate (default: all Manim sections) |
-| `user_feedback` | string | No | Specific improvement instructions for LLM |
-
-**Response (200):**
+**Response:**
 ```json
 {
   "status": "success",
@@ -516,19 +363,14 @@ Regenerate Manim code for specific sections with optional user feedback.
 }
 ```
 
-**Use Case:**
-- Provide targeted feedback to improve specific Manim animations
-- LLM uses feedback to enhance code quality (speed, colors, complexity, etc.)
-- Accessible via Dashboard "Retry Phase" modal with feedback textarea
-
 ---
 
-### Metadata Repair
+### 🔧 Metadata & Diagnostic Tools
 
 #### `POST /api/repair-metadata/<job_id>`
-Surgically repair presentation.json by scanning for orphaned assets.
+Surgically repair presentation.json by scanning for orphaned assets on disk and stitching them back into JSON.
 
-**Response (200):**
+**Response:**
 ```json
 {
   "status": "repaired",
@@ -540,22 +382,95 @@ Surgically repair presentation.json by scanning for orphaned assets.
 
 ---
 
-### Static File Serving
+#### `GET /api/sanity-report/<job_id>` ✨ **NEW**
+**100% truthful asset validation** - Provides comprehensive read-only truth report by scanning directories and comparing against JSON references. Returns orphaned files, missing files, and accuracy metrics.
+
+**Response:**
+```json
+{
+  "job_id": "6355bd5b",
+  "accuracy": 76.19,
+  "summary": {
+    "videos_on_disk": 9,
+    "videos_in_json": 14,
+    "missing_videos": 5,
+    "orphaned_videos": 0,
+    "avatars_in_json": 7,
+    "avatars_on_disk": 7,
+    "matched_videos": 9
+  },
+  "orphaned": {
+    "videos": [],
+    "avatars": []
+  },
+  "missing": {
+    "videos": ["topic_7_seg_1_beat_1", "topic_7_seg_2_beat_1"],
+    "avatars": []
+  },
+  "sections": [
+    {
+      "section_id": "7",
+      "section_type": "recap",
+      "renderer": "video",
+      "title": "Lesson Recap",
+      "segments_with_beats": 5,
+      "total_beat_videos": 5,
+      "videos_in_json": ["topic_7_seg_1_beat_1", ...],
+      "videos_on_disk": [],
+      "videos_missing": ["topic_7_seg_1_beat_1", ...],
+      "videos_orphaned": [],
+      "avatar_status": "found"
+    }
+  ]
+}
+```
+
+**Key Features:**
+- ✅ Scans all directories (videos/, avatars/, images/)
+- ✅ **Segment-level beat video validation** (scans `narration.segments[].beat_videos[]`)
+- ✅ Calculates accuracy percentage
+- ✅ Read-only (does not mutate presentation.json)
+
+---
+
+### 📝 Review & Feedback
+
+#### `POST /submit_review`
+Submit a review for a specific job section (saves to `reviews.json`).
+
+---
+
+#### `POST /job/<job_id>/submit_review`
+Submit section-specific review.
+
+---
+
+#### `POST /recreate_job_from_review`
+Trigger regeneration of a job (or specific sections) based on submitted reviews.
+
+---
+
+### 📁 Static File Serving
 
 #### `GET /dashboard`
 Serve the job management dashboard UI.
+
+#### `GET /sanity_check.html`
+Serve the sanity check tool for visual validation of presentation structure.
+
+**Usage:** `http://localhost:5000/sanity_check.html?job=<job_id>`
 
 #### `GET /player/<filename>`
 Serve player assets (legacy).
 
 #### `GET /player_v2/<filename>`
-Serve V2 player files.
+Serve V2.5 player files.
 
 #### `GET /jobs/<job_id>/`
 Serve job-specific player (index.html).
 
 #### `GET /jobs/<job_id>/<filename>`
-Serve any file from job folder (videos, audio, avatars, etc.).
+Serve any file from job folder (videos, audio, avatars, presentation.json, etc.).
 
 ---
 
