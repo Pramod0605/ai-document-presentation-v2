@@ -406,6 +406,12 @@ class PartitionDirectorGenerator:
                 # print(json.dumps(data, indent=2))
                 # print(f"[PHASE 1 DEBUG] --------------------------------------------------\n")
                     
+                    if data is None:
+                         # CRITICAL FIX: Prevent NoneType crash
+                         msg = f"LLM returned invalid/None JSON. Raw length: {len(response) if response else 0}"
+                         logger.error(msg)
+                         raise RuntimeError(msg)
+                    
                     # Validation with Source Text for Pointer Check
                     errors = V25Validator.validate_content_chunk(data, source_text=chunk.get("content", ""))
                     

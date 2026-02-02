@@ -159,6 +159,9 @@ def call_openrouter_llm(
 
 def extract_json_from_response(response: str) -> dict:
     """Extract and parse JSON from LLM response."""
+    if response is None:
+        raise ValueError("Response is None - cannot parse JSON")
+        
     content = response.strip()
     
     if content.startswith("```json"):
@@ -219,6 +222,11 @@ def extract_json_from_response(response: str) -> dict:
                 with open("llm_parse_fail.txt", "w", encoding="utf-8") as f:
                     f.write(content)
             except: pass
+            
+            # CRITICAL FIX: Explicitly raise JSONParseError, do NOT fallback or return None
+            # Log the first 100 chars for context
+            snippet = content[:100] + "..." if len(content) > 100 else content
+            logger.error(f"[JSONParseError] Failed content snippet: {snippet}")
             raise JSONParseError(f"Failed to parse JSON: {first_err}")
 
 
