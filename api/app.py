@@ -1492,14 +1492,14 @@ def _retry_avatar_generation(job_id: str, job_folder: Path, presentation: dict, 
                                 break
                         
                         results["success"].append({"section_id": section_id, "task_id": task_id})
-                        print(f"[RETRY-AVATAR] âœ" Sec {section_id} downloaded", flush=True)
+                        print(f"[RETRY-AVATAR] OK Sec {section_id} downloaded", flush=True)
                         # V2.5 FIX: Removed write from inside loop - will save once at end with lock
                     else:
                         results["failed"].append({"section_id": section_id, "error": "Download failed"})
                 
                 elif status in ["failed", "error", "not_found"]:
                     results["failed"].append({"section_id": section_id, "error": status})
-                    print(f"[RETRY-AVATAR] âœ— Sec {section_id} failed: {status}", flush=True)
+                    print(f"[RETRY-AVATAR] FAIL Sec {section_id} failed: {status}", flush=True)
                 
                 else:
                     # Still processing
