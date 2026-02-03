@@ -25,6 +25,7 @@ from core.tts_duration import update_durations_simplified, TTSProvider
 from core.agents.manim_code_generator import ManimCodeGenerator, integrate_manim_code_into_section
 from core.agents.avatar_generator import AvatarGenerator
 from core.image_processor import save_datalab_images, extract_image_refs_from_markdown
+from core.locks import presentation_lock  # V2.5 FIX: Thread-safe JSON writes
 
 logger = logging.getLogger(__name__)
 
@@ -466,8 +467,10 @@ def process_markdown_unified(
         # --- PHASE 3.5: Checkpoint Save ---
         if output_dir:
             pres_path = os.path.join(output_dir, "presentation.json")
-            with open(pres_path, "w", encoding="utf-8") as f:
-                json.dump(presentation, f, indent=4)
+            # V2.5 FIX: Use lock to prevent race with avatar/TTS threads starting soon
+            with presentation_lock:
+                with open(pres_path, "w", encoding="utf-8") as f:
+                    json.dump(presentation, f, indent=4)
             logger.info(f"Pipeline: Saved presentation checkpoint to {pres_path}")
 
         # --- PHASE 4: AUTOMATED PARALLEL FORK (Avatar + TTS + Manim/WAN) ---
@@ -532,9 +535,11 @@ def process_markdown_unified(
                     )
                     
                     # Save updated presentation with audio paths
+                    # V2.5 FIX: Use lock to prevent race with avatar/WAN threads
                     pres_path = Path(out_dir) / "presentation.json"
-                    with open(pres_path, "w") as f:
-                        json.dump(result_pres, f, indent=4)
+                    with presentation_lock:
+                        with open(pres_path, "w") as f:
+                            json.dump(result_pres, f, indent=4)
                     logger.info(f"[TTS-BG] Background TTS complete for job {job_id_ref}")
                     
                 except Exception as e:
@@ -648,8 +653,10 @@ def process_markdown_unified(
             # main thread overwrites async thread's updates.
             if output_dir:
                 pres_path = os.path.join(output_dir, "presentation.json")
-                with open(pres_path, "w", encoding="utf-8") as f:
-                    json.dump(presentation, f, indent=4)
+                # V2.5 FIX: Use lock for thread-safe write before WAN thread starts
+                with presentation_lock:
+                    with open(pres_path, "w", encoding="utf-8") as f:
+                        json.dump(presentation, f, indent=4)
                 logger.info(f"Pipeline: Saved FINAL presentation to {pres_path}")
             
             # --- PART B: ASYNC WAN RENDERING (Batched) ---

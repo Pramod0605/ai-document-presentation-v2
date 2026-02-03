@@ -25,6 +25,7 @@ from core.pipeline_v15 import process_markdown_to_presentation_v15, resume_from_
 from core.pipeline_v15_optimized import process_markdown_optimized
 from core.unified_content_generator import generate_presentation, transform_to_player_schema, GeneratorConfig
 from core.job_manager import job_manager, run_job_async, is_job_running, get_current_job_ids
+from core.locks import presentation_lock, analytics_lock  # Thread-safe JSON writes
 
 app = Flask(__name__)
 CORS(app)
@@ -53,6 +54,9 @@ try:
     logging.getLogger().setLevel(logging.INFO)
 except Exception as e:
     print(f"Failed to setup file logging: {e}")
+
+# Module logger for app.py
+logger = logging.getLogger(__name__)
 
 PLAYER_DIR = Path(__file__).parent.parent / "player"
 ASSETS_DIR = PLAYER_DIR / "assets"
@@ -978,10 +982,12 @@ def retry_failed_job(job_id):
                     status_callback=lambda phase, msg: job_manager.update_job(job_id, {"message": f"{phase}: {msg}", "status_message": f"{phase}: {msg}"}, persist=True)
                 )
                 
+                # V2.5 FIX: Use lock for thread-safe write after resume
                 presentation_path = job_folder / "presentation.json"
-                with open(presentation_path, 'w') as f:
-                    json.dump(presentation, f, indent=2)
-                
+                with presentation_lock:
+                    with open(presentation_path, 'w') as f:
+                        json.dump(presentation, f, indent=2)
+
                 return {"presentation_path": str(presentation_path)}
             
             # Use run_job_async for proper lifecycle management (same as fresh jobs)
@@ -1079,7 +1085,14 @@ def retry_phase(job_id):
         data = request.get_json() or {}
         phase = data.get("phase", "video_render")
         section_ids = data.get("section_ids")
-        
+
+        # V2.5 FIX: Validate section_ids exist in presentation
+        if section_ids:
+            valid_ids = {s.get("section_id") for s in presentation.get("sections", [])}
+            invalid_ids = set(section_ids) - valid_ids
+            if invalid_ids:
+                return jsonify({"error": f"Invalid section_ids: {sorted(invalid_ids)}. Valid IDs: {sorted(valid_ids)}"}), 400
+
         if phase == "manim_codegen":
             result = _retry_manim_codegen(job_id, job_folder, presentation, section_ids)
         elif phase == "video_render":
@@ -1093,9 +1106,11 @@ def retry_phase(job_id):
         else:
             return jsonify({"error": f"Unknown phase: {phase}. Valid: manim_codegen, wan_render, manim_render, avatar_generation"}), 400
         
-        with open(presentation_path, 'w') as f:
-            json.dump(presentation, f, indent=2)
-        
+        # V2.5 FIX: Use presentation_lock to prevent race conditions with background threads
+        with presentation_lock:
+            with open(presentation_path, 'w') as f:
+                json.dump(presentation, f, indent=2)
+
         return jsonify({
             "status": "success",
             "phase": phase,
@@ -1133,7 +1148,7 @@ def _retry_manim_codegen(job_id: str, job_folder: Path, presentation: dict, sect
         section_id = section.get("section_id")
         renderer = section.get("renderer", "")
         
-        print(f"DEBUG: Checking Section {section_id} (Renderer: {renderer}) for retry. Target IDs: {section_ids}")
+        logger.debug(f"Checking Section {section_id} (Renderer: {renderer}) for retry. Target IDs: {section_ids}")
 
         if renderer != "manim":
             continue
@@ -1147,16 +1162,16 @@ def _retry_manim_codegen(job_id: str, job_folder: Path, presentation: dict, sect
             section.get("manim_code") or  # Top-level (v1.5)
             section.get("render_spec", {}).get("manim_scene_spec", {}).get("manim_code")  # Nested (v2.5)
         )
-        print(f"DEBUG: Section {section_id} has_code={bool(has_code)}")
+        logger.debug(f"Section {section_id} has_code={bool(has_code)}")
         if has_code:
             if section_ids is None:
-                print(f"DEBUG: Section {section_id} SKIPPED - already has valid code")
+                logger.debug(f"Section {section_id} SKIPPED - already has valid code")
                 results["skipped"].append({"section_id": section_id, "reason": "Already has valid code"})
                 continue
             else:
-                print(f"DEBUG: Forcing regen for Section {section_id} despite existing code.")
+                logger.debug(f"Forcing regen for Section {section_id} despite existing code.")
         
-        print(f"DEBUG: Section {section_id} PROCEEDING to code generation")
+        logger.debug(f"Section {section_id} PROCEEDING to code generation")
         try:
             print(f"[RETRY] Regenerating Manim code for section {section_id}")
             manim_input = build_manim_section_data(
@@ -1477,11 +1492,8 @@ def _retry_avatar_generation(job_id: str, job_folder: Path, presentation: dict, 
                                 break
                         
                         results["success"].append({"section_id": section_id, "task_id": task_id})
-                        print(f"[RETRY-AVATAR] âœ“ Sec {section_id} downloaded", flush=True)
-                        
-                        # Save progress
-                        with open(job_folder / "presentation.json", "w", encoding="utf-8") as f:
-                            json.dump(presentation, f, indent=2)
+                        print(f"[RETRY-AVATAR] âœ" Sec {section_id} downloaded", flush=True)
+                        # V2.5 FIX: Removed write from inside loop - will save once at end with lock
                     else:
                         results["failed"].append({"section_id": section_id, "error": "Download failed"})
                 
@@ -1505,7 +1517,13 @@ def _retry_avatar_generation(job_id: str, job_folder: Path, presentation: dict, 
     # Timeout handling
     for task in active_tasks:
         results["failed"].append({"section_id": task["section_id"], "error": "Timeout"})
-    
+
+    # V2.5 FIX: Single write at end with lock (prevents race condition with WAN/TTS threads)
+    if results["success"]:  # Only write if we actually updated something
+        with presentation_lock:
+            with open(job_folder / "presentation.json", "w", encoding="utf-8") as f:
+                json.dump(presentation, f, indent=2)
+
     print(f"[RETRY-AVATAR] Complete: {len(results['success'])} success, {len(results['failed'])} failed", flush=True)
     return results
 
@@ -2036,18 +2054,21 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             video_provider=video_provider
         )
         
+        # V2.5 FIX: Use locks for thread-safe JSON writes (avatar/WAN threads may be starting)
         pres_path = output_path / "presentation.json"
-        with open(pres_path, "w") as f:
-            json.dump(presentation, f, indent=2)
-            
+        with presentation_lock:
+            with open(pres_path, "w") as f:
+                json.dump(presentation, f, indent=2)
+
         # Analytics handling
         analytics_summary = tracker.get_summary() if hasattr(tracker, 'get_summary') else {}
         # Ensure complete analytics dict is saved if get_summary is partial
         if hasattr(tracker, 'to_dict'):
             analytics_full = tracker.to_dict()
             analytics_path = output_path / "analytics.json"
-            with open(analytics_path, "w") as f:
-                json.dump(analytics_full, f, indent=2)
+            with analytics_lock:
+                with open(analytics_path, "w") as f:
+                    json.dump(analytics_full, f, indent=2)
         
         # Auto-trigger Avatar Polling & Download
         # Check explicit dry_run arg or params
