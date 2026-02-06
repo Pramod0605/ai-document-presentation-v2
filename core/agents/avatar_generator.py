@@ -170,7 +170,7 @@ class AvatarGenerator:
             logger.error(f"[AVATAR] Download failed: {e}")
             return False
 
-    def _update_artifacts(self, output_dir: str, section_id: int, video_path: str, duration: float = 0.0, vimeo_url: Optional[str] = None):
+    def _update_artifacts(self, output_dir: str, section_id: int, video_path: str, duration: float = 0.0, vimeo_url: Optional[str] = None, b2_url: Optional[str] = None):
         """
         Live-patch presentation.json and analytics.json with the new avatar video and Vimeo info.
         This is crucial for "Fire-and-Forget" mode where the main pipeline has already exited.
@@ -199,6 +199,12 @@ class AvatarGenerator:
                                     section["vimeo_url"] = vimeo_url
                                     section["vimeo_uploaded"] = True
                                     logger.info(f"[AVATAR] Added Vimeo URL for Sec {section_id}: {vimeo_url}")
+                                
+                                # B2: store backblaze details
+                                if b2_url:
+                                    section["b2_url"] = b2_url
+                                    section["b2_uploaded"] = True
+                                    logger.info(f"[AVATAR] Added B2 URL for Sec {section_id}: {b2_url}")
                                 
                                 updated = True
                                 break
@@ -231,6 +237,7 @@ class AvatarGenerator:
                             "duration_seconds": round(duration, 2),
                             "status": "completed",
                             "vimeo_url": vimeo_url,
+                            "b2_url": b2_url,
                             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S")
                         }
                         if "section_details" not in avatar_metrics:
@@ -435,13 +442,14 @@ class AvatarGenerator:
                         out_path = active_map[tid]["output_path"]
                         success = self.download_video(tid, out_path)
                         
-                        # Extract Vimeo URL if available
-                        vimeo_url = status_res.get("raw_response", {}).get("vimeo_url")
+                        # Extract Vimeo and B2 URLs if available
+                        raw = status_res.get("raw_response", {})
+                        vimeo_url = raw.get("vimeo_url")
+                        b2_url = raw.get("b2_url")
 
                         # Get duration from status if available
                         duration = 0.0
                         try:
-                            raw = status_res.get("raw_response", {})
                             duration = float(raw.get("result", {}).get("data", {}).get("video_duration", 0.0))
                         except:
                             pass
@@ -449,7 +457,7 @@ class AvatarGenerator:
                         if success:
                             results["completed"].append(active_map[tid])
                             completed_in_batch.add(tid)
-                            self._update_artifacts(output_dir, active_map[tid]["section_id"], out_path, duration, vimeo_url=vimeo_url)
+                            self._update_artifacts(output_dir, active_map[tid]["section_id"], out_path, duration, vimeo_url=vimeo_url, b2_url=b2_url)
                             
                             if tracker:
                                 tracker.update_progress(
@@ -598,18 +606,21 @@ class AvatarGenerator:
                         print(f"[AVATAR-ALL] Task {tid} COMPLETED. Downloading...", flush=True)
                         info = state["tasks"][tid]
                         if self.download_video(tid, info["output_path"]):
-                            # Extract Vimeo details
+                            # Extract Vimeo and B2 details
                             vimeo_url = None
+                            b2_url = None
                             try:
                                 raw = status_res.get("raw_response", {})
                                 vimeo_url = raw.get("vimeo_url")
+                                b2_url = raw.get("b2_url")
                                 duration = float(raw.get("result", {}).get("data", {}).get("video_duration", 0.0))
                             except:
                                 duration = 0.0
                                 
-                            self._update_artifacts(output_dir, info["section_id"], info["output_path"], duration, vimeo_url)
+                            self._update_artifacts(output_dir, info["section_id"], info["output_path"], duration, vimeo_url, b2_url)
                             info["status"] = "completed"
                             info["vimeo_url"] = vimeo_url
+                            info["b2_url"] = b2_url
                             logger.info(f"[AVATAR-ALL] Sec {info['section_id']} DONE.")
                         else:
                             still_active.append(tid) # Retry download next loop
