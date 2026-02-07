@@ -16,6 +16,12 @@
    - Used if no avatar is present.
    - Simulates playback for testing/development.
 
+### Multi-Language Switching (New in V2.5.8)
+The player supports real-time switching between avatar languages:
+1. **Detection**: Checks `presentation.avatar_languages` for available regional tracks.
+2. **Logic**: Swaps `avatarVideo` src to the corresponding `avatars/{lang}/section_{id}_avatar.mp4`.
+3. **Sync**: Maintains playback timestamp during switching for a seamless experience.
+
 ### Beat Synchronization Engine (New in V2.5.5)
 The player now uses a dual-strategy beat engine handled by `updateContentProgressiveReveal()`:
 
@@ -81,6 +87,7 @@ Handles CSS 3D Flashcards.
 - `segment_id`: **REQUIRED** for V2.5 beat sync.
 - `beat_videos`: Array of video file IDs (e.g., `["topic_5_seg_1.mp4"]`).
 - `markdown_pointer`: Used for Anti-Hallucination text resolution.
+- `avatar_languages`: Map of available regional avatar tracks for real-time switching.
 
 ---
 

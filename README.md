@@ -102,7 +102,7 @@ The **V2.5 Director Pipeline** is a production-grade AI system that converts Mar
 | `manim` | Mathematical formulas, graphs, animations | Python → MP4 |
 | `video` (WAN/Kie) | Visual storytelling, cinematic scenes | Prompt → MP4 |
 | `text_card` | Definitions, bullet points | SVG/HTML layer |
-| `avatar` | AI presenter narrating content | MP4 video |
+| `avatar` | AI presenter narrating content (Multi-language support) | MP4 video |
 | `flashcard_set` | Memory/quiz sections | Interactive cards |
 
 ### TTS Providers
@@ -190,6 +190,8 @@ Submit a new presentation job.
 | `dry_run` | string | No | "false" | Skip actual rendering |
 | `skip_wan` | string | No | "false" | Skip WAN video generation |
 | `skip_avatar` | string | No | "false" | Skip avatar generation |
+| `languages` | string | No | "en" | Comma-separated list (e.g., "en,hi") |
+| `speaker` | string | No | "default" | Speaker name (e.g., "Sagar") |
 | `generation_scope` | string | No | "full" | Scope of generation |
 
 **Response (200):**
@@ -308,7 +310,23 @@ Retry a specific phase for specific sections.
 ### 🧑 Avatar Generation
 
 #### `POST /job/<job_id>/generate_avatar`
-Trigger AI Avatar generation for a job.
+Trigger AI Avatar generation for a job. Supports multi-language generation.
+
+**Request (JSON):**
+```json
+{
+  "languages": ["en", "hi", "te"],
+  "speaker": "Sagar",
+  "target_sections": ["intro_1", "section_5"],
+  "force_regenerate": false
+}
+```
+
+**Parameters:**
+- `languages`: Array of ISO language codes (e.g., `["en", "hi", "te"]`).
+- `speaker`: (Optional) Voice name from the supported list.
+- `target_sections`: (Optional) Array of section IDs to generate for.
+- `force_regenerate`: (Optional) If true, overwrites existing avatars.
 
 ---
 
@@ -533,7 +551,11 @@ player/jobs/{job_id}/
 ├── audio/                  # TTS audio files
 │   └── section_*.mp3
 ├── avatars/                # AI avatar videos
-│   └── section_*_avatar.mp4
+│   ├── metadata.json       # Map of languages and speakers
+│   ├── en/                 # Default (English) avatars
+│   │   └── section_*_avatar.mp4
+│   └── {lang}/             # Language subfolders (e.g., hi, te)
+│       └── section_*_avatar.mp4
 └── images/                 # Extracted/processed images
     └── *.png
 ```
