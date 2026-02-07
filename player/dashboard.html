@@ -522,6 +522,87 @@
         </div>
     </div>
 
+    <!-- Multi-Language Avatar Modal -->
+    <div id="multiLangAvatarModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center;">
+        <div
+            style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px; max-width: 500px; width: 90%; padding: 30px; position: relative; border: 1px solid rgba(255,255,255,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="color: #9c27b0; margin: 0;">Generate Multi-Language Avatar</h3>
+                <button onclick="closeMultiLangAvatarModal()"
+                    style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <div style="color: #00d4ff; font-size: 0.9rem; margin-bottom: 5px;">Job ID:</div>
+                <div id="multiLangJobId" style="font-family: monospace; color: #fff; font-size: 1.1rem;"></div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: #aaa; margin-bottom: 8px; font-size: 0.9rem;">Language:</label>
+                <select id="avatarLanguageSelect"
+                    style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: #fff; font-size: 0.95rem;">
+                    <option value="">Select Language</option>
+                    <option value="english">English (Default - Voice Cloning)</option>
+                    <option value="hindi">Hindi (हिंदी)</option>
+                    <option value="tamil">Tamil (தமிழ்)</option>
+                    <option value="telugu">Telugu (తెలుగు)</option>
+                    <option value="kannada">Kannada (ಕನ್ನಡ)</option>
+                    <option value="malayalam">Malayalam (മലയാളം)</option>
+                    <option value="bengali">Bengali (বাংলা)</option>
+                    <option value="marathi">Marathi (मराठी)</option>
+                    <option value="gujarati">Gujarati (ગુજરાતી)</option>
+                    <option value="punjabi">Punjabi (ਪੰਜਾਬੀ)</option>
+                    <option value="odia">Odia (ଓଡ଼ିଆ)</option>
+                    <option value="assamese">Assamese (অসমীয়া)</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: #aaa; margin-bottom: 8px; font-size: 0.9rem;">Speaker /
+                    Voice:</label>
+                <select id="avatarSpeakerSelect"
+                    style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: #fff; font-size: 0.95rem;">
+                    <option value="">Default Speaker (abhilash)</option>
+                    <optgroup label="Male Voices">
+                        <option value="abhilash">Abhilash - Clear, Professional (Default)</option>
+                        <option value="karun">Karun - Warm, Friendly</option>
+                        <option value="hitesh">Hitesh - Energetic, Youthful</option>
+                    </optgroup>
+                    <optgroup label="Female Voices">
+                        <option value="anushka">Anushka - Soft, Gentle</option>
+                        <option value="manisha">Manisha - Professional, Clear</option>
+                        <option value="vidya">Vidya - Warm, Expressive</option>
+                        <option value="arya">Arya - Young, Energetic</option>
+                    </optgroup>
+                </select>
+                <div style="color: #888; font-size: 0.75rem; margin-top: 5px;">Works with ANY Indian language. English
+                    uses voice cloning (speaker ignored).
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button id="generateMultiLangBtn" onclick="executeMultiLangAvatarGeneration()" class="btn"
+                    style="flex: 1; background: #9c27b0; color: #fff; padding: 12px 20px; font-size: 0.95rem;">
+                    Generate Avatars
+                </button>
+                <button onclick="closeMultiLangAvatarModal()" class="btn btn-secondary"
+                    style="padding: 12px 20px; font-size: 0.95rem;">
+                    Cancel
+                </button>
+            </div>
+
+            <div
+                style="margin-top: 15px; padding: 10px; background: rgba(0,212,255,0.1); border-radius: 6px; border-left: 3px solid #00d4ff;">
+                <div style="color: #00d4ff; font-size: 0.75rem; font-weight: 600; margin-bottom: 3px;">ℹ️ Info:</div>
+                <div style="color: #aaa; font-size: 0.75rem;">This will generate avatars for <strong>all
+                        sections</strong> in the selected language. Files will be saved in <code
+                        style="background: rgba(0,0,0,0.3); padding: 2px 4px; border-radius: 3px;">avatars/{language}/</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentJobId = null;
         let pollInterval = null;
@@ -815,8 +896,10 @@
 
                         actions += `
                              <button class="btn" style="padding: 4px 10px; font-size: 0.8rem; margin-left: 5px; ${btnStyle} color: #fff;" onclick="generateAvatar('${job.job_id}', this)" ${avState === 'processing' ? 'data-polling="true"' : ''}>${btnText}</button>
+                             <button class="btn" style="padding: 4px 10px; font-size: 0.8rem; margin-left: 5px; background: #9c27b0; color: #fff;" onclick="showMultiLangAvatarModal('${job.job_id}')">Multi-Language Avatar</button>
                         `;
                     }
+
 
                     if (job.status === 'running' || job.status === 'processing') {
                         const progress = job.progress || 0;
@@ -1152,6 +1235,73 @@
                         btn.disabled = false;
                         btn.textContent = "Retry Failed";
                     }
+                });
+        }
+
+
+        // --- Multi-Language Avatar Functions ---
+        let currentMultiLangJobId = null;
+
+        function showMultiLangAvatarModal(jobId) {
+            currentMultiLangJobId = jobId;
+            document.getElementById('multiLangJobId').textContent = jobId;
+            document.getElementById('avatarLanguageSelect').value = '';
+            document.getElementById('avatarSpeakerSelect').value = '';
+            document.getElementById('multiLangAvatarModal').style.display = 'flex';
+        }
+
+        function closeMultiLangAvatarModal() {
+            document.getElementById('multiLangAvatarModal').style.display = 'none';
+            currentMultiLangJobId = null;
+        }
+
+        function executeMultiLangAvatarGeneration() {
+            if (!currentMultiLangJobId) return;
+
+            const language = document.getElementById('avatarLanguageSelect').value;
+            const speaker = document.getElementById('avatarSpeakerSelect').value;
+
+            if (!language) {
+                alert('Please select a language!');
+                return;
+            }
+
+            const btn = document.getElementById('generateMultiLangBtn');
+            btn.disabled = true;
+            btn.textContent = 'Starting...';
+
+            const payload = {
+                languages: [language]  // Send as array (backend expects list)
+            };
+
+            if (speaker) {
+                payload.speaker = speaker;
+            }
+
+            fetch(`/job/${currentMultiLangJobId}/generate_avatar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+                .then(r => r.json())
+                .then(data => {
+                    btn.disabled = false;
+                    btn.textContent = 'Generate Avatars';
+
+                    if (data.status === 'queued' || data.status === 'already_running') {
+                        alert(`Multi-Language Avatar generation started!\\n\\nLanguage: ${language}\\nSpeaker: ${speaker || 'Default'}\\n\\nThis will generate avatars for ALL sections.\\nUse 'Refresh' button to track progress.`);
+                        closeMultiLangAvatarModal();
+                        loadJobHistory();  // Refresh to show updated state
+                    } else if (data.error) {
+                        alert('Error: ' + data.error);
+                    } else {
+                        alert('Unexpected response: ' + JSON.stringify(data));
+                    }
+                })
+                .catch(err => {
+                    btn.disabled = false;
+                    btn.textContent = 'Generate Avatars';
+                    alert('Request failed: ' + err.message);
                 });
         }
 

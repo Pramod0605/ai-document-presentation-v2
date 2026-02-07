@@ -185,10 +185,19 @@
                 }
             }
 
-            // Check Avatar
-            if (!section.avatar_video) {
+            // Check Avatar (including multi-language)
+            const avatarLanguages = section.avatar_languages || [];
+            if (!section.avatar_video && avatarLanguages.length === 0) {
+                // Check default avatar
                 const check = await checkUrl(`section_${sid}_avatar.mp4`, 'avatar');
                 if (check.valid) orphanDetected = true;
+
+                // Check common language subdirectories
+                const commonLangs = ['hindi', 'tamil', 'kannada', 'telugu', 'malayalam', 'bengali'];
+                for (const lang of commonLangs) {
+                    const langCheck = await checkUrl(`avatars/${lang}/section_${sid}_avatar.mp4`);
+                    if (langCheck.valid) orphanDetected = true;
+                }
             }
 
             // Check Recap Beats
@@ -294,9 +303,12 @@
                     if (renderer === 'manim') rendererClass = 'manim';
                     if (renderer === 'wan' || renderer === 'video_generation' || renderer === 'VIDEO' || renderer === 'video') rendererClass = 'wan';
 
-                    // AVATAR
+                    // AVATAR (Multi-Language Support)
                     const avatarPath = section.avatar_video || section.avatar_video_path;
-                    let avatarHtml = 'None';
+                    const avatarLanguages = section.avatar_languages || [];
+                    let avatar Html = '';
+
+                    // Check default/English avatar
                     if (avatarPath) {
                         const obj = await checkUrl(avatarPath, 'avatar');
                         let statusText = obj.status;
@@ -310,7 +322,36 @@
                                 statusClass = 'fail';
                             }
                         }
-                        avatarHtml = `<a href="${obj.url}" target="_blank">${avatarPath}</a><br><span class="${statusClass}">[${statusText}]</span>`;
+                        avatarHtml = `<span class="sub-item"><strong>Default:</strong> <a href="${obj.url}" target="_blank">${avatarPath}</a><br><span class="${statusClass}">[${statusText}]</span></span>`;
+                    }
+
+                    // Check multi-language avatars
+                    if (avatarLanguages.length > 0) {
+                        for (const langEntry of avatarLanguages) {
+                            const lang = langEntry.language || 'unknown';
+                            const langPath = langEntry.video_path;
+                            const speaker = langEntry.speaker || 'default';
+
+                            if (langPath) {
+                                const obj = await checkUrl(langPath, 'avatar');
+                                let statusText = obj.status;
+                                let statusClass = obj.valid ? 'pass' : 'fail';
+
+                                if (obj.valid) {
+                                    const isGood = await checkVideoIntegrity(obj.url);
+                                    if (!isGood) {
+                                        statusText = 'CORRUPT';
+                                        statusClass = 'fail';
+                                    }
+                                }
+
+                                avatarHtml += `<div class="sub-item"><strong>${lang.toUpperCase()} (${speaker}):</strong> <a href="${obj.url}" target="_blank">${langPath}</a><br><span class="${statusClass}">[${statusText}]</span></div>`;
+                            }
+                        }
+                    }
+
+                    if (!avatarHtml) {
+                        avatarHtml = 'None';
                     }
 
                     // VIDEO

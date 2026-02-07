@@ -30,7 +30,8 @@ class AvatarGenerator:
         if not self.api_url:
             raise ValueError("AVATAR_API_URL environment variable is not set")
         
-    def generate_avatar_video(self, text: str, job_id: str, section_id: int) -> Dict[str, Any]:
+    def generate_avatar_video(self, text: str, job_id: str, section_id: int, 
+                             language: str = None, speaker: str = None) -> Dict[str, Any]:
         """
         Submit a request to generate an avatar video for the given text.
         
@@ -38,13 +39,16 @@ class AvatarGenerator:
             text (str): The raw narration text (can contain LaTeX).
             job_id (str): The job ID for context.
             section_id (int): The section ID for context.
+            language (str, optional): Language code (e.g., "hindi", "tamil"). Default: None (English).
+            speaker (str, optional): Voice ID (e.g., "vidya", "abhilash"). Only for Indian languages.
             
         Returns:
             Dict: Response containing 'task_id', 'status', etc.
         """
         # 1. Preprocess: Convert LaTeX using existing utility
         clean_text = latex_to_speech(text)
-        logger.info(f"[AVATAR] Preprocessed text for Job {job_id}/Sec {section_id}: {clean_text[:50]}...")
+        lang_str = f" [{language}]" if language else ""
+        logger.info(f"[AVATAR] Preprocessed text for Job {job_id}/Sec {section_id}{lang_str}: {clean_text[:50]}...")
         
         # 2. Submit to API
         try:
@@ -52,6 +56,15 @@ class AvatarGenerator:
             payload = {
                 "text": clean_text
             }
+            
+            # Add optional language and speaker parameters
+            if language:
+                payload["language"] = language
+                logger.info(f"[AVATAR] Language: {language}")
+            
+            if speaker:
+                payload["speaker"] = speaker
+                logger.info(f"[AVATAR] Speaker: {speaker}")
             
             # 2. Submit to API with Retry Logic
             max_retries = 3
@@ -170,10 +183,17 @@ class AvatarGenerator:
             logger.error(f"[AVATAR] Download failed: {e}")
             return False
 
-    def _update_artifacts(self, output_dir: str, section_id: int, video_path: str, duration: float = 0.0, vimeo_url: Optional[str] = None, b2_url: Optional[str] = None):
+    def _update_artifacts(self, output_dir: str, section_id: int, video_path: str, duration: float = 0.0, 
+                         vimeo_url: Optional[str] = None, b2_url: Optional[str] = None,
+                         language: str = None, speaker: str = None, task_id: str = None):
         """
         Live-patch presentation.json and analytics.json with the new avatar video and Vimeo info.
         This is crucial for "Fire-and-Forget" mode where the main pipeline has already exited.
+        
+        Args:
+            language (str, optional): Language code for multi-language support.
+            speaker (str, optional): Speaker ID for multi-language support.
+            task_id (str, optional): Avatar API task ID for tracking.
         """
         try:
             out_path = Path(output_dir)
@@ -191,20 +211,65 @@ class AvatarGenerator:
                             if str(section.get("section_id")) == str(section_id):
                                 # Player expects 'avatar_video' relative to job root (e.g. avatars/filename.mp4)
                                 avatar_filename = os.path.basename(video_path)
-                                section["avatar_video"] = f"avatars/{avatar_filename}"
-                                section["avatar_status"] = "completed"
                                 
-                                # ISS-VIMEO: store vimeo details
-                                if vimeo_url:
-                                    section["vimeo_url"] = vimeo_url
-                                    section["vimeo_uploaded"] = True
-                                    logger.info(f"[AVATAR] Added Vimeo URL for Sec {section_id}: {vimeo_url}")
-                                
-                                # B2: store backblaze details
-                                if b2_url:
-                                    section["b2_url"] = b2_url
-                                    section["b2_uploaded"] = True
-                                    logger.info(f"[AVATAR] Added B2 URL for Sec {section_id}: {b2_url}")
+                                # Multi-language support: store in avatar_languages array
+                                if language:
+                                    # Ensure avatar_languages array exists
+                                    if "avatar_languages" not in section:
+                                        section["avatar_languages"] = []
+                                    
+                                    # Build language-specific path
+                                    avatar_rel_path = f"avatars/{language}/{avatar_filename}"
+                                    
+                                    # Check if language entry exists, update or append
+                                    lang_entry = None
+                                    for entry in section["avatar_languages"]:
+                                        if entry.get("language") == language:
+                                            lang_entry = entry
+                                            break
+                                    
+                                    if lang_entry:
+                                        # Update existing entry
+                                        lang_entry["video_path"] = avatar_rel_path
+                                        lang_entry["status"] = "completed"
+                                        lang_entry["duration"] = round(duration, 2)
+                                    else:
+                                        # Create new entry
+                                        lang_entry = {
+                                            "language": language,
+                                            "video_path": avatar_rel_path,
+                                            "status": "completed",
+                                            "duration": round(duration, 2)
+                                        }
+                                        if speaker:
+                                            lang_entry["speaker"] = speaker
+                                        if task_id:
+                                            lang_entry["task_id"] = task_id
+                                        section["avatar_languages"].append(lang_entry)
+                                    
+                                    # Update URLs
+                                    if vimeo_url:
+                                        lang_entry["vimeo_url"] = vimeo_url
+                                    if b2_url:
+                                        lang_entry["b2_url"] = b2_url
+                                    
+                                    logger.info(f"[AVATAR] Updated avatar_languages for Sec {section_id} [{language}]")
+                                else:
+                                    # Default/English: use existing flat structure
+                                    section["avatar_video"] = f"avatars/{avatar_filename}"
+                                    section["avatar_status"] = "completed"
+                                    
+                                    # ISS-VIMEO: store vimeo details
+                                    if vimeo_url:
+                                        section["vimeo_url"] = vimeo_url
+                                        section["vimeo_uploaded"] = True
+                                        logger.info(f"[AVATAR] Added Vimeo URL for Sec {section_id}: {vimeo_url}")
+                                    
+                                    # B2: store backblaze details
+                                    if b2_url:
+                                        section["b2_url"] = b2_url
+                                        section["b2_uploaded"] = True
+                                        logger.info(f"[AVATAR] Added B2 URL for Sec {section_id}: {b2_url}")
                                 
                                 updated = True
                                 break
@@ -253,55 +318,45 @@ class AvatarGenerator:
         except Exception as e:
             logger.error(f"[AVATAR] Critical error in _update_artifacts: {e}")
 
-    def submit_parallel_job(self, presentation: Dict[str, Any], job_id: str, output_dir: str, tracker: Optional[AnalyticsTracker] = None) -> Dict[str, Any]:
+    def submit_parallel_job(self, presentation: Dict[str, Any], job_id: str, output_dir: str, 
+                            tracker: Optional[AnalyticsTracker] = None,
+                            languages: list = None, speaker: str = None) -> Dict[str, Any]:
         """
-        Submits sections in strict batches of 2.
+        Submits sections in strict batches of 3.
         For each batch:
-          1. Submit 2 concurrent requests.
+          1. Submit concurrent requests.
           2. Wait for BOTH to complete (polling).
           3. Download videos.
           4. Only then proceed to next batch.
         
         This respects the 2-GPU limit by ensuring we never have more than 2 tasks active.
+        
+        Args:
+            languages (list, optional): List of language codes. If None, generates English (default).
+            speaker (str, optional): Voice ID for non-English languages.
         """
         logger.info(f"[AVATAR] Starting strict batch submission for Job {job_id}")
         sections = presentation.get("sections", [])
         total_sections = len(sections)
+        
+        # Default to English if no languages specified
+        if languages is None:
+            languages = [None]  # None = English/default
+        
+        # Calculate total tasks: sections * languages
+        total_tasks = total_sections * len(languages)
         
         # Initialize progress
         if tracker:
             tracker.update_progress(
                 category="avatar_generation", 
                 completed=0, 
-                total=total_sections, 
+                total=total_tasks, 
                 failed=0,
-                message="Starting avatar generation..."
+                message=f"Starting avatar generation for {len(languages)} language(s)..."
             )
-        avatar_dir = Path(output_dir) / "avatars" # We might want to put them in root output_dir usually, but let's stick to existing pattern or caller's pref.
-        # Check if caller expects them in root or subdir. 
-        # Usually pipeline passes output_dir as job_dir. videos often go to output_dir directly or 'videos' subdir.
-        # Let's verify where download_video saves them.
-        # Actually existing code passed 'output_dir' meant as root.
-        # Let's stick to saving in 'output_dir' (root of job) to match Player expectation of simple relative paths?
-        # Re-reading existing code: 'avatar_dir = Path(output_dir) / "avatars"' was used in previous snippet.
-        # If Player expects 'avatar.mp4' in root, we should maybe change this? 
-        # But 'resolveMediaPath' in player checks multiple places. 
-        # Let's stick to 'avatars' subdir to keep it clean, or root if simpler.
-        # The prompt said "avatars appear in output folder".
-        # Let's use root output_dir/videos to align with other videos? Or just output_dir.
-        # Let's keep existing logic to minimize friction, but verify path.
-        
-        # Actually, let's look at what I wrote in the plan: "submit_parallel_job" logic.
-        # I'll stick to the existing logic I wrote earlier:
-        # "avatar_dir = Path(output_dir) / "avatars""
         
         avatar_dir = Path(output_dir)
-        # NOTE: Changing to root or specific 'avatars' folder? 
-        # Previous implementation I wrote used: avatar_dir = Path(output_dir) / "avatars"
-        # But wait, if I put them in a subdir, I must ensure relatve path is correct for Player.
-        # Using root is safer for simple 'video.mp4' links.
-        # Let's use 'avatars' subdir for organization.
-        
         save_dir = avatar_dir / "avatars"
         save_dir.mkdir(parents=True, exist_ok=True)
         
@@ -322,14 +377,21 @@ class AvatarGenerator:
         print(f"[AVATAR] Initiating synchronous processing in {len(section_batches)} batches...")
         
         # Helper to submit
-        def _submit_single_section(section, job_id, save_dir):
+        def _submit_single_section(section, job_id, save_dir, language=None, speaker=None):
             sec_id = section.get("section_id")
             output_filename = f"section_{sec_id}_avatar.mp4"
-            output_path = save_dir / output_filename
+            
+            # Create language-specific subdirectory if language is specified
+            if language:
+                lang_save_dir = save_dir / language
+                lang_save_dir.mkdir(parents=True, exist_ok=True)
+                output_path = lang_save_dir / output_filename
+            else:
+                output_path = save_dir / output_filename
             
             # 1. Check for existing
             if output_path.exists() and output_path.stat().st_size > 1000:
-                return {"status": "skipped", "section_id": sec_id, "reason": "exists", "output_path": str(output_path)}
+                return {"status": "skipped", "section_id": sec_id, "language": language, "reason": "exists", "output_path": str(output_path)}
 
             # 2. Extract Text
             narration_text = ""
@@ -346,21 +408,23 @@ class AvatarGenerator:
                     narration_text = str(narr)
             
             if not narration_text or not narration_text.strip():
-                return {"status": "skipped", "section_id": sec_id, "reason": "empty_text"}
+                return {"status": "skipped", "section_id": sec_id, "language": language, "reason": "empty_text"}
             
-            # 3. Submit
-            print(f"[AVATAR] Submitting Sec {sec_id}...")
-            res = self.generate_avatar_video(narration_text, job_id, sec_id)
+            # 3. Submit with language and speaker
+            lang_str = f" [{language}]" if language else ""
+            print(f"[AVATAR] Submitting Sec {sec_id}{lang_str}...")
+            res = self.generate_avatar_video(narration_text, job_id, sec_id, language=language, speaker=speaker)
             # Handle both task_id dict and direct error dict
             if "task_id" in res:
                 return {
                     "status": "queued",
                     "section_id": sec_id,
+                    "language": language,
                     "task_id": res["task_id"],
                     "output_path": str(output_path)
                 }
             else:
-                 return {"status": "failed", "section_id": sec_id, "error": res.get("error", "Unknown")}
+                 return {"status": "failed", "section_id": sec_id, "language": language, "error": res.get("error", "Unknown")}
 
         # --- BATCH LOOP ---
         for batch_idx, batch in enumerate(section_batches):
@@ -368,9 +432,14 @@ class AvatarGenerator:
             
             current_batch_tasks = []
             
-            # 1. SUBMIT BATCH
+            # 1. SUBMIT BATCH for all languages
             with ThreadPoolExecutor(max_workers=BATCH_SIZE) as executor:
-                futures = {executor.submit(_submit_single_section, sec, job_id, save_dir): sec for sec in batch}
+                # Submit tasks for each section and language combination
+                futures = {}
+                for sec in batch:
+                    for lang in languages:
+                        future = executor.submit(_submit_single_section, sec, job_id, save_dir, language=lang, speaker=speaker)
+                        futures[future] = (sec, lang)
                 
                 for future in as_completed(futures):
                     try:
@@ -381,27 +450,30 @@ class AvatarGenerator:
                             results["queued"].append(res)
                         elif status == "skipped":
                             results["skipped"].append(res)
-                            print(f"[AVATAR] - Sec {res.get('section_id')} skipped.")
+                            lang_str = f" [{res.get('language')}]" if res.get('language') else ""
+                            print(f"[AVATAR] - Sec {res.get('section_id')}{lang_str} skipped.")
                             if "output_path" in res:
-                                 self._update_artifacts(output_dir, res["section_id"], res["output_path"])
+                                 self._update_artifacts(output_dir, res["section_id"], res["output_path"],
+                                                      language=res.get("language"), speaker=speaker)
                             if tracker:
                                 tracker.update_progress(
                                     category="avatar_generation",
                                     completed=len(results["completed"]) + len(results["skipped"]),
-                                    total=total_sections,
+                                    total=total_tasks,
                                     failed=len(results["failed"]),
-                                    message=f"Skipped Section {res.get('section_id')}"
+                                    message=f"Skipped Section {res.get('section_id')}{lang_str}"
                                 )
                         else:
                             results["failed"].append(res)
-                            print(f"[AVATAR] x Sec {res.get('section_id')} submission failed.")
+                            lang_str = f" [{res.get('language')}]" if res.get('language') else ""
+                            print(f"[AVATAR] x Sec {res.get('section_id')}{lang_str} submission failed.")
                             if tracker:
                                 tracker.update_progress(
                                     category="avatar_generation",
                                     completed=len(results["completed"]) + len(results["skipped"]),
-                                    total=total_sections,
+                                    total=total_tasks,
                                     failed=len(results["failed"]),
-                                    message=f"Failed to submit Section {res.get('section_id')}"
+                                    message=f"Failed to submit Section {res.get('section_id')}{lang_str}"
                                 )
                     except Exception as e:
                          print(f"[AVATAR] Submission Ex: {e}")
@@ -457,15 +529,20 @@ class AvatarGenerator:
                         if success:
                             results["completed"].append(active_map[tid])
                             completed_in_batch.add(tid)
-                            self._update_artifacts(output_dir, active_map[tid]["section_id"], out_path, duration, vimeo_url=vimeo_url, b2_url=b2_url)
+                            # Pass language and speaker to _update_artifacts
+                            lang = active_map[tid].get("language")
+                            self._update_artifacts(output_dir, active_map[tid]["section_id"], out_path, duration, 
+                                                  vimeo_url=vimeo_url, b2_url=b2_url,
+                                                  language=lang, speaker=speaker, task_id=tid)
                             
+                            lang_str = f" [{active_map[tid].get('language')}]" if active_map[tid].get('language') else ""
                             if tracker:
                                 tracker.update_progress(
                                     category="avatar_generation",
                                     completed=len(results["completed"]) + len(results["skipped"]),
-                                    total=total_sections,
+                                    total=total_tasks,
                                     failed=len(results["failed"]),
-                                    message=f"Completed Section {active_map[tid]['section_id']}"
+                                    message=f"Completed Section {active_map[tid]['section_id']}{lang_str}"
                                 )
                         else:
                             print(f"[AVATAR] Failed to download {tid}")
@@ -481,7 +558,7 @@ class AvatarGenerator:
                             tracker.update_progress(
                                 category="avatar_generation",
                                 completed=len(results["completed"]) + len(results["skipped"]),
-                                total=total_sections,
+                                total=total_tasks,
                                 failed=len(results["failed"]),
                                 message=f"Task {tid} failed"
                             )
@@ -498,13 +575,19 @@ class AvatarGenerator:
         print(final_msg)
         return results
 
-    def submit_all_jobs(self, presentation: Dict[str, Any], job_id: str, output_dir: str, target_sections: Optional[List[str]] = None, force: bool = False, tracker: Optional[AnalyticsTracker] = None) -> Dict[str, Any]:
+    def submit_all_jobs(self, presentation: Dict[str, Any], job_id: str, output_dir: str, 
+                       target_sections: Optional[List[str]] = None, force: bool = False, 
+                       tracker: Optional[AnalyticsTracker] = None,
+                       languages: list = None, speaker: str = None) -> Dict[str, Any]:
         """
         New "Submit All" strategy:
         - target_sections: List of section_ids to process (None = all)
         - force: If True, bypasses existence check and re-submits
+        - languages (list, optional): List of language codes for multi-language generation
+        - speaker (str, optional): Voice ID for non-English languages
         """
-        logger.info(f"[AVATAR-ALL] Starting 'Submit All' strategy for Job {job_id} (Target: {target_sections}, Force: {force})")
+        lang_info = f" for {len(languages)} language(s)" if languages else ""
+        logger.info(f"[AVATAR-ALL] Starting 'Submit All' strategy for Job {job_id} (Target: {target_sections}, Force: {force}){lang_info}")
         sections = presentation.get("sections", [])
         job_path = Path(output_dir)
         state_file = job_path / "avatar_analysis.json"
@@ -564,7 +647,7 @@ class AvatarGenerator:
                 if not narration_text.strip():
                     continue
 
-                res = self.generate_avatar_video(narration_text, job_id, int(sec_id))
+                res = self.generate_avatar_video(narration_text, job_id, int(sec_id), language=languages[0] if languages else None, speaker=speaker)
                 if "task_id" in res:
                     tid = res["task_id"]
                     state["tasks"][tid] = {
