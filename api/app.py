@@ -1429,8 +1429,14 @@ def _retry_manim_render(job_id: str, job_folder: Path, presentation: dict, secti
 
 
 
-def _retry_avatar_generation(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
-    """Retry avatar generation - uses same parallel logic as new jobs."""
+def _retry_avatar_generation(job_id: str, job_folder: Path, presentation: dict, 
+                             section_ids: list = None, languages: list = None, speaker: str = None) -> dict:
+    """Retry avatar generation - uses same parallel logic as new jobs.
+    
+    Args:
+        languages (list, optional): List of language codes for multi-language generation
+        speaker (str, optional): Voice ID for non-English languages
+    """
     from core.agents.avatar_generator import AvatarGenerator
     import time
     
@@ -1447,10 +1453,12 @@ def _retry_avatar_generation(job_id: str, job_folder: Path, presentation: dict, 
     else:
         filtered_presentation = presentation
     
-    print(f"[RETRY-AVATAR] Using parallel submit for {len(filtered_presentation['sections'])} sections", flush=True)
+    lang_info = f" for {len(languages)} language(s)" if languages else ""
+    print(f"[RETRY-AVATAR] Using parallel submit for {len(filtered_presentation['sections'])} sections{lang_info}", flush=True)
     
-    # Use the SAME parallel submit that new jobs use
-    submit_results = generator.submit_parallel_job(filtered_presentation, job_id, str(job_folder))
+    # Use the SAME parallel submit that new jobs use, with language support
+    submit_results = generator.submit_parallel_job(filtered_presentation, job_id, str(job_folder), 
+                                                   languages=languages, speaker=speaker)
     
     tasks = submit_results.get("queued", [])
     if not tasks:
@@ -3399,7 +3407,7 @@ def serve_job_assets(job_id, filename):
 
 @app.route("/job/<job_id>/generate_avatar", methods=["POST"])
 def generate_avatar(job_id):
-    """Trigger AI Avatar generation for a job."""
+    """Trigger AI Avatar generation for a job with optional multi-language support."""
     print(f"[AVATAR] Received request to generate for Job {job_id}", flush=True)
     job_dir = JOBS_DIR / job_id
     if not job_dir.exists():
@@ -3408,14 +3416,24 @@ def generate_avatar(job_id):
     # Check if already running in memory
     if job_id in ACTIVE_AVATAR_JOBS:
         return jsonify({"status": "already_running", "message": "Avatar generation in progress (Active Thread)"}), 409
-            
+    
+    # Extract optional parameters from request body
+    data = request.get_json() or {}
+    languages = data.get("languages")  # Optional: list of language codes
+    speaker = data.get("speaker")       # Optional: voice ID
+    sections = data.get("sections")     # Optional: specific section IDs
+    
     # Start async task
     ACTIVE_AVATAR_JOBS.add(job_id)
-    thread = Thread(target=run_avatar_sequential_task, args=(job_id, str(JOBS_DIR)))
+    thread = Thread(target=run_avatar_sequential_task, args=(job_id, str(JOBS_DIR), languages, speaker, sections))
     thread.daemon = True
     thread.start()
     
-    return jsonify({"status": "queued", "message": "Avatar generation started"})
+    response = {"status": "queued", "message": "Avatar generation started"}
+    if languages:
+        response["languages"] = languages
+    
+    return jsonify(response)
 
 @app.route("/job/<job_id>/avatar_status", methods=["GET"])
 def get_avatar_status(job_id):
@@ -3686,15 +3704,22 @@ def run_avatar_generation_task(job_id, jobs_root):
         update_status("failed", str(e))
     finally:
         ACTIVE_AVATAR_JOBS.discard(job_id)
-def run_avatar_sequential_task(job_id, jobs_root, target_sections=None, force=False):
+def run_avatar_sequential_task(job_id, jobs_root, languages=None, speaker=None, target_sections=None, force=False):
     """
     Background worker to handle avatar generation:
-    Now uses the refactored 'Submit All' strategy from AvatarGenerator.
+    Now uses the refactored 'Submit All' strategy from AvatarGenerator with multi-language support.
+    
+    Args:
+        languages (list, optional): List of language codes for multi-language generation
+        speaker (str, optional): Voice ID for non-English languages
+        target_sections (list, optional): Specific section IDs to process
+        force (bool): Force regeneration even if videos exist
     """
     from core.agents.avatar_generator import AvatarGenerator
     import time
     
-    print(f"[AVATAR-TASK] Initiating generation for job {job_id}", flush=True)
+    lang_info = f" for {len(languages)} language(s)" if languages else ""
+    print(f"[AVATAR-TASK] Initiating generation for job {job_id}{lang_info}", flush=True)
     job_dir = Path(jobs_root) / job_id
     presentation_file = job_dir / "presentation.json"
     
@@ -3708,15 +3733,29 @@ def run_avatar_sequential_task(job_id, jobs_root, target_sections=None, force=Fa
             
         generator = AvatarGenerator()
         
-        # Use the new high-performance "Submit All" method
-        # This handles its own persistence, polling (30s), and Vimeo metadata
-        generator.submit_all_jobs(
-            presentation=presentation,
-            job_id=job_id,
-            output_dir=str(job_dir),
-            target_sections=target_sections,
-            force=force
-        )
+        # Use submit_parallel_job for multi-language support (has batch processing with language loops)
+        # submit_all_jobs is for single-language, stateful retry mechanism
+        if languages:
+            # Multi-language: use submit_parallel_job which handles language batching
+            print(f"[AVATAR-TASK] Using submit_parallel_job for multi-language generation", flush=True)
+            result = generator.submit_parallel_job(
+                presentation=presentation,
+                job_id=job_id,
+                output_dir=str(job_dir),
+                languages=languages,
+                speaker=speaker
+            )
+            print(f"[AVATAR-TASK] Multi-language generation complete: {len(result.get('completed', []))} completed, {len(result.get('failed', []))} failed", flush=True)
+        else:
+            # Single language/default: use submit_all_jobs (stateful with retry)
+            print(f"[AVATAR-TASK] Using submit_all_jobs for default avatar generation", flush=True)
+            generator.submit_all_jobs(
+                presentation=presentation,
+                job_id=job_id,
+                output_dir=str(job_dir),
+                target_sections=target_sections,
+                force=force
+            )
         
         print(f"[AVATAR-TASK] Background task completed for job {job_id}")
         
