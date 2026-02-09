@@ -18,6 +18,14 @@ import requests
 from pathlib import Path
 from typing import Optional, Set
 
+class WanSafetyError(Exception):
+    """Raised when the prompt violates safety policies (NSFW, blocked content)."""
+    pass
+
+class WanFatalError(Exception):
+    """Raised for non-retryable errors like authentication or payment issues."""
+    pass
+
 KIE_API_KEY = os.environ.get("KIE_API_KEY", "")
 KIE_API_BASE = "https://api.kie.ai/api/v1"
 
@@ -154,6 +162,21 @@ class WANClient:
             
             print(f"[WAN 2.6] Create response status: {create_response.status_code}")
             
+            # --- ERROR MAPPING ---
+            if create_response.status_code in [422, 403, 451]:
+                raise WanSafetyError(f"Safety/Policy Violation ({create_response.status_code}): {create_response.text}")
+                
+            if create_response.status_code in [401, 402, 404]:
+                raise WanFatalError(f"Fatal API Error ({create_response.status_code}): {create_response.text}")
+                
+            if create_response.status_code == 400:
+                err_text = create_response.text.lower()
+                if "nsfw" in err_text or "policy" in err_text or "safety" in err_text:
+                    raise WanSafetyError(f"Safety Violation (400): {create_response.text}")
+                else:
+                    raise WanFatalError(f"Bad Request (400): {create_response.text}")
+            # ---------------------
+
             if create_response.status_code != 200:
                 error_text = create_response.text[:500] if create_response.text else "No response body"
                 raise Exception(f"API creation failed: {create_response.status_code} - {error_text}")
@@ -178,6 +201,10 @@ class WANClient:
             
             # Step 3: Download the video
             return self._download_video(video_url, output_path)
+            
+        except (WanSafetyError, WanFatalError) as e:
+            print(f"[WAN 2.6] CRITICAL ERROR: {e}")
+            raise e # Propagate these up
             
         except requests.exceptions.Timeout:
             raise Exception("API request timed out")

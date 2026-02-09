@@ -4,7 +4,8 @@ import logging
 import asyncio
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from render.wan.wan_client import WANClient
+from render.wan.wan_client import WANClient, WanSafetyError, WanFatalError
+from core.llm_client import openrouter
 
 logger = logging.getLogger(__name__)
 
@@ -20,8 +21,53 @@ class KieBatchGenerator:
     def __init__(self, api_key: Optional[str] = None):
         self.client = WANClient(api_key)
         self.pending_tasks = [] # List of (beat_id, task_id, output_path)
+
+    def _rewrite_prompt(self, original_prompt: str, feedback: str = None, is_safety_fix: bool = False) -> str:
+        """Rewrite prompt using LLM for safety or user feedback."""
+        try:
+            # HARD SAFETY RULES for System Prompt
+            safety_rules = """
+🔒 WAN VIDEO PROMPT HARD SAFETY RULES (MANDATORY)
+1. NEVER use close-up or extreme framing for humans.
+   - DO NOT use: "close-up", "extreme close-up", "macro", "tight framing"
+   - ALWAYS use: "medium shot", "medium-wide shot", or "wide shot"
+2. NEVER explicitly mention human body parts.
+   - DO NOT mention: hands, eyes, face, skin, fingers
+   - Describe actions indirectly (e.g., "writing at a desk", "focused posture")
+3. NEVER use age-descriptive human terms.
+   - DO NOT use: young, child, girl, boy, young woman
+   - ALWAYS use: "adult person" or "individual"
+4. NEVER use cinematic intimacy language.
+   - DO NOT use: rack focus, lingering shot, intimate, sensual, dramatic zoom on person
+   - Use neutral camera behavior: steady camera, fixed framing, gentle focus shift
+5. Style disclaimers DO NOT override safety.
+   - Phrases like "educational", "documentary", or "non-sexual" do NOT make unsafe prompts valid.
+"""
+            if is_safety_fix:
+                sys_prompt = f"You are a safety assistant. Rewrite this video prompt to be safe, educational, and documentary-style. remove any potential NSFW triggers. Follow these HARD SAFETY RULES:{safety_rules} Return ONLY the new prompt."
+            elif feedback:
+                sys_prompt = f"You are a video prompt improver. Rewrite this prompt to incorporate the user's feedback: '{feedback}'. Keep it safe and documentary-style. Return ONLY the new prompt."
+            else:
+                return original_prompt
+
+            response = openrouter.chat.completions.create(
+                model="google/gemini-2.5-flash", # Fast model for rewrites
+                messages=[
+                    {"role": "system", "content": sys_prompt},
+                    {"role": "user", "content": original_prompt}
+                ]
+            )
+            new_prompt = response.choices[0].message.content.strip()
+            # Remove quotes if present
+            if new_prompt.startswith('"') and new_prompt.endswith('"'):
+                new_prompt = new_prompt[1:-1]
+            logger.info(f"[WAN Safety] Prompt rewritten: '{original_prompt[:30]}...' -> '{new_prompt[:30]}...'")
+            return new_prompt
+        except Exception as e:
+            logger.error(f"[WAN Safety] LLM Rewrite failed: {e}")
+            return original_prompt # Fallback
     
-    def generate_batch(self, beats: List[Dict], output_dir: str):
+    def generate_batch(self, beats: List[Dict], output_dir: str, user_feedback: str = None):
         """
         Process a list of beats in batches.
         Each beat in 'beats' should have: beat_id, prompt, duration_hint
@@ -39,7 +85,7 @@ class KieBatchGenerator:
             
             for beat in batch:
                 beat_id = beat.get("beat_id")
-                prompt = beat.get("prompt")
+                original_prompt = beat.get("prompt")
                 # TODO: In future, support 'duration' key as well. For now, rely on duration_hint or default 15.
                 duration = int(beat.get("duration_hint", 15))
                 output_path = os.path.join(output_dir, f"{beat_id}.mp4")
@@ -51,22 +97,52 @@ class KieBatchGenerator:
                     results[beat_id] = output_path 
                     continue
                 
-                print(f"[WAN] Submitting Beat: {beat_id} | Prompt: {prompt[:60]}... | Duration: {duration}s")
+                # Pre-process prompt if user feedback provided
+                current_prompt = original_prompt
+                if user_feedback:
+                    logger.info(f"[WAN] Applying user feedback to prompt for {beat_id}")
+                    current_prompt = self._rewrite_prompt(original_prompt, feedback=user_feedback)
+
+                print(f"[WAN] Submitting Beat: {beat_id} | Prompt: {current_prompt[:60]}... | Duration: {duration}s")
+                
                 try:
-                    # We use a modified client or just extract the create logic
-                    # For now, let's use the client's internal methods (or refactor client)
-                    # REFINE: Refactor WANClient to expose createTask separately
-                    task_id = self._create_task(prompt, duration)
+                    # Attempt 1
+                    task_id = self._create_task(current_prompt, duration)
                     if task_id:
                         self.pending_tasks.append({
                             "beat_id": beat_id,
                             "task_id": task_id,
                             "output_path": output_path,
-                            "prompt": prompt,
+                            "prompt": current_prompt,
                             "duration": duration
                         })
                     else:
                         logger.error(f"[KieBatch] Failed to create task for {beat_id}")
+
+                except WanSafetyError as e:
+                    logger.warning(f"[WAN] Safety Error for {beat_id}: {e}. Retrying with LLM rewrite...")
+                    # Rewrite for safety
+                    safe_prompt = self._rewrite_prompt(current_prompt, is_safety_fix=True)
+                    try:
+                        # Attempt 2 (Retry once)
+                        task_id = self._create_task(safe_prompt, duration)
+                        if task_id:
+                            self.pending_tasks.append({
+                                "beat_id": beat_id,
+                                "task_id": task_id,
+                                "output_path": output_path,
+                                "prompt": safe_prompt,
+                                "duration": duration
+                            })
+                            logger.info(f"[WAN] Safety retry submitted for {beat_id}")
+                        else:
+                            logger.error(f"[WAN] Safety retry failed to create task for {beat_id}")
+                    except Exception as retry_e:
+                        logger.error(f"[WAN] Safety retry FAILED for {beat_id}: {retry_e}")
+                        
+                except WanFatalError as e:
+                    logger.error(f"[WAN] Fatal Error for {beat_id}: {e}. Skipping retry.")
+                
                 except Exception as e:
                     logger.error(f"[KieBatch] Submission error for {beat_id}: {e}")
             
@@ -116,11 +192,33 @@ class KieBatchGenerator:
                 json=payload,
                 timeout=30
             )
+
+            # --- ERROR MAPPING (Replicated from WANClient) ---
+            if response.status_code in [422, 403, 451]:
+                raise WanSafetyError(f"Safety/Policy Violation ({response.status_code}): {response.text}")
+            
+            if response.status_code in [401, 402, 404]:
+                raise WanFatalError(f"Fatal API Error ({response.status_code}): {response.text}")
+
+            if response.status_code == 400:
+                err_text = response.text.lower()
+                if "nsfw" in err_text or "policy" in err_text or "safety" in err_text:
+                    raise WanSafetyError(f"Safety Violation (400): {response.text}")
+                else:
+                    raise WanFatalError(f"Bad Request (400): {response.text}")
+            # ------------------------------------------------
+
             if response.status_code == 200:
                 res_json = response.json()
                 if res_json.get("code") == 200:
                     return res_json.get("data", {}).get("taskId")
-            logger.error(f"[KieBatch] API returned {response.status_code}: {response.text}")
+                else:
+                    logger.error(f"[KieBatch] API Logic Error: {res_json}")
+            else:
+                logger.error(f"[KieBatch] API returned {response.status_code}: {response.text}")
+                
+        except (WanSafetyError, WanFatalError) as e:
+            raise e # Propagate to generate_batch for retry handling logic
         except Exception as e:
             logger.error(f"[KieBatch] CreateTask Exception: {e}")
         return None

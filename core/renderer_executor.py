@@ -331,20 +331,20 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
                     wan_beats.extend(sanitized_beats)
                     topic_id_to_beats[topic.get("section_id")] = [b.get("beat_id") for b in sanitized_beats]
 
-                    # LOGGING FIX: Log these prompts to render_prompts.json so we can debug NSFW/errors
-                    # Set trace output directory to the job's parent directory if possible, or default
-                    job_output_dir = Path(output_dir).parent
-                    set_trace_output_dir(str(job_output_dir))
+        # LOGGING FIX: Log these prompts to render_prompts.json so we can debug NSFW/errors
+            # Set trace output directory to the job's parent directory if possible, or default
+            job_output_dir = Path(output_dir).parent
+            set_trace_output_dir(str(job_output_dir))
 
-                    for beat in sanitized_beats:
-                        log_render_prompt(
-                            section_id=topic.get("section_id"),
-                            section_title=topic.get("title", "Unknown"),
-                            renderer="wan_background",
-                            prompt=beat.get("prompt", ""),
-                            output_path=str(Path(output_dir) / f"{beat.get('beat_id')}.mp4"),
-                            extra_data={"job_id": job_id, "source": "background_retry"}
-                        )
+            for beat in sanitized_beats:
+                log_render_prompt(
+                    section_id=topic.get("section_id"),
+                    section_title=topic.get("title", "Unknown"),
+                    renderer="wan_background",
+                    prompt=beat.get("prompt", ""),
+                    output_path=str(Path(output_dir) / f"{beat.get('beat_id')}.mp4"),
+                    extra_data={"job_id": job_id, "source": "background_retry"}
+                )
 
         
         print(f"[BG-JOB] Found {len(wan_beats)} total video beats across {len(topic_id_to_beats)} topics.")
