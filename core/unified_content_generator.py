@@ -456,7 +456,14 @@ def transform_to_player_schema(
         }
         
         if section.get("video_prompts"):
-            transformed["video_prompts"] = section["video_prompts"]
+            # ISS-STRING-PROMPT-FIX: Ensure all prompts are objects, not strings
+            sanitized_prompts = []
+            for p in section["video_prompts"]:
+                if isinstance(p, str):
+                    sanitized_prompts.append({"prompt": p, "beat_id": f"beat_{len(sanitized_prompts)}"})
+                elif isinstance(p, dict):
+                    sanitized_prompts.append(p)
+            transformed["video_prompts"] = sanitized_prompts
         
         if section.get("quiz_data"):
             transformed["quiz_data"] = section["quiz_data"]
