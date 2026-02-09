@@ -102,7 +102,7 @@ The **V2.5 Director Pipeline** is a production-grade AI system that converts Mar
 | `manim` | Mathematical formulas, graphs, animations | Python → MP4 |
 | `video` (WAN/Kie) | Visual storytelling, cinematic scenes | Prompt → MP4 |
 | `text_card` | Definitions, bullet points | SVG/HTML layer |
-| `avatar` | AI presenter narrating content | MP4 video |
+| `avatar` | AI presenter narrating content (11 languages supported - see [Avatar Languages](#-avatar-generation)) | MP4 video |
 | `flashcard_set` | Memory/quiz sections | Interactive cards |
 
 ### TTS Providers
@@ -190,6 +190,8 @@ Submit a new presentation job.
 | `dry_run` | string | No | "false" | Skip actual rendering |
 | `skip_wan` | string | No | "false" | Skip WAN video generation |
 | `skip_avatar` | string | No | "false" | Skip avatar generation |
+| `languages` | string | No | "english" | Comma-separated language names (e.g., "english,hindi,telugu"). See [Avatar Languages](#-avatar-generation) |
+| `speaker` | string | No | "default" | Speaker name (e.g., "abhilash") |
 | `generation_scope` | string | No | "full" | Scope of generation |
 
 **Response (200):**
@@ -308,7 +310,60 @@ Retry a specific phase for specific sections.
 ### 🧑 Avatar Generation
 
 #### `POST /job/<job_id>/generate_avatar`
-Trigger AI Avatar generation for a job.
+Trigger AI Avatar generation for a job. Supports multi-language generation.
+
+**Request Examples:**
+
+**Example 1: Generate avatars for all sections in multiple languages (typical use case)**
+```json
+{
+  "languages": ["english", "hindi", "telugu", "tamil"],
+  "speaker": "abhilash"
+}
+```
+Generates avatar videos for **all sections** in English, Hindi, Telugu, and Tamil.
+
+**Example 2: Generate English avatars only (default)**
+```json
+{
+  "languages": ["english"]
+}
+```
+Generates avatars for **all sections** in English.
+
+**Example 3: Retry/Regenerate specific sections only**
+```json
+{
+  "languages": ["hindi"],
+  "speaker": "abhilash",
+  "target_sections": ["intro_1", "section_5"],
+  "force_regenerate": true
+}
+```
+Use `target_sections` when retrying failed sections or selectively updating specific sections.
+
+**Supported Languages:**
+
+| Language Code | Language Name | Notes |
+|---------------|---------------|-------|
+| `english` | English | Default language (voice cloning) |
+| `hindi` | Hindi (हिन्दी) | Indian language |
+| `telugu` | Telugu (తెలుగు) | Indian language |
+| `tamil` | Tamil (தமிழ்) | Indian language |
+| `kannada` | Kannada (ಕನ್ನಡ) | Indian language |
+| `malayalam` | Malayalam (മലയാളം) | Indian language |
+| `marathi` | Marathi (मराठी) | Indian language |
+| `gujarati` | Gujarati (ગુજરાતી) | Indian language |
+| `bengali` | Bengali (বাংলা) | Indian language |
+| `punjabi` | Punjabi (ਪੰਜਾਬੀ) | Indian language |
+| `odia` | Odia (ଓଡ଼ିଆ) | Indian language |
+| `assamese` | Assamese (অসমীয়া) | Indian language |
+
+**Parameters:**
+- `languages`: Array of language names (e.g., `["english", "hindi", "telugu"]`). See table above for supported codes.
+- `speaker`: (Optional) Voice name from the supported list.
+- `target_sections`: (Optional) Array of section IDs. **Only needed for retries/selective regeneration**. If omitted, processes **all sections**.
+- `force_regenerate`: (Optional) If true, overwrites existing avatars. Typically used with `target_sections` for retries.
 
 ---
 
@@ -533,7 +588,11 @@ player/jobs/{job_id}/
 ├── audio/                  # TTS audio files
 │   └── section_*.mp3
 ├── avatars/                # AI avatar videos
-│   └── section_*_avatar.mp4
+│   ├── metadata.json       # Map of languages and speakers
+│   ├── en/                 # Default (English) avatars
+│   │   └── section_*_avatar.mp4
+│   └── {lang}/             # Language subfolders (e.g., hi, te)
+│       └── section_*_avatar.mp4
 └── images/                 # Extracted/processed images
     └── *.png
 ```

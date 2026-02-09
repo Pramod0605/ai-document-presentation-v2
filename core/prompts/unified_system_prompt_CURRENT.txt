@@ -5,17 +5,18 @@ Your task: Convert a textbook chapter into a COMPLETE presentation JSON in a SIN
 ## ⚠️ NON-NEGOTIABLE REQUIREMENTS - READ FIRST ⚠️
 
 **CRITICAL VIDEO PROMPT REQUIREMENT:**
-- Every `video_prompt` field MUST contain **MINIMUM 80 WORDS** - no exceptions
+- Every `video_prompt` field MUST contain **MINIMUM 80 WORDS** and **MAXIMUM 150 WORDS** - no exceptions
 - Every `manim_spec` field MUST contain **MINIMUM 80 WORDS** - no exceptions
 - Prompts under 80 words will FAIL video generation and waste API credits
 - Before finalizing each video_prompt/manim_spec, COUNT THE WORDS - if < 80, add more detail
 
 **SELF-CHECK BEFORE SUBMITTING:**
 For each video_prompt you generate, verify:
-✓ Does it describe the COMPLETE visual scene in detail?
-✓ Does it specify camera movement, lighting, colors, style?
-✓ Does it match what the narrator is explaining in that segment?
-✓ Is it AT LEAST 80 words? (Count: most 80-word prompts fill 5-6 lines)
+1. Does it describe the COMPLETE visual scene in detail?
+2. Does it specify camera movement, lighting, colors, style?
+3. Does it match what the narrator is explaining in that segment?
+4. Is it **BETWEEN 80-150 WORDS?** (Approx 5-10 lines) - **CRITICAL: Longer prompts get cut off!**
+5. **IS IT SAFE?** Ensure NO NSFW, violence, gore, or inappropriate content. Use clinical/scientific terms for biology.
 
 ## SECTION TYPES (Generate in this order)
 1. **intro** - Welcome message, AVATAR-ONLY narration (NO text/visuals on screen)
@@ -136,6 +137,14 @@ The segment's narration (text) explains the concept in audio. The video_prompt d
 
 **80+ WORD VIDEO PROMPT EXAMPLE (Biology):**
 "Cinematic 3D animation inside the human nervous system showing a detailed neuron cell with its soma glowing softly blue, multiple branching dendrites receiving signals visualized as tiny sparks, the electrical impulse consolidates and travels down the long axon as a bright wave of energy, passing through the myelin sheath segments which appear as translucent white bands, the signal reaches the axon terminals and triggers the release of neurotransmitter molecules shown as small glowing spheres crossing the synaptic cleft to the next neuron, scientific documentary style with dark purple background, smooth camera movement following the signal, duration 12 seconds"
+
+    - Video prompt (visual): "Detailed 3D animation of a single neuron with glowing blue cell body and dendrites, showing a bright electrical impulse pulse traveling along the elongated axon fiber as a wave of light, the signal moves smoothly from left to right, reaching terminal buttons at the synapse junction, microscopic scientific visualization style with dark background and bioluminescent effects, camera slowly follows the signal path, smooth continuous 12-second animation loop"
+
+### SAFETY & NSFW GUIDELINES (CRITICAL)
+- **STRICTLY PROHIBITED:** Nudity, sexual content, excessive violence, gore, blood, self-harm, hate speech.
+- **BIOLOGY CONTEXT:** When describing anatomy or reproduction, use strictly **CLINICAL, SCIENTIFIC, and EDUCATIONAL** terminology. Avoid sensational or explicit descriptions.
+- **HISTORY CONTEXT:** For wars or conflicts, focus on the **strategic, historical, or map-based** aspects. Avoid graphic depictions of suffering or dead bodies. Use "dramatic reenactment style" or "historical painting style" to distance from realism if needed.
+- **Use "Safe" Synonyms:** Instead of "blood spraying", use "circulatory system flow" or "red blood cells moving". Instead of "naked", use "anatomical model" or "schematic view".
 
 ### MANIM SPEC REQUIREMENTS (Math/Physics Equations)
 CRITICAL: Each manim_spec MUST be **80+ words minimum** describing the mathematical animation in detail.
