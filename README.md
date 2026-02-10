@@ -217,6 +217,7 @@ Get processing status for a job.
 {
   "job_id": "a1b2c3d4",
   "status": "processing",
+  "blueprint_ready": true,
   "progress": 45,
   "current_step": "Generating TTS Audio",
   "current_phase": "tts_generation",
@@ -228,6 +229,9 @@ Get processing status for a job.
   "error": null
 }
 ```
+
+**New Field (February 2026):**
+- `blueprint_ready` - **[NEW]** Set to `true` when `presentation.json` is saved. Allows frontend to enable player access early while assets continue rendering.
 
 **Status Values:**
 - `pending` - Job queued, waiting to start
@@ -439,6 +443,37 @@ Get avatar generation progress.
   }
 }
 ```
+
+---
+
+#### `GET /job/<job_id>/wan_status` **[NEW - February 2026]**
+Get WAN video generation progress (real-time tracking).
+
+**Response:**
+```json
+{
+  "state": "processing",
+  "total_beats": 10,
+  "completed_beats": 7,
+  "failed_beats": 1,
+  "progress_percent": 70,
+  "started_at": "2026-02-10T18:00:00",
+  "updated_at": "2026-02-10T18:36:00",
+  "details": {
+    "pending": [],
+    "in_progress": [],
+    "completed": ["topic_1_beat_0", "topic_1_beat_1", ...],
+    "failed": ["topic_2_beat_3"],
+    "errors": {"topic_2_beat_3": "Generation failed"}
+  }
+}
+```
+
+**Status States:**
+- `processing` - Generation in progress
+- `completed` - All beats succeeded
+- `completed_with_errors` - Some beats failed
+- `not_found` - WAN generation not started (404)
 
 ---
 

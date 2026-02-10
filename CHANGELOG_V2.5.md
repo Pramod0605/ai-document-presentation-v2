@@ -1,5 +1,36 @@
 # Changelog - V2.5 Director Bible Enhancements
 
+## [February 2026] - NSFW Persistence, Blueprint Ready, WAN Status Tracking
+
+### Added
+- **[FEATURE]** **Blueprint Ready Flag:** New `blueprint_ready` field in `/job/<job_id>/status` API response
+  - Allows frontend to display player link as soon as `presentation.json` is saved
+  - Enables early user access while videos/avatars continue rendering in background
+  - Zero breaking changes - existing `status` field remains unchanged
+- **[FEATURE]** **WAN Task Tracking:** Real-time progress monitoring for WAN video generation
+  - New `wan_status.json` file tracks pending/completed/failed beats
+  - New endpoint: `GET /job/<job_id>/wan_status` for polling WAN progress
+  - Mirrors `avatar_status.json` structure for consistency
+- **[FEATURE]** **NSFW Prompt Persistence:** Sanitized prompts now persist to `presentation.json`
+  - Auto-corrected NSFW prompts are saved back to `video_prompts` array
+  - Prevents retry loops caused by original unsafe prompts persisting
+  - Enhanced thread-safe updates via `presentation_lock` in `_update_presentation_safely`
+
+### Fixed
+- **[BUGFIX]** **NSFW Retry Loop:** Previously, sanitized WAN prompts were only updated in-memory, causing retries to fail with same NSFW error
+  - Now writes sanitized prompts to `presentation.json` immediately after generation
+  - Both video paths AND sanitized prompts saved with thread-safe locking
+
+### Technical Details
+- Modified `core/renderer_executor.py` to pass `wan_beats` to `_update_presentation_safely`
+- Added `_update_status` method to `render/wan/kie_batch_generator.py`
+- Blueprint ready callback added in `core/pipeline_unified.py` line 476-485
+- All WAN status updates use `presentation_lock` for thread safety
+
+---
+
+## [Previous Updates] - Concurrency Safety & Smart Recovery
+
 This update focuses on **Concurrency Safety**, **Stability**, and **Smart Recovery** for the presentation generation pipeline.
 - **[FIX]** **Sanity Checker:** Resolved `SyntaxError: Unexpected identifier 'Html'` in `sanity_check.html`.
 - **[DOCS]** **Job Lifecycle:** Updated `README.md` to define `completed_with_errors` status and clarify LLM completion vs. Job completion.

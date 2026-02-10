@@ -15,12 +15,13 @@ class KieBatchGenerator:
     Handles rate limits (15 concurrent, 15s interval) and parallel polling.
     """
     
-    BATCH_SIZE = 15
-    BATCH_INTERVAL = 15
+    BATCH_SIZE = 5
+    BATCH_INTERVAL = 2
     
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, status_file_path: Optional[str] = None):
         self.client = WANClient(api_key)
         self.pending_tasks = [] # List of (beat_id, task_id, output_path)
+        self.status_file_path = status_file_path # NEW: Path to wan_status.json
 
     def _rewrite_prompt(self, original_prompt: str, feedback: str = None, is_safety_fix: bool = False) -> str:
         """Rewrite prompt using LLM for safety or user feedback."""
@@ -71,6 +72,33 @@ class KieBatchGenerator:
             logger.error(f"[WAN Safety] LLM Rewrite failed: {e}")
             return original_prompt # Fallback
     
+    def _update_status(self, state, **kwargs):
+        """Update wan_status.json with current progress."""
+        if not self.status_file_path:
+            return
+        
+        try:
+            from datetime import datetime
+            import json
+            
+            status = {
+                "state": state,
+                "total_beats": kwargs.get("total_beats", 0),
+                "completed_beats": kwargs.get("completed_beats", 0),
+                "failed_beats": kwargs.get("failed_beats", 0),
+                "progress_percent": kwargs.get("progress_percent", 0),
+                "updated_at": datetime.now().isoformat(),
+                "details": kwargs.get("details", {})
+            }
+            
+            if "started_at" in kwargs:
+                status["started_at"] = kwargs["started_at"]
+            
+            with open(self.status_file_path, "w", encoding="utf-8") as f:
+                json.dump(status, f, indent=2)
+        except Exception as e:
+            logger.error(f"[WAN Status] Failed to update status file: {e}")
+    
     def generate_batch(self, beats: List[Dict], output_dir: str, user_feedback: str = None):
         """
         Process a list of beats in batches.
@@ -81,6 +109,24 @@ class KieBatchGenerator:
             
         os.makedirs(output_dir, exist_ok=True)
         results = {}
+        
+        # NEW: Initialize status tracking
+        from datetime import datetime
+        started_at = datetime.now().isoformat()
+        self._update_status("processing", 
+            total_beats=len(beats), 
+            completed_beats=0, 
+            failed_beats=0,
+            progress_percent=0,
+            started_at=started_at,
+            details={
+                "pending": [b["beat_id"] for b in beats],
+                "in_progress": [],
+                "completed": [],
+                "failed": [],
+                "errors": {}
+            }
+        )
         
         # 1. Submission Phase
         for i in range(0, len(beats), self.BATCH_SIZE):
@@ -97,8 +143,8 @@ class KieBatchGenerator:
                 # GRANULAR RETRY: Check if file exists and is valid (>0 bytes)
                 if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
                     print(f"[WAN] Skipping existing beat: {beat_id}")
-                    # Pre-populate result immediately so it's returned at the end
-                    results[beat_id] = output_path 
+                    # Pre-populate result immediately - return dict with path and original prompt
+                    results[beat_id] = {"path": output_path, "prompt": original_prompt}
                     continue
                 
                 # Pre-process prompt if user feedback provided
@@ -118,6 +164,7 @@ class KieBatchGenerator:
                             "task_id": task_id,
                             "output_path": output_path,
                             "prompt": current_prompt,
+                            "final_prompt": current_prompt,  # Track the prompt that was actually used
                             "duration": duration
                         })
                     else:
@@ -136,6 +183,7 @@ class KieBatchGenerator:
                                 "task_id": task_id,
                                 "output_path": output_path,
                                 "prompt": safe_prompt,
+                                "final_prompt": safe_prompt,  # Track sanitized prompt
                                 "duration": duration,
                                 "is_retry": True
                             })
@@ -163,6 +211,28 @@ class KieBatchGenerator:
             results.update(polled_results)
         else:
             logger.info("[KieBatch] No pending tasks to poll.")
+        
+        # NEW: Final status update
+        completed = [bid for bid, r in results.items() if r and (isinstance(r, dict) and r.get("path") or isinstance(r, str))]
+        failed = [bid for bid, r in results.items() if not r or (isinstance(r, dict) and not r.get("path"))]
+        total = len(beats)
+        progress = int((len(completed) / total * 100)) if total > 0 else 100
+        
+        self._update_status(
+            "completed" if len(failed) == 0 else "completed_with_errors",
+            total_beats=total,
+            completed_beats=len(completed),
+            failed_beats=len(failed),
+            progress_percent=progress,
+            started_at=started_at,
+            details={
+                "pending": [],
+                "in_progress": [],
+                "completed": completed,
+                "failed": failed,
+                "errors": {bid: "Generation failed" for bid in failed}
+            }
+        )
         
         return results
 
@@ -234,16 +304,21 @@ class KieBatchGenerator:
         print(f"[WAN] Starting parallel polling for {len(self.pending_tasks)} tasks...")
         
         with ThreadPoolExecutor(max_workers=10) as executor:
-            future_to_beat = {
-                executor.submit(self._poll_and_download, task): task["beat_id"] 
+            future_to_task = {
+                executor.submit(self._poll_and_download, task): task 
                 for task in self.pending_tasks
             }
             
-            for future in as_completed(future_to_beat):
-                beat_id = future_to_beat[future]
+            for future in as_completed(future_to_task):
+                task = future_to_task[future]
+                beat_id = task["beat_id"]
                 try:
                     local_path = future.result()
-                    final_results[beat_id] = local_path
+                    # Return dict with both path and the final prompt used
+                    final_results[beat_id] = {
+                        "path": local_path, 
+                        "prompt": task.get("final_prompt", task.get("prompt"))
+                    }
                 except Exception as e:
                     logger.error(f"[KieBatch] Task {beat_id} failed: {e}")
                     final_results[beat_id] = None # Or handle placeholder

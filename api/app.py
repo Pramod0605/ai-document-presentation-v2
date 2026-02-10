@@ -3453,6 +3453,20 @@ def get_avatar_status(job_id):
     except Exception as e:
         return jsonify({"state": "error", "error": str(e)}), 500
 
+@app.route("/job/<job_id>/wan_status", methods=["GET"])
+def get_wan_status(job_id):
+    """Get WAN video generation status."""
+    job_dir = JOBS_DIR / job_id
+    status_file = job_dir / "wan_status.json"
+    
+    if not status_file.exists():
+        return jsonify({"state": "not_found", "message": "WAN generation not started"}), 404
+        
+    try:
+        return jsonify(json.loads(status_file.read_text()))
+    except Exception as e:
+        return jsonify({"state": "error", "error": str(e)}), 500
+
 @app.route("/job/<job_id>/regenerate_failed_avatars", methods=["POST"])
 def regenerate_failed_avatars(job_id):
     """Regenerate only the avatars that previously failed or are missing."""

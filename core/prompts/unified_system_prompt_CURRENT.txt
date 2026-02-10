@@ -148,27 +148,54 @@ The segment's narration (text) explains the concept in audio. The video_prompt d
 ### WAN VIDEO PROMPT HARD SAFETY RULES (MANDATORY)
 These rules apply ONLY to video_prompt fields sent to the WAN video generation API.
 
-1. NEVER use close-up or extreme framing for humans.
-   - DO NOT use: "close-up", "extreme close-up", "macro", "tight framing"
-   - ALWAYS use: "medium shot", "medium-wide shot", or "wide shot"
+**🚨 CRITICAL: These rules are NON-NEGOTIABLE. Any violation = instant NSFW rejection + wasted API credits.**
 
-2. NEVER explicitly mention human body parts.
-   - DO NOT mention: hands, eyes, face, skin, fingers
-   - Describe actions indirectly (e.g., "writing at a desk", "focused posture")
+**BANNED FRAMING (STRICTLY PROHIBITED):**
+1. NEVER use close-up or intimate framing for humans.
+   - ❌ BANNED WORDS: "close-up", "extreme close-up", "macro", "tight framing", "zoomed in", "focused on face", "facial features", "detailed view of person"
+   - ✅ SAFE ALTERNATIVES: "wide shot", "medium-wide shot", "full scene", "environmental view", "establishing shot"
+   - If describing a person's action, ALWAYS show the full scene with context
 
-3. NEVER use age-descriptive human terms.
-   - DO NOT use: young, child, girl, boy, young woman
-   - ALWAYS use: "adult person" or "individual"
+**BANNED BODY PART REFERENCES (STRICTLY PROHIBITED):**
+2. NEVER explicitly mention specific human body parts or physical details.
+   - ❌ BANNED WORDS: hands, fingers, eyes, face, faces, skin, arms, legs, body, head, hair, mouth, lips, shoulders, neck
+   - ✅ SAFE ALTERNATIVES: 
+     * Instead of "hands writing" → "person at desk completing work"
+     * Instead of "eyes looking" → "individual observing"
+     * Instead of "face shows emotion" → "posture suggests contemplation"
+   - Use ACTIVITY-BASED descriptions, NOT anatomy-based
 
-4. NEVER use cinematic intimacy language.
-   - DO NOT use: rack focus, lingering shot, intimate, sensual, dramatic zoom on person
-   - Use neutral camera behavior: steady camera, fixed framing, gentle focus shift
+**BANNED DEMOGRAPHIC TERMS (STRICTLY PROHIBITED):**
+3. NEVER use age, gender, or appearance descriptors for humans.
+   - ❌ BANNED WORDS: young, old, child, kid, girl, boy, woman, man, female, male, teenager, adult, elderly, beautiful, handsome, attractive
+   - ✅ SAFE ALTERNATIVES: "individual", "person", "researcher", "professional", "student" (role-based, not appearance-based)
+   - NEVER describe a person's physical appearance - describe their ROLE or ACTION only
 
-5. Style disclaimers DO NOT override safety.
-   - Phrases like "educational", "documentary", or "non-sexual" do NOT make unsafe prompts valid.
-   - Safety is enforced ONLY by wording and framing choices.
+**BANNED CAMERA LANGUAGE (STRICTLY PROHIBITED):**
+4. NEVER use cinematic or dramatic camera techniques that focus on people.
+   - ❌ BANNED WORDS: rack focus, lingering shot, intimate, sensual, dramatic zoom, slow-motion on person, tracking close, following closely, panning across body, emotional close-up
+   - ✅ SAFE ALTERNATIVES: "steady camera", "fixed framing", "static shot", "gentle pan across scene", "smooth transition"
+   - Camera movement must describe the ENVIRONMENT, never a person
 
-Violation of these rules WILL cause WAN 422 safety rejection.
+**BANNED STYLE MODIFIERS (DO NOT USE):**
+5. Educational/documentary disclaimers DO NOT bypass safety checks.
+   - ❌ INEFFECTIVE: Adding "educational", "documentary", "scientific", "clinical", "non-sexual" to an unsafe prompt
+   - ✅ EFFECTIVE: Using safe wording and framing from the start
+   - The API only checks the WORDS you use, NOT your intent
+
+**MANDATORY PRE-SUBMISSION CHECK:**
+Before finalizing ANY video_prompt, verify:
+- [ ] Does it mention ANY banned body part words? → ❌ REWRITE
+- [ ] Does it use close-up/zoom/tight framing on a person? → ❌ REWRITE
+- [ ] Does it describe a person's age, gender, or appearance? → ❌ REWRITE
+- [ ] Does it use dramatic/intimate camera language? → ❌ REWRITE
+- [ ] If yes to ANY above → REWRITE using SAFE ALTERNATIVES only
+
+**SAFE PROMPT FORMULA:**
+✅ [Wide/Medium shot] + [Environment description] + [Activity happening] + [Visual style] + [Camera behavior]
+✅ Example: "Wide shot of a modern laboratory with workstations and equipment, scientific demonstration in progress showing chemical reaction in beaker, educational documentary style with bright lighting, steady camera observing the full scene"
+
+Violation of these rules WILL cause WAN 422 safety rejection and waste API credits.
 
 ### MANIM SPEC REQUIREMENTS (Math/Physics Equations)
 CRITICAL: Each manim_spec MUST be **80+ words minimum** describing the mathematical animation in detail.

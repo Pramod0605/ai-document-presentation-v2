@@ -473,6 +473,16 @@ def process_markdown_unified(
                 with open(pres_path, "w", encoding="utf-8") as f:
                     json.dump(presentation, f, indent=4)
             logger.info(f"Pipeline: Saved presentation checkpoint to {pres_path}")
+            
+            # NEW: Mark blueprint as ready for frontend
+            log_status("blueprint_ready", "Blueprint (presentation.json) is Ready! You can view the Player now.")
+            if callback:
+                callback({
+                    "blueprint_ready": True,  # NEW FIELD
+                    "status": "processing",
+                    "current_step_name": "Blueprint Ready - Rendering Assets...",
+                    "current_phase_key": "rendering"
+                }, persist=True)
 
         # --- PHASE 4: AUTOMATED PARALLEL FORK (Avatar + TTS + Manim/WAN) ---
         # 4a. Trigger Avatar Generation (Fire-and-Forget)

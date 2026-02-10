@@ -418,17 +418,42 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
         else:
             # Existing Kie Logic
             # 1. Generate in Batches
-            batch_gen = KieBatchGenerator()
+            wan_status_path = Path(output_dir).parent / "wan_status.json"
+            batch_gen = KieBatchGenerator(status_file_path=str(wan_status_path))
             results = batch_gen.generate_batch(wan_beats, output_dir)
         
-        # 2. Update Files (Shared Logic)
+        # 2. Update wan_beats with sanitized prompts if they changed
+        for beat in wan_beats:
+            beat_id = beat.get("beat_id")
+            result = results.get(beat_id)
+            
+            # Results now contain: {"path": "...", "prompt": "sanitized_prompt"}
+            if isinstance(result, dict) and "prompt" in result:
+                original_prompt = beat.get("prompt")
+                sanitized_prompt = result["prompt"]
+                
+                if original_prompt != sanitized_prompt:
+                    # Prompt was sanitized - update the beat object
+                    beat["prompt"] = sanitized_prompt
+                    logger.info(f"[NSFW-FIX] Updated prompt for {beat_id}: '{original_prompt[:40]}...' -> '{sanitized_prompt[:40]}...'")
+        
+        # 3. Update Files (Shared Logic)
         pres_path = Path(output_dir).parent / "presentation.json"
         
         for topic_id, beat_ids in topic_id_to_beats.items():
             # For each topic, find the corresponding results
             topic_results = {bid: results.get(bid) for bid in beat_ids if bid in results}
             if topic_results:
-                _update_presentation_safely(pres_path, topic_id, list(topic_results.values())[0], {"status": "success", "beat_video_paths": list(topic_results.values()), "topic_results": topic_results})
+                # Extract paths for file update (maintain backward compatibility)
+                first_result = list(topic_results.values())[0]
+                video_path = first_result["path"] if isinstance(first_result, dict) else first_result
+                
+                _update_presentation_safely(pres_path, topic_id, video_path, {
+                    "status": "success", 
+                    "beat_video_paths": [r["path"] if isinstance(r, dict) else r for r in topic_results.values()], 
+                    "topic_results": topic_results,
+                    "wan_beats": wan_beats  # NEW: Pass updated beats with sanitized prompts
+                })
                 _update_analytics_safely(pres_path.parent / "analytics.json", topic_id, {"status": "success", "duration_seconds": 0}) 
                 
         logger.info(f"[BG-JOB] All tasks complete for job {job_id}")
@@ -510,6 +535,25 @@ def _update_presentation_safely(pres_path: Path, section_id: str, video_path: st
                          section["beat_videos"] = [f"videos/{Path(p).name}" for p in beat_videos]
                     if recap_video_paths:
                          section["recap_video_paths"] = [f"videos/{Path(p).name}" for p in recap_video_paths]
+                    
+                    # NEW: Update video_prompts with sanitized versions (NSFW fix)
+                    wan_beats = result.get("wan_beats", [])
+                    if wan_beats and "video_prompts" in section:
+                        prompts_updated = 0
+                        for beat in wan_beats:
+                            beat_id = beat.get("beat_id")
+                            sanitized_prompt = beat.get("prompt")
+                            
+                            # Find matching prompt in section and update
+                            for vp in section["video_prompts"]:
+                                if isinstance(vp, dict) and vp.get("beat_id") == beat_id:
+                                    if vp.get("prompt") != sanitized_prompt:
+                                        vp["prompt"] = sanitized_prompt
+                                        prompts_updated += 1
+                                        logger.info(f"[JSON-SAVE] Persisted sanitized prompt for {beat_id}")
+                        
+                        if prompts_updated > 0:
+                            logger.info(f"[NSFW-FIX] Updated {prompts_updated} prompts in presentation.json for section {section_id}")
                     
                     updated = True
                     break
