@@ -270,7 +270,11 @@ class WANClient:
                         else:
                             raise Exception("Success status but no video_url found")
                     elif state == "failed":
-                        raise Exception(f"Generation failed: {status_result.get('message', 'Unknown error')}")
+                        msg = status_result.get('message', 'Unknown error')
+                        err_text = msg.lower()
+                        if any(k in err_text for k in ["nsfw", "policy", "safety", "flagged", "violation"]):
+                            raise WanSafetyError(f"Safety Violation in Polling: {msg}")
+                        raise Exception(f"Generation failed: {msg}")
                     elif state in ["waiting", "generating"]:
                         pass
                     else:
@@ -303,6 +307,9 @@ class WANClient:
                     elif state == "fail":
                         fail_msg = data.get("failMsg", "Unknown error")
                         fail_code = data.get("failCode", "")
+                        err_text = fail_msg.lower()
+                        if any(k in err_text for k in ["nsfw", "policy", "safety", "flagged", "violation"]):
+                            raise WanSafetyError(f"Safety Violation in Polling [{fail_code}]: {fail_msg}")
                         raise Exception(f"Generation failed: [{fail_code}] {fail_msg}")
                     
                     elif state in ["waiting", "queuing", "generating"]:
