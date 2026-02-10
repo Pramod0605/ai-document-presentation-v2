@@ -42,6 +42,10 @@ class KieBatchGenerator:
    - Use neutral camera behavior: steady camera, fixed framing, gentle focus shift
 5. Style disclaimers DO NOT override safety.
    - Phrases like "educational", "documentary", or "non-sexual" do NOT make unsafe prompts valid.
+6. NO SPECIFIC GENDER/AGE for generic humans.
+   - Convert "woman", "man", "girl", "boy" to "individual" or "adult person".
+7. NO CLOTHING DESCRIPTIONS that could be misinterpreted.
+   - Use: "professional attire", "simple clothing", or omit clothing details entirely.
 """
             if is_safety_fix:
                 sys_prompt = f"You are a safety assistant. Rewrite this video prompt to be safe, educational, and documentary-style. remove any potential NSFW triggers. Follow these HARD SAFETY RULES:{safety_rules} Return ONLY the new prompt."
@@ -132,7 +136,8 @@ class KieBatchGenerator:
                                 "task_id": task_id,
                                 "output_path": output_path,
                                 "prompt": safe_prompt,
-                                "duration": duration
+                                "duration": duration,
+                                "is_retry": True
                             })
                             logger.info(f"[WAN] Safety retry submitted for {beat_id}")
                         else:
@@ -246,14 +251,36 @@ class KieBatchGenerator:
         return final_results
 
     def _poll_and_download(self, task_info: Dict) -> str:
-        """Poller for a single task."""
+        """Poller for a single task with internal retry for safety errors."""
         task_id = task_info["task_id"]
         output_path = task_info["output_path"]
+        beat_id = task_info["beat_id"]
         
-        # Use client's polling and download methods
-        video_url = self.client._poll_task_status(task_id)
-        if video_url:
-            return self.client._download_video(video_url, output_path)
-        
+        try:
+            # Use client's polling and download methods
+            video_url = self.client._poll_task_status(task_id)
+            if video_url:
+                return self.client._download_video(video_url, output_path)
+        except WanSafetyError as e:
+            logger.warning(f"[WAN Polling] Safety Error detected during generation for {beat_id}: {e}. Attempting ONE retry with rewrite...")
+            # If it's a safety error during polling, try ONE resubmission
+            # Note: We only do this if it wasn't already a rewritten prompt (to avoid loops)
+            if not task_info.get("is_retry"):
+                safe_prompt = self._rewrite_prompt(task_info["prompt"], is_safety_fix=True)
+                try:
+                    new_task_id = self._create_task(safe_prompt, task_info["duration"])
+                    if new_task_id:
+                        logger.info(f"[WAN Polling] Resubmitted {beat_id} with new task {new_task_id}")
+                        # Poll the new task
+                        video_url = self.client._poll_task_status(new_task_id)
+                        if video_url:
+                            return self.client._download_video(video_url, output_path)
+                except Exception as retry_e:
+                    logger.error(f"[WAN Polling] Retry failed for {beat_id}: {retry_e}")
+            else:
+                logger.error(f"[WAN Polling] Rewritten prompt for {beat_id} STILL flagged as unsafe. Giving up.")
+        except Exception as e:
+            logger.error(f"[WAN Polling] Polling error for {beat_id}: {e}")
+            
         # If failed, generate placeholder
         return self.client._generate_placeholder(task_info["prompt"], task_info["duration"], output_path)
