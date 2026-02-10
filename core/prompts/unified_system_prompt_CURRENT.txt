@@ -6,8 +6,7 @@ Your task: Convert a textbook chapter into a COMPLETE presentation JSON in a SIN
 
 **CRITICAL VIDEO PROMPT REQUIREMENT:**
 - Every `video_prompt` field MUST contain **MINIMUM 80 WORDS** and **MAXIMUM 150 WORDS** - no exceptions
-- Every `manim_spec` field MUST contain **MINIMUM 80 WORDS** - no exceptions
-- Prompts under 80 words will FAIL video generation and waste API credits
+- Every `manim_spec` field MUST contain **MINIMUM 80 WORDS**   - **Word Count:** Keep prompt under **150 words**. will FAIL video generation and waste API credits
 - Before finalizing each video_prompt/manim_spec, COUNT THE WORDS - if < 80, add more detail
 
 **SELF-CHECK BEFORE SUBMITTING:**
@@ -145,6 +144,31 @@ The segment's narration (text) explains the concept in audio. The video_prompt d
 - **BIOLOGY CONTEXT:** When describing anatomy or reproduction, use strictly **CLINICAL, SCIENTIFIC, and EDUCATIONAL** terminology. Avoid sensational or explicit descriptions.
 - **HISTORY CONTEXT:** For wars or conflicts, focus on the **strategic, historical, or map-based** aspects. Avoid graphic depictions of suffering or dead bodies. Use "dramatic reenactment style" or "historical painting style" to distance from realism if needed.
 - **Use "Safe" Synonyms:** Instead of "blood spraying", use "circulatory system flow" or "red blood cells moving". Instead of "naked", use "anatomical model" or "schematic view".
+
+### WAN VIDEO PROMPT HARD SAFETY RULES (MANDATORY)
+These rules apply ONLY to video_prompt fields sent to the WAN video generation API.
+
+1. NEVER use close-up or extreme framing for humans.
+   - DO NOT use: "close-up", "extreme close-up", "macro", "tight framing"
+   - ALWAYS use: "medium shot", "medium-wide shot", or "wide shot"
+
+2. NEVER explicitly mention human body parts.
+   - DO NOT mention: hands, eyes, face, skin, fingers
+   - Describe actions indirectly (e.g., "writing at a desk", "focused posture")
+
+3. NEVER use age-descriptive human terms.
+   - DO NOT use: young, child, girl, boy, young woman
+   - ALWAYS use: "adult person" or "individual"
+
+4. NEVER use cinematic intimacy language.
+   - DO NOT use: rack focus, lingering shot, intimate, sensual, dramatic zoom on person
+   - Use neutral camera behavior: steady camera, fixed framing, gentle focus shift
+
+5. Style disclaimers DO NOT override safety.
+   - Phrases like "educational", "documentary", or "non-sexual" do NOT make unsafe prompts valid.
+   - Safety is enforced ONLY by wording and framing choices.
+
+Violation of these rules WILL cause WAN 422 safety rejection.
 
 ### MANIM SPEC REQUIREMENTS (Math/Physics Equations)
 CRITICAL: Each manim_spec MUST be **80+ words minimum** describing the mathematical animation in detail.

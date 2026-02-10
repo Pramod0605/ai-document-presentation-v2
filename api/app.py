@@ -1085,6 +1085,7 @@ def retry_phase(job_id):
         data = request.get_json() or {}
         phase = data.get("phase", "video_render")
         section_ids = data.get("section_ids")
+        user_feedback = data.get("user_feedback")
 
         # V2.5 FIX: Validate section_ids exist in presentation
         if section_ids:
@@ -1098,7 +1099,7 @@ def retry_phase(job_id):
         elif phase == "video_render":
             result = _retry_video_render(job_id, job_folder, presentation, section_ids)
         elif phase == "wan_render":
-            result = _retry_wan_render(job_id, job_folder, presentation, section_ids)
+            result = _retry_wan_render(job_id, job_folder, presentation, section_ids, user_feedback=user_feedback)
         elif phase == "manim_render":
             result = _retry_manim_render(job_id, job_folder, presentation, section_ids)
         elif phase == "avatar_generation":
@@ -1283,7 +1284,7 @@ def _retry_video_render(job_id: str, job_folder: Path, presentation: dict, secti
     return results
 
 
-def _retry_wan_render(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None) -> dict:
+def _retry_wan_render(job_id: str, job_folder: Path, presentation: dict, section_ids: list = None, user_feedback: str = None) -> dict:
     """Retry WAN video rendering for sections with renderer='video'."""
     from core.renderer_executor import execute_renderer
     
@@ -1333,8 +1334,8 @@ def _retry_wan_render(job_id: str, job_folder: Path, presentation: dict, section
             if video_prompts:
                 print(f"[RETRY-WAN] Found {len(video_prompts)} video prompts for section {section_id}")
                 batch_gen = KieBatchGenerator()
-                # generate_batch handles: 1. Idempotency (skips exist) 2. Batching 3. Polling
-                batch_results = batch_gen.generate_batch(video_prompts, str(videos_dir))
+                # generate_batch handles: 1. Idempotency 2. Batching 3. Polling 4. Feedback/Safety Retry
+                batch_results = batch_gen.generate_batch(video_prompts, str(videos_dir), user_feedback=user_feedback)
                 
                 # Update success/failed counts based on returned results
                 generated_count = 0
