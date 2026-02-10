@@ -4,9 +4,14 @@ import json
 import shutil
 import time
 import tempfile
+import logging
+import uuid
+import threading
 from pathlib import Path
-from typing import Optional
-from threading import Thread
+from typing import Dict, List, Optional, Callable
+from datetime import datetime
+
+from render.wan.kie_batch_generator import KieBatchGenerator
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -1333,7 +1338,8 @@ def _retry_wan_render(job_id: str, job_folder: Path, presentation: dict, section
 
             if video_prompts:
                 print(f"[RETRY-WAN] Found {len(video_prompts)} video prompts for section {section_id}")
-                batch_gen = KieBatchGenerator()
+                wan_status_path = job_folder / "wan_status.json"
+                batch_gen = KieBatchGenerator(status_file_path=str(wan_status_path))
                 # generate_batch handles: 1. Idempotency 2. Batching 3. Polling 4. Feedback/Safety Retry
                 batch_results = batch_gen.generate_batch(video_prompts, str(videos_dir), user_feedback=user_feedback)
                 
@@ -2406,10 +2412,14 @@ def rerender_job_sections(job_id):
         def run_wan_rerender_task(job_id, section_ids):
             from core.llm_client_v12 import rerender_sections_wan
             from core.analytics import create_tracker
+            from render.wan.kie_batch_generator import KieBatchGenerator
+            from pathlib import Path
             
             try:
                 job_dir = JOBS_DIR / job_id
                 pres_path = job_dir / "presentation.json"
+                videos_dir = job_dir / "videos"
+                videos_dir.mkdir(parents=True, exist_ok=True)
                 
                 # Update Status
                 job_manager.update_job(job_id, {
@@ -2418,16 +2428,65 @@ def rerender_job_sections(job_id):
                     "current_phase_key": "video_generation"
                 }, persist=True)
                 
+                # 1. Load presentation
                 with open(pres_path, "r") as f:
                     presentation = json.load(f)
                 
+                # 2. Generate NEW prompts via LLM
                 tracker = create_tracker(job_id)
                 updated = rerender_sections_wan(presentation, section_ids, tracker)
                 
+                # 3. Extract wan_beats from updated sections
+                wan_beats = []
+                for section in updated.get("sections", []):
+                    section_id = section.get("section_id")
+                    if section_id not in section_ids:
+                        continue
+                    
+                    video_prompts = section.get("video_prompts", [])
+                    for idx, prompt_data in enumerate(video_prompts):
+                        beat_id = f"section_{section_id}_beat_{idx}"
+                        wan_beats.append({
+                            "beat_id": beat_id,
+                            "prompt": prompt_data.get("prompt", ""),
+                            "duration": prompt_data.get("duration", 5),
+                            "section_id": section_id
+                        })
+                
+                # 4. Render videos using KieBatchGenerator
+                print(f"[WAN-RETRY] Found {len(wan_beats)} beats to render (Job {job_id})")
+                
+                if wan_beats:
+                    wan_status_path = job_dir / "wan_status.json"
+                    batch_gen = KieBatchGenerator(status_file_path=str(wan_status_path))
+                    results = batch_gen.generate_batch(wan_beats, str(videos_dir))
+                    
+                    # 5. Update presentation.json with video paths
+                    for section in updated.get("sections", []):
+                        section_id = section.get("section_id")
+                        if section_id not in section_ids:
+                            continue
+                        
+                        beat_videos = []
+                        video_prompts = section.get("video_prompts", [])
+                        for idx, prompt_data in enumerate(video_prompts):
+                            beat_id = f"section_{section_id}_beat_{idx}"
+                            result = results.get(beat_id)
+                            
+                            if isinstance(result, dict):
+                                video_path = result.get("path", "")
+                            else:
+                                video_path = result or ""
+                            
+                            beat_videos.append(video_path)
+                        
+                        section["beat_videos"] = beat_videos
+                
+                # 6. Save updated presentation.json
                 with open(pres_path, "w") as f:
                     json.dump(updated, f, indent=2)
                 
-                # Check for failures
+                # 7. Check for failures
                 failed_count = 0
                 for s in updated.get("sections", []):
                      if s.get("section_id") in section_ids and s.get("renderer_error"):
@@ -2438,7 +2497,9 @@ def rerender_job_sections(job_id):
                 print(f"[WAN-TASK] Job {job_id} rerender complete: {final_status}")
                 
             except Exception as e:
-                print(f"[WAN-TASK] Error: {e}")
+                import traceback
+                print(f"[WAN-TASK] Error during rerender: {e}")
+                print(traceback.format_exc())
                 job_manager.fail_job(job_id, str(e))
 
         # Submit to JobManager

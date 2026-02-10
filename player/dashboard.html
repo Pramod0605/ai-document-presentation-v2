@@ -290,6 +290,62 @@
             font-size: 0.8rem;
             color: #666;
         }
+
+        /* NEW: WAN Progress and Repair Button Styles */
+        .wan-progress-container {
+            margin-top: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            padding: 8px;
+            display: none;
+        }
+
+        .wan-progress-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 5px;
+            position: relative;
+        }
+
+        .wan-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #9c27b0, #00d4ff);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .wan-progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 0.7rem;
+            line-height: 12px;
+            color: #fff;
+            text-shadow: 0 0 2px #000;
+        }
+
+        .btn-repair {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            transition: background 0.2s;
+        }
+
+        .btn-repair:hover {
+            background: #218838;
+        }
+
+        .btn-repair:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
@@ -871,6 +927,7 @@
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="showAnalytics('${job.job_id}')">Analytics</button>
                             <button class="btn" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px; background: #9c27b0; color: #fff;" onclick="showRetryPhaseModal('${job.job_id}')">Retry Phase</button>
                             <button class="btn" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px; background: #ff6b35; color: #fff;" onclick="showReviewModal('${job.job_id}')">Review</button>
+                            <button class="btn-repair" onclick="repairMissingAssets('${job.job_id}')">Repair Assets</button>
                             <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px;" onclick="window.open('/player_v2/?job=${job.job_id}', '_blank')">Play</button>
                         `;
 
@@ -928,6 +985,17 @@
                                 ${dryRunBadge}
                                 <div style="color: #888; font-size: 0.8rem; margin-top: 4px;">${createdDate} | ${job.params?.subject || 'N/A'} - ${job.params?.grade || 'N/A'}</div>
                                 ${progressBar}
+                                <!-- WAN Progress Monitoring -->
+                                <div class="wan-progress-container" id="wan-progress-area-${job.job_id}">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #aaa;">
+                                        <span>WAN Rendering: <span id="wan-state-text-${job.job_id}">pending</span></span>
+                                        <span id="wan-beats-text-${job.job_id}">0/0 beats</span>
+                                    </div>
+                                    <div class="wan-progress-bar">
+                                        <div class="wan-progress-fill" id="wan-progress-fill-${job.job_id}"></div>
+                                        <div class="wan-progress-text" id="wan-progress-percent-${job.job_id}">0%</div>
+                                    </div>
+                                </div>
                                 ${errorPreview}
                             </div>
                             <div>${actions}</div>
@@ -1351,6 +1419,12 @@
                         const skipped = result.skipped?.length || 0;
                         alert(`Phase Retry Complete!\n\nPhase: ${data.phase}\nSuccess: ${success}\nFailed: ${failed}\nSkipped: ${skipped}`);
                         closeRetryPhaseModal();
+
+                        // NEW: Start polling if it was a WAN phase
+                        if (phase === 'wan_render' || phase === 'video_render') {
+                            pollWANStatus(currentRetryJobId);
+                        }
+
                         loadJobHistory();
                     }
                 })
@@ -1359,6 +1433,86 @@
                     document.getElementById('retryPhaseBtn').textContent = 'Retry Phase';
                     alert('Error: ' + err.message);
                 });
+        }
+
+        // --- WAN Progress Polling ---
+        window.wanPollers = {};
+
+        function pollWANStatus(jobId) {
+            const area = document.getElementById(`wan-progress-area-${jobId}`);
+            if (area) area.style.display = 'block';
+
+            if (window.wanPollers[jobId]) return;
+
+            window.wanPollers[jobId] = setInterval(async () => {
+                try {
+                    const res = await fetch(`/job/${jobId}/wan_status`);
+                    if (!res.ok) {
+                        if (res.status === 404) {
+                            // Not found yet, keep waiting
+                            return;
+                        }
+                        clearInterval(window.wanPollers[jobId]);
+                        delete window.wanPollers[jobId];
+                        return;
+                    }
+
+                    const data = await res.json();
+
+                    const fill = document.getElementById(`wan-progress-fill-${jobId}`);
+                    const percentText = document.getElementById(`wan-progress-percent-${jobId}`);
+                    const beatsText = document.getElementById(`wan-beats-text-${jobId}`);
+                    const stateText = document.getElementById(`wan-state-text-${jobId}`);
+
+                    if (fill) fill.style.width = `${data.progress_percent || 0}%`;
+                    if (percentText) percentText.textContent = `${data.progress_percent || 0}%`;
+                    if (beatsText) beatsText.textContent = `${data.completed_beats || 0}/${data.total_beats || 0} beats`;
+                    if (stateText) {
+                        stateText.textContent = data.state || 'pending';
+                        if (data.state === 'failed') stateText.style.color = '#ff5252';
+                        else if (data.state === 'completed') stateText.style.color = '#00ff88';
+                        else stateText.style.color = '#ffc107';
+                    }
+
+                    if (data.state === 'completed' || data.state === 'failed') {
+                        clearInterval(window.wanPollers[jobId]);
+                        delete window.wanPollers[jobId];
+                        setTimeout(() => loadJobHistory(), 2000);
+                    }
+                } catch (err) {
+                    console.error('WAN poll error:', err);
+                    clearInterval(window.wanPollers[jobId]);
+                    delete window.wanPollers[jobId];
+                }
+            }, 2000);
+        }
+
+        // --- Repair Missing Assets ---
+        async function repairMissingAssets(jobId) {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '⏳ Repairing...';
+
+            try {
+                const res = await fetch(`/api/repair-missing-assets/${jobId}`, {
+                    method: 'POST'
+                });
+
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    alert(`✅ Repair Complete!\n\nRepaired: ${data.repaired_count}\nSkipped: ${data.skipped_count}\nDetails: ${JSON.stringify(data.details, null, 2)}`);
+                    loadJobHistory();
+                } else {
+                    alert(`❌ Repair Failed: ${data.error || 'Unknown error'}`);
+                }
+            } catch (err) {
+                alert(`❌ Request Failed: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
         }
 
         function showAnalytics(jobId) {
