@@ -45,6 +45,7 @@ def process_markdown_unified(
     tts_provider: TTSProvider = "our_tts",
     dry_run: bool = False,
     skip_wan: bool = False,
+    skip_avatar: bool = False,
     images_dict: Optional[dict] = None,
     pipeline_version: str = "v15_v2_director",  # DEFAULT: Use path with Content Completeness Validator
     generation_scope: str = "full",
@@ -476,38 +477,9 @@ def process_markdown_unified(
         # --- PHASE 4: AUTOMATED PARALLEL FORK (Avatar + TTS + Manim/WAN) ---
         # 4a. Trigger Avatar Generation (Fire-and-Forget)
         # 4a. Trigger Avatar Generation (Fire-and-Forget)
-        if output_dir and not dry_run:  # BUG FIX: Skip avatar generation in dry_run/debug mode
-            try:
-                log_status("avatar_generation", "Triggering parallel avatar generation (Background)...")
-                
-                import threading
-                def avatar_worker(pres, j_id, out_dir, trk):
-                    try:
-                        avatar_gen = AvatarGenerator()
-                        # This method now handles updating presentation.json and analytics.json live!
-                        res = avatar_gen.submit_parallel_job(pres, j_id, str(out_dir), tracker=trk)
-                        logger.info(f"[Avatar Worker] Finished job {j_id}. Summary: {len(res.get('completed', []))} completed.")
-                    except Exception as e:
-                        logger.error(f"[Avatar Worker] Failed: {e}")
-
-                # Fire and Forget
-                # Daemon=True ensures it doesn't block app shutdown, but we want it to finish even if main thread ends?
-                # Actually, in Flask/Gunicorn, daemon threads might be killed.
-                # But for this script execution, daemon=False (default) or explicit join is needed if script exits.
-                # However, the user wants "Pipeline Completes". Use Daemon=True to allow script to exit if needed,
-                # OR Daemon=False to keep process alive but unblocked main flow?
-                # Let's use Daemon=True for now as often these are run in long-lived server processes.
-                t = threading.Thread(target=avatar_worker, args=(presentation, job_id, output_dir, tracker))
-                t.daemon = True 
-                t.start()
-                
-                log_status("avatar_generation", "Avatar generation started in background thread.")
-            except Exception as e:
-                logger.error(f"Avatar Generation Trigger Failed: {e}")
-                log_status("avatar_generation", f"Error triggering avatars: {e}")
-        elif dry_run and output_dir:
-            log_status("avatar_generation", "Skipped (dry_run mode)")
-            logger.info("Pipeline: Skipping Avatar generation (dry_run=True)")
+        # 4a. Trigger Avatar Generation 
+        # MOVED TO API/APP.PY to correct concurrency and status handling issues.
+        log_status("avatar_generation", "Avatar generation delegated to Job Manager (Async)")
         
         # --- PHASE 4b: TTS Audio Generation (Background) ---
         # Step 1: Skip estimates (already applied in Phase 2.5)
@@ -659,24 +631,25 @@ def process_markdown_unified(
                         json.dump(presentation, f, indent=4)
                 logger.info(f"Pipeline: Saved FINAL presentation to {pres_path}")
             
-            # --- PART B: ASYNC WAN RENDERING (Batched) ---
-            log_status("wan_rendering", "Starting WAN video generation (Background)...")
+            # --- PART B: WAN RENDERING (Synchronous / Blocking) ---
+            log_status("wan_rendering", "Starting WAN video generation (Blocking)...")
             try:
                 from core.renderer_executor import submit_wan_background_job
-                from threading import Thread
                 
-                # Submit to background thread (Fire-and-Forget)
-                # Thread will safely read/update the file we just saved
-                wan_thread = Thread(
-                    target=submit_wan_background_job,
-                    args=(presentation, str(output_dir / "videos"), job_id, skip_wan, video_provider),
-                    daemon=True
+                # Submit synchronously to hold the worker slot
+                # This prevents "Thundering Herd" on GPU/WAN APIs
+                submit_wan_background_job(
+                    presentation, 
+                    str(output_dir / "videos"), 
+                    job_id, 
+                    skip_wan, 
+                    skip_avatar, 
+                    video_provider
                 )
-                wan_thread.start()
-                logger.info(f"Pipeline: Triggered async WAN generation for job {job_id}")
+                logger.info(f"Pipeline: Completed synchronous WAN generation for job {job_id}")
                 
             except Exception as e:
-                logger.error(f"Failed to trigger async WAN generation: {e}")
+                logger.error(f"Failed to execute WAN generation: {e}")
             
             tracker.end_phase("visual_rendering", 0, 0)
 

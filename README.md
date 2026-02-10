@@ -95,6 +95,8 @@ The **V2.5 Director Pipeline** is a production-grade AI system that converts Mar
 - **Section-Aware Structure**: 18 distinct section types per V2.5 Director Bible
 - **Narration Segments**: LLM generates educator-style explanations with timing
 - **Multi-Renderer Support**: Manim for math, WAN for visuals, Avatar for presenter
+- **Smart Job Recovery**: Preserves LLM work after server restarts (marks as `completed_with_errors` if `presentation.json` exists)
+- **Queued Retries**: All retry actions (Avatar, Video) now respect the global 2-job concurrency limit and queue correctly.
 
 ### Renderers
 | Renderer | Use Case | Output |

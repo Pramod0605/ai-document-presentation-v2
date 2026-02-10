@@ -90,8 +90,65 @@ class JobManager:
     def __init__(self):
         self._jobs: Dict[str, dict] = load_jobs_index()
         self._lock = threading.Lock()
-        self._executor = ThreadPoolExecutor(max_workers=4)  # Allow 4 parallel jobs
-        self.cleanup_stale_jobs()
+        self._executor = ThreadPoolExecutor(max_workers=2)  # Allow 2 parallel jobs (reduced from 4 for stability)
+        self._startup_cleanup()
+    
+    def _startup_cleanup(self):
+        """
+        On startup, fail any jobs that were left in processing/pending/running/queued state.
+        Also cleans up stuck avatar statuses.
+        """
+        changed = False
+        interrupted_count = 0
+        
+        # 1. Pipeline Jobs Cleanup (Smart Recovery)
+        with self._lock:
+            for job_id, job in self._jobs.items():
+                if job.get("status") in ["processing", "running", "queued", "pending"]:
+                    job_dir = JOBS_DIR / job_id
+                    pres_path = job_dir / "presentation.json"
+                    
+                    if pres_path.exists():
+                        log(f"[STARTUP] Found interrupted job {job_id} with saved presentation. Enabling Smart Recovery.")
+                        job["status"] = "completed_with_errors"
+                        job["error"] = None # Clear error to show "Completed with Errors" in UI
+                        job["status_message"] = "Interrupted during asset generation. Partial results saved."
+                        job["failure_message"] = "Server restart interrupted asset generation. You can now retry specific assets."
+                    else:
+                        log(f"[STARTUP] Found stuck job {job_id} (no saved state). Auto-failing.")
+                        job["status"] = "failed"
+                        job["error"] = "System Restarted - Job Interrupted. Please Retry."
+                        job["failure_message"] = "The server was restarted while this job was running."
+                    
+                    job["completed_at"] = datetime.now().isoformat()
+                    interrupted_count += 1
+                    changed = True
+        
+        if changed:
+            self._persist()
+            log(f"[STARTUP] Cleaned up {interrupted_count} stale pipeline jobs.")
+
+        # 2. Avatar Status Cleanup (Local file based)
+        try:
+            cleaned_avatars = 0
+            if JOBS_DIR.exists():
+                for job_folder in JOBS_DIR.iterdir():
+                    if job_folder.is_dir():
+                        status_file = job_folder / "avatar_status.json"
+                        if status_file.exists():
+                            try:
+                                data = json.loads(status_file.read_text())
+                                if data.get("state") == "processing":
+                                    data["state"] = "failed"
+                                    data["error"] = "Avatar generation was interrupted due to server restart."
+                                    status_file.write_text(json.dumps(data, indent=2))
+                                    cleaned_avatars += 1
+                            except Exception:
+                                pass
+            if cleaned_avatars > 0:
+                log(f"[STARTUP] Cleaned up {cleaned_avatars} stuck avatar tasks.")
+        except Exception as e:
+            log(f"[STARTUP] Avatar cleanup failed: {e}")
     
     def _persist(self):
         """Save current jobs state to disk."""
@@ -176,15 +233,18 @@ class JobManager:
     
     def complete_job(self, job_id: str, result: dict = None, status: str = "completed"):
         completed_message = get_phase_message(status)
-        self.update_job(job_id, {
+        updates = {
             "status": status,
             "progress": 100,
             "current_step_name": "Complete!",
             "current_phase_key": "completed",
             "status_message": completed_message,
-            "completed_at": datetime.now().isoformat(),
-            "result": result
-        }, persist=True)
+            "completed_at": datetime.now().isoformat()
+        }
+        if result is not None:
+            updates["result"] = result
+            
+        self.update_job(job_id, updates, persist=True)
     
     def fail_job(self, job_id: str, error: str, phase_key: str = None):
         job = self.get_job(job_id)
@@ -225,49 +285,11 @@ class JobManager:
             "started_at": datetime.now().isoformat()
         }, persist=True)
 
-    def cleanup_stale_jobs(self):
-        """
-        Mark jobs that were interrupted (server crash/restart) as failed.
-        Also cleans up stuck avatar statuses.
-        """
-        changed = False
-        interrupted_count = 0
-        
-        # 1. Pipeline Jobs Cleanup
-        for job_id, job in self._jobs.items():
-            if job.get("status") in ["processing", "running", "queued"]:
-                job["status"] = "failed"
-                job["error"] = "Process interrupted (Server Restart)"
-                job["failure_message"] = "The process was interrupted because the server was restarted."
-                job["completed_at"] = datetime.now().isoformat()
-                interrupted_count += 1
-                changed = True
-        
-        if changed:
-            log(f"[Janitor] Cleaned up {interrupted_count} stale pipeline jobs.")
-            self._persist()
+    def submit_task(self, func: Callable, *args, **kwargs):
+        """Submit an arbitrary task to the thread pool (respecting max_workers)."""
+        return self._executor.submit(func, *args, **kwargs)
 
-        # 2. Avatar Status Cleanup (Local file based)
-        try:
-            cleaned_avatars = 0
-            if JOBS_DIR.exists():
-                for job_folder in JOBS_DIR.iterdir():
-                    if job_folder.is_dir():
-                        status_file = job_folder / "avatar_status.json"
-                        if status_file.exists():
-                            try:
-                                data = json.loads(status_file.read_text())
-                                if data.get("state") == "processing":
-                                    data["state"] = "failed"
-                                    data["error"] = "Avatar generation was interrupted due to server restart."
-                                    status_file.write_text(json.dumps(data, indent=2))
-                                    cleaned_avatars += 1
-                            except Exception:
-                                pass
-            if cleaned_avatars > 0:
-                log(f"[Janitor] Cleaned up {cleaned_avatars} stuck avatar tasks.")
-        except Exception as e:
-            log(f"[Janitor] Avatar cleanup failed: {e}")
+
 
 
 job_manager = JobManager()
@@ -283,18 +305,39 @@ def run_job_async(job_id: str, process_func: Callable, **kwargs):
             log(f"[JOB {job_id}] Job completed successfully!")
             
             # Determine final status from result metadata if available
+            # Determine final status from result metadata if available
             final_status = "completed"
+            pending_tasks = False
+            
             if isinstance(result, dict):
                  meta_status = result.get("metadata", {}).get("job_status")
                  if meta_status == "completed_with_errors":
                      final_status = "completed_with_errors"
+                 if result.get("pending_background_tasks"):
+                     pending_tasks = True
+                     
             elif isinstance(result, tuple) and len(result) > 0 and isinstance(result[0], dict):
                  # Handle (presentation, tracker) tuple
                  meta_status = result[0].get("metadata", {}).get("job_status")
                  if meta_status == "completed_with_errors":
                      final_status = "completed_with_errors"
+                 if result[0].get("pending_background_tasks"):
+                     pending_tasks = True
 
-            job_manager.complete_job(job_id, result, status=final_status)
+            if not pending_tasks:
+                job_manager.complete_job(job_id, result, status=final_status)
+            else:
+                log(f"[JOB {job_id}] Kept in processing state (pending background tasks)")
+                # STATUS UPDATE: Mark as LLM Complete, explicitly requested by user
+                job_manager.update_job(job_id, {
+                    "status": "processing",
+                    "current_step_name": "LLM Completed_Processing_Assets",
+                    "current_phase_key": "assets_pending"
+                }, persist=True)
+                
+                # Persist partial result so frontend has output paths
+                if result:
+                    job_manager.update_job(job_id, {"result": result}, persist=True)
         except Exception as e:
             import traceback
             full_traceback = traceback.format_exc()
