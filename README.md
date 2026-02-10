@@ -97,6 +97,7 @@ The **V2.5 Director Pipeline** is a production-grade AI system that converts Mar
 - **Multi-Renderer Support**: Manim for math, WAN for visuals, Avatar for presenter
 - **Smart Job Recovery**: Preserves LLM work after server restarts (marks as `completed_with_errors` if `presentation.json` exists)
 - **Queued Retries**: All retry actions (Avatar, Video) now respect the global 2-job concurrency limit and queue correctly.
+- **Asset Auto-Repair**: Automatically re-downloads missing avatars using existing task IDs—no new billing or regeneration required.
 
 ### Renderers
 | Renderer | Use Case | Output |
@@ -469,6 +470,27 @@ Regenerate Manim code for specific sections with optional user feedback.
 
 ### 🔧 Metadata & Diagnostic Tools
 
+#### `POST /api/repair-missing-assets/<job_id>` ✨ **NEW**
+**Automated Asset Recovery** - Scans `presentation.json`, identifies missing local `.mp4` files, and re-downloads them from the remote server using existing Task IDs.
+- ✅ **Cost-Efficiency:** Does NOT trigger a new generation; uses already-paid-for tasks.
+- ✅ **Deep Validation:** Verifies the task is actually `completed` on the remote server before attempting download.
+- ✅ **Actionable Repair:** Recommended follow-up action when `sanity-report` identifies missing avatars.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "repaired_count": 3,
+  "details": [
+    {"section_id": "1", "type": "default", "status": "repaired"},
+    {"section_id": "5", "type": "lang_hindi", "status": "repaired"}
+  ],
+  "message": "Successfully repaired 3 avatar files from remote server."
+}
+```
+
+---
+
 #### `POST /api/repair-metadata/<job_id>`
 Surgically repair presentation.json by scanning for orphaned assets on disk and stitching them back into JSON.
 
@@ -709,6 +731,7 @@ For deep-dive architecture and implementation details:
 | `check_job.py` | `python check_job.py <JOB_ID>` | Quick job status check |
 | `reset_jobs.py` | `python reset_jobs.py` | Reset stuck "processing" jobs to "failed" |
 | `fix_job_status.py` | `python fix_job_status.py` | Manually fix job entries |
+| `repair_all_avatars.py` | `python scripts/repair_all_avatars.py` | [NEW] Bulk repair for ALL historical jobs |
 | `deep_fidelity_analysis.py` | `python scripts/deep_fidelity_analysis.py <JOB_ID>` | Analyze job quality |
 
 ---
