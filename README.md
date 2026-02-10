@@ -95,6 +95,8 @@ The **V2.5 Director Pipeline** is a production-grade AI system that converts Mar
 - **Section-Aware Structure**: 18 distinct section types per V2.5 Director Bible
 - **Narration Segments**: LLM generates educator-style explanations with timing
 - **Multi-Renderer Support**: Manim for math, WAN for visuals, Avatar for presenter
+- **Smart Job Recovery**: Preserves LLM work after server restarts (marks as `completed_with_errors` if `presentation.json` exists)
+- **Queued Retries**: All retry actions (Avatar, Video) now respect the global 2-job concurrency limit and queue correctly.
 
 ### Renderers
 | Renderer | Use Case | Output |
@@ -304,6 +306,51 @@ Retry a specific phase for specific sections.
 - `wan_render` - Re-render WAN/Kie videos
 - `avatar_generation` - Regenerate avatar videos
 - `tts_generation` - Regenerate TTS audio
+
+---
+
+---
+
+### 🎥 Video Regeneration & Retries
+
+#### `POST /jobs/<job_id>/regenerate_and_render`
+Regenerate render specs (Manim/WAN) and execute renderers in the background.
+
+**Request (JSON):**
+```json
+{
+  "section_ids": [1, 5],
+  "renderers": ["all"],
+  "execute": true
+}
+```
+
+**Response (200):**
+```json
+{
+  "status": "queued",
+  "message": "Regeneration started in background",
+  "job_id": "a1b2c3d4"
+}
+```
+
+#### `POST /jobs/<job_id>/rerender`
+Request a quick WAN re-render for specific sections (background task).
+
+**Request (JSON):**
+```json
+{
+  "section_ids": ["intro_1"]
+}
+```
+
+**Response (200):**
+```json
+{
+  "status": "queued",
+  "message": "WAN re-render started in background"
+}
+```
 
 ---
 

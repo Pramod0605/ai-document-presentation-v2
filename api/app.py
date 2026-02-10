@@ -2057,6 +2057,7 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             tts_provider=tts_provider,
             dry_run=dry_run,
             skip_wan=skip_wan,
+            skip_avatar=skip_avatar,
             images_dict=images_dict,
             pipeline_version=pipeline_version,
             generation_scope=generation_scope,
@@ -2079,25 +2080,24 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
                 with open(analytics_path, "w") as f:
                     json.dump(analytics_full, f, indent=2)
         
-        # Auto-trigger Avatar Polling & Download
+        # Auto-trigger Avatar Polling & Download (Synchronous / Blocking)
         # Check explicit dry_run arg or params
         is_dry_run_job = locals().get('dry_run', False) or presentation.get('params', {}).get('dry_run', False)
         
         if not skip_avatar and not is_dry_run_job:
-            print(f"[AVATAR] Auto-triggering background generation task for Job {job_id}", flush=True)
-            from threading import Thread
+            print(f"[AVATAR] Starting synchronous avatar generation for Job {job_id}", flush=True)
             if job_id not in ACTIVE_AVATAR_JOBS:
                 ACTIVE_AVATAR_JOBS.add(job_id)
-                thread = Thread(target=run_avatar_sequential_task, args=(job_id, str(JOBS_DIR)))
-                thread.daemon = True
-                thread.start()
+                # RUN SYNCHRONOUSLY to hold the worker slot
+                run_avatar_sequential_task(job_id, str(JOBS_DIR))
         
         return {
             "status": "success",
             "presentation": presentation,
             "analytics": analytics_summary,
             "output_path": str(pres_path),
-            "pipeline_version": "1.5-unified"
+            "pipeline_version": "1.5-unified",
+            "pending_background_tasks": False # Now blocking, so job is truly done when this returns
         }
     except Exception as e:
         import traceback
@@ -2220,17 +2220,75 @@ def process_markdown():
             "error": str(e)
         }), 500
 
+def _async_resume_worker(job_id, mode="standard", from_phase="audio", dry_run=False, skip_wan=False, skip_avatar=False, markdown_content=None, subject=None, grade=None):
+    """Background worker logic for queued retries (Video, Manim, Avatar)."""
+    try:
+        job_dir = JOBS_DIR / job_id
+        
+        if mode == "standard":
+            from core.pipeline_v12 import resume_job_from_phase
+            result = resume_job_from_phase(
+                job_id=job_id,
+                from_phase=from_phase,
+                dry_run=dry_run,
+                skip_wan=skip_wan,
+                skip_avatar=skip_avatar
+            )
+        else: # Recap mode
+            from core.pipeline_v15 import resume_from_recap
+            presentation, tracker = resume_from_recap(
+                job_id=job_id,
+                output_dir=job_dir,
+                markdown_content=markdown_content,
+                subject=subject,
+                grade=grade,
+                generate_tts=True,
+                run_renderers=True,
+                dry_run=dry_run,
+                skip_wan=skip_wan,
+                status_callback=lambda p, m: print(f"[Resume {job_id}] {p}: {m}")
+            )
+            
+            pres_path = job_dir / "presentation.json"
+            with open(pres_path, "w") as f:
+                json.dump(presentation, f, indent=2)
+                
+            # Copy player files
+            for filename in ["player_v2.html", "player_v2.js", "player_v2.css"]:
+                src = PLAYER_DIR / filename
+                dst_name = "index.html" if filename == "player_v2.html" else filename
+                dst = job_dir / dst_name
+                if src.exists():
+                    shutil.copy(str(src), str(dst))
+            
+            result = {
+                "status": "success", 
+                "presentation": presentation, 
+                "analytics": tracker.get_summary() if tracker else {}
+            }
+
+        # FINAL STEP: Auto-trigger Avatar Polling & Download (Synchronous / Blocking)
+        if not skip_avatar and not dry_run:
+            print(f"[RETRY-AVATAR] Starting synchronous avatar generation for Job {job_id}", flush=True)
+            if job_id not in ACTIVE_AVATAR_JOBS:
+                ACTIVE_AVATAR_JOBS.add(job_id)
+                # RUN SYNCHRONOUSLY
+                run_avatar_sequential_task(job_id, str(JOBS_DIR))
+                
+                # Job is not complete until this returns
+                result["pending_background_tasks"] = False
+                
+        return result
+
+    except Exception as e:
+        import traceback
+        print(f"[ASYNC-RESUME-ERROR] {job_id}: {str(e)}\n{traceback.format_exc()}")
+        raise e
+
 @app.route("/jobs/<job_id>/resume", methods=["POST"])
 def resume_job(job_id):
-    """Resume a failed job from a specific phase.
-    
-    POST body:
-    - from_phase: "render" or "audio" (default: "audio")
-    - dry_run: boolean (default: false)
-    - skip_wan: boolean (default: false)
-    - skip_avatar: boolean (default: false)
-    """
-    from core.pipeline_v12 import resume_job_from_phase, detect_job_phase
+    """Resume a failed job from a specific phase (Queued)."""
+    from core.pipeline_v12 import detect_job_phase
     
     data = request.get_json() or {}
     from_phase = data.get("from_phase", "audio")
@@ -2243,136 +2301,61 @@ def resume_job(job_id):
         return jsonify({"error": "Job not found", "job_id": job_id}), 404
     
     phases = detect_job_phase(str(job_dir))
-    
     if not phases["presentation"]:
-        return jsonify({
-            "error": "Cannot resume - presentation.json missing. Job must have completed Director phase.",
-            "job_id": job_id,
-            "phases": phases
-        }), 400
+        return jsonify({"error": "Cannot resume - presentation.json missing.", "job_id": job_id}), 400
     
     try:
-        print(f"[API] Resuming job {job_id} from phase: {from_phase}")
-        result = resume_job_from_phase(
+        print(f"[API] Queueing resume for job {job_id} from phase: {from_phase}")
+        run_job_async(
             job_id=job_id,
+            process_func=_async_resume_worker,
+            mode="standard",
             from_phase=from_phase,
             dry_run=dry_run,
             skip_wan=skip_wan,
             skip_avatar=skip_avatar
         )
-        return jsonify(result)
+        return jsonify({"status": "success", "message": "Resume queued successfully", "job_id": job_id})
     except Exception as e:
-        return jsonify({
-            "status": "error",
-            "error": str(e),
-            "job_id": job_id
-        }), 500
-
+        return jsonify({"status": "error", "error": str(e), "job_id": job_id}), 500
 
 @app.route("/jobs/<job_id>/resume-recap", methods=["POST"])
 def resume_job_from_recap(job_id):
-    """Resume a V1.5 job from the recap stage.
-    
-    Use when the job failed at recap narration/scene generation.
-    Loads existing artifacts and continues from recap.
-    
-    POST body (optional):
-    - skip_wan: boolean (default: false)
-    - dry_run: boolean (default: false)
-    """
-    from core.pipeline_v15 import resume_from_recap, PipelineError
-    
+    """Resume a V1.5 job from the recap stage (Queued)."""
     data = request.get_json() or {}
     skip_wan = data.get("skip_wan", False)
     dry_run = data.get("dry_run", False)
     
     job_dir = JOBS_DIR / job_id
-    if not job_dir.exists():
-        return jsonify({"error": "Job not found", "job_id": job_id}), 404
-    
     artifacts_dir = job_dir / "artifacts"
-    if not artifacts_dir.exists():
-        return jsonify({
-            "error": "Artifacts directory not found. Job must have completed section processing.",
-            "job_id": job_id
-        }), 400
-    
     chunker_path = artifacts_dir / "01_chunker.json"
+    
     if not chunker_path.exists():
-        return jsonify({
-            "error": "01_chunker.json not found. Cannot resume without source content.",
-            "job_id": job_id
-        }), 400
+        return jsonify({"error": "Original artifacts not found. Cannot resume.", "job_id": job_id}), 400
     
     with open(chunker_path) as f:
         chunker_data = json.load(f)
     
     chunks = chunker_data.get("chunks", [])
     markdown_content = "\n\n".join([c.get("content", "") for c in chunks])
-    
     subject = chunker_data.get("subject", "General")
     grade = chunker_data.get("grade", "General")
     
     try:
-        print(f"[API] Resuming job {job_id} from recap stage")
-        
-        def status_callback(phase, message):
-            print(f"[Resume {job_id}] {phase}: {message}")
-        
-        presentation, tracker = resume_from_recap(
+        print(f"[API] Queueing recap resume for job {job_id}")
+        run_job_async(
             job_id=job_id,
-            output_dir=job_dir,
+            process_func=_async_resume_worker,
+            mode="recap",
             markdown_content=markdown_content,
             subject=subject,
             grade=grade,
-            generate_tts=True,
-            run_renderers=True,
-            dry_run=dry_run,
             skip_wan=skip_wan,
-            status_callback=status_callback
+            dry_run=dry_run
         )
-        
-        pres_path = job_dir / "presentation.json"
-        with open(pres_path, "w") as f:
-            json.dump(presentation, f, indent=2)
-        
-        for filename in ["index.html", "player.js"]:
-            src = PLAYER_DIR / filename
-            dst = job_dir / filename
-            if src.exists():
-                shutil.copy(str(src), str(dst))
-        
-        # Update job_manager status so dashboard shows completed
-        sections_count = len(presentation.get("sections", []))
-        job_manager.update_job(job_id, {
-            "status": "completed",
-            "progress": 100,
-            "current_step_name": "Complete",
-            "status_message": f"Resumed from recap - {sections_count} sections rendered",
-            "completed_at": __import__('datetime').datetime.utcnow().isoformat(),
-            "error": None
-        }, persist=True)
-        
-        return jsonify({
-            "status": "success",
-            "job_id": job_id,
-            "sections_count": sections_count,
-            "message": "Job resumed from recap stage successfully"
-        })
-        
-    except PipelineError as e:
-        return jsonify({
-            "status": "error",
-            "error": str(e),
-            "phase": e.phase,
-            "job_id": job_id
-        }), 500
+        return jsonify({"status": "success", "message": "Recap resume queued successfully", "job_id": job_id})
     except Exception as e:
-        return jsonify({
-            "status": "error",
-            "error": str(e),
-            "job_id": job_id
-        }), 500
+        return jsonify({"status": "error", "error": str(e), "job_id": job_id}), 500
 
 
 @app.route("/jobs/<job_id>/phases", methods=["GET"])
@@ -2416,32 +2399,59 @@ def rerender_job_sections(job_id):
         return jsonify({"error": "presentation.json not found"}), 400
     
     try:
-        with open(pres_path, "r") as f:
-            presentation = json.load(f)
+        # Check if already running
+        if job_manager.is_job_running(job_id):
+             return jsonify({"status": "error", "message": "Job is already running"}), 409
+
+        print(f"[API] Queueing WAN re-render for sections {section_ids} (Job {job_id})")
         
-        tracker = create_tracker(job_id)
-        
-        print(f"[API] Re-rendering sections {section_ids} for job {job_id}")
-        updated = rerender_sections_wan(presentation, section_ids, tracker)
-        
-        with open(pres_path, "w") as f:
-            json.dump(updated, f, indent=2)
-        
-        sections_updated = []
-        for s in updated.get("sections", []):
-            sid = s.get("section_id") or s.get("id")
-            if sid in section_ids:
-                sections_updated.append({
-                    "section_id": sid,
-                    "renderer": s.get("renderer"),
-                    "video_prompts_count": len(s.get("video_prompts", [])),
-                    "error": s.get("renderer_error")
-                })
+        # Define wrapper task locally or import
+        def run_wan_rerender_task(job_id, section_ids):
+            from core.llm_client_v12 import rerender_sections_wan
+            from core.analytics import create_tracker
+            
+            try:
+                job_dir = JOBS_DIR / job_id
+                pres_path = job_dir / "presentation.json"
+                
+                # Update Status
+                job_manager.update_job(job_id, {
+                    "status": "processing",
+                    "current_step_name": f"Rerendering {len(section_ids)} WAN video(s)...",
+                    "current_phase_key": "video_generation"
+                }, persist=True)
+                
+                with open(pres_path, "r") as f:
+                    presentation = json.load(f)
+                
+                tracker = create_tracker(job_id)
+                updated = rerender_sections_wan(presentation, section_ids, tracker)
+                
+                with open(pres_path, "w") as f:
+                    json.dump(updated, f, indent=2)
+                
+                # Check for failures
+                failed_count = 0
+                for s in updated.get("sections", []):
+                     if s.get("section_id") in section_ids and s.get("renderer_error"):
+                         failed_count += 1
+                
+                final_status = "completed_with_errors" if failed_count > 0 else "completed"
+                job_manager.complete_job(job_id, status=final_status)
+                print(f"[WAN-TASK] Job {job_id} rerender complete: {final_status}")
+                
+            except Exception as e:
+                print(f"[WAN-TASK] Error: {e}")
+                job_manager.fail_job(job_id, str(e))
+
+        # Submit to JobManager
+        job_manager.submit_task(run_wan_rerender_task, job_id, section_ids)
         
         return jsonify({
-            "status": "success",
+            "status": "queued",
+            "message": "WAN re-render started in background",
             "job_id": job_id,
-            "sections_updated": sections_updated
+            "section_ids": section_ids
         })
         
     except Exception as e:
@@ -2597,120 +2607,112 @@ def regenerate_and_render(job_id):
         return jsonify({"error": "presentation.json not found"}), 400
     
     try:
-        with open(pres_path, "r") as f:
-            presentation = json.load(f)
-        
-        tracker = create_tracker(job_id)
-        videos_dir = job_dir / "videos"
-        videos_dir.mkdir(exist_ok=True)
-        
-        results = {"regenerated": [], "render_results": []}
-        do_all = "all" in renderers
-        do_manim = do_all or "manim" in renderers
-        do_wan = do_all or "wan" in renderers
-        
-        for section in presentation.get("sections", []):
-            sid = section.get("section_id") or section.get("id")
-            if sid not in section_ids:
-                continue
-            
-            renderer = section.get("renderer", "none")
-            section_title = section.get("title", "")[:40]
+        # Check if already running
+        if job_manager.is_job_running(job_id):
+             return jsonify({"status": "error", "message": "Job is already running"}), 409
+
+        print(f"[API] Queueing Regenerate & Render for sections {section_ids} (Job {job_id})")
+
+        def run_regenerate_task(job_id, section_ids, renderers, execute, skip_wan, dry_run):
+            from core.llm_client_v12 import pass2_manim_renderer, pass2_video_renderer
+            from core.renderer_executor import render_all_topics, enforce_renderer_policy
+            from core.analytics import create_tracker
             
             try:
-                if renderer == "manim" and do_manim:
-                    print(f"[Regenerate] Section {sid}: Regenerating manim spec...")
-                    manim_result = pass2_manim_renderer(section, tracker)
-                    section["manim_scene_spec"] = manim_result.get("manim_scene_spec")
-                    results["regenerated"].append({
-                        "section_id": sid,
-                        "title": section_title,
-                        "renderer": "manim",
-                        "status": "success",
-                        "objects": len(section.get("manim_scene_spec", {}).get("objects", [])),
-                        "animations": len(section.get("manim_scene_spec", {}).get("animation_sequence", []))
-                    })
+                job_dir = JOBS_DIR / job_id
+                pres_path = job_dir / "presentation.json"
+                videos_dir = job_dir / "videos"
+                videos_dir.mkdir(exist_ok=True)
+                
+                # Update Status
+                job_manager.update_job(job_id, {
+                    "status": "processing",
+                    "current_step_name": f"Regenerating specs for {len(section_ids)} sections...",
+                    "current_phase_key": "video_generation"
+                }, persist=True)
+                
+                with open(pres_path, "r") as f:
+                    presentation = json.load(f)
+                
+                tracker = create_tracker(job_id)
+                results = {"regenerated": [], "render_results": []}
+                do_all = "all" in renderers
+                do_manim = do_all or "manim" in renderers
+                do_wan = do_all or "wan" in renderers
+                
+                # 1. Regenerate Specs
+                for section in presentation.get("sections", []):
+                    sid = section.get("section_id") or section.get("id")
+                    if sid not in section_ids:
+                        continue
                     
-                elif renderer in ["video", "wan_video", "wan"] and do_wan:
-                    print(f"[Regenerate] Section {sid}: Regenerating WAN video prompts...")
-                    video_result = pass2_video_renderer(section, tracker)
-                    section["video_prompts"] = video_result.get("video_prompts", [])
-                    results["regenerated"].append({
-                        "section_id": sid,
-                        "title": section_title,
-                        "renderer": renderer,
-                        "status": "success",
-                        "prompts_count": len(section.get("video_prompts", []))
-                    })
-                else:
-                    results["regenerated"].append({
-                        "section_id": sid,
-                        "title": section_title,
-                        "renderer": renderer,
-                        "status": "skipped",
-                        "reason": f"Renderer {renderer} not in requested types"
-                    })
+                    renderer = section.get("renderer", "none")
+                    try:
+                        if renderer == "manim" and do_manim:
+                            print(f"[Regenerate] Section {sid}: Regenerating manim spec...")
+                            manim_result = pass2_manim_renderer(section, tracker)
+                            section["manim_scene_spec"] = manim_result.get("manim_scene_spec")
+                        elif renderer in ["video", "wan_video", "wan"] and do_wan:
+                            print(f"[Regenerate] Section {sid}: Regenerating WAN video prompts...")
+                            video_result = pass2_video_renderer(section, tracker)
+                            section["video_prompts"] = video_result.get("video_prompts", [])
+                    except Exception as e:
+                        print(f"[Regenerate] Error regenerating spec for {sid}: {e}")
+
+                with open(pres_path, "w") as f:
+                    json.dump(presentation, f, indent=2)
+                
+                # 2. Execute Renderers
+                if execute and not dry_run:
+                    job_manager.update_job(job_id, {
+                        "current_step_name": f"Rendering videos for {len(section_ids)} sections..."
+                    }, persist=True)
                     
+                    print(f"[Regenerate] Executing renderers for sections {section_ids}...")
+                    presentation = enforce_renderer_policy(presentation)
+                    
+                    rendered_videos = render_all_topics(
+                        presentation=presentation,
+                        output_dir=str(videos_dir),
+                        dry_run=False,
+                        skip_wan=skip_wan,
+                        output_dir_base=str(job_dir)
+                    )
+                    
+                    # Stitch back results
+                    for result in rendered_videos:
+                        topic_id = result.get("topic_id")
+                        if topic_id in section_ids and result.get("video_path"):
+                            video_path = result.get("video_path")
+                            for section in presentation.get("sections", []):
+                                if section.get("section_id") == topic_id:
+                                    rel_path = Path(video_path).name if "/" in str(video_path) else video_path
+                                    section["video_path"] = f"videos/{rel_path}"
+                                    break
+                    
+                    with open(pres_path, "w") as f:
+                        json.dump(presentation, f, indent=2)
+
+                job_manager.complete_job(job_id, status="completed")
+                print(f"[Regenerate] Job {job_id} complete.")
+                
             except Exception as e:
-                results["regenerated"].append({
-                    "section_id": sid,
-                    "title": section_title,
-                    "renderer": renderer,
-                    "status": "error",
-                    "error": str(e)
-                })
-        
-        with open(pres_path, "w") as f:
-            json.dump(presentation, f, indent=2)
-        
-        if execute and not dry_run:
-            print(f"[Regenerate] Executing renderers for sections {section_ids}...")
-            presentation = enforce_renderer_policy(presentation)
-            
-            rendered_videos = render_all_topics(
-                presentation=presentation,
-                output_dir=str(videos_dir),
-                dry_run=False,
-                skip_wan=skip_wan,
-                output_dir_base=str(job_dir)
-            )
-            
-            for result in rendered_videos:
-                topic_id = result.get("topic_id")
-                if topic_id in section_ids:
-                    video_path = result.get("video_path")
-                    for section in presentation.get("sections", []):
-                        if section.get("section_id") == topic_id:
-                            if video_path:
-                                rel_path = Path(video_path).name if "/" in str(video_path) else video_path
-                                section["video_path"] = f"videos/{rel_path}"
-                            break
-                    
-                    results["render_results"].append({
-                        "section_id": topic_id,
-                        "status": result.get("status"),
-                        "video_path": result.get("video_path"),
-                        "error": result.get("error")
-                    })
-            
-            with open(pres_path, "w") as f:
-                json.dump(presentation, f, indent=2)
+                print(f"[Regenerate] Error: {e}")
+                job_manager.fail_job(job_id, str(e))
+
+        # Submit to JobManager
+        job_manager.submit_task(run_regenerate_task, job_id, section_ids, renderers, execute, skip_wan, dry_run)
         
         return jsonify({
-            "status": "success",
+            "status": "queued",
+            "message": "Regeneration started in background",
             "job_id": job_id,
-            "results": results,
-            "execute": execute,
-            "dry_run": dry_run,
-            "skip_wan": skip_wan
         })
         
     except Exception as e:
-        import traceback
         return jsonify({
             "status": "error",
             "error": str(e),
-            "traceback": traceback.format_exc(),
             "job_id": job_id
         }), 500
 
@@ -3426,9 +3428,8 @@ def generate_avatar(job_id):
     
     # Start async task
     ACTIVE_AVATAR_JOBS.add(job_id)
-    thread = Thread(target=run_avatar_sequential_task, args=(job_id, str(JOBS_DIR), languages, speaker, sections))
-    thread.daemon = True
-    thread.start()
+    # Use JobManager to respect global concurrency
+    job_manager.submit_task(run_avatar_sequential_task, job_id, str(JOBS_DIR), languages, speaker, sections)
     
     response = {"status": "queued", "message": "Avatar generation started"}
     if languages:
@@ -3474,9 +3475,8 @@ def regenerate_failed_avatars(job_id):
         
     # Start async task with force=True for the specified sections
     ACTIVE_AVATAR_JOBS.add(job_id)
-    thread = Thread(target=run_avatar_sequential_task, args=(job_id, str(JOBS_DIR), failed_sections, True))
-    thread.daemon = True
-    thread.start()
+    # Use JobManager to respect global concurrency
+    job_manager.submit_task(run_avatar_sequential_task, job_id, str(JOBS_DIR), None, None, failed_sections, True)
     
     return jsonify({"status": "queued", "message": "Avatar retry started", "failed_sections_detected": failed_sections})
 
@@ -3491,9 +3491,8 @@ def regenerate_section_avatar(job_id, section_id):
         return jsonify({"status": "already_running", "message": "Avatar generation in progress"}), 409
     
     ACTIVE_AVATAR_JOBS.add(job_id)
-    thread = Thread(target=run_avatar_sequential_task, args=(job_id, str(JOBS_DIR), [section_id], True))
-    thread.daemon = True
-    thread.start()
+    # Use JobManager to respect global concurrency
+    job_manager.submit_task(run_avatar_sequential_task, job_id, str(JOBS_DIR), None, None, [section_id], True)
     
     return jsonify({"status": "queued", "section_id": section_id})
 
@@ -3724,6 +3723,18 @@ def run_avatar_sequential_task(job_id, jobs_root, languages=None, speaker=None, 
     job_dir = Path(jobs_root) / job_id
     presentation_file = job_dir / "presentation.json"
     
+    # STATUS UPDATE: Start of Avatar Phase
+    try:
+        from core.job_manager import job_manager
+        if job_manager:
+            job_manager.update_job(job_id, {
+                "status": "processing",
+                "current_step_name": "Generating Avatars...",
+                "current_phase_key": "avatar_generation" 
+            }, persist=True)
+    except Exception as e:
+        print(f"[AVATAR-TASK] Failed to update start status: {e}", flush=True)
+
     try:
         if not presentation_file.exists():
             print(f"[AVATAR-TASK] Error: presentation.json not found for {job_id}")
@@ -3733,24 +3744,25 @@ def run_avatar_sequential_task(job_id, jobs_root, languages=None, speaker=None, 
             presentation = json.load(f)
             
         generator = AvatarGenerator()
+        results = {}
         
         # Use submit_parallel_job for multi-language support (has batch processing with language loops)
         # submit_all_jobs is for single-language, stateful retry mechanism
         if languages:
             # Multi-language: use submit_parallel_job which handles language batching
             print(f"[AVATAR-TASK] Using submit_parallel_job for multi-language generation", flush=True)
-            result = generator.submit_parallel_job(
+            results = generator.submit_parallel_job(
                 presentation=presentation,
                 job_id=job_id,
                 output_dir=str(job_dir),
                 languages=languages,
                 speaker=speaker
             )
-            print(f"[AVATAR-TASK] Multi-language generation complete: {len(result.get('completed', []))} completed, {len(result.get('failed', []))} failed", flush=True)
+            print(f"[AVATAR-TASK] Multi-language generation complete: {len(results.get('completed', []))} completed, {len(results.get('failed', []))} failed", flush=True)
         else:
             # Single language/default: use submit_all_jobs (stateful with retry)
             print(f"[AVATAR-TASK] Using submit_all_jobs for default avatar generation", flush=True)
-            generator.submit_all_jobs(
+            results = generator.submit_all_jobs(
                 presentation=presentation,
                 job_id=job_id,
                 output_dir=str(job_dir),
@@ -3760,10 +3772,37 @@ def run_avatar_sequential_task(job_id, jobs_root, languages=None, speaker=None, 
         
         print(f"[AVATAR-TASK] Background task completed for job {job_id}")
         
+        # STATUS UPDATE: Completion
+        try:
+            failed_count = len(results.get("failed", []))
+            completed_count = len(results.get("completed", []))
+            skipped_count = len(results.get("skipped", []))
+            
+            final_status = "completed"
+            
+            if failed_count > 0:
+                if completed_count > 0 or skipped_count > 0:
+                    final_status = "completed_with_errors"
+                else:
+                    # Soft Fail: Still mark as completed_with_errors if user wants to see partials or just fail?
+                    # Plan says "Soft Fail" logic.
+                    final_status = "completed_with_errors" 
+            
+            if job_manager:
+                job_manager.complete_job(job_id, result=results, status=final_status)
+                print(f"[AVATAR-TASK] Job {job_id} marked as {final_status}")
+                
+        except Exception as e:
+            print(f"[AVATAR-TASK] Failed to update completion status: {e}", flush=True)
+            
     except Exception as e:
         print(f"[AVATAR-TASK] Fatal error: {e}", flush=True)
         import traceback
         traceback.print_exc()
+        try:
+            if job_manager:
+                job_manager.fail_job(job_id, str(e), phase_key="avatar_generation")
+        except: pass
     finally:
         if job_id in ACTIVE_AVATAR_JOBS:
             ACTIVE_AVATAR_JOBS.remove(job_id)
