@@ -638,14 +638,28 @@ def process_markdown_unified(
                 
                 # Submit synchronously to hold the worker slot
                 # This prevents "Thundering Herd" on GPU/WAN APIs
-                submit_wan_background_job(
-                    presentation, 
-                    str(output_dir / "videos"), 
-                    job_id, 
-                    skip_wan, 
-                    skip_avatar, 
-                    video_provider
-                )
+                try:
+                    submit_wan_background_job(
+                        presentation, 
+                        str(output_dir / "videos"), 
+                        job_id, 
+                        skip_wan, 
+                        skip_avatar, 
+                        video_provider
+                    )
+                except TypeError as te:
+                    if "positional arguments" in str(te):
+                        logger.warning(f"Pipeline: Detected legacy submit_wan_background_job signature. Retrying with 5 args. Error: {te}")
+                        submit_wan_background_job(
+                            presentation, 
+                            str(output_dir / "videos"), 
+                            job_id, 
+                            skip_wan, 
+                            skip_avatar
+                        )
+                    else:
+                        raise te
+                        
                 logger.info(f"Pipeline: Completed synchronous WAN generation for job {job_id}")
                 
             except Exception as e:
