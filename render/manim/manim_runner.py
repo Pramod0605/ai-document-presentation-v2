@@ -10,6 +10,7 @@ import tempfile
 import shutil
 import json
 from pathlib import Path
+from typing import Union, Optional, List, Dict, Any
 from render.render_trace import log_render_prompt
 
 
@@ -89,7 +90,7 @@ BANNED_PLACEHOLDER_EQUATIONS = [
 ]
 
 
-def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trace_output_dir: str | None = None) -> str | list[str]:
+def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trace_output_dir: Optional[str] = None) -> Union[str, List[str]]:
     """
     Render Manim video for a section with visual beats.
     
@@ -429,7 +430,7 @@ def _render_v12_manim_spec(
     duration: float,
     output_dir: str,
     dry_run: bool = False,
-    trace_output_dir: str | None = None
+    trace_output_dir: Optional[str] = None
 ) -> str:
     """
     Render v1.2 section-level manim_scene_spec as a single video.
@@ -507,7 +508,7 @@ def _render_v15_manim_code(
     duration: float,
     output_dir: str,
     dry_run: bool = False,
-    trace_output_dir: str | None = None
+    trace_output_dir: Optional[str] = None
 ) -> str:
     """
     Render v1.5 pre-generated Manim Python code.
@@ -593,8 +594,8 @@ def _render_all_beats(
     narration_segments: list,
     output_dir: str,
     dry_run: bool = False,
-    trace_output_dir: str | None = None
-) -> list[str]:
+    trace_output_dir: Optional[str] = None
+) -> List[str]:
     """
     Render ALL visual beats as separate video files.
     
@@ -730,9 +731,9 @@ def _render_manim_segment_specs(
     topic_title: str,
     output_dir: str,
     dry_run: bool = False,
-    trace_output_dir: str | None = None,
-    topic: dict | None = None
-) -> list[str]:
+    trace_output_dir: Optional[str] = None,
+    topic: Optional[dict] = None
+) -> List[str]:
     """
     Render per-segment Manim videos.
     Each spec has: segment_id, duration_seconds, manim_scene_spec
@@ -825,8 +826,8 @@ def _render_sync_split_manim_beats(
     section_type: str,
     output_dir: str,
     dry_run: bool = False,
-    trace_output_dir: str | None = None
-) -> list[str]:
+    trace_output_dir: Optional[str] = None
+) -> List[str]:
     """
     Render sync-split Manim beats from video_prompts.
     
@@ -892,8 +893,8 @@ def _render_compiled_multi_beat(
     total_duration: float,
     output_dir: str,
     dry_run: bool = False,
-    trace_output_dir: str | None = None
-) -> list[str]:
+    trace_output_dir: Optional[str] = None
+) -> List[str]:
     """
     Render compiled multi-beat plans (from manim_plan['beats'] array).
     
