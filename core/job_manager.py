@@ -173,6 +173,7 @@ class JobManager:
                 "steps_completed": 0,
                 "total_steps": 4 if job_type == "pdf" else 3,
                 "progress": 0,
+                "blueprint_ready": False,  # NEW: Initialize to false, set to true when presentation.json saved
                 "created_at": datetime.now().isoformat(),
                 "started_at": None,
                 "completed_at": None,
