@@ -2399,9 +2399,6 @@ def rerender_job_sections(job_id):
         return jsonify({"error": "presentation.json not found"}), 400
     
     try:
-        # Check if already running
-        if job_manager.is_job_running(job_id):
-             return jsonify({"status": "error", "message": "Job is already running"}), 409
 
         print(f"[API] Queueing WAN re-render for sections {section_ids} (Job {job_id})")
         
@@ -3861,7 +3858,7 @@ def repair_missing_assets(job_id):
             def check_and_repair(task_id, rel_path, language=None):
                 nonlocal updates_made
                 if not task_id or not rel_path:
-                    return False, "no_data"
+                    return False, "no_data", None  # Fixed: Return 3 values
                 
                 # Check local file
                 # Handle relative paths properly: "avatars/foo.mp4" -> job_dir / "avatars/foo.mp4"
