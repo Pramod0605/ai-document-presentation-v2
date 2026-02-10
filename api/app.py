@@ -3815,6 +3815,7 @@ def repair_missing_assets(job_id):
     on the remote server (using existing task_id).
     Does NOT regenerate or re-bill.
     """
+    from core.locks import presentation_lock, analytics_lock
     from core.agents.avatar_generator import AvatarGenerator
     
     job_dir = JOBS_DIR / job_id
@@ -3825,9 +3826,10 @@ def repair_missing_assets(job_id):
         return jsonify({"error": "Job presentation.json not found"}), 404
         
     try:
-        # Load presentation
-        with open(pres_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        # Load presentation with lock
+        with presentation_lock:
+            with open(pres_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
             
         generator = AvatarGenerator()
         repaired_count = 0
@@ -3916,10 +3918,11 @@ def repair_missing_assets(job_id):
                     updates_made = True
                     details.append({"section_id": sid, "type": f"lang_{l_lang}", "status": "metadata_fixed"})
 
-        # Final Persistence
+        # Final Persistence with lock
         if updates_made:
-            with open(pres_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=4)
+            with presentation_lock:
+                with open(pres_path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=4)
             
             # Smart Status Upgrade: If we recovered everything, try to upgrade the job status
             try:
