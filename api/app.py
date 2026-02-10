@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import Dict, List, Optional, Callable
 from datetime import datetime
 
-from render.wan.kie_batch_generator import KieBatchGenerator
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -2449,7 +2448,7 @@ def rerender_job_sections(job_id):
                         wan_beats.append({
                             "beat_id": beat_id,
                             "prompt": prompt_data.get("prompt", ""),
-                            "duration": prompt_data.get("duration", 5),
+                            "duration_hint": prompt_data.get("duration", 5),  # FIX: Use duration_hint, not duration
                             "section_id": section_id
                         })
                 
@@ -2459,7 +2458,14 @@ def rerender_job_sections(job_id):
                 if wan_beats:
                     wan_status_path = job_dir / "wan_status.json"
                     batch_gen = KieBatchGenerator(status_file_path=str(wan_status_path))
-                    results = batch_gen.generate_batch(wan_beats, str(videos_dir))
+                    
+                    try:
+                        results = batch_gen.generate_batch(wan_beats, str(videos_dir))
+                    except Exception as render_error:
+                        print(f"[WAN-RETRY] Rendering error: {render_error}")
+                        import traceback
+                        traceback.print_exc()
+                        results = {}  # Continue with empty results to update what we can
                     
                     # 5. Update presentation.json with video paths
                     for section in updated.get("sections", []):
@@ -2478,7 +2484,12 @@ def rerender_job_sections(job_id):
                             else:
                                 video_path = result or ""
                             
-                            beat_videos.append(video_path)
+                            # FIX: Ensure paths are relative, not absolute
+                            if video_path:
+                                rel_path = Path(video_path).name
+                                beat_videos.append(f"videos/{rel_path}")
+                            else:
+                                beat_videos.append("")
                         
                         section["beat_videos"] = beat_videos
                 
