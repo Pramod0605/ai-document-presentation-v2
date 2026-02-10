@@ -21,9 +21,14 @@ This update focuses on **Concurrency Safety**, **Stability**, and **Smart Recove
   - *Cost Efficiency:* Re-downloads existing successful tasks; **no new billing/generation cost**.
 - **Bulk Repair Script:** Added `scripts/repair_all_avatars.py` for one-click recovery of all historical jobs.
 - **WAN Version Safety:** Implemented backward-compatibility for `submit_wan_background_job` to gracefully handle argument count mismatches during phased server updates.
+- **WAN NSFW Resilience (New Logic):**
+  - **Polling-Phase Detection:** Updated `WANClient` to detect safety violations *after* submission (during video generation).
+  - **Auto-Retry & Rewrite:** `KieBatchGenerator` now automatically catches these flags, rewrites the prompt with "Hard Safety Rules," and resubmits once—preventing job failure.
 
 ## Files Modified
 - `api/app.py`: Added `/api/repair-missing-assets/` and background task submission.
-- `core/job_manager.py`: Implemented `_startup_cleanup` logic and `submit_task` pool management.
+- `core/job_manager.py`: Implemented `_startup_cleanup` logic and pool management.
 - `core/pipeline_unified.py`: Fixed `submit_wan_background_job` mismatch and enforced sync safety.
+- `render/wan/wan_client.py`: Enhanced polling to detect safety/nsfw errors post-submission.
+- `render/wan/kie_batch_generator.py`: Implemented internal retry logic for safety errors and hardened rewrite rules.
 - `scripts/repair_all_avatars.py`: [NEW] Bulk recovery tool.
