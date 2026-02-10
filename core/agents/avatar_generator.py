@@ -570,9 +570,15 @@ class AvatarGenerator:
             
             print(f"[AVATAR] Batch {batch_idx+1} Done.")
             
-        final_msg = f"[AVATAR] Job Complete. Queued: {len(results['queued'])}, Completed/Downloaded: {len(results['completed'])}, Skipped: {len(results['skipped'])}"
+        final_msg = f"[AVATAR] Job Complete. Queued: {len(results['queued'])}, Completed/Downloaded: {len(results['completed'])}, Skipped: {len(results['skipped'])}, Failed: {len(results['failed'])}"
         logger.info(final_msg)
         print(final_msg)
+        
+        if results["failed"]:
+            print(f"[AVATAR] Critical: {len(results['failed'])} tasks failed.")
+            for f in results["failed"]:
+                print(f"  - Section {f.get('section_id')}: {f.get('error', 'Unknown Error')}")
+                
         return results
 
     def submit_all_jobs(self, presentation: Dict[str, Any], job_id: str, output_dir: str, 

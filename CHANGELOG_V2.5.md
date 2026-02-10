@@ -1,6 +1,8 @@
 # Changelog - V2.5 Director Bible Enhancements
 
 This update focuses on **Concurrency Safety**, **Stability**, and **Smart Recovery** for the presentation generation pipeline.
+- **[FIX]** **Sanity Checker:** Resolved `SyntaxError: Unexpected identifier 'Html'` in `sanity_check.html`.
+- **[DOCS]** **Job Lifecycle:** Updated `README.md` to define `completed_with_errors` status and clarify LLM completion vs. Job completion.
 
 ## 1. Concurrency & Sequential Safety (Global Job Pool)
 - **Max Workers Enforced:** Reduced global concurrency to **2 parallel jobs** in `core/job_manager.py` for maximum stability.

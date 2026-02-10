@@ -298,7 +298,7 @@ def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False
 
 
 
-def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, skip_wan: bool = False, video_provider: str = "ltx"):
+def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, skip_wan: bool = False, skip_avatar: bool = False, video_provider: str = "ltx"):
     """
     Submits video generation tasks to Kie.ai or LTX.
     """
@@ -306,6 +306,15 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
         from render.wan.kie_batch_generator import KieBatchGenerator
         from render.render_trace import log_render_prompt, set_trace_output_dir
 
+        try:
+            from core.job_manager import job_manager
+            if job_manager and not skip_wan:
+                 job_manager.update_job(job_id, {
+                     "status": "processing",
+                     "current_step_name": f"Generating Video ({video_provider.upper()})...",
+                     "current_phase_key": "video_generation"
+                 }, persist=True)
+        except: pass
         
         print(f"[BG-JOB] Starting background generation for job {job_id} using {video_provider}")
         
@@ -351,10 +360,20 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
         
         if not wan_beats:
             logger.info(f"[BG-JOB] No beats found for job {job_id}")
+            if skip_avatar:
+                try: 
+                    from core.job_manager import job_manager
+                    if job_manager: job_manager.complete_job(job_id)
+                except: pass
             return
             
         if skip_wan:
             logger.info(f"[BG-JOB] Video generation skipped per request")
+            if skip_avatar:
+                try: 
+                    from core.job_manager import job_manager
+                    if job_manager: job_manager.complete_job(job_id)
+                except: pass
             return
 
         if video_provider == "ltx":
@@ -413,6 +432,14 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
                 _update_analytics_safely(pres_path.parent / "analytics.json", topic_id, {"status": "success", "duration_seconds": 0}) 
                 
         logger.info(f"[BG-JOB] All tasks complete for job {job_id}")
+        
+        if skip_avatar:
+            try: 
+                from core.job_manager import job_manager
+                if job_manager: 
+                    job_manager.complete_job(job_id)
+                    print(f"[BG-JOB] Job {job_id} marked as completed (Avatar skipped)")
+            except: pass
 
     except Exception as e:
         logger.error(f"[BG-JOB] Fatal error in background thread: {e}")
