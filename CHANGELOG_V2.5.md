@@ -15,13 +15,15 @@ This update focuses on **Concurrency Safety**, **Stability**, and **Smart Recove
 - **Action:** If found, the job is marked as **`completed_with_errors`** instead of `failed`.
 - **User Benefit:** You no longer need to restart the entire pipeline; you can simply click "Retry" on the missing Avatar or Video sections from the Dashboard.
 
-## 3. Bug Fixes & Improvements
-- **Duplicate Avatar Trigger:** Removed redundant trigger in `pipeline_unified.py` to prevent race conditions and double-billing.
-- **Accurate Status Logs:** Jobs now report granular phases (`Generating Video...`, `Generating Avatars...`, `LLM Completed_Processing_Assets`) to prevent the dashboard from prematurely showing green.
-- **Result Preservation:** Ensured `presentation.json` is persisted before asset generation starts so metadata is available even during background processing.
+## 3. Asset Auto-Repair & Hotfixes
+- **Asset Auto-Repair:** New endpoint `POST /api/repair-missing-assets/<job_id>` automatically restores missing avatars.
+  - *Reliability:* It verifies the task status on the remote server before downloading.
+  - *Cost Efficiency:* Re-downloads existing successful tasks; **no new billing/generation cost**.
+- **Bulk Repair Script:** Added `scripts/repair_all_avatars.py` for one-click recovery of all historical jobs.
+- **WAN Version Safety:** Implemented backward-compatibility for `submit_wan_background_job` to gracefully handle argument count mismatches during phased server updates.
 
 ## Files Modified
-- `api/app.py`: Implemented background task submission for all retry types.
+- `api/app.py`: Added `/api/repair-missing-assets/` and background task submission.
 - `core/job_manager.py`: Implemented `_startup_cleanup` logic and `submit_task` pool management.
-- `core/pipeline_unified.py`: Enforced sync safety for WAN generation and removed duplicate triggers.
-- `core/renderer_executor.py`: Updated status reporting and renderer selection logic.
+- `core/pipeline_unified.py`: Fixed `submit_wan_background_job` mismatch and enforced sync safety.
+- `scripts/repair_all_avatars.py`: [NEW] Bulk recovery tool.

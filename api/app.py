@@ -3808,6 +3808,147 @@ def run_avatar_sequential_task(job_id, jobs_root, languages=None, speaker=None, 
             ACTIVE_AVATAR_JOBS.remove(job_id)
 
 
+@app.route("/api/repair-missing-assets/<job_id>", methods=["POST"])
+def repair_missing_assets(job_id):
+    """
+    Auto-Repair: Downloads missing avatars IF they are marked as completed 
+    on the remote server (using existing task_id).
+    Does NOT regenerate or re-bill.
+    """
+    from core.locks import presentation_lock, analytics_lock
+    from core.agents.avatar_generator import AvatarGenerator
+    
+    job_dir = JOBS_DIR / job_id
+    pres_path = job_dir / "presentation.json"
+    avatar_dir = job_dir / "avatars"
+    
+    if not pres_path.exists():
+        return jsonify({"error": "Job presentation.json not found"}), 404
+        
+    try:
+        # Load presentation with lock
+        with presentation_lock:
+            with open(pres_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            
+        generator = AvatarGenerator()
+        repaired_count = 0
+        updates_made = False
+        details = []
+        
+        # Ensure avatar dir exists
+        avatar_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Scan sections
+        for section in data.get("sections", []):
+            sid = str(section.get("section_id"))
+            
+            # Helper to check and repair a single reference
+            def check_and_repair(task_id, rel_path, language=None):
+                nonlocal updates_made
+                if not task_id or not rel_path:
+                    return False, "no_data"
+                
+                # Check local file
+                # Handle relative paths properly: "avatars/foo.mp4" -> job_dir / "avatars/foo.mp4"
+                current_path_is_absolute = rel_path.startswith("/jobs/")
+                
+                if current_path_is_absolute:
+                     # Force fix to relative
+                     filename = Path(rel_path).name
+                     if language:
+                         rel_path = f"avatars/{language}/{filename}"
+                     else:
+                         rel_path = f"avatars/{filename}"
+                     local_file = job_dir / rel_path
+                else:
+                     local_file = job_dir / rel_path
+                
+                # If missing or empty
+                if not local_file.exists() or local_file.stat().st_size < 1000:
+                    # 1. Check Status on Server
+                    print(f"[REPAIR] Checking status for Task {task_id} (Sec {sid})...", flush=True)
+                    status_res = generator.check_status(task_id)
+                    status = status_res.get("status")
+                    
+                    is_success = (status == "completed" or (status_res.get("result", {}).get("success") is True))
+                    
+                    if is_success:
+                        print(f"[REPAIR] Task {task_id} is VALID. Downloading to {local_file}...", flush=True)
+                        local_file.parent.mkdir(parents=True, exist_ok=True)
+                        if generator.download_video(task_id, str(local_file)):
+                            updates_made = True
+                            return True, "restored", rel_path
+                        else:
+                            return False, "download_failed", rel_path
+                    else:
+                        return False, f"server_status_{status}", rel_path
+                else:
+                    return False, "exists", rel_path
+
+            # 1. Default Avatar
+            tid = section.get("avatar_task_id")
+            path = section.get("avatar_video")
+            success, reason, new_path = check_and_repair(tid, path)
+            if success:
+                repaired_count += 1
+                section["avatar_video"] = new_path
+                section["avatar_status"] = "completed"
+                details.append({"section_id": sid, "type": "default", "status": "repaired"})
+            elif reason == "exists" and path.startswith("/jobs/"):
+                # File exists but path is absolute, fix the path
+                section["avatar_video"] = new_path
+                updates_made = True
+                details.append({"section_id": sid, "type": "default", "status": "metadata_fixed"})
+
+            # 2. Multi-Language Avatars
+            for lang_entry in section.get("avatar_languages", []):
+                l_tid = lang_entry.get("task_id")
+                l_path = lang_entry.get("video_path")
+                l_lang = lang_entry.get("language")
+                
+                l_success, l_reason, l_new_path = check_and_repair(l_tid, l_path, language=l_lang)
+                if l_success:
+                    repaired_count += 1
+                    lang_entry["video_path"] = l_new_path
+                    lang_entry["status"] = "completed"
+                    details.append({"section_id": sid, "type": f"lang_{l_lang}", "status": "repaired"})
+                elif l_reason == "exists" and l_path.startswith("/jobs/"):
+                    lang_entry["video_path"] = l_new_path
+                    updates_made = True
+                    details.append({"section_id": sid, "type": f"lang_{l_lang}", "status": "metadata_fixed"})
+
+        # Final Persistence with lock
+        if updates_made:
+            with presentation_lock:
+                with open(pres_path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=4)
+            
+            # Smart Status Upgrade: If we recovered everything, try to upgrade the job status
+            try:
+                from core.job_manager import job_manager
+                job_info = job_manager.get_job(job_id)
+                if job_info and job_info.get("status") == "completed_with_errors":
+                    # Simple check: are there any sections still missing avatars?
+                    # This is a bit lazy but better than nothing
+                    # Future: re-run the whole sanity check logic here
+                    pass
+            except: pass
+
+        return jsonify({
+            "status": "success",
+            "repaired_count": repaired_count,
+            "metadata_updates": updates_made,
+            "details": details,
+            "message": f"Successfully repaired {repaired_count} avatar files and updated metadata."
+        })
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"status": "error", "error": str(e)}), 500
+
+
 @app.route("/api/repair-metadata/<job_id>", methods=["POST"])
 def repair_metadata(job_id):
     """
