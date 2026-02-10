@@ -26,13 +26,32 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 # 2. Restart Docker
-Write-Host "[DEPLOY] Restarting Application Container..." -ForegroundColor Yellow
+Write-Host "[DEPLOY] Restarting Application Container ($CONTAINER_NAME)..." -ForegroundColor Yellow
 ssh $SERVER_USER@$SERVER_IP "docker restart $CONTAINER_NAME"
 
-# Example 3: If running manual python script (Kill and Restart)
-# This is risky via SSH one-liner without nohup/Start-Process, but here's a pattern:
-# ssh $SERVER_USER@$SERVER_IP "stop-process -name python -force; Start-Process python -ArgumentList 'pipeline_v2.py' -WorkingDirectory '$PROJECT_DIR' -WindowStyle Hidden"
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "[ERROR] Docker restart command failed." -ForegroundColor Red
+    exit 1
+}
 
-Write-Host "[DEPLOY] NOTE: Docker restart command is commented out in script. Please uncomment the one matching your setup." -ForegroundColor Gray
+# 3. Verify Restart
+Write-Host "[DEPLOY] Verifying container status..." -ForegroundColor Yellow
+Start-Sleep -Seconds 2 # Give it a moment to initialize
+
+$STATUS_JSON = ssh $SERVER_USER@$SERVER_IP "docker inspect $CONTAINER_NAME --format '{{json .State}}'"
+if ($LASTEXITCODE -eq 0 -and $STATUS_JSON) {
+    # Check if Running
+    if ($STATUS_JSON -match '"Running":true') {
+        $STARTED_AT = ssh $SERVER_USER@$SERVER_IP "docker inspect $CONTAINER_NAME --format '{{.State.StartedAt}}'"
+        Write-Host "[SUCCESS] Container is RUNNING. Started at: $STARTED_AT" -ForegroundColor Green
+    } else {
+        Write-Host "[CRITICAL] Container is NOT running after restart!" -ForegroundColor Red
+        Write-Host "[DEBUG] Fetching last 20 lines of logs:" -ForegroundColor Gray
+        ssh $SERVER_USER@$SERVER_IP "docker logs --tail 20 $CONTAINER_NAME"
+        exit 1
+    }
+} else {
+    Write-Host "[WARNING] Could not verify container status via docker inspect." -ForegroundColor Yellow
+}
 
 Write-Host "[DEPLOY] Deployment Sequence Complete!" -ForegroundColor Green

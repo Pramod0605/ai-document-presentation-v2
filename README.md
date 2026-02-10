@@ -231,9 +231,17 @@ Get processing status for a job.
 
 **Status Values:**
 - `pending` - Job queued, waiting to start
-- `processing` - Job actively running
-- `completed` - Job finished successfully
-- `failed` - Job encountered an error
+- `processing` - Job actively running (LLM, Manim, WAN, Avatar)
+- `completed` - Job finished successfully (All assets generated)
+- `completed_with_errors` - **[NEW]** LLM Blueprint is done, but some assets failed (use Auto-Repair/Retry)
+- `failed` - Job encountered a fatal error (e.g., LLM failure)
+
+#### 🧠 LLM Completion vs. Job Completion
+The **LLM Phase** is considered "Complete" when:
+1. The **Director's Blueprint** (`presentation.json`) is successfully saved to disk.
+2. The `llm_generation` phase in `analytics.json` maps to `completed`.
+
+At this stage, the "Creative Work" is done. The job then moves to **Rendering Phase** (Manim, WAN, Avatar). If the server restarts *after* this point, the job will recover as `completed_with_errors`, preserving your generated content.
 
 ---
 

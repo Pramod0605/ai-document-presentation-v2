@@ -1,2 +1,50 @@
---- Running V25Validator on Chunk 2 ---
-✅ Validation PASSED!
+﻿
+======================================================================
+Testing: debug_llm_chunk_0_attempt_0.txt
+======================================================================
+File size: 19186 characters
+First 200 chars: ```json
+{
+  "sections": [
+    {
+      "section_id": "section_1",
+      "section_type": "content",
+      "title": "Chapter Introduction",
+      "renderer": "none",
+      "narration": {
+        "full_te
+Last 200 chars:  'MISTAKE: Image is INVERTED on retina' fading in. This clearly demonstrates and corrects a common misconception for students.",
+            "beats": null
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+python : Traceback (most recent call last):
+At line:1 char:1
++ python test_llm_json_validity.py 2>&1 | Out-File -FilePath 
+test_resul ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent  
+   call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "C:\Users\email\Downloads\AI-Document-presentation\ai-doc-pres
+entation\test_llm_json_validity.py", line 121, in <module>
+    main()
+  File "C:\Users\email\Downloads\AI-Document-presentation\ai-doc-pres
+entation\test_llm_json_validity.py", line 89, in main
+    valid, parsed = test_json_validity(file_path)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\email\Downloads\AI-Document-presentation\ai-doc-pres
+entation\test_llm_json_validity.py", line 28, in test_json_validity
+    print("\n\u26a0\ufe0f  Response is wrapped in markdown code 
+block")
+  File "C:\Users\email\AppData\Local\Programs\Python\Python312\Lib\en
+codings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in 
+position 2-3: character maps to <undefined>
