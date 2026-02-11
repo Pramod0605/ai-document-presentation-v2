@@ -186,7 +186,10 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
         duration=min(duration, 60),
         output_path=output_path
     )
-    
+
+    # FIX: Return None if generation failed (no placeholder)
+    if result_path is None:
+        print(f"[WAN] Section {topic_id} video generation failed - no placeholder created")
     return result_path
 
 
@@ -352,9 +355,15 @@ def _render_visual_beats(
             duration=beat_duration,
             output_path=beat_output_path
         )
+        # FIX: Handle None (failed) - append None to track failure, no placeholder
+        if result_path is None:
+            print(f"  [Beat {beat_idx}] FAILED: Video generation failed - no placeholder")
         video_paths.append(result_path)
-    
-    print(f"[WAN] Completed {len(video_paths)} beat videos for section {topic_id}")
+
+    # Count successful vs failed
+    successful = sum(1 for p in video_paths if p is not None)
+    failed = len(video_paths) - successful
+    print(f"[WAN] Completed {successful}/{len(video_paths)} beat videos for section {topic_id} ({failed} failed)")
     
     # ISS-200 FIX: Optionally return all paths for recap sequencing
     if return_all_paths:
@@ -488,9 +497,15 @@ def _render_recap_scenes(
             duration=scene_duration,
             output_path=scene_output_path
         )
+        # FIX: Handle None (failed) - append None to track failure, no placeholder
+        if result_path is None:
+            print(f"  [Recap Scene {scene_num}] FAILED: Video generation failed - no placeholder")
         video_paths.append(result_path)
-    
-    print(f"[WAN] Completed {len(video_paths)} recap scene videos for section {topic_id}")
+
+    # Count successful vs failed
+    successful = sum(1 for p in video_paths if p is not None)
+    failed = len(video_paths) - successful
+    print(f"[WAN] Completed {successful}/{len(video_paths)} recap scene videos for section {topic_id} ({failed} failed)")
     
     # ISS-092 FIX: Return all paths for player sequencing
     return {
@@ -713,13 +728,19 @@ def render_from_video_prompts(
                 duration=min(duration, 10),
                 output_path=str(video_file)
             )
+            # FIX: Handle None (failed) - no placeholder creation
+            if result_path is None:
+                print(f"  [Beat {beat_id}] FAILED: Video generation failed - no placeholder")
             video_paths.append(result_path)
         except Exception as e:
-            print(f"  [Beat {beat_id}] ERROR: {e}")
-            _create_beat_placeholder(i, section_id, str(video_file), duration)
-            video_paths.append(str(video_file))
-    
-    print(f"[WAN] Completed {len(video_paths)} videos for section {section_id}")
+            # FIX: Don't create placeholder on error - just log and append None
+            print(f"  [Beat {beat_id}] ERROR: {e} - no placeholder created")
+            video_paths.append(None)
+
+    # Count successful vs failed
+    successful = sum(1 for p in video_paths if p is not None)
+    failed = len(video_paths) - successful
+    print(f"[WAN] Completed {successful}/{len(video_paths)} videos for section {section_id} ({failed} failed)")
     
     if video_paths and section_type != "recap":
         combined_path = output_path / f"topic_{section_id}.mp4"

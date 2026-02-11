@@ -136,27 +136,67 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
                 # Default to Kie/WAN
                 print(f"[RENDER] Section {topic_id}: Using Kie/WAN provider")
                 video_path = render_wan_video(topic, output_dir, dry_run=dry_run, skip_wan=skip_wan, trace_output_dir=trace_output_dir)
-        
-        result["status"] = "success"
-        
+
         # ISS-093 FIX: Handle different return types from renderers
+        # FIX: Also handle None returns (failed generation - no placeholder)
         if isinstance(video_path, list):
-            result["video_path"] = video_path[0] if video_path else None
-            result["beat_videos"] = video_path
-            print(f"[RENDER] Manim multi-beat: {len(video_path)} beat videos for section {topic_id}")
+            # Filter out None values (failed beats)
+            valid_paths = [p for p in video_path if p is not None]
+            failed_count = len(video_path) - len(valid_paths)
+
+            if valid_paths:
+                result["video_path"] = valid_paths[0]
+                result["beat_videos"] = valid_paths
+                result["status"] = "success" if failed_count == 0 else "partial"
+                if failed_count > 0:
+                    result["video_status"] = f"partial_failure_{failed_count}_of_{len(video_path)}_failed"
+                print(f"[RENDER] Manim multi-beat: {len(valid_paths)}/{len(video_path)} beat videos for section {topic_id}")
+            else:
+                result["status"] = "failed"
+                result["video_status"] = "generation_failed"
+                result["error"] = "All video generations failed"
+                print(f"[RENDER] Section {topic_id}: ALL beat videos failed to generate")
+
         elif isinstance(video_path, dict):
-            result["video_path"] = video_path.get("first_path")
-            result["recap_video_paths"] = video_path.get("all_paths", [])
-            print(f"[RENDER] WAN recap: {len(result['recap_video_paths'])} videos for section {topic_id}")
+            all_paths = video_path.get("all_paths", [])
+            valid_paths = [p for p in all_paths if p is not None]
+            failed_count = len(all_paths) - len(valid_paths)
+
+            if valid_paths:
+                result["video_path"] = valid_paths[0]
+                result["recap_video_paths"] = valid_paths
+                result["status"] = "success" if failed_count == 0 else "partial"
+                if failed_count > 0:
+                    result["video_status"] = f"partial_failure_{failed_count}_of_{len(all_paths)}_failed"
+                print(f"[RENDER] WAN recap: {len(valid_paths)}/{len(all_paths)} videos for section {topic_id}")
+            else:
+                result["status"] = "failed"
+                result["video_status"] = "generation_failed"
+                result["error"] = "All recap video generations failed"
+                print(f"[RENDER] Section {topic_id}: ALL recap videos failed to generate")
+
+        elif video_path is None:
+            # Single video failed
+            result["status"] = "failed"
+            result["video_status"] = "generation_failed"
+            result["error"] = "Video generation failed - no video created"
+            print(f"[RENDER] Section {topic_id}: Video generation FAILED (no placeholder)")
         else:
             result["video_path"] = video_path
-        
+            result["status"] = "success"
+
         if topic.get("_recap_video_paths"):
-            result["recap_video_paths"] = topic["_recap_video_paths"]
-        
+            recap_paths = topic["_recap_video_paths"]
+            valid_recap = [p for p in recap_paths if p is not None]
+            if valid_recap:
+                result["recap_video_paths"] = valid_recap
+
         if topic.get("_beat_video_paths"):
-            result["beat_video_paths"] = topic["_beat_video_paths"]
-            print(f"[RENDER] Captured {len(result['beat_video_paths'])} content beat paths for section {topic_id}")
+            beat_paths = topic["_beat_video_paths"]
+            valid_beats = [p for p in beat_paths if p is not None]
+            if valid_beats:
+                result["beat_video_paths"] = valid_beats
+                print(f"[RENDER] Captured {len(valid_beats)} content beat paths for section {topic_id}")
     except Exception as e:
         result["status"] = "failed"
         result["error"] = str(e)

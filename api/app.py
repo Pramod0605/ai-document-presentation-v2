@@ -1499,7 +1499,8 @@ def _retry_avatar_generation(job_id: str, job_folder: Path, presentation: dict,
                     if generator.download_video(task_id, str(output_path)):
                         # Update presentation.json
                         for sec in presentation["sections"]:
-                            if sec["section_id"] == section_id:
+                            # FIX: Use string comparison to avoid int/str type mismatch
+                            if str(sec.get("section_id")) == str(section_id):
                                 sec["avatar_path"] = f"avatars/section_{section_id}_avatar.mp4"
                                 sec["avatar_video"] = f"avatars/section_{section_id}_avatar.mp4"
                                 sec["avatar_status"] = "completed"
@@ -3067,11 +3068,22 @@ def generate_v15():
         job_output_dir = JOBS_DIR / job_id
         setup_job_folder(job_output_dir)
         
-        def status_callback(jid, phase, message):
-            job_manager.update_job(jid, {
-                "current_phase_key": phase,
-                "status_message": message
-            }, persist=True)
+        def status_callback(update_data_or_jid, phase=None, message=None):
+            # Handle both legacy signature (jid, phase, message) and new dict signature (update_dict)
+            if isinstance(update_data_or_jid, dict):
+                # New dict signature from pipeline_unified
+                update_data = update_data_or_jid
+                # ensure job_id is present
+                if "job_id" not in update_data:
+                    update_data["job_id"] = job_id
+                job_manager.update_job(job_id, update_data, persist=True)
+            else:
+                # Legacy signature
+                # jid is update_data_or_jid
+                job_manager.update_job(update_data_or_jid, {
+                    "current_phase_key": phase,
+                    "status_message": message
+                }, persist=True)
         
         generate_tts = tts_provider not in ["estimate"]
         
@@ -3800,7 +3812,8 @@ def run_avatar_generation_task(job_id, jobs_root):
                         
                         # Update presentation.json immediately
                         for sec in presentation["sections"]:
-                            if sec["section_id"] == section_id:
+                            # FIX: Use string comparison to avoid int/str type mismatch
+                            if str(sec.get("section_id")) == str(section_id):
                                 sec["avatar_video"] = task["local_path"]
                                 sec["avatar_task_id"] = task_id
                                 break

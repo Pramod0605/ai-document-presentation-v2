@@ -260,12 +260,21 @@ class KieBatchGenerator:
         else:
             logger.info("[KieBatch] No pending tasks to poll.")
         
-        # NEW: Final status update
+        # NEW: Final status update with actual error messages from Kie.ai
         completed = [bid for bid, r in results.items() if r and (isinstance(r, dict) and r.get("path") or isinstance(r, str))]
         failed = [bid for bid, r in results.items() if not r or (isinstance(r, dict) and not r.get("path"))]
         total = len(beats)
         progress = int((len(completed) / total * 100)) if total > 0 else 100
-        
+
+        # Extract actual error messages from results
+        errors = {}
+        for bid in failed:
+            result = results.get(bid)
+            if isinstance(result, dict) and result.get("error"):
+                errors[bid] = result["error"]  # Actual Kie.ai error
+            else:
+                errors[bid] = "Generation failed (unknown error)"
+
         self._update_status(
             "completed" if len(failed) == 0 else "completed_with_errors",
             total_beats=total,
@@ -278,7 +287,7 @@ class KieBatchGenerator:
                 "in_progress": [],
                 "completed": completed,
                 "failed": failed,
-                "errors": {bid: "Generation failed" for bid in failed}
+                "errors": errors  # Now contains actual error messages
             }
         )
         
@@ -350,60 +359,75 @@ class KieBatchGenerator:
         """Poll all tasks in parallel using a thread pool."""
         final_results = {}
         print(f"[WAN] Starting parallel polling for {len(self.pending_tasks)} tasks...")
-        
+
         with ThreadPoolExecutor(max_workers=10) as executor:
             future_to_task = {
-                executor.submit(self._poll_and_download, task): task 
+                executor.submit(self._poll_and_download, task): task
                 for task in self.pending_tasks
             }
-            
+
             for future in as_completed(future_to_task):
                 task = future_to_task[future]
                 beat_id = task["beat_id"]
                 try:
-                    local_path = future.result()
-                    # Return dict with both path and the final prompt used
-                    final_results[beat_id] = {
-                        "path": local_path, 
-                        "prompt": task.get("final_prompt", task.get("prompt"))
-                    }
+                    result = future.result()
+                    # Result is now a dict with path, prompt, and optional error
+                    if isinstance(result, dict):
+                        final_results[beat_id] = result
+                    else:
+                        # Legacy: if string path returned directly
+                        final_results[beat_id] = {
+                            "path": result,
+                            "prompt": task.get("final_prompt", task.get("prompt"))
+                        }
                 except Exception as e:
                     logger.error(f"[KieBatch] Task {beat_id} failed: {e}")
-                    final_results[beat_id] = None # Or handle placeholder
-                    
+                    final_results[beat_id] = {"path": None, "error": str(e)}
+
         return final_results
 
-    def _poll_and_download(self, task_info: Dict) -> str:
-        """Poller for a single task with internal retry for safety errors."""
+    def _poll_and_download(self, task_info: Dict) -> Dict:
+        """Poller for a single task with internal retry for safety errors.
+
+        Returns:
+            dict: {"path": str|None, "prompt": str, "error": str|None}
+        """
         task_id = task_info["task_id"]
         output_path = task_info["output_path"]
         beat_id = task_info["beat_id"]
-        
+        prompt = task_info.get("final_prompt", task_info.get("prompt"))
+        last_error = None
+
         try:
             # Use client's polling and download methods
             video_url = self.client._poll_task_status(task_id)
             if video_url:
-                return self.client._download_video(video_url, output_path)
+                local_path = self.client._download_video(video_url, output_path)
+                return {"path": local_path, "prompt": prompt, "error": None}
         except WanSafetyError as e:
+            last_error = f"Safety/Policy Violation: {e}"
             logger.warning(f"[WAN Polling] Safety Error detected during generation for {beat_id}: {e}. Attempting ONE retry with rewrite...")
             # If it's a safety error during polling, try ONE resubmission
-            # Note: We only do this if it wasn't already a rewritten prompt (to avoid loops)
             if not task_info.get("is_retry"):
                 safe_prompt = self._rewrite_prompt(task_info["prompt"], is_safety_fix=True)
                 try:
                     new_task_id = self._create_task(safe_prompt, task_info["duration"])
                     if new_task_id:
                         logger.info(f"[WAN Polling] Resubmitted {beat_id} with new task {new_task_id}")
-                        # Poll the new task
                         video_url = self.client._poll_task_status(new_task_id)
                         if video_url:
-                            return self.client._download_video(video_url, output_path)
+                            local_path = self.client._download_video(video_url, output_path)
+                            return {"path": local_path, "prompt": safe_prompt, "error": None}
                 except Exception as retry_e:
+                    last_error = f"Safety retry failed: {retry_e}"
                     logger.error(f"[WAN Polling] Retry failed for {beat_id}: {retry_e}")
             else:
+                last_error = "Rewritten prompt still flagged as unsafe"
                 logger.error(f"[WAN Polling] Rewritten prompt for {beat_id} STILL flagged as unsafe. Giving up.")
         except Exception as e:
+            last_error = str(e)
             logger.error(f"[WAN Polling] Polling error for {beat_id}: {e}")
-            
-        # If failed, generate placeholder
-        return self.client._generate_placeholder(task_info["prompt"], task_info["duration"], output_path)
+
+        # FIX: Return dict with error info instead of None
+        logger.error(f"[WAN Polling] Beat {beat_id} FAILED - no video generated. Error: {last_error}")
+        return {"path": None, "prompt": prompt, "error": last_error}

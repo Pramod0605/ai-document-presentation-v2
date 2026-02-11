@@ -32,8 +32,8 @@ KIE_API_BASE = "https://api.kie.ai/api/v1"
 class WANClient:
     MAX_RETRIES = 3
     RETRY_DELAY = 5
-    POLL_INTERVAL = 5  # seconds between status checks
-    MAX_POLL_ATTEMPTS = 120  # 10 minutes max wait (120 * 5s)
+    POLL_INTERVAL = 30  # seconds between status checks (reduced API load)
+    MAX_POLL_ATTEMPTS = 20  # 10 minutes max wait (20 * 30s)
     
     # Track video hashes to detect duplicates within a session
     _generated_hashes: Set[str] = set()
@@ -46,12 +46,17 @@ class WANClient:
             "Content-Type": "application/json"
         }
     
-    def generate_video(self, prompt: str, duration: int = 5, output_path: Optional[str] = None, max_retries: Optional[int] = None, seed: Optional[int] = None) -> str:
-        """Generate video with retry logic for transient failures and duplicate detection."""
+    def generate_video(self, prompt: str, duration: int = 5, output_path: Optional[str] = None, max_retries: Optional[int] = None, seed: Optional[int] = None) -> Optional[str]:
+        """Generate video with retry logic for transient failures and duplicate detection.
+
+        Returns:
+            str: Path to generated video file on success
+            None: If all retries failed (no placeholder created)
+        """
         retries = max_retries if max_retries is not None else self.MAX_RETRIES
         last_error = None
         current_seed = seed if seed is not None else random.randint(1, 999999)
-        
+
         for attempt in range(retries):
             try:
                 result = self._generate_video_attempt(prompt, duration, output_path, seed=current_seed)
@@ -73,9 +78,10 @@ class WANClient:
                     print(f"[WAN 2.6] Retrying in {self.RETRY_DELAY}s with new seed...")
                     current_seed = random.randint(1, 999999)
                     time.sleep(self.RETRY_DELAY)
-        
-        print(f"[WAN 2.6] All {retries} attempts failed, generating placeholder")
-        return self._generate_placeholder(prompt, duration, output_path)
+
+        # FIX: Return None instead of placeholder - let caller mark as failed
+        print(f"[WAN 2.6] All {retries} attempts failed. Error: {last_error}")
+        return None
     
     def _compute_file_hash(self, file_path: str) -> str:
         """Compute MD5 hash of a file for duplicate detection."""
@@ -114,8 +120,8 @@ class WANClient:
         Status polling: GET /api/v1/jobs/getTask/{task_id}
         """
         if not self.api_key:
-            print("[WAN 2.6] No API key configured, generating placeholder")
-            return self._generate_placeholder(prompt, duration, output_path)
+            print("[WAN 2.6] No API key configured - cannot generate video")
+            return None
         
         # Truncate prompt to 800 chars max
         prompt = self._truncate_prompt(prompt, max_chars=800)
@@ -341,7 +347,10 @@ class WANClient:
     def _generate_placeholder(self, prompt: str, duration: int, output_path: Optional[str]) -> str:
         """Generate placeholder video when API fails or is not configured."""
         try:
-            from moviepy import ColorClip
+            try:
+                from moviepy import ColorClip  # moviepy 2.x
+            except ImportError:
+                from moviepy.editor import ColorClip  # moviepy 1.x
             
             output_path = output_path or f"placeholder_{int(time.time())}.mp4"
             
