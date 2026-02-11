@@ -556,6 +556,15 @@ def submit_job():
                 job_type_name = "v15_pipeline"
             else:
                 job_type_name = "v14_pipeline"
+            # ISS-PREFIX: Extract job prefix or use IP address
+            job_prefix = request.form.get("job_prefix")
+            if not job_prefix:
+                # Fallback to IP address if no prefix provided
+                job_prefix = request.remote_addr
+                # Replace dots/colons in IP with underscores for safety
+                if job_prefix:
+                    job_prefix = job_prefix.replace(".", "_").replace(":", "_")
+            
             job_id = job_manager.create_job(job_type_name, {
                 "subject": subject,
                 "grade": grade,
@@ -567,9 +576,10 @@ def submit_job():
                 "pipeline_version": pipeline_version,
                 "generation_scope": generation_scope,
                 "model": model,
-                "video_provider": video_provider
-            })
-            
+                "video_provider": video_provider,
+                "job_prefix": job_prefix  # Store in params too for reference
+            }, prefix=job_prefix)
+        
             job_output_dir = JOBS_DIR / job_id
             setup_job_folder(job_output_dir)
             
@@ -641,7 +651,6 @@ def submit_job():
                     tts_provider=tts_provider,
                     pipeline_version=pipeline_version,
                     generation_scope=generation_scope,
-                    model=model
                 )
         
         elif request.is_json:
@@ -675,6 +684,13 @@ def submit_job():
                 job_type_name = "v15_pipeline"
             else:
                 job_type_name = "v14_pipeline"
+            # ISS-PREFIX: Extract job prefix (JSON payload)
+            job_prefix = data.get("job_prefix")
+            if not job_prefix:
+                job_prefix = request.remote_addr
+                if job_prefix:
+                    job_prefix = job_prefix.replace(".", "_").replace(":", "_")
+
             job_id = job_manager.create_job(job_type_name, {
                 "subject": subject,
                 "grade": grade,
@@ -686,8 +702,9 @@ def submit_job():
                 "generation_scope": generation_scope,
                 "model": model,
                 "content_preview": content_preview,
-                "video_provider": video_provider
-            })
+                "video_provider": video_provider,
+                "job_prefix": job_prefix
+            }, prefix=job_prefix)
             
             job_output_dir = JOBS_DIR / job_id
             setup_job_folder(job_output_dir)

@@ -155,8 +155,22 @@ class JobManager:
         with self._lock:
             save_jobs_index(self._jobs)
     
-    def create_job(self, job_type: str, params: dict) -> str:
-        job_id = str(uuid.uuid4())[:8]
+    def create_job(self, job_type: str, params: dict, prefix: str = None) -> str:
+        # Generate ID with optional prefix
+        base_uuid = str(uuid.uuid4())[:8]
+        if prefix:
+            # Sanitize prefix (alphanumeric + underscore only)
+            clean_prefix = "".join(c if c.isalnum() else "_" for c in prefix)
+            # Truncate to reasonable length (e.g. 32 chars) to avoid filesystem issues
+            clean_prefix = clean_prefix[:32]
+            # Ensure no trailing/leading underscores
+            clean_prefix = clean_prefix.strip("_")
+            if clean_prefix:
+                job_id = f"{clean_prefix}_{base_uuid}"
+            else:
+                job_id = base_uuid
+        else:
+            job_id = base_uuid
         
         queued_message = get_phase_message("queued")
         

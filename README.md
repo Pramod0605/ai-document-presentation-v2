@@ -196,6 +196,7 @@ Submit a new presentation job.
 | `languages` | string | No | "english" | Comma-separated language names (e.g., "english,hindi,telugu"). See [Avatar Languages](#-avatar-generation) |
 | `speaker` | string | No | "default" | Speaker name (e.g., "abhilash") |
 | `generation_scope` | string | No | "full" | Scope of generation |
+| `job_prefix` | string | No | IP Address | Custom prefix for Job ID (e.g., "Math_Project") |
 
 **Response (200):**
 ```json
