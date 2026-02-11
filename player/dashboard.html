@@ -971,8 +971,15 @@
                                     <div style="width: ${progress}%; height: 100%; background: linear-gradient(90deg, #00d4ff, #00ff88); border-radius: 3px; transition: width 0.5s;"></div>
                                 </div>
                             </div>
+                            </div>
                         `;
-                        actions = `<span style="color: #ffc107; font-size: 0.8rem; margin-right: 10px;">In Progress...</span><button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; border: 1px solid #ff5252; color: #ff5252;" onclick="forceStopJob('${job.job_id}')">Force Stop</button>`;
+
+                        let playerBtn = '';
+                        if (job.blueprint_ready) {
+                            playerBtn = `<button class="btn btn-primary" style="padding: 4px 10px; font-size: 0.8rem; margin-right: 5px; background: #2196f3;" onclick="window.open('/player_v2/?job=${job.job_id}', '_blank')">Show Player (Preview)</button>`;
+                        }
+
+                        actions = `${playerBtn}<span style="color: #ffc107; font-size: 0.8rem; margin-right: 10px;">In Progress...</span><button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; border: 1px solid #ff5252; color: #ff5252;" onclick="forceStopJob('${job.job_id}')">Force Stop</button>`;
                     }
 
                     const errorPreview = (job.error && job.status !== 'running') ? `<div style="color: #ff5252; font-size: 0.8rem; margin-top: 5px; max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${job.error.substring(0, 100)}...</div>` : '';
