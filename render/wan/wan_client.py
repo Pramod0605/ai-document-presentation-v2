@@ -345,7 +345,7 @@ class WANClient:
             
             output_path = output_path or f"placeholder_{int(time.time())}.mp4"
             
-            bg = ColorClip(size=(1280, 720), color=(30, 30, 60), duration=duration)
+            bg = ColorClip(size=(1280, 720), color=(255, 0, 0), duration=1)  # 1-sec RED placeholder for easy detection
             
             bg.write_videofile(
                 output_path,

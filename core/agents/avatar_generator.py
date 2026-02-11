@@ -259,6 +259,10 @@ class AvatarGenerator:
                                     section["avatar_video"] = f"avatars/{avatar_filename}"
                                     section["avatar_status"] = "completed"
                                     
+                                    # CRITICAL FIX: Store task_id for repair feature
+                                    if task_id:
+                                        section["avatar_task_id"] = task_id
+                                    
                                     # ISS-VIMEO: store vimeo details
                                     if vimeo_url:
                                         section["vimeo_url"] = vimeo_url

@@ -99,6 +99,38 @@ class KieBatchGenerator:
         except Exception as e:
             logger.error(f"[WAN Status] Failed to update status file: {e}")
     
+    def _is_placeholder_video(self, video_path: str, expected_duration: int) -> bool:
+        """
+        Detect if a video is a placeholder by checking duration.
+        
+        Args:
+            video_path: Path to video file
+            expected_duration: Expected duration from narration (5/10/15 seconds)
+        
+        Returns:
+            True if video is a placeholder (duration ≤ 2 seconds)
+        """
+        if not os.path.exists(video_path):
+            return False
+        
+        try:
+            from moviepy.editor import VideoFileClip
+            
+            with VideoFileClip(video_path) as clip:
+                actual_duration = clip.duration
+            
+            # Placeholder detection: duration ≤ 2 seconds when expecting >= 5
+            if actual_duration <= 2 and expected_duration >= 5:
+                print(f"[WAN] Placeholder detected: {video_path} (duration={actual_duration}s, expected={expected_duration}s)")
+                return True
+                
+            return False
+        except Exception as e:
+            logger.error(f"[WAN] Failed to check video duration for {video_path}: {e}")
+            # If we can't determine, treat very small files as placeholders
+            file_size = os.path.getsize(video_path)
+            return file_size < 100000  # < 100KB is likely placeholder
+    
     def generate_batch(self, beats: List[Dict], output_dir: str, user_feedback: str = None):
         """
         Process a list of beats in batches.
@@ -142,10 +174,26 @@ class KieBatchGenerator:
                 
                 # GRANULAR RETRY: Check if file exists and is valid (>0 bytes)
                 if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
-                    print(f"[WAN] Skipping existing beat: {beat_id}")
-                    # Pre-populate result immediately - return dict with path and original prompt
-                    results[beat_id] = {"path": output_path, "prompt": original_prompt}
-                    continue
+                    # NEW: Check if it's a placeholder video
+                    if self._is_placeholder_video(output_path, duration):
+                        print(f"[WAN] Placeholder detected for {beat_id}, will retry...")
+                        # Delete placeholder to force regeneration
+                        try:
+                            os.remove(output_path)
+                            print(f"[WAN] Deleted placeholder: {output_path}")
+                            # Update status to show retry attempt
+                            # Note: Status will be updated again in polling phase
+                        except Exception as e:
+                            logger.error(f"[WAN] Failed to delete placeholder {output_path}: {e}")
+                            # If deletion fails, treat as existing valid file to avoid infinite retry
+                            results[beat_id] = {"path": output_path, "prompt": original_prompt}
+                            continue
+                    else:
+                        # Valid video exists, skip
+                        print(f"[WAN] Skipping existing beat: {beat_id}")
+                        # Pre-populate result immediately - return dict with path and original prompt
+                        results[beat_id] = {"path": output_path, "prompt": original_prompt}
+                        continue
                 
                 # Pre-process prompt if user feedback provided
                 current_prompt = original_prompt
