@@ -73,14 +73,14 @@ class KieBatchGenerator:
             return original_prompt # Fallback
     
     def _update_status(self, state, **kwargs):
-        """Update wan_status.json with current progress."""
+        """Update wan_status.json with current progress and pending task_ids for recovery."""
         if not self.status_file_path:
             return
-        
+
         try:
             from datetime import datetime
             import json
-            
+
             status = {
                 "state": state,
                 "total_beats": kwargs.get("total_beats", 0),
@@ -90,15 +90,111 @@ class KieBatchGenerator:
                 "updated_at": datetime.now().isoformat(),
                 "details": kwargs.get("details", {})
             }
-            
+
             if "started_at" in kwargs:
                 status["started_at"] = kwargs["started_at"]
-            
+
+            # NEW: Save pending_tasks for crash recovery (includes task_ids)
+            if kwargs.get("save_pending_tasks", False) and self.pending_tasks:
+                status["pending_tasks"] = [
+                    {
+                        "beat_id": t["beat_id"],
+                        "task_id": t["task_id"],
+                        "output_path": t["output_path"],
+                        "prompt": t.get("final_prompt", t.get("prompt")),
+                        "duration": t.get("duration", 5)
+                    }
+                    for t in self.pending_tasks
+                ]
+
             with open(self.status_file_path, "w", encoding="utf-8") as f:
                 json.dump(status, f, indent=2)
         except Exception as e:
             logger.error(f"[WAN Status] Failed to update status file: {e}")
-    
+
+    def _load_pending_tasks(self) -> List[Dict]:
+        """Load pending tasks with task_ids from wan_status.json for recovery."""
+        if not self.status_file_path or not os.path.exists(self.status_file_path):
+            return []
+
+        try:
+            import json
+            with open(self.status_file_path, "r", encoding="utf-8") as f:
+                status = json.load(f)
+
+            pending = status.get("pending_tasks", [])
+            if pending:
+                logger.info(f"[WAN Recovery] Found {len(pending)} pending tasks from previous session")
+            return pending
+        except Exception as e:
+            logger.error(f"[WAN Recovery] Failed to load pending tasks: {e}")
+            return []
+
+    def resume_polling(self) -> Dict:
+        """
+        Resume polling for orphaned tasks from a previous session.
+
+        Call this before generate_batch() to recover videos that may have
+        completed on Kie.ai while your server was down.
+
+        Returns:
+            Dict[beat_id -> {"path": str|None, "prompt": str, "error": str|None}]
+        """
+        saved_tasks = self._load_pending_tasks()
+        if not saved_tasks:
+            logger.info("[WAN Recovery] No pending tasks to resume")
+            return {}
+
+        logger.info(f"[WAN Recovery] Resuming polling for {len(saved_tasks)} orphaned tasks...")
+
+        # Filter out tasks where video already exists on disk
+        tasks_to_poll = []
+        already_done = {}
+        for task in saved_tasks:
+            output_path = task.get("output_path")
+            beat_id = task.get("beat_id")
+            if output_path and os.path.exists(output_path) and os.path.getsize(output_path) > 100000:
+                # Video file exists and is > 100KB, consider it done
+                logger.info(f"[WAN Recovery] {beat_id} already has video file, skipping")
+                already_done[beat_id] = {"path": output_path, "prompt": task.get("prompt"), "error": None}
+            else:
+                tasks_to_poll.append(task)
+
+        if not tasks_to_poll:
+            logger.info("[WAN Recovery] All tasks already have video files")
+            # Clear pending_tasks from status file
+            self._update_status("resumed_complete", details={"recovered": list(already_done.keys())})
+            return already_done
+
+        # Poll the remaining tasks
+        self.pending_tasks = tasks_to_poll
+        logger.info(f"[WAN Recovery] Polling {len(tasks_to_poll)} tasks...")
+
+        results = self._poll_all_tasks()
+        results.update(already_done)
+
+        # Update status file - clear pending_tasks on completion
+        completed = [bid for bid, r in results.items() if r and r.get("path")]
+        failed = [bid for bid, r in results.items() if not r or not r.get("path")]
+
+        self._update_status(
+            "resumed_complete" if not failed else "resumed_with_errors",
+            completed_beats=len(completed),
+            failed_beats=len(failed),
+            details={
+                "recovered": completed,
+                "failed": failed,
+                "errors": {bid: results.get(bid, {}).get("error", "Unknown") for bid in failed}
+            }
+        )
+
+        logger.info(f"[WAN Recovery] Resume complete: {len(completed)} recovered, {len(failed)} failed")
+
+        # IMPORTANT: Clear pending_tasks after resume to prevent mixing with new submissions
+        self.pending_tasks = []
+
+        return results
+
     def _is_placeholder_video(self, video_path: str, expected_duration: int) -> bool:
         """
         Detect if a video is a placeholder by checking duration.
@@ -131,16 +227,35 @@ class KieBatchGenerator:
             file_size = os.path.getsize(video_path)
             return file_size < 100000  # < 100KB is likely placeholder
     
-    def generate_batch(self, beats: List[Dict], output_dir: str, user_feedback: str = None):
+    def generate_batch(self, beats: List[Dict], output_dir: str, user_feedback: str = None, resume_first: bool = True):
         """
         Process a list of beats in batches.
         Each beat in 'beats' should have: beat_id, prompt, duration_hint
+
+        Args:
+            beats: List of beat dicts with beat_id, prompt, duration_hint
+            output_dir: Directory to save videos
+            user_feedback: Optional feedback to rewrite prompts
+            resume_first: If True, check for orphaned tasks from previous session first
         """
         if not beats:
             return {}
-            
+
         os.makedirs(output_dir, exist_ok=True)
         results = {}
+
+        # NEW: Resume orphaned tasks from previous session if any
+        if resume_first:
+            recovered = self.resume_polling()
+            if recovered:
+                logger.info(f"[WAN] Recovered {len(recovered)} videos from previous session")
+                results.update(recovered)
+                # Filter out beats that were already recovered
+                recovered_ids = set(recovered.keys())
+                beats = [b for b in beats if b.get("beat_id") not in recovered_ids]
+                if not beats:
+                    logger.info("[WAN] All beats recovered from previous session, nothing to generate")
+                    return results
         
         # NEW: Initialize status tracking
         from datetime import datetime
@@ -160,7 +275,8 @@ class KieBatchGenerator:
             }
         )
         
-        # 1. Submission Phase
+        # 1. Submission Phase - clear pending_tasks first to ensure clean state
+        self.pending_tasks = []
         for i in range(0, len(beats), self.BATCH_SIZE):
             batch = beats[i:i + self.BATCH_SIZE]
             logger.info(f"[KieBatch] Submitting batch {i // self.BATCH_SIZE + 1} ({len(batch)} items)...")
@@ -251,7 +367,26 @@ class KieBatchGenerator:
             if i + self.BATCH_SIZE < len(beats):
                 logger.info(f"[KieBatch] Waiting {self.BATCH_INTERVAL}s before next batch...")
                 time.sleep(self.BATCH_INTERVAL)
-        
+
+        # NEW: Save pending_tasks to status file BEFORE polling (crash recovery)
+        if self.pending_tasks:
+            logger.info(f"[KieBatch] Saving {len(self.pending_tasks)} task IDs for crash recovery...")
+            self._update_status(
+                "polling",
+                total_beats=len(beats),
+                completed_beats=len(results),
+                failed_beats=0,
+                progress_percent=int(len(results) / len(beats) * 50) if beats else 0,
+                started_at=started_at,
+                save_pending_tasks=True,  # This triggers saving task_ids
+                details={
+                    "pending": [t["beat_id"] for t in self.pending_tasks],
+                    "in_progress": [],
+                    "completed": list(results.keys()),
+                    "failed": []
+                }
+            )
+
         # 2. Polling Phase
         if self.pending_tasks:
             logger.info(f"[KieBatch] Polling {len(self.pending_tasks)} tasks...")
