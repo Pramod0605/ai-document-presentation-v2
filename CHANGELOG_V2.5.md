@@ -11,6 +11,11 @@
   - New `wan_status.json` file tracks pending/completed/failed beats
   - New endpoint: `GET /job/<job_id>/wan_status` for polling WAN progress
   - Mirrors `avatar_status.json` structure for consistency
+- **[FEATURE]** **WAN Task ID Persistence & Crash Recovery:** Kie.ai task IDs now persist to `wan_status.json`
+  - Saves `pending_tasks` with task_ids before polling phase begins
+  - Enables `resume_polling()` to recover orphaned videos after server crashes
+  - No duplicate API charges - completed videos on Kie.ai can be downloaded without regeneration
+  - Automatic recovery on next job run or via dedicated recovery endpoint
 - **[FEATURE]** **NSFW Prompt Persistence:** Sanitized prompts now persist to `presentation.json`
   - Auto-corrected NSFW prompts are saved back to `video_prompts` array
   - Prevents retry loops caused by original unsafe prompts persisting

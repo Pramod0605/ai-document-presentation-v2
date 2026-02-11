@@ -96,6 +96,7 @@ The **V2.5 Director Pipeline** is a production-grade AI system that converts Mar
 - **Narration Segments**: LLM generates educator-style explanations with timing
 - **Multi-Renderer Support**: Manim for math, WAN for visuals, Avatar for presenter
 - **Smart Job Recovery**: Preserves LLM work after server restarts (marks as `completed_with_errors` if `presentation.json` exists)
+- **WAN Crash Recovery**: Persists Kie.ai task IDs to `wan_status.json`—recovers completed videos after server crashes without regeneration costs
 - **Queued Retries**: All retry actions (Avatar, Video) now respect the global 2-job concurrency limit and queue correctly.
 - **Asset Auto-Repair**: Automatically re-downloads missing avatars using existing task IDs—no new billing or regeneration required.
 
