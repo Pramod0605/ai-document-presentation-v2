@@ -1503,9 +1503,31 @@ def _retry_avatar_generation(job_id: str, job_folder: Path, presentation: dict,
                                 sec["avatar_path"] = f"avatars/section_{section_id}_avatar.mp4"
                                 sec["avatar_video"] = f"avatars/section_{section_id}_avatar.mp4"
                                 sec["avatar_status"] = "completed"
+                                # CRITICAL FIX: Store task_id for repair feature
+                                if task_id:
+                                    sec["avatar_task_id"] = task_id
+                                    sec["avatar_id"] = task_id
+                                
+                                # Extract Vimeo and B2 URLs if available
+                                raw = status_resp.get("raw_response", {})
+                                vimeo_url = raw.get("vimeo_url")
+                                b2_url = raw.get("b2_url")
+                                
+                                if vimeo_url:
+                                    sec["vimeo_url"] = vimeo_url
+                                    sec["vimeo_uploaded"] = True
+                                if b2_url:
+                                    sec["b2_url"] = b2_url
+                                    sec["b2_uploaded"] = True
+                                    
                                 break
                         
-                        results["success"].append({"section_id": section_id, "task_id": task_id})
+                        results["success"].append({
+                            "section_id": section_id, 
+                            "task_id": task_id,
+                            "vimeo_url": vimeo_url,
+                            "b2_url": b2_url
+                        })
                         print(f"[RETRY-AVATAR] OK Sec {section_id} downloaded", flush=True)
                         # V2.5 FIX: Removed write from inside loop - will save once at end with lock
                     else:
@@ -1534,9 +1556,48 @@ def _retry_avatar_generation(job_id: str, job_folder: Path, presentation: dict,
 
     # V2.5 FIX: Single write at end with lock (prevents race condition with WAN/TTS threads)
     if results["success"]:  # Only write if we actually updated something
+        
+        # RELOAD from disk to avoid overwriting generator updates (Vimeo/B2 URLs)
+        current_presentation = presentation
+        try:
+             with presentation_lock:
+                 with open(job_folder / "presentation.json", "r", encoding="utf-8") as f:
+                     current_presentation = json.load(f)
+        except Exception as e:
+             print(f"[RETRY-AVATAR] Warning: converting presentation reload failed: {e}")
+
+        # Re-apply our successful updates to the FRESH presentation object
+        for success_item in results["success"]:
+            sid = success_item["section_id"]
+            tid = success_item["task_id"]
+            vimeo = success_item.get("vimeo_url")
+            b2 = success_item.get("b2_url")
+            
+            # Find section in fresh presentation
+            for sec in current_presentation.get("sections", []):
+                if sec["section_id"] == sid:
+                    # Update standard fields
+                    sec["avatar_path"] = f"avatars/section_{sid}_avatar.mp4"
+                    sec["avatar_video"] = f"avatars/section_{sid}_avatar.mp4"
+                    sec["avatar_status"] = "completed"
+                    
+                    if tid:
+                        sec["avatar_task_id"] = tid
+                        sec["avatar_id"] = tid
+                    
+                    # Re-apply Vimeo/B2 URLs since they weren't saved to disk yet
+                    if vimeo:
+                        sec["vimeo_url"] = vimeo
+                        sec["vimeo_uploaded"] = True
+                    if b2:
+                        sec["b2_url"] = b2
+                        sec["b2_uploaded"] = True
+                        
+                    break
+
         with presentation_lock:
             with open(job_folder / "presentation.json", "w", encoding="utf-8") as f:
-                json.dump(presentation, f, indent=2)
+                json.dump(current_presentation, f, indent=2)
 
     print(f"[RETRY-AVATAR] Complete: {len(results['success'])} success, {len(results['failed'])} failed", flush=True)
     return results
@@ -2047,6 +2108,9 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             "current_phase_key": phase,
             "status_message": message
         }, persist=True)
+
+    def job_update_callback(updates: dict, persist: bool = True):
+        job_manager.update_job(job_id, updates, persist=persist)
     
     try:
         generate_tts = tts_provider not in ["estimate"]
@@ -2066,7 +2130,8 @@ def process_markdown_job_v15_v2(job_id: str, markdown_content: str, subject: str
             images_dict=images_dict,
             pipeline_version=pipeline_version,
             generation_scope=generation_scope,
-            video_provider=video_provider
+            video_provider=video_provider,
+            job_update_callback=job_update_callback
         )
         
         # V2.5 FIX: Use locks for thread-safe JSON writes (avatar/WAN threads may be starting)

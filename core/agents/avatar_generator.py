@@ -262,6 +262,7 @@ class AvatarGenerator:
                                     # CRITICAL FIX: Store task_id for repair feature
                                     if task_id:
                                         section["avatar_task_id"] = task_id
+                                        section["avatar_id"] = task_id
                                     
                                     # ISS-VIMEO: store vimeo details
                                     if vimeo_url:
@@ -380,8 +381,18 @@ class AvatarGenerator:
         
         print(f"[AVATAR] Initiating synchronous processing in {len(section_batches)} batches...")
         
+        
+        # Load state for recovery (if available)
+        state_file = Path(output_dir) / "avatar_analysis.json"
+        state = {}
+        if state_file.exists():
+            try:
+                state = json.loads(state_file.read_text())
+            except:
+                pass
+
         # Helper to submit
-        def _submit_single_section(section, job_id, save_dir, language=None, speaker=None):
+        def _submit_single_section(section, job_id, save_dir, language=None, speaker=None, state=None):
             sec_id = section.get("section_id")
             output_filename = f"section_{sec_id}_avatar.mp4"
             
@@ -395,7 +406,38 @@ class AvatarGenerator:
             
             # 1. Check for existing
             if output_path.exists() and output_path.stat().st_size > 1000:
-                return {"status": "skipped", "section_id": sec_id, "language": language, "reason": "exists", "output_path": str(output_path)}
+                # Try to preserve existing task_id if known
+                existing_tid = section.get("avatar_task_id") or section.get("avatar_id")
+                existing_vimeo = section.get("vimeo_url")
+                existing_b2 = section.get("b2_url")
+                
+                # RECOVERY: If missing in section but present in state, use state
+                if not (existing_tid and existing_vimeo and existing_b2) and state and "tasks" in state:
+                    for tid, tinfo in state["tasks"].items():
+                        if str(tinfo.get("section_id")) == str(sec_id):
+                            if not existing_tid: existing_tid = tid
+                            if not existing_vimeo: existing_vimeo = tinfo.get("vimeo_url")
+                            if not existing_b2: existing_b2 = tinfo.get("b2_url")
+                            break
+                
+                # If we recovered at least the task_id, we can skip generation
+                if existing_tid:
+                    return {
+                        "status": "skipped", 
+                        "section_id": sec_id, 
+                        "language": language, 
+                        "reason": "exists", 
+                        "output_path": str(output_path), 
+                        "task_id": existing_tid,
+                        "vimeo_url": existing_vimeo,
+                        "b2_url": existing_b2
+                    }
+                else:
+                    # SELF-HEALING: File exists but no metadata found in section or state.
+                    # We MUST regenerate to get a valid task_id and metadata.
+                    print(f"[AVATAR-FIX] Sec {sec_id} file exists but missing metadata. Forcing regeneration.")
+
+            # 2. Extract Text
 
             # 2. Extract Text
             narration_text = ""
@@ -406,11 +448,14 @@ class AvatarGenerator:
                 narr = section["narration"]
                 if isinstance(narr, dict):
                     narration_text = narr.get("full_text", "")
-                    if not narration_text:
-                         narration_text = " ".join([str(s.get("text", "") or "") for s in narr.get("segments", [])])
                 else:
                     narration_text = str(narr)
-            
+                
+                if not narration_text:
+                     # Fallback
+                     if isinstance(narr, dict):
+                         narration_text = " ".join([str(s.get("text", "") or "") for s in narr.get("segments", [])])
+
             if not narration_text or not narration_text.strip():
                 return {"status": "skipped", "section_id": sec_id, "language": language, "reason": "empty_text"}
             
@@ -442,7 +487,7 @@ class AvatarGenerator:
                 futures = {}
                 for sec in batch:
                     for lang in languages:
-                        future = executor.submit(_submit_single_section, sec, job_id, save_dir, language=lang, speaker=speaker)
+                        future = executor.submit(_submit_single_section, sec, job_id, save_dir, language=lang, speaker=speaker, state=state)
                         futures[future] = (sec, lang)
                 
                 for future in as_completed(futures):
@@ -458,7 +503,10 @@ class AvatarGenerator:
                             print(f"[AVATAR] - Sec {res.get('section_id')}{lang_str} skipped.")
                             if "output_path" in res:
                                  self._update_artifacts(output_dir, res["section_id"], res["output_path"],
-                                                      language=res.get("language"), speaker=speaker)
+                                                      language=res.get("language"), speaker=speaker, 
+                                                      task_id=res.get("task_id"),
+                                                      vimeo_url=res.get("vimeo_url"),
+                                                      b2_url=res.get("b2_url"))
                             if tracker:
                                 tracker.update_progress(
                                     category="avatar_generation",
@@ -710,7 +758,7 @@ class AvatarGenerator:
                             except:
                                 duration = 0.0
                                 
-                            self._update_artifacts(output_dir, info["section_id"], info["output_path"], duration, vimeo_url, b2_url)
+                            self._update_artifacts(output_dir, info["section_id"], info["output_path"], duration, vimeo_url, b2_url, task_id=tid)
                             info["status"] = "completed"
                             info["vimeo_url"] = vimeo_url
                             info["b2_url"] = b2_url
