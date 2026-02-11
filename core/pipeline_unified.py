@@ -9,7 +9,7 @@ import time
 import os
 import requests
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Tuple, Optional, Any, Callable
 
 from core.unified_content_generator import (
     generate_presentation, 
@@ -50,7 +50,8 @@ def process_markdown_unified(
     pipeline_version: str = "v15_v2_director",  # DEFAULT: Use path with Content Completeness Validator
     generation_scope: str = "full",
     model: Optional[str] = None,
-    video_provider: str = "ltx"
+    video_provider: str = "ltx",
+    job_update_callback: Optional[Callable[[Dict, bool], None]] = None
 ) -> Tuple[Dict, AnalyticsTracker]:
     """
     Execute the True Unified Pipeline (Single LLM Call).
@@ -476,8 +477,8 @@ def process_markdown_unified(
             
             # NEW: Mark blueprint as ready for frontend
             log_status("blueprint_ready", "Blueprint (presentation.json) is Ready! You can view the Player now.")
-            if callback:
-                callback({
+            if job_update_callback:
+                job_update_callback({
                     "blueprint_ready": True,  # NEW FIELD
                     "status": "processing",
                     "current_step_name": "Blueprint Ready - Rendering Assets...",
