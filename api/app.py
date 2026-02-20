@@ -494,6 +494,475 @@ def regenerate_manim(job_id):
         return jsonify({"error": str(e)}), 500
 
 
+
+# --- PREVIEW & APPROVE WORKFLOW (V2.6) ---
+
+PREVIEW_LOCK = threading.Lock()
+
+def _update_preview_status(job_id: str, key: str, status_data: dict):
+    """Thread-safe update of preview_status.json in job directory."""
+    try:
+        status_path = JOBS_DIR / job_id / "preview_status.json"
+        with PREVIEW_LOCK:
+            current_status = {}
+            if status_path.exists():
+                try:
+                    with open(status_path, "r") as f:
+                        current_status = json.load(f)
+                except: pass
+            
+            # Merge or set
+            if key in current_status:
+                current_status[key].update(status_data)
+            else:
+                current_status[key] = status_data
+                
+            current_status[key]["last_updated"] = datetime.utcnow().isoformat()
+            
+            with open(status_path, "w") as f:
+                json.dump(current_status, f, indent=2)
+    except Exception as e:
+        print(f"[Preview] Failed to update status: {e}")
+
+def _run_preview_generation(job_id: str, section_id: str, beat_id: str, renderer: str, 
+                          user_feedback: str, raw_prompt_override: str, 
+                          preview_filename: str):
+    """Background task for generating preview video."""
+    import traceback
+    from render.wan.wan_client import WANClient
+    from core.agents.manim_code_generator import ManimCodeGenerator
+    from render.manim.manim_runner import render_manim_video
+    
+    preview_key = f"{section_id}_{beat_id}"
+    job_dir = JOBS_DIR / job_id
+    output_path = job_dir / "videos" / preview_filename
+    
+    try:
+        print(f"[Preview] Starting generation for {preview_key} ({renderer})...")
+        _update_preview_status(job_id, preview_key, {"status": "processing", "progress": 10})
+        
+        pres_path = job_dir / "presentation.json"
+        if not pres_path.exists():
+            raise Exception("Job presentation not found")
+            
+        with open(pres_path, "r") as f:
+            data = json.load(f)
+            
+        # Find section
+        section = next((s for s in data.get("sections", []) if str(s["section_id"]) == str(section_id)), None)
+        if not section:
+            raise Exception(f"Section {section_id} not found")
+
+        final_prompt_used = ""
+        
+        if renderer == "wan":
+            # 1. Determine Prompt
+            prompt = ""
+            if raw_prompt_override:
+                prompt = raw_prompt_override
+                print(f"[Preview] Using raw prompt override: {prompt[:50]}...")
+            else:
+                # Use LLM to rewrite prompt based on feedback
+                # For now (MVP), just append feedback or use feedback as prompt? 
+                # Plan said: Call KieBatchGenerator internal LLM. 
+                # But creating KieBatchGenerator is heavy. 
+                # Let's simple-append for MVP or use logic if feedback > 10 chars
+                # Better: Allow user to just write the new prompt in user_feedback if they want.
+                # Or if we strictly follow plan, we need the rewriter. 
+                # Let's fallback to "feedback IS the prompt" if raw_override is empty 
+                # UNLESS we implement the rewriter here. 
+                # Given user's request "retry with new text or prompt", let's treat user_feedback as the new prompt 
+                # if raw check fails, OR if user_feedback looks like a prompt.
+                # Actuall, let's just use user_feedback as the prompt for simplicity V1.
+                prompt = user_feedback
+                
+            final_prompt_used = prompt
+            
+            # 2. Call WAN
+            _update_preview_status(job_id, preview_key, {"status": "processing", "progress": 20, "message": "Sending to WAN..."})
+            client = WANClient()
+            result_path = client.generate_video(prompt, duration=15, output_path=str(output_path))
+            
+            if not result_path:
+                raise Exception("WAN generation returned None (Failed)")
+                
+        elif renderer == "manim":
+            # 1. Generate Code with Feedback
+            _update_preview_status(job_id, preview_key, {"status": "processing", "progress": 20, "message": "Generating Manim code..."})
+            
+            # Prepare data
+            nar = section.get("narration", {})
+            all_segments = nar.get("segments", [])
+            render_spec = section.get("render_spec", {})
+            segment_specs = render_spec.get("segment_specs", [])
+            
+            # Select only the relevant segment for this beat
+            # beat_id maps to index in segment_specs, NOT directly into narration segments
+            segments = all_segments  # fallback
+            beat_manim_spec = ""
+            try:
+                beat_idx = int(beat_id)
+                if 0 <= beat_idx < len(segment_specs):
+                    # Get the segment_id from segment_specs (e.g., "seg_2")
+                    spec_entry = segment_specs[beat_idx]
+                    spec_seg_id = spec_entry.get("segment_id", "")
+                    beat_manim_spec = spec_entry.get("manim_scene_spec", "")
+                    if isinstance(beat_manim_spec, dict):
+                        beat_manim_spec = beat_manim_spec.get("description", "")
+                    
+                    # Extract segment number from "seg_N" format
+                    seg_num = None
+                    if spec_seg_id.startswith("seg_"):
+                        try:
+                            seg_num = int(spec_seg_id.replace("seg_", ""))
+                        except ValueError:
+                            pass
+                    
+                    # Find the matching narration segment (seg_2 → index 1, since segment_ids are 1-based)
+                    if seg_num is not None and 0 <= seg_num - 1 < len(all_segments):
+                        segments = [all_segments[seg_num - 1]]
+                        print(f"[Preview] Using segment {spec_seg_id} (index {seg_num-1}) of {len(all_segments)} for beat {beat_idx}")
+                    elif 0 <= beat_idx < len(all_segments):
+                        segments = [all_segments[beat_idx]]
+                        print(f"[Preview] Fallback: using segment index {beat_idx} of {len(all_segments)}")
+                    else:
+                        print(f"[Preview] Could not map beat {beat_idx} to segment, using all {len(all_segments)} segments")
+                elif 0 <= beat_idx < len(all_segments):
+                    segments = [all_segments[beat_idx]]
+                    print(f"[Preview] No segment_specs, using segment index {beat_idx} of {len(all_segments)}")
+                else:
+                    print(f"[Preview] beat_id {beat_id} out of range, using all {len(all_segments)} segments")
+            except (ValueError, TypeError):
+                print(f"[Preview] Could not parse beat_id '{beat_id}', using all {len(all_segments)} segments")
+            
+            # Use beat-specific manim_spec if available, otherwise section-level
+            section_manim_spec = render_spec.get("manim_scene_spec", {})
+            if isinstance(section_manim_spec, dict): 
+                section_manim_spec = section_manim_spec.get("description", "")
+            manim_spec = beat_manim_spec or section_manim_spec
+            
+            section_data = {
+                "section_title": section.get("title", "Preview"),
+                "narration_segments": segments,
+                "manim_spec": raw_prompt_override or manim_spec,
+                "user_feedback": user_feedback if not raw_prompt_override else "" 
+            }
+            
+            gen = ManimCodeGenerator()
+            print(f"[Preview] Manim generator model: {gen.model}")
+            print(f"[Preview] API key present: {bool(gen.api_key)}")
+            print(f"[Preview] Section data keys: {list(section_data.keys())}")
+            print(f"[Preview] manim_spec length: {len(str(section_data.get('manim_spec', '')))}")
+            print(f"[Preview] narration_segments count: {len(section_data.get('narration_segments', []))}")
+            
+            code, errors = gen.generate(section_data)
+            
+            if errors:
+                print(f"[Preview] Manim generation errors: {errors}")
+            if code:
+                print(f"[Preview] Generated code length: {len(code)} chars")
+            else:
+                print(f"[Preview] Code is EMPTY. Errors: {errors}")
+            
+            if not code:
+                raise Exception(f"Failed to generate Manim code. Errors: {errors}")
+                
+            final_prompt_used = code # Store code as "prompt"
+            
+            # 2. Render Code
+            _update_preview_status(job_id, preview_key, {"status": "processing", "progress": 50, "message": "Rendering Manim video..."})
+            
+            # We need to execute this code. 
+            # ManimRunner expects topic dict. We can create a fake one.
+            # But ManimRunner.render_manim_video is complex.
+            # Easier to use internal helper _execute_spec_generated_render or similar if accessible,
+            # OR just use the code generator's output and run manim command directly here.
+            
+            # Let's use the standard "render_manim_video" but we need to trick it into using our code.
+            # We'll create a temp topic dict with "spec_generated" plan.
+            
+            fake_topic = {
+                "section_id": f"preview_{section_id}",
+                "title": "Preview",
+                "explanation_plan": {
+                    "manim_plan": {
+                        "scene_type": "spec_generated",
+                        "manim_code": code,
+                        "params": {}
+                    }
+                }
+            }
+            
+            # Manim runner writes to output_dir/topic_ID.mp4
+            # We want specific output_path.
+            # We'll rely on temp dir then rename.
+            temp_dir = job_dir / "videos" / "temp_preview"
+            os.makedirs(temp_dir, exist_ok=True)
+            
+            # Import inside function to avoid circular imports
+            from render.manim.manim_runner import render_manim_video
+            
+            result_paths = render_manim_video(fake_topic, str(temp_dir))
+            
+            # Result is likely temp_dir/topic_preview_...mp4
+            # We need to move it to output_path
+            msg = "No output"
+            if isinstance(result_paths, str) and os.path.exists(result_paths):
+                shutil.move(result_paths, str(output_path))
+            elif isinstance(result_paths, list) and len(result_paths) > 0 and os.path.exists(result_paths[0]):
+                shutil.move(result_paths[0], str(output_path))
+            else:
+                raise Exception("Manim runner did not produce a file")
+                
+            # Cleanup
+            try: shutil.rmtree(temp_dir)
+            except: pass
+
+        _update_preview_status(job_id, preview_key, {
+            "status": "success", 
+            "progress": 100, 
+            "preview_url": f"/player/jobs/{job_id}/videos/{preview_filename}",
+            "generated_prompt": final_prompt_used
+        })
+        print(f"[Preview] Success for {preview_key}")
+        
+    except Exception as e:
+        print(f"[Preview] Error: {e}")
+        traceback.print_exc()
+        _update_preview_status(job_id, preview_key, {"status": "failed", "error": str(e)})
+
+
+@app.route("/job/<job_id>/generate_preview", methods=["POST"])
+def generate_preview(job_id):
+    """
+    Generate a preview video (non-destructive) with new feedback/prompt.
+    Returns immediately and runs in background.
+    """
+    try:
+        data = request.json
+        section_id = data.get("section_id")
+        beat_id = data.get("beat_id", "0") # Default to 0 if not provided
+        renderer = data.get("renderer", "wan").lower()
+        
+        user_feedback = data.get("user_feedback", "")
+        raw_prompt_override = data.get("raw_prompt_override", "")
+        
+        if not section_id:
+            return jsonify({"error": "section_id is required"}), 400
+            
+        if not user_feedback and not raw_prompt_override:
+             return jsonify({"error": "Either user_feedback or raw_prompt_override is required"}), 400
+
+        # Unique preview filename
+        timestamp = int(time.time())
+        preview_filename = f"preview_{section_id}_{beat_id}_{timestamp}.mp4"
+        
+        # Start background thread
+        thread = threading.Thread(
+            target=_run_preview_generation,
+            args=(job_id, section_id, beat_id, renderer, user_feedback, raw_prompt_override, preview_filename)
+        )
+        thread.start()
+        
+        preview_key = f"{section_id}_{beat_id}"
+        
+        return jsonify({
+            "status": "accepted",
+            "message": "Preview generation started",
+            "preview_key": preview_key,
+            "status_endpoint": f"/job/{job_id}/preview_status/{preview_key}"
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/job/<job_id>/preview_status/<preview_key>", methods=["GET"])
+def check_preview_status(job_id, preview_key):
+    """Check status of a specific preview generation."""
+    try:
+        status_path = JOBS_DIR / job_id / "preview_status.json"
+        if not status_path.exists():
+            return jsonify({"status": "unknown", "message": "No status file found"})
+            
+        with open(status_path, "r") as f:
+            data = json.load(f)
+            
+        return jsonify(data.get(preview_key, {"status": "unknown"}))
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/job/<job_id>/approve_preview", methods=["POST"])
+def approve_preview(job_id):
+    """
+    Promote a preview video to be the official asset.
+    Updates files and presentation.json.
+    """
+    try:
+        data = request.json
+        print(f"[DEBUG] approve_preview called for {job_id} with data: {data}")
+        
+        section_id = data.get("section_id")
+        beat_id = data.get("beat_id")
+        preview_path = data.get("preview_path") # Expected: "videos/preview_..."
+        new_prompt = data.get("new_prompt") # The prompt that actually generated this
+        
+        if not all([section_id, preview_path]):
+             return jsonify({"error": "Missing required fields"}), 400
+             
+        job_dir = JOBS_DIR / job_id
+        
+        # 1. Verify Preview Exists
+        # Remove leading slashed or /player/... prefixes to get relative path
+        clean_preview_path = preview_path.split("videos/")[-1] 
+        abs_preview_path = job_dir / "videos" / clean_preview_path
+        
+        if not abs_preview_path.exists():
+            return jsonify({"error": f"Preview file not found: {clean_preview_path}"}), 404
+            
+        # 2. Determine Target Filename & Prompt Index
+        target_filename = ""
+        target_key = "video_path"
+        prompt_index = None
+        
+        # Load presentation to resolve beat_id to index if needed
+        pres_path = job_dir / "presentation.json"
+        
+        # We need to read presentation FIRST to resolve the index from the ID
+        with open(pres_path, "r") as f:
+            presentation = json.load(f)
+            
+        section = next((s for s in presentation.get("sections", []) if str(s["section_id"]) == str(section_id)), None)
+        if not section:
+             return jsonify({"error": "Section not found"}), 404
+             
+        v_prompts = section.get("video_prompts", [])
+        beat_videos = section.get("beat_videos", [])
+        renderer_type = section.get("renderer", "")
+        
+        if beat_id and str(beat_id) != "None":
+            # Resolving beat_id to index
+            # Try 1: Exact string match in video_prompts (WAN sections)
+            for idx, p in enumerate(v_prompts):
+                if isinstance(p, dict) and str(p.get("beat_id")) == str(beat_id):
+                    prompt_index = idx
+                    # Use the exact beat_id for filename to preserve naming convention
+                    target_filename = f"{beat_id}.mp4"
+                    target_key = "beat_videos"
+                    break
+            
+            # Try 2: Numeric beat_id as index into video_prompts (WAN)
+            if prompt_index is None and str(beat_id).isdigit():
+                idx = int(beat_id)
+                if 0 <= idx < len(v_prompts):
+                    prompt_index = idx
+                    target_filename = f"topic_{section_id}_beat_{prompt_index}.mp4"
+                    target_key = "beat_videos"
+            
+            # Try 3: Numeric beat_id as index into beat_videos (Manim sections)
+            if prompt_index is None and str(beat_id).isdigit():
+                idx = int(beat_id)
+                if 0 <= idx < len(beat_videos):
+                    prompt_index = idx
+                    # Use the actual filename from beat_videos array
+                    bv_path = beat_videos[idx]
+                    target_filename = Path(bv_path).name if bv_path else f"topic_{section_id}_beat_{idx}.mp4"
+                    target_key = "beat_videos"
+                    print(f"[Approve] Manim beat_videos resolution: beat {idx} -> {target_filename}")
+                    
+            # Try 4: If beat_id is "beat_X"
+            if prompt_index is None and str(beat_id).startswith("beat_"):
+                try:
+                    idx = int(str(beat_id).split("_")[1])
+                    if 0 <= idx < len(v_prompts):
+                        prompt_index = idx
+                        target_filename = f"topic_{section_id}_beat_{prompt_index}.mp4"
+                        target_key = "beat_videos"
+                except:
+                    pass
+
+            if prompt_index is None:
+                # Fallback: Use whatever beat_id passed as filename suffix (Legacy/Safe)
+                # But sanitize it first
+                safe_beat_id = str(beat_id).replace("/", "_").replace("\\", "_")
+                target_filename = f"{safe_beat_id}.mp4"
+                target_key = "beat_videos"
+
+        else:
+            target_filename = f"topic_{section_id}.mp4"
+            target_key = "video_path"
+            
+        abs_target_path = job_dir / "videos" / target_filename
+        
+        # 3. Perform Swap
+        shutil.move(str(abs_preview_path), str(abs_target_path))
+        print(f"[Approve] Swapped {abs_preview_path} -> {abs_target_path}")
+        
+        # 4. Update JSON
+        with presentation_lock:
+            # Re-read to be safe under lock
+            with open(pres_path, "r") as f:
+                presentation = json.load(f)
+                
+            updated = False
+            for section in presentation.get("sections", []):
+                if str(section.get("section_id")) == str(section_id):
+                    # Update prompt if provided
+                    if new_prompt:
+                        v_prompts = section.get("video_prompts", [])
+                        if prompt_index is not None and prompt_index < len(v_prompts):
+                             if isinstance(v_prompts[prompt_index], dict):
+                                 v_prompts[prompt_index]["prompt"] = new_prompt
+                        elif not beat_id: # Main video prompt?
+                             # Logic for main video prompt update if needed
+                             pass
+
+                    # Ensure path is correct/linked
+                    if target_key == "video_path":
+                         section["video_path"] = f"videos/{target_filename}"
+                    elif target_key == "beat_videos" and prompt_index is not None:
+                         # Ensure beat_videos list exists and is large enough
+                         b_videos = section.get("beat_videos", [])
+                         if b_videos is None: b_videos = []
+                         
+                         # Ensure size
+                         while len(b_videos) <= prompt_index:
+                             b_videos.append(None)
+                             
+                         b_videos[prompt_index] = f"videos/{target_filename}"
+                         section["beat_videos"] = b_videos
+
+                    updated = True
+                    break
+            
+            if updated:
+                with open(pres_path, "w") as f:
+                    json.dump(presentation, f, indent=4)
+                    
+        # 5. Cleanup other previews for this beat
+        try:
+            # Cleanup previews for this beat
+            # Use glob to match pattern
+            pattern = f"preview_{section_id}_"
+            if beat_id:
+                pattern += f"{beat_id}_"
+            
+            for f in job_dir.glob(f"videos/{pattern}*.mp4"):
+                try:
+                    if f.resolve() != abs_target_path.resolve(): 
+                         f.unlink()
+                         print(f"[Cleanup] Deleted unused preview: {f.name}")
+                except Exception as ex:
+                    print(f"[Cleanup] Failed to delete {f.name}: {ex}")
+        except Exception as e:
+            print(f"[Cleanup] Error during cleanup: {e}")
+                    
+        return jsonify({"status": "success"})
+
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/submit_job", methods=["POST"])
 def submit_job():
     try:

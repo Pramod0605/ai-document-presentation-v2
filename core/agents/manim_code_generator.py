@@ -481,8 +481,11 @@ IMPORTANT: The user has specifically requested the above improvements. Please re
         """
         Check if code is complete (not truncated mid-statement).
         
-        SIMPLIFIED: Trust Python's compile() for syntax validation.
-        Only check for obviously incomplete code that compile() might not catch.
+        Checks:
+        1. Control structures without bodies
+        2. Bare identifiers on last line (truncation artifact)
+        3. Lines ending with operators (truncation artifact)
+        4. compile() syntax check as final catch-all
         """
         errors = []
         
@@ -490,22 +493,13 @@ IMPORTANT: The user has specifically requested the above improvements. Please re
         if not lines:
             return ["Empty code"]
         
-        # SIMPLIFIED: Remove fragile checks that cause false positives
-        # - Removed "ends with comma" check (valid in lists/dicts)
-        # - Removed comment stripping (fails on # in strings)
-        # - Trust compile() to catch real syntax errors
-        
-        # Only check for truly incomplete control structures
-        # (Where a block has no body at all - compile() might not catch this cleanly)
+        # 1. Check for truly incomplete control structures
         for i, line in enumerate(lines):
             stripped = line.strip()
-            # Skip empty lines and comments
             if not stripped or stripped.startswith('#'):
                 continue
                 
-            # Check if line ends with colon (control structure) but has no body
             if stripped.endswith(':'):
-                # Look ahead for any non-empty, non-comment line
                 has_body = False
                 for next_line in lines[i+1:]:
                     next_stripped = next_line.strip()
@@ -515,6 +509,34 @@ IMPORTANT: The user has specifically requested the above improvements. Please re
                 
                 if not has_body:
                     errors.append(f"Control structure at line {i+1} has no body: '{stripped[:60]}...'")
+        
+        # 2. Check for truncated last logical line
+        last_logical = ""
+        last_logical_idx = 0
+        for i in range(len(lines) - 1, -1, -1):
+            stripped = lines[i].strip()
+            if stripped and not stripped.startswith('#'):
+                last_logical = stripped
+                last_logical_idx = i + 1
+                break
+        
+        if last_logical:
+            import keyword
+            # Bare identifier (e.g. 'n' from truncated 'n_box = ...')
+            if (last_logical.isidentifier() 
+                and not keyword.iskeyword(last_logical) 
+                and last_logical not in ('self', 'pass', 'True', 'False', 'None')):
+                errors.append(f"Code appears truncated at line {last_logical_idx}: bare identifier '{last_logical}'")
+            
+            # Lines ending with operators
+            if last_logical.endswith(('=', '+', '-', '*', '/', '(', '[', '{', '.', '\\')):
+                errors.append(f"Code appears truncated at line {last_logical_idx}: ends with '{last_logical[-1]}'")
+        
+        # 3. compile() as final syntax check
+        try:
+            compile(code, "<completeness_check>", "exec")
+        except SyntaxError as e:
+            errors.append(f"Syntax error (possible truncation) at line {e.lineno}: {e.msg}")
         
         return errors
     

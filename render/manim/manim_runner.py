@@ -114,6 +114,9 @@ def render_manim_video(topic: dict, output_dir: str, dry_run: bool = False, trac
     visual_beats = topic.get("visual_beats", [])
     duration = topic.get("duration", 30)
     
+    # Extract v1.5 code if present
+    v15_manim_code = topic.get("v15_manim_code") or explanation_plan.get("v15_manim_code")
+    
     # Get narration_segments for per-beat duration lookup
     narration_segments = topic.get("narration_segments", [])
     
