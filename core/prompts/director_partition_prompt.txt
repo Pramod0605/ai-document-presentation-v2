@@ -74,6 +74,7 @@ Return a JSON object with this exact structure:
       "section_type": "content|example|quiz",
       "title": "Section Title",
       "renderer": "manim|video|none",
+      "use_local_gpu": true,
       "narration": {
         "full_text": "Complete narration...",
         "segments": [
@@ -155,9 +156,16 @@ WAN 2.6 API produces 15s videos maximum.
 ### 3. RENDERER SELECTION
 1. **MATH / PHYSICS** -> **MANIM** (`renderer: "manim"`)
    - 1 `manim_scene_spec` per segment (NO 15s limit for Manim).
-2. **BIOLOGY / HISTORY** -> **VIDEO** (`renderer: "video"`)
-   - Uses WAN Video. Match beat count to narration duration (1 beat per 15s).
-3. **STANDARD** -> **NONE** (`renderer: "none"`)
+2. **BIOLOGY / ANATOMY / HUMAN ORGANS** -> **VIDEO** (`renderer: "video"`, `use_local_gpu: false`)
+   - Content involving: human body, organs (heart, liver, kidney, brain, lungs, etc.), cells, tissues, blood, nervous system, digestive system, anatomy diagrams, microscopic biology.
+   - Uses Kie.ai WAN API (external) — better for organic/anatomical visuals.
+3. **ALL OTHER VIDEO CONTENT** (history, general scenes, objects, landscapes, abstract concepts) -> **VIDEO** (`renderer: "video"`, `use_local_gpu: true`)
+   - Uses Local GPU server — faster and free for generic visual content.
+4. **STANDARD** -> **NONE** (`renderer: "none"`)
+
+**CRITICAL**: `use_local_gpu` MUST be set for every `renderer: "video"` section.
+- `use_local_gpu: false` → Only for Biology/Anatomy/Human Organ content
+- `use_local_gpu: true`  → For ALL other video sections (default)
 
 ### B. PROMPT QUALITY CHECKLIST
 1. **Length**: 80+ Words Minimum for BOTH Manim specs and Video prompts.

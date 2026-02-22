@@ -16,6 +16,20 @@ logger = logging.getLogger(__name__)
 
 TEXT_ONLY_SECTION_TYPES = ["intro", "summary", "memory"]
 
+# Keywords that trigger WAN routing (use_local_gpu=False) for recap sections.
+# Matches the same logic in director_partition_prompt.txt.
+BIOLOGY_ANATOMY_KEYWORDS = [
+    "biology", "anatomy", "human body", "organ", "cell", "tissue",
+    "physiology", "genetics", "microbiology", "botany", "zoology",
+    "nervous system", "digestive", "respiratory", "circulatory"
+]
+
+
+def _is_biology_anatomy(subject: str) -> bool:
+    """Return True if the subject should be routed to WAN (not Local GPU)."""
+    subject_lower = subject.lower()
+    return any(kw in subject_lower for kw in BIOLOGY_ANATOMY_KEYWORDS)
+
 
 def merge_director_outputs(
     content_output: Dict,
@@ -51,7 +65,7 @@ def merge_director_outputs(
     
     logger.info(f"[Merge Step] Content sections: {len(content_sections)}, Recap sections: {len(recap_sections)}")
     
-    ordered_sections = _order_sections(content_sections, recap_sections)
+    ordered_sections = _order_sections(content_sections, recap_sections, subject)
     
     for i, section in enumerate(ordered_sections, start=1):
         section["section_id"] = f"section_{i}"
@@ -168,7 +182,7 @@ def _normalize_memory_section(memory: Dict) -> Dict:
     return memory
 
 
-def _order_sections(content_sections: List[Dict], recap_sections: List[Dict]) -> List[Dict]:
+def _order_sections(content_sections: List[Dict], recap_sections: List[Dict], subject: str = "") -> List[Dict]:
     """
     Order sections in pedagogical sequence:
     1. intro
@@ -217,14 +231,14 @@ def _order_sections(content_sections: List[Dict], recap_sections: List[Dict]) ->
         memory = _normalize_memory_section(memory)
         ordered.append(memory)
     
-    merged_recap = _merge_recap_scenes_to_single_section(recap_scene_sections)
+    merged_recap = _merge_recap_scenes_to_single_section(recap_scene_sections, subject)
     if merged_recap:
         ordered.append(merged_recap)
     
     return ordered
 
 
-def _merge_recap_scenes_to_single_section(recap_scene_sections: Dict[str, Dict]) -> Optional[Dict]:
+def _merge_recap_scenes_to_single_section(recap_scene_sections: Dict[str, Dict], subject: str = "") -> Optional[Dict]:
     """
     Convert 5 separate recap_scene_N sections into ONE 'recap' section.
     
@@ -304,13 +318,31 @@ def _merge_recap_scenes_to_single_section(recap_scene_sections: Dict[str, Dict])
     if not visual_beats:
         logger.warning("[Merge Step] No visual beats generated from recap scenes")
         return None
-    
+
+    # Routing: biology/anatomy → WAN (Kie.ai), everything else → Local GPU.
+    # Mirrors the same rule in director_partition_prompt.txt for content sections.
+    use_local_gpu = not _is_biology_anatomy(subject)
+    routing_label = "Local GPU" if use_local_gpu else "Kie.ai WAN (biology/anatomy)"
+    logger.info(f"[Merge Step] Recap routing for subject '{subject}': {routing_label} (use_local_gpu={use_local_gpu})")
+
+    # Build video_prompts so the background job router (renderer_executor.py) can
+    # find and submit these beats.  Each entry must have beat_id + prompt.
+    video_prompts = []
+    for i, scene in enumerate(recap_scenes):
+        prompt_text = scene.get("wan_prompt") or scene.get("video_prompt") or ""
+        video_prompts.append({
+            "beat_id": f"recap_scene_{i + 1}",
+            "prompt": prompt_text,
+            "duration_hint": scene.get("duration", 5)
+        })
+
     merged_recap = {
         "section_type": "recap",
         "section_title": "Lesson Recap",
         "layout": {"avatar_position": "hidden"},
         "renderer": "video",
         "renderer_reasoning": "WAN video for cinematic recap visualization",
+        "use_local_gpu": use_local_gpu,
         "narration": {
             "full_text": " ".join(all_narration_text),
             "segments": all_segments,
@@ -318,6 +350,7 @@ def _merge_recap_scenes_to_single_section(recap_scene_sections: Dict[str, Dict])
         },
         "visual_beats": visual_beats,
         "recap_scenes": recap_scenes,
+        "video_prompts": video_prompts,
         "avatar": {
             "visible": False,
             "position": "hidden"

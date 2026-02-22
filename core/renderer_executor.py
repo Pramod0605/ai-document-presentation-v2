@@ -341,9 +341,12 @@ def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False
 def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, skip_wan: bool = False, skip_avatar: bool = False, video_provider: str = "ltx"):
     """
     Submits video generation tasks to Kie.ai or LTX.
+    Routing: sections with use_local_gpu=True → Local GPU server
+             sections with use_local_gpu=False (or missing) → Kie.ai WAN
     """
     try:
         from render.wan.kie_batch_generator import KieBatchGenerator
+        from render.wan.local_gpu_client import LocalGPUClient
         from render.render_trace import log_render_prompt, set_trace_output_dir
 
         try:
@@ -358,47 +361,63 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
         
         print(f"[BG-JOB] Starting background generation for job {job_id} using {video_provider}")
         
-        # ... (collect beats logic) ...
         topics = presentation.get("sections", [])
-        wan_beats = [] 
-        topic_id_to_beats = {}
-        
+
+        # ── Routing: split beats by use_local_gpu flag ─────────────────────────
+        # kie_beats  → Kie.ai WAN API (biology/anatomy or use_local_gpu=False)
+        # local_beats_by_topic → Local GPU server (general content, use_local_gpu=True)
+        kie_beats = []
+        local_beats_by_topic = []  # list of (topic, sanitized_beats)
+        topic_id_to_beats = {}     # shared: section_id → [beat_ids] for result mapping
+
+        job_output_dir = Path(output_dir).parent
+        set_trace_output_dir(str(job_output_dir))
+
         for topic in topics:
             renderer = topic.get("renderer", "none")
-            # Bible: Recaps and SHOW segments use 'video'/'wan_video'
-            if renderer in ["wan", "wan_video", "video"]:
-                beats = topic.get("video_prompts", [])
-                if beats:
-                    # Fix for potential string prompts from LLM
-                    sanitized_beats = []
-                    for b in beats:
-                        if isinstance(b, str):
-                            sanitized_beats.append({"beat_id": f"beat_{len(sanitized_beats)}", "prompt": b})
-                        elif isinstance(b, dict):
-                            sanitized_beats.append(b)
-                    
-                    wan_beats.extend(sanitized_beats)
-                    topic_id_to_beats[topic.get("section_id")] = [b.get("beat_id") for b in sanitized_beats]
+            if renderer not in ["wan", "wan_video", "video"]:
+                continue
 
-                    # LOGGING FIX: Log these prompts to render_prompts.json so we can debug NSFW/errors
-                    # Set trace output directory to the job's parent directory if possible, or default
-                    job_output_dir = Path(output_dir).parent
-                    set_trace_output_dir(str(job_output_dir))
+            beats = topic.get("video_prompts", [])
+            if not beats:
+                continue
 
-                    for beat in sanitized_beats:
-                        log_render_prompt(
-                            section_id=topic.get("section_id"),
-                            section_title=topic.get("title", "Unknown"),
-                            renderer="wan_background",
-                            prompt=beat.get("prompt", ""),
-                            output_path=str(Path(output_dir) / f"{beat.get('beat_id')}.mp4"),
-                            extra_data={"job_id": job_id, "source": "background_retry"}
-                        )
+            # Sanitize beats
+            sanitized_beats = []
+            for b in beats:
+                if isinstance(b, str):
+                    sanitized_beats.append({"beat_id": f"beat_{len(sanitized_beats)}", "prompt": b})
+                elif isinstance(b, dict):
+                    sanitized_beats.append(b)
+
+            topic_id_to_beats[topic.get("section_id")] = [b.get("beat_id") for b in sanitized_beats]
+
+            # Log prompts for debugging
+            for beat in sanitized_beats:
+                log_render_prompt(
+                    section_id=topic.get("section_id"),
+                    section_title=topic.get("title", "Unknown"),
+                    renderer="wan_background",
+                    prompt=beat.get("prompt", ""),
+                    output_path=str(Path(output_dir) / f"{beat.get('beat_id')}.mp4"),
+                    extra_data={"job_id": job_id, "source": "background_retry"}
+                )
+
+            # ROUTING DECISION: use_local_gpu field set by Director LLM
+            # Default is True (Local GPU) — Director LLM only sets False for biology/anatomy
+            use_local = topic.get("use_local_gpu", True)
+            if use_local:
+                print(f"[ROUTER] Section {topic.get('section_id')} '{topic.get('title','?')}' → Local GPU")
+                local_beats_by_topic.append((topic, sanitized_beats))
+            else:
+                print(f"[ROUTER] Section {topic.get('section_id')} '{topic.get('title','?')}' → Kie.ai WAN (use_local_gpu=False, biology/anatomy)")
+                kie_beats.extend(sanitized_beats)
+
+        total_beats = len(kie_beats) + sum(len(b) for _, b in local_beats_by_topic)
+        print(f"[BG-JOB] Found {total_beats} total beats: {len(kie_beats)} → Kie.ai, {total_beats - len(kie_beats)} → Local GPU")
 
         
-        print(f"[BG-JOB] Found {len(wan_beats)} total video beats across {len(topic_id_to_beats)} topics.")
-        
-        if not wan_beats:
+        if not total_beats:
             logger.info(f"[BG-JOB] No beats found for job {job_id}")
             if skip_avatar:
                 try: 
@@ -416,14 +435,63 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
                 except: pass
             return
 
+        results = {}  # beat_id → path (merged from all providers)
+        all_sanitized_beats = []  # track all beats for final presentation update
+
+        # ── Step A: Local GPU beats ────────────────────────────────────────────
+        if local_beats_by_topic:
+            local_client = LocalGPUClient()
+            gpu_available = local_client.is_available()
+            if not gpu_available:
+                print(f"[ROUTER] Local GPU unavailable — falling back all local beats to Kie.ai WAN")
+
+            # Collect all individual beats for parallel processing
+            all_local_beats = []
+            for topic, beats in local_beats_by_topic:
+                for beat in beats:
+                    all_local_beats.append((topic, beat))
+
+            if gpu_available:
+                print(f"[LocalGPU] Processing {len(all_local_beats)} beats in parallel (max_workers=3)")
+                with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+                    # beat_id -> (future, beat_obj)
+                    future_to_beat = {}
+                    for topic, beat in all_local_beats:
+                        beat_id = beat.get("beat_id", "")
+                        prompt = beat.get("prompt") or beat.get("wan_prompt") or ""
+                        # V2.6: Use duration_seconds if available (narration sync), else duration_hint
+                        duration = int(beat.get("duration_seconds") or beat.get("duration_hint") or 5)
+                        out_path = str(Path(output_dir) / f"{beat_id}.mp4")
+
+                        future = executor.submit(local_client.generate_video, prompt, duration=duration, output_path=out_path)
+                        future_to_beat[future] = (beat, beat_id)
+
+                    for future in concurrent.futures.as_completed(future_to_beat):
+                        beat, beat_id = future_to_beat[future]
+                        try:
+                            video_path = future.result()
+                            if video_path:
+                                results[beat_id] = video_path
+                                all_sanitized_beats.append(beat)
+                                print(f"[LocalGPU] ✓ Beat {beat_id} done: {video_path}")
+                            else:
+                                # Individual beat fallback to Kie.ai
+                                print(f"[LocalGPU] ✗ Beat {beat_id} failed → falling back to Kie.ai")
+                                kie_beats.append(beat)
+                        except Exception as e:
+                            print(f"[LocalGPU] ✗ Beat {beat_id} execution error: {e} → falling back to Kie.ai")
+                            kie_beats.append(beat)
+            else:
+                # GPU not available at all, fallback everything
+                for topic, beat in all_local_beats:
+                    kie_beats.append(beat)
+
+        # ── Step B: Kie.ai WAN beats (biology/anatomy + any Local GPU fallbacks) ─
         if video_provider == "ltx":
-            # LTX Background Logic (Sequential loop for MVP)
             from render.ltx.ltx_client import LtxClient
             client = LtxClient()
-            results = {} # map beat_id -> path
-            
-            logger.info(f"[LTX-BG] Starting processing of {len(wan_beats)} beats...")
-            for i, beat_obj in enumerate(wan_beats):
+            logger.info(f"[LTX-BG] Starting processing of {len(kie_beats)} beats...")
+            for i, beat_obj in enumerate(kie_beats):
                 prompt = beat_obj.get("prompt") or beat_obj.get("wan_prompt") or ""
                 beat_id = beat_obj.get("beat_id", f"beat_{i}")
                 
@@ -437,33 +505,28 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
                      continue
                      
                 try:
-                    print(f"[LTX-BG] ▶ Processing beat {i+1}/{len(wan_beats)}: {beat_id}")
+                    print(f"[LTX-BG] ▶ Processing beat {i+1}/{len(kie_beats)}: {beat_id}")
                     print(f"[LTX-BG]   Prompt: {prompt[:80]}...")
                     p = client.generate_video(prompt, output_path=str(out_path))
                     results[beat_id] = p
                     print(f"[LTX-BG] ✓ Beat {beat_id} complete: {p}")
-                    
-                    # Update presentation immediately for this beat's topic
-                    # Find which topic owns this beat
-                    for tid, bids in topic_id_to_beats.items():
-                        if beat_id in bids:
-                            # We can trigger partial update here or wait for topic completion
-                            # For MVP simplicity, update files after each beat (robustness)
-                            pass 
                 except Exception as e:
                     logger.error(f"[LTX-BG] ✗ Error generating beat {beat_id}: {e}")
             
+            all_sanitized_beats.extend(kie_beats)
             logger.info(f"[LTX-BG] All beats processed.")
 
         else:
-            # Existing Kie Logic
-            # 1. Generate in Batches
-            wan_status_path = Path(output_dir).parent / "wan_status.json"
-            batch_gen = KieBatchGenerator(status_file_path=str(wan_status_path))
-            results = batch_gen.generate_batch(wan_beats, output_dir)
+            # Kie.ai WAN batch (biology/anatomy sections + Local GPU fallbacks)
+            if kie_beats:
+                wan_status_path = Path(output_dir).parent / "wan_status.json"
+                batch_gen = KieBatchGenerator(status_file_path=str(wan_status_path))
+                kie_results = batch_gen.generate_batch(kie_beats, output_dir)
+                results.update(kie_results)
+                all_sanitized_beats.extend(kie_beats)
         
-        # 2. Update wan_beats with sanitized prompts if they changed
-        for beat in wan_beats:
+        # 2. Update sanitized prompts back (kie_beats may have been rewritten by safety LLM)
+        for beat in all_sanitized_beats:
             beat_id = beat.get("beat_id")
             result = results.get(beat_id)
             
@@ -492,7 +555,7 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
                     "status": "success", 
                     "beat_video_paths": [r["path"] if isinstance(r, dict) else r for r in topic_results.values()], 
                     "topic_results": topic_results,
-                    "wan_beats": wan_beats  # NEW: Pass updated beats with sanitized prompts
+                    "wan_beats": all_sanitized_beats  # Pass updated beats with sanitized prompts
                 })
                 _update_analytics_safely(pres_path.parent / "analytics.json", topic_id, {"status": "success", "duration_seconds": 0}) 
                 

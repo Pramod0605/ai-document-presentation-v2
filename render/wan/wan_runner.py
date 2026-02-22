@@ -23,6 +23,30 @@ def reset_wan_session():
     WANClient.reset_hash_cache()
 
 
+def _select_video_client(use_local_gpu: bool, dry_run: bool, skip_wan: bool):
+    """
+    Return the appropriate video client for recap sections.
+
+    use_local_gpu=True  → LocalGPUClient (falls back to WANClient if unavailable)
+    use_local_gpu=False → WANClient (biology/anatomy subjects)
+    dry_run / skip_wan  → None (no real API calls needed)
+    """
+    if dry_run or skip_wan:
+        return None
+    if use_local_gpu:
+        try:
+            from render.wan.local_gpu_client import LocalGPUClient
+            client = LocalGPUClient()
+            if client.is_available():
+                print("[ROUTER] Recap → Local GPU client selected")
+                return client
+            print("[ROUTER] Local GPU unavailable — falling back to Kie.ai WAN for recap")
+        except Exception as e:
+            print(f"[ROUTER] LocalGPUClient import error: {e} — falling back to WAN")
+    print("[ROUTER] Recap → Kie.ai WAN client selected")
+    return WANClient()
+
+
 def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, trace_output_dir: str = None) -> str:
     """
     Render WAN video for a section.
@@ -69,6 +93,11 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
         topic["_beat_video_paths"] = recap_result.get("all_paths", [])
         return recap_result.get("first_path")
     
+    # For recap sections: pick the right video client based on use_local_gpu flag.
+    # use_local_gpu is set by merge_step.py based on subject (biology/anatomy → WAN, else → Local GPU).
+    use_local_gpu = topic.get("use_local_gpu", True)
+    video_client = _select_video_client(use_local_gpu, dry_run, skip_wan)
+
     # For recap sections, render each recap_scene as a separate video
     recap_scenes = topic.get("recap_scenes", [])
     if section_type == "recap" and recap_scenes:
@@ -80,7 +109,8 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             output_dir=output_dir,
             dry_run=dry_run,
             skip_wan=skip_wan,
-            trace_output_dir=trace_output_dir
+            trace_output_dir=trace_output_dir,
+            video_client=video_client
         )
         # Store all paths on the topic for reconciliation
         topic["_recap_video_paths"] = recap_result.get("all_paths", [])
@@ -91,7 +121,7 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     # ISS-199 FIX: Use narration segment durations for WAN videos (capped at 15 sec for WAN 2.6)
     # ISS-200 FIX: Set _recap_video_paths so player can sequence through all 5 videos
     if section_type == "recap" and video_prompts and len(video_prompts) > 0:
-        print(f"[WAN] ISS-161: Recap section {topic_id} has {len(video_prompts)} video_prompts (no recap_scenes)")
+        print(f"[ROUTER] ISS-161: Recap section {topic_id} has {len(video_prompts)} video_prompts — {'Local GPU' if use_local_gpu else 'Kie.ai WAN'}")
         
         # Get narration segment durations to sync video length with narration
         narration = topic.get("narration", {})
@@ -119,7 +149,8 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             trace_output_dir=trace_output_dir,
             duration=duration,
             video_prompts=video_prompts,
-            return_all_paths=True  # ISS-200: Get all paths for recap sequencing
+            return_all_paths=True,  # ISS-200: Get all paths for recap sequencing
+            video_client=video_client
         )
         
         # Store all paths on the topic for reconciliation (same as recap_scenes path)
@@ -204,7 +235,8 @@ def _render_visual_beats(
     trace_output_dir: str,
     duration: int,
     video_prompts: list = None,
-    return_all_paths: bool = False
+    return_all_paths: bool = False,
+    **kwargs
 ):
     """
     Render each visual beat as a separate video segment.
@@ -260,7 +292,8 @@ def _render_visual_beats(
     
     default_beat_duration = max(5, duration // num_beats)
     video_paths = []
-    client = WANClient() if not skip_wan and not dry_run else None
+    # Use caller-supplied client if provided (recap routing), else default to WANClient
+    client = kwargs.get("video_client") if kwargs.get("video_client") else (WANClient() if not skip_wan and not dry_run else None)
     
     for beat_idx in range(num_beats):
         # ISS-067: Use pre-compiled prompts if available, otherwise compile from visual_beats
@@ -383,7 +416,8 @@ def _render_recap_scenes(
     output_dir: str,
     dry_run: bool,
     skip_wan: bool,
-    trace_output_dir: str
+    trace_output_dir: str,
+    video_client=None
 ) -> dict:
     """
     Render each recap scene as a separate WAN video.
@@ -432,7 +466,8 @@ def _render_recap_scenes(
             raise WanRenderError(f"Recap prompt validation failed: {e}")
     
     video_paths = []
-    client = WANClient() if not skip_wan and not dry_run else None
+    # Use caller-supplied client (for smart routing), else default to WANClient
+    client = video_client if video_client else (WANClient() if not skip_wan and not dry_run else None)
     scene_duration = 5  # Each recap scene is 5 seconds
     
     for scene_idx, scene in enumerate(recap_scenes):

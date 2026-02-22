@@ -524,9 +524,9 @@ def _update_preview_status(job_id: str, key: str, status_data: dict):
     except Exception as e:
         print(f"[Preview] Failed to update status: {e}")
 
-def _run_preview_generation(job_id: str, section_id: str, beat_id: str, renderer: str, 
-                          user_feedback: str, raw_prompt_override: str, 
-                          preview_filename: str):
+def _run_preview_generation(job_id: str, section_id: str, beat_id: str, renderer: str,
+                          user_feedback: str, raw_prompt_override: str,
+                          preview_filename: str, video_provider: str = "wan"):
     """Background task for generating preview video."""
     import traceback
     from render.wan.wan_client import WANClient
@@ -578,13 +578,30 @@ def _run_preview_generation(job_id: str, section_id: str, beat_id: str, renderer
                 
             final_prompt_used = prompt
             
-            # 2. Call WAN
-            _update_preview_status(job_id, preview_key, {"status": "processing", "progress": 20, "message": "Sending to WAN..."})
-            client = WANClient()
+            # 2. Pick client based on video_provider
+            provider_label = "Local GPU" if video_provider == "gpu" else "Kie.ai WAN"
+            _update_preview_status(job_id, preview_key, {"status": "processing", "progress": 20, "message": f"Sending to {provider_label}..."})
+
+            client = None
+            if video_provider == "gpu":
+                try:
+                    from render.wan.local_gpu_client import LocalGPUClient
+                    gpu_client = LocalGPUClient()
+                    if gpu_client.is_available():
+                        client = gpu_client
+                        print(f"[Preview] Using Local GPU client")
+                    else:
+                        print(f"[Preview] Local GPU unavailable — falling back to Kie.ai WAN")
+                except Exception as gpu_err:
+                    print(f"[Preview] LocalGPUClient error: {gpu_err} — falling back to WAN")
+            if client is None:
+                client = WANClient()
+                print(f"[Preview] Using Kie.ai WAN client")
+
             result_path = client.generate_video(prompt, duration=15, output_path=str(output_path))
-            
+
             if not result_path:
-                raise Exception("WAN generation returned None (Failed)")
+                raise Exception(f"{provider_label} generation returned None (Failed)")
                 
         elif renderer == "manim":
             # 1. Generate Code with Feedback
@@ -746,21 +763,22 @@ def generate_preview(job_id):
         
         user_feedback = data.get("user_feedback", "")
         raw_prompt_override = data.get("raw_prompt_override", "")
-        
+        video_provider = data.get("video_provider", "wan")  # 'wan' or 'gpu'
+
         if not section_id:
             return jsonify({"error": "section_id is required"}), 400
-            
+
         if not user_feedback and not raw_prompt_override:
-             return jsonify({"error": "Either user_feedback or raw_prompt_override is required"}), 400
+            return jsonify({"error": "Either user_feedback or raw_prompt_override is required"}), 400
 
         # Unique preview filename
         timestamp = int(time.time())
         preview_filename = f"preview_{section_id}_{beat_id}_{timestamp}.mp4"
-        
+
         # Start background thread
         thread = threading.Thread(
             target=_run_preview_generation,
-            args=(job_id, section_id, beat_id, renderer, user_feedback, raw_prompt_override, preview_filename)
+            args=(job_id, section_id, beat_id, renderer, user_feedback, raw_prompt_override, preview_filename, video_provider)
         )
         thread.start()
         
@@ -1822,30 +1840,58 @@ def _retry_wan_render(job_id: str, job_folder: Path, presentation: dict, section
                      pass
 
             if video_prompts:
-                print(f"[RETRY-WAN] Found {len(video_prompts)} video prompts for section {section_id}")
-                wan_status_path = job_folder / "wan_status.json"
-                batch_gen = KieBatchGenerator(status_file_path=str(wan_status_path))
-                # generate_batch handles: 1. Idempotency 2. Batching 3. Polling 4. Feedback/Safety Retry
-                batch_results = batch_gen.generate_batch(video_prompts, str(videos_dir), user_feedback=user_feedback)
-                
-                # Update success/failed counts based on returned results
-                generated_count = 0
-                for bid, path in batch_results.items():
-                    if path:
-                        generated_count += 1
-                
-                if generated_count > 0:
-                     results["success"].append({"section_id": section_id, "count": generated_count})
-                     # We don't need to return a single video_path as WAN sections rely on beat_videos
-                     # stored in presentation.json (which we should arguably update)
-                     
-                     # Update beat_videos paths in section to be safe
-                     section["beat_video_paths"] = [f"videos/{Path(p).name}" for p in batch_results.values() if p]
-                else:
-                     results["skipped"].append({"section_id": section_id, "reason": "No new videos generated (all existed or failed)"})
+                use_local = section.get("use_local_gpu", True)
+                print(f"[RETRY-WAN] Section {section_id}: {len(video_prompts)} prompts → {'Local GPU' if use_local else 'Kie.ai WAN'}")
 
-                # Mock result for compatibility with rest of function if needed
-                result = {"status": "success", "video_path": None} 
+                batch_results = {}
+
+                if use_local:
+                    # Route to Local GPU (same as background job router)
+                    try:
+                        from render.wan.local_gpu_client import LocalGPUClient
+                        local_client = LocalGPUClient()
+                        if local_client.is_available():
+                            for beat in video_prompts:
+                                beat_id = beat.get("beat_id", "")
+                                prompt = beat.get("prompt") or beat.get("wan_prompt") or ""
+                                duration = int(beat.get("duration_hint", 5))
+                                out_path = str(videos_dir / f"{beat_id}.mp4")
+                                video_path = local_client.generate_video(prompt, duration=duration, output_path=out_path)
+                                if video_path:
+                                    batch_results[beat_id] = video_path
+                                    print(f"[LocalGPU] ✓ Beat {beat_id} done")
+                                else:
+                                    print(f"[LocalGPU] ✗ Beat {beat_id} failed → falling back to Kie.ai")
+                                    # Per-beat fallback to WAN
+                                    wan_status_path = job_folder / "wan_status.json"
+                                    batch_gen = KieBatchGenerator(status_file_path=str(wan_status_path))
+                                    fb = batch_gen.generate_batch([beat], str(videos_dir), user_feedback=user_feedback)
+                                    batch_results.update(fb)
+                        else:
+                            print(f"[RETRY-WAN] Local GPU unavailable — falling back all beats to Kie.ai WAN")
+                            wan_status_path = job_folder / "wan_status.json"
+                            batch_gen = KieBatchGenerator(status_file_path=str(wan_status_path))
+                            batch_results = batch_gen.generate_batch(video_prompts, str(videos_dir), user_feedback=user_feedback)
+                    except Exception as e:
+                        print(f"[RETRY-WAN] LocalGPUClient error: {e} — falling back to Kie.ai WAN")
+                        wan_status_path = job_folder / "wan_status.json"
+                        batch_gen = KieBatchGenerator(status_file_path=str(wan_status_path))
+                        batch_results = batch_gen.generate_batch(video_prompts, str(videos_dir), user_feedback=user_feedback)
+                else:
+                    # Route to Kie.ai WAN (biology/anatomy)
+                    wan_status_path = job_folder / "wan_status.json"
+                    batch_gen = KieBatchGenerator(status_file_path=str(wan_status_path))
+                    batch_results = batch_gen.generate_batch(video_prompts, str(videos_dir), user_feedback=user_feedback)
+
+                generated_count = sum(1 for p in batch_results.values() if p)
+
+                if generated_count > 0:
+                    results["success"].append({"section_id": section_id, "count": generated_count})
+                    section["beat_video_paths"] = [f"videos/{Path(p).name}" for p in batch_results.values() if p]
+                else:
+                    results["skipped"].append({"section_id": section_id, "reason": "No new videos generated (all existed or failed)"})
+
+                result = {"status": "success", "video_path": None}
             else:
                 print(f"[RETRY-WAN] No video_prompts found for section {section_id} - falling back to legacy renderer")
                 # Fallback to legacy path if no pre-compiled prompts (e.g. old jobs)

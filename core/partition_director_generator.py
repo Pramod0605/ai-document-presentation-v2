@@ -117,6 +117,8 @@ def inject_missing_image_ids(sections: List[Dict], images_list: str, source_cont
                          logger.info(f"[ImageInjection] Strategy 5 (Fallback) used single available image '{matched_image}'")
 
                 if matched_image:
+                    # Safety net: normalize .jpg/.jpeg → .png (files always saved as .png)
+                    matched_image = matched_image.replace('.jpeg', '.png').replace('.jpg', '.png')
                     beat["image_id"] = matched_image
                     injected_count += 1
                     logger.info(f"[ImageInjection] Injected image_id '{matched_image}' for beat {beat.get('beat_id')}")

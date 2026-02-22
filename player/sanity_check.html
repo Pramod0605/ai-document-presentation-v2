@@ -161,6 +161,38 @@
             margin: 2px;
         }
 
+        /* Provider toggle (WAN / Local GPU) */
+        .provider-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .provider-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #45475a;
+            background: #252635;
+            color: #cdd6f4;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.15s;
+        }
+
+        .provider-btn.active-wan {
+            border-color: #cba6f7;
+            background: #3b3152;
+            color: #cba6f7;
+        }
+
+        .provider-btn.active-gpu {
+            border-color: #a6e3a1;
+            background: #1e3127;
+            color: #a6e3a1;
+        }
+
         #preview-container {
             margin-top: 20px;
             background: #11111b;
@@ -249,6 +281,16 @@
                 </div>
             </div>
 
+            <!-- Provider Toggle: only shown for WAN/video sections -->
+            <div class="provider-toggle" id="provider-toggle" style="display:none;">
+                <button id="btn-use-wan" class="provider-btn active-wan" onclick="setProvider('wan')">
+                    🌐 WAN (Kie.ai)
+                </button>
+                <button id="btn-use-gpu" class="provider-btn" onclick="setProvider('gpu')">
+                    🖥️ Local GPU
+                </button>
+            </div>
+
             <div style="display: flex; align-items: center;">
                 <button class="btn btn-primary" onclick="generatePreview()">Generate Preview</button>
                 <span id="preview-status-text" style="font-weight: bold; margin-left: 10px;"></span>
@@ -302,6 +344,15 @@
         // --- PREVIEW & APPROVE WORKFLOW LIBRARIES ---
         let currentRefineData = {};
         let orphanDetected = false;
+        let selectedProvider = 'wan'; // 'wan' or 'gpu'
+
+        function setProvider(p) {
+            selectedProvider = p;
+            const btnWan = document.getElementById('btn-use-wan');
+            const btnGpu = document.getElementById('btn-use-gpu');
+            btnWan.className = 'provider-btn' + (p === 'wan' ? ' active-wan' : '');
+            btnGpu.className = 'provider-btn' + (p === 'gpu' ? ' active-gpu' : '');
+        }
 
 
 
@@ -380,6 +431,15 @@
             document.getElementById('progress-bar').style.display = 'none';
             document.getElementById('preview-container').innerHTML = '<span style="color: #666">Preview will appear here...</span>';
 
+            // Show provider toggle only for WAN/video sections
+            const toggle = document.getElementById('provider-toggle');
+            if (renderer === 'wan' || renderer === 'video') {
+                toggle.style.display = 'flex';
+                setProvider('wan'); // reset to WAN default on each open
+            } else {
+                toggle.style.display = 'none';
+            }
+
             // Reset to Override Mode by default
             const overrideRadio = document.querySelector('input[name="refine-mode"][value="override"]');
             if (overrideRadio) {
@@ -421,7 +481,8 @@
                     beat_id: currentRefineData.beatId,
                     renderer: currentRefineData.renderer,
                     user_feedback: feedback,
-                    raw_prompt_override: rawOverride
+                    raw_prompt_override: rawOverride,
+                    video_provider: selectedProvider  // 'wan' or 'gpu'
                 };
 
                 const res = await fetch(`/job/${JOB_ID}/generate_preview`, {
