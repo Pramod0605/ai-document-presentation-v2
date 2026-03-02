@@ -386,8 +386,20 @@ def process_job_parallel(job_id: str, job_sections: list, heygem_url: str,
                         if status == "completed":
                             print(f"\n  ✅ Section {entry['section_id']} DONE ({prog}%)")
                             # Extract vimeo_url and b2_url from raw API response
+                            # Vimeo/B2 upload is async — wait a bit and re-poll once
                             vimeo_url = data.get("vimeo_url")
                             b2_url = data.get("b2_url")
+                            if not vimeo_url or not b2_url:
+                                print(f"  ⏳ Waiting 15s for Vimeo/B2 upload to complete...")
+                                time.sleep(15)
+                                try:
+                                    r2 = requests.get(f"{heygem_url}/api/status/{task_id}", timeout=15)
+                                    if r2.status_code == 200:
+                                        d2 = r2.json()
+                                        vimeo_url = vimeo_url or d2.get("vimeo_url")
+                                        b2_url = b2_url or d2.get("b2_url")
+                                except Exception:
+                                    pass
                             success = download_video(task_id, entry["avatar_path"])
                             if success:
                                 update_presentation_json(
