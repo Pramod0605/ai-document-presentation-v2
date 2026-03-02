@@ -219,8 +219,10 @@ def save_job_report(job_dir: str, job_id: str, section_results: list):
         print(f"    📄 Job report saved (fallback) → {fallback_path}")
 
 
-def update_presentation_json(pres_path: str, section_id, task_id: str):
-    """Update presentation.json with new avatar_id and avatar_task_id."""
+def update_presentation_json(pres_path: str, section_id, task_id: str,
+                             vimeo_url: Optional[str] = None,
+                             b2_url: Optional[str] = None):
+    """Update presentation.json with new avatar_id, avatar_task_id, vimeo_url, b2_url."""
     try:
         with open(pres_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -231,13 +233,23 @@ def update_presentation_json(pres_path: str, section_id, task_id: str):
                 section["avatar_id"] = task_id
                 section["avatar_task_id"] = task_id
                 section["avatar_status"] = "completed"
+                if vimeo_url:
+                    section["vimeo_url"] = vimeo_url
+                    section["vimeo_uploaded"] = True
+                if b2_url:
+                    section["b2_url"] = b2_url
+                    section["b2_uploaded"] = True
                 updated = True
                 break
 
         if updated:
             with open(pres_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
-            print(f"    📝 presentation.json updated (section {section_id})")
+            extras = []
+            if vimeo_url: extras.append("vimeo")
+            if b2_url: extras.append("b2")
+            extra_str = f" + {', '.join(extras)}" if extras else ""
+            print(f"    📝 presentation.json updated (section {section_id}{extra_str})")
         else:
             print(f"    ⚠️  Section {section_id} not found in presentation.json")
     except Exception as e:
@@ -373,13 +385,19 @@ def process_job_parallel(job_id: str, job_sections: list, heygem_url: str,
 
                         if status == "completed":
                             print(f"\n  ✅ Section {entry['section_id']} DONE ({prog}%)")
+                            # Extract vimeo_url and b2_url from raw API response
+                            vimeo_url = data.get("vimeo_url")
+                            b2_url = data.get("b2_url")
                             success = download_video(task_id, entry["avatar_path"])
                             if success:
                                 update_presentation_json(
-                                    entry["pres_path"], entry["section_id"], task_id)
+                                    entry["pres_path"], entry["section_id"], task_id,
+                                    vimeo_url=vimeo_url, b2_url=b2_url)
                                 new_dur = get_video_duration(entry["avatar_path"])
                                 all_results.append({**entry, "result": "success",
-                                                    "new_duration": new_dur})
+                                                    "new_duration": new_dur,
+                                                    "vimeo_url": vimeo_url,
+                                                    "b2_url": b2_url})
                             else:
                                 all_results.append({**entry, "result": "failed",
                                                     "reason": "download_failed"})
