@@ -87,6 +87,27 @@ def is_bad_avatar(video_path: str, text: str,
     return (near_30s and long_enough_text), duration
 
 
+def was_section_regenerated(job_dir: str, section_id) -> bool:
+    """
+    Returns True if regeneration_report.json exists in job_dir AND contains
+    a successful entry for section_id.  Returns False if:
+      - the report file doesn't exist, OR
+      - the report exists but the section is missing / not 'success'.
+    """
+    report_path = os.path.join(job_dir, "regeneration_report.json")
+    if not os.path.exists(report_path):
+        return False
+    try:
+        with open(report_path, "r", encoding="utf-8") as f:
+            report = json.load(f)
+        for sec in report.get("sections", []):
+            if str(sec.get("section_id")) == str(section_id):
+                return sec.get("result") == "success"
+    except Exception:
+        pass
+    return False
+
+
 def get_narration_text(section: dict) -> str:
     """Extract full narration text from a section."""
     narration = section.get("narration", "")
@@ -295,14 +316,31 @@ def scan_jobs(jobs_dir: str, job_filter: list,
 
             avatar_path = os.path.join(job_dir, avatar_rel)
             text = get_narration_text(section)
+            section_id = section.get("section_id")
             bad, duration = is_bad_avatar(avatar_path, text, tolerance, min_text_len)
+
+            # If already successfully regenerated, skip regardless
+            if bad and was_section_regenerated(job_dir, section_id):
+                continue
+
+            # Extra check: if video is ~30s but regeneration_report is missing
+            # or doesn't record a successful regeneration for this section,
+            # flag it regardless of text length.
+            if not bad and duration is None:
+                # can't determine duration — skip
+                pass
+            elif not bad:
+                # duration was determined; check if it's near 30s but unregenerated
+                near_30s = abs(duration - REFERENCE_AUDIO_DURATION) <= tolerance
+                if near_30s and not was_section_regenerated(job_dir, section_id):
+                    bad = True  # force-flag: 30s video with no successful regen record
 
             if bad:
                 bad_sections.append({
                     "job_id": job_id,
                     "job_dir": job_dir,
                     "pres_path": pres_path,
-                    "section_id": section.get("section_id"),
+                    "section_id": section_id,
                     "avatar_path": avatar_path,
                     "avatar_rel": avatar_rel,
                     "text": text,

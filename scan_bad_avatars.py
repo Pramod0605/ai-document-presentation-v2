@@ -41,6 +41,22 @@ def get_text(section):
     return str(narr)
 
 
+def was_section_regenerated(job_dir, section_id):
+    """Returns True if regeneration_report.json has a 'success' entry for this section."""
+    report_path = os.path.join(job_dir, "regeneration_report.json")
+    if not os.path.exists(report_path):
+        return False
+    try:
+        with open(report_path, encoding="utf-8") as f:
+            report = json.load(f)
+        for sec in report.get("sections", []):
+            if str(sec.get("section_id")) == str(section_id):
+                return sec.get("result") == "success"
+    except Exception:
+        pass
+    return False
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--jobs-dir", default=JOBS_DIR)
@@ -77,16 +93,24 @@ def main():
                 continue
 
             text = get_text(sec)
-            if len(text.strip()) < args.min_text_len:
-                continue
-
+            section_id = sec.get("section_id")
             dur = get_duration(av_path)
             if dur is None:
                 continue
 
-            if abs(dur - REFERENCE_DURATION) <= args.tolerance:
+            near_30s = abs(dur - REFERENCE_DURATION) <= args.tolerance
+            if not near_30s:
+                continue
+
+            # Skip if already successfully regenerated
+            if was_section_regenerated(job_dir, section_id):
+                continue
+
+            # Flag if text is long enough OR there's no regen record at all
+            if len(text.strip()) >= args.min_text_len or not os.path.exists(
+                    os.path.join(job_dir, "regeneration_report.json")):
                 bad.setdefault(job_id, []).append({
-                    "section_id": sec.get("section_id"),
+                    "section_id": section_id,
                     "duration": round(dur, 1),
                     "text_len": len(text),
                     "text_preview": text[:80].replace("\n", " "),
