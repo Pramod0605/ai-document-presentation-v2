@@ -506,7 +506,19 @@ function loadSlide(index) {
     contentVideo.onended = null;
   }
 
-  // Reset all layer states\n  contentBox.innerHTML = '';\n  videoLayer.classList.add('hidden');\n  contentLayer.classList.remove('video-mode');\n  \n  // V2.5: Hide intro background video if not on Intro slide\n  const introBackground = document.getElementById('intro-background-video');\n  if (introBackground && sectionType !== 'intro') {\n    introBackground.style.display = 'none';\n    introBackground.pause();\n  }
+  // Reset all layer states
+  contentBox.innerHTML = '';
+  videoLayer.classList.add('hidden');
+  contentLayer.classList.remove('video-mode');
+  
+  // V3 QUIZ: Hide quiz overlay when loading new section
+  const quizOverlay = document.getElementById('quiz-overlay');
+  if (quizOverlay) {
+    quizOverlay.style.display = 'none';
+  }
+  document.getElementById('stage').classList.remove('mode-quiz');
+  
+  // V2.5: Hide intro background video if not on Intro slide\n  const introBackground = document.getElementById('intro-background-video');\n  if (introBackground && sectionType !== 'intro') {\n    introBackground.style.display = 'none';\n    introBackground.pause();\n  }
   contentLayer.classList.remove('hidden');
 
   // V2.5: Apply section-specific display directives
@@ -671,6 +683,10 @@ function setStageMode(sectionType) {
 
   if (sectionType === 'intro') {
     stage.classList.add('mode-intro');
+  }
+  
+  if (sectionType === 'quiz') {
+    stage.classList.add('mode-quiz');
   }
 }
 
@@ -926,21 +942,153 @@ function renderRecap(slide) {
 }
 
 function renderQuiz(slide) {
-  // V2.5: QUIZ = 3-Step Dance per Bible
-  console.log('[V2.5] QUIZ: 3-step choreography (Introduce → Pause → Reveal)');
+  // V3 STYLE: Full-screen quiz overlay with branching
+  console.log('[V2.5] QUIZ: V3-style overlay quiz');
 
+  // Show quiz overlay
+  const overlay = document.getElementById('quiz-overlay');
+  const qLabel = document.getElementById('quiz-q-label');
+  const qText = document.getElementById('quiz-q-text');
+  const qOptions = document.getElementById('quiz-options');
+  const qFeedback = document.getElementById('quiz-feedback');
+  const avatarVideo = document.getElementById('raw-avatar-video');
+
+  if (!overlay) {
+    console.warn('[V2.5] QUIZ: Overlay not found, using legacy render');
+    renderQuizLegacy(slide);
+    return;
+  }
+
+  overlay.style.display = 'flex';
+  qFeedback.style.display = 'none';
+  qFeedback.className = '';
+
+  // Set mode for avatar positioning
+  document.getElementById('stage').classList.add('mode-quiz');
+
+  // Get questions from slide
+  const questions = (slide.questions && slide.questions.length > 0) 
+    ? slide.questions 
+    : (slide.understanding_quiz ? [slide.understanding_quiz] : []);
+  
+  // Fallback to visual_beats if no questions
+  const finalQuestions = questions.length > 0 ? questions : [];
+  
+  let qIdx = 0;
+
+  function showQuestion(idx) {
+    const q = finalQuestions[idx];
+    if (!q) {
+      // All questions done
+      overlay.style.display = 'none';
+      document.getElementById('stage').classList.remove('mode-quiz');
+      // Auto-advance to next section
+      if (typeof goToNextSection === 'function') {
+        setTimeout(() => goToNextSection(), 600);
+      }
+      return;
+    }
+
+    qLabel.textContent = 'QUESTION ' + (idx + 1) + ' / ' + finalQuestions.length;
+    qText.textContent = q.question_text || q.question || '';
+    qOptions.innerHTML = '';
+    qFeedback.style.display = 'none';
+    qFeedback.className = '';
+
+    // Build option buttons
+    const opts = q.options || {};
+    const keys = Object.keys(opts);
+
+    keys.forEach(key => {
+      const btn = document.createElement('button');
+      btn.id = 'quiz-opt-' + key;
+      btn.textContent = key + ': ' + opts[key];
+      btn.onclick = () => handleAnswer(key, q, idx);
+      qOptions.appendChild(btn);
+    });
+
+    // Play question avatar clip if available
+    const clips = q.avatar_clips || {};
+    if (clips.question && avatarVideo) {
+      avatarVideo.src = clips.question;
+      avatarVideo.load();
+      avatarVideo.play().catch(() => {});
+      avatarVideo.onended = () => {
+        // Enable buttons after clip ends
+        qOptions.querySelectorAll('button').forEach(b => b.disabled = false);
+      };
+    } else {
+      // No clip - buttons already enabled
+    }
+  }
+
+  function handleAnswer(selectedKey, q, idx) {
+    const correct = q.correct_option || q.correct || '';
+    const isRight = (selectedKey === correct);
+
+    // Disable all buttons
+    qOptions.querySelectorAll('button').forEach(btn => {
+      btn.disabled = true;
+      btn.style.cursor = 'default';
+    });
+
+    // Style buttons
+    keys = Object.keys(q.options || {});
+    keys.forEach(k => {
+      const btn = document.getElementById('quiz-opt-' + k);
+      if (!btn) return;
+      if (k === correct) {
+        btn.classList.add('correct');
+      } else if (k === selectedKey && !isRight) {
+        btn.classList.add('wrong');
+      }
+    });
+
+    // Show feedback
+    qFeedback.style.display = 'block';
+    qFeedback.classList.add(isRight ? 'correct' : 'wrong');
+    
+    const explanation = q.explanation || (isRight ? '✓ Correct!' : '✗ Incorrect');
+    qFeedback.innerHTML = explanation;
+
+    // Play correct/wrong clip
+    const clips = q.avatar_clips || {};
+    const clipUrl = isRight ? clips.correct : clips.wrong;
+    
+    const proceed = () => {
+      // Next question after delay
+      setTimeout(() => {
+        qIdx++;
+        showQuestion(qIdx);
+      }, 2500);
+    };
+
+    if (clipUrl && avatarVideo) {
+      avatarVideo.src = clipUrl;
+      avatarVideo.load();
+      avatarVideo.play().catch(() => {});
+      avatarVideo.onended = proceed;
+    } else {
+      proceed();
+    }
+  }
+
+  // Start with first question
+  showQuestion(0);
+
+  console.log(`[V2.5] QUIZ: ${finalQuestions.length} questions ready`);
+}
+
+// Legacy fallback
+function renderQuizLegacy(slide) {
+  console.log('[V2.5] QUIZ: Legacy 3-step choreography');
   contentBox.innerHTML = '';
-
   const beats = slide.visual_beats || [];
-
   beats.forEach((beat, i) => {
     const card = document.createElement('div');
-    // V2.6: Use beat-block for styles and beat-${i} for reveal loop match
     card.className = 'beat-block quiz-beat reveal-hidden';
     card.id = `beat-${i}`;
     card.dataset.segmentId = beat.segment_id || '';
-
-    // Visual styling based on answer_revealed flag
     if (beat.answer_revealed) {
       card.classList.add('quiz-answer');
     } else if (beat.display_text === '🤔') {
@@ -948,16 +1096,12 @@ function renderQuiz(slide) {
     } else {
       card.classList.add('quiz-question');
     }
-
     const content = document.createElement('div');
     content.className = 'quiz-content';
     content.innerHTML = sanitizeMarkdown(beat.display_text || '');
-
     card.appendChild(content);
     contentBox.appendChild(card);
   });
-
-  console.log(`[V2.5] QUIZ: ${beats.length} beats ready for reveal`);
 }
 
 function renderMemory(slide) {

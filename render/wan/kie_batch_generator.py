@@ -319,49 +319,47 @@ class KieBatchGenerator:
 
                 print(f"[WAN] Submitting Beat: {beat_id} | Prompt: {current_prompt[:60]}... | Duration: {duration}s")
                 
-                try:
-                    # Attempt 1
-                    task_id = self._create_task(current_prompt, duration)
-                    if task_id:
-                        self.pending_tasks.append({
-                            "beat_id": beat_id,
-                            "task_id": task_id,
-                            "output_path": output_path,
-                            "prompt": current_prompt,
-                            "final_prompt": current_prompt,  # Track the prompt that was actually used
-                            "duration": duration
-                        })
-                    else:
-                        logger.error(f"[KieBatch] Failed to create task for {beat_id}")
-
-                except WanSafetyError as e:
-                    logger.warning(f"[WAN] Safety Error for {beat_id}: {e}. Retrying with LLM rewrite...")
-                    # Rewrite for safety
-                    safe_prompt = self._rewrite_prompt(current_prompt, is_safety_fix=True)
+                # Try up to 3 times for Safety Errors
+                task_created = False
+                for attempt in range(3):
                     try:
-                        # Attempt 2 (Retry once)
-                        task_id = self._create_task(safe_prompt, duration)
+                        # Attempt to create task
+                        prompt_to_use = current_prompt
+                        
+                        task_id = self._create_task(prompt_to_use, duration)
                         if task_id:
                             self.pending_tasks.append({
                                 "beat_id": beat_id,
                                 "task_id": task_id,
                                 "output_path": output_path,
-                                "prompt": safe_prompt,
-                                "final_prompt": safe_prompt,  # Track sanitized prompt
+                                "prompt": prompt_to_use,
+                                "final_prompt": prompt_to_use,
                                 "duration": duration,
-                                "is_retry": True
+                                "is_retry": attempt > 0
                             })
-                            logger.info(f"[WAN] Safety retry submitted for {beat_id}")
+                            task_created = True
+                            if attempt > 0:
+                                logger.info(f"[WAN] Safety retry {attempt}/3 successful for {beat_id}")
+                            break # Success, exit loop
                         else:
-                            logger.error(f"[WAN] Safety retry failed to create task for {beat_id}")
-                    except Exception as retry_e:
-                        logger.error(f"[WAN] Safety retry FAILED for {beat_id}: {retry_e}")
-                        
-                except WanFatalError as e:
-                    logger.error(f"[WAN] Fatal Error for {beat_id}: {e}. Skipping retry.")
-                
-                except Exception as e:
-                    logger.error(f"[KieBatch] Submission error for {beat_id}: {e}")
+                            logger.error(f"[KieBatch] Failed to create task for {beat_id} (Attempt {attempt+1}/3)")
+
+                    except WanSafetyError as e:
+                        logger.warning(f"[WAN] Safety Error for {beat_id} (Attempt {attempt+1}/3): {e}")
+                        if attempt < 2:
+                            logger.info(f"[WAN] Rewriting prompt for safety retry {attempt+1}...")
+                            current_prompt = self._rewrite_prompt(current_prompt, is_safety_fix=True)
+                            continue # Try next attempt
+                        else:
+                            logger.error(f"[WAN] All 3 safety retries failed for {beat_id}")
+                    
+                    except WanFatalError as e:
+                        logger.error(f"[WAN] Fatal Error for {beat_id}: {e}. Skipping retries.")
+                        break
+                    
+                    except Exception as e:
+                        logger.error(f"[KieBatch] Submission error for {beat_id}: {e}")
+                        break
             
             # Rate limit wait between batches
             if i + self.BATCH_SIZE < len(beats):
@@ -533,35 +531,47 @@ class KieBatchGenerator:
         prompt = task_info.get("final_prompt", task_info.get("prompt"))
         last_error = None
 
-        try:
-            # Use client's polling and download methods
-            video_url = self.client._poll_task_status(task_id)
-            if video_url:
-                local_path = self.client._download_video(video_url, output_path)
-                return {"path": local_path, "prompt": prompt, "error": None}
-        except WanSafetyError as e:
-            last_error = f"Safety/Policy Violation: {e}"
-            logger.warning(f"[WAN Polling] Safety Error detected during generation for {beat_id}: {e}. Attempting ONE retry with rewrite...")
-            # If it's a safety error during polling, try ONE resubmission
-            if not task_info.get("is_retry"):
-                safe_prompt = self._rewrite_prompt(task_info["prompt"], is_safety_fix=True)
-                try:
-                    new_task_id = self._create_task(safe_prompt, task_info["duration"])
-                    if new_task_id:
-                        logger.info(f"[WAN Polling] Resubmitted {beat_id} with new task {new_task_id}")
-                        video_url = self.client._poll_task_status(new_task_id)
-                        if video_url:
-                            local_path = self.client._download_video(video_url, output_path)
-                            return {"path": local_path, "prompt": safe_prompt, "error": None}
-                except Exception as retry_e:
-                    last_error = f"Safety retry failed: {retry_e}"
-                    logger.error(f"[WAN Polling] Retry failed for {beat_id}: {retry_e}")
-            else:
-                last_error = "Rewritten prompt still flagged as unsafe"
-                logger.error(f"[WAN Polling] Rewritten prompt for {beat_id} STILL flagged as unsafe. Giving up.")
-        except Exception as e:
-            last_error = str(e)
-            logger.error(f"[WAN Polling] Polling error for {beat_id}: {e}")
+        # Loop for retries specifically during polling (Safety errors can happen here too)
+        for attempt in range(3):
+            try:
+                # Use client's polling and download methods
+                # If we are in a retry loop (attempt > 0), we must submit a NEW task first
+                if attempt > 0:
+                     logger.info(f"[WAN Polling] Safety Retry {attempt}/3: Resubmitting task...")
+                     # Rewrite prompt
+                     safe_prompt = self._rewrite_prompt(task_info["prompt"], is_safety_fix=True)
+                     # Create NEW task
+                     new_task_id = self._create_task(safe_prompt, task_info["duration"])
+                     if not new_task_id:
+                         raise Exception("Failed to create new task for retry")
+                     
+                     # Update task_id in memory for polling
+                     task_id = new_task_id
+                     logger.info(f"[WAN Polling] Resubmitted with new task_id: {task_id}")
+
+                # Poll
+                video_url = self.client._poll_task_status(task_id)
+                if video_url:
+                    local_path = self.client._download_video(video_url, output_path)
+                    # Use the prompt that actually worked (if rewritten)
+                    final_p = safe_prompt if attempt > 0 else prompt
+                    return {"path": local_path, "prompt": final_p, "error": None}
+            
+            except WanSafetyError as e:
+                last_error = f"Safety/Policy Violation: {e}"
+                logger.warning(f"[WAN Polling] Safety Error for {beat_id} (Attempt {attempt+1}/3): {e}")
+                
+                 # If we haven't exhausted retries, loop again to resubmit
+                if attempt < 2:
+                    continue
+                else:
+                    logger.error(f"[WAN Polling] All 3 safety retries failed for {beat_id}")
+            
+            except Exception as e:
+                last_error = str(e)
+                logger.error(f"[WAN Polling] Polling error for {beat_id}: {e}")
+                # Non-safety errors break the loop (we don't retry random API failures here endlessly)
+                break
 
         # FIX: Return dict with error info instead of None
         logger.error(f"[WAN Polling] Beat {beat_id} FAILED - no video generated. Error: {last_error}")

@@ -697,6 +697,108 @@
     }
 
     /* ========================================
+       V3 QUIZ OVERLAY STYLES
+       ======================================== */
+    #quiz-overlay {
+      display: none;
+    }
+
+    #quiz-question-card {
+      max-width: 640px;
+      width: 100%;
+      background: #161b22;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-top: 3px solid #f6c44e;
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 22px;
+    }
+
+    #quiz-q-label {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      color: rgba(246,196,78,0.6);
+      letter-spacing: 0.12em;
+      margin-bottom: 10px;
+    }
+
+    #quiz-q-text {
+      font-size: 22px;
+      line-height: 1.65;
+      color: #e6edf3;
+    }
+
+    #quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      max-width: 640px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    #quiz-options button {
+      padding: 16px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      font-size: 18px;
+      text-align: left;
+      background: #21262d;
+      color: #e6edf3;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.25s;
+    }
+
+    #quiz-options button:hover {
+      border-color: #f6c44e;
+    }
+
+    #quiz-options button.correct {
+      background: rgba(126,231,135,0.14);
+      border-color: #7ee787;
+      color: #7ee787;
+    }
+
+    #quiz-options button.wrong {
+      background: rgba(255,107,138,0.14);
+      border-color: #ff6b8a;
+      color: #ff6b8a;
+    }
+
+    #quiz-feedback {
+      max-width: 640px;
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+      display: none;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(0, 212, 255, 0.08);
+      color: #e6edf3;
+    }
+
+    #quiz-feedback.show {
+      display: block;
+    }
+
+    #quiz-feedback.correct {
+      background: rgba(126,231,135,0.1);
+      border-color: #7ee787;
+    }
+
+    #quiz-feedback.wrong {
+      background: rgba(255,107,138,0.1);
+      border-color: #ff6b8a;
+    }
+
+    /* Quiz mode - show avatar on right */
+    .mode-quiz #content-wrapper {
+      opacity: 0.3;
+    }
+
+    /* ========================================
        AVATAR: ALL positioning controlled by JavaScript applyAvatarLayout()
        CSS only provides minimal base styles - NO position/width/left/right
        ======================================== */
@@ -1376,6 +1478,32 @@
     <button id="btn-dev" title="Toggle Dev Panel">Dev</button>
     <span class="keyboard-hint">Space: Play | Arrows: Navigate | D: Dev Panel</span>
     <button id="btn-fullscreen" title="Fullscreen">FS</button>
+  </div>
+
+  <!-- V3 STYLE QUIZ OVERLAY -->
+  <div id="quiz-overlay" style="
+    display:none; position:fixed; inset:0; z-index:200;
+    flex-direction:column; align-items:center; justify-content:center;
+    background:rgba(13,17,23,0.96); padding:28px;
+  ">
+    <div id="quiz-question-card" style="
+      max-width:640px; width:100%;
+      background:#161b22; border:1px solid rgba(255,255,255,0.08);
+      border-top:3px solid #f6c44e; border-radius:16px;
+      padding:24px 28px; margin-bottom:22px;
+    ">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(246,196,78,0.6);letter-spacing:.12em;margin-bottom:10px"
+        id="quiz-q-label">QUESTION 1 / 1</div>
+      <div id="quiz-q-text" style="font-size:22px;line-height:1.65;color:#e6edf3"></div>
+    </div>
+    <div id="quiz-options"
+      style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:640px;width:100%;margin-bottom:20px">
+    </div>
+    <div id="quiz-feedback" style="
+      max-width:640px; width:100%; padding:12px 18px; border-radius:10px;
+      font-size:13px; line-height:1.6; display:none;
+      border:1px solid rgba(255,255,255,0.07);
+    "></div>
   </div>
 
   <div id="dev-panel">

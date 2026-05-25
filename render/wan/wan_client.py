@@ -33,7 +33,7 @@ class WANClient:
     MAX_RETRIES = 3
     RETRY_DELAY = 5
     POLL_INTERVAL = 30  # seconds between status checks (reduced API load)
-    MAX_POLL_ATTEMPTS = 20  # 10 minutes max wait (20 * 30s)
+    MAX_POLL_ATTEMPTS = 60  # 30 minutes max wait (60 * 30s)
     
     # Track video hashes to detect duplicates within a session
     _generated_hashes: Set[str] = set()
