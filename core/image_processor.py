@@ -136,6 +136,10 @@ def save_datalab_images(images_dict: dict, output_dir: str, apply_green_screen: 
     
     for filename, base64_data in images_dict.items():
         try:
+            # Strip data URI prefix if present (e.g., from local marker OCR)
+            if base64_data.startswith('data:image/'):
+                base64_data = base64_data.split('base64,')[1]
+                
             img_bytes = base64.b64decode(base64_data)
             img = Image.open(BytesIO(img_bytes))
             

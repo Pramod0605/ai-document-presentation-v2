@@ -126,7 +126,7 @@ CRITICAL: Each video_prompt MUST be **80+ words minimum** for the video API to g
 Each video_prompt must:
 1. **Be 80+ words minimum** - detailed enough for AI video generation
 2. **Be derived from the narration context** - visualize exactly what the narrator is explaining
-3. **Duration hint: 10-15 seconds**
+3. **Duration: use `duration_seconds` field (NOT `duration` or `duration_hint`). Max 15 seconds per beat. For segments 16-30s provide 2 beats; 31-45s provide 3 beats.**
 4. **Include visual details**: camera angles, lighting, animation style, motion, colors
 
 **NARRATION-VIDEO SYNC RULE:**
@@ -367,7 +367,7 @@ For recap sections, include:
   {
     "segment_id": "seg_1",
     "prompt": "Detailed video generation prompt...",
-    "duration_hint": 10
+    "duration_seconds": 15
   }
 ]
 

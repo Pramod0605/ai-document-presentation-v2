@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Educational Video Player V2</title>
-  <link rel="stylesheet" href="player_v2.css?v=2.5.5">
+  <link rel="stylesheet" href="player_v2.css?v=2.5.8">
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
@@ -39,6 +39,9 @@
         <!-- Canvas for chroma-keyed output -->
         <canvas id="avatar-canvas"></canvas>
       </div>
+
+      <!-- LAYER 2.5: Subtitle Overlay — fixed to viewport, left of avatar column -->
+      <div id="subtitle-overlay" aria-live="polite" aria-atomic="true"></div>
 
       <!-- Content Video Overlay (for Manim/WAN videos) -->
       <div id="video-layer" class="hidden">
@@ -108,7 +111,7 @@
   <!-- Hidden Audio Element -->
   <audio id="narration-audio"></audio>
 
-  <script src="player_v2.js?v=2.5.5"></script>
+  <script src="player_v2.js?v=2.5.8"></script>
 </body>
 
 </html>

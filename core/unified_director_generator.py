@@ -295,10 +295,18 @@ class DirectorGenerator:
             # Fix: Look in root AND render_spec, handle strings vs dicts
             prompts_list = section.get("video_prompts", []) or section.get("render_spec", {}).get("video_prompts", [])
             base_prompt = "Cinematic educational visualization, high quality, professional lighting."
+            # Preserve I2V frame prompts from the LLM-generated video_prompts entry
+            base_image_prompt = None
+            base_image_prompt_end = None
+            base_duration_hint = 15
             if prompts_list and isinstance(prompts_list, list) and len(prompts_list) > 0:
                 obj = prompts_list[idx % len(prompts_list)]
                 if isinstance(obj, dict):
                     base_prompt = obj.get("prompt") or obj.get("text") or obj.get("wan_prompt") or base_prompt
+                    # Preserve I2V fields — critical for Local GPU image-to-video conditioning
+                    base_image_prompt = obj.get("image_prompt") or None
+                    base_image_prompt_end = obj.get("image_prompt_end") or None
+                    base_duration_hint = obj.get("duration_hint") or obj.get("duration") or 15
                 else:
                     base_prompt = str(obj)
             
@@ -314,11 +322,18 @@ class DirectorGenerator:
                     consistency_prefix = "Keeping the previous character and setting exactly the same, " if i > 0 else ""
                     
                     beat_id = f"{seg_id}_beat_{i+1}"
-                    final_video_prompts.append({
+                    beat_entry = {
                         "beat_id": beat_id,
+                        "segment_id": seg_id,
                         "prompt": f"{consistency_prefix}{base_prompt} (Step {i+1} of {num_beats})",
-                        "duration_hint": 15
-                    })
+                        "duration_hint": base_duration_hint
+                    }
+                    # Only set I2V frames on first beat (start) and last beat (end) of the split
+                    if base_image_prompt and i == 0:
+                        beat_entry["image_prompt"] = base_image_prompt
+                    if base_image_prompt_end and i == num_beats - 1:
+                        beat_entry["image_prompt_end"] = base_image_prompt_end
+                    final_video_prompts.append(beat_entry)
                     seg_beats.append(beat_id)
                 
                 # Add beat mapping to segment so player knows to switch
@@ -326,11 +341,18 @@ class DirectorGenerator:
             else:
                 # Standard segment: still needs a video beat mapping
                 beat_id = f"{seg_id}_beat_1"
-                final_video_prompts.append({
+                beat_entry = {
                     "beat_id": beat_id,
+                    "segment_id": seg_id,
                     "prompt": base_prompt,
-                    "duration_hint": 15
-                })
+                    "duration_hint": base_duration_hint
+                }
+                # Preserve I2V frame conditioning for this single beat
+                if base_image_prompt:
+                    beat_entry["image_prompt"] = base_image_prompt
+                if base_image_prompt_end:
+                    beat_entry["image_prompt_end"] = base_image_prompt_end
+                final_video_prompts.append(beat_entry)
                 seg["beat_videos"] = [beat_id]
         
         # Replace section top-level video_prompts with the complete mapping

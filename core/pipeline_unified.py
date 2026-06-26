@@ -127,51 +127,66 @@ def process_markdown_unified(
                 generate_tts = False
                 logger.info("Pipeline: V2.5 Director Mode active - Disabling TTS generation (User Preference).")
             
-            # Save source markdown for Player V2.5
+            # Save source markdown for Player V2.5 (ORIGINAL — player needs raw base64 images)
             source_md_path = output_path / "source_markdown.md"
             with open(source_md_path, "w", encoding="utf-8") as f:
                 f.write(markdown_content)
             logger.info(f"Saved source markdown to {source_md_path}")
-            
+
+            # ── Strip base64/image blobs before ANY LLM call ─────────────────
+            # OCR-produced markdown embeds raw page scans as data:image/jpeg;base64,...
+            # blobs (can be 90-400KB per image) — sending these to the LLM causes:
+            #   1. Context window saturation (LLM sees 97% garbage)
+            #   2. LLM tries to echo base64 into JSON string fields
+            #   3. Response gets truncated mid-base64 → "Unterminated string" JSONDecodeError
+            # Solution: strip once here (same pattern as V3 pipeline_v3.py line 248-249).
+            # source_markdown.md above already has the original for the player.
+            from core.utils.markdown_cleaner import clean_markdown_for_llm
+            llm_markdown = clean_markdown_for_llm(markdown_content, label=f"V2 Job {job_id}")
+            logger.info(
+                f"[MarkdownCleaner] LLM will receive {len(llm_markdown):,} chars "
+                f"(original: {len(markdown_content):,} chars)"
+            )
+
             # Save Smart Chunker output for Content Completeness Validator
             log_status("chunker", "Running Smart Chunker for validation ground truth...")
             from core.smart_chunker import call_smart_chunker
-            
+
             artifacts_dir = output_path / "artifacts"
             artifacts_dir.mkdir(parents=True, exist_ok=True)
-            
+
             try:
                 chunker_output = call_smart_chunker(
-                    markdown_content=markdown_content,
+                    markdown_content=llm_markdown,
                     subject=subject,
                     tracker=tracker
                 )
-                
+
                 chunker_path = artifacts_dir / "01_chunker.json"
                 with open(chunker_path, "w", encoding="utf-8") as f:
                     json.dump(chunker_output, f, indent=2)
-                
+
                 logger.info(f"Saved chunker output to {chunker_path}")
             except Exception as e:
                 logger.warning(f"Smart Chunker failed (non-critical for validation): {e}")
                 # Continue without chunker output - validator will skip if not available
 
             # v2_output = generate_director_presentation(
-            #     markdown_content=markdown_content,
+            #     markdown_content=llm_markdown,
             #     subject=subject,
             #     grade=grade,
             #     images_list=images_list,
             #     update_status_callback=log_status
             # )
-            
+
             # Start LLM Phase
             llm_phase = tracker.start_phase("llm_generation", model=model or "default")
-            
+
             # PHASE 7 SWAP: Use Partition & Conquer architecture
             config = GeneratorConfig(model=model) if model else None
             director = PartitionDirectorGenerator(config=config)
             v2_output = director.generate_presentation_partitioned(
-                markdown_content=markdown_content,
+                markdown_content=llm_markdown,
                 subject=subject,
                 grade=grade,
                 images_list=images_list,
@@ -553,6 +568,18 @@ def process_markdown_unified(
                 presentation.setdefault("metadata", {})["job_status"] = "completed_with_errors"
                 presentation["metadata"]["error_summary"] = f"Image Linking Warning: {str(e)}."
 
+        # Phase: Render images for image_to_video sections
+        renderers_needing_images = {"image_to_video", "video", "wan_video", "wan"}
+        if any(s.get("renderer") in renderers_needing_images for s in presentation.get("sections", [])):
+            log_status("image_rendering", "Generating static reference images for video animation...")
+            from core.renderer_executor import execute_image_phase
+            execute_image_phase(
+                presentation, 
+                str(output_dir), 
+                image_provider=os.getenv("IMAGE_PROVIDER", "gpu"),
+                image_model=os.getenv("IMAGE_MODEL", "flux_dev")
+            )
+
         # Visual Rendering (Manim + WAN)
         if output_dir:
             tracker.start_phase("visual_rendering", model="renderer")
@@ -677,6 +704,20 @@ def process_markdown_unified(
                 logger.error(f"Failed to execute WAN generation: {e}")
             
             tracker.end_phase("visual_rendering", 0, 0)
+
+            # --- POST-RENDER: Compress LTX/WAN beat videos (videos/ only, never avatars/) ---
+            if output_dir and (output_dir / "videos").exists():
+                try:
+                    from core.video_downgrader import downgrade_job_videos
+                    dg_result = downgrade_job_videos(str(output_dir))
+                    log_status(
+                        "video_downgrade",
+                        f"Beat video compression: {dg_result['compressed']} compressed, "
+                        f"{len(dg_result['errors'])} errors"
+                    )
+                except Exception as _dg_err:
+                    logger.warning(f"[DOWNGRADE] Non-fatal: {_dg_err}")
+
 
         # --- PHASE 5.6: SAVE COMPREHENSIVE ANALYTICS ---
         if output_dir:

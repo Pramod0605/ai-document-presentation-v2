@@ -1,4 +1,4 @@
-﻿import os
+import os
 import time
 import requests
 import logging
@@ -586,7 +586,20 @@ class AvatarGenerator:
                             self._update_artifacts(output_dir, active_map[tid]["section_id"], out_path, duration, 
                                                   vimeo_url=vimeo_url, b2_url=b2_url,
                                                   language=lang, speaker=speaker, task_id=tid)
-                            
+
+                            # --- SUBTITLE GENERATION (non-fatal) ---
+                            try:
+                                from core.agents.subtitle_aligner import generate_subtitles_for_section
+                                generate_subtitles_for_section(
+                                    section_id=active_map[tid]["section_id"],
+                                    avatar_video_path=out_path,
+                                    output_dir=output_dir,
+                                    language=lang,
+                                )
+                            except Exception as _sub_err:
+                                logger.warning(f"[Subtitle] Non-fatal: sec {active_map[tid]['section_id']}: {_sub_err}")
+                            # --- END SUBTITLE ---
+
                             lang_str = f" [{active_map[tid].get('language')}]" if active_map[tid].get('language') else ""
                             if tracker:
                                 tracker.update_progress(
@@ -759,6 +772,19 @@ class AvatarGenerator:
                                 duration = 0.0
                                 
                             self._update_artifacts(output_dir, info["section_id"], info["output_path"], duration, vimeo_url, b2_url, task_id=tid)
+
+                            # --- SUBTITLE GENERATION (non-fatal) ---
+                            try:
+                                from core.agents.subtitle_aligner import generate_subtitles_for_section
+                                generate_subtitles_for_section(
+                                    section_id=info["section_id"],
+                                    avatar_video_path=info["output_path"],
+                                    output_dir=output_dir,
+                                )
+                            except Exception as _sub_err:
+                                logger.warning(f"[Subtitle] Non-fatal: sec {info['section_id']}: {_sub_err}")
+                            # --- END SUBTITLE ---
+
                             info["status"] = "completed"
                             info["vimeo_url"] = vimeo_url
                             info["b2_url"] = b2_url

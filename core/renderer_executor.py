@@ -206,8 +206,76 @@ def execute_renderer(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     result["duration_seconds"] = round(time.time() - render_start, 2)
     return result
 
-
-
+def execute_image_phase(presentation: dict, output_dir: str, image_provider: str = "gpu", image_model: str = "flux_dev", aspect_ratio: str = "16:9"):
+    """
+    Synchronous phase to pre-generate all images for image_to_video sections
+    before WAN rendering kicks in.
+    """
+    from render.image.image_generator import generate_image_for_beat, generate_ipe_image
+    
+    sections = presentation.get("sections", [])
+    job_id = str(Path(output_dir).name)
+    images_dir = str(Path(output_dir) / "images")
+    os.makedirs(images_dir, exist_ok=True)
+    
+    for topic in sections:
+        renderer = topic.get("renderer")
+        if renderer != "image_to_video":
+            continue
+            
+        topic_id = topic.get("section_id")
+        render_spec = topic.get("render_spec", {})
+        image_to_video_beats = render_spec.get("image_to_video_beats") or topic.get("image_to_video_beats", [])
+        video_prompts = render_spec.get("video_prompts") or topic.get("video_prompts", [])
+        
+        beats = []
+        if image_to_video_beats:
+            for i, beat in enumerate(image_to_video_beats):
+                beats.append({
+                    "beat_id": beat.get("beat_id", f"beat_{i + 1}"),
+                    "image_prompt": beat.get("image_prompt_start", ""),
+                    "image_prompt_end": beat.get("image_prompt_end", ""),
+                })
+        elif video_prompts:
+            for i, vid_p in enumerate(video_prompts):
+                beat_id = vid_p.get("beat_id", f"beat_{i + 1}") if isinstance(vid_p, dict) else f"beat_{i + 1}"
+                img_prompt = vid_p.get("image_prompt", "") if isinstance(vid_p, dict) else f"Reference image for scene: {str(vid_p)[:200]}"
+                img_prompt_end = vid_p.get("image_prompt_end", "") if isinstance(vid_p, dict) else ""
+                beats.append({
+                    "beat_id": beat_id,
+                    "image_prompt": img_prompt,
+                    "image_prompt_end": img_prompt_end,
+                })
+        
+        for beat in beats:
+            beat_id = beat["beat_id"]
+            if beat.get("image_prompt"):
+                try:
+                    img_path = generate_image_for_beat(
+                        beat=beat,
+                        job_id=job_id,
+                        section_id=str(topic_id),
+                        output_dir=images_dir,
+                        image_provider=image_provider,
+                        image_model=image_model,
+                        aspect_ratio=aspect_ratio
+                    )
+                    logger.info(f"[ImagePhase] Generated start frame for {topic_id}/{beat_id}: {img_path}")
+                except Exception as e:
+                    logger.error(f"[ImagePhase] Failed start frame for {topic_id}/{beat_id}: {e}")
+                    
+            if beat.get("image_prompt_end"):
+                try:
+                    img_path_end = generate_ipe_image(
+                        beat=beat,
+                        job_id=job_id,
+                        section_id=str(topic_id),
+                        output_dir=images_dir,
+                        ips_image_path=img_path if 'img_path' in locals() else None
+                    )
+                    logger.info(f"[ImagePhase] Generated end frame for {topic_id}/{beat_id}: {img_path_end}")
+                except Exception as e:
+                    logger.error(f"[ImagePhase] Failed end frame for {topic_id}/{beat_id}: {e}")
 
 def validate_before_render(presentation: dict, output_dir: str, strict_v13: bool = True) -> DryRunValidationResult:
     """
@@ -338,7 +406,8 @@ def render_all_topics(presentation: dict, output_dir: str, dry_run: bool = False
 
 
 
-def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, skip_wan: bool = False, skip_avatar: bool = False, video_provider: str = "ltx"):
+def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, skip_wan: bool = False, skip_avatar: bool = False, video_provider: str = "ltx",
+                              image_provider: str = None, image_model: str = None):
     """
     Submits video generation tasks to Kie.ai or LTX.
     Routing: sections with use_local_gpu=True → Local GPU server
@@ -348,6 +417,11 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
         from render.wan.kie_batch_generator import KieBatchGenerator
         from render.wan.local_gpu_client import LocalGPUClient
         from render.render_trace import log_render_prompt, set_trace_output_dir
+
+        import os
+        _img_provider = image_provider or os.getenv("IMAGE_PROVIDER", "gpu")
+        _img_model = image_model or os.getenv("IMAGE_MODEL", "flux_dev")
+        print(f"[BG-JOB] Image provider: {_img_provider} / model: {_img_model}")
 
         try:
             from core.job_manager import job_manager
@@ -459,12 +533,55 @@ def submit_wan_background_job(presentation: dict, output_dir: str, job_id: str, 
                     for topic, beat in all_local_beats:
                         beat_id = beat.get("beat_id", "")
                         prompt = beat.get("prompt") or beat.get("wan_prompt") or ""
-                        # V2.6: Use duration_seconds if available (narration sync), else duration_hint
-                        duration = int(beat.get("duration_seconds") or beat.get("duration_hint") or 5)
+                        # V2.6: Use duration_seconds if available (narration sync), else duration_hint, else duration
+                        duration = int(beat.get("duration_seconds") or beat.get("duration_hint") or beat.get("duration") or 5)
                         out_path = str(Path(output_dir) / f"{beat_id}.mp4")
+                        image_prompt = beat.get("image_prompt")
+                        image_prompt_end = beat.get("image_prompt_end")
 
-                        future = executor.submit(local_client.generate_video, prompt, duration=duration, output_path=out_path)
+                        def _gen_with_i2v(prompt=prompt, duration=duration, out_path=out_path,
+                                          beat=beat, beat_id=beat_id,
+                                          _topic_id=topic.get("section_id", beat_id), _output_dir=output_dir, _job_id=job_id,
+                                          _img_provider=_img_provider, _img_model=_img_model):
+                            """Generate video with optional I2V conditioning."""
+                            img_path = None
+                            img_path_end = None
+                            if beat.get("image_prompt"):
+                                try:
+                                    from render.image.image_generator import generate_image_for_beat
+                                    img_path = generate_image_for_beat(
+                                        beat=beat,
+                                        job_id=_job_id,
+                                        section_id=str(_topic_id),
+                                        output_dir=_output_dir,
+                                        image_provider=_img_provider,
+                                        image_model=_img_model,
+                                    )
+                                    print(f"[LocalGPU-I2V] ✓ Start frame for {beat_id}: {img_path}")
+                                except Exception as e:
+                                    print(f"[LocalGPU-I2V] ✗ Start frame failed for {beat_id}: {e} (T2V fallback)")
+                            if beat.get("image_prompt_end"):
+                                try:
+                                    from render.image.image_generator import generate_ipe_image
+                                    img_path_end = generate_ipe_image(
+                                        beat=beat,
+                                        job_id=_job_id,
+                                        section_id=str(_topic_id),
+                                        output_dir=_output_dir,
+                                        image_provider=_img_provider,
+                                        image_model=_img_model,
+                                    )
+                                    print(f"[LocalGPU-I2V] ✓ End frame for {beat_id}: {img_path_end}")
+                                except Exception as e:
+                                    print(f"[LocalGPU-I2V] ✗ End frame failed for {beat_id}: {e}")
+                            return local_client.generate_video(
+                                prompt=prompt, duration=duration, output_path=out_path,
+                                image_path=img_path, image_path_end=img_path_end
+                            )
+
+                        future = executor.submit(_gen_with_i2v)
                         future_to_beat[future] = (beat, beat_id)
+
 
                     for future in concurrent.futures.as_completed(future_to_beat):
                         beat, beat_id = future_to_beat[future]

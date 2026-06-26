@@ -45,14 +45,23 @@ Return a JSON object with these EXACT keys and structure:
     "section_type": "recap",
     "title": "Lesson Recap",
     "renderer": "video",
+    "use_local_gpu": true,
     "text_layer": "hide",
     "visual_layer": "show",
-    "video_prompts": [...exactly 5 segments...],
+    "video_prompts": [
+      {
+        "beat_id": "topic_N_seg_M_beat_1",
+        "prompt": "100+ word cinematic video description...",
+        "image_prompt": "100+ word Gemini image prompt — OPENING frame. Describe subject, background, lighting, colors, composition, style. End: '16:9, dark background, no watermarks, publication quality.'",
+        "image_prompt_end": "100+ word Gemini image prompt — CLOSING frame. Same style/background. What changed or moved. End: '16:9, dark background, no watermarks, publication quality.'"
+      }
+    ],
     "narration": { 
       "full_text": "...", 
       "segments": [...EXACTLY 5 segments. EACH segment MUST be 40-60 words...] 
     }
   },
+
   "quiz": {
     "section_id": "quiz_1",
     "section_type": "quiz",
@@ -112,11 +121,16 @@ Return a JSON object with these EXACT keys and structure:
 - **Rules**:
   - **EXACTLY 5 SEGMENTS**.
   - **derived_renderer**: `"video"`.
+  - **use_local_gpu**: `true` (MANDATORY — always local GPU).
   - **Visuals**: FULL SCREEN VIDEO. (`text_layer: "hide"`, `visual_layer: "show"`).
-  - **Prompts**: Each `video_prompt` MUST be **EXTREMELY DETAILED, MINIMUM 100 WORDS**. Describe camera, lighting, action, subject, texture, color, and mood in cinematic detail.
-  - **NO TECHNICAL REFERENCES**: ❌ NEVER mention image filenames (e.g., "topic_1_beat_1.png"), technical IDs, or file extensions in your prompts.
+  - **Prompts**: Each `video_prompt` object MUST contain 3 required fields:
+    1. `"prompt"`: **100+ words** — cinematic description. Camera, lighting, action, subject, texture, color, mood.
+    2. `"image_prompt"`: **100+ words** — Gemini image prompt for the OPENING reference frame. Describe subject, background, lighting, colors, composition, style. End with: `'16:9, dark background, no watermarks, publication quality.'`
+    3. `"image_prompt_end"`: **100+ words** — Gemini image prompt for the CLOSING reference frame. Same style as opening. Describe what changed/moved/appeared. End with: `'16:9, dark background, no watermarks, publication quality.'`
+  - **Continuity**: Beat 2+ `image_prompt` MUST match the previous beat's `image_prompt_end`.
+  - **NO TECHNICAL REFERENCES**: ❌ NEVER mention image filenames, technical IDs, or file extensions.
   - **Story**: Narrate a cohesive story summarizing the lesson flow.
-- **WORD COUNT**: MANDATORY 40-60 words per segment. DO NOT output fewer than 40 words. This matches the ~15s cinematic duration.
+- **WORD COUNT**: MANDATORY 40-60 words per narration segment. DO NOT output fewer than 40 words. This matches the ~15s cinematic duration.
 - **CULTURAL CONTEXT**: The video story should feature diverse Indian settings (e.g., a student in a Kerala village, a lab in Hyderabad, a field trip in Assam). Make it relatable!
 - **TONE**: Emotional and cinematic. Treat this as the "Final Act" of a movie.
 

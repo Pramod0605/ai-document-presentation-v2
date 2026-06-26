@@ -121,12 +121,14 @@ Return a JSON object with this exact structure:
             "segment_id": "seg_2",
             "renderer": "manim|video",
             "manim_scene_spec": "For manim: 80+ word description...",
-            "video_prompt": "For WAN: 80+ word cinematic prompt...",
+            "video_prompt": "For video: 80+ word cinematic prompt...",
             "beats": [
               {
                 "beat_id": "seg_2_beat_1",
-                "duration": 12.5,
-                "prompt": "For segments > 15s, split into multiple UNIQUE beats (80+ words each)..."
+                "duration_seconds": 12.5,
+                "prompt": "80+ word cinematic motion prompt describing what happens between start and end frame...",
+                "image_prompt": "100+ word Gemini image prompt — OPENING frame. Describe subject, background, lighting, colors, composition, style. End: '16:9, dark background, no watermarks, publication quality.'",
+                "image_prompt_end": "100+ word Gemini image prompt — CLOSING frame. Same style/background. Describe final state: what changed, moved, appeared. End: '16:9, dark background, no watermarks, publication quality.'"
               }
             ]
           }
@@ -146,31 +148,35 @@ You MUST generate ONE entry in `segment_specs` for EACH SHOW segment (visual_lay
 - **DO NOT** generate a single prompt for the entire section.
 - **COUNT** your SHOW segments (e.g., seg_2, seg_4) and match the count in `segment_specs`.
 
-### 2. WAN VIDEO LIMITS & BEATS (15s Max)
-WAN 2.6 API produces 15s videos maximum.
-- If a segment duration is **16-30s**: Provide 2 `beats` in that `segment_spec`.
-- If a segment duration is **31-45s**: Provide 3 `beats`.
-- For Beats 2+: Use prefix "Keeping the previous scene exactly the same, continue showing..."
-- Each beat prompt MUST be 80+ words.
+### 2. VIDEO BEAT LIMITS & I2V FRAMES (15s Max)
+Local GPU generates 15s videos maximum. Every video beat MUST include THREE prompts:
+- `prompt`: 80+ word cinematic motion description (what happens between start→end)
+- `image_prompt`: 100+ word Gemini prompt for the OPENING reference frame
+- `image_prompt_end`: 100+ word Gemini prompt for the CLOSING reference frame
+
+If a segment duration is **16-30s**: Provide 2 `beats`.
+If a segment duration is **31-45s**: Provide 3 `beats`.
+For Beats 2+: `image_prompt` MUST match the `image_prompt_end` of the previous beat.
+Each beat `prompt` MUST be 80+ words. Each `image_prompt` / `image_prompt_end` MUST be 100+ words.
 
 ### 3. RENDERER SELECTION
-1. **MATH / PHYSICS** -> **MANIM** (`renderer: "manim"`)
+1. **MATH / PHYSICS** → **MANIM** (`renderer: "manim"`)
    - 1 `manim_scene_spec` per segment (NO 15s limit for Manim).
-2. **BIOLOGY / ANATOMY / HUMAN ORGANS** -> **VIDEO** (`renderer: "video"`, `use_local_gpu: false`)
-   - Content involving: human body, organs (heart, liver, kidney, brain, lungs, etc.), cells, tissues, blood, nervous system, digestive system, anatomy diagrams, microscopic biology.
-   - Uses Kie.ai WAN API (external) — better for organic/anatomical visuals.
-3. **ALL OTHER VIDEO CONTENT** (history, general scenes, objects, landscapes, abstract concepts) -> **VIDEO** (`renderer: "video"`, `use_local_gpu: true`)
-   - Uses Local GPU server — faster and free for generic visual content.
-4. **STANDARD** -> **NONE** (`renderer: "none"`)
+2. **ALL VIDEO CONTENT** (biology, anatomy, history, general scenes, objects, landscapes, abstract concepts) → **VIDEO** (`renderer: "video"`, `use_local_gpu: true`)
+   - Local GPU is used for ALL video — biology, anatomy, and everything else.
+   - I2V conditioning via `image_prompt` + `image_prompt_end` gives high visual accuracy for all content types.
+3. **STANDARD** → **NONE** (`renderer: "none"`)
 
-**CRITICAL**: `use_local_gpu` MUST be set for every `renderer: "video"` section.
-- `use_local_gpu: false` → Only for Biology/Anatomy/Human Organ content
-- `use_local_gpu: true`  → For ALL other video sections (default)
+**CRITICAL**: `use_local_gpu` MUST be `true` for EVERY `renderer: "video"` section. No exceptions.
 
 ### B. PROMPT QUALITY CHECKLIST
-1. **Length**: 80+ Words Minimum for BOTH Manim specs and Video prompts.
-2. **Detail**: Describe colors, motions, transitions.
-3. **NO TECHNICAL REFERENCES**: ❌ NEVER mention image filenames (e.g., "topic_1_beat_1.png"), technical IDs, or file extensions in your prompts. Your prompt must describe what is FILMED, not what an image file contains.
-4. **Sync**: Must visualize exactly what is narrated.
+1. **Length**: 80+ Words Minimum for BOTH Manim specs and Video `prompt` fields.
+2. **I2V Frames (MANDATORY for all video beats)**:
+   - `image_prompt`: 100+ words — describe the OPENING frame (subject, background, lighting, colors, style, aspect ratio 16:9, dark background, publication quality).
+   - `image_prompt_end`: 100+ words — describe the CLOSING frame (same style/background, what changed vs opening).
+   - Beat 2+ `image_prompt` MUST match the previous beat's `image_prompt_end`.
+3. **Detail**: Describe colors, motions, transitions in the `prompt`.
+4. **NO TECHNICAL REFERENCES**: ❌ NEVER mention image filenames or file extensions in prompts.
+5. **Sync**: Video `prompt` must describe the cinematic motion between the opening and closing reference frames.
 
 Return ONLY valid JSON.

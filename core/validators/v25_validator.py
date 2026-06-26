@@ -137,7 +137,7 @@ class V25Validator:
                     errors.append(f"Section '{title}' ({stype}) is MISSING 'renderer' key.")
                 
                 # Check for segment_specs (V2.5 requirement)
-                render_spec = sec.get("render_spec", {})
+                render_spec = sec.get("render_spec") or {}
                 segment_specs = render_spec.get("segment_specs", [])
                 
                 # Identify SHOW segments
@@ -146,8 +146,8 @@ class V25Validator:
                 
                 if show_seg_ids and not segment_specs:
                     # Legacy fallback check
-                    v_prompts = render_spec.get("video_prompts", [])
-                    m_spec = render_spec.get("manim_scene_spec")
+                    v_prompts = (render_spec or {}).get("video_prompts", [])
+                    m_spec = (render_spec or {}).get("manim_scene_spec")
                     if not v_prompts and not m_spec:
                          errors.append(f"Section '{title}': Missing 'segment_specs' for SHOW segments {show_seg_ids}.")
                 
@@ -176,7 +176,7 @@ class V25Validator:
                                 if not p or len(str(p).split()) < 40:
                                     errors.append(f"Section '{title}' Manim spec for {spec.get('segment_id')} is too short or missing (min 40 words).")
                     else:
-                        spec = render_spec.get("manim_scene_spec")
+                        spec = (render_spec or {}).get("manim_scene_spec")
                         if not spec or len(str(spec).split()) < 40:
                             errors.append(f"Section '{title}' root manim_scene_spec is too short or missing (min 40 words).")
                         
@@ -195,7 +195,7 @@ class V25Validator:
                                 elif not p or len(str(p).split()) < 80:
                                     errors.append(f"Section '{title}' WAN prompt for {spec.get('segment_id')} is too short or missing.")
                     else:
-                        v_prompts = render_spec.get("video_prompts", [])
+                        v_prompts = (render_spec or {}).get("video_prompts", [])
                         if not v_prompts:
                              errors.append(f"Section '{title}' missing video_prompts.")
                         else:

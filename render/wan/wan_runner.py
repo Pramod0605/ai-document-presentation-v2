@@ -6,11 +6,26 @@ NO fallback to generic prompts - fail if visual beats are missing.
 
 ISS-076 FIX: Production runs now validate 300+ word prompts before API calls.
 """
+import os
 from pathlib import Path
 from typing import List
-from .wan_client import WANClient
+from render.wan.local_gpu_client import LocalGPUClient
+from render.wan.wan_client import WANClient
 from render.render_trace import log_render_prompt
 from core.wan_prompt_validator import hard_fail_on_short_prompts, WanPromptHardFailError, truncate_video_prompts, truncate_wan_prompt, expand_video_prompts
+
+
+def _make_video_client(dry_run: bool, skip_wan: bool):
+    """Return LocalGPUClient for all video generation (single backend)."""
+    if dry_run or skip_wan:
+        return None
+    client = LocalGPUClient()
+    if client.is_available():
+        return client
+    # Hard fallback to WANClient only if GPU is unreachable
+    print("[ROUTER] LocalGPU unreachable — emergency fallback to Kie.ai WAN")
+    return WANClient()
+
 
 
 class WanRenderError(Exception):
@@ -25,29 +40,16 @@ def reset_wan_session():
 
 def _select_video_client(use_local_gpu: bool, dry_run: bool, skip_wan: bool):
     """
-    Return the appropriate video client for recap sections.
-
-    use_local_gpu=True  → LocalGPUClient (falls back to WANClient if unavailable)
-    use_local_gpu=False → WANClient (biology/anatomy subjects)
-    dry_run / skip_wan  → None (no real API calls needed)
+    Return LocalGPUClient for ALL video content.
+    use_local_gpu flag is kept for schema backwards-compat but is now always True.
+    dry_run / skip_wan → None (no real API calls).
     """
-    if dry_run or skip_wan:
-        return None
-    if use_local_gpu:
-        try:
-            from render.wan.local_gpu_client import LocalGPUClient
-            client = LocalGPUClient()
-            if client.is_available():
-                print("[ROUTER] Recap → Local GPU client selected")
-                return client
-            print("[ROUTER] Local GPU unavailable — falling back to Kie.ai WAN for recap")
-        except Exception as e:
-            print(f"[ROUTER] LocalGPUClient import error: {e} — falling back to WAN")
-    print("[ROUTER] Recap → Kie.ai WAN client selected")
-    return WANClient()
+    return _make_video_client(dry_run, skip_wan)
 
 
-def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, trace_output_dir: str = None) -> str:
+
+def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_wan: bool = False, trace_output_dir: str = None,
+                     image_provider: str = None, image_model: str = None) -> str:
     """
     Render WAN video for a section.
     
@@ -73,6 +75,10 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     # then fall back to explanation_plan (legacy ISS-067 location)
     video_prompts = topic.get("video_prompts", []) or explanation_plan.get("video_prompts", [])
     
+    # Resolve image provider from args → env → default (local GPU)
+    _img_provider = image_provider or os.getenv("IMAGE_PROVIDER", "gpu")
+    _img_model = image_model or os.getenv("IMAGE_MODEL", "flux_dev")
+
     # For content/example sections, use visual beats (or pre-compiled video_prompts)
     if section_type in ["content", "example"] and (visual_beats or video_prompts):
         # ISS-200: Return all paths for content sections so each segment can find its video
@@ -87,7 +93,9 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             trace_output_dir=trace_output_dir,
             duration=duration,
             video_prompts=video_prompts,
-            return_all_paths=True
+            return_all_paths=True,
+            image_provider=_img_provider,
+            image_model=_img_model,
         )
         # Store all paths on the topic for reconciliation (like recap does)
         topic["_beat_video_paths"] = recap_result.get("all_paths", [])
@@ -150,7 +158,9 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
             duration=duration,
             video_prompts=video_prompts,
             return_all_paths=True,  # ISS-200: Get all paths for recap sequencing
-            video_client=video_client
+            video_client=video_client,
+            image_provider=_img_provider,
+            image_model=_img_model,
         )
         
         # Store all paths on the topic for reconciliation (same as recap_scenes path)
@@ -211,7 +221,8 @@ def render_wan_video(topic: dict, output_dir: str, dry_run: bool = False, skip_w
     except WanPromptHardFailError as e:
         raise WanRenderError(f"Section-level WAN prompt validation failed: {e}")
     
-    client = WANClient()
+    client = _make_video_client(dry_run, skip_wan)
+
     result_path = client.generate_video(
         prompt=prompt,
         duration=min(duration, 60),
@@ -236,8 +247,13 @@ def _render_visual_beats(
     duration: int,
     video_prompts: list = None,
     return_all_paths: bool = False,
+    image_provider: str = None,
+    image_model: str = None,
     **kwargs
 ):
+    # Resolve image provider: arg → env → default (local GPU)
+    _img_provider = image_provider or os.getenv("IMAGE_PROVIDER", "gpu")
+    _img_model = image_model or os.getenv("IMAGE_MODEL", "flux_dev")
     """
     Render each visual beat as a separate video segment.
     
@@ -292,8 +308,12 @@ def _render_visual_beats(
     
     default_beat_duration = max(5, duration // num_beats)
     video_paths = []
-    # Use caller-supplied client if provided (recap routing), else default to WANClient
-    client = kwargs.get("video_client") if kwargs.get("video_client") else (WANClient() if not skip_wan and not dry_run else None)
+    # Use caller-supplied client if provided (recap routing), else Local GPU
+    client = kwargs.get("video_client") if kwargs.get("video_client") else _make_video_client(dry_run, skip_wan)
+    
+    # Detect if client supports image-to-video (LocalGPUClient)
+    _client_supports_i2v = isinstance(client, LocalGPUClient)
+
     
     for beat_idx in range(num_beats):
         # ISS-067: Use pre-compiled prompts if available, otherwise compile from visual_beats
@@ -316,6 +336,7 @@ def _render_visual_beats(
             beat = visual_beats[beat_idx] if beat_idx < len(visual_beats) else {}
         else:
             beat = visual_beats[beat_idx]
+            prompt_obj = beat  # expose to I2V block below (may carry image_prompt fields)
             beat_duration = default_beat_duration  # Use default for compiled prompts
             # Compile the visual beat into a WAN prompt
             try:
@@ -382,11 +403,46 @@ def _render_visual_beats(
             video_paths.append(beat_output_path)
             continue
         
+        # ── I2V: Generate start / end frame images for LocalGPUClient ────────────────
+        image_path = None
+        image_path_end = None
+
+        if _client_supports_i2v and not dry_run and not skip_wan and isinstance(prompt_obj, dict):
+            img_prompt = prompt_obj.get("image_prompt", "")
+            img_prompt_end = prompt_obj.get("image_prompt_end", "")
+
+            if img_prompt:
+                from render.image.image_generator import generate_image_for_beat, generate_ipe_image
+                images_dir = str(Path(output_dir).parent / "images")
+
+                start_beat = {"beat_id": f"{topic_id}_beat_{beat_idx}_ips", "image_prompt": img_prompt}
+                image_path = generate_image_for_beat(
+                    start_beat, str(topic_id), str(topic_id), images_dir,
+                    image_provider=_img_provider,
+                    image_model=_img_model,
+                )
+                if not image_path:
+                    print(f"  [Beat {beat_idx}] WARN: Start-frame generation failed — falling back to text-to-video")
+
+                if img_prompt_end:
+                    end_beat = {"beat_id": f"{topic_id}_beat_{beat_idx}_ipe", "image_prompt_end": img_prompt_end}
+                    image_path_end = generate_ipe_image(
+                        end_beat, str(topic_id), str(topic_id), images_dir,
+                        image_provider=_img_provider,
+                        image_model=_img_model,
+                    )
+                    if not image_path_end:
+                        print(f"  [Beat {beat_idx}] WARN: End-frame generation failed — using start frame only")
+
         # Generate actual video
         result_path = client.generate_video(
             prompt=wan_prompt,
             duration=beat_duration,
-            output_path=beat_output_path
+            output_path=beat_output_path,
+            **({
+                "image_path": image_path,
+                "image_path_end": image_path_end,
+            } if _client_supports_i2v else {})
         )
         # FIX: Handle None (failed) - append None to track failure, no placeholder
         if result_path is None:
@@ -466,9 +522,10 @@ def _render_recap_scenes(
             raise WanRenderError(f"Recap prompt validation failed: {e}")
     
     video_paths = []
-    # Use caller-supplied client (for smart routing), else default to WANClient
-    client = video_client if video_client else (WANClient() if not skip_wan and not dry_run else None)
+    # All video content uses Local GPU
+    client = video_client if video_client else _make_video_client(dry_run, skip_wan)
     scene_duration = 5  # Each recap scene is 5 seconds
+
     
     for scene_idx, scene in enumerate(recap_scenes):
         scene_num = scene.get("scene", scene_idx + 1)
@@ -720,7 +777,8 @@ def render_from_video_prompts(
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
     
-    client = WANClient() if not skip_wan and not dry_run else None
+    client = _make_video_client(dry_run, skip_wan)
+
     video_paths = []
     
     for i, vp in enumerate(video_prompts):

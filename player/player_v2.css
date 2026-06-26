@@ -1820,3 +1820,85 @@ mjx-container[jax="CHTML"][display="true"] {
   background-color: #dfdfdf;
   /* Thumb color on hover */
 }
+/* ============================================================
+   SUBTITLE OVERLAY — V3-style karaoke, fixed to viewport
+   Stays LEFT of avatar column (right:30vw), above controls bar
+   ============================================================ */
+#subtitle-overlay {
+  position: fixed;
+  bottom: 70px;           /* above controls bar */
+  left: 0;
+  right: 30vw;            /* stays left of the avatar column */
+  padding: 6px 16px 10px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 65;            /* above avatar and all content layers */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 2px 4px;
+  min-height: 2em;
+}
+
+/* Intro / fullscreen mode: center across full width with dark pill */
+#stage.mode-intro #subtitle-overlay {
+  left: 50% !important;
+  right: auto !important;
+  width: min(88vw, 980px);
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 8px;
+  padding: 6px 20px;
+}
+
+/* Each word span */
+.sub-word {
+  display: inline;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.65;
+  padding: 0 2px;
+  color: rgba(255, 255, 255, 0.4);
+  text-shadow: 0 0 8px rgba(0,0,0,1), 1px 1px 3px rgba(0,0,0,1);
+  transition: color 0.1s ease, text-shadow 0.1s ease;
+}
+
+/* Currently spoken word — gold karaoke highlight */
+.sub-word.active {
+  color: #FFD700;
+  text-shadow:
+    0 0 12px rgba(255, 215, 0, 0.6),
+    0 0 8px rgba(0,0,0,1),
+    1px 1px 3px rgba(0,0,0,1);
+}
+
+/* Words already spoken — bright white */
+.sub-word.spoken {
+  color: #e6edf3;
+}
+
+/* Upcoming words — dimmed */
+.sub-word.future {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Hide when empty */
+#subtitle-overlay:empty {
+  display: none;
+}
+
+/* Mobile: full width, smaller text */
+@media (max-width: 700px) {
+  #subtitle-overlay {
+    right: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+    width: 100% !important;
+    bottom: 56px;
+  }
+  .sub-word {
+    font-size: 13px;
+  }
+}

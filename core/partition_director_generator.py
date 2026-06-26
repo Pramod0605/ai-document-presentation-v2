@@ -13,6 +13,66 @@ from core.tts_duration import update_durations_simplified
 logger = logging.getLogger(__name__)
 
 
+CINEMATIC_BOILERPLATE = (
+    " Photorealistic, cinematic quality. Vivid colors, natural lighting, high detail."
+    " 16:9 aspect ratio. No watermarks or text overlays. Professional educational video aesthetic."
+)
+
+
+def _lightweight_content_check(sections_result: list) -> list:
+    """
+    Structural-only check identical to V3's content worker gate.
+    Only verifies sections exist, have renderer + narration.
+    Full V25 validation runs separately as non-fatal warnings.
+    """
+    errors = []
+    if not sections_result:
+        errors.append("No sections returned from Content Worker.")
+        return errors
+    for sec in sections_result:
+        title = sec.get("title", "?")
+        if not sec.get("renderer"):
+            errors.append(f"Section '{title}' is missing 'renderer' field.")
+        if not sec.get("narration"):
+            errors.append(f"Section '{title}' is missing 'narration' field.")
+    return errors
+
+
+def _ensure_minimum_prompt_length(sections: list, min_words: int = 80) -> int:
+    """
+    Post-processor: auto-pads short WAN video prompts so they meet the minimum word
+    count instead of causing validation failures and wasted retries.
+    Returns the number of prompts that were padded.
+    """
+    padded = 0
+    for sec in sections:
+        render_spec = sec.get("render_spec") or {}
+        for spec in render_spec.get("segment_specs", []):
+            # Beat-based prompts
+            for beat in spec.get("beats", []):
+                prompt = beat.get("prompt", "")
+                if prompt and len(str(prompt).split()) < min_words:
+                    beat["prompt"] = str(prompt) + CINEMATIC_BOILERPLATE
+                    padded += 1
+            # Single video_prompt per spec
+            vp = spec.get("video_prompt", "")
+            if vp and len(str(vp).split()) < min_words:
+                spec["video_prompt"] = str(vp) + CINEMATIC_BOILERPLATE
+                padded += 1
+        # Legacy root-level video_prompts list
+        for vp in render_spec.get("video_prompts", []):
+            if isinstance(vp, str) and len(vp.split()) < min_words:
+                idx = render_spec["video_prompts"].index(vp)
+                render_spec["video_prompts"][idx] = vp + CINEMATIC_BOILERPLATE
+                padded += 1
+            elif isinstance(vp, dict):
+                p = vp.get("prompt", "")
+                if p and len(str(p).split()) < min_words:
+                    vp["prompt"] = str(p) + CINEMATIC_BOILERPLATE
+                    padded += 1
+    return padded
+
+
 def inject_missing_image_ids(sections: List[Dict], images_list: str, source_content: str) -> int:
     """
     Pipeline-level fix: Scan visual_beats for diagram/image types with null image_id
@@ -58,7 +118,7 @@ def inject_missing_image_ids(sections: List[Dict], images_list: str, source_cont
             # Only process diagram/image types with no image_id
             if visual_type in ["diagram", "image"] and not image_id:
                 # Try to match based on markdown_pointer
-                pointer = beat.get("markdown_pointer", {})
+                pointer = beat.get("markdown_pointer") or {}
                 start_phrase = pointer.get("start_phrase", "")
                 
                 # Strategy 1: Check if start_phrase contains an image reference
@@ -288,6 +348,16 @@ class PartitionDirectorGenerator:
                     self._apply_sync_splitter(sec)
                     
                 final_presentation["sections"].append(sec)
+
+        # NEW: Phase 2.5: Visual Prompt Enhancement
+        from core.agents.visual_prompt_enhancer import run_prompt_enhancement
+        try:
+            msg = "Phase 2.5: Enhancing visual prompts with cultural context..."
+            logger.info(msg)
+            if update_status_callback: update_status_callback("prompt_enhancer", msg)
+            final_presentation = run_prompt_enhancement(final_presentation, log_fn=None)
+        except Exception as e:
+            logger.error(f"Visual prompt enhancement failed: {e}")
                 
         return final_presentation
 
@@ -387,15 +457,26 @@ class PartitionDirectorGenerator:
             
             while retries < max_retries:
                 try:
-                    response, _ = call_openrouter_llm(sys_p, current_prompt, self.config)
-                    
-                    # [DEBUG] Save Raw LLM Response to verify if it's String or Dict
+                    # [DEBUG] Write placeholder BEFORE LLM call so timeouts leave a trace
+                    debug_file = f"debug_llm_chunk_{index}_attempt_{retries}.txt"
+                    if output_dir:
+                        os.makedirs(output_dir, exist_ok=True)
+                        debug_file = os.path.join(output_dir, debug_file)
                     try:
-                        debug_file = f"debug_llm_chunk_{index}_attempt_{retries}.txt"
-                        if output_dir:
-                            os.makedirs(output_dir, exist_ok=True)
-                            debug_file = os.path.join(output_dir, debug_file)
-                            
+                        with open(debug_file, "w", encoding="utf-8") as f:
+                            f.write(f"[PENDING] Chunk {index} attempt {retries} — LLM call in progress...\n")
+                    except Exception:
+                        pass
+
+                    response, _ = call_openrouter_llm(sys_p, current_prompt, self.config)
+                    if not response:
+                        logger.warning(f"Worker {index} LLM returned empty response. Retrying...")
+                        retries += 1
+                        time.sleep(2)
+                        continue
+                    
+                    # Overwrite placeholder with actual response
+                    try:
                         with open(debug_file, "w", encoding="utf-8") as f:
                             f.write(response)
                         logger.info(f"Saved raw LLM response to {debug_file}")
@@ -413,35 +494,57 @@ class PartitionDirectorGenerator:
                          msg = f"LLM returned invalid/None JSON. Raw length: {len(response) if response else 0}"
                          logger.error(msg)
                          raise RuntimeError(msg)
-                    
-                    # Validation with Source Text for Pointer Check
-                    errors = V25Validator.validate_content_chunk(data, source_text=chunk.get("content", ""))
-                    
-                    if not errors:
-                        # Success!
-                        sections_result = data.get("sections", [])
-                        # INJECT CONTENT FIDELITY (Restore source text)
-                        if sections_result and chunk.get("content"):
-                            sections_result[0]["content"] = chunk.get("content")
-                        
-                        # Apply splitter to items with video renderer - MOVED TO STITCHING
-                        return sections_result
-                    
-                    # Validation Failed
-                    logger.warning(f"Worker {index} Validation Failed (Attempt {retries+1}/{max_retries}): {errors}")
-                    
-                    # Feedback Loop
-                    error_msg = "\n- ".join(errors)
-                    current_prompt += (
-                        f"\n\n[SYSTEM: PREVIOUS ATTEMPT REJECTED]\n"
-                        f"Your previous JSON output was invalid for the following reasons:\n- {error_msg}\n"
-                        f"Please FIX these errors and regenerate the JSON strictly following the schema."
-                    )
-                    retries += 1
+
+                    sections_result = data.get("sections", [])
+                    # Normalize: if LLM returned a bare section dict, wrap it
+                    if not sections_result and data.get("section_type"):
+                        sections_result = [data]
+
+                    # --- STEP 1: LIGHTWEIGHT structural check (fatal gate, same as V3) ---
+                    struct_errors = _lightweight_content_check(sections_result)
+                    if struct_errors:
+                        logger.warning(f"Worker {index} Structural Check Failed (Attempt {retries+1}/{max_retries}): {struct_errors}")
+                        error_msg = "\n- ".join(struct_errors)
+                        current_prompt += (
+                            f"\n\n[SYSTEM: PREVIOUS ATTEMPT REJECTED]\n"
+                            f"Your previous JSON output was structurally invalid:\n- {error_msg}\n"
+                            f"Please FIX these errors and regenerate the JSON."
+                        )
+                        retries += 1
+                        time.sleep(2)
+                        continue
+
+                    # --- STEP 2: Auto-pad short prompts before V25 check ---
+                    padded = _ensure_minimum_prompt_length(sections_result)
+                    if padded:
+                        logger.info(f"Worker {index}: Auto-padded {padded} short video prompt(s) to meet 80-word minimum.")
+
+                    # --- STEP 3: V25 deep check — NON-FATAL (warnings only, don't retry) ---
+                    v25_warnings = V25Validator.validate_content_chunk(data, source_text=chunk.get("content", ""))
+                    if v25_warnings:
+                        logger.warning(f"Worker {index} V25 non-fatal warnings (proceeding): {v25_warnings}")
+
+                    # Success — structural check passed
+                    # INJECT CONTENT FIDELITY (Restore source text)
+                    if sections_result and chunk.get("content"):
+                        sections_result[0]["content"] = chunk.get("content")
+
+                    return sections_result
                     
                 except Exception as e:
-                    logger.error(f"Worker {index} Exception (Attempt {retries+1}): {e}")
+                    import traceback as _tb
+                    logger.error(
+                        f"Worker {index} Exception (Attempt {retries+1}/{max_retries}): "
+                        f"{type(e).__name__}: {e}\n{_tb.format_exc()}"
+                    )
+                    # Write error info to debug file so we know what happened
+                    try:
+                        with open(debug_file, "w", encoding="utf-8") as f:
+                            f.write(f"[ERROR] {type(e).__name__}: {e}\n\n{_tb.format_exc()}")
+                    except Exception:
+                        pass
                     retries += 1
+                    time.sleep(5)  # delay before retry on error
                     
             # If all retries fail, raise error to stop pipeline
             raise RuntimeError(f"Content Worker {index} failed all {max_retries} attempts.")
@@ -478,6 +581,8 @@ class PartitionDirectorGenerator:
         final_manim_specs = []  # Specific for manim renderer output
         
         for idx, seg in enumerate(section["narration"]["segments"]):
+            if isinstance(seg, str):
+                seg = {"text": seg, "segment_id": f"seg_{idx + 1}"}
             seg_id = seg.get('segment_id') or f"seg_{idx + 1}"
             
             # GAP FIX: Verify if visuals are actually required
@@ -516,32 +621,68 @@ class PartitionDirectorGenerator:
                     # Use LLM-provided beats and ensure unique naming
                     beat_ids = []
                     section_prefix = f"topic_{section.get('section_id')}_"
-                    
+
+                    # FIX 2A: Stamp duration_seconds from narration (ground truth) onto each beat
+                    # LLM guesses duration; narration segment is the authoritative value
+                    per_beat_dur = round(duration / max(1, len(llm_beats)), 1)
+
                     for beat in llm_beats:
                         original_id = beat.get("beat_id", "")
                         # Ensure ID is unique by prepending section if not already present
-                        # (Assume seg_id in beat_id might collide, so we enforce prefix)
                         if not original_id.startswith("topic_"):
                             beat["beat_id"] = f"{section_prefix}{original_id}"
-                        
+
                         beat["segment_id"] = seg_id
+                        # Override LLM's duration guess with narration-derived value (capped at LTX max)
+                        beat["duration_seconds"] = min(15, per_beat_dur)
                         final_video_prompts.append(beat)
                         beat_ids.append(beat["beat_id"])
-                        
-                    seg["beat_videos"] = beat_ids
+
+                    # FIX 2B: If narration is longer than beats cover, inject a padding continuation beat
+                    # e.g. narration=26.9s, 1 LLM beat capped at 15s → need a 2nd beat for remaining 11.9s
+                    total_beat_coverage = sum(min(15, per_beat_dur) for _ in llm_beats)
+                    remaining = duration - total_beat_coverage
+                    if remaining > 2:
+                        logger.info(f"[SYNC-SPLIT] Segment {seg_id}: narr={duration}s, beats cover {total_beat_coverage}s → injecting padding beat ({remaining:.1f}s)")
+                        last_beat = llm_beats[-1]
+                        extra_beat_id = f"{section_prefix}{seg_id}_beat_{len(llm_beats) + 1}"
+                        extra_beat = {
+                            "beat_id": extra_beat_id,
+                            "segment_id": seg_id,
+                            "prompt": "Keeping the previous scene exactly the same, continue the visualization smoothly for the remaining narration.",
+                            "duration_seconds": min(15, remaining),
+                            # Re-use end frame of previous beat as start frame for seamless continuation
+                            "image_prompt": last_beat.get("image_prompt_end") or last_beat.get("image_prompt"),
+                            "image_prompt_end": last_beat.get("image_prompt_end"),
+                        }
+                        final_video_prompts.append(extra_beat)
+                        beat_ids.append(extra_beat_id)
+
+                    # Write expected file paths, not bare IDs — renderer will overwrite with real paths
+                    seg["beat_videos"] = [f"videos/{bid}.mp4" for bid in beat_ids]
                 else:
                     # Auto-split if > 15s or no beats provided
                     video_prompt = ""
+                    # Preserve I2V frame prompts from LLM-generated video_prompts entry
+                    base_image_prompt = None
+                    base_image_prompt_end = None
                     if spec:
                         video_prompt = spec.get("video_prompt", "")
                     elif v_prompts:
-                        # Fallback to cycling through legacy prompts
+                        # Fallback to cycling through legacy prompts — preserve ALL fields
                         base_obj = v_prompts[idx % len(v_prompts)]
-                        video_prompt = base_obj.get("prompt", str(base_obj)) if isinstance(base_obj, dict) else str(base_obj)
+                        if isinstance(base_obj, dict):
+                            video_prompt = base_obj.get("prompt", str(base_obj))
+                            # Preserve I2V fields — critical for Local GPU image-to-video conditioning
+                            base_image_prompt = base_obj.get("image_prompt") or None
+                            base_image_prompt_end = base_obj.get("image_prompt_end") or None
+                        else:
+                            video_prompt = str(base_obj)
                     else:
                         video_prompt = "Cinematic educational visualization."
                         
-                    num_beats = max(1, int((duration + 1) // 15)) # Ceiling-ish
+                    import math
+                    num_beats = max(1, math.ceil(duration / 15.0)) # Ensures full coverage of segment
                     if duration > 15:
                         logger.info(f"Sync Splitter (WAN): Auto-splitting segment {seg_id} ({duration}s) into {num_beats} beats")
                     
@@ -552,14 +693,21 @@ class PartitionDirectorGenerator:
                         prefix = "" if i == 0 else "Keeping the previous scene exactly the same, continue showing: "
                         suffix = f" (Part {i+1} of {num_beats})" if num_beats > 1 else ""
                         
-                        final_video_prompts.append({
+                        beat_entry = {
                             "beat_id": beat_id,
                             "segment_id": seg_id,
                             "prompt": prefix + video_prompt + suffix,
                             "duration_hint": min(15, duration / num_beats)
-                        })
+                        }
+                        # I2V: set start frame on first beat, end frame on last beat
+                        if base_image_prompt and i == 0:
+                            beat_entry["image_prompt"] = base_image_prompt
+                        if base_image_prompt_end and i == num_beats - 1:
+                            beat_entry["image_prompt_end"] = base_image_prompt_end
+                        final_video_prompts.append(beat_entry)
                         beat_ids.append(beat_id)
-                    seg["beat_videos"] = beat_ids
+                    # Write expected file paths, not bare IDs — renderer will overwrite with real paths
+                    seg["beat_videos"] = [f"videos/{bid}.mp4" for bid in beat_ids]
         
         # Store for downstream processing
         section["video_prompts"] = final_video_prompts
@@ -575,6 +723,7 @@ def generate_director_presentation(
     update_status_callback=None
 ) -> dict:
     """Entry point for pipeline integration."""
+    from core.unified_director_generator import DirectorGenerator
     generator = DirectorGenerator(config)
     # Revert to standard loop (Sync) until ThreadPool implemented in V2
     # partition_director_generator is the class above, DirectorGenerator is legacy

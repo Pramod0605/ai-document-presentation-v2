@@ -510,14 +510,14 @@ function loadSlide(index) {
   contentBox.innerHTML = '';
   videoLayer.classList.add('hidden');
   contentLayer.classList.remove('video-mode');
-  
+
   // V3 QUIZ: Hide quiz overlay when loading new section
   const quizOverlay = document.getElementById('quiz-overlay');
   if (quizOverlay) {
     quizOverlay.style.display = 'none';
   }
   document.getElementById('stage').classList.remove('mode-quiz');
-  
+
   // V2.5: Hide intro background video if not on Intro slide\n  const introBackground = document.getElementById('intro-background-video');\n  if (introBackground && sectionType !== 'intro') {\n    introBackground.style.display = 'none';\n    introBackground.pause();\n  }
   contentLayer.classList.remove('hidden');
 
@@ -684,7 +684,7 @@ function setStageMode(sectionType) {
   if (sectionType === 'intro') {
     stage.classList.add('mode-intro');
   }
-  
+
   if (sectionType === 'quiz') {
     stage.classList.add('mode-quiz');
   }
@@ -898,7 +898,8 @@ function renderContent(slide) {
     } else if (videoPath) {
       const fullPath = resolveMediaPath(videoPath, 'video');
       contentVideo.src = fullPath;
-      contentVideo.muted = true;  // ← ADD THIS LINE
+      contentVideo.muted = true;
+      contentVideo.loop = true; // Loop the video
 
       console.log(`[V2.5] Video loaded for SHOW phase: ${fullPath}`);
     }
@@ -933,6 +934,7 @@ function renderRecap(slide) {
     const fullPath = resolveMediaPath(videoPath, 'video');
     contentVideo.src = fullPath;
     contentVideo.muted = true; // V2.5: Content videos are always muted (only avatar has audio)
+    contentVideo.loop = true;  // Prevent early termination
     videoLayer.classList.remove('hidden');
     videoLayer.classList.add('fullscreen');
     console.log(`[V2.5] RECAP video: ${fullPath}`);
@@ -967,13 +969,13 @@ function renderQuiz(slide) {
   document.getElementById('stage').classList.add('mode-quiz');
 
   // Get questions from slide
-  const questions = (slide.questions && slide.questions.length > 0) 
-    ? slide.questions 
+  const questions = (slide.questions && slide.questions.length > 0)
+    ? slide.questions
     : (slide.understanding_quiz ? [slide.understanding_quiz] : []);
-  
+
   // Fallback to visual_beats if no questions
   const finalQuestions = questions.length > 0 ? questions : [];
-  
+
   let qIdx = 0;
 
   function showQuestion(idx) {
@@ -1012,7 +1014,7 @@ function renderQuiz(slide) {
     if (clips.question && avatarVideo) {
       avatarVideo.src = clips.question;
       avatarVideo.load();
-      avatarVideo.play().catch(() => {});
+      avatarVideo.play().catch(() => { });
       avatarVideo.onended = () => {
         // Enable buttons after clip ends
         qOptions.querySelectorAll('button').forEach(b => b.disabled = false);
@@ -1047,14 +1049,14 @@ function renderQuiz(slide) {
     // Show feedback
     qFeedback.style.display = 'block';
     qFeedback.classList.add(isRight ? 'correct' : 'wrong');
-    
+
     const explanation = q.explanation || (isRight ? '✓ Correct!' : '✗ Incorrect');
     qFeedback.innerHTML = explanation;
 
     // Play correct/wrong clip
     const clips = q.avatar_clips || {};
     const clipUrl = isRight ? clips.correct : clips.wrong;
-    
+
     const proceed = () => {
       // Next question after delay
       setTimeout(() => {
@@ -1066,7 +1068,7 @@ function renderQuiz(slide) {
     if (clipUrl && avatarVideo) {
       avatarVideo.src = clipUrl;
       avatarVideo.load();
-      avatarVideo.play().catch(() => {});
+      avatarVideo.play().catch(() => { });
       avatarVideo.onended = proceed;
     } else {
       proceed();
@@ -1137,10 +1139,109 @@ function renderMemory(slide) {
 }
 
 // ============================================
+// SUBTITLE ENGINE — V3-style sentence-grouped karaoke
+// ============================================
+let _subtitleWords = [];       // [{word, start, end, sentenceIdx}, ...] for current section
+let _subtitleOverlay = null;   // #subtitle-overlay element (lazy-resolved)
+let _subtitleLastIdx = -1;     // last active word index (for change detection)
+let _subtitleLastSentence = -1;// last rendered sentence index (avoids full re-render)
+
+function _getSubtitleOverlay() {
+  if (!_subtitleOverlay) _subtitleOverlay = document.getElementById('subtitle-overlay');
+  return _subtitleOverlay;
+}
+
+function clearSubtitles() {
+  _subtitleWords = [];
+  _subtitleLastIdx = -1;
+  _subtitleLastSentence = -1;
+  const el = _getSubtitleOverlay();
+  if (el) el.innerHTML = '';
+}
+
+function loadSectionSubtitles(sectionId) {
+  clearSubtitles();
+  if (!sectionId && sectionId !== 0) return;
+
+  // BASE_PATH is set at page load — /player/jobs/<id>/ for ?job= URLs
+  const url = `${BASE_PATH}subtitles/section_${sectionId}_subtitles.json`;
+  console.log(`[Subtitle] Fetching: ${url}`);
+
+  fetch(url)
+    .then(r => { if (!r.ok) throw new Error(`${r.status}`); return r.json(); })
+    .then(data => {
+      const rawWords = data.words || [];
+      if (!rawWords.length) return;
+
+      // Assign sentenceIdx based on terminal punctuation (. ! ?)
+      let sentenceIdx = 0;
+      _subtitleWords = rawWords.map(w => {
+        const withIdx = { ...w, sentenceIdx };
+        const last = (w.word || '').trimEnd().slice(-1);
+        if (last === '.' || last === '!' || last === '?') sentenceIdx++;
+        return withIdx;
+      });
+
+      console.log(`[Subtitle] Loaded ${_subtitleWords.length} words, ${sentenceIdx + 1} sentences for section ${sectionId}`);
+    })
+    .catch(err => {
+      // Subtitle file missing is expected for older jobs — silent
+      console.debug(`[Subtitle] No subtitles for section ${sectionId}: ${err.message}`);
+    });
+}
+
+function updateSubtitles(currentTime) {
+  if (!_subtitleWords.length) return;
+
+  // Find active word index (O(n) scan — fast enough at ~500 words max)
+  let activeIdx = -1;
+  for (let i = 0; i < _subtitleWords.length; i++) {
+    const w = _subtitleWords[i];
+    if (currentTime >= w.start && currentTime < w.end) { activeIdx = i; break; }
+    if (currentTime < w.start) break;
+    activeIdx = i; // keep last spoken word highlighted
+  }
+
+  const activeSentenceIdx = activeIdx >= 0 ? _subtitleWords[activeIdx].sentenceIdx : -1;
+
+  // Skip re-render if nothing changed
+  if (activeIdx === _subtitleLastIdx && activeSentenceIdx === _subtitleLastSentence) return;
+  _subtitleLastIdx = activeIdx;
+  _subtitleLastSentence = activeSentenceIdx;
+
+  const overlay = _getSubtitleOverlay();
+  if (!overlay) return;
+
+  // Get words belonging to the current sentence
+  const sentenceWords = activeSentenceIdx >= 0
+    ? _subtitleWords.filter(w => w.sentenceIdx === activeSentenceIdx)
+    : [];
+
+  if (!sentenceWords.length) { overlay.innerHTML = ''; return; }
+
+  // Render sentence — only one sentence at a time (like V3)
+  const globalStartIdx = _subtitleWords.indexOf(sentenceWords[0]);
+  overlay.innerHTML = '';
+  sentenceWords.forEach((w, i) => {
+    const globalIdx = globalStartIdx + i;
+    const cls = globalIdx < activeIdx ? 'spoken'
+      : globalIdx === activeIdx ? 'active'
+        : 'future';
+    const span = document.createElement('span');
+    span.className = `sub-word ${cls}`;
+    span.textContent = w.word + ' ';
+    overlay.appendChild(span);
+  });
+}
+
+// ============================================
 // MEDIA SOURCE SETUP
 // ============================================
 function setupMediaSource(slide) {
   const avatarPath = slide.avatar_video ? resolveMediaPath(slide.avatar_video, 'avatar') : null;
+
+  // Load subtitles for this section (non-fatal if missing)
+  loadSectionSubtitles(slide.section_id);
 
   if (avatarPath) {
     avatarLayer.style.display = 'block';
@@ -1150,6 +1251,14 @@ function setupMediaSource(slide) {
     useTimerFallback = false;
     activeTimeSource = avatarVideo;
     bindTimeEvents(avatarVideo);
+
+    // [SYNC FIX] Once avatar metadata loads, rescale beat playlist to match
+    // the avatar's ACTUAL duration (which may differ from JSON segment totals).
+    avatarVideo.addEventListener('loadedmetadata', () => {
+      if (avatarVideo.duration && beatVideoPlaylist.length > 0) {
+        rescaleBeatPlaylist(avatarVideo.duration, slide);
+      }
+    }, { once: true });
 
     console.log('[V2.5] Avatar set as time source:', avatarPath);
   } else {
@@ -1245,6 +1354,9 @@ function handleTimeUpdateMain() {
 
   // Update beat video timing
   checkBeatVideoSwitch();
+
+  // Karaoke subtitle tick
+  updateSubtitles(currentTime);
 
   // Update dev panel if enabled
   if (devModeEnabled) updateDevInfo();
@@ -1709,24 +1821,39 @@ function buildBeatPlaylistWithTiming(slide) {
 
     // Check if THIS segment has beat_videos
     const beatVids = seg.beat_videos || [];
-    const videoPath = beatVids.length > 0 ? beatVids[0] : null;
-
-    // V2.6 FIX: Always add entry (even for null videos) to maintain timing sync
-    playlist.push({
-      videoPath: videoPath ? resolveMediaPath(videoPath, 'video') : null,
-      startTime: segStartTime,
-      endTime: segEndTime,
-      segmentIndex: segIdx,
-      beatIndex: beatIndex,
-      hasVideo: !!videoPath
-    });
-
-    if (videoPath) {
-      console.log(`[V2.6] Beat ${beatIndex} → Segment ${segIdx} (${segStartTime.toFixed(1)}s - ${segEndTime.toFixed(1)}s): ${videoPath}`);
+    
+    // V2.6 FIX: If multiple beats, divide segment duration equally among them
+    if (beatVids.length > 0) {
+      const beatDur = duration / beatVids.length;
+      beatVids.forEach((vidPath, i) => {
+        const beatStart = segStartTime + (i * beatDur);
+        const beatEnd = segStartTime + ((i + 1) * beatDur);
+        playlist.push({
+          videoPath: resolveMediaPath(vidPath, 'video'),
+          startTime: beatStart,
+          endTime: beatEnd,
+          segmentIndex: segIdx,
+          beatIndex: beatIndex,
+          hasVideo: true
+        });
+        console.log(`[V2.6] Beat ${beatIndex} → Segment ${segIdx} (${beatStart.toFixed(1)}s - ${beatEnd.toFixed(1)}s): ${vidPath}`);
+        beatIndex++;
+      });
     } else {
+      // Always add entry (even for null videos) to maintain timing sync
+      playlist.push({
+        videoPath: null,
+        startTime: segStartTime,
+        endTime: segEndTime,
+        segmentIndex: segIdx,
+        beatIndex: beatIndex,
+        hasVideo: false
+      });
       console.log(`[V2.6] Segment ${segIdx} (${segStartTime.toFixed(1)}s - ${segEndTime.toFixed(1)}s): No video (text only)`);
+      beatIndex++;
     }
-    beatIndex++;
+
+
 
     accumulatedTime += duration;
   });
@@ -1756,6 +1883,47 @@ function buildBeatPlaylistWithTiming(slide) {
   return playlist;
 }
 
+// ============================================
+// [SYNC FIX] RESCALE BEAT PLAYLIST TO AVATAR DURATION
+// ============================================
+// The beat video playlist is built from JSON duration_seconds values, which
+// may not match the avatar video's actual encoded duration. The avatar is the
+// master clock, so all beat timestamps must be scaled to fit its real duration.
+function rescaleBeatPlaylist(avatarDuration, slide) {
+  if (!beatVideoPlaylist.length || !avatarDuration) return;
+
+  const segments = slide.narration?.segments || [];
+  const jsonTotalDur = segments.reduce((sum, s) => sum + (s.duration_seconds || 5), 0);
+
+  // If JSON total is effectively zero (e.g. recap with all 0.0 durations),
+  // divide avatar duration equally among all beat entries.
+  if (jsonTotalDur < 0.5) {
+    const slotDur = avatarDuration / beatVideoPlaylist.length;
+    beatVideoPlaylist.forEach((entry, i) => {
+      entry.startTime = i * slotDur;
+      entry.endTime   = (i + 1) * slotDur;
+    });
+    console.log(`[SYNC FIX] No JSON durations — equally distributed ${beatVideoPlaylist.length} beats across ${avatarDuration.toFixed(2)}s`);
+    return;
+  }
+
+  // If already in sync (within 0.5s tolerance), nothing to do.
+  if (Math.abs(jsonTotalDur - avatarDuration) < 0.5) {
+    console.log(`[SYNC FIX] Beat playlist already in sync with avatar (${avatarDuration.toFixed(2)}s)`);
+    return;
+  }
+
+  const scale = avatarDuration / jsonTotalDur;
+  console.log(`[SYNC FIX] Rescaling beat playlist: JSON=${jsonTotalDur.toFixed(2)}s → Avatar=${avatarDuration.toFixed(2)}s (scale=${scale.toFixed(3)})`);
+
+  beatVideoPlaylist.forEach(entry => {
+    entry.startTime = entry.startTime * scale;
+    entry.endTime   = entry.endTime   * scale;
+  });
+
+  console.log('[SYNC FIX] Beat playlist rescaled:', beatVideoPlaylist.map(e => `${e.startTime.toFixed(1)}–${e.endTime.toFixed(1)}s`));
+}
+
 
 function loadBeatVideo(index) {
   if (index < 0 || index >= beatVideoPlaylist.length) return;
@@ -1771,6 +1939,7 @@ function loadBeatVideo(index) {
 
   contentVideo.src = beat.videoPath;
   contentVideo.muted = true;
+  contentVideo.loop = true; // Loop the video if the segment slice is longer than the video
 
   contentVideo.onloadeddata = () => {
     console.log(`[V2.6] Beat video ${index + 1}/${beatVideoPlaylist.length} loaded`);

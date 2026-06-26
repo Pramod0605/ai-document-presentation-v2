@@ -29,7 +29,7 @@ class GeneratorConfig:
     max_tokens: int = 32000
     max_retries: int = 3
     retry_delay_base: float = 2.0
-    timeout: int = 60
+    timeout: int = 300  # 5 min — Gemini 2.5 Pro needs 2-4 min for large prompts
 
 
 class SchemaValidationError(Exception):
@@ -159,8 +159,10 @@ def call_openrouter_llm(
 
 def extract_json_from_response(response: str) -> dict:
     """Extract and parse JSON from LLM response."""
-    if response is None:
-        raise ValueError("Response is None - cannot parse JSON")
+    if not response:
+        # Trigger JSONParseError instead of ValueError so that the retry loop picks it up
+        logger.error("[JSONParseError] Response is None or empty. Possibly blocked by safety filter or model error.")
+        raise JSONParseError("Response is None or empty - cannot parse JSON")
         
     content = response.strip()
     

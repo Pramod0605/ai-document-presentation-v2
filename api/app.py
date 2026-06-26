@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 import json
 import shutil
@@ -79,7 +79,8 @@ def setup_job_folder(job_output_dir: Path):
     """Copy player files to job folder for self-contained playback"""
     os.makedirs(job_output_dir / "videos", exist_ok=True)
     os.makedirs(job_output_dir / "audio", exist_ok=True)
-    # Copy player_v2 files for self-contained job
+    os.makedirs(job_output_dir / "subtitles", exist_ok=True)  # for subtitle JSON files
+    # Copy player_v2 files for self-contained job (always overwrite to pick up latest)
     # player_v2.html becomes index.html, player_v2.js and player_v2.css keep their names
     file_mappings = [
         ("player_v2.html", "index.html"),
@@ -89,7 +90,7 @@ def setup_job_folder(job_output_dir: Path):
     for src_name, dst_name in file_mappings:
         src = PLAYER_DIR / src_name
         dst = job_output_dir / dst_name
-        if src.exists() and not dst.exists():
+        if src.exists():
             shutil.copy(str(src), str(dst))
 
 @app.route("/sanity_check.html")
@@ -2411,7 +2412,7 @@ def process_pdf_job_v15(job_id: str, pdf_path: str, subject: str, grade: str, ou
     )
 
 
-def process_document_job_v15(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", video_provider: str = "kie") -> dict:
+def process_document_job_v15(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", video_provider: str = "kie", ocr_provider: str = "local") -> dict:
     """ISS-206/207: Process PDF/DOC/DOCX/ODT using V1.5 Optimized pipeline.
     
     1. Convert document to Markdown using Datalab API (supports PDF, DOC, DOCX, ODT)
@@ -2429,7 +2430,7 @@ def process_document_job_v15(job_id: str, document_path: str, subject: str, grad
         }, persist=True)
         
         # ISS-206/207: Use new document_to_markdown with ConversionResult
-        conversion_result = document_to_markdown(document_path)
+        conversion_result = document_to_markdown(document_path, ocr_provider=ocr_provider)
         markdown_content = conversion_result.markdown
         page_count = conversion_result.page_count
         
@@ -2499,7 +2500,7 @@ def process_document_job_v15(job_id: str, document_path: str, subject: str, grad
             os.unlink(document_path)
 
 
-def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", pipeline_version: str = "v15_v2_director", generation_scope: str = "full", model: Optional[str] = None, video_provider: str = "kie") -> dict:
+def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, grade: str, output_dir: str, dry_run: bool = False, skip_wan: bool = False, skip_avatar: bool = False, source_file: Optional[str] = None, tts_provider: str = "edge_tts", pipeline_version: str = "v15_v2_director", generation_scope: str = "full", model: Optional[str] = None, video_provider: str = "kie", ocr_provider: str = "local") -> dict:
     """Process PDF/DOC/DOCX/ODT using V1.5 V2 Unified pipeline with image handling.
     
     1. Convert document to Markdown using Datalab API (captures images)
@@ -2516,7 +2517,7 @@ def process_document_job_v15_v2(job_id: str, document_path: str, subject: str, g
             "status_message": f"Converting {file_ext.upper()} to Markdown..."
         }, persist=True)
         
-        conversion_result = document_to_markdown(document_path)
+        conversion_result = document_to_markdown(document_path, ocr_provider=ocr_provider)
         markdown_content = conversion_result.markdown
         page_count = conversion_result.page_count
         images_dict = conversion_result.images
@@ -4054,7 +4055,7 @@ def serve_job_player(job_id):
     if not job_dir.exists():
         return jsonify({"error": "Job not found"}), 404
     # Serve index.html from job folder (copied during job creation)
-        return send_from_directory(PLAYER_DIR, "index.html")
+    return send_from_directory(job_dir, "index.html")
 
 @app.route('/assets/<job_id>/<path:filename>')
 def serve_job_asset(job_id, filename):
